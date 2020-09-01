@@ -94,7 +94,7 @@ android {
             versionNameSuffix "-dev"
             applicationId "org.second.bestill.dev"
         }
-        test {
+        staging {
             dimension "app"
             resValue "string", "app_name", "BeStill Test"
             versionNameSuffix "-test"
