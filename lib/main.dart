@@ -6,6 +6,7 @@ import 'package:be_still/src/screens/GrowMyPrayerLife/recommended_bibles_screen.
 import 'package:be_still/src/screens/PrayMode/pray_mode_screen.dart';
 import 'package:be_still/src/screens/PrayerDetails/prayer_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'src/screens/Create_Account/create_account_screen.dart';
 import 'src/screens/Forget_Password/forget_password.dart';
 import 'package:be_still/src/screens/Settings/settings_screen.dart';
@@ -26,6 +27,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Be Still',
       theme: _app.isDarkModeEnabled
