@@ -86,7 +86,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -111,7 +111,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -136,7 +136,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -203,7 +203,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,

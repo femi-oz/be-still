@@ -73,7 +73,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -98,7 +98,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -123,7 +123,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -164,7 +164,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -189,7 +189,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,

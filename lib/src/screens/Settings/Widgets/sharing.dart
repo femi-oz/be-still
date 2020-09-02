@@ -57,7 +57,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -82,7 +82,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -247,9 +247,9 @@ class _SharingSettingsState extends State<SharingSettings> {
                         strutStyle: StrutStyle(fontSize: 12.0),
                         text: TextSpan(
                             style: TextStyle(
-                          color: context.brightBlue,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                                color: context.brightBlue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
                             text: 'carthagebc.com/prayer/request/testing'),
                       ),
                     ),

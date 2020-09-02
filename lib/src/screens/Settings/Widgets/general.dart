@@ -150,7 +150,7 @@ class GeneralSettings extends StatelessWidget {
                           fontWeight: FontWeight.w300),
                     ),
                   ),
-                  Switch(
+                  Switch.adaptive(
                     value: true,
                     activeColor: Colors.white,
                     activeTrackColor: context.switchThumbActive,
@@ -175,7 +175,7 @@ class GeneralSettings extends StatelessWidget {
                           fontWeight: FontWeight.w300),
                     ),
                   ),
-                  Switch(
+                  Switch.adaptive(
                     value: false,
                     activeColor: Colors.white,
                     activeTrackColor: context.switchThumbActive,

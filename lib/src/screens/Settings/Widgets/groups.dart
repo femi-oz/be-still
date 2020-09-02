@@ -344,7 +344,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -459,7 +459,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                               fontWeight: FontWeight.w300),
                                         ),
                                       ),
-                                      Switch(
+                                      Switch.adaptive(
                                         value: true,
                                         activeColor: Colors.white,
                                         activeTrackColor:
@@ -489,7 +489,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                               fontWeight: FontWeight.w300),
                                         ),
                                       ),
-                                      Switch(
+                                      Switch.adaptive(
                                         value: true,
                                         activeColor: Colors.white,
                                         activeTrackColor:
@@ -523,7 +523,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         FontWeight.w300),
                                               ),
                                             ),
-                                            Switch(
+                                            Switch.adaptive(
                                               value: false,
                                               activeColor: Colors.white,
                                               activeTrackColor:
@@ -559,7 +559,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         FontWeight.w300),
                                               ),
                                             ),
-                                            Switch(
+                                            Switch.adaptive(
                                               value: false,
                                               activeColor: Colors.white,
                                               activeTrackColor:
@@ -594,7 +594,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         FontWeight.w300),
                                               ),
                                             ),
-                                            Switch(
+                                            Switch.adaptive(
                                               value: false,
                                               activeColor: Colors.white,
                                               activeTrackColor:

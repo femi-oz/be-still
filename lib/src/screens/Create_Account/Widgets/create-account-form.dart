@@ -150,7 +150,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     Theme(
                       data:
                           ThemeData(unselectedWidgetColor: context.brightBlue),
-                      child: Switch(
+                      child: Switch.adaptive(
                         value: termsAccepted,
                         onChanged: (_) {
                           setState(() {

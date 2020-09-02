@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           color: context.brightBlue2,
                                           fontSize: 14),
                                     ),
-                                    Switch(
+                                    Switch.adaptive(
                                       activeColor: Colors.white,
                                       activeTrackColor:
                                           context.switchThumbActive,

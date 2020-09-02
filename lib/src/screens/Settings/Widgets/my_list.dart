@@ -351,7 +351,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,

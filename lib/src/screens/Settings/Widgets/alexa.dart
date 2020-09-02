@@ -135,7 +135,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -160,7 +160,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
@@ -215,7 +215,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                         fontWeight: FontWeight.w300),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
                   activeTrackColor: context.switchThumbActive,
