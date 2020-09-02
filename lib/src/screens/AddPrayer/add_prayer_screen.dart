@@ -1,4 +1,5 @@
 import 'package:be_still/src/Data/prayer.data.dart';
+import 'package:be_still/src/screens/AddPrayer/Widgets/name_recognition_one.dart';
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -10,26 +11,28 @@ class AddPrayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AddRouteArguments args = ModalRoute.of(context).settings.arguments;
-    final isEditeMode =  args.isEditMode;
-    final prayerContent = isEditeMode ? prayerData.singleWhere((p) => p.id == args.prayerId).content : ''; 
+    final isEditeMode = args.isEditMode;
+    final prayerContent = isEditeMode
+        ? prayerData.singleWhere((p) => p.id == args.prayerId).content
+        : '';
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         child: Scaffold(
-          body: SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    context.mainBgStart,
-                    context.mainBgEnd,
-                  ],
-                ),
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  context.mainBgStart,
+                  context.mainBgEnd,
+                ],
               ),
-              padding: EdgeInsets.all(20),
+            ),
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   Row(
@@ -49,7 +52,15 @@ class AddPrayer extends StatelessWidget {
                           style: TextStyle(
                               color: context.toolsBackBtn, fontSize: 16),
                         ),
-                        onTap: () => Navigator.of(context).pop(),
+                        onTap: () => showModalBottomSheet(
+                          context: context,
+                          barrierColor: context.toolsBg.withOpacity(0.5),
+                          backgroundColor: context.toolsBg.withOpacity(0.9),
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return NameRecognitionMenuOne();
+                          },
+                        ),
                       ),
                     ],
                   ),

@@ -25,6 +25,7 @@ class CustomDrawer extends StatelessWidget {
     return SafeArea(
       child: Container(
         width: double.infinity,
+        height: MediaQuery.of(context).size.height,
         child: Drawer(
           child: Container(
             decoration: BoxDecoration(
@@ -39,7 +40,7 @@ class CustomDrawer extends StatelessWidget {
                 image: AssetImage(_app.isDarkModeEnabled
                     ? 'assets/images/drawer-bck-dark.png'
                     : 'assets/images/drawer-bck-light.png'),
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.bottomRight,
               ),
             ),
             child: Column(
@@ -78,87 +79,91 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.85,
-                  child: Center(
-                    child: ListView(
+                  height: MediaQuery.of(context).size.height * 0.75,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 60,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Container(
                       padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.height * 0.2,
-                        horizontal: 60,
+                        vertical: MediaQuery.of(context).size.height * 0.22,
                       ),
-                      children: <Widget>[
-                        ListTile(
-                          onTap: () {
-                            Navigator.of(context).pushReplacementNamed('/');
-                          },
-                          title: Text(
-                            "MY LIST",
-                            style: TextStyle(
-                              color: context.brightBlue2,
-                              fontSize: 16,
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            onTap: () {
+                              Navigator.of(context).pushReplacementNamed('/');
+                            },
+                            title: Text(
+                              "MY LIST",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          onTap: () => Navigator.of(context).pushNamed(
-                            AddPrayer.routeName,
-                            arguments: AddRouteArguments(false, null),
-                          ),
-                          title: Text(
-                            "ADD A PRAYER",
-                            style: TextStyle(
-                              color: context.brightBlue2,
-                              fontSize: 16,
+                          ListTile(
+                            onTap: () => Navigator.of(context).pushNamed(
+                              AddPrayer.routeName,
+                              arguments: AddRouteArguments(false, null),
+                            ),
+                            title: Text(
+                              "ADD A PRAYER",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          onTap: () => Navigator.of(context)
-                              .pushReplacementNamed(PrayerMode.routeName),
-                          title: Text(
-                            "PRAY",
-                            style: TextStyle(
-                              color: context.brightBlue2,
-                              fontSize: 16,
+                          ListTile(
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed(PrayerMode.routeName),
+                            title: Text(
+                              "PRAY",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          onTap: _launchURL,
-                          title: Text(
-                            "BIBLE",
-                            style: TextStyle(
-                              color: context.brightBlue2,
-                              fontSize: 16,
+                          ListTile(
+                            onTap: _launchURL,
+                            title: Text(
+                              "BIBLE",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          onTap: () {
-                            Navigator.of(context).pushReplacementNamed(
-                                GrowMyPrayerLifeScreen.routeName);
-                          },
-                          title: Text(
-                            "GROW MY PRAYER LIFE",
-                            style: TextStyle(
-                              color: context.brightBlue2,
-                              fontSize: 16,
+                          ListTile(
+                            onTap: () {
+                              Navigator.of(context).pushReplacementNamed(
+                                  GrowMyPrayerLifeScreen.routeName);
+                            },
+                            title: Text(
+                              "GROW MY PRAYER LIFE",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushReplacementNamed(SettingsScreen.routeName);
-                          },
-                          title: Text(
-                            "SETTINGS",
-                            style: TextStyle(
-                              color: context.brightBlue2,
-                              fontSize: 16,
+                          ListTile(
+                            onTap: () {
+                              Navigator.of(context).pushReplacementNamed(
+                                  SettingsScreen.routeName);
+                            },
+                            title: Text(
+                              "SETTINGS",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 )

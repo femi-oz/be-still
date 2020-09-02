@@ -55,6 +55,10 @@ extension ThemeContext on BuildContext {
   Color get prayerCardTags => dynamicColor(light: 0xFFbf0606, dark: 0xFFbf0606);
 
   Color get toolsActiveBtn => dynamicColor(light: 0xFF9BD4E5, dark: 0xFF025584);
+  Color get toolsInactiveBtn =>
+      dynamicColor(light: 0xFF1D2730, dark: 0xFF0B2432);
+  Color get toolsInactiveWhiteBtn =>
+      dynamicColor(light: 0xFF1D2730, dark: 0xFF1D2730);
   Color get toolsBtnBorder => dynamicColor(light: 0xFF027BA6, dark: 0xFF027BA6);
   Color get toolsBackBtn => dynamicColor(light: 0xFF01486C, dark: 0xFF01486C);
   Color get toolsBg => dynamicColor(light: 0xFFE6E9ED, dark: 0xFF06213B);

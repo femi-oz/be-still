@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
 
 class CustomInput extends StatelessWidget {
-  // final hint;
+  final maxLines;
   final label;
-  // final suffix;
+  final color;
   final isPassword;
   final controller;
-  // final action;
+  final showSuffix;
   final textInputAction;
   // final focusNodeType;
   final keyboardType;
@@ -18,12 +18,12 @@ class CustomInput extends StatelessWidget {
   final unfocus;
 
   CustomInput({
-    // this.hint,
+    this.maxLines = 1,
     @required this.label,
-    // this.suffix,
+    this.color,
     this.isPassword = false,
     @required this.controller,
-    // this.action,
+    this.showSuffix = true,
     this.textInputAction = TextInputAction.next,
     // this.focusNodeType,
     this.keyboardType,
@@ -40,11 +40,12 @@ class CustomInput extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       style: TextStyle(
-        color: context.brightBlue2,
+        color: color == null ? context.brightBlue2 : color,
         fontSize: 14,
         height: 1.5,
         fontWeight: FontWeight.normal,
       ),
+      maxLines: maxLines,
       decoration: InputDecoration(
         // prefixIcon: icon,
         // suffixIcon: isPassword == true
@@ -58,7 +59,7 @@ class CustomInput extends StatelessWidget {
         //         },
         //       )
         //     : null,
-        suffixText: label,
+        suffixText: showSuffix ? label : '',
         suffixStyle: TextStyle(
           color: context.brightBlue2,
           fontSize: 14,
@@ -67,7 +68,7 @@ class CustomInput extends StatelessWidget {
         counterText: '',
         hintText: label,
         hintStyle: TextStyle(
-          color: context.brightBlue2,
+          color: color == null ? context.brightBlue2 : color,
           fontSize: 14,
           fontWeight: FontWeight.w200,
         ),
@@ -89,7 +90,7 @@ class CustomInput extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: context.brightBlue2.withOpacity(0.5),
+            color: context.brightBlue2,
             width: 1.0,
           ),
         ),
