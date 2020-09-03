@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -92,7 +92,6 @@
 				E0B6CAA3AC9169286FCCA650 /* Pods-Runner.profile-test.xcconfig */,
 				1BA52FF56DAB6D472D21C628 /* Pods-Runner.profile-dev.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -1609,7 +1608,7 @@
 				35BA8C6524FDDD04003C5548 /* Profile-dev */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-store";
+			defaultConfigurationName = "Release-dev";
 		};
 		97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */ = {
 			isa = XCConfigurationList;
@@ -1631,7 +1630,7 @@
 				35BA8C6624FDDD04003C5548 /* Profile-dev */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-store";
+			defaultConfigurationName = "Release-dev";
 		};
 /* End XCConfigurationList section */
 	};
