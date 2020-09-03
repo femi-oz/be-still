@@ -137,7 +137,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Text(
-                        'Read the Terms of Use/User Agreement',
+                        'Read the Terms of Use/User Agreement ',
                         style: TextStyle(
                           color: context.brightBlue2,
                           fontSize: 14,
