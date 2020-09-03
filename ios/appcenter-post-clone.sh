@@ -26,4 +26,4 @@ flutter pub get
 echo "Installed flutter to `pwd`/flutter"
 echo "APP_ENVIRONMENT : $APP_ENVIRONMENT"
 
-rm ios/Podfile && flutter build ios --release --no-codesign --build-number $APPCENTER_BUILD_ID --flavor $APP_ENVIRONMENT --target=lib/main_$APP_ENVIRONMENT.dart
+flutter build ios --release --no-codesign --build-number $APPCENTER_BUILD_ID --flavor $APP_ENVIRONMENT --target=lib/main_$APP_ENVIRONMENT.dart
