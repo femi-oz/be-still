@@ -9,11 +9,12 @@ class CustomInput extends StatelessWidget {
   final controller;
   final showSuffix;
   final textInputAction;
-  // final focusNodeType;
+  final submitForm;
   final keyboardType;
   final isRequired;
   final validator;
   final isEmail;
+  final padding;
   final isPhone;
   final unfocus;
 
@@ -25,10 +26,11 @@ class CustomInput extends StatelessWidget {
     @required this.controller,
     this.showSuffix = true,
     this.textInputAction = TextInputAction.next,
-    // this.focusNodeType,
+    this.submitForm,
     this.keyboardType,
     this.isRequired = false,
     this.validator,
+    this.padding = 20,
     this.isPhone = false,
     this.isEmail = false,
     this.unfocus = false,
@@ -48,6 +50,8 @@ class CustomInput extends StatelessWidget {
       maxLines: maxLines,
       decoration: InputDecoration(
         suffixText: showSuffix ? label : '',
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: padding),
         suffixStyle: TextStyle(
           color: context.brightBlue2,
           fontSize: 14,
@@ -88,7 +92,8 @@ class CustomInput extends StatelessWidget {
       onFieldSubmitted: (_) => {
         unfocus
             ? FocusScope.of(context).unfocus()
-            : FocusScope.of(context).nextFocus()
+            : FocusScope.of(context).nextFocus(),
+        unfocus ? submitForm : null
       },
       textInputAction: textInputAction,
     );
