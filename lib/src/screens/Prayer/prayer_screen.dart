@@ -9,6 +9,7 @@ import 'Widgets/prayer_menu.dart';
 import 'Widgets/prayer_list.dart';
 
 class PrayerScreen extends StatefulWidget {
+  static const routeName = 'prayer-screen';
   @override
   _PrayerScreenState createState() => _PrayerScreenState();
 }

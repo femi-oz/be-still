@@ -11,6 +11,7 @@ import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const routeName = 'login';
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }

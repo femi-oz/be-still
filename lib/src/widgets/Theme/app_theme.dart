@@ -32,6 +32,9 @@ extension ThemeContext on BuildContext {
   Color get dimBlue => dynamicColor(light: 0xFF01537B, dark: 0xFF01537B);
   Color get offWhite => dynamicColor(light: 0xFFC1C5C8, dark: 0xFFC1C5C8);
 
+  Color get splashBgStart => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF011d3c);
+  Color get splashBgEnd => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF053566);
+
   Color get mainBgStart => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF021D3C);
   Color get mainBgEnd => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF073668);
 
