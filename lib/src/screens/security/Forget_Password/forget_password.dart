@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:be_still/src/Data/user.data.dart';
-import 'package:be_still/src/screens/Forget_Password/Widgets/step_three.dart';
-import 'package:be_still/src/screens/Forget_Password/Widgets/step_two.dart';
+import 'package:be_still/src/screens/security/Forget_Password/Widgets/step_three.dart';
+import 'package:be_still/src/screens/security/Forget_Password/Widgets/step_two.dart';
 import 'package:be_still/src/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/src/Providers/app_provider.dart';

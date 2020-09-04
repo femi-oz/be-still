@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:be_still/src/Providers/app_provider.dart';
-import 'package:be_still/src/screens/Login/login_screen.dart';
 import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/src/screens/security/Login/login_screen.dart';
 import 'package:be_still/src/widgets/app_icons_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

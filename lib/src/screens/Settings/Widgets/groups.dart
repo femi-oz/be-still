@@ -356,7 +356,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           ),
           Column(
             children: <Widget>[
-              ...GROUP_DATA
+              ...groupData
                   .where((gl) => gl.members.contains(_app.user.id))
                   .map(
                     (GroupModel group) => Container(

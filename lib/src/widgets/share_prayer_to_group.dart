@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'Theme/app_theme.dart';
 
 class SharePrayerToGroups extends StatefulWidget {
-
   @override
   _SharePrayerToGroupsState createState() => _SharePrayerToGroupsState();
 }
@@ -16,7 +15,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
 
-    final groups = GROUP_DATA.where((gl) => gl.members.contains(_app.user.id));
+    final groups = groupData.where((gl) => gl.members.contains(_app.user.id));
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -55,7 +54,9 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 10),
                             decoration: BoxDecoration(
-                              color: selectedGroup == group.id ? context.toolsActiveBtn.withOpacity(0.2) : Colors.transparent,
+                              color: selectedGroup == group.id
+                                  ? context.toolsActiveBtn.withOpacity(0.2)
+                                  : Colors.transparent,
                               border: Border.all(
                                 color: context.toolsBtnBorder,
                                 width: 1,

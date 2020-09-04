@@ -12,7 +12,6 @@ class DevotionPlans extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final _app = Provider.of<AppProvider>(context);
     void _showAlert(DevotionalModel dev) {
       AlertDialog dialog = AlertDialog(
@@ -27,7 +26,6 @@ class DevotionPlans extends StatelessWidget {
         ),
         content: Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.5,
           margin: EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),

@@ -1,4 +1,4 @@
-import 'package:be_still/src/screens/Create_Account/Widgets/terms_dialog.dart';
+import 'package:be_still/src/screens/security/Create_Account/Widgets/terms_dialog.dart';
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
 import 'package:be_still/src/widgets/input_field.dart';
 import 'package:flutter/material.dart';

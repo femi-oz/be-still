@@ -25,9 +25,7 @@ class PrayerDetails extends StatelessWidget {
         args.groupId.toString() == 'null' || prayer.user == _app.user.id;
     final isGroupAdmin = args.groupId.toString() == 'null'
         ? false
-        : GROUP_DATA
-                    .singleWhere((g) => g.id == args.groupId.toString())
-                    .admin ==
+        : groupData.singleWhere((g) => g.id == args.groupId.toString()).admin ==
                 _app.user.id
             ? true
             : false;
@@ -112,7 +110,9 @@ class PrayerDetails extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: prayer.updates.length > 0 ? UpdateView(prayer) : NoUpdateView(prayer),
+                child: prayer.updates.length > 0
+                    ? UpdateView(prayer)
+                    : NoUpdateView(prayer),
               ),
             ),
             IconButton(

@@ -10,6 +10,7 @@ class CustomInput extends StatelessWidget {
   final showSuffix;
   final textInputAction;
   final submitForm;
+  final onTextchanged;
   final keyboardType;
   final isRequired;
   final validator;
@@ -27,10 +28,11 @@ class CustomInput extends StatelessWidget {
     this.showSuffix = true,
     this.textInputAction = TextInputAction.next,
     this.submitForm,
+    this.onTextchanged,
     this.keyboardType,
     this.isRequired = false,
     this.validator,
-    this.padding = 20,
+    this.padding = 20.0,
     this.isPhone = false,
     this.isEmail = false,
     this.unfocus = false,
@@ -47,6 +49,7 @@ class CustomInput extends StatelessWidget {
         height: 1.5,
         fontWeight: FontWeight.normal,
       ),
+      cursorColor: color == null ? context.brightBlue2 : color,
       maxLines: maxLines,
       decoration: InputDecoration(
         suffixText: showSuffix ? label : '',
@@ -86,6 +89,8 @@ class CustomInput extends StatelessWidget {
             width: 1.0,
           ),
         ),
+        fillColor: context.inputFieldBg,
+        filled: true,
       ),
       obscureText: isPassword ? true : false,
       validator: (value) => _validatorFn(value),
@@ -96,6 +101,7 @@ class CustomInput extends StatelessWidget {
         unfocus ? submitForm : null
       },
       textInputAction: textInputAction,
+      onChanged: onTextchanged,
     );
   }
 

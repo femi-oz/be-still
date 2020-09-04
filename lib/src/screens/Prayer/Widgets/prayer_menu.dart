@@ -1,6 +1,8 @@
 import 'package:be_still/src/Data/group.data.dart';
 import 'package:be_still/src/Enums/prayer_list.enum.dart';
+import 'package:be_still/src/screens/Prayer/Widgets/menu_items.dart';
 import 'package:be_still/src/screens/Prayer/Widgets/prayer_tools.dart';
+import 'package:be_still/src/screens/create_group/create_group_screen.dart';
 import 'package:be_still/src/widgets/app_icons_icons.dart';
 import 'package:be_still/src/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +16,21 @@ class PrayerMenu extends StatefulWidget {
   final activeList;
 
   final groupId;
-  final searchController;
+  var onTextchanged;
 
   @override
-  PrayerMenu(this.setCurrentList, this.activeList, this.groupId,
-      this.searchController);
+  PrayerMenu(
+      {this.setCurrentList,
+      this.activeList,
+      this.groupId,
+      // this.searchController,
+      this.onTextchanged});
   _PrayerMenuState createState() => _PrayerMenuState();
 }
 
 class _PrayerMenuState extends State<PrayerMenu> {
+  final TextEditingController searchController = TextEditingController();
+
   bool searchMode = false;
   @override
   Widget build(BuildContext context) {
@@ -78,21 +86,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
               ),
             ),
           ),
-          SizedBox(width: 10.0),
+          SizedBox(width: 15.0),
           searchMode
               ? Row(
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width * 0.7,
                       child: CustomInput(
-                        controller: widget.searchController,
+                        controller: searchController,
                         label: 'Search',
                         padding: 5.0,
-                        submitForm: (_) => setState(
-                          () => {
-                            searchMode = !searchMode,
-                          },
-                        ),
+                        textInputAction: TextInputAction.done,
+                        onTextchanged: widget.onTextchanged,
                       ),
                     ),
                     IconButton(
@@ -116,170 +121,72 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () => setState(() {
-                                widget.setCurrentList(
-                                    PrayerListType.personal, null);
-                              }),
-                              child: Text(
-                                'My List',
-                                style: TextStyle(
-                                  color: widget.activeList ==
-                                          PrayerListType.personal
-                                      ? context.brightBlue
-                                      : context.prayerMenuInactive,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
-                              height: 15,
-                              child:
-                                  widget.activeList == PrayerListType.personal
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.more_horiz,
-                                            color: context.brightBlue,
-                                          ),
-                                          padding: EdgeInsets.all(0),
-                                          onPressed: () => openTools(),
-                                        )
-                                      : Container(),
-                            ),
-                          ],
+                        PrayerMenuItem(
+                          title: 'My List',
+                          showIcon:
+                              widget.activeList == PrayerListType.personal,
+                          showActiveColor:
+                              widget.activeList == PrayerListType.personal,
+                          action: () => setState(() {
+                            widget.setCurrentList(
+                                PrayerListType.personal, null);
+                          }),
+                          openTools: () => openTools(),
                         ),
-                        ...GROUP_DATA
+                        ...groupData
                             .where((gl) => gl.members.contains(_app.user.id))
                             .map(
                               (g) => Row(children: [
-                                SizedBox(width: 40.0),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    InkWell(
-                                      onTap: () => setState(() {
-                                        widget.setCurrentList(
-                                            PrayerListType.group, g.id);
-                                      }),
-                                      child: Text(
-                                        g.name,
-                                        style: TextStyle(
-                                          color: widget.activeList ==
-                                                      PrayerListType.group &&
-                                                  widget.groupId == g.id
-                                              ? context.brightBlue
-                                              : context.prayerMenuInactive,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.all(0),
-                                      margin: EdgeInsets.all(0),
-                                      height: 15,
-                                      child: widget.activeList ==
-                                                  PrayerListType.group &&
-                                              widget.groupId == g.id
-                                          ? IconButton(
-                                              icon: Icon(
-                                                Icons.more_horiz,
-                                                color: context.brightBlue,
-                                              ),
-                                              padding: EdgeInsets.all(0),
-                                              onPressed: () => openTools(),
-                                            )
-                                          : Container(),
-                                    )
-                                  ],
+                                PrayerMenuItem(
+                                  title: g.name,
+                                  showIcon: widget.activeList ==
+                                          PrayerListType.group &&
+                                      widget.groupId == g.id,
+                                  showActiveColor: widget.activeList ==
+                                          PrayerListType.group &&
+                                      widget.groupId == g.id,
+                                  action: () => setState(() {
+                                    widget.setCurrentList(
+                                        PrayerListType.group, g.id);
+                                  }),
+                                  openTools: () => openTools(),
                                 ),
                               ]),
                             ),
-                        SizedBox(width: 40.0),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () => setState(() {
-                                widget.setCurrentList(
-                                    PrayerListType.archived, null);
-                              }),
-                              child: Text(
-                                'Archived',
-                                style: TextStyle(
-                                  color: widget.activeList ==
-                                          PrayerListType.archived
-                                      ? context.brightBlue
-                                      : context.prayerMenuInactive,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
-                              height: 15,
-                              child:
-                                  widget.activeList == PrayerListType.archived
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.more_horiz,
-                                            color: context.brightBlue,
-                                          ),
-                                          padding: EdgeInsets.all(0),
-                                          onPressed: () => openTools(),
-                                        )
-                                      : Container(),
-                            ),
-                          ],
+                        PrayerMenuItem(
+                          title: 'Archived',
+                          showIcon:
+                              widget.activeList == PrayerListType.archived,
+                          showActiveColor:
+                              widget.activeList == PrayerListType.archived,
+                          action: () => setState(() {
+                            widget.setCurrentList(
+                                PrayerListType.archived, null);
+                          }),
+                          openTools: () => openTools(),
                         ),
-                        SizedBox(width: 40.0),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () => setState(() {
-                                widget.setCurrentList(
-                                    PrayerListType.answered, null);
-                              }),
-                              child: Text(
-                                'Answered',
-                                style: TextStyle(
-                                  color: widget.activeList ==
-                                          PrayerListType.answered
-                                      ? context.brightBlue
-                                      : context.prayerMenuInactive,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
-                              height: 15,
-                              child:
-                                  widget.activeList == PrayerListType.answered
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.more_horiz,
-                                            color: context.brightBlue,
-                                          ),
-                                          padding: EdgeInsets.all(0),
-                                          onPressed: () => openTools(),
-                                        )
-                                      : Container(),
-                            ),
-                          ],
+                        PrayerMenuItem(
+                          title: 'Answered',
+                          showIcon:
+                              widget.activeList == PrayerListType.answered,
+                          showActiveColor:
+                              widget.activeList == PrayerListType.answered,
+                          action: () => setState(() {
+                            widget.setCurrentList(
+                                PrayerListType.answered, null);
+                          }),
+                          openTools: () => openTools(),
                         ),
-                        SizedBox(width: 20.0)
+                        PrayerMenuItem(
+                          title: 'Add/Join Group +',
+                          showIcon: false,
+                          showActiveColor: true,
+                          action: () => setState(() {
+                            Navigator.of(context).pushReplacementNamed(
+                                CreateGroupScreen.routeName);
+                          }),
+                          openTools: () => openTools(),
+                        ),
                       ],
                     ),
                   ),

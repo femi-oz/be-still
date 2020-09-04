@@ -9,28 +9,29 @@ import 'Theme/app_theme.dart';
 class SharePrayer extends StatelessWidget {
   // PrayerModel prayer;
   _emailLink() async {
-  const url = 'mailto:?subject=prayer subject&body=prayer body';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+    const url = 'mailto:?subject=prayer subject&body=prayer body';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
-}
+
   _textLink() async {
-  const url = 'sms:';
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+    const url = 'sms:';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
-}
 
   @override
   // SharePrayer(this.prayer);
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
     final groupsCount =
-        GROUP_DATA.where((gl) => gl.members.contains(_app.user.id)).length;
+        groupData.where((gl) => gl.members.contains(_app.user.id)).length;
     return Container(
       width: double.infinity,
       height: double.infinity,

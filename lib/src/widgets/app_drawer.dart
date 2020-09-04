@@ -1,6 +1,7 @@
 import 'package:be_still/src/screens/AddPrayer/add_prayer_screen.dart';
 import 'package:be_still/src/screens/GrowMyPrayerLife/grow_my_prayer_life_screen.dart';
 import 'package:be_still/src/screens/PrayMode/pray_mode_screen.dart';
+import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/src/screens/Settings/settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -92,7 +93,8 @@ class CustomDrawer extends StatelessWidget {
                         children: <Widget>[
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed('/');
+                              Navigator.of(context)
+                                  .pushReplacementNamed(PrayerScreen.routeName);
                             },
                             title: Text(
                               "MY LIST",

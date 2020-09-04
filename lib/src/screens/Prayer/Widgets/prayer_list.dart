@@ -11,33 +11,14 @@ import 'package:be_still/src/widgets/Theme/app_theme.dart';
 
 class PrayerList extends StatelessWidget {
   final activeList;
-  final searchParam;
+  final List<PrayerModel> prayers;
   final groupId;
 
   @override
-  PrayerList(this.activeList, this.groupId, this.searchParam);
+  PrayerList({this.activeList, this.groupId, this.prayers});
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
-    final List<PrayerModel> emptyList = [];
-    var prayers = activeList == PrayerListType.personal
-        ? prayerData.where(
-            (p) => _app.user.prayerList.contains(p.id) && p.status == 'active')
-        : activeList == PrayerListType.archived
-            ? prayerData.where((p) =>
-                _app.user.prayerList.contains(p.id) && p.status == 'archived')
-            : activeList == PrayerListType.answered
-                ? prayerData.where((p) =>
-                    _app.user.prayerList.contains(p.id) &&
-                    p.status == 'answered')
-                : activeList == PrayerListType.group
-                    ? prayerData.where((p) => GROUP_DATA
-                        .singleWhere((g) => g.id == groupId)
-                        .prayerList
-                        .contains(p.id))
-                    : emptyList;
 
-    var filteredPrayers =
-        prayers.where((p) => p.content.contains(searchParam.text));
     return Container(
       padding: EdgeInsets.only(
         top: 20,
@@ -46,7 +27,7 @@ class PrayerList extends StatelessWidget {
       ),
       child: Column(
         children: <Widget>[
-          filteredPrayers.length < 1
+          prayers.length < 1
               ? Container(
                   padding: EdgeInsets.all(60),
                   child: Text(
@@ -61,7 +42,7 @@ class PrayerList extends StatelessWidget {
                 )
               : Column(
                   children: <Widget>[
-                    ...filteredPrayers
+                    ...prayers
                         .map(
                           (p) => PrayerCard(p, groupId, activeList),
                         )

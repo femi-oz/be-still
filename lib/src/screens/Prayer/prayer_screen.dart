@@ -1,4 +1,7 @@
+import 'package:be_still/src/Data/group.data.dart';
+import 'package:be_still/src/Data/prayer.data.dart';
 import 'package:be_still/src/Enums/prayer_list.enum.dart';
+import 'package:be_still/src/Models/prayer.model.dart';
 import 'package:be_still/src/Providers/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,18 +20,71 @@ class PrayerScreen extends StatefulWidget {
 class _PrayerScreenState extends State<PrayerScreen> {
   var activeList = PrayerListType.personal;
   var groupId;
-  var searchParam = TextEditingController();
 
-  setCurrentList(_activeList, _groupId) {
+  final List<PrayerModel> emptyList = [];
+  List<PrayerModel> prayers = [];
+  List<PrayerModel> filteredprayers = [];
+
+  void _onTextchanged(String value) {
+    print(value);
+    setState(() {
+      filteredprayers = prayers
+          .where((p) => p.content.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    });
+  }
+
+  _setCurrentList(_activeList, _groupId) {
     setState(() {
       activeList = _activeList;
       groupId = _groupId;
     });
   }
 
+  bool isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
+    if (!isInitialized) {
+      isInitialized = true;
+      setState(
+        () {
+          prayers = activeList == PrayerListType.personal
+              ? prayerData
+                  .where((p) =>
+                      _app.user.prayerList.contains(p.id) &&
+                      p.status == 'active')
+                  .toList()
+              : activeList == PrayerListType.archived
+                  ? prayerData
+                      .where((p) =>
+                          _app.user.prayerList.contains(p.id) &&
+                          p.status == 'archived')
+                      .toList()
+                  : activeList == PrayerListType.answered
+                      ? prayerData
+                          .where((p) =>
+                              _app.user.prayerList.contains(p.id) &&
+                              p.status == 'answered')
+                          .toList()
+                      : activeList == PrayerListType.group
+                          ? prayerData
+                              .where((p) => groupData
+                                  .singleWhere((g) => g.id == groupId)
+                                  .prayerList
+                                  .contains(p.id))
+                              .toList()
+                          : emptyList;
+          filteredprayers = prayers;
+        },
+      );
+    }
     return Scaffold(
       appBar: CustomAppBar(),
       body: Container(
@@ -54,12 +110,18 @@ class _PrayerScreenState extends State<PrayerScreen> {
               Container(
                 height: 60,
                 child: PrayerMenu(
-                    setCurrentList, activeList, groupId, searchParam),
+                    setCurrentList: _setCurrentList,
+                    activeList: activeList,
+                    groupId: groupId,
+                    onTextchanged: _onTextchanged),
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.825,
                 child: SingleChildScrollView(
-                  child: PrayerList(activeList, groupId, searchParam),
+                  child: PrayerList(
+                      activeList: activeList,
+                      groupId: groupId,
+                      prayers: filteredprayers),
                 ),
               ),
             ],

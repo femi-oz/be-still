@@ -4,10 +4,10 @@ import 'package:be_still/src/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './../../widgets/Theme/app_theme.dart';
-import '../../Providers/app_provider.dart';
+import './../../../widgets/Theme/app_theme.dart';
+import '../../../Providers/app_provider.dart';
 
-import '../../widgets/input_field.dart';
+import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
 
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
-    _authenticate(String text) {
+    _authenticate() {
       setState(() {
         _autoValidate = true;
       });
@@ -127,6 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     isRequired: true,
                                     textInputAction: TextInputAction.done,
                                     unfocus: true,
+                                    submitForm: () => _authenticate(),
                                   ),
                                 ],
                               ),
@@ -190,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               child: FlatButton(
                                 onPressed: () {
-                                  _authenticate('');
+                                  _authenticate();
                                 },
                                 color: Colors.transparent,
                                 child: Icon(
