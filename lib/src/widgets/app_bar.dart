@@ -3,6 +3,8 @@ import 'package:be_still/src/screens/PrayMode/pray_mode_screen.dart';
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
+import 'app_icons_icons.dart';
+
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   CustomAppBar({Key key})
       : preferredSize = Size.fromHeight(kToolbarHeight),
@@ -61,9 +63,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                Icons.menu,
+                AppIcons.menu,
                 color: context.appBarActive,
-                size: 24,
+                // size: 24,
               ),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();

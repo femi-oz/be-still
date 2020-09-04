@@ -42,7 +42,7 @@ class PrayerList extends StatelessWidget {
       padding: EdgeInsets.only(
         top: 20,
         left: 20,
-        bottom: 20,
+        bottom: 200,
       ),
       child: Column(
         children: <Widget>[

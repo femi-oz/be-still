@@ -47,18 +47,6 @@ class CustomInput extends StatelessWidget {
       ),
       maxLines: maxLines,
       decoration: InputDecoration(
-        // prefixIcon: icon,
-        // suffixIcon: isPassword == true
-        //     ? IconButton(
-        //         icon: Icon(
-        //           obsurePassword ? Icons.visibility : Icons.visibility_off,
-        //           color: color,
-        //         ),
-        //         onPressed: () {
-        //           toggleVisibility();
-        //         },
-        //       )
-        //     : null,
         suffixText: showSuffix ? label : '',
         suffixStyle: TextStyle(
           color: context.brightBlue2,

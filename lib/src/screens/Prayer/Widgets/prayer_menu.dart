@@ -1,6 +1,7 @@
 import 'package:be_still/src/Data/group.data.dart';
 import 'package:be_still/src/Enums/prayer_list.enum.dart';
 import 'package:be_still/src/screens/Prayer/Widgets/prayer_tools.dart';
+import 'package:be_still/src/widgets/app_icons_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/src/Providers/app_provider.dart';
 import 'package:provider/provider.dart';
@@ -65,9 +66,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
             width: 50,
             child: IconButton(
               icon: Icon(
-                Icons.search,
+                AppIcons.search,
                 color: context.brightBlue,
-                size: 30,
+                size: 25,
               ),
               onPressed: () => setState(
                 () => {
@@ -107,23 +108,20 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           ),
                         )
                       : Container(),
-                      
                   SizedBox(width: 10.0),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       InkWell(
                         onTap: () => setState(() {
-                          widget.setCurrentList(
-                              PrayerListType.personal, null);
+                          widget.setCurrentList(PrayerListType.personal, null);
                         }),
                         child: Text(
                           'My List',
                           style: TextStyle(
-                            color:
-                                widget.activeList == PrayerListType.personal
-                                    ? context.brightBlue
-                                    : context.prayerMenuInactive,
+                            color: widget.activeList == PrayerListType.personal
+                                ? context.brightBlue
+                                : context.prayerMenuInactive,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),

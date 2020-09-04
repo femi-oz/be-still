@@ -6,7 +6,7 @@ import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/src/widgets/app_icons_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../widgets/Theme/app_theme.dart' as color;
+import '../../widgets/Theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = '/splash';
@@ -37,8 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = new Duration(seconds: 2);
-    // return new Timer(duration, () => route());
+    var duration = new Duration(seconds: 3);
+    return new Timer(duration, () => route());
   }
 
   route() async {
@@ -68,10 +68,17 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [context.splashBgStart, context.splashBgEnd])),
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              context.splashBgStart,
+              context.splashBgEnd,
+              context.splashBgStart,
+              context.splashBgEnd,
+            ],
+          ),
+        ),
         padding: EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
