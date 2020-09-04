@@ -178,7 +178,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
-                          title: 'Add/Join Group +',
+                          title: 'Create a Group +',
                           showIcon: false,
                           showActiveColor: true,
                           action: () => setState(() {
