@@ -1,4 +1,5 @@
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
+import 'package:be_still/src/widgets/app_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -41,7 +42,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                Icons.menu,
+                AppIcons.menu,
                 color: context.appBarActive,
                 size: 24,
               ),

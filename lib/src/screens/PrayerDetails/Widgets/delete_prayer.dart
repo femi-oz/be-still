@@ -1,4 +1,5 @@
 import 'package:be_still/src/Models/prayer.model.dart';
+import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/Theme/app_theme.dart';
 
@@ -29,7 +30,8 @@ class DeletePrayer extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('/');
+              Navigator.of(context)
+                  .pushReplacementNamed(PrayerScreen.routeName);
             },
             child: Container(
               height: 30,
@@ -65,7 +67,8 @@ class DeletePrayer extends StatelessWidget {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushReplacementNamed('/');
+                    Navigator.of(context)
+                        .pushReplacementNamed(PrayerScreen.routeName);
                   },
                   child: Container(
                     height: 30,

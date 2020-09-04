@@ -1,3 +1,4 @@
+import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/src/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/Theme/app_theme.dart';
@@ -125,7 +126,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     : Container(),
                 SizedBox(height: 40.0),
                 InkWell(
-                  onTap: () => Navigator.of(context).pushReplacementNamed('/'),
+                  onTap: () => Navigator.of(context)
+                      .pushReplacementNamed(PrayerScreen.routeName),
                   child: Container(
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),

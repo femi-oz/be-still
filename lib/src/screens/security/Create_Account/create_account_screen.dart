@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:be_still/src/Data/user.data.dart';
 import 'package:be_still/src/Providers/app_provider.dart';
+import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/src/screens/security/Login/login_screen.dart';
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
 import 'package:be_still/src/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
@@ -139,8 +141,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                               Duration(seconds: 5),
                                               () => {
                                                 _app.login(),
-                                                Navigator.of(context)
-                                                    .pushNamed('/')
+                                                Navigator.of(context).pushNamed(
+                                                    PrayerScreen.routeName)
                                               },
                                             );
                                           }
@@ -164,7 +166,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                       ),
                                     ),
                                     onTap: () {
-                                      Navigator.of(context).pushNamed('/');
+                                      Navigator.of(context)
+                                          .pushNamed(LoginScreen.routeName);
                                     },
                                   )
                                 ],

@@ -1,4 +1,5 @@
 import 'package:be_still/src/Data/prayer.data.dart';
+import 'package:be_still/src/widgets/app_icons_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/Theme/app_theme.dart';
 
@@ -49,7 +50,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
                 builder: (BuildContext context) {
                   return IconButton(
                     icon: Icon(
-                      Icons.menu,
+                      AppIcons.menu,
                       color: context.brightBlue2,
                       size: 24,
                     ),

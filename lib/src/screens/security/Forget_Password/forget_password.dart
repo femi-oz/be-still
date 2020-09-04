@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:be_still/src/Data/user.data.dart';
+import 'package:be_still/src/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/src/screens/security/Forget_Password/Widgets/step_three.dart';
 import 'package:be_still/src/screens/security/Forget_Password/Widgets/step_two.dart';
+import 'package:be_still/src/screens/security/Login/login_screen.dart';
 import 'package:be_still/src/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/src/Providers/app_provider.dart';
@@ -159,8 +161,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                               Duration(seconds: 5),
                                               () => {
                                                 _app.login(),
-                                                Navigator.of(context)
-                                                    .pushNamed('/')
+                                                Navigator.of(context).pushNamed(
+                                                    PrayerScreen.routeName)
                                               },
                                             );
                                           }
@@ -187,7 +189,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                           ),
                                           onTap: () {
                                             Navigator.of(context)
-                                                .pushReplacementNamed('/');
+                                                .pushReplacementNamed(
+                                                    LoginScreen.routeName);
                                           },
                                         )
                                 ],

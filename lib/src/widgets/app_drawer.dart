@@ -64,7 +64,8 @@ class CustomDrawer extends StatelessWidget {
                         ),
                         onTap: () {
                           _app.logout();
-                          Navigator.of(context).pushReplacementNamed('/');
+                          Navigator.of(context)
+                              .pushReplacementNamed(PrayerScreen.routeName);
                         },
                       ),
                       InkWell(
