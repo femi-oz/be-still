@@ -1,6 +1,8 @@
-enum PrayerListType {
+enum PrayerActiveScreen {
   personal,
   group,
   archived,
-  answered
+  answered,
+  findGroup,
+  createGroup,
 }

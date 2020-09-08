@@ -3,6 +3,7 @@ import 'package:be_still/src/Data/prayer.data.dart';
 import 'package:be_still/src/Enums/prayer_list.enum.dart';
 import 'package:be_still/src/Models/prayer.model.dart';
 import 'package:be_still/src/Providers/app_provider.dart';
+import 'package:be_still/src/screens/Prayer/Widgets/find_a_group.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/app_drawer.dart';
@@ -18,7 +19,7 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  var activeList = PrayerListType.personal;
+  var activeList = PrayerActiveScreen.personal;
   var groupId;
 
   final List<PrayerModel> emptyList = [];
@@ -55,25 +56,25 @@ class _PrayerScreenState extends State<PrayerScreen> {
       isInitialized = true;
       setState(
         () {
-          prayers = activeList == PrayerListType.personal
+          prayers = activeList == PrayerActiveScreen.personal
               ? prayerData
                   .where((p) =>
                       _app.user.prayerList.contains(p.id) &&
                       p.status == 'active')
                   .toList()
-              : activeList == PrayerListType.archived
+              : activeList == PrayerActiveScreen.archived
                   ? prayerData
                       .where((p) =>
                           _app.user.prayerList.contains(p.id) &&
                           p.status == 'archived')
                       .toList()
-                  : activeList == PrayerListType.answered
+                  : activeList == PrayerActiveScreen.answered
                       ? prayerData
                           .where((p) =>
                               _app.user.prayerList.contains(p.id) &&
                               p.status == 'answered')
                           .toList()
-                      : activeList == PrayerListType.group
+                      : activeList == PrayerActiveScreen.group
                           ? prayerData
                               .where((p) => groupData
                                   .singleWhere((g) => g.id == groupId)
@@ -118,10 +119,12 @@ class _PrayerScreenState extends State<PrayerScreen> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.825,
                 child: SingleChildScrollView(
-                  child: PrayerList(
-                      activeList: activeList,
-                      groupId: groupId,
-                      prayers: filteredprayers),
+                  child: activeList == PrayerActiveScreen.findGroup
+                      ? FindAGroup()
+                      : PrayerList(
+                          activeList: activeList,
+                          groupId: groupId,
+                          prayers: filteredprayers),
                 ),
               ),
             ],

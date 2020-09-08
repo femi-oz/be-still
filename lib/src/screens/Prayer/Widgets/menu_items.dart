@@ -1,19 +1,16 @@
-import 'package:be_still/src/Enums/prayer_list.enum.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/src/widgets/Theme/app_theme.dart';
 
 class PrayerMenuItem extends StatefulWidget {
   final Function action;
   final Function openTools;
-  final bool showIcon;
-  final bool showActiveColor;
+  final bool isActive;
   final String title;
   PrayerMenuItem({
     this.action,
-    this.showIcon,
     this.title,
     this.openTools,
-    this.showActiveColor,
+    this.isActive,
   });
   @override
   _PrayerMenuItemState createState() => _PrayerMenuItemState();
@@ -32,7 +29,7 @@ class _PrayerMenuItemState extends State<PrayerMenuItem> {
               Text(
                 widget.title,
                 style: TextStyle(
-                  color: widget.showActiveColor
+                  color: widget.isActive
                       ? context.brightBlue
                       : context.prayerMenuInactive,
                   fontSize: 14,
@@ -43,7 +40,7 @@ class _PrayerMenuItemState extends State<PrayerMenuItem> {
                 padding: EdgeInsets.all(0),
                 margin: EdgeInsets.all(0),
                 height: 15,
-                child: widget.showIcon
+                child: widget.isActive
                     ? IconButton(
                         icon: Icon(
                           Icons.more_horiz,

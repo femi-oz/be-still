@@ -1,5 +1,6 @@
 import 'package:be_still/src/Data/group.data.dart';
 import 'package:be_still/src/Enums/prayer_list.enum.dart';
+import 'package:be_still/src/screens/Prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/src/screens/Prayer/Widgets/menu_items.dart';
 import 'package:be_still/src/screens/Prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/src/screens/create_group/create_group_screen.dart';
@@ -16,20 +17,16 @@ class PrayerMenu extends StatefulWidget {
   final activeList;
 
   final groupId;
-  var onTextchanged;
+  final onTextchanged;
 
   @override
   PrayerMenu(
-      {this.setCurrentList,
-      this.activeList,
-      this.groupId,
-      // this.searchController,
-      this.onTextchanged});
+      {this.setCurrentList, this.activeList, this.groupId, this.onTextchanged});
   _PrayerMenuState createState() => _PrayerMenuState();
 }
 
 class _PrayerMenuState extends State<PrayerMenu> {
-  final TextEditingController searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   bool searchMode = false;
   @override
@@ -42,7 +39,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
         backgroundColor: context.toolsBg,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return PrayerTools();
+          return widget.activeList == PrayerActiveScreen.findGroup
+              ? FindGroupTools()
+              : PrayerTools();
         },
       );
     }
@@ -93,9 +92,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.7,
                       child: CustomInput(
-                        controller: searchController,
+                        controller: _searchController,
                         label: 'Search',
                         padding: 5.0,
+                        showSuffix: false,
                         textInputAction: TextInputAction.done,
                         onTextchanged: widget.onTextchanged,
                       ),
@@ -123,13 +123,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         PrayerMenuItem(
                           title: 'My List',
-                          showIcon:
-                              widget.activeList == PrayerListType.personal,
-                          showActiveColor:
-                              widget.activeList == PrayerListType.personal,
+                          isActive:
+                              widget.activeList == PrayerActiveScreen.personal,
                           action: () => setState(() {
                             widget.setCurrentList(
-                                PrayerListType.personal, null);
+                                PrayerActiveScreen.personal, null);
                           }),
                           openTools: () => openTools(),
                         ),
@@ -139,15 +137,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               (g) => Row(children: [
                                 PrayerMenuItem(
                                   title: g.name,
-                                  showIcon: widget.activeList ==
-                                          PrayerListType.group &&
-                                      widget.groupId == g.id,
-                                  showActiveColor: widget.activeList ==
-                                          PrayerListType.group &&
+                                  isActive: widget.activeList ==
+                                          PrayerActiveScreen.group &&
                                       widget.groupId == g.id,
                                   action: () => setState(() {
                                     widget.setCurrentList(
-                                        PrayerListType.group, g.id);
+                                        PrayerActiveScreen.group, g.id);
                                   }),
                                   openTools: () => openTools(),
                                 ),
@@ -155,33 +150,41 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             ),
                         PrayerMenuItem(
                           title: 'Archived',
-                          showIcon:
-                              widget.activeList == PrayerListType.archived,
-                          showActiveColor:
-                              widget.activeList == PrayerListType.archived,
+                          isActive:
+                              widget.activeList == PrayerActiveScreen.archived,
                           action: () => setState(() {
                             widget.setCurrentList(
-                                PrayerListType.archived, null);
+                                PrayerActiveScreen.archived, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Answered',
-                          showIcon:
-                              widget.activeList == PrayerListType.answered,
-                          showActiveColor:
-                              widget.activeList == PrayerListType.answered,
+                          isActive:
+                              widget.activeList == PrayerActiveScreen.answered,
                           action: () => setState(() {
                             widget.setCurrentList(
-                                PrayerListType.answered, null);
+                                PrayerActiveScreen.answered, null);
+                          }),
+                          openTools: () => openTools(),
+                        ),
+                        PrayerMenuItem(
+                          title: 'Find a Group',
+                          isActive:
+                              widget.activeList == PrayerActiveScreen.findGroup,
+                          action: () => setState(() {
+                            widget.setCurrentList(
+                                PrayerActiveScreen.findGroup, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Create a Group +',
-                          showIcon: false,
-                          showActiveColor: true,
+                          isActive: widget.activeList ==
+                              PrayerActiveScreen.createGroup,
                           action: () => setState(() {
+                            widget.setCurrentList(
+                                PrayerActiveScreen.createGroup, null);
                             Navigator.of(context).pushReplacementNamed(
                                 CreateGroupScreen.routeName);
                           }),
@@ -196,4 +199,3 @@ class _PrayerMenuState extends State<PrayerMenu> {
     );
   }
 }
-// []

@@ -32,7 +32,7 @@ class PrayerCard extends StatelessWidget {
           isScrollControlled: true,
           builder: (BuildContext context) {
             return (prayer.user != _app.user.id &&
-                    activeList != PrayerListType.personal)
+                    activeList != PrayerActiveScreen.personal)
                 ? GroupPrayerQuickAccess(y: y, prayer: prayer)
                 : PrayerQuickAccess(y: y, prayer: prayer);
           },
