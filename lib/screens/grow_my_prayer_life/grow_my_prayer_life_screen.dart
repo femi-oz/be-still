@@ -1,5 +1,5 @@
-import 'package:be_still/screens/GrowMyPrayerLife/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/GrowMyPrayerLife/recommended_bibles_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
+import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -13,7 +13,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(provider: _app),
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,

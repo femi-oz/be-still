@@ -4,7 +4,7 @@ import 'package:be_still/screens/Prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/Prayer/Widgets/menu_items.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
-import 'package:be_still/widgets/app_icons_icons.dart';
+import 'package:be_still/widgets/app_icons.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/Providers/app_provider.dart';

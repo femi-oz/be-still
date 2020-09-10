@@ -1,5 +1,5 @@
-import 'package:be_still/screens/Settings/Widgets/app_bar.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
+import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/Theme/app_theme.dart';
@@ -38,16 +38,18 @@ class _SettingsScreenPage extends State<SettingsScreen>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: SettingsAppBar(), endDrawer: CustomDrawer(), body: FirstTab());
+        appBar: SettingsAppBar(),
+        endDrawer: CustomDrawer(),
+        body: SettingsTab());
   }
 }
 
-class FirstTab extends StatefulWidget {
+class SettingsTab extends StatefulWidget {
   @override
-  FirstTabState createState() => FirstTabState();
+  SettingsTabState createState() => SettingsTabState();
 }
 
-class FirstTabState extends State<FirstTab>
+class SettingsTabState extends State<SettingsTab>
     with SingleTickerProviderStateMixin {
   TabController tabController;
 

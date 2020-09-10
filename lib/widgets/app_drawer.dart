@@ -1,7 +1,8 @@
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/GrowMyPrayerLife/grow_my_prayer_life_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -65,7 +66,7 @@ class CustomDrawer extends StatelessWidget {
                         onTap: () {
                           _app.logout();
                           Navigator.of(context)
-                              .pushReplacementNamed(PrayerScreen.routeName);
+                              .pushReplacementNamed(LoginScreen.routeName);
                         },
                       ),
                       InkWell(

@@ -30,7 +30,7 @@ class PrayerDetails extends StatelessWidget {
             ? true
             : false;
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(provider: _app),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

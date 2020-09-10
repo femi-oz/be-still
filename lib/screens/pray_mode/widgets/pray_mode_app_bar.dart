@@ -1,5 +1,5 @@
 import 'package:be_still/Data/prayer.data.dart';
-import 'package:be_still/widgets/app_icons_icons.dart';
+import 'package:be_still/widgets/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/Theme/app_theme.dart';
 

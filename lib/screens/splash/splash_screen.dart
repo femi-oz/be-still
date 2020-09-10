@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
-import 'package:be_still/widgets/app_icons_icons.dart';
+import 'package:be_still/widgets/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/Theme/app_theme.dart';

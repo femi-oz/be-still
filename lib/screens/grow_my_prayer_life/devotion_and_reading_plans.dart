@@ -139,7 +139,7 @@ class DevotionPlans extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(provider: _app),
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,

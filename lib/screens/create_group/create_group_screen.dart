@@ -36,7 +36,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         TextEditingController();
 
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(provider: _app),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

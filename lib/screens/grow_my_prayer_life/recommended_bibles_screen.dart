@@ -29,7 +29,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   Widget build(BuildContext context) {
     final _app = Provider.of<AppProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(provider: _app),
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,

@@ -1,33 +1,36 @@
 import 'package:be_still/data/notification.data.dart';
 import 'package:be_still/providers/app_provider.dart';
-import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
+import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/widgets/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'app_icons.dart';
-
-class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final provider;
-
-  CustomAppBar({Key key, this.provider})
+class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
+  SettingsAppBar({Key key})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   @override
   final Size preferredSize;
 
+  get provider => null;
+
   @override
-  _CustomAppBarState createState() => _CustomAppBarState();
+  _SettingsAppBarState createState() => _SettingsAppBarState();
 }
 
-class _CustomAppBarState extends State<CustomAppBar> {
+class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(''),
+      title: Text('SETTINGS',
+          style: TextStyle(
+            color: context.settingsTitle,
+            fontSize: 28,
+            fontWeight: FontWeight.w500,
+          )),
+      centerTitle: true,
       leading: notificationData.length > 0
           ? FlatButton(
               onPressed: () => showModalBottomSheet(
@@ -66,37 +69,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
               onPressed: null,
             ),
       actions: <Widget>[
-        FlatButton(
-          onPressed: () => Navigator.of(context).pushNamed(
-            AddPrayer.routeName,
-            arguments: AddRouteArguments(false, null),
-          ),
-          child: Text(
-            "ADD A PRAYER",
-            style: TextStyle(
-              color: context.appBarActive,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        FlatButton(
-          onPressed: () =>
-              Navigator.of(context).pushReplacementNamed(PrayerMode.routeName),
-          child: Text(
-            "PRAY",
-            style: TextStyle(
-              color: context.appBarActive,
-              fontSize: 16,
-            ),
-          ),
-        ),
         Builder(
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
                 AppIcons.menu,
                 color: context.appBarActive,
-                // size: 24,
+                size: 24,
               ),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
