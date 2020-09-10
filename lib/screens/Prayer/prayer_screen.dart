@@ -87,7 +87,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
       );
     }
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(context: context),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

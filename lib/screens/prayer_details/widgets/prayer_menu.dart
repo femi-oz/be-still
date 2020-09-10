@@ -1,6 +1,6 @@
 import 'package:be_still/Models/prayer.model.dart';
-import 'package:be_still/screens/AddPrayer/add_prayer_screen.dart';
-import 'package:be_still/screens/AddUpdate/add_update.dart';
+import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/add_update//add_update.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';

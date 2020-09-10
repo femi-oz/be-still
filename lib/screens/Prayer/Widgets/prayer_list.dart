@@ -2,7 +2,7 @@ import 'package:be_still/Models/prayer.model.dart';
 import 'package:be_still/Providers/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../AddPrayer/add_prayer_screen.dart';
+import '../../add_prayer/add_prayer_screen.dart';
 import 'prayer_card.dart';
 import 'package:be_still/widgets/Theme/app_theme.dart';
 

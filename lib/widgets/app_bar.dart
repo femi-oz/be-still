@@ -1,12 +1,16 @@
-import 'package:be_still/screens/AddPrayer/add_prayer_screen.dart';
-import 'package:be_still/screens/PrayMode/pray_mode_screen.dart';
+import 'package:be_still/data/notification.data.dart';
+import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'app_icons_icons.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  CustomAppBar({Key key})
+  final context;
+
+  CustomAppBar({Key key, this.context})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -24,14 +28,45 @@ class _CustomAppBarState extends State<CustomAppBar> {
       title: Text(''),
       leading: Builder(
         builder: (BuildContext context) {
-          return IconButton(
-            icon: Icon(
-              Icons.notifications_none,
-              color: context.appBarInactive,
-              size: 24,
-            ),
-            onPressed: () => null,
-          );
+          return notificationData.length > 0
+              ? FlatButton(
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor: context.toolsBg,
+                    backgroundColor: context.toolsBg,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return Container(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.035),
+                        child: NotificationsScreen(),
+                      );
+                    },
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.notifications,
+                        color: context.prayerCardTags,
+                      ),
+                      Container(
+                        child: Text(
+                          notificationData.length.toString(),
+                          style: TextStyle(fontSize: 5, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              : IconButton(
+                  icon: Icon(
+                    Icons.notifications_none,
+                    color: context.appBarInactive,
+                    size: 24,
+                  ),
+                  onPressed: null,
+                );
         },
       ),
       actions: <Widget>[
