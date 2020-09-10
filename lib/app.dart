@@ -1,9 +1,9 @@
-import 'package:be_still/src/Providers/app_provider.dart';
-import 'package:be_still/src/screens/splash/splash_screen.dart';
+import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'src/widgets/Theme/app_theme.dart';
-import './src/utils/routes.dart' as rt;
+import 'widgets/Theme/app_theme.dart';
+import './utils/routes.dart' as rt;
 
 class MyApp extends StatelessWidget {
   @override
