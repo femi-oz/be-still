@@ -1,7 +1,7 @@
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 
 class PrayerTimeSettings extends StatefulWidget {
   @override

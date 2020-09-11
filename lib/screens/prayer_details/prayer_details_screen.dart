@@ -4,7 +4,7 @@ import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer_details/Widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/Widgets/update_view.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';

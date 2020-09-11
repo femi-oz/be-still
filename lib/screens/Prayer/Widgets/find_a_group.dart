@@ -4,7 +4,7 @@ import 'package:be_still/screens/Prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_card.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import '../../../widgets/Theme/app_theme.dart';
+import '../../../utils/app_theme.dart';
 
 class FindAGroup extends StatefulWidget {
   @override

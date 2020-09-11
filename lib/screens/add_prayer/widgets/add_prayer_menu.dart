@@ -2,7 +2,7 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
-import './../../../widgets/Theme/app_theme.dart';
+import './../../../utils/app_theme.dart';
 
 class AddPrayerMenu extends StatefulWidget {
   @override

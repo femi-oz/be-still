@@ -2,7 +2,7 @@ import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 
 import 'Widgets/alexa.dart';
 import 'Widgets/general.dart';

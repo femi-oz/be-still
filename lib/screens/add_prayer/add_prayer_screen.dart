@@ -1,6 +1,6 @@
 import 'package:be_still/Data/prayer.data.dart';
 import 'package:be_still/screens/add_prayer/Widgets/name_recognition_one.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 
 import 'Widgets/add_prayer_menu.dart';

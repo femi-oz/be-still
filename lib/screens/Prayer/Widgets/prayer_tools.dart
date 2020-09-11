@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './../../../widgets/Theme/app_theme.dart';
+import './../../../utils/app_theme.dart';
 
 class PrayerTools extends StatefulWidget {
   @override

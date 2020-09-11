@@ -2,7 +2,7 @@ import 'package:be_still/Models/prayer.model.dart';
 import 'package:be_still/screens/pray_mode/Widgets/no_update_view.dart';
 import 'package:be_still/screens/pray_mode/Widgets/update_view.dart';
 import 'package:flutter/material.dart';
-import './../../../widgets/Theme/app_theme.dart';
+import './../../../utils/app_theme.dart';
 
 class PrayerPage extends StatelessWidget {
   final PrayerModel prayer;

@@ -1,7 +1,7 @@
 import 'package:be_still/Data/user.data.dart';
 import 'package:be_still/Models/group.model.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 
 class GroupCard extends StatelessWidget {
   final GroupModel group;

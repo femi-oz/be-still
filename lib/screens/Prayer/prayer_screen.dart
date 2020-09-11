@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/app_drawer.dart';
 import '../../widgets/app_bar.dart';
-import '../../widgets/Theme/app_theme.dart';
+import '../../utils/app_theme.dart';
 import 'Widgets/prayer_menu.dart';
 import 'Widgets/prayer_list.dart';
 

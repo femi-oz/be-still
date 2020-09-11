@@ -3,7 +3,7 @@ import 'package:be_still/Enums/prayer_list.enum.dart';
 import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_quick_acccess.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/Models/prayer.model.dart';
 import 'package:intl/intl.dart';

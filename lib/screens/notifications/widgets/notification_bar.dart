@@ -1,8 +1,8 @@
 import 'package:be_still/data/notification.data.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
-import 'package:be_still/widgets/app_icons.dart';
+import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:flutter/material.dart';
 
 // import 'app_icons_icons.dart';

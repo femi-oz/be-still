@@ -4,7 +4,7 @@ import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class DevotionPlans extends StatelessWidget {

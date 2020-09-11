@@ -1,7 +1,7 @@
 import 'package:be_still/Models/prayer.model.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
 import 'package:flutter/material.dart';
-import '../../../widgets/Theme/app_theme.dart';
+import '../../../utils/app_theme.dart';
 
 class DeletePrayer extends StatelessWidget {
   final PrayerModel prayer;

@@ -1,7 +1,7 @@
 import 'package:be_still/Data/user.data.dart';
 import 'package:be_still/screens/add_prayer/Widgets/name_recognition_two.dart';
 import 'package:flutter/material.dart';
-import '../../../widgets/Theme/app_theme.dart';
+import '../../../utils/app_theme.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {
   @override

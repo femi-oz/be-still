@@ -4,7 +4,7 @@ import 'package:be_still/Data/user.data.dart';
 import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

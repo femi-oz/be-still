@@ -6,7 +6,7 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import './../../../widgets/Theme/app_theme.dart';
+import './../../../utils/app_theme.dart';
 import 'delete_prayer.dart';
 
 class PrayerMenu extends StatefulWidget {

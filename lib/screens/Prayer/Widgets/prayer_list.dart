@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../add_prayer/add_prayer_screen.dart';
 import 'prayer_card.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 
 class PrayerList extends StatelessWidget {
   final activeList;

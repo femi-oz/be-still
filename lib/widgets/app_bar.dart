@@ -2,12 +2,11 @@ import 'package:be_still/data/notification.data.dart';
 import 'package:be_still/providers/app_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'app_icons.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final provider;

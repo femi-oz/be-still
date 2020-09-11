@@ -1,6 +1,6 @@
 import 'package:be_still/Models/user.model.dart';
 import 'package:flutter/material.dart';
-import '../../../widgets/Theme/app_theme.dart';
+import '../../../utils/app_theme.dart';
 
 class GroupPrivilegeSettings extends StatelessWidget {
   final String status;

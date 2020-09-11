@@ -3,7 +3,7 @@ import 'package:be_still/data/user.data.dart';
 import 'package:be_still/models/notifictaion.model.dart';
 import 'package:be_still/providers/app_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/widgets/Theme/app_theme.dart';
+import 'package:be_still/utils/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
