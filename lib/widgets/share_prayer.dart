@@ -1,10 +1,11 @@
-import 'package:be_still/Data/group.data.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/group.data.dart';
+
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'Theme/app_theme.dart';
+import '../utils/app_theme.dart';
 
 class SharePrayer extends StatelessWidget {
   // PrayerModel prayer;
@@ -27,11 +28,11 @@ class SharePrayer extends StatelessWidget {
   }
 
   @override
-  // SharePrayer(this.prayer);
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
-    final groupsCount =
-        groupData.where((gl) => gl.members.contains(_app.user.id)).length;
+    final _userProvider = Provider.of<UserProvider>(context);
+    final groupsCount = groupData
+        .where((gl) => gl.members.contains(_userProvider.user.id))
+        .length;
     return Container(
       width: double.infinity,
       height: double.infinity,

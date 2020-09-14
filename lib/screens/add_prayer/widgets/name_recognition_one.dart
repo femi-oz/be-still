@@ -1,4 +1,4 @@
-import 'package:be_still/Data/user.data.dart';
+import 'package:be_still/data/user.data.dart';
 import 'package:be_still/screens/add_prayer/Widgets/name_recognition_two.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/app_theme.dart';

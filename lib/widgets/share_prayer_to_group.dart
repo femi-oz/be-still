@@ -1,8 +1,8 @@
-import 'package:be_still/Data/group.data.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/group.data.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'Theme/app_theme.dart';
+import '../utils/app_theme.dart';
 
 class SharePrayerToGroups extends StatefulWidget {
   @override
@@ -13,9 +13,10 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   String selectedGroup;
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
 
-    final groups = groupData.where((gl) => gl.members.contains(_app.user.id));
+    final groups =
+        groupData.where((gl) => gl.members.contains(_userProvider.user.id));
     return Container(
       width: double.infinity,
       height: double.infinity,

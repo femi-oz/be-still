@@ -1,6 +1,7 @@
-import 'package:be_still/Models/prayer.model.dart';
-import 'package:be_still/Providers/app_provider.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/models/prayer.model.dart';
+
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -26,7 +27,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   String _option = 'normal';
   int _step = 1;
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     final TextEditingController _groupNameController = TextEditingController();
     final TextEditingController _cityController = TextEditingController();
     final TextEditingController _stateController = TextEditingController();
@@ -36,7 +37,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         TextEditingController();
 
     return Scaffold(
-      appBar: CustomAppBar(provider: _app),
+      appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -48,7 +49,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             ],
           ),
           image: DecorationImage(
-            image: AssetImage(_app.isDarkModeEnabled
+            image: AssetImage(_themeProvider.isDarkModeEnabled
                 ? 'assets/images/background-pattern-dark.png'
                 : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,

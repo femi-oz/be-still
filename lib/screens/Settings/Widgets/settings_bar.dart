@@ -1,5 +1,5 @@
 import 'package:be_still/data/notification.data.dart';
-import 'package:be_still/providers/app_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -40,7 +40,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return MultiProvider(providers: [
-                    ChangeNotifierProvider(create: (ctx) => AppProvider()),
+                    ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
                   ], child: NotificationsScreen());
                 },
               ),

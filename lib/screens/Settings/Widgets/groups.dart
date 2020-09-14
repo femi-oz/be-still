@@ -1,8 +1,9 @@
-import 'package:be_still/Data/group.data.dart';
-import 'package:be_still/Data/user.data.dart';
-import 'package:be_still/Models/group.model.dart';
-import 'package:be_still/Models/user.model.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/group.data.dart';
+import 'package:be_still/data/user.data.dart';
+import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/user.model.dart';
+
+import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
@@ -295,7 +296,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -357,7 +358,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           Column(
             children: <Widget>[
               ...groupData
-                  .where((gl) => gl.members.contains(_app.user.id))
+                  .where((gl) => gl.members.contains(_userProvider.user.id))
                   .map(
                     (GroupModel group) => Container(
                       margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -400,7 +401,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             fontWeight: FontWeight.w300),
                                       ),
                                       Text(
-                                        group.admin == _app.user.id
+                                        group.admin == _userProvider.user.id
                                             ? 'ADMIN'
                                             : 'MEMBER',
                                         style: TextStyle(
@@ -416,7 +417,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       horizontal: 20.0),
                                   child: Row(
                                     children: <Widget>[
-                                      group.admin != _app.user.id
+                                      group.admin != _userProvider.user.id
                                           ? Container()
                                           : Padding(
                                               padding: const EdgeInsets.only(
@@ -500,7 +501,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     ],
                                   ),
                                 ),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20.0),
@@ -535,7 +536,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         ),
                                       )
                                     : Container(),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container()
                                     : Container(
                                         padding: const EdgeInsets.symmetric(
@@ -570,7 +571,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                           ],
                                         ),
                                       ),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container()
                                     : Container(
                                         padding: const EdgeInsets.symmetric(
@@ -605,7 +606,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                           ],
                                         ),
                                       ),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container()
                                     : Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -634,7 +635,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                           ],
                                         ),
                                       ),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container()
                                     : Container(
                                         padding: const EdgeInsets.symmetric(
@@ -650,7 +651,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                           ),
                                         ),
                                       ),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container()
                                     : Padding(
                                         padding:
@@ -791,7 +792,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     onPressed: () => print(''),
                                   ),
                                 ),
-                                group.admin != _app.user.id
+                                group.admin != _userProvider.user.id
                                     ? Container()
                                     : Container(
                                         margin: EdgeInsets.symmetric(

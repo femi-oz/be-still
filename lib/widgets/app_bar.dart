@@ -1,5 +1,5 @@
 import 'package:be_still/data/notification.data.dart';
-import 'package:be_still/providers/app_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final provider;
-
-  CustomAppBar({Key key, this.provider})
+  CustomAppBar({Key key})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -36,7 +34,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return MultiProvider(providers: [
-                    ChangeNotifierProvider(create: (ctx) => AppProvider()),
+                    ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
                   ], child: NotificationsScreen());
                 },
               ),

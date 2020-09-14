@@ -1,4 +1,4 @@
-import 'package:be_still/Models/bible.model.dart';
+import 'package:be_still/models/bible.model.dart';
 
 List<BibleModel> bibleData = [
   BibleModel(

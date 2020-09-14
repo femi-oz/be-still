@@ -1,4 +1,4 @@
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/app_theme.dart';

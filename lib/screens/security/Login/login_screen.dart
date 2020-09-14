@@ -1,12 +1,12 @@
-import 'package:be_still/Data/user.data.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/data/user.data.dart';
+import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import './../../../utils/app_theme.dart';
-import '../../../Providers/app_provider.dart';
-
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
@@ -17,7 +17,8 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   bool rememberMe = false;
   bool _autoValidate = false;
   final _usernameController = TextEditingController();
@@ -27,7 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _authProvider = Provider.of<AuthProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     _authenticate() {
       setState(() {
         _autoValidate = true;
@@ -41,8 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
           var user = userData
               .singleWhere((user) => user.username == _usernameController.text);
           if (user.password == _passwordController.text) {
-            _app.setCurrentUser(user);
-            _app.login();
+            _userProvider.setCurrentUser(user);
+            _authProvider.login();
             Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
           } else {
             _scaffoldKey.currentState.showSnackBar(
@@ -79,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             image: DecorationImage(
-              image: AssetImage(_app.isDarkModeEnabled
+              image: AssetImage(_themeProvider.isDarkModeEnabled
                   ? 'assets/images/background-pattern-dark.png'
                   : 'assets/images/background-pattern.png'),
               alignment: Alignment.bottomCenter,
@@ -143,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         fontSize: 14),
                                   ),
                                   onTap: () {
-                                    Navigator.of(context).pushReplacementNamed(
+                                    Navigator.of(context).pushNamed(
                                         CreateAccountScreen.routeName);
                                   },
                                 ),
@@ -173,10 +176,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-                      Container(
-                        child: Column(
-                          children: <Widget>[
-                            Container(
+                      Column(
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: _authenticate,
+                            child: Container(
+                              height: 50.0,
                               width: double.infinity,
                               margin: EdgeInsets.only(bottom: 20),
                               decoration: BoxDecoration(
@@ -189,33 +194,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 ),
                               ),
-                              child: FlatButton(
-                                onPressed: () {
-                                  _authenticate();
-                                },
-                                color: Colors.transparent,
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: context.offWhite,
-                                ),
+                              child: Icon(
+                                Icons.arrow_forward,
+                                color: context.offWhite,
                               ),
                             ),
-                            GestureDetector(
-                              child: Text(
-                                "Forget my Password",
-                                style: TextStyle(
-                                  color: context.brightBlue2,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w300,
-                                ),
+                          ),
+                          GestureDetector(
+                            child: Text(
+                              "Forget my Password",
+                              style: TextStyle(
+                                color: context.brightBlue2,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w300,
                               ),
-                              onTap: () {
-                                Navigator.of(context).pushReplacementNamed(
-                                    ForgetPassword.routeName);
-                              },
                             ),
-                          ],
-                        ),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(ForgetPassword.routeName);
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

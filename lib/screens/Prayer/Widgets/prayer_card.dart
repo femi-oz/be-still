@@ -1,11 +1,11 @@
-import 'package:be_still/Data/user.data.dart';
-import 'package:be_still/Enums/prayer_list.enum.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/user.data.dart';
+import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
-import 'package:be_still/screens/Prayer/Widgets/prayer_quick_acccess.dart';
+import 'package:be_still/screens/prayer/Widgets/prayer_quick_acccess.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/Models/prayer.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class PrayerCard extends StatelessWidget {
   PrayerCard(this.prayer, this.groupId, this.activeList);
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
         var y = details.globalPosition.dy;
@@ -31,7 +31,7 @@ class PrayerCard extends StatelessWidget {
           backgroundColor: context.prayerMenuStart.withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return (prayer.user != _app.user.id &&
+            return (prayer.user != _userProvider.user.id &&
                     activeList != PrayerActiveScreen.personal)
                 ? GroupPrayerQuickAccess(y: y, prayer: prayer)
                 : PrayerQuickAccess(y: y, prayer: prayer);
@@ -78,7 +78,7 @@ class PrayerCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            prayer.user != _app.user.id
+                            prayer.user != _userProvider.user.id
                                 ? Text(
                                     userData
                                         .singleWhere((u) => u.id == prayer.user)

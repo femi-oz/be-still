@@ -81,156 +81,160 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Container(
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 30,
-            top: widget.y + 100 > size.height
-                ? size.height - 175
-                : widget.y - 75,
-            child: Stack(
-              alignment: Alignment.centerLeft,
-              children: <Widget>[
-                IgnorePointer(
-                  child: Container(
-                    height: 150.0,
-                    width: 100.0,
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: Container(
+        color: Colors.transparent,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 30,
+              top: widget.y + 100 > size.height
+                  ? size.height - 175
+                  : widget.y - 75,
+              child: Stack(
+                alignment: Alignment.centerLeft,
+                children: <Widget>[
+                  IgnorePointer(
+                    child: Container(
+                      height: 150.0,
+                      width: 100.0,
+                    ),
                   ),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadiansFromDegree(270),
-                      degOneTranslationAnimation.value * 60),
-                  child: Transform(
-                    transform: Matrix4.rotationZ(
-                        getRadiansFromDegree(rotationAnimation.value))
-                      ..scale(degOneTranslationAnimation.value),
-                    alignment: Alignment.center,
-                    child: CircularButton(
-                      icon: Icon(
-                        Icons.star,
-                        color: context.brightBlue2,
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(270),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: CircularButton(
+                        icon: Icon(
+                          Icons.star,
+                          color: context.brightBlue2,
+                        ),
+                        onClick: () {},
                       ),
-                      onClick: () {},
                     ),
                   ),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadiansFromDegree(315),
-                      degOneTranslationAnimation.value * 60),
-                  child: Transform(
-                    transform: Matrix4.rotationZ(
-                        getRadiansFromDegree(rotationAnimation.value))
-                      ..scale(degOneTranslationAnimation.value),
-                    alignment: Alignment.center,
-                    child: CircularButton(
-                      icon: Icon(
-                        Icons.share,
-                        color: context.brightBlue2,
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(315),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: CircularButton(
+                        icon: Icon(
+                          Icons.share,
+                          color: context.brightBlue2,
+                        ),
+                        onClick: () {
+                          showModalBottomSheet(
+                            context: context,
+                            barrierColor: context.toolsBg.withOpacity(0.5),
+                            backgroundColor: context.toolsBg.withOpacity(0.9),
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return SharePrayer();
+                            },
+                          );
+                        },
                       ),
-                      onClick: () {
-                        showModalBottomSheet(
-                          context: context,
-                          barrierColor: context.toolsBg.withOpacity(0.5),
-                          backgroundColor: context.toolsBg.withOpacity(0.9),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return SharePrayer();
-                          },
-                        );
-                      },
                     ),
                   ),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadiansFromDegree(360),
-                      degOneTranslationAnimation.value * 60),
-                  child: Transform(
-                    transform: Matrix4.rotationZ(
-                        getRadiansFromDegree(rotationAnimation.value))
-                      ..scale(degOneTranslationAnimation.value),
-                    alignment: Alignment.center,
-                    child: CircularButton(
-                      icon: Icon(
-                        Icons.calendar_today,
-                        color: context.brightBlue2,
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(360),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: CircularButton(
+                        icon: Icon(
+                          Icons.calendar_today,
+                          color: context.brightBlue2,
+                        ),
+                        onClick: () {
+                          showModalBottomSheet(
+                            context: context,
+                            barrierColor: context.toolsBg.withOpacity(0.5),
+                            backgroundColor: context.toolsBg.withOpacity(0.9),
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return ReminderPicker(setReminder,
+                                  reminderInterval, reminderDays, false);
+                            },
+                          );
+                        },
                       ),
-                      onClick: () {
-                        showModalBottomSheet(
-                          context: context,
-                          barrierColor: context.toolsBg.withOpacity(0.5),
-                          backgroundColor: context.toolsBg.withOpacity(0.9),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return ReminderPicker(setReminder, reminderInterval,
-                                reminderDays, false);
-                          },
-                        );
-                      },
                     ),
                   ),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadiansFromDegree(45),
-                      degOneTranslationAnimation.value * 60),
-                  child: Transform(
-                    transform: Matrix4.rotationZ(
-                        getRadiansFromDegree(rotationAnimation.value))
-                      ..scale(degOneTranslationAnimation.value),
-                    alignment: Alignment.center,
-                    child: CircularButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: context.brightBlue2,
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(45),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: CircularButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: context.brightBlue2,
+                        ),
+                        onClick: () {
+                          showModalBottomSheet(
+                            context: context,
+                            barrierColor: context.toolsBg.withOpacity(0.5),
+                            backgroundColor: context.toolsBg.withOpacity(0.9),
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return DeletePrayer(widget.prayer);
+                            },
+                          );
+                        },
                       ),
-                      onClick: () {
-                        showModalBottomSheet(
-                          context: context,
-                          barrierColor: context.toolsBg.withOpacity(0.5),
-                          backgroundColor: context.toolsBg.withOpacity(0.9),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return DeletePrayer(widget.prayer);
-                          },
-                        );
-                      },
                     ),
                   ),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadiansFromDegree(90),
-                      degOneTranslationAnimation.value * 60),
-                  child: Transform(
-                    transform: Matrix4.rotationZ(
-                        getRadiansFromDegree(rotationAnimation.value))
-                      ..scale(degOneTranslationAnimation.value),
-                    alignment: Alignment.center,
-                    child: CircularButton(
-                      icon: Icon(
-                        Icons.check_box,
-                        color: context.brightBlue2,
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(90),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: CircularButton(
+                        icon: Icon(
+                          Icons.check_box,
+                          color: context.brightBlue2,
+                        ),
+                        onClick: () {
+                          print('Fourth Button');
+                        },
                       ),
-                      onClick: () {
-                        print('Fourth Button');
-                      },
                     ),
                   ),
-                ),
-                Container(
-                  height: 25,
-                  width: 25,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: context.brightBlue2,
-                      width: 2,
+                  Container(
+                    height: 25,
+                    width: 25,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: context.brightBlue2,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    borderRadius: BorderRadius.circular(50),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

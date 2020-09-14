@@ -128,6 +128,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                 return null;
               },
               textInputAction: TextInputAction.done,
+              unfocus: true,
             ),
             SizedBox(height: 10.0),
             Column(

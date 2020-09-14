@@ -1,4 +1,4 @@
-import '../Models/prayer.model.dart';
+import '../models/prayer.model.dart';
 
 final List<PrayerModel> prayerData = [
   PrayerModel(

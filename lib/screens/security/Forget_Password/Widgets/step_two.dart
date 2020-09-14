@@ -44,6 +44,7 @@ class _ForgetPasswordTwoState extends State<ForgetPasswordTwo> {
               return null;
             },
             textInputAction: TextInputAction.done,
+            unfocus: true,
           ),
         ],
       ),

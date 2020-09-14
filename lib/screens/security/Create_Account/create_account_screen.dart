@@ -1,8 +1,11 @@
 import 'dart:async';
 
-import 'package:be_still/Data/user.data.dart';
-import 'package:be_still/Providers/app_provider.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/data/user.data.dart';
+
+import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
@@ -40,7 +43,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     'email': '',
   };
 
-  _createAccount() {
+  void _createAccount() {
     setState(() {
       _autoValidate = true;
       if (!_formKey.currentState.validate()) return;
@@ -55,7 +58,22 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    _next() {
+      if (step == 2) {
+        var user = userData.singleWhere((user) => user.id == '1');
+        Provider.of<UserProvider>(context, listen: false).setCurrentUser(user);
+        return new Timer(
+          Duration(seconds: 2),
+          () => {
+            Provider.of<AuthProvider>(context, listen: false).login(),
+            Navigator.of(context).pushNamed(PrayerScreen.routeName)
+          },
+        );
+      }
+      return null;
+    }
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -71,7 +89,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               ],
             ),
             image: DecorationImage(
-              image: AssetImage(_app.isDarkModeEnabled
+              image: AssetImage(_themeProvider.isDarkModeEnabled
                   ? 'assets/images/background-pattern-dark.png'
                   : 'assets/images/background-pattern.png'),
               alignment: Alignment.bottomCenter,
@@ -112,11 +130,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                       step > 1
                           ? Container()
-                          : Container(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
+                          : Column(
+                              children: <Widget>[
+                                InkWell(
+                                  onTap: () =>
+                                      {print(step), _createAccount(), _next()},
+                                  child: Container(
+                                    height: 50.0,
                                     width: double.infinity,
                                     margin: EdgeInsets.only(bottom: 20),
                                     decoration: BoxDecoration(
@@ -129,49 +149,26 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                         ],
                                       ),
                                     ),
-                                    child: FlatButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _createAccount();
-                                          if (step == 2) {
-                                            var user = userData.singleWhere(
-                                                (user) => user.id == '1');
-                                            _app.setCurrentUser(user);
-                                            return new Timer(
-                                              Duration(seconds: 5),
-                                              () => {
-                                                _app.login(),
-                                                Navigator.of(context).pushNamed(
-                                                    PrayerScreen.routeName)
-                                              },
-                                            );
-                                          }
-                                          return null;
-                                        });
-                                      },
-                                      color: Colors.transparent,
-                                      child: Icon(
-                                        Icons.arrow_forward,
-                                        color: context.offWhite,
-                                      ),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      color: context.offWhite,
                                     ),
                                   ),
-                                  InkWell(
-                                    child: Text(
-                                      "Already have an account? Login!",
-                                      style: TextStyle(
-                                        color: context.brightBlue2,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w300,
-                                      ),
+                                ),
+                                InkWell(
+                                  child: Text(
+                                    "Already have an account? Login!",
+                                    style: TextStyle(
+                                      color: context.brightBlue2,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w300,
                                     ),
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .pushNamed(LoginScreen.routeName);
-                                    },
-                                  )
-                                ],
-                              ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
                             ),
                     ],
                   ),

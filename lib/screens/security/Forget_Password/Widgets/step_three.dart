@@ -39,6 +39,7 @@ class _ForgetPasswordThreeState extends State<ForgetPasswordThree> {
             isRequired: true,
             label: 'Confirm Password',
             textInputAction: TextInputAction.done,
+            unfocus: true,
           ),
         ],
       ),

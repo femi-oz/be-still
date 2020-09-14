@@ -1,4 +1,4 @@
-import 'package:be_still/Models/prayer.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter/material.dart';
 import './../../../utils/app_theme.dart';
 

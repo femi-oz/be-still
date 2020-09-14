@@ -1,4 +1,4 @@
-import 'package:be_still/Models/group.model.dart';
+import 'package:be_still/models/group.model.dart';
 
 const List<GroupModel> groupData = [
   GroupModel(

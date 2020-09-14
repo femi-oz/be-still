@@ -1,15 +1,15 @@
+import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'Theme/app_theme.dart';
-import '../Providers/app_provider.dart';
+import '../utils/app_theme.dart';
 
 class CustomDrawer extends StatelessWidget {
   _launchURL() async {
@@ -23,7 +23,8 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _authProvider = Provider.of<AuthProvider>(context);
     return SafeArea(
       child: Container(
         width: double.infinity,
@@ -39,7 +40,7 @@ class CustomDrawer extends StatelessWidget {
                     context.mainBgEnd,
                   ]),
               image: DecorationImage(
-                image: AssetImage(_app.isDarkModeEnabled
+                image: AssetImage(_themeProvider.isDarkModeEnabled
                     ? 'assets/images/drawer-bck-dark.png'
                     : 'assets/images/drawer-bck-light.png'),
                 alignment: Alignment.bottomRight,
@@ -64,7 +65,7 @@ class CustomDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          _app.logout();
+                          _authProvider.logout();
                           Navigator.of(context)
                               .pushReplacementNamed(LoginScreen.routeName);
                         },

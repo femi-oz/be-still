@@ -1,12 +1,16 @@
+import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
-import 'Providers/app_provider.dart';
+import 'providers/theme_provider.dart';
 
 void main() => runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (ctx) => AppProvider()),
+          ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
+          ChangeNotifierProvider(create: (ctx) => UserProvider()),
+          ChangeNotifierProvider(create: (ctx) => AuthProvider()),
         ],
         child: MyApp(),
       ),

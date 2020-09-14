@@ -1,6 +1,6 @@
-import 'package:be_still/Data/bible.data.dart';
-import 'package:be_still/Models/bible.model.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/bible.data.dart';
+import 'package:be_still/models/bible.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +27,9 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(provider: _app),
+      appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -43,7 +43,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             ],
           ),
           image: DecorationImage(
-            image: AssetImage(_app.isDarkModeEnabled
+            image: AssetImage(_themeProvider.isDarkModeEnabled
                 ? 'assets/images/background-pattern-dark.png'
                 : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,

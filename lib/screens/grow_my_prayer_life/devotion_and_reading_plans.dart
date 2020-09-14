@@ -1,6 +1,6 @@
-import 'package:be_still/Data/devotional.data.dart';
-import 'package:be_still/Models/devotionals.model.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/devotional.data.dart';
+import 'package:be_still/models/devotionals.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class DevotionPlans extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     void _showAlert(DevotionalModel dev) {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -139,7 +139,7 @@ class DevotionPlans extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(provider: _app),
+      appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -154,7 +154,7 @@ class DevotionPlans extends StatelessWidget {
             ],
           ),
           image: DecorationImage(
-            image: AssetImage(_app.isDarkModeEnabled
+            image: AssetImage(_themeProvider.isDarkModeEnabled
                 ? 'assets/images/background-pattern-dark.png'
                 : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,

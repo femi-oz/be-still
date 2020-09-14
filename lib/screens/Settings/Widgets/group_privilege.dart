@@ -1,4 +1,4 @@
-import 'package:be_still/Models/user.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/app_theme.dart';
 

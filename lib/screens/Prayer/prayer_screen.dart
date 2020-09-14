@@ -1,9 +1,11 @@
-import 'package:be_still/Data/group.data.dart';
-import 'package:be_still/Data/prayer.data.dart';
-import 'package:be_still/Enums/prayer_list.enum.dart';
-import 'package:be_still/Models/prayer.model.dart';
-import 'package:be_still/Providers/app_provider.dart';
-import 'package:be_still/screens/Prayer/Widgets/find_a_group.dart';
+import 'package:be_still/data/group.data.dart';
+import 'package:be_still/data/prayer.data.dart';
+import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/models/prayer.model.dart';
+
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer/Widgets/find_a_group.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/app_drawer.dart';
@@ -51,7 +53,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     if (!isInitialized) {
       isInitialized = true;
       setState(
@@ -59,19 +62,19 @@ class _PrayerScreenState extends State<PrayerScreen> {
           prayers = activeList == PrayerActiveScreen.personal
               ? prayerData
                   .where((p) =>
-                      _app.user.prayerList.contains(p.id) &&
+                      _userProvider.user.prayerList.contains(p.id) &&
                       p.status == 'active')
                   .toList()
               : activeList == PrayerActiveScreen.archived
                   ? prayerData
                       .where((p) =>
-                          _app.user.prayerList.contains(p.id) &&
+                          _userProvider.user.prayerList.contains(p.id) &&
                           p.status == 'archived')
                       .toList()
                   : activeList == PrayerActiveScreen.answered
                       ? prayerData
                           .where((p) =>
-                              _app.user.prayerList.contains(p.id) &&
+                              _userProvider.user.prayerList.contains(p.id) &&
                               p.status == 'answered')
                           .toList()
                       : activeList == PrayerActiveScreen.group
@@ -87,7 +90,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
       );
     }
     return Scaffold(
-      appBar: CustomAppBar(provider: _app),
+      appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -99,7 +102,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
             ],
           ),
           image: DecorationImage(
-            image: AssetImage(_app.isDarkModeEnabled
+            image: AssetImage(_themeProvider.isDarkModeEnabled
                 ? 'assets/images/background-pattern-dark.png'
                 : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,
@@ -124,7 +127,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
                       : PrayerList(
                           activeList: activeList,
                           groupId: groupId,
-                          prayers: filteredprayers),
+                          prayers: filteredprayers,
+                        ),
                 ),
               ),
             ],

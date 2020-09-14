@@ -1,4 +1,4 @@
-import 'package:be_still/Models/user.model.dart';
+import 'package:be_still/models/user.model.dart';
 
 final List<UserModel> userData = [
   UserModel(

@@ -1,4 +1,5 @@
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,8 @@ import 'package:be_still/utils/app_theme.dart';
 class GeneralSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(
@@ -25,14 +27,14 @@ class GeneralSettings extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    _app.user.name,
+                    _userProvider.user.name,
                     style: TextStyle(
                         color: context.settingsUsername,
                         fontSize: 28,
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    DateFormat('MM/dd/yyyy').format(_app.user.dob),
+                    DateFormat('MM/dd/yyyy').format(_userProvider.user.dob),
                     style: TextStyle(
                         color: context.settingsUsername.withOpacity(0.9),
                         fontSize: 12,
@@ -61,7 +63,7 @@ class GeneralSettings extends StatelessWidget {
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
-                        _app.user.email,
+                        _userProvider.user.email,
                         style: TextStyle(
                             color: context.inputFieldText,
                             fontSize: 10,
@@ -223,7 +225,7 @@ class GeneralSettings extends StatelessWidget {
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: _app.colorMode == 'light'
+                      color: _themeProvider.colorMode == 'light'
                           ? context.toolsActiveBtn.withOpacity(0.3)
                           : Colors.transparent,
                       border: Border.all(
@@ -243,13 +245,13 @@ class GeneralSettings extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onPressed: () => _app.changeTheme('light'),
+                      onPressed: () => _themeProvider.changeTheme('light'),
                     ),
                   ),
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: _app.colorMode == 'dark'
+                      color: _themeProvider.colorMode == 'dark'
                           ? context.toolsActiveBtn.withOpacity(0.5)
                           : Colors.transparent,
                       border: Border.all(
@@ -271,13 +273,13 @@ class GeneralSettings extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onPressed: () => _app.changeTheme('dark'),
+                      onPressed: () => _themeProvider.changeTheme('dark'),
                     ),
                   ),
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: _app.colorMode == 'auto'
+                      color: _themeProvider.colorMode == 'auto'
                           ? context.toolsActiveBtn.withOpacity(0.5)
                           : Colors.transparent,
                       border: Border.all(
@@ -299,7 +301,7 @@ class GeneralSettings extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onPressed: () => _app.changeTheme('auto'),
+                      onPressed: () => _themeProvider.changeTheme('auto'),
                     ),
                   ),
                 ],

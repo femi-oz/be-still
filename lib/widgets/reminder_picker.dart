@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'Theme/app_theme.dart';
+import '../utils/app_theme.dart';
 
 class ReminderPicker extends StatefulWidget {
   final _setReminder;
@@ -23,11 +23,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   double itemExtent = 30.0;
 
-  FixedExtentScrollController daysController = FixedExtentScrollController(initialItem: 2);
-  FixedExtentScrollController hourController = FixedExtentScrollController(initialItem: 5);
-  FixedExtentScrollController minuteController = FixedExtentScrollController(initialItem: 15);
-  FixedExtentScrollController intervalController = FixedExtentScrollController(initialItem: 2);
-  FixedExtentScrollController ampmController = FixedExtentScrollController(initialItem: 1);
+  FixedExtentScrollController daysController =
+      FixedExtentScrollController(initialItem: 2);
+  FixedExtentScrollController hourController =
+      FixedExtentScrollController(initialItem: 5);
+  FixedExtentScrollController minuteController =
+      FixedExtentScrollController(initialItem: 15);
+  FixedExtentScrollController intervalController =
+      FixedExtentScrollController(initialItem: 2);
+  FixedExtentScrollController ampmController =
+      FixedExtentScrollController(initialItem: 1);
 
   List<String> ampm = ['AM', 'PM'];
 

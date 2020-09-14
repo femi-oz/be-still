@@ -1,6 +1,6 @@
-import 'package:be_still/Data/user.data.dart';
-import 'package:be_still/Models/prayer.model.dart';
-import 'package:be_still/Providers/app_provider.dart';
+import 'package:be_still/data/user.data.dart';
+import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:intl/intl.dart';
@@ -15,13 +15,13 @@ class UpdateView extends StatelessWidget {
   UpdateView(this.prayer);
   Widget build(BuildContext context) {
     final username = userData.singleWhere((u) => u.id == prayer.user).name;
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
     return Container(
       child: SingleChildScrollView(
         child: Container(
           child: Column(
             children: <Widget>[
-              prayer.user != _app.user.id
+              prayer.user != _userProvider.user.id
                   ? Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(

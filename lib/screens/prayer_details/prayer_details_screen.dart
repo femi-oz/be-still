@@ -1,7 +1,9 @@
-import 'package:be_still/Data/group.data.dart';
-import 'package:be_still/Data/prayer.data.dart';
-import 'package:be_still/Providers/app_provider.dart';
-import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
+import 'package:be_still/data/group.data.dart';
+import 'package:be_still/data/prayer.data.dart';
+import 'package:be_still/models/prayer.model.dart';
+
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer/Widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer_details/Widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/Widgets/update_view.dart';
 import 'package:be_still/utils/app_theme.dart';
@@ -18,19 +20,20 @@ class PrayerDetails extends StatelessWidget {
   static const routeName = '/prayer-details';
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
     final RouteArguments args = ModalRoute.of(context).settings.arguments;
-    final prayer = prayerData.singleWhere((prayer) => prayer.id == args.id);
-    final isUserPrayer =
-        args.groupId.toString() == 'null' || prayer.user == _app.user.id;
+    final PrayerModel prayer =
+        prayerData.singleWhere((prayer) => prayer.id == args.id);
+    final isUserPrayer = args.groupId.toString() == 'null' ||
+        prayer.user == _userProvider.user.id;
     final isGroupAdmin = args.groupId.toString() == 'null'
         ? false
         : groupData.singleWhere((g) => g.id == args.groupId.toString()).admin ==
-                _app.user.id
+                _userProvider.user.id
             ? true
             : false;
     return Scaffold(
-      appBar: CustomAppBar(provider: _app),
+      appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

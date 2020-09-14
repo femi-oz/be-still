@@ -1,9 +1,6 @@
-import 'package:be_still/Models/user.model.dart';
 import 'package:flutter/material.dart';
 
-class AppProvider with ChangeNotifier {
-  bool _isAuthenticated = false;
-  // bool _isDarkModeEnabled = false;
+class ThemeProvider with ChangeNotifier {
   String _colorOption =
       MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                   .platformBrightness ==
@@ -15,33 +12,14 @@ class AppProvider with ChangeNotifier {
           Brightness.dark
       ? 'dark'
       : 'light';
-  UserModel _user;
-
-  bool get isAuthenticated {
-    return _isAuthenticated;
-  }
 
   bool get isDarkModeEnabled {
     print(_colorOption == 'dark');
     return _colorMode == 'dark';
   }
 
-  UserModel get user {
-    return _user;
-  }
-
   String get colorMode {
     return _colorOption;
-  }
-
-  void login() {
-    _isAuthenticated = true;
-    notifyListeners();
-  }
-
-  void logout() {
-    _isAuthenticated = false;
-    notifyListeners();
   }
 
   void changeTheme(value) {
@@ -53,12 +31,7 @@ class AppProvider with ChangeNotifier {
           ? 'dark'
           : 'light';
     }
-    // _isDarkModeEnabled = (_colorMode == 'light') ? false : true;
     _colorOption = value;
     notifyListeners();
-  }
-
-  void setCurrentUser(user) {
-    _user = user;
   }
 }

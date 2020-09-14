@@ -1,13 +1,16 @@
 import 'dart:async';
 
-import 'package:be_still/Data/user.data.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/data/user.data.dart';
+import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/step_three.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/step_two.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/Providers/app_provider.dart';
+
 import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'Widgets/step_one.dart';
@@ -67,7 +70,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _userProvider = Provider.of<UserProvider>(context);
+    final _authProvider = Provider.of<AuthProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -82,7 +87,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               ],
             ),
             image: DecorationImage(
-              image: AssetImage(_app.isDarkModeEnabled
+              image: AssetImage(_themeProvider.isDarkModeEnabled
                   ? 'assets/images/background-pattern-dark.png'
                   : 'assets/images/background-pattern.png'),
               alignment: Alignment.bottomCenter,
@@ -133,10 +138,30 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       ),
                       step > 3
                           ? Container()
-                          : Container(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
+                          : Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () => {
+                                    setState(() {
+                                      _next();
+                                      if (step == 4) {
+                                        var user = userData.singleWhere(
+                                            (user) => user.id == '1');
+                                        _userProvider.setCurrentUser(user);
+                                        return new Timer(
+                                          Duration(seconds: 5),
+                                          () => {
+                                            _authProvider.login(),
+                                            Navigator.of(context).pushNamed(
+                                                PrayerScreen.routeName)
+                                          },
+                                        );
+                                      }
+                                      return null;
+                                    })
+                                  },
+                                  child: Container(
+                                    height: 50.0,
                                     width: double.infinity,
                                     margin: EdgeInsets.only(bottom: 20),
                                     decoration: BoxDecoration(
@@ -149,52 +174,34 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                         ],
                                       ),
                                     ),
-                                    child: FlatButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _next();
-                                          if (step == 4) {
-                                            var user = userData.singleWhere(
-                                                (user) => user.id == '1');
-                                            _app.setCurrentUser(user);
-                                            return new Timer(
-                                              Duration(seconds: 5),
-                                              () => {
-                                                _app.login(),
-                                                Navigator.of(context).pushNamed(
-                                                    PrayerScreen.routeName)
-                                              },
-                                            );
-                                          }
-                                          return null;
-                                        });
-                                      },
-                                      color: Colors.transparent,
-                                      child: Icon(
-                                        Icons.arrow_forward,
-                                        color: context.offWhite,
-                                      ),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      color: context.offWhite,
                                     ),
                                   ),
-                                  step > 2
-                                      ? Container()
-                                      : GestureDetector(
-                                          child: Text(
-                                            "Go Back",
-                                            style: TextStyle(
-                                              color: context.brightBlue2,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w300,
-                                            ),
+                                ),
+                                step > 2
+                                    ? Container()
+                                    : GestureDetector(
+                                        child: Text(
+                                          "Go Back",
+                                          style: TextStyle(
+                                            color: context.brightBlue2,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w300,
                                           ),
-                                          onTap: () {
-                                            Navigator.of(context)
-                                                .pushReplacementNamed(
-                                                    LoginScreen.routeName);
-                                          },
-                                        )
-                                ],
-                              ),
+                                        ),
+                                        onTap: () {
+                                          if (step == 1) {
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            setState(() {
+                                              step -= 1;
+                                            });
+                                          }
+                                        },
+                                      )
+                              ],
                             ),
                     ],
                   ),

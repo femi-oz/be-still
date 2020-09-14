@@ -1,11 +1,10 @@
 import 'package:be_still/data/group.data.dart';
 import 'package:be_still/data/user.data.dart';
 import 'package:be_still/models/notifictaion.model.dart';
-import 'package:be_still/providers/app_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class NotificationCard extends StatelessWidget {
   final NotificationModel notification;
@@ -13,7 +12,6 @@ class NotificationCard extends StatelessWidget {
   NotificationCard(this.notification);
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
     return GestureDetector(
       onLongPressEnd: null,
       onTap: null,

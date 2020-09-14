@@ -1,9 +1,8 @@
 import 'package:be_still/data/group.data.dart';
 import 'package:be_still/data/notification.data.dart';
 import 'package:be_still/data/user.data.dart';
-import 'package:be_still/providers/app_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
-import 'package:be_still/screens/notifications/widgets/notification_card.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -42,7 +41,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child: Scaffold(
         appBar: NotificationBar(),
@@ -58,7 +57,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ],
             ),
             image: DecorationImage(
-              image: AssetImage(_app.isDarkModeEnabled
+              image: AssetImage(_themeProvider.isDarkModeEnabled
                   ? 'assets/images/background-pattern-dark.png'
                   : 'assets/images/background-pattern.png'),
               alignment: Alignment.bottomCenter,

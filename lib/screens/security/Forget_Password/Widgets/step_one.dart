@@ -32,6 +32,7 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
             keyboardType: TextInputType.text,
             isRequired: true,
             textInputAction: TextInputAction.done,
+            unfocus: true,
           ),
           Container(
             margin: EdgeInsets.symmetric(vertical: 40, horizontal: 20),

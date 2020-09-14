@@ -1,6 +1,6 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
-import 'package:be_still/Providers/app_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +11,9 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
   static const routeName = 'grow-prayer';
   @override
   Widget build(BuildContext context) {
-    final _app = Provider.of<AppProvider>(context);
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      appBar: CustomAppBar(provider: _app),
+      appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -27,7 +27,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
             ],
           ),
           image: DecorationImage(
-            image: AssetImage(_app.isDarkModeEnabled
+            image: AssetImage(_themeProvider.isDarkModeEnabled
                 ? 'assets/images/background-pattern-dark.png'
                 : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'Theme/app_theme.dart';
+import '../utils/app_theme.dart';
 
 class SnoozePicker extends StatefulWidget {
   final _setSnooze;
@@ -20,11 +20,11 @@ class _SnoozePickerState extends State<SnoozePicker> {
 
   double itemExtent = 30.0;
 
-
   var selectedInterval;
   @override
   Widget build(BuildContext context) {
-  FixedExtentScrollController scrollController = FixedExtentScrollController(initialItem: selected);
+    FixedExtentScrollController scrollController =
+        FixedExtentScrollController(initialItem: selected);
     return Container(
       width: double.infinity,
       child: Column(

@@ -1,4 +1,4 @@
-import 'package:be_still/Models/devotionals.model.dart';
+import 'package:be_still/models/devotionals.model.dart';
 
 List<DevotionalModel> devotionalData = [
   DevotionalModel(
