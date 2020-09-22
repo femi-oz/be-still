@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'src/utils/string_utils.dart';
+import 'utils/string_utils.dart';
 
 enum Flavor {
   DEV,
