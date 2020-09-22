@@ -4,7 +4,7 @@ class PrayerModel {
   final String id;
   final String title;
   final String content;
-  final String user; 
+  final String user;
   final List<String> tags;
   final String status; //active, snoozed, archived
   // final bool isAnswered;
