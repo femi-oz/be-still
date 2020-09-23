@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class PrayerSettings {
+class PrayerSettingsModel {
   final String userId;
   final String frequency;
   final DateTime date;
@@ -10,7 +10,7 @@ class PrayerSettings {
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const PrayerSettings(
+  const PrayerSettingsModel(
       {@required this.userId,
       @required this.frequency,
       @required this.date,
