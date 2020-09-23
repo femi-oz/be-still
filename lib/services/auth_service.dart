@@ -32,7 +32,7 @@ class AuthenticationService {
     String password,
   }) async {
     try {
-      await _firebaseAuth
+      return await _firebaseAuth
           .createUserWithEmailAndPassword(
         email: userData.email,
         password: password,
@@ -40,10 +40,9 @@ class AuthenticationService {
           .then((value) async {
         // user.sendEmailVerification();
         FirebaseUser user = value.user;
-        print(value.user.uid);
         // Save user information in firestore
         await locator<UserService>().addUserData(userData, user.uid);
-        return user.uid;
+        return user != null;
       });
     } catch (e) {
       if (e is PlatformException) {

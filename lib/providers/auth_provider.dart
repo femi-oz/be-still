@@ -34,4 +34,8 @@ class AuthenticationProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<bool> handleStartUpLogic() async {
+    return await _authService.isUserLoggedIn();
+  }
 }

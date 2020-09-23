@@ -3,6 +3,7 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
@@ -47,29 +48,40 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     });
   }
 
-  void _createAccount() {
+  _createAccount() async {
     setState(() {
       _autoValidate = true;
-      if (!_formKey.currentState.validate()) return;
+      if (!_formKey.currentState.validate()) return null;
       _formKey.currentState.save();
-      final UserModel _userData = UserModel(
-        churchId: 0,
-        createdBy: '',
-        createdOn: DateTime.now(),
-        dateOfBirth: _selectedDate,
-        email: _emailController.text,
-        firstName: _firstnameController.text,
-        keyReference: '',
-        lastName: _lastnameController.text,
-        modifiedBy: '',
-        modifiedOn: DateTime.now(),
-        phone: '',
-      );
-      Provider.of<AuthenticationProvider>(context, listen: false).registerUser(
-          password: _passwordController.text, userData: _userData);
-      //TODO
-      // step += 1;
     });
+    final UserModel _userData = UserModel(
+      churchId: 0,
+      createdBy: '',
+      createdOn: DateTime.now(),
+      dateOfBirth: _selectedDate,
+      email: _emailController.text,
+      firstName: _firstnameController.text,
+      keyReference: '',
+      lastName: _lastnameController.text,
+      modifiedBy: '',
+      modifiedOn: DateTime.now(),
+      phone: '',
+    );
+    final result = await Provider.of<AuthenticationProvider>(context,
+            listen: false)
+        .registerUser(password: _passwordController.text, userData: _userData);
+
+    if (result is bool) {
+      if (result == true) step += 1;
+      return new Timer(
+        Duration(seconds: 2),
+        () => {
+          Navigator.of(context).pushReplacementNamed(SplashScreen.routeName)
+        },
+      );
+    } else {
+      showInSnackBar(result.toString());
+    }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -85,18 +97,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    _next() {
-      if (step == 2) {
-        return new Timer(
-          Duration(seconds: 2),
-          () => {
-            // Provider.of<AuthenticationProvider>(context, listen: false).login(),
-            Navigator.of(context).pushNamed(PrayerScreen.routeName)
-          },
-        );
-      }
-      return null;
-    }
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -164,7 +164,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   onTap: () => !_disableSubmit
                                       ? showInSnackBar(
                                           'Accepts Terms To Proceed')
-                                      : {_createAccount(), _next()},
+                                      : _createAccount(),
                                   child: Container(
                                     height: 50.0,
                                     width: double.infinity,

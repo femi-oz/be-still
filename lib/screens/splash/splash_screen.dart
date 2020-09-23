@@ -19,6 +19,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController _textAnimationController;
+  AuthenticationProvider _authenticationProvider = AuthenticationProvider();
 
   var _isInit = true;
 
@@ -53,19 +54,49 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   route() async {
-    final _authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
-    if (_authProvider.isAuthenticated) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        PrayerScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
-    } else {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        LoginScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
-    }
+    await _authenticationProvider.handleStartUpLogic().then((value) {
+      if (value == true) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerScreen.routeName, (Route<dynamic> route) => false);
+      } else {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginScreen.routeName,
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
+    // switch (value) {
+    //   case true:
+    //     return Loader();
+    //   default:
+    //     if (snapshot.hasError)
+    //       return Center(
+    //         child: Text(
+    //           'Error: ${snapshot.error}',
+    //         ),
+    //       );
+    //     else
+    //       return snapshot.data
+    //           ? Navigator.of(context).pushNamedAndRemoveUntil(
+    //               PrayerScreen.routeName,
+    //               (Route<dynamic> route) => false,
+    //             )
+    //           : Navigator.of(context).pushNamedAndRemoveUntil(
+    //               LoginScreen.routeName,
+    //               (Route<dynamic> route) => false,
+    //             );
+    // if (_authenticationProvider.isAuthenticated) {
+    //   Navigator.of(context).pushNamedAndRemoveUntil(
+    //     PrayerScreen.routeName,
+    //     (Route<dynamic> route) => false,
+    //   );
+    // } else {
+    //   Navigator.of(context).pushNamedAndRemoveUntil(
+    //     LoginScreen.routeName,
+    //     (Route<dynamic> route) => false,
+    //   );
+    // }
+    // });
   }
 
   @override
