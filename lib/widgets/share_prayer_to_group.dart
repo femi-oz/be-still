@@ -45,7 +45,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                     .map((group) => GestureDetector(
                           onTap: () {
                             setState(() {
-                              selectedGroup = group.id;
+                              selectedGroup = group.groupId;
                             });
                           },
                           child: Container(
@@ -55,7 +55,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 10),
                             decoration: BoxDecoration(
-                              color: selectedGroup == group.id
+                              color: selectedGroup == group.groupId
                                   ? context.toolsActiveBtn.withOpacity(0.2)
                                   : Colors.transparent,
                               border: Border.all(

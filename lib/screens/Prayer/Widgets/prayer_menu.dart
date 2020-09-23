@@ -141,10 +141,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   title: g.name,
                                   isActive: widget.activeList ==
                                           PrayerActiveScreen.group &&
-                                      widget.groupId == g.id,
+                                      widget.groupId == g.groupId,
                                   action: () => setState(() {
                                     widget.setCurrentList(
-                                        PrayerActiveScreen.group, g.id);
+                                        PrayerActiveScreen.group, g.groupId);
                                   }),
                                   openTools: () => openTools(),
                                 ),

@@ -28,7 +28,9 @@ class PrayerDetails extends StatelessWidget {
         prayer.user == _userProvider.user.id;
     final isGroupAdmin = args.groupId.toString() == 'null'
         ? false
-        : groupData.singleWhere((g) => g.id == args.groupId.toString()).admin ==
+        : groupData
+                    .singleWhere((g) => g.groupId == args.groupId.toString())
+                    .admin ==
                 _userProvider.user.id
             ? true
             : false;

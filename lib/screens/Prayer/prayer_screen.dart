@@ -80,7 +80,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
                       : activeList == PrayerActiveScreen.group
                           ? prayerData
                               .where((p) => groupData
-                                  .singleWhere((g) => g.id == groupId)
+                                  .singleWhere((g) => g.groupId == groupId)
                                   .prayerList
                                   .contains(p.id))
                               .toList()

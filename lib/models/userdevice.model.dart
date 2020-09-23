@@ -1,21 +1,17 @@
 import 'package:flutter/foundation.dart';
 
-class DeviceModel {
-  final String id;
+class UserDeviceModel {
+  final String userId;
   final String deviceId;
-  final String name;
-  final String model;
   final String status;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const DeviceModel(
-      {@required this.id,
+  const UserDeviceModel(
+      {@required this.userId,
       @required this.deviceId,
-      @required this.name,
-      @required this.model,
       @required this.status,
       @required this.createdBy,
       @required this.createdOn,

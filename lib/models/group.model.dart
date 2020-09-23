@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 class GroupModel {
-  final String id;
+  final String groupId;
+  final String userId;
   final String name;
   final String admin;
   final String city;
@@ -18,7 +19,8 @@ class GroupModel {
   final String createdBy;
 
   const GroupModel({
-    @required this.id,
+    @required this.groupId,
+    @required this.userId,
     @required this.name,
     @required this.admin,
     @required this.city,

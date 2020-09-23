@@ -63,8 +63,8 @@ class NotificationCard extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   groupData
-                                      .singleWhere(
-                                          (u) => u.id == notification.group)
+                                      .singleWhere((u) =>
+                                          u.groupId == notification.group)
                                       .name
                                       .toUpperCase(),
                                   style: TextStyle(

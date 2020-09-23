@@ -173,7 +173,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           Text(
                                                             groupData
                                                                 .singleWhere((u) =>
-                                                                    u.id ==
+                                                                    u.groupId ==
                                                                     notificationByType[
                                                                             'notifications'][i]
                                                                         .group)

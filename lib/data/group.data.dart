@@ -2,7 +2,7 @@ import 'package:be_still/models/group.model.dart';
 
 const List<GroupModel> groupData = [
   GroupModel(
-      id: '1',
+      groupId: '1',
       admin: '1',
       members: ['1', '2'],
       name: 'Group List 1',
@@ -15,7 +15,7 @@ const List<GroupModel> groupData = [
           'short description here hfghgfasd hfghas hgghas jhfas jghgfad hfgfgha hfgasf',
       type: 'Normal'),
   GroupModel(
-      id: '2',
+      groupId: '2',
       admin: '2',
       members: ['1', '2'],
       name: 'Group List 2',
@@ -28,7 +28,7 @@ const List<GroupModel> groupData = [
           'short description here hfghgfasd hfghas hgghas jhfas jghgfad hfgfgha hfgasf',
       type: 'Normal'),
   GroupModel(
-      id: '3',
+      groupId: '3',
       admin: '2',
       members: ['2'],
       name: 'Group List 3',
