@@ -53,7 +53,8 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   route() async {
-    final _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final _authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     if (_authProvider.isAuthenticated) {
       Navigator.of(context).pushNamedAndRemoveUntil(
         PrayerScreen.routeName,

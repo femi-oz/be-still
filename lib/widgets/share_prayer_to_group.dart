@@ -13,10 +13,10 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   String selectedGroup;
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
 
-    final groups =
-        groupData.where((gl) => gl.members.contains(_userProvider.user.id));
+    // final groups =
+    //     groupData.where((gl) => gl.members.contains(_currentUser.id));
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -41,47 +41,48 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                     ),
                   ),
                 ),
-                ...groups
-                    .map((group) => GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedGroup = group.id;
-                            });
-                          },
-                          child: Container(
-                            height: 50,
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            width: double.infinity,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: selectedGroup == group.id
-                                  ? context.toolsActiveBtn.withOpacity(0.2)
-                                  : Colors.transparent,
-                              border: Border.all(
-                                color: context.toolsBtnBorder,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    group.name,
-                                    style: TextStyle(
-                                      color: context.brightBlue2,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ))
-                    .toList(),
+                // TODO
+                // ...groups
+                //     .map((group) => GestureDetector(
+                //           onTap: () {
+                //             setState(() {
+                //               selectedGroup = group.id;
+                //             });
+                //           },
+                //           child: Container(
+                //             height: 50,
+                //             padding: EdgeInsets.symmetric(horizontal: 20),
+                //             width: double.infinity,
+                //             margin: EdgeInsets.symmetric(
+                //                 horizontal: 50, vertical: 10),
+                //             decoration: BoxDecoration(
+                //               color: selectedGroup == group.id
+                //                   ? context.toolsActiveBtn.withOpacity(0.2)
+                //                   : Colors.transparent,
+                //               border: Border.all(
+                //                 color: context.toolsBtnBorder,
+                //                 width: 1,
+                //               ),
+                //               borderRadius: BorderRadius.circular(10),
+                //             ),
+                //             child: Row(
+                //               children: <Widget>[
+                //                 Padding(
+                //                   padding: const EdgeInsets.only(left: 10.0),
+                //                   child: Text(
+                //                     group.name,
+                //                     style: TextStyle(
+                //                       color: context.brightBlue2,
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.w500,
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         ))
+                //     .toList(),
               ],
             ),
           ),

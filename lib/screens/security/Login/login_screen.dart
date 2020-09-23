@@ -1,7 +1,6 @@
 import 'package:be_still/data/user.data.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +27,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final _authProvider = Provider.of<AuthProvider>(context);
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _authProvider = Provider.of<AuthenticationProvider>(context);
     final _themeProvider = Provider.of<ThemeProvider>(context);
     _authenticate() {
       setState(() {
@@ -37,32 +35,20 @@ class _LoginScreenState extends State<LoginScreen>
       });
       if (_formKey.currentState.validate()) {
         _formKey.currentState.save();
-        if ((userData.singleWhere(
-                (user) => user.username == _usernameController.text,
-                orElse: () => null)) !=
-            null) {
-          var user = userData
-              .singleWhere((user) => user.username == _usernameController.text);
-          if (user.password == _passwordController.text) {
-            _userProvider.setCurrentUser(user);
-            _authProvider.login();
-            Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
-          } else {
-            _scaffoldKey.currentState.showSnackBar(
-              new SnackBar(
-                backgroundColor: context.brightBlue2,
-                content: new Text('Password doesn\'t match'),
-              ),
-            );
-          }
-        } else {
-          _scaffoldKey.currentState.showSnackBar(
-            new SnackBar(
-              backgroundColor: context.brightBlue2,
-              content: new Text('User doesn\'t exist!'),
-            ),
-          );
-        }
+
+        _authProvider.login(
+            context: context,
+            email: _usernameController.text,
+            password: _passwordController.text);
+        // Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+
+      } else {
+        _scaffoldKey.currentState.showSnackBar(
+          new SnackBar(
+            backgroundColor: context.brightBlue2,
+            content: new Text('User doesn\'t exist!'),
+          ),
+        );
       }
     }
 

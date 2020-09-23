@@ -29,10 +29,10 @@ class SharePrayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
-    final groupsCount = groupData
-        .where((gl) => gl.members.contains(_userProvider.user.id))
-        .length;
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    // TODO
+    // final groupsCount =
+    //     groupData.where((gl) => gl.members.contains(_currentUser.id)).length;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -206,7 +206,8 @@ class SharePrayer extends StatelessWidget {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                Text('$groupsCount / $groupsCount')
+                                // TODO
+                                // Text('$groupsCount / $groupsCount')
                               ],
                             ),
                           ),

@@ -24,7 +24,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    final _authProvider = Provider.of<AuthProvider>(context);
+    final _authProvider = Provider.of<AuthenticationProvider>(context);
     return SafeArea(
       child: Container(
         width: double.infinity,

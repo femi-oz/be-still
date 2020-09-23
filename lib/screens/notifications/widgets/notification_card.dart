@@ -1,15 +1,14 @@
 import 'package:be_still/data/group.data.dart';
 import 'package:be_still/data/user.data.dart';
 import 'package:be_still/models/notifictaion.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:intl/intl.dart';
 
 class NotificationCard extends StatelessWidget {
-  final NotificationModel notification;
+  // final NotificationModel notification;
 
-  NotificationCard(this.notification);
+  // NotificationCard(this.notification);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -42,58 +41,58 @@ class NotificationCard extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            notification.creator != ''
-                                ? Text(
-                                    userData
-                                        .singleWhere(
-                                            (u) => u.id == notification.creator)
-                                        .name
-                                        .toUpperCase(),
-                                    style: TextStyle(
-                                      color: context.brightBlue,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 10,
-                                    ),
-                                  )
-                                : Container(),
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  groupData
-                                      .singleWhere(
-                                          (u) => u.id == notification.group)
-                                      .name
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                    color: context.prayerCardTags,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  child: Text(
-                                    '|',
-                                    style: TextStyle(
-                                        color: context.prayerCardBorder),
-                                  ),
-                                ),
-                                Text(
-                                  DateFormat('MM.dd.yyyy')
-                                      .format(notification.date),
-                                  style: TextStyle(
-                                    color: context.prayerCardPrayer,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: <Widget>[
+                        //     notification.creator != ''
+                        //         ? Text(
+                        //             userData
+                        //                 .singleWhere(
+                        //                     (u) => u.id == notification.creator)
+                        //                 .fullName
+                        //                 .toUpperCase(),
+                        //             style: TextStyle(
+                        //               color: context.brightBlue,
+                        //               fontWeight: FontWeight.w500,
+                        //               fontSize: 10,
+                        //             ),
+                        //           )
+                        //         : Container(),
+                        //     Row(
+                        //       children: <Widget>[
+                        //         Text(
+                        //           groupData
+                        //               .singleWhere(
+                        //                   (u) => u.id == notification.group)
+                        //               .name
+                        //               .toUpperCase(),
+                        //           style: TextStyle(
+                        //             color: context.prayerCardTags,
+                        //             fontSize: 10,
+                        //           ),
+                        //         ),
+                        //         Container(
+                        //           margin: EdgeInsets.symmetric(
+                        //             horizontal: 10,
+                        //           ),
+                        //           child: Text(
+                        //             '|',
+                        //             style: TextStyle(
+                        //                 color: context.prayerCardBorder),
+                        //           ),
+                        //         ),
+                        //         Text(
+                        //           DateFormat('MM.dd.yyyy')
+                        //               .format(notification.date),
+                        //           style: TextStyle(
+                        //             color: context.prayerCardPrayer,
+                        //             fontSize: 10,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     )
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
@@ -105,17 +104,17 @@ class NotificationCard extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Text(
-                      notification.content.substring(0, 100),
-                      style: TextStyle(
-                        color: context.prayerCardPrayer,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width * 0.8,
+                  //   child: Text(
+                  //     notification.content.substring(0, 100),
+                  //     style: TextStyle(
+                  //       color: context.prayerCardPrayer,
+                  //       fontSize: 12,
+                  //       fontWeight: FontWeight.w300,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ],

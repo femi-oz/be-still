@@ -7,12 +7,15 @@ import 'package:intl/intl.dart';
 class CreateAccountForm extends StatefulWidget {
   final datePickerController;
   final dobController;
-  final fullnameController;
+  final firstnameController;
+  final lastnameController;
   final emailController;
   final formKey;
   final autoValidate;
   final passwordController;
   final confirmPasswordController;
+  final selectDate;
+  final agreeTerms;
 
   @override
   CreateAccountForm({
@@ -21,9 +24,12 @@ class CreateAccountForm extends StatefulWidget {
     this.formKey,
     this.autoValidate,
     this.emailController,
-    this.fullnameController,
+    this.firstnameController,
+    this.lastnameController,
     this.passwordController,
     this.confirmPasswordController,
+    this.selectDate,
+    this.agreeTerms,
   });
   _CreateAccountFormState createState() => _CreateAccountFormState();
 }
@@ -32,21 +38,6 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
   DateTime _selectedDate = DateTime.now();
 
   _selectDate() async {
-    // final DateTime picked = await showDatePicker(
-    //   context: context,
-    //   initialDate: selectedDate,
-    //   firstDate: DateTime(1901, 1),
-    //   lastDate: DateTime(2101),
-    // );
-    // if (picked != null && picked != selectedDate)
-    //   setState(
-    //     () {
-    //       selectedDate = picked;
-    //       final DateFormat formatter = DateFormat('MM/dd/yyyy');
-    //       final String formatted = formatter.format(picked);
-    //       widget.datePickerController.value = TextEditingValue(text: formatted);
-    //     },
-    //   );
     FocusScope.of(context).unfocus();
     showDatePicker(
       context: context,
@@ -65,6 +56,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
       widget.dobController.text =
           DateFormat('MM/dd/yyyy').format(_selectedDate);
     });
+    widget.selectDate(pickedDate);
   }
 
   FocusNode focusNode;
@@ -79,8 +71,15 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
         child: Column(
           children: <Widget>[
             CustomInput(
-              label: 'Full name',
-              controller: widget.fullnameController,
+              label: 'First name',
+              controller: widget.firstnameController,
+              keyboardType: TextInputType.text,
+              isRequired: true,
+            ),
+            SizedBox(height: 10.0),
+            CustomInput(
+              label: 'Last name',
+              controller: widget.lastnameController,
               keyboardType: TextInputType.text,
               isRequired: true,
             ),
@@ -153,9 +152,10 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                           ThemeData(unselectedWidgetColor: context.brightBlue),
                       child: Switch.adaptive(
                         value: termsAccepted,
-                        onChanged: (_) {
+                        onChanged: (val) {
                           setState(() {
-                            termsAccepted = !termsAccepted;
+                            widget.agreeTerms(val);
+                            termsAccepted = val;
                           });
                         },
                         activeColor: Colors.white,

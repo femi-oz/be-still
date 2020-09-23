@@ -13,7 +13,7 @@ class DevotionPlans extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    void _showAlert(DevotionalModel dev) {
+    void _showAlert(dev) {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -201,69 +201,69 @@ class DevotionPlans extends StatelessWidget {
                 ),
                 child: Column(
                   children: <Widget>[
-                    ...devotionalData.map(
-                      (dev) => GestureDetector(
-                        onTap: () => _showAlert(dev),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: context.prayerCardBg,
-                            border: Border.all(
-                              color: context.prayerCardBorder,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    dev.type.toUpperCase(),
-                                    style: TextStyle(
-                                      color: context.devotionalGrey,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                  Text(
-                                    'LENGTH: ${dev.length}'.toUpperCase(),
-                                    style: TextStyle(
-                                      color: context.devotionalGrey,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 5.0),
-                                child: Divider(
-                                  color: context.prayerCardBorder,
-                                  thickness: 1,
-                                ),
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    dev.title,
-                                    style: TextStyle(
-                                        color: context.brightBlue2,
-                                        fontSize: 14),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    // ...devotionalData.map(
+                    //   (dev) => GestureDetector(
+                    //     onTap: () => _showAlert(dev),
+                    //     child: Container(
+                    //       margin: EdgeInsets.symmetric(vertical: 5.0),
+                    //       padding: EdgeInsets.symmetric(
+                    //           vertical: 10, horizontal: 20),
+                    //       width: double.infinity,
+                    //       decoration: BoxDecoration(
+                    //         color: context.prayerCardBg,
+                    //         border: Border.all(
+                    //           color: context.prayerCardBorder,
+                    //           width: 1,
+                    //         ),
+                    //         borderRadius: BorderRadius.circular(10),
+                    //       ),
+                    //       child: Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: <Widget>[
+                    //           Row(
+                    //             mainAxisAlignment:
+                    //                 MainAxisAlignment.spaceBetween,
+                    //             children: <Widget>[
+                    //               Text(
+                    //                 dev.type.toUpperCase(),
+                    //                 style: TextStyle(
+                    //                   color: context.devotionalGrey,
+                    //                   fontSize: 10,
+                    //                 ),
+                    //               ),
+                    //               Text(
+                    //                 'LENGTH: ${dev.length}'.toUpperCase(),
+                    //                 style: TextStyle(
+                    //                   color: context.devotionalGrey,
+                    //                   fontSize: 10,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //           Padding(
+                    //             padding:
+                    //                 const EdgeInsets.symmetric(vertical: 5.0),
+                    //             child: Divider(
+                    //               color: context.prayerCardBorder,
+                    //               thickness: 1,
+                    //             ),
+                    //           ),
+                    //           Column(
+                    //             children: <Widget>[
+                    //               Text(
+                    //                 dev.title,
+                    //                 style: TextStyle(
+                    //                     color: context.brightBlue2,
+                    //                     fontSize: 14),
+                    //                 textAlign: TextAlign.left,
+                    //               ),
+                    //             ],
+                    //           )
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

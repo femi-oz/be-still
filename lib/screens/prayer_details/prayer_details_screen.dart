@@ -20,18 +20,20 @@ class PrayerDetails extends StatelessWidget {
   static const routeName = '/prayer-details';
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final RouteArguments args = ModalRoute.of(context).settings.arguments;
     final PrayerModel prayer =
         prayerData.singleWhere((prayer) => prayer.id == args.id);
-    final isUserPrayer = args.groupId.toString() == 'null' ||
-        prayer.user == _userProvider.user.id;
-    final isGroupAdmin = args.groupId.toString() == 'null'
-        ? false
-        : groupData.singleWhere((g) => g.id == args.groupId.toString()).admin ==
-                _userProvider.user.id
-            ? true
-            : false;
+    // TODO
+    final isUserPrayer = false;
+    //     args.groupId.toString() == 'null' || prayer.user == _currentUser.id;
+    final isGroupAdmin = false;
+    //args.groupId.toString() == 'null'
+    //     ? false
+    //     : groupData.singleWhere((g) => g.id == args.groupId.toString()).admin ==
+    //             _currentUser.id
+    //         ? true
+    //         : false;
     return Scaffold(
       appBar: CustomAppBar(),
       body: Container(
