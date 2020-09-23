@@ -1,14 +1,17 @@
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:be_still/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider with ChangeNotifier {
+  UserService _userService = locator<UserService>();
   UserModel _currentUser;
 
   UserModel get currentUser => _currentUser;
 
-  void setCurrentUser(FirebaseUser user) {
+  void setCurrentUserDetails() async {
     //Fetch USer from Firestore
+    _currentUser = await _userService.getCurrentUser();
   }
 
   UserModel get user {

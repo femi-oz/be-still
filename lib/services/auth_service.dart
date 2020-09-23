@@ -15,7 +15,7 @@ class AuthenticationService {
       AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
-      return user.uid;
+      return user != null;
       // if (user.isEmailVerified) return user.uid;
       // return null;
     } catch (e) {
@@ -53,7 +53,7 @@ class AuthenticationService {
     }
   }
 
-  Future<void> resetPassword(String email) async {
+  Future<void> forgotPassword(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 

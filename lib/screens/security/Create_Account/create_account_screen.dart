@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
@@ -72,11 +73,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         .registerUser(password: _passwordController.text, userData: _userData);
 
     if (result is bool) {
-      if (result == true) step += 1;
+      if (result == true) {
+        Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUserDetails();
+        step += 1;
+      }
       return new Timer(
         Duration(seconds: 2),
         () => {
-          Navigator.of(context).pushReplacementNamed(SplashScreen.routeName)
+          Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName)
         },
       );
     } else {

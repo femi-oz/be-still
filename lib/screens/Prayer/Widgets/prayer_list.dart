@@ -15,7 +15,6 @@ class PrayerList extends StatelessWidget {
   PrayerList({this.activeList, this.groupId, this.prayers});
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-
     return Container(
       padding: EdgeInsets.only(
         top: 20,

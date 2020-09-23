@@ -3,6 +3,7 @@ import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
 class UserService {
@@ -12,6 +13,7 @@ class UserService {
       Firestore.instance.collection("UserDevice");
   final CollectionReference _deviceCollectionReference =
       Firestore.instance.collection("Device");
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   deviceModel() async {
     var deviceInfo = DeviceInfoPlugin();
@@ -86,7 +88,7 @@ class UserService {
       // store user details
       Firestore.instance.runTransaction((transaction) async {
         await _userCollectionReference.add(setUser(userData, uid).toJson());
-//store device
+        //store device
         final deviceRes = await _deviceCollectionReference
             .add(setDevice(userData, deviceModel, deviceName).toJson());
         // store user device
@@ -99,10 +101,14 @@ class UserService {
     }
   }
 
-  Future getUser(String uid) async {
+  Future getCurrentUser() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
     try {
-      var userData = await _userCollectionReference.document(uid).get();
-      return UserModel.fromData(userData);
+      final userRes = await _userCollectionReference
+          .where('KeyReference', isEqualTo: user.uid)
+          .limit(1)
+          .getDocuments();
+      return UserModel.fromData(userRes.documents[0]);
     } catch (e) {
       if (e is PlatformException) {
         return e.message;
