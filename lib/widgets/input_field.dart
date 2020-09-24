@@ -108,7 +108,7 @@ class CustomInput extends StatelessWidget {
   String _validatorFn(String value) {
     if (isRequired) {
       if (value.isEmpty) {
-        return 'Enter ${label.toLowerCase()}';
+        return '$label is required';
       }
     }
     if (isEmail && value.isNotEmpty) {

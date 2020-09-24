@@ -35,7 +35,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
-  bool _disableSubmit = true;
+  bool _enableSubmit = false;
 
   _selectDate(DateTime value) async {
     setState(() {
@@ -45,16 +45,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   _agreeTerms(bool value) {
     setState(() {
-      _disableSubmit = value;
+      _enableSubmit = value;
     });
   }
 
   _createAccount() async {
     setState(() {
       _autoValidate = true;
-      if (!_formKey.currentState.validate()) return null;
-      _formKey.currentState.save();
     });
+    if (!_formKey.currentState.validate()) {
+      showInSnackBar('All fields are required');
+      return null;
+    }
+    _formKey.currentState.save();
+
     final UserModel _userData = UserModel(
       churchId: 0,
       createdBy: '',
@@ -68,6 +72,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       modifiedOn: DateTime.now(),
       phone: '',
     );
+
     final result = await Provider.of<AuthenticationProvider>(context,
             listen: false)
         .registerUser(password: _passwordController.text, userData: _userData);
@@ -76,7 +81,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       if (result == true) {
         Provider.of<UserProvider>(context, listen: false)
             .setCurrentUserDetails();
-        step += 1;
+        setState(() {
+          step += 1;
+        });
       }
       return new Timer(
         Duration(seconds: 2),
@@ -166,9 +173,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           : Column(
                               children: <Widget>[
                                 InkWell(
-                                  onTap: () => !_disableSubmit
+                                  onTap: () => !_enableSubmit
                                       ? showInSnackBar(
-                                          'Accepts Terms To Proceed')
+                                          'Accept terms to proceed',
+                                        )
                                       : _createAccount(),
                                   child: Container(
                                     height: 50.0,
@@ -185,7 +193,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                       ),
                                     ),
                                     child: Icon(
-                                      Icons.arrow_forward,
+                                      _enableSubmit
+                                          ? Icons.arrow_forward
+                                          : Icons.do_not_disturb,
                                       color: context.offWhite,
                                     ),
                                   ),

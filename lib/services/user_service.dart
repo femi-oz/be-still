@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 
 class UserService {
   final CollectionReference _userCollectionReference =
@@ -27,51 +28,69 @@ class UserService {
     }
   }
 
-  setDevice(UserModel user, String deviceModel, String deviceName) {
+  populateDevice(
+    UserModel user,
+    String deviceModel,
+    String deviceName,
+    String deviceID,
+  ) {
     DeviceModel device = DeviceModel(
-      createdBy: '${user.firstName} ${user.lastName}',
+      createdBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
       createdOn: user.createdOn,
       modifiedOn: user.modifiedOn,
-      modifiedBy: '${user.firstName} ${user.lastName}',
-      model: deviceModel,
-      deviceId: '',
-      name: deviceName,
+      modifiedBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
+      model: deviceModel.toUpperCase(),
+      deviceId: deviceID,
+      name: deviceName.toUpperCase(),
       status: 'Active',
     );
     return device;
   }
 
-  setUser(UserModel userData, String uid) {
+  populateUser(
+    UserModel userData,
+    String authUid,
+  ) {
     UserModel user = UserModel(
       churchId: 0,
-      createdBy: '${userData.firstName} ${userData.lastName}',
+      createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
       createdOn: DateTime.now(),
       dateOfBirth: userData.dateOfBirth,
       email: userData.email,
-      firstName: userData.firstName,
-      keyReference: uid,
-      lastName: userData.lastName,
-      modifiedBy: '${userData.firstName} ${userData.lastName}',
+      firstName: userData.firstName.toUpperCase(),
+      keyReference: authUid,
+      lastName: userData.lastName.toUpperCase(),
+      modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
       modifiedOn: DateTime.now(),
       phone: '',
     );
     return user;
   }
 
-  setUserDevice(UserModel user, String deviceID, String uid) {
+  populateUserDevice(
+    UserModel user,
+    String deviceID,
+    String userID,
+  ) {
     UserDeviceModel userDevice = UserDeviceModel(
-      createdBy: '${user.firstName} ${user.lastName}',
+      createdBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
       createdOn: user.createdOn,
       modifiedOn: user.modifiedOn,
-      modifiedBy: '${user.firstName} ${user.lastName}',
+      modifiedBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
       deviceId: deviceID,
-      userId: uid,
+      userId: userID,
       status: 'Active',
     );
     return userDevice;
   }
 
-  Future addUserData(UserModel userData, uid) async {
+  Future addUserData(UserModel userData, String authUid) async {
+    // Generate uuid
+    final deviceID = Uuid().v1();
+    final userID = Uuid().v1();
+    final userDeviceID = Uuid().v1();
+
+    // get device infomation
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String deviceModel;
     String deviceName;
@@ -84,17 +103,28 @@ class UserService {
       deviceModel = iosInfo.utsname.machine;
       deviceName = iosInfo.name;
     }
+
     try {
-      // store user details
-      Firestore.instance.runTransaction((transaction) async {
-        await _userCollectionReference.add(setUser(userData, uid).toJson());
-        //store device
-        final deviceRes = await _deviceCollectionReference
-            .add(setDevice(userData, deviceModel, deviceName).toJson());
-        // store user device
-        await _userDeviceCollectionReference
-            .add(setUserDevice(userData, deviceRes.documentID, uid).toJson());
-      });
+      Firestore.instance.runTransaction(
+        (transaction) async {
+          // store user details
+          await _userCollectionReference.document(userID).setData(
+                populateUser(userData, authUid).toJson(),
+              );
+
+          //store device
+          await _deviceCollectionReference.document(deviceID).setData(
+                populateDevice(userData, deviceModel, deviceName, deviceID)
+                    .toJson(),
+              );
+
+          // store user device
+          await _userDeviceCollectionReference.document(userDeviceID).setData(
+                populateUserDevice(userData, deviceID.toString(), userID)
+                    .toJson(),
+              );
+        },
+      );
     } catch (e) {
       print(e.toString());
       return null;
