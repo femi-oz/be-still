@@ -71,14 +71,14 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
         child: Column(
           children: <Widget>[
             CustomInput(
-              label: 'First name',
+              label: 'First Name',
               controller: widget.firstnameController,
               keyboardType: TextInputType.text,
               isRequired: true,
             ),
             SizedBox(height: 10.0),
             CustomInput(
-              label: 'Last name',
+              label: 'Last Name',
               controller: widget.lastnameController,
               keyboardType: TextInputType.text,
               isRequired: true,
