@@ -52,7 +52,7 @@ class SettingsService {
   Future getSettingsData(String userId) async {
     try {
       final settingRes = await _settingsCollectionReference
-          .where('userId', isEqualTo: userId)
+          .where('UserId', isEqualTo: userId)
           .limit(1)
           .getDocuments();
       return SettingsModel.fromData(settingRes.documents[0]);

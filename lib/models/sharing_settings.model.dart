@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SharingSettingsModel {
@@ -24,18 +25,30 @@ class SharingSettingsModel {
       @required this.modifiedBy,
       @required this.modifiedOn});
 
+  SharingSettingsModel.fromData(DocumentSnapshot snapShot)
+      : userId = snapShot.documentID,
+        enableSharingViaEmail = snapShot.data["EnableSharingViaEmail"],
+        enableSharingViaText = snapShot.data["EnableSharingViaText"],
+        churchId = snapShot.data["ChurchId"],
+        phone = snapShot.data["Phone"],
+        status = snapShot.data["Status"],
+        createdBy = snapShot.data["CreatedBy"],
+        createdOn = snapShot.data["CreatedOn"],
+        modifiedBy = snapShot.data["ModifiedBy"],
+        modifiedOn = snapShot.data["ModifiedOn"];
+
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
-      'enableSharingViaEmail': enableSharingViaEmail,
-      'enableSharingViaText': enableSharingViaText,
-      'churchId': churchId,
-      'phone': phone,
-      'status': status,
-      'createdBy': createdBy,
-      'createdOn': createdOn,
-      'modifiedBy': modifiedBy,
-      'modifiedOn': modifiedOn,
+      'UserId': userId,
+      'EnableSharingViaEmail': enableSharingViaEmail,
+      'EnableSharingViaText': enableSharingViaText,
+      'ChurchId': churchId,
+      'Phone': phone,
+      'Status': status,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
     };
   }
 }
