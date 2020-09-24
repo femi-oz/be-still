@@ -53,39 +53,40 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     if (!isInitialized) {
       isInitialized = true;
       setState(
         () {
-          prayers = activeList == PrayerActiveScreen.personal
-              ? prayerData
-                  .where((p) =>
-                      _userProvider.user.prayerList.contains(p.id) &&
-                      p.status == 'active')
-                  .toList()
-              : activeList == PrayerActiveScreen.archived
-                  ? prayerData
-                      .where((p) =>
-                          _userProvider.user.prayerList.contains(p.id) &&
-                          p.status == 'archived')
-                      .toList()
-                  : activeList == PrayerActiveScreen.answered
-                      ? prayerData
-                          .where((p) =>
-                              _userProvider.user.prayerList.contains(p.id) &&
-                              p.status == 'answered')
-                          .toList()
-                      : activeList == PrayerActiveScreen.group
-                          ? prayerData
-                              .where((p) => groupData
-                                  .singleWhere((g) => g.groupId == groupId)
-                                  .prayerList
-                                  .contains(p.id))
-                              .toList()
-                          : emptyList;
-          filteredprayers = prayers;
+          // TODO
+          // prayers = activeList == PrayerActiveScreen.personal
+          //     ? prayerData
+          //         .where((p) =>
+          //             _currentUser.prayerList.contains(p.id) &&
+          //             p.status == 'active')
+          //         .toList()
+          //     : activeList == PrayerActiveScreen.archived
+          //         ? prayerData
+          //             .where((p) =>
+          //                 _currentUser.prayerList.contains(p.id) &&
+          //                 p.status == 'archived')
+          //             .toList()
+          //         : activeList == PrayerActiveScreen.answered
+          //             ? prayerData
+          //                 .where((p) =>
+          //                     _currentUser.prayerList.contains(p.id) &&
+          //                     p.status == 'answered')
+          //                 .toList()
+          //             : activeList == PrayerActiveScreen.group
+          //                 ? prayerData
+          //                     .where((p) => groupData
+          //                         .singleWhere((g) => g.id == groupId)
+          //                         .prayerList
+          //                         .contains(p.id))
+          //                     .toList()
+          //                 : emptyList;
+          // filteredprayers = prayers;
         },
       );
     }

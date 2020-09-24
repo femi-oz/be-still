@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class SettingsModel {
   final String userId;
@@ -43,4 +44,55 @@ class SettingsModel {
       @required this.createdOn,
       @required this.modifiedBy,
       @required this.modifiedOn});
+
+  SettingsModel.fromData(DocumentSnapshot snapShot)
+      : userId = snapShot.documentID,
+        deviceId = snapShot.data['DeviceId'],
+        appearance = snapShot.data['Appearance'],
+        defaultSortBy = snapShot.data['DefaultSortBy'],
+        defaultSnoozeDuration = snapShot.data['DefaultSnoozeDuration'],
+        archiveAutoDelete = snapShot.data['ArchiveAutoDelete'],
+        includeAnsweredPrayerAutoDelete =
+            snapShot.data['IncludeAnsweredPrayerAutoDelete'],
+        allowPushNotification = snapShot.data['AllowPushNotification'],
+        allowTextNotification = snapShot.data['AllowTextNotification'],
+        emailUpdateFrequency = snapShot.data['EmailUpdateFrequency'],
+        emailUpdateNotification = snapShot.data['EmailUpdateNotification'],
+        notifyMeSomeonePostOnGroup =
+            snapShot.data['NotifyMeSomeonePostOnGroup'],
+        notifyMeSomeoneSharePrayerWithMe =
+            snapShot.data['NotifyMeSomeoneSharePrayerWithMe'],
+        allowPrayerTimeNotification =
+            snapShot.data['AllowPrayerTimeNotification'],
+        syncAlexa = snapShot.data['SyncAlexa'],
+        status = snapShot.data['Status'],
+        createdBy = snapShot.data['CreatedBy'],
+        createdOn = snapShot.data['CreatedOn'].toDate(),
+        modifiedBy = snapShot.data['ModifiedBy'],
+        modifiedOn = snapShot.data['ModifiedOn'].toDate();
+
+  Map<String, dynamic> toJSon() {
+    return {
+      'UserId': userId,
+      'DeviceId': deviceId,
+      'Appearance': appearance,
+      'DefaultSortBy': defaultSortBy,
+      'DefaultSnoozeDuration': defaultSnoozeDuration,
+      'ArchiveAutoDelete': archiveAutoDelete,
+      'IncludeAnsweredPrayerAutoDelete': includeAnsweredPrayerAutoDelete,
+      'AllowPushNotification': allowPushNotification,
+      'AllowTextNotification': allowTextNotification,
+      'EmailUpdateNotification': emailUpdateNotification,
+      'NotifyMeSomeonePostOnGroup': notifyMeSomeonePostOnGroup,
+      'NotifyMeSomeoneSharePrayerWithMe': notifyMeSomeoneSharePrayerWithMe,
+      'AllowPrayerTimeNotification': allowPrayerTimeNotification,
+      'SyncAlexa': syncAlexa,
+      'Status': status,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+      'EmailUpdateFrequency': emailUpdateFrequency,
+    };
+  }
 }

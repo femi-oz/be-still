@@ -11,11 +11,13 @@ class NoUpdateView extends StatelessWidget {
   @override
   NoUpdateView(this.prayer);
   Widget build(BuildContext context) {
-    final username = userData.singleWhere((u) => u.id == prayer.user).name;
-    final _userProvider = Provider.of<UserProvider>(context);
+    // TODO
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+    final username = currentUser.firstName;
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return Column(
       children: <Widget>[
-        prayer.user != _userProvider.user.id
+        prayer.user != _currentUser.id
             ? Container(
                 margin: EdgeInsets.only(bottom: 20),
                 child: Text(

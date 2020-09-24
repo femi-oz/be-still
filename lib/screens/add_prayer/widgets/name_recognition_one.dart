@@ -37,54 +37,55 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                ...userData.map(
-                  (user) => GestureDetector(
-                    onTap: () {
-                      setState(
-                        () {
-                          selectedOption = user.id;
-                        },
-                      );
-                    },
-                    child: Container(
-                      height: 50,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      width: double.infinity,
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: selectedOption == user.id
-                            ? context.toolsActiveBtn.withOpacity(0.3)
-                            : context.toolsActiveBtn.withOpacity(0.2),
-                        border: Border.all(
-                          color: context.toolsBtnBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            user.name.toUpperCase(),
-                            style: TextStyle(
-                              color: context.offWhite,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            'contacts'.toUpperCase(),
-                            style: TextStyle(
-                              color: context.offWhite,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                // TODO
+                // ...userData.map(
+                //   (user) => GestureDetector(
+                //     onTap: () {
+                //       setState(
+                //         () {
+                //           selectedOption = user.id;
+                //         },
+                //       );
+                //     },
+                //     child: Container(
+                //       height: 50,
+                //       padding: EdgeInsets.symmetric(horizontal: 20),
+                //       width: double.infinity,
+                //       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                //       decoration: BoxDecoration(
+                //         color: selectedOption == user.id
+                //             ? context.toolsActiveBtn.withOpacity(0.3)
+                //             : context.toolsActiveBtn.withOpacity(0.2),
+                //         border: Border.all(
+                //           color: context.toolsBtnBorder,
+                //           width: 1,
+                //         ),
+                //         borderRadius: BorderRadius.circular(10),
+                //       ),
+                //       child: Row(
+                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //         children: [
+                //           Text(
+                //             user.fullName.toUpperCase(),
+                //             style: TextStyle(
+                //               color: context.offWhite,
+                //               fontSize: 12,
+                //               fontWeight: FontWeight.w400,
+                //             ),
+                //           ),
+                //           Text(
+                //             'contacts'.toUpperCase(),
+                //             style: TextStyle(
+                //               color: context.offWhite,
+                //               fontSize: 12,
+                //               fontWeight: FontWeight.w400,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 GestureDetector(
                   onTap: () {
                     setState(

@@ -1,12 +1,10 @@
 import 'dart:async';
-
-import 'package:be_still/data/user.data.dart';
-
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
@@ -29,54 +27,86 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool _autoValidate = false;
 
   TextEditingController _date = new TextEditingController();
-  TextEditingController _fullnameController = new TextEditingController();
+  TextEditingController _firstnameController = new TextEditingController();
+  TextEditingController _lastnameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
   TextEditingController _confirmPasswordController =
       new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
+  DateTime _selectedDate;
+  bool _disableSubmit = true;
 
-  Map<String, String> _formData = {
-    'fullName': '',
-    'password': '',
-    'dob': '',
-    'email': '',
-  };
+  _selectDate(DateTime value) async {
+    setState(() {
+      _selectedDate = value;
+    });
+  }
 
-  void _createAccount() {
+  _agreeTerms(bool value) {
+    setState(() {
+      _disableSubmit = value;
+    });
+  }
+
+  _createAccount() async {
     setState(() {
       _autoValidate = true;
-      if (!_formKey.currentState.validate()) return;
+      if (!_formKey.currentState.validate()) return null;
       _formKey.currentState.save();
-      _formData['fullName'] = _fullnameController.text;
-      _formData['email'] = _emailController.text;
-      _formData['dob'] = _dobController.text;
-      _formData['password'] = _passwordController.text;
-      print(_formData);
-      step += 1;
     });
+    final UserModel _userData = UserModel(
+      churchId: 0,
+      createdBy: '',
+      createdOn: DateTime.now(),
+      dateOfBirth: _selectedDate,
+      email: _emailController.text,
+      firstName: _firstnameController.text,
+      keyReference: '',
+      lastName: _lastnameController.text,
+      modifiedBy: '',
+      modifiedOn: DateTime.now(),
+      phone: '',
+    );
+    final result = await Provider.of<AuthenticationProvider>(context,
+            listen: false)
+        .registerUser(password: _passwordController.text, userData: _userData);
+
+    if (result is bool) {
+      if (result == true) {
+        Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUserDetails();
+        step += 1;
+      }
+      return new Timer(
+        Duration(seconds: 2),
+        () => {
+          Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName)
+        },
+      );
+    } else {
+      showInSnackBar(result.toString());
+    }
+  }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(
+      new SnackBar(
+        backgroundColor: context.offWhite,
+        content: new Text(value),
+      ),
+    );
   }
 
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    _next() {
-      if (step == 2) {
-        var user = userData.singleWhere((user) => user.id == '1');
-        Provider.of<UserProvider>(context, listen: false).setCurrentUser(user);
-        return new Timer(
-          Duration(seconds: 2),
-          () => {
-            Provider.of<AuthProvider>(context, listen: false).login(),
-            Navigator.of(context).pushNamed(PrayerScreen.routeName)
-          },
-        );
-      }
-      return null;
-    }
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Container(
           height: double.infinity,
           decoration: BoxDecoration(
@@ -123,7 +153,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   dobController: _dobController,
                                   emailController: _emailController,
                                   formKey: _formKey,
-                                  fullnameController: _fullnameController,
+                                  firstnameController: _firstnameController,
+                                  lastnameController: _lastnameController,
+                                  selectDate: _selectDate,
+                                  agreeTerms: _agreeTerms,
                                 )
                               : CreateAccountSuccess(),
                         ),
@@ -133,8 +166,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           : Column(
                               children: <Widget>[
                                 InkWell(
-                                  onTap: () =>
-                                      {print(step), _createAccount(), _next()},
+                                  onTap: () => !_disableSubmit
+                                      ? showInSnackBar(
+                                          'Accepts Terms To Proceed')
+                                      : _createAccount(),
                                   child: Container(
                                     height: 50.0,
                                     width: double.infinity,
@@ -167,7 +202,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   onTap: () {
                                     Navigator.of(context).pop();
                                   },
-                                )
+                                ),
+                                SizedBox(height: 20.0),
                               ],
                             ),
                     ],

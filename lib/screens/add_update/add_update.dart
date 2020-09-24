@@ -16,8 +16,11 @@ class AddUpdate extends StatelessWidget {
   Widget build(BuildContext context) {
     final String prayerId = ModalRoute.of(context).settings.arguments;
     final prayer = prayerData.singleWhere((p) => p.id == prayerId);
-    final username = userData.singleWhere((u) => u.id == prayer.user).name;
-    final _userProvider = Provider.of<UserProvider>(context);
+
+    // TODO
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+    final username = currentUser.firstName;
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -100,7 +103,7 @@ class AddUpdate extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      prayer.user != _userProvider.user.id
+                      prayer.user != _currentUser.id
                           ? Container(
                               margin: EdgeInsets.only(bottom: 20),
                               child: Text(

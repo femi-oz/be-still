@@ -109,89 +109,89 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
       child: Container(
         child: Column(
           children: <Widget>[
-            ...bibleData
-                .map(
-                  (BibleModel bible) => Container(
-                    margin: EdgeInsets.symmetric(vertical: 10.0),
-                    child: custom.ExpansionTile(
-                      iconColor: context.brightBlue2,
-                      headerBackgroundColorStart: context.prayerMenuStart,
-                      headerBackgroundColorEnd: context.prayerMenuEnd,
-                      shadowColor: context.dropShadow,
-                      title: Container(
-                        margin: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width * 0.1),
-                        child: Text(
-                          bible.shortName,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: context.inputFieldText,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      initiallyExpanded: false,
-                      // onExpansionChanged: (bool isExpanded) {
-                      // },
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(bottom: 20),
-                          width: double.infinity,
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 20.0),
-                                child: Text(
-                                  bible.name,
-                                  style: TextStyle(
-                                    color: context.inputFieldText,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                bible.type,
-                                style: TextStyle(
-                                    color: context.prayerCardBorder,
-                                    fontSize: 10,
-                                    height: 1.5),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40.0, vertical: 20.0),
-                                child: Text(
-                                  bible.description,
-                                  style: TextStyle(
-                                    color: context.inputFieldText,
-                                    fontSize: 11,
-                                    height: 1.3,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              OutlineButton(
-                                disabledBorderColor: context.prayerCardBorder,
-                                borderSide:
-                                    BorderSide(color: context.prayerCardBorder),
-                                onPressed: () => _launchURL(bible.link),
-                                child: Text(
-                                  'READ NOW',
-                                  style: TextStyle(
-                                    color: context.brightBlue2,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.3,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
+            // ...bibleData
+            //     .map(
+            //       (BibleModel bible) => Container(
+            //         margin: EdgeInsets.symmetric(vertical: 10.0),
+            //         child: custom.ExpansionTile(
+            //           iconColor: context.brightBlue2,
+            //           headerBackgroundColorStart: context.prayerMenuStart,
+            //           headerBackgroundColorEnd: context.prayerMenuEnd,
+            //           shadowColor: context.dropShadow,
+            //           title: Container(
+            //             margin: EdgeInsets.only(
+            //                 left: MediaQuery.of(context).size.width * 0.1),
+            //             child: Text(
+            //               bible.shortName,
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                   color: context.inputFieldText,
+            //                   fontSize: 22,
+            //                   fontWeight: FontWeight.w500),
+            //             ),
+            //           ),
+            //           initiallyExpanded: false,
+            //           // onExpansionChanged: (bool isExpanded) {
+            //           // },
+            //           children: <Widget>[
+            //             Container(
+            //               padding: EdgeInsets.only(bottom: 20),
+            //               width: double.infinity,
+            //               child: Column(
+            //                 children: <Widget>[
+            //                   Padding(
+            //                     padding: const EdgeInsets.only(top: 20.0),
+            //                     child: Text(
+            //                       bible.name,
+            //                       style: TextStyle(
+            //                         color: context.inputFieldText,
+            //                         fontSize: 11,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   Text(
+            //                     bible.type,
+            //                     style: TextStyle(
+            //                         color: context.prayerCardBorder,
+            //                         fontSize: 10,
+            //                         height: 1.5),
+            //                   ),
+            //                   Padding(
+            //                     padding: const EdgeInsets.symmetric(
+            //                         horizontal: 40.0, vertical: 20.0),
+            //                     child: Text(
+            //                       bible.description,
+            //                       style: TextStyle(
+            //                         color: context.inputFieldText,
+            //                         fontSize: 11,
+            //                         height: 1.3,
+            //                       ),
+            //                       textAlign: TextAlign.center,
+            //                     ),
+            //                   ),
+            //                   OutlineButton(
+            //                     disabledBorderColor: context.prayerCardBorder,
+            //                     borderSide:
+            //                         BorderSide(color: context.prayerCardBorder),
+            //                     onPressed: () => _launchURL(bible.link),
+            //                     child: Text(
+            //                       'READ NOW',
+            //                       style: TextStyle(
+            //                         color: context.brightBlue2,
+            //                         fontSize: 14,
+            //                         fontWeight: FontWeight.w500,
+            //                         height: 1.3,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     )
+            //     .toList(),
           ],
         ),
       ),

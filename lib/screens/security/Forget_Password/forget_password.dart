@@ -1,13 +1,8 @@
 import 'dart:async';
-
-import 'package:be_still/data/user.data.dart';
-import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/step_three.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/step_two.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
 import 'package:flutter/material.dart';
 
@@ -70,8 +65,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
-    final _authProvider = Provider.of<AuthProvider>(context);
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -145,13 +138,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                     setState(() {
                                       _next();
                                       if (step == 4) {
-                                        var user = userData.singleWhere(
-                                            (user) => user.id == '1');
-                                        _userProvider.setCurrentUser(user);
                                         return new Timer(
                                           Duration(seconds: 5),
                                           () => {
-                                            _authProvider.login(),
+                                            // _authProvider.login(),
                                             Navigator.of(context).pushNamed(
                                                 PrayerScreen.routeName)
                                           },

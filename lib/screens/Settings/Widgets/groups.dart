@@ -54,7 +54,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        user.name.toUpperCase(),
+                        user.firstName.toUpperCase(), //TODO
                         style: TextStyle(
                             color: context.brightBlue,
                             fontSize: 14,
@@ -296,533 +296,534 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 40),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: context.dropShadow,
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
-              ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Preferences',
-              style: TextStyle(
-                  color: context.settingsHeader,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    'Enable notifications from Groups?',
-                    style: TextStyle(
-                        color: context.inputFieldText,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ),
-                Switch.adaptive(
-                  value: true,
-                  activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
-                  inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: <Widget>[
-              ...groupData
-                  .where((gl) => gl.members.contains(_userProvider.user.id))
-                  .map(
-                    (GroupModel group) => Container(
-                      margin: EdgeInsets.symmetric(vertical: 10.0),
-                      child: custom.ExpansionTile(
-                        iconColor: context.brightBlue2,
-                        headerBackgroundColorStart: context.prayerMenuStart,
-                        headerBackgroundColorEnd: context.prayerMenuEnd,
-                        shadowColor: context.dropShadow,
-                        title: Container(
-                          margin: EdgeInsets.only(
-                              left: MediaQuery.of(context).size.width * 0.1),
-                          child: Text(
-                            group.name,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: context.settingsHeader,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        initiallyExpanded: false,
-                        // onExpansionChanged: (bool isExpanded) {
-                        // },
-                        children: <Widget>[
-                          Container(
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0, vertical: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        'I am a',
-                                        style: TextStyle(
-                                            color: context.inputFieldText,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w300),
-                                      ),
-                                      Text(
-                                        group.admin == _userProvider.user.id
-                                            ? 'ADMIN'
-                                            : 'MEMBER',
-                                        style: TextStyle(
-                                            color: context.prayerMenuInactive,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      group.admin != _userProvider.user.id
-                                          ? Container()
-                                          : Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10.0),
-                                              child: Text(
-                                                'My Notifications',
-                                                style: TextStyle(
-                                                    color: context
-                                                        .prayerMenuInactive,
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ),
-                                      Expanded(
-                                        child: Divider(
-                                          color: context.prayerCardBorder,
-                                          thickness: 1,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.7,
-                                        child: Text(
-                                          'Enable notifications for New Prayers for this group?',
-                                          style: TextStyle(
-                                              color: context.inputFieldText,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300),
-                                        ),
-                                      ),
-                                      Switch.adaptive(
-                                        value: true,
-                                        activeColor: Colors.white,
-                                        activeTrackColor:
-                                            context.switchThumbActive,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.7,
-                                        child: Text(
-                                          'Enable notifications for Prayer Updates for this group?',
-                                          style: TextStyle(
-                                              color: context.inputFieldText,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300),
-                                        ),
-                                      ),
-                                      Switch.adaptive(
-                                        value: true,
-                                        activeColor: Colors.white,
-                                        activeTrackColor:
-                                            context.switchThumbActive,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                group.admin != _userProvider.user.id
-                                    ? Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.7,
-                                              child: Text(
-                                                'Notify me when new members joins this group',
-                                                style: TextStyle(
-                                                    color:
-                                                        context.inputFieldText,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ),
-                                            Switch.adaptive(
-                                              value: false,
-                                              activeColor: Colors.white,
-                                              activeTrackColor:
-                                                  context.switchThumbActive,
-                                              inactiveThumbColor: Colors.white,
-                                              onChanged: (_) {},
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : Container(),
-                                group.admin != _userProvider.user.id
-                                    ? Container()
-                                    : Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.7,
-                                              child: Text(
-                                                'Notify me of membership requests',
-                                                style: TextStyle(
-                                                    color:
-                                                        context.inputFieldText,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ),
-                                            Switch.adaptive(
-                                              value: false,
-                                              activeColor: Colors.white,
-                                              activeTrackColor:
-                                                  context.switchThumbActive,
-                                              inactiveThumbColor: Colors.white,
-                                              onChanged: (_) {},
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                group.admin != _userProvider.user.id
-                                    ? Container()
-                                    : Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.7,
-                                              child: Text(
-                                                'Notify me of flagged prayers',
-                                                style: TextStyle(
-                                                    color:
-                                                        context.inputFieldText,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ),
-                                            Switch.adaptive(
-                                              value: false,
-                                              activeColor: Colors.white,
-                                              activeTrackColor:
-                                                  context.switchThumbActive,
-                                              inactiveThumbColor: Colors.white,
-                                              onChanged: (_) {},
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                group.admin != _userProvider.user.id
-                                    ? Container()
-                                    : Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0, vertical: 10.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10.0),
-                                              child: Text(
-                                                'Invite',
-                                                style: TextStyle(
-                                                    color: context
-                                                        .prayerMenuInactive,
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Divider(
-                                                color: context.prayerCardBorder,
-                                                thickness: 1,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                group.admin != _userProvider.user.id
-                                    ? Container()
-                                    : Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: GestureDetector(
-                                          onTap: null,
-                                          child: Text(
-                                            'Send an invite to join group',
-                                            style: TextStyle(
-                                                color: context.brightBlue,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      ),
-                                group.admin != _userProvider.user.id
-                                    ? Container()
-                                    : Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 80.0),
-                                        child: custom.ExpansionTile(
-                                          iconColor: context.brightBlue2,
-                                          headerBackgroundColorStart:
-                                              Colors.transparent,
-                                          headerBackgroundColorEnd:
-                                              Colors.transparent,
-                                          shadowColor: Colors.transparent,
-                                          title: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10.0),
-                                            child: Row(
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 10.0),
-                                                  child: Text(
-                                                    'Members | ${group.members.length}',
-                                                    style: TextStyle(
-                                                        color: context
-                                                            .prayerMenuInactive,
-                                                        fontSize: 10,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Divider(
-                                                    color: context
-                                                        .prayerCardBorder,
-                                                    thickness: 1,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          initiallyExpanded: false,
-                                          // onExpansionChanged: (bool isExpanded) {
-                                          // },
-                                          children: <Widget>[
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20.0),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  ...group.members.map(
-                                                    (id) => GestureDetector(
-                                                      onTap: () => _showAlert(
-                                                          userData.singleWhere(
-                                                              (user) =>
-                                                                  user.id ==
-                                                                  id)),
-                                                      child: Container(
-                                                        margin: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 5.0),
-                                                        padding: EdgeInsets.all(
-                                                            15.0),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: context
-                                                              .inputFieldBg,
-                                                          border: Border.all(
-                                                            color: context
-                                                                .prayerCardBorder,
-                                                            width: 1,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: <Widget>[
-                                                            Text(
-                                                              userData
-                                                                  .singleWhere(
-                                                                      (user) =>
-                                                                          user.id ==
-                                                                          id)
-                                                                  .name
-                                                                  .toUpperCase(),
-                                                              style: TextStyle(
-                                                                  color: context
-                                                                      .brightBlue,
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w300),
-                                                            ),
-                                                            Text(
-                                                              group.moderators
-                                                                      .contains(
-                                                                          id)
-                                                                  ? 'MODERATOR'
-                                                                  : 'MEMBER'
-                                                                      .toUpperCase(),
-                                                              style: TextStyle(
-                                                                  color: context
-                                                                      .prayerMenuInactive,
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w300),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 5.0, horizontal: 20.0),
-                                  width: double.infinity,
-                                  child: OutlineButton(
-                                    child: Text(
-                                      'LEAVE',
-                                      style: TextStyle(
-                                          color: context.prayerCardTags,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    borderSide: BorderSide(
-                                        color: context.prayerCardTags),
-                                    onPressed: () => print(''),
-                                  ),
-                                ),
-                                group.admin != _userProvider.user.id
-                                    ? Container()
-                                    : Container(
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 5.0, horizontal: 20.0),
-                                        width: double.infinity,
-                                        child: OutlineButton(
-                                          child: Text(
-                                            'DELETE',
-                                            style: TextStyle(
-                                                color: context.prayerCardTags,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          borderSide: BorderSide(
-                                              color: context.prayerCardTags),
-                                          onPressed: () => print(''),
-                                        ),
-                                      ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ],
-          ),
-        ],
-      ),
-    );
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    // TODO
+    // return SingleChildScrollView(
+    //   child: Column(
+    //     children: <Widget>[
+    //       Container(
+    //         margin: EdgeInsets.symmetric(vertical: 40),
+    //         width: double.infinity,
+    //         decoration: BoxDecoration(
+    //           boxShadow: [
+    //             BoxShadow(
+    //               color: context.dropShadow,
+    //               offset: Offset(0.0, 1.0),
+    //               blurRadius: 6.0,
+    //             ),
+    //           ],
+    //           gradient: LinearGradient(
+    //             begin: Alignment.centerLeft,
+    //             end: Alignment.centerRight,
+    //             colors: [
+    //               context.prayerMenuStart,
+    //               context.prayerMenuEnd,
+    //             ],
+    //           ),
+    //         ),
+    //         padding: EdgeInsets.all(10),
+    //         child: Text(
+    //           'Preferences',
+    //           style: TextStyle(
+    //               color: context.settingsHeader,
+    //               fontSize: 22,
+    //               fontWeight: FontWeight.w700),
+    //           textAlign: TextAlign.center,
+    //         ),
+    //       ),
+    //       Container(
+    //         padding: EdgeInsets.only(left: 20.0, right: 20.0),
+    //         child: Row(
+    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //           children: <Widget>[
+    //             Container(
+    //               width: MediaQuery.of(context).size.width * 0.7,
+    //               child: Text(
+    //                 'Enable notifications from Groups?',
+    //                 style: TextStyle(
+    //                     color: context.inputFieldText,
+    //                     fontSize: 12,
+    //                     fontWeight: FontWeight.w300),
+    //               ),
+    //             ),
+    //             Switch.adaptive(
+    //               value: true,
+    //               activeColor: Colors.white,
+    //               activeTrackColor: context.switchThumbActive,
+    //               inactiveThumbColor: Colors.white,
+    //               onChanged: (_) {},
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //       Column(
+    //         children: <Widget>[
+    //           ...groupData
+    //               .where((gl) => gl.members.contains(_currentUser.id))
+    //               .map(
+    //                 (GroupModel group) => Container(
+    //                   margin: EdgeInsets.symmetric(vertical: 10.0),
+    //                   child: custom.ExpansionTile(
+    //                     iconColor: context.brightBlue2,
+    //                     headerBackgroundColorStart: context.prayerMenuStart,
+    //                     headerBackgroundColorEnd: context.prayerMenuEnd,
+    //                     shadowColor: context.dropShadow,
+    //                     title: Container(
+    //                       margin: EdgeInsets.only(
+    //                           left: MediaQuery.of(context).size.width * 0.1),
+    //                       child: Text(
+    //                         group.name,
+    //                         textAlign: TextAlign.center,
+    //                         style: TextStyle(
+    //                             color: context.settingsHeader,
+    //                             fontSize: 22,
+    //                             fontWeight: FontWeight.w500),
+    //                       ),
+    //                     ),
+    //                     initiallyExpanded: false,
+    //                     // onExpansionChanged: (bool isExpanded) {
+    //                     // },
+    //                     children: <Widget>[
+    //                       Container(
+    //                         child: Column(
+    //                           children: <Widget>[
+    //                             Padding(
+    //                               padding: const EdgeInsets.symmetric(
+    //                                   horizontal: 20.0, vertical: 20.0),
+    //                               child: Row(
+    //                                 mainAxisAlignment:
+    //                                     MainAxisAlignment.spaceBetween,
+    //                                 children: <Widget>[
+    //                                   Text(
+    //                                     'I am a',
+    //                                     style: TextStyle(
+    //                                         color: context.inputFieldText,
+    //                                         fontSize: 12,
+    //                                         fontWeight: FontWeight.w300),
+    //                                   ),
+    //                                   Text(
+    //                                     group.admin == _currentUser.id
+    //                                         ? 'ADMIN'
+    //                                         : 'MEMBER',
+    //                                     style: TextStyle(
+    //                                         color: context.prayerMenuInactive,
+    //                                         fontSize: 20,
+    //                                         fontWeight: FontWeight.w500),
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                             Padding(
+    //                               padding: const EdgeInsets.symmetric(
+    //                                   horizontal: 20.0),
+    //                               child: Row(
+    //                                 children: <Widget>[
+    //                                   group.admin != _currentUser.id
+    //                                       ? Container()
+    //                                       : Padding(
+    //                                           padding: const EdgeInsets.only(
+    //                                               right: 10.0),
+    //                                           child: Text(
+    //                                             'My Notifications',
+    //                                             style: TextStyle(
+    //                                                 color: context
+    //                                                     .prayerMenuInactive,
+    //                                                 fontSize: 10,
+    //                                                 fontWeight:
+    //                                                     FontWeight.w300),
+    //                                           ),
+    //                                         ),
+    //                                   Expanded(
+    //                                     child: Divider(
+    //                                       color: context.prayerCardBorder,
+    //                                       thickness: 1,
+    //                                     ),
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                             Container(
+    //                               padding: const EdgeInsets.symmetric(
+    //                                   horizontal: 20.0),
+    //                               child: Row(
+    //                                 mainAxisAlignment:
+    //                                     MainAxisAlignment.spaceBetween,
+    //                                 children: <Widget>[
+    //                                   Container(
+    //                                     width:
+    //                                         MediaQuery.of(context).size.width *
+    //                                             0.7,
+    //                                     child: Text(
+    //                                       'Enable notifications for New Prayers for this group?',
+    //                                       style: TextStyle(
+    //                                           color: context.inputFieldText,
+    //                                           fontSize: 12,
+    //                                           fontWeight: FontWeight.w300),
+    //                                     ),
+    //                                   ),
+    //                                   Switch.adaptive(
+    //                                     value: true,
+    //                                     activeColor: Colors.white,
+    //                                     activeTrackColor:
+    //                                         context.switchThumbActive,
+    //                                     inactiveThumbColor: Colors.white,
+    //                                     onChanged: (_) {},
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                             Container(
+    //                               padding: const EdgeInsets.symmetric(
+    //                                   horizontal: 20.0),
+    //                               child: Row(
+    //                                 mainAxisAlignment:
+    //                                     MainAxisAlignment.spaceBetween,
+    //                                 children: <Widget>[
+    //                                   Container(
+    //                                     width:
+    //                                         MediaQuery.of(context).size.width *
+    //                                             0.7,
+    //                                     child: Text(
+    //                                       'Enable notifications for Prayer Updates for this group?',
+    //                                       style: TextStyle(
+    //                                           color: context.inputFieldText,
+    //                                           fontSize: 12,
+    //                                           fontWeight: FontWeight.w300),
+    //                                     ),
+    //                                   ),
+    //                                   Switch.adaptive(
+    //                                     value: true,
+    //                                     activeColor: Colors.white,
+    //                                     activeTrackColor:
+    //                                         context.switchThumbActive,
+    //                                     inactiveThumbColor: Colors.white,
+    //                                     onChanged: (_) {},
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container(
+    //                                     padding: const EdgeInsets.symmetric(
+    //                                         horizontal: 20.0),
+    //                                     child: Row(
+    //                                       mainAxisAlignment:
+    //                                           MainAxisAlignment.spaceBetween,
+    //                                       children: <Widget>[
+    //                                         Container(
+    //                                           width: MediaQuery.of(context)
+    //                                                   .size
+    //                                                   .width *
+    //                                               0.7,
+    //                                           child: Text(
+    //                                             'Notify me when new members joins this group',
+    //                                             style: TextStyle(
+    //                                                 color:
+    //                                                     context.inputFieldText,
+    //                                                 fontSize: 12,
+    //                                                 fontWeight:
+    //                                                     FontWeight.w300),
+    //                                           ),
+    //                                         ),
+    //                                         Switch.adaptive(
+    //                                           value: false,
+    //                                           activeColor: Colors.white,
+    //                                           activeTrackColor:
+    //                                               context.switchThumbActive,
+    //                                           inactiveThumbColor: Colors.white,
+    //                                           onChanged: (_) {},
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   )
+    //                                 : Container(),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container()
+    //                                 : Container(
+    //                                     padding: const EdgeInsets.symmetric(
+    //                                         horizontal: 20.0),
+    //                                     child: Row(
+    //                                       mainAxisAlignment:
+    //                                           MainAxisAlignment.spaceBetween,
+    //                                       children: <Widget>[
+    //                                         Container(
+    //                                           width: MediaQuery.of(context)
+    //                                                   .size
+    //                                                   .width *
+    //                                               0.7,
+    //                                           child: Text(
+    //                                             'Notify me of membership requests',
+    //                                             style: TextStyle(
+    //                                                 color:
+    //                                                     context.inputFieldText,
+    //                                                 fontSize: 12,
+    //                                                 fontWeight:
+    //                                                     FontWeight.w300),
+    //                                           ),
+    //                                         ),
+    //                                         Switch.adaptive(
+    //                                           value: false,
+    //                                           activeColor: Colors.white,
+    //                                           activeTrackColor:
+    //                                               context.switchThumbActive,
+    //                                           inactiveThumbColor: Colors.white,
+    //                                           onChanged: (_) {},
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   ),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container()
+    //                                 : Container(
+    //                                     padding: const EdgeInsets.symmetric(
+    //                                         horizontal: 20.0),
+    //                                     child: Row(
+    //                                       mainAxisAlignment:
+    //                                           MainAxisAlignment.spaceBetween,
+    //                                       children: <Widget>[
+    //                                         Container(
+    //                                           width: MediaQuery.of(context)
+    //                                                   .size
+    //                                                   .width *
+    //                                               0.7,
+    //                                           child: Text(
+    //                                             'Notify me of flagged prayers',
+    //                                             style: TextStyle(
+    //                                                 color:
+    //                                                     context.inputFieldText,
+    //                                                 fontSize: 12,
+    //                                                 fontWeight:
+    //                                                     FontWeight.w300),
+    //                                           ),
+    //                                         ),
+    //                                         Switch.adaptive(
+    //                                           value: false,
+    //                                           activeColor: Colors.white,
+    //                                           activeTrackColor:
+    //                                               context.switchThumbActive,
+    //                                           inactiveThumbColor: Colors.white,
+    //                                           onChanged: (_) {},
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   ),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container()
+    //                                 : Padding(
+    //                                     padding: const EdgeInsets.symmetric(
+    //                                         horizontal: 20.0, vertical: 10.0),
+    //                                     child: Row(
+    //                                       children: <Widget>[
+    //                                         Padding(
+    //                                           padding: const EdgeInsets.only(
+    //                                               right: 10.0),
+    //                                           child: Text(
+    //                                             'Invite',
+    //                                             style: TextStyle(
+    //                                                 color: context
+    //                                                     .prayerMenuInactive,
+    //                                                 fontSize: 10,
+    //                                                 fontWeight:
+    //                                                     FontWeight.w300),
+    //                                           ),
+    //                                         ),
+    //                                         Expanded(
+    //                                           child: Divider(
+    //                                             color: context.prayerCardBorder,
+    //                                             thickness: 1,
+    //                                           ),
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   ),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container()
+    //                                 : Container(
+    //                                     padding: const EdgeInsets.symmetric(
+    //                                         horizontal: 20.0),
+    //                                     child: GestureDetector(
+    //                                       onTap: null,
+    //                                       child: Text(
+    //                                         'Send an invite to join group',
+    //                                         style: TextStyle(
+    //                                             color: context.brightBlue,
+    //                                             fontSize: 14,
+    //                                             fontWeight: FontWeight.w400),
+    //                                       ),
+    //                                     ),
+    //                                   ),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container()
+    //                                 : Padding(
+    //                                     padding:
+    //                                         const EdgeInsets.only(bottom: 80.0),
+    //                                     child: custom.ExpansionTile(
+    //                                       iconColor: context.brightBlue2,
+    //                                       headerBackgroundColorStart:
+    //                                           Colors.transparent,
+    //                                       headerBackgroundColorEnd:
+    //                                           Colors.transparent,
+    //                                       shadowColor: Colors.transparent,
+    //                                       title: Padding(
+    //                                         padding: const EdgeInsets.symmetric(
+    //                                             vertical: 10.0),
+    //                                         child: Row(
+    //                                           children: <Widget>[
+    //                                             Padding(
+    //                                               padding:
+    //                                                   const EdgeInsets.only(
+    //                                                       right: 10.0),
+    //                                               child: Text(
+    //                                                 'Members | ${group.members.length}',
+    //                                                 style: TextStyle(
+    //                                                     color: context
+    //                                                         .prayerMenuInactive,
+    //                                                     fontSize: 10,
+    //                                                     fontWeight:
+    //                                                         FontWeight.w300),
+    //                                               ),
+    //                                             ),
+    //                                             Expanded(
+    //                                               child: Divider(
+    //                                                 color: context
+    //                                                     .prayerCardBorder,
+    //                                                 thickness: 1,
+    //                                               ),
+    //                                             ),
+    //                                           ],
+    //                                         ),
+    //                                       ),
+    //                                       initiallyExpanded: false,
+    //                                       // onExpansionChanged: (bool isExpanded) {
+    //                                       // },
+    //                                       children: <Widget>[
+    //                                         Padding(
+    //                                           padding:
+    //                                               const EdgeInsets.symmetric(
+    //                                                   horizontal: 20.0),
+    //                                           child: Column(
+    //                                             children: <Widget>[
+    //                                               ...group.members.map(
+    //                                                 (id) => GestureDetector(
+    //                                                   onTap: () => _showAlert(
+    //                                                       userData.singleWhere(
+    //                                                           (user) =>
+    //                                                               user.id ==
+    //                                                               id)),
+    //                                                   child: Container(
+    //                                                     margin: EdgeInsets
+    //                                                         .symmetric(
+    //                                                             vertical: 5.0),
+    //                                                     padding: EdgeInsets.all(
+    //                                                         15.0),
+    //                                                     decoration:
+    //                                                         BoxDecoration(
+    //                                                       color: context
+    //                                                           .inputFieldBg,
+    //                                                       border: Border.all(
+    //                                                         color: context
+    //                                                             .prayerCardBorder,
+    //                                                         width: 1,
+    //                                                       ),
+    //                                                       borderRadius:
+    //                                                           BorderRadius
+    //                                                               .circular(10),
+    //                                                     ),
+    //                                                     child: Row(
+    //                                                       mainAxisAlignment:
+    //                                                           MainAxisAlignment
+    //                                                               .spaceBetween,
+    //                                                       children: <Widget>[
+    //                                                         Text(
+    //                                                           userData
+    //                                                               .singleWhere(
+    //                                                                   (user) =>
+    //                                                                       user.id ==
+    //                                                                       id)
+    //                                                               .fullName
+    //                                                               .toUpperCase(),
+    //                                                           style: TextStyle(
+    //                                                               color: context
+    //                                                                   .brightBlue,
+    //                                                               fontSize: 12,
+    //                                                               fontWeight:
+    //                                                                   FontWeight
+    //                                                                       .w300),
+    //                                                         ),
+    //                                                         Text(
+    //                                                           group.moderators
+    //                                                                   .contains(
+    //                                                                       id)
+    //                                                               ? 'MODERATOR'
+    //                                                               : 'MEMBER'
+    //                                                                   .toUpperCase(),
+    //                                                           style: TextStyle(
+    //                                                               color: context
+    //                                                                   .prayerMenuInactive,
+    //                                                               fontSize: 12,
+    //                                                               fontWeight:
+    //                                                                   FontWeight
+    //                                                                       .w300),
+    //                                                         ),
+    //                                                       ],
+    //                                                     ),
+    //                                                   ),
+    //                                                 ),
+    //                                               ),
+    //                                             ],
+    //                                           ),
+    //                                         ),
+    //                                       ],
+    //                                     ),
+    //                                   ),
+    //                             Container(
+    //                               margin: EdgeInsets.symmetric(
+    //                                   vertical: 5.0, horizontal: 20.0),
+    //                               width: double.infinity,
+    //                               child: OutlineButton(
+    //                                 child: Text(
+    //                                   'LEAVE',
+    //                                   style: TextStyle(
+    //                                       color: context.prayerCardTags,
+    //                                       fontSize: 16,
+    //                                       fontWeight: FontWeight.w500),
+    //                                 ),
+    //                                 borderSide: BorderSide(
+    //                                     color: context.prayerCardTags),
+    //                                 onPressed: () => print(''),
+    //                               ),
+    //                             ),
+    //                             group.admin != _currentUser.id
+    //                                 ? Container()
+    //                                 : Container(
+    //                                     margin: EdgeInsets.symmetric(
+    //                                         vertical: 5.0, horizontal: 20.0),
+    //                                     width: double.infinity,
+    //                                     child: OutlineButton(
+    //                                       child: Text(
+    //                                         'DELETE',
+    //                                         style: TextStyle(
+    //                                             color: context.prayerCardTags,
+    //                                             fontSize: 16,
+    //                                             fontWeight: FontWeight.w500),
+    //                                       ),
+    //                                       borderSide: BorderSide(
+    //                                           color: context.prayerCardTags),
+    //                                       onPressed: () => print(''),
+    //                                     ),
+    //                                   ),
+    //                           ],
+    //                         ),
+    //                       )
+    //                     ],
+    //                   ),
+    //                 ),
+    //               )
+    //               .toList(),
+    //         ],
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }

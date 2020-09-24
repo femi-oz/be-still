@@ -25,47 +25,42 @@ class _LoginScreenState extends State<LoginScreen>
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  _authenticate() async {
+    final _authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    setState(() {
+      _autoValidate = true;
+    });
+    if (!_formKey.currentState.validate()) return;
+    _formKey.currentState.save();
+
+    final result = await _authProvider.login(
+        context: context,
+        email: _usernameController.text,
+        password: _passwordController.text);
+    if (result is bool) {
+      if (result == true) {
+        Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUserDetails();
+        Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      }
+    } else {
+      showInSnackBar(result.toString());
+    }
+  }
+
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(
+      new SnackBar(
+        backgroundColor: context.offWhite,
+        content: new Text(value),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _authProvider = Provider.of<AuthProvider>(context);
-    final _userProvider = Provider.of<UserProvider>(context);
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    _authenticate() {
-      setState(() {
-        _autoValidate = true;
-      });
-      if (_formKey.currentState.validate()) {
-        _formKey.currentState.save();
-        if ((userData.singleWhere(
-                (user) => user.username == _usernameController.text,
-                orElse: () => null)) !=
-            null) {
-          var user = userData
-              .singleWhere((user) => user.username == _usernameController.text);
-          if (user.password == _passwordController.text) {
-            _userProvider.setCurrentUser(user);
-            _authProvider.login();
-            Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
-          } else {
-            _scaffoldKey.currentState.showSnackBar(
-              new SnackBar(
-                backgroundColor: context.brightBlue2,
-                content: new Text('Password doesn\'t match'),
-              ),
-            );
-          }
-        } else {
-          _scaffoldKey.currentState.showSnackBar(
-            new SnackBar(
-              backgroundColor: context.brightBlue2,
-              content: new Text('User doesn\'t exist!'),
-            ),
-          );
-        }
-      }
-    }
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(

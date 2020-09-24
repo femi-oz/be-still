@@ -32,7 +32,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   bool searchMode = false;
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     openTools() {
       showModalBottomSheet(
         context: context,
@@ -132,24 +132,24 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           }),
                           openTools: () => openTools(),
                         ),
-                        ...groupData
-                            .where((gl) =>
-                                gl.members.contains(_userProvider.user.id))
-                            .map(
-                              (g) => Row(children: [
-                                PrayerMenuItem(
-                                  title: g.name,
-                                  isActive: widget.activeList ==
-                                          PrayerActiveScreen.group &&
-                                      widget.groupId == g.groupId,
-                                  action: () => setState(() {
-                                    widget.setCurrentList(
-                                        PrayerActiveScreen.group, g.groupId);
-                                  }),
-                                  openTools: () => openTools(),
-                                ),
-                              ]),
-                            ),
+                        // TODO
+                        // ...groupData
+                        //     .where((gl) => gl.members.contains(_currentUser.id))
+                        //     .map(
+                        //       (g) => Row(children: [
+                        //         PrayerMenuItem(
+                        //           title: g.name,
+                        //           isActive: widget.activeList ==
+                        //                   PrayerActiveScreen.group &&
+                        //               widget.groupId == g.id,
+                        //           action: () => setState(() {
+                        //             widget.setCurrentList(
+                        //                 PrayerActiveScreen.group, g.id);
+                        //           }),
+                        //           openTools: () => openTools(),
+                        //         ),
+                        //       ]),
+                        //     ),
                         PrayerMenuItem(
                           title: 'Archived',
                           isActive:

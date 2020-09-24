@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class SharingSettingsModel {
   final String userId;
@@ -23,4 +23,19 @@ class SharingSettingsModel {
       @required this.createdOn,
       @required this.modifiedBy,
       @required this.modifiedOn});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'enableSharingViaEmail': enableSharingViaEmail,
+      'enableSharingViaText': enableSharingViaText,
+      'churchId': churchId,
+      'phone': phone,
+      'status': status,
+      'createdBy': createdBy,
+      'createdOn': createdOn,
+      'modifiedBy': modifiedBy,
+      'modifiedOn': modifiedOn,
+    };
+  }
 }

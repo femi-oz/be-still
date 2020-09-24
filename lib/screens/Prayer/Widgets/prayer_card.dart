@@ -21,7 +21,7 @@ class PrayerCard extends StatelessWidget {
   PrayerCard(this.prayer, this.groupId, this.activeList);
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
         var y = details.globalPosition.dy;
@@ -31,7 +31,7 @@ class PrayerCard extends StatelessWidget {
           backgroundColor: context.prayerMenuStart.withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return (prayer.user != _userProvider.user.id &&
+            return (prayer.user != _currentUser.id &&
                     activeList != PrayerActiveScreen.personal)
                 ? GroupPrayerQuickAccess(y: y, prayer: prayer)
                 : PrayerQuickAccess(y: y, prayer: prayer);
@@ -78,12 +78,13 @@ class PrayerCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            prayer.user != _userProvider.user.id
+                            prayer.user != _currentUser.id
                                 ? Text(
-                                    userData
-                                        .singleWhere((u) => u.id == prayer.user)
-                                        .name
-                                        .toUpperCase(),
+                                    'TODO',
+                                    // userData
+                                    //     .singleWhere((u) => u.id == prayer.user)
+                                    //     .fullName
+                                    //     .toUpperCase(),
                                     style: TextStyle(
                                       color: context.brightBlue,
                                       fontWeight: FontWeight.w500,

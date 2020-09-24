@@ -9,7 +9,7 @@ class GeneralSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    final _userProvider = Provider.of<UserProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(
@@ -27,14 +27,14 @@ class GeneralSettings extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    _userProvider.user.name,
+                    _currentUser.firstName, //TODO
                     style: TextStyle(
                         color: context.settingsUsername,
                         fontSize: 28,
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    DateFormat('MM/dd/yyyy').format(_userProvider.user.dob),
+                    DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
                     style: TextStyle(
                         color: context.settingsUsername.withOpacity(0.9),
                         fontSize: 12,
@@ -63,7 +63,7 @@ class GeneralSettings extends StatelessWidget {
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
-                        _userProvider.user.email,
+                        _currentUser.email,
                         style: TextStyle(
                             color: context.inputFieldText,
                             fontSize: 10,

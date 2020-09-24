@@ -1,19 +1,29 @@
+import 'package:be_still/locator.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class AuthProvider with ChangeNotifier {
-  bool _isAuthenticated = false;
+class AuthenticationProvider with ChangeNotifier {
+  AuthenticationService _authService = locator<AuthenticationService>();
 
-  bool get isAuthenticated {
-    return _isAuthenticated;
+  login({String email, String password, BuildContext context}) async {
+    return await _authService.signIn(email: email, password: password);
   }
 
-  void login() {
-    _isAuthenticated = true;
-    notifyListeners();
+  registerUser({String password, UserModel userData}) async {
+    return await _authService.registerUser(
+        password: password, userData: userData);
   }
 
-  void logout() {
-    _isAuthenticated = false;
-    notifyListeners();
+  forgotPassword({String email}) async {
+    return await _authService.forgotPassword(email);
+  }
+
+  void logout() async {
+    await _authService.signOut();
+  }
+
+  Future<bool> handleStartUpLogic() async {
+    return await _authService.isUserLoggedIn();
   }
 }

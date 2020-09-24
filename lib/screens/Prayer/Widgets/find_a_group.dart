@@ -16,12 +16,13 @@ class _FindAGroupState extends State<FindAGroup> {
   String searchText = '';
   List<GroupModel> filteredGroups = [];
   void onTextchanged(String value) {
-    setState(() {
-      searchText = _searchController.text;
-      filteredGroups = groupData
-          .where((p) => p.name.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-    });
+    // TODO
+    // setState(() {
+    //   searchText = _searchController.text;
+    //   filteredGroups = groupData
+    //       .where((p) => p.name.toLowerCase().contains(value.toLowerCase()))
+    //       .toList();
+    // });
   }
 
   @override
