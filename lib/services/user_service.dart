@@ -84,7 +84,10 @@ class UserService {
     return userDevice;
   }
 
-  Future addUserData(UserModel userData, String authUid) async {
+  Future addUserData(
+    UserModel userData,
+    String authUid,
+  ) async {
     // Generate uuid
     final deviceID = Uuid().v1();
     final userID = Uuid().v1();

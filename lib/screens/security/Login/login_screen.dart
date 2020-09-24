@@ -31,13 +31,17 @@ class _LoginScreenState extends State<LoginScreen>
     setState(() {
       _autoValidate = true;
     });
-    if (!_formKey.currentState.validate()) return;
+    if (!_formKey.currentState.validate()) {
+      showInSnackBar('All fields are required');
+      return;
+    }
     _formKey.currentState.save();
 
     final result = await _authProvider.login(
-        context: context,
-        email: _usernameController.text,
-        password: _passwordController.text);
+      context: context,
+      email: _usernameController.text,
+      password: _passwordController.text,
+    );
     if (result is bool) {
       if (result == true) {
         Provider.of<UserProvider>(context, listen: false)
