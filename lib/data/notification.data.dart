@@ -1,4 +1,4 @@
-import 'package:be_still/models/notifictaion.model.dart';
+import 'package:be_still/models/notification.model.dart';
 
 final List<NotificationModel> notificationData = [
   NotificationModel(
