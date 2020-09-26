@@ -19,16 +19,22 @@ class PrayerMenu extends StatefulWidget {
 
   final groupId;
   final onTextchanged;
+  final searchController;
+  final clearSearchField;
 
   @override
-  PrayerMenu(
-      {this.setCurrentList, this.activeList, this.groupId, this.onTextchanged});
+  PrayerMenu({
+    this.setCurrentList,
+    this.activeList,
+    this.groupId,
+    this.onTextchanged,
+    this.searchController,
+    this.clearSearchField,
+  });
   _PrayerMenuState createState() => _PrayerMenuState();
 }
 
 class _PrayerMenuState extends State<PrayerMenu> {
-  final TextEditingController _searchController = TextEditingController();
-
   bool searchMode = false;
   @override
   Widget build(BuildContext context) {
@@ -93,7 +99,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.7,
                       child: CustomInput(
-                        controller: _searchController,
+                        controller: widget.searchController,
                         label: 'Search',
                         padding: 5.0,
                         showSuffix: false,
@@ -108,8 +114,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         size: 25,
                       ),
                       onPressed: () => setState(
-                        () => {
-                          searchMode = !searchMode,
+                        () {
+                          widget.clearSearchField();
+                          searchMode = !searchMode;
                         },
                       ),
                     )

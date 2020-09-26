@@ -26,17 +26,25 @@ class _PrayerScreenState extends State<PrayerScreen> {
   var groupId;
   List<PrayerModel> filteredprayers = [];
 
+  final TextEditingController _searchController = TextEditingController();
   void _onTextchanged(String value) {
-    print(value);
-    // setState(() {
-    //   filteredprayers = prayers
-    //       .where((p) => p.content.toLowerCase().contains(value.toLowerCase()))
-    //       .toList();
-    // });
+    setState(() {
+      filteredprayers = screenPrayers
+          .where(
+              (p) => p.description.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+      print('--------------$filteredprayers');
+    });
+  }
+
+  void _clearSearchField() {
+    _searchController.text = '';
+    filteredprayers = screenPrayers;
   }
 
   _setCurrentList(_activeList, _groupId) {
     setState(() {
+      _clearSearchField();
       activeList = _activeList;
       groupId = _groupId;
     });
@@ -91,12 +99,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
           prayerList = prayersRes;
           archivedPrayerList = archivedPrayersRes;
           answeredPrayerList = answeredPrayersRes;
-          screenPrayers = activeList == PrayerActiveScreen.archived
-              ? archivedPrayerList
-              : activeList == PrayerActiveScreen.answered
-                  ? answeredPrayerList
-                  : activeList == PrayerActiveScreen.personal ? prayerList : [];
-          print(screenPrayers);
+
           return screenPrayers;
         },
       );
@@ -105,47 +108,20 @@ class _PrayerScreenState extends State<PrayerScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    // final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    screenPrayers = activeList == PrayerActiveScreen.archived
+        ? archivedPrayerList
+        : activeList == PrayerActiveScreen.answered
+            ? answeredPrayerList
+            : activeList == PrayerActiveScreen.personal ? prayerList : [];
+    setState(() {
+      filteredprayers = screenPrayers
+          .where((e) => e.description
+              .toLowerCase()
+              .contains(_searchController.text.toLowerCase()))
+          .toList();
+    });
 
-    //TODO
-    // if (!isInitialized) {
-    //   isInitialized = true;
-    //   setState(
-    //     () {
-    //       // TODO
-    //       print(activeList);
-    //       List<PrayerModel> screenPrayers = [];
-    //       // prayers = activeList == PrayerActiveScreen.personal
-    //       //     ? prayerData
-    //       //         .where((p) =>
-    //       //             _currentUser.prayerList.contains(p.id) &&
-    //       //             p.status == 'active')
-    //       //         .toList()
-    //       //     : activeList == PrayerActiveScreen.archived
-    //       //         ? prayerData
-    //       //             .where((p) =>
-    //       //                 _currentUser.prayerList.contains(p.id) &&
-    //       //                 p.status == 'archived')
-    //       //             .toList()
-    //       //         : activeList == PrayerActiveScreen.answered
-    //       //             ? prayerData
-    //       //                 .where((p) =>
-    //       //                     _currentUser.prayerList.contains(p.id) &&
-    //       //                     p.status == 'answered')
-    //       //                 .toList()
-    //       //             : activeList == PrayerActiveScreen.group
-    //       //                 ? prayerData
-    //       //                     .where((p) => groupData
-    //       //                         .singleWhere((g) => g.id == groupId)
-    //       //                         .prayerList
-    //       //                         .contains(p.id))
-    //       //                     .toList()
-    //       //                 : emptyList;
-    //       // filteredprayers = prayers;
-    //     },
-    //   );
-    // }
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(),
@@ -172,6 +148,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
               Container(
                 height: 60,
                 child: PrayerMenu(
+                    clearSearchField: _clearSearchField,
+                    searchController: _searchController,
                     setCurrentList: _setCurrentList,
                     activeList: activeList,
                     groupId: groupId,
@@ -204,7 +182,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
                                 : PrayerList(
                                     activeList: activeList,
                                     groupId: groupId,
-                                    prayers: screenPrayers,
+                                    prayers: filteredprayers,
                                   ),
                           );
                     }
