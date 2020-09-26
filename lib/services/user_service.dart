@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/user_device.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,16 +30,16 @@ class UserService {
   }
 
   populateDevice(
-    UserModel user,
+    UserModel userData,
     String deviceModel,
     String deviceName,
     String deviceID,
   ) {
     DeviceModel device = DeviceModel(
-      createdBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
-      createdOn: user.createdOn,
-      modifiedOn: user.modifiedOn,
-      modifiedBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
+      createdBy: userData.createdBy,
+      createdOn: userData.createdOn,
+      modifiedOn: userData.modifiedOn,
+      modifiedBy: userData.modifiedBy,
       model: deviceModel.toUpperCase(),
       deviceId: deviceID,
       name: deviceName.toUpperCase(),
@@ -53,14 +54,14 @@ class UserService {
   ) {
     UserModel user = UserModel(
       churchId: 0,
-      createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+      createdBy: userData.createdBy,
       createdOn: DateTime.now(),
       dateOfBirth: userData.dateOfBirth,
       email: userData.email,
       firstName: userData.firstName.toUpperCase(),
       keyReference: authUid,
       lastName: userData.lastName.toUpperCase(),
-      modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+      modifiedBy: userData.modifiedBy,
       modifiedOn: DateTime.now(),
       phone: '',
     );
@@ -68,15 +69,15 @@ class UserService {
   }
 
   populateUserDevice(
-    UserModel user,
+    UserModel userData,
     String deviceID,
     String userID,
   ) {
     UserDeviceModel userDevice = UserDeviceModel(
-      createdBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
-      createdOn: user.createdOn,
-      modifiedOn: user.modifiedOn,
-      modifiedBy: '${user.firstName} ${user.lastName}'.toUpperCase(),
+      createdBy: userData.createdBy,
+      createdOn: userData.createdOn,
+      modifiedOn: userData.modifiedOn,
+      modifiedBy: userData.modifiedBy,
       deviceId: deviceID,
       userId: userID,
       status: 'Active',

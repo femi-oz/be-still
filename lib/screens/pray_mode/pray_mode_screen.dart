@@ -34,9 +34,11 @@ class _PrayerModeState extends State<PrayerMode> {
       body: PageView.builder(
         controller: _controller,
         itemBuilder: (context, index) {
-          return PrayerPage(prayerData[index]);
+          // TODO
+          // return PrayerPage(prayerData[index]);
         },
-        itemCount: prayerData.length,
+        // TODO
+        // itemCount: prayerData.length,
         onPageChanged: (value) => {
           setState(
             () => {

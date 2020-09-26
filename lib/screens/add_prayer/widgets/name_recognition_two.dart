@@ -1,9 +1,19 @@
+import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class NameRecognitionMenuTwo extends StatefulWidget {
+  final PrayerModel prayer;
+
+  final scafoldKey;
+
+  NameRecognitionMenuTwo({this.prayer, this.scafoldKey});
   @override
   _NameRecognitionMenuTwoState createState() => _NameRecognitionMenuTwoState();
 }
@@ -12,8 +22,18 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
   String _selectedOption;
   bool _showCommentField = false;
 
+  void showInSnackBar(String value) {
+    widget.scafoldKey.currentState.showSnackBar(
+      new SnackBar(
+        backgroundColor: context.offWhite,
+        content: new Text(value),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    UserModel _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
@@ -126,8 +146,21 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     : Container(),
                 SizedBox(height: 40.0),
                 InkWell(
-                  onTap: () => Navigator.of(context)
-                      .pushReplacementNamed(PrayerScreen.routeName),
+                  onTap: () async {
+                    final result = await Provider.of<PrayerProvider>(context,
+                            listen: false)
+                        .addprayer(widget.prayer, _user.id);
+                    print('+++++++++++++++$result');
+                    if (result is bool) {
+                      if (result == true) {
+                        showInSnackBar('Prayer created');
+                      }
+                    } else {
+                      showInSnackBar(result.toString());
+                    }
+                    Navigator.of(context)
+                        .pushReplacementNamed(PrayerScreen.routeName);
+                  },
                   child: Container(
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),

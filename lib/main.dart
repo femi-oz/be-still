@@ -1,5 +1,6 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ void main() {
         ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
         ChangeNotifierProvider(create: (ctx) => UserProvider()),
         ChangeNotifierProvider(create: (ctx) => AuthenticationProvider()),
+        ChangeNotifierProvider(create: (ctx) => PrayerProvider()),
       ],
       child: MyApp(),
     ),

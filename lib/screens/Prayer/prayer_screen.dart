@@ -1,7 +1,8 @@
-import 'package:be_still/data/group.data.dart';
-import 'package:be_still/data/prayer.data.dart';
+import 'package:async/async.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -23,18 +24,15 @@ class PrayerScreen extends StatefulWidget {
 class _PrayerScreenState extends State<PrayerScreen> {
   var activeList = PrayerActiveScreen.personal;
   var groupId;
-
-  final List<PrayerModel> emptyList = [];
-  List<PrayerModel> prayers = [];
   List<PrayerModel> filteredprayers = [];
 
   void _onTextchanged(String value) {
     print(value);
-    setState(() {
-      filteredprayers = prayers
-          .where((p) => p.content.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-    });
+    // setState(() {
+    //   filteredprayers = prayers
+    //       .where((p) => p.content.toLowerCase().contains(value.toLowerCase()))
+    //       .toList();
+    // });
   }
 
   _setCurrentList(_activeList, _groupId) {
@@ -51,9 +49,35 @@ class _PrayerScreenState extends State<PrayerScreen> {
     super.initState();
   }
 
+  List<PrayerModel> dataList = [];
+
+  Future<Stream> getData() async {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    Stream prayerStream =
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .getPrayers(_user);
+    return StreamZip([prayerStream]).asBroadcastStream();
+  }
+
+  Future setupData() async {
+    return await getData()
+      ..asBroadcastStream().listen(
+        (data) {
+          List<PrayerModel> dataRes = [];
+          data[0].documents.map((doc) {
+            dataRes.add(PrayerModel.fromData(doc));
+          }).toList();
+          dataList = dataRes;
+          return dataList;
+        },
+      );
+  }
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    // final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     if (!isInitialized) {
       isInitialized = true;
@@ -90,53 +114,67 @@ class _PrayerScreenState extends State<PrayerScreen> {
         },
       );
     }
-    return Scaffold(
-      appBar: CustomAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              context.mainBgStart,
-              context.mainBgEnd,
-            ],
-          ),
-          image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
-            alignment: Alignment.bottomCenter,
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 60,
-                child: PrayerMenu(
-                    setCurrentList: _setCurrentList,
-                    activeList: activeList,
-                    groupId: groupId,
-                    onTextchanged: _onTextchanged),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.825,
-                child: SingleChildScrollView(
-                  child: activeList == PrayerActiveScreen.findGroup
-                      ? FindAGroup()
-                      : PrayerList(
-                          activeList: activeList,
-                          groupId: groupId,
-                          prayers: filteredprayers,
-                        ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      endDrawer: CustomDrawer(),
-    );
+    return FutureBuilder(
+        future: setupData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Text('Loading....');
+            default:
+              if (snapshot.hasError)
+                return Text('Error: ${snapshot.error}');
+              else
+                return Scaffold(
+                  key: _scaffoldKey,
+                  appBar: CustomAppBar(),
+                  body: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          context.mainBgStart,
+                          context.mainBgEnd,
+                        ],
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage(_themeProvider.isDarkModeEnabled
+                            ? 'assets/images/background-pattern-dark.png'
+                            : 'assets/images/background-pattern.png'),
+                        alignment: Alignment.bottomCenter,
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: 60,
+                            child: PrayerMenu(
+                                setCurrentList: _setCurrentList,
+                                activeList: activeList,
+                                groupId: groupId,
+                                onTextchanged: _onTextchanged),
+                          ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.855,
+                            child: SingleChildScrollView(
+                              child: activeList == PrayerActiveScreen.findGroup
+                                  ? FindAGroup()
+                                  : PrayerList(
+                                      activeList: activeList,
+                                      groupId: groupId,
+                                      prayers: dataList,
+                                      // prayers: snapshot.data[0],
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  endDrawer: CustomDrawer(),
+                );
+          }
+        });
   }
 }

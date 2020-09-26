@@ -1,24 +1,97 @@
-import 'package:be_still/data/prayer.data.dart';
+import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/Widgets/name_recognition_one.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'Widgets/add_prayer_menu.dart';
 
-class AddPrayer extends StatelessWidget {
+class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
+
+  final bool isEdit;
+
+  final PrayerModel prayer;
+
+  @override
+  AddPrayer({this.isEdit, this.prayer});
+  _AddPrayerState createState() => _AddPrayerState();
+}
+
+class _AddPrayerState extends State<AddPrayer> {
+  final _descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  _save() async {
+    setState(() {
+      _autoValidate = true;
+    });
+    if (!_formKey.currentState.validate()) {
+      // showInSnackBar('Please, enter your prayer');
+      return;
+    }
+    _formKey.currentState.save();
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    PrayerModel prayerData;
+    if (!widget.isEdit) {
+      prayerData = PrayerModel(
+        title: '',
+        isAnswer: false,
+        groupId: '0',
+        userId: _user.id,
+        description: _descriptionController.text,
+        status: 'Active',
+        modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+        modifiedOn: DateTime.now(),
+        type: '',
+        createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+        createdOn: DateTime.now(),
+      );
+      showModalBottomSheet(
+        context: context,
+        barrierColor: context.toolsBg.withOpacity(0.5),
+        backgroundColor: context.toolsBg.withOpacity(0.9),
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return NameRecognitionMenuOne(
+              prayer: prayerData, scafoldKey: _scaffoldKey);
+        },
+      );
+    } else {
+      prayerData = PrayerModel(
+        title: widget.prayer.title,
+        isAnswer: widget.prayer.isAnswer,
+        groupId: widget.prayer.groupId,
+        userId: widget.prayer.userId,
+        description: _descriptionController.text,
+        status: widget.prayer.status,
+        modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+        modifiedOn: DateTime.now(),
+        type: widget.prayer.type,
+        createdBy: widget.prayer.createdBy,
+        createdOn: widget.prayer.createdOn,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    _descriptionController.text =
+        widget.isEdit ? widget.prayer.description : '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AddRouteArguments args = ModalRoute.of(context).settings.arguments;
-    final isEditeMode = args.isEditMode;
-    final prayerContent = isEditeMode
-        ? prayerData.singleWhere((p) => p.id == args.prayerId).content
-        : '';
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         child: Scaffold(
+          key: _scaffoldKey,
           body: Container(
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
@@ -47,51 +120,24 @@ class AddPrayer extends StatelessWidget {
                         onTap: () => Navigator.of(context).pop(),
                       ),
                       InkWell(
-                        child: Text(
-                          'SAVE',
-                          style: TextStyle(
-                              color: context.toolsBackBtn, fontSize: 16),
-                        ),
-                        onTap: () => showModalBottomSheet(
-                          context: context,
-                          barrierColor: context.toolsBg.withOpacity(0.5),
-                          backgroundColor: context.toolsBg.withOpacity(0.9),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return NameRecognitionMenuOne();
-                          },
-                        ),
-                      ),
+                          child: Text(
+                            'SAVE',
+                            style: TextStyle(
+                                color: context.toolsBackBtn, fontSize: 16),
+                          ),
+                          onTap: () => _save()),
                     ],
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 30),
-                    decoration: BoxDecoration(
-                      color: context.inputFieldBg.withOpacity(0.5),
-                      border: Border.all(
-                        color: context.inputFieldBorder,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: TextFormField(
-                        initialValue: prayerContent,
-                        style: TextStyle(
-                          color: context.inputFieldText,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                        ),
-                        maxLines: 30,
-                        decoration: InputDecoration.collapsed(
-                            hintStyle: TextStyle(
-                              color: context.inputFieldText,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                            hintText: "Enter your text here"),
-                      ),
+                  SizedBox(height: 30.0),
+                  Form(
+                    autovalidate: _autoValidate,
+                    key: _formKey,
+                    child: CustomInput(
+                      label: 'Prayer description',
+                      controller: _descriptionController,
+                      maxLines: 23,
+                      isRequired: true,
+                      showSuffix: false,
                     ),
                   ),
                   IconButton(
@@ -119,9 +165,12 @@ class AddPrayer extends StatelessWidget {
   }
 }
 
-class AddRouteArguments {
-  final bool isEditMode;
-  final String prayerId;
+// class AddRouteArguments {
+//   final bool isEditMode;
+//   final String prayerId;
 
-  AddRouteArguments(this.isEditMode, this.prayerId);
-}
+//   AddRouteArguments({
+//     this.isEditMode = false,
+//     this.prayerId,
+//   });
+// }

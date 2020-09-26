@@ -1,36 +1,54 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class UserPrayerModel {
-  final String groupId;
+  final String id;
   final String prayerId;
   final String userId;
   final String sequence;
   final bool isFavorite;
-  final String type;
-  final String title;
-  final String description;
-  final String isAnswer;
-  final String sort;
   final String status;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const UserPrayerModel(
-      {@required this.groupId,
-      @required this.prayerId,
-      @required this.userId,
-      @required this.sequence,
-      @required this.isAnswer,
-      @required this.isFavorite,
-      @required this.title,
-      @required this.type,
-      @required this.description,
-      @required this.sort,
-      @required this.status,
-      @required this.createdBy,
-      @required this.createdOn,
-      @required this.modifiedBy,
-      @required this.modifiedOn});
+  const UserPrayerModel({
+    this.id,
+    @required this.prayerId,
+    @required this.userId,
+    @required this.sequence,
+    @required this.isFavorite,
+    @required this.status,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+
+  UserPrayerModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.documentID,
+        prayerId = snapshot.data['PrayerId'],
+        userId = snapshot.data['UserId'],
+        sequence = snapshot.data['Sequence'],
+        isFavorite = snapshot.data['IsFavorite'],
+        status = snapshot.data['Status'],
+        createdBy = snapshot.data['CreatedBy'],
+        createdOn = snapshot.data['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data['ModifiedBy'],
+        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'UserId': userId,
+      'Sequence': sequence,
+      'IsFavorite': isFavorite,
+      'Status': status,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
 }

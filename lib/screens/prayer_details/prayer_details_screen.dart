@@ -22,8 +22,9 @@ class PrayerDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final RouteArguments args = ModalRoute.of(context).settings.arguments;
-    final PrayerModel prayer =
-        prayerData.singleWhere((prayer) => prayer.id == args.id);
+    // TODO
+    // final PrayerModel prayer =
+    //     prayerData.singleWhere((prayer) => prayer.id == args.id);
     // TODO
     final isUserPrayer = false;
     //     args.groupId.toString() == 'null' || prayer.user == _currentUser.id;
@@ -54,93 +55,95 @@ class PrayerDetails extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  FlatButton.icon(
-                    padding: EdgeInsets.all(0),
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: context.toolsBackBtn,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    label: Text(
-                      'BACK',
-                      style: TextStyle(
-                        color: context.toolsBackBtn,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  prayer.hasReminder
-                      ? Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.calendar_today,
-                              size: 14,
-                              color: context.toolsBackBtn,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              child: Text(
-                                prayer.reminder,
-                                style: TextStyle(
-                                  color: context.toolsBackBtn,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Container(),
+                  // TODO
+                  // FlatButton.icon(
+                  //   padding: EdgeInsets.all(0),
+                  //   icon: Icon(
+                  //     Icons.arrow_back,
+                  //     color: context.toolsBackBtn,
+                  //   ),
+                  //   onPressed: () {
+                  //     Navigator.of(context).pop();
+                  //   },
+                  //   label: Text(
+                  //     'BACK',
+                  //     style: TextStyle(
+                  //       color: context.toolsBackBtn,
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.w500,
+                  //     ),
+                  //   ),
+                  // ),
+                  // prayer.hasReminder
+                  //     ? Row(
+                  //         children: <Widget>[
+                  //           Icon(
+                  //             Icons.calendar_today,
+                  //             size: 14,
+                  //             color: context.toolsBackBtn,
+                  //           ),
+                  //           Container(
+                  //             margin: EdgeInsets.only(left: 10),
+                  //             child: Text(
+                  //               prayer.reminder,
+                  //               style: TextStyle(
+                  //                 color: context.toolsBackBtn,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       )
+                  //     : Container(),
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                width: double.infinity,
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      context.prayerDetailsCardStart,
-                      context.prayerDetailsCardEnd,
-                    ],
-                  ),
-                  border: Border.all(
-                    color: context.prayerDetailsCardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: prayer.updates.length > 0
-                    ? UpdateView(prayer)
-                    : NoUpdateView(prayer),
-              ),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: context.brightBlue,
-              ),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                barrierColor: context.toolsBg.withOpacity(0.5),
-                backgroundColor: context.toolsBg.withOpacity(0.9),
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return isUserPrayer
-                      ? PrayerMenu(prayer)
-                      : prayer.isAddedFromGroup && isGroupAdmin
-                          ? GroupAdminPrayerMenu(prayer)
-                          : prayer.isAddedFromGroup && !isGroupAdmin
-                              ? OtherMemberPrayerMenu(prayer)
-                              : Container();
-                },
-              ),
-            ),
+            // TODO
+            // Expanded(
+            //   child: Container(
+            //     margin: EdgeInsets.symmetric(horizontal: 20),
+            //     width: double.infinity,
+            //     padding: EdgeInsets.all(20),
+            //     decoration: BoxDecoration(
+            //       gradient: LinearGradient(
+            //         begin: Alignment.topCenter,
+            //         end: Alignment.bottomCenter,
+            //         colors: [
+            //           context.prayerDetailsCardStart,
+            //           context.prayerDetailsCardEnd,
+            //         ],
+            //       ),
+            //       border: Border.all(
+            //         color: context.prayerDetailsCardBorder,
+            //         width: 1,
+            //       ),
+            //       borderRadius: BorderRadius.circular(15),
+            //     ),
+            //     child: prayer.updates.length > 0
+            //         ? UpdateView(prayer)
+            //         : NoUpdateView(prayer),
+            //   ),
+            // ),
+            // IconButton(
+            //   icon: Icon(
+            //     Icons.more_horiz,
+            //     color: context.brightBlue,
+            //   ),
+            //   onPressed: () => showModalBottomSheet(
+            //     context: context,
+            //     barrierColor: context.toolsBg.withOpacity(0.5),
+            //     backgroundColor: context.toolsBg.withOpacity(0.9),
+            //     isScrollControlled: true,
+            //     builder: (BuildContext context) {
+            //       return isUserPrayer
+            //           ? PrayerMenu(prayer)
+            //           : prayer.isAddedFromGroup && isGroupAdmin
+            //               ? GroupAdminPrayerMenu(prayer)
+            //               : prayer.isAddedFromGroup && !isGroupAdmin
+            //                   ? OtherMemberPrayerMenu(prayer)
+            //                   : Container();
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),

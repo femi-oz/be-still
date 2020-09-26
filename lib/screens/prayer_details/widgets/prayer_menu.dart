@@ -42,7 +42,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
-    setReminder(this.widget.prayer.reminder);
+    // TODO
+    // setReminder(this.widget.prayer.reminder);
     super.initState();
   }
 
@@ -116,12 +117,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(
-                      AddPrayer.routeName,
-                      arguments: AddRouteArguments(true, widget.prayer.id),
-                    );
-                  },
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          AddPrayer(isEdit: true), //TODO pass prayer
+                    ),
+                  ),
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
