@@ -15,6 +15,36 @@ class PrayerService {
     try {
       return _prayerCollectionReference
           .where('UserId', isEqualTo: user.id)
+          .where('Status', isEqualTo: 'Active')
+          .where('IsAnswer', isEqualTo: false)
+          .snapshots();
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
+  Future fetchArchivedPrayers(UserModel user) async {
+    try {
+      return _prayerCollectionReference
+          .where('UserId', isEqualTo: user.id)
+          .where('Status', isEqualTo: 'Inactive')
+          .snapshots();
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
+  Future fetchAnsweredPrayers(UserModel user) async {
+    try {
+      return _prayerCollectionReference
+          .where('UserId', isEqualTo: user.id)
+          .where('IsAnswer', isEqualTo: true)
           .snapshots();
     } catch (e) {
       if (e is PlatformException) {
@@ -82,31 +112,58 @@ class PrayerService {
     PrayerModel prayerData,
     String prayerID,
   ) async {
-    // Generate uuid
-    // final _prayerID = Uuid().v1();
-    // final _userPrayerID = Uuid().v1();
-
     try {
-      return Firestore.instance.runTransaction(
-        (transaction) async {
-          // store prayer
-          await transaction.update(
-              _prayerCollectionReference.document(prayerID),
-              prayerData.toJson());
+      _prayerCollectionReference.document(prayerID).updateData(
+            prayerData.toJson(),
+          );
+      // return Firestore.instance.runTransaction(
+      //   (transaction) async {
+      // store prayer
+      // await transaction.update(
+      //     _prayerCollectionReference.document(prayerID),
+      //     prayerData.toJson());
 
-          //store user prayer
-          // await transaction.set(
-          //     _userPrayerCollectionReference.document(_userPrayerID),
-          //     populateUserPrayer(prayerData, _userID, _prayerID).toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        if (e is PlatformException) {
-          return e.message;
-        }
-        return e.toString();
-      });
+      //store user prayer
+      // await transaction.set(
+      //     _userPrayerCollectionReference.document(_userPrayerID),
+      //     populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+      // },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   if (e is PlatformException) {
+      //     return e.message;
+      //   }
+      //   return e.toString();
+      // });
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
+  Future markPrayerAsAnswered(String prayerID) async {
+    try {
+      _prayerCollectionReference.document(prayerID).updateData(
+        {'IsAnswer': true},
+      );
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
+  Future archivePrayer(
+    String prayerID,
+  ) async {
+    try {
+      _prayerCollectionReference.document(prayerID).updateData(
+        {'Status': 'Inactive'},
+      );
     } catch (e) {
       if (e is PlatformException) {
         return e.message;
@@ -123,7 +180,6 @@ class PrayerService {
             .where("PrayerId", isEqualTo: prayerID)
             .limit(1)
             .getDocuments();
-        print(userPrayerRes);
         await transaction.delete(_userPrayerCollectionReference
             .document(userPrayerRes.documents[0].documentID));
       }).then((val) {

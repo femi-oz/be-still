@@ -22,7 +22,7 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  var activeList = PrayerActiveScreen.personal;
+  var activeList;
   var groupId;
   List<PrayerModel> filteredprayers = [];
 
@@ -46,30 +46,58 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   void initState() {
+    activeList = PrayerActiveScreen.personal;
     super.initState();
   }
 
-  List<PrayerModel> dataList = [];
+  List<PrayerModel> prayerList = [];
+  List<PrayerModel> archivedPrayerList = [];
+  List<PrayerModel> answeredPrayerList = [];
+  List<PrayerModel> screenPrayers = [];
 
   Future<Stream> getData() async {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    Stream prayerStream =
+    Stream prayersStream =
         await Provider.of<PrayerProvider>(context, listen: false)
             .getPrayers(_user);
-    return StreamZip([prayerStream]).asBroadcastStream();
+    Stream archivedPrayersStream =
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .getArchivedPrayers(_user);
+    Stream answeredPrayersStream =
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .getAnsweredPrayers(_user);
+    return StreamZip(
+            [prayersStream, archivedPrayersStream, answeredPrayersStream])
+        .asBroadcastStream();
   }
 
   Future setupData() async {
     return await getData()
       ..asBroadcastStream().listen(
         (data) {
-          List<PrayerModel> dataRes = [];
+          List<PrayerModel> prayersRes = [];
+          List<PrayerModel> archivedPrayersRes = [];
+          List<PrayerModel> answeredPrayersRes = [];
           data[0].documents.map((doc) {
-            dataRes.add(PrayerModel.fromData(doc));
+            prayersRes.add(PrayerModel.fromData(doc));
           }).toList();
-          dataList = dataRes;
-          return dataList;
+          data[1].documents.map((doc) {
+            archivedPrayersRes.add(PrayerModel.fromData(doc));
+          }).toList();
+          data[2].documents.map((doc) {
+            answeredPrayersRes.add(PrayerModel.fromData(doc));
+          }).toList();
+          prayerList = prayersRes;
+          archivedPrayerList = archivedPrayersRes;
+          answeredPrayerList = answeredPrayersRes;
+          screenPrayers = activeList == PrayerActiveScreen.archived
+              ? archivedPrayerList
+              : activeList == PrayerActiveScreen.answered
+                  ? answeredPrayerList
+                  : activeList == PrayerActiveScreen.personal ? prayerList : [];
+          print(screenPrayers);
+          return screenPrayers;
         },
       );
   }
@@ -79,41 +107,45 @@ class _PrayerScreenState extends State<PrayerScreen> {
   Widget build(BuildContext context) {
     // final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    if (!isInitialized) {
-      isInitialized = true;
-      setState(
-        () {
-          // TODO
-          // prayers = activeList == PrayerActiveScreen.personal
-          //     ? prayerData
-          //         .where((p) =>
-          //             _currentUser.prayerList.contains(p.id) &&
-          //             p.status == 'active')
-          //         .toList()
-          //     : activeList == PrayerActiveScreen.archived
-          //         ? prayerData
-          //             .where((p) =>
-          //                 _currentUser.prayerList.contains(p.id) &&
-          //                 p.status == 'archived')
-          //             .toList()
-          //         : activeList == PrayerActiveScreen.answered
-          //             ? prayerData
-          //                 .where((p) =>
-          //                     _currentUser.prayerList.contains(p.id) &&
-          //                     p.status == 'answered')
-          //                 .toList()
-          //             : activeList == PrayerActiveScreen.group
-          //                 ? prayerData
-          //                     .where((p) => groupData
-          //                         .singleWhere((g) => g.id == groupId)
-          //                         .prayerList
-          //                         .contains(p.id))
-          //                     .toList()
-          //                 : emptyList;
-          // filteredprayers = prayers;
-        },
-      );
-    }
+
+    //TODO
+    // if (!isInitialized) {
+    //   isInitialized = true;
+    //   setState(
+    //     () {
+    //       // TODO
+    //       print(activeList);
+    //       List<PrayerModel> screenPrayers = [];
+    //       // prayers = activeList == PrayerActiveScreen.personal
+    //       //     ? prayerData
+    //       //         .where((p) =>
+    //       //             _currentUser.prayerList.contains(p.id) &&
+    //       //             p.status == 'active')
+    //       //         .toList()
+    //       //     : activeList == PrayerActiveScreen.archived
+    //       //         ? prayerData
+    //       //             .where((p) =>
+    //       //                 _currentUser.prayerList.contains(p.id) &&
+    //       //                 p.status == 'archived')
+    //       //             .toList()
+    //       //         : activeList == PrayerActiveScreen.answered
+    //       //             ? prayerData
+    //       //                 .where((p) =>
+    //       //                     _currentUser.prayerList.contains(p.id) &&
+    //       //                     p.status == 'answered')
+    //       //                 .toList()
+    //       //             : activeList == PrayerActiveScreen.group
+    //       //                 ? prayerData
+    //       //                     .where((p) => groupData
+    //       //                         .singleWhere((g) => g.id == groupId)
+    //       //                         .prayerList
+    //       //                         .contains(p.id))
+    //       //                     .toList()
+    //       //                 : emptyList;
+    //       // filteredprayers = prayers;
+    //     },
+    //   );
+    // }
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(),
@@ -172,7 +204,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
                                 : PrayerList(
                                     activeList: activeList,
                                     groupId: groupId,
-                                    prayers: dataList,
+                                    prayers: screenPrayers,
                                   ),
                           );
                     }

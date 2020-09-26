@@ -80,7 +80,7 @@ class AddUpdate extends StatelessWidget {
                         fontWeight: FontWeight.w300,
                       ),
                       maxLines: 25,
-                      decoration: InputDecoration.collapsed(
+                      decoration: InputDecoration(
                           hintStyle: TextStyle(
                             color: context.inputFieldText,
                             fontSize: 14,

@@ -34,8 +34,7 @@ class DeletePrayer extends StatelessWidget {
             onTap: () {
               Provider.of<PrayerProvider>(context, listen: false)
                   .deletePrayer(prayer.id);
-              Navigator.of(context)
-                  .pushReplacementNamed(PrayerScreen.routeName);
+              Navigator.of(context).pushNamed(PrayerScreen.routeName);
             },
             child: Container(
               height: 30,

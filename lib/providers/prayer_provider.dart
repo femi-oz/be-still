@@ -17,6 +17,25 @@ class PrayerProvider with ChangeNotifier {
       print(res);
     else
       return res;
+    notifyListeners();
+  }
+
+  Future getArchivedPrayers(UserModel user) async {
+    final res = await _prayerService.fetchArchivedPrayers(user);
+    if (res is String)
+      print(res);
+    else
+      return res;
+    notifyListeners();
+  }
+
+  Future getAnsweredPrayers(UserModel user) async {
+    final res = await _prayerService.fetchAnsweredPrayers(user);
+    if (res is String)
+      print(res);
+    else
+      return res;
+    notifyListeners();
   }
 
   Future addprayer(PrayerModel prayerData, String _userID) async {
@@ -27,8 +46,15 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.editPrayer(prayerData, prayerID);
   }
 
+  Future archivePrayer(String prayerID) async {
+    return await _prayerService.archivePrayer(prayerID);
+  }
+
+  Future markPrayerAsAnswered(String prayerID) async {
+    return await _prayerService.markPrayerAsAnswered(prayerID);
+  }
+
   Future deletePrayer(String prayerID) async {
-    print(prayerID);
     return await _prayerService.deletePrayer(prayerID);
   }
 

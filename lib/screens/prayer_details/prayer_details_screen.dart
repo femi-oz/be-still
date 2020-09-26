@@ -1,6 +1,7 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/pray_mode/widgets/no_update_view.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -13,22 +14,8 @@ class PrayerDetails extends StatelessWidget {
   static const routeName = '/prayer-details';
   @override
   Widget build(BuildContext context) {
-    // final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final PrayerDetailsRouteArguments args =
         ModalRoute.of(context).settings.arguments;
-    // TODO
-
-    //     prayerData.singleWhere((prayer) => prayer.id == args.id);
-    // TODO
-    // final isUserPrayer = false;
-    // //     args.groupId.toString() == 'null' || prayer.user == _currentUser.id;
-    // final isGroupAdmin = false;
-    //args.groupId.toString() == 'null'
-    //     ? false
-    //     : groupData.singleWhere((g) => g.id == args.groupId.toString()).admin ==
-    //             _currentUser.id
-    //         ? true
-    //         : false;
     PrayerModel prayer;
     return StreamBuilder(
         stream: Provider.of<PrayerProvider>(context).fetchPrayer(args.id),
@@ -62,7 +49,8 @@ class PrayerDetails extends StatelessWidget {
                               color: context.toolsBackBtn,
                             ),
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.of(context)
+                                  .pushReplacementNamed(PrayerScreen.routeName);
                             },
                             label: Text(
                               'BACK',

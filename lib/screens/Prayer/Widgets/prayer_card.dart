@@ -44,7 +44,7 @@ class PrayerCard extends StatelessWidget {
         );
       },
       onTap: () {
-        Navigator.of(context).pushNamed(
+        Navigator.of(context).pushReplacementNamed(
           PrayerDetails.routeName,
           arguments: PrayerDetailsRouteArguments(
             prayer.id,
