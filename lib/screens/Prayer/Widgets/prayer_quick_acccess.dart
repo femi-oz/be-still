@@ -114,18 +114,19 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: context.brightBlue2,
-                        ),
-                        onClick: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AddPrayer(isEdit: true), //TODO pass prayer
+                          icon: Icon(
+                            Icons.edit,
+                            color: context.brightBlue2,
                           ),
-                        ),
-                      ),
+                          onClick: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPrayer(
+                                    isEdit: true, prayer: widget.prayer),
+                              ),
+                            );
+                          }),
                     ),
                   ),
                   Transform.translate(

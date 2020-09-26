@@ -2,6 +2,8 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/Widgets/name_recognition_one.dart';
+import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +76,15 @@ class _AddPrayerState extends State<AddPrayer> {
         type: widget.prayer.type,
         createdBy: widget.prayer.createdBy,
         createdOn: widget.prayer.createdOn,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .editprayer(prayerData, widget.prayer.id);
+
+      Navigator.of(context).pushNamed(
+        PrayerDetails.routeName,
+        arguments: PrayerDetailsRouteArguments(
+          widget.prayer.id,
+        ),
       );
     }
   }
@@ -165,12 +176,12 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 }
 
-// class AddRouteArguments {
-//   final bool isEditMode;
-//   final String prayerId;
+// class RouteArguments {
+//   final String id;
+//   // final String groupId;
 
-//   AddRouteArguments({
-//     this.isEditMode = false,
-//     this.prayerId,
-//   });
+//   RouteArguments(
+//     this.id,
+//     // this.groupId,
+//   );
 // }

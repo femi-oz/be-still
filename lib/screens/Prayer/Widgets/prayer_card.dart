@@ -14,11 +14,15 @@ import 'group_quick_access.dart';
 class PrayerCard extends StatelessWidget {
   final PrayerModel prayer;
 
-  final groupId;
+  // final groupId;
 
   final activeList;
 
-  PrayerCard(this.prayer, this.groupId, this.activeList);
+  PrayerCard(
+    this.prayer,
+    // this.groupId,
+    this.activeList,
+  );
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
@@ -42,12 +46,11 @@ class PrayerCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed(
           PrayerDetails.routeName,
-          arguments: RouteArguments(
+          arguments: PrayerDetailsRouteArguments(
             prayer.id,
-            groupId,
+            // groupId,
           ),
         );
-        print(groupId);
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5.0),
@@ -182,11 +185,4 @@ class PrayerCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class RouteArguments {
-  final String id;
-  final String groupId;
-
-  RouteArguments(this.id, this.groupId);
 }

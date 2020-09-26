@@ -1,4 +1,5 @@
 import 'package:be_still/data/user.data.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +7,7 @@ import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class NoUpdateView extends StatelessWidget {
-  final prayer;
+  final PrayerModel prayer;
 
   @override
   NoUpdateView(this.prayer);
@@ -17,7 +18,7 @@ class NoUpdateView extends StatelessWidget {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return Column(
       children: <Widget>[
-        prayer.user != _currentUser.id
+        prayer.userId != _currentUser.id
             ? Container(
                 margin: EdgeInsets.only(bottom: 20),
                 child: Text(
@@ -38,7 +39,7 @@ class NoUpdateView extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Text(
-                    DateFormat('hh:mma | MM.dd.yyyy').format(prayer.date),
+                    DateFormat('hh:mma | MM.dd.yyyy').format(prayer.createdOn),
                     style: TextStyle(
                         color: context.dimBlue, fontWeight: FontWeight.w500),
                   ),
@@ -58,7 +59,7 @@ class NoUpdateView extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Center(
               child: Text(
-                prayer.content,
+                prayer.description,
                 style: TextStyle(
                   color: context.inputFieldText,
                   fontSize: 14,

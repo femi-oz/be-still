@@ -114,67 +114,76 @@ class _PrayerScreenState extends State<PrayerScreen> {
         },
       );
     }
-    return FutureBuilder(
-        future: setupData(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return Text('Loading....');
-            default:
-              if (snapshot.hasError)
-                return Text('Error: ${snapshot.error}');
-              else
-                return Scaffold(
-                  key: _scaffoldKey,
-                  appBar: CustomAppBar(),
-                  body: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          context.mainBgStart,
-                          context.mainBgEnd,
-                        ],
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage(_themeProvider.isDarkModeEnabled
-                            ? 'assets/images/background-pattern-dark.png'
-                            : 'assets/images/background-pattern.png'),
-                        alignment: Alignment.bottomCenter,
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            height: 60,
-                            child: PrayerMenu(
-                                setCurrentList: _setCurrentList,
-                                activeList: activeList,
-                                groupId: groupId,
-                                onTextchanged: _onTextchanged),
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.855,
-                            child: SingleChildScrollView(
-                              child: activeList == PrayerActiveScreen.findGroup
-                                  ? FindAGroup()
-                                  : PrayerList(
-                                      activeList: activeList,
-                                      groupId: groupId,
-                                      prayers: dataList,
-                                      // prayers: snapshot.data[0],
-                                    ),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: CustomAppBar(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              context.mainBgStart,
+              context.mainBgEnd,
+            ],
+          ),
+          image: DecorationImage(
+            image: AssetImage(_themeProvider.isDarkModeEnabled
+                ? 'assets/images/background-pattern-dark.png'
+                : 'assets/images/background-pattern.png'),
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 60,
+                child: PrayerMenu(
+                    setCurrentList: _setCurrentList,
+                    activeList: activeList,
+                    groupId: groupId,
+                    onTextchanged: _onTextchanged),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.855,
+                child: FutureBuilder(
+                  future: setupData(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Column(
+                          children: [
+                            LinearProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                context.brightBlue,
+                              ),
+                              backgroundColor: context.prayerMenuEnd,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  endDrawer: CustomDrawer(),
-                );
-          }
-        });
+                          ],
+                        );
+                      default:
+                        if (snapshot.hasError)
+                          return Text('Error: ${snapshot.error}');
+                        else
+                          return SingleChildScrollView(
+                            child: activeList == PrayerActiveScreen.findGroup
+                                ? FindAGroup()
+                                : PrayerList(
+                                    activeList: activeList,
+                                    groupId: groupId,
+                                    prayers: dataList,
+                                  ),
+                          );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      endDrawer: CustomDrawer(),
+    );
   }
 }

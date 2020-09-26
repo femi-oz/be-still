@@ -147,17 +147,16 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                 SizedBox(height: 40.0),
                 InkWell(
                   onTap: () async {
-                    final result = await Provider.of<PrayerProvider>(context,
-                            listen: false)
+                    await Provider.of<PrayerProvider>(context, listen: false)
                         .addprayer(widget.prayer, _user.id);
-                    print('+++++++++++++++$result');
-                    if (result is bool) {
-                      if (result == true) {
-                        showInSnackBar('Prayer created');
-                      }
-                    } else {
-                      showInSnackBar(result.toString());
-                    }
+                    // TODO
+                    // if (result is bool) {
+                    //   if (result == true) {
+                    //     showInSnackBar('Prayer created');
+                    //   }
+                    // } else {
+                    //   showInSnackBar(result.toString());
+                    // }
                     Navigator.of(context)
                         .pushReplacementNamed(PrayerScreen.routeName);
                   },

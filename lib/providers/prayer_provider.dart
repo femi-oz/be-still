@@ -23,8 +23,16 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.addPrayer(prayerData, _userID);
   }
 
+  Future editprayer(PrayerModel prayerData, String prayerID) async {
+    return await _prayerService.editPrayer(prayerData, prayerID);
+  }
+
   Future deletePrayer(String prayerID) async {
     print(prayerID);
     return await _prayerService.deletePrayer(prayerID);
+  }
+
+  Stream<DocumentSnapshot> fetchPrayer(String id) {
+    return _prayerService.fetchPrayer(id);
   }
 }

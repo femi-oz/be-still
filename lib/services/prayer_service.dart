@@ -78,9 +78,71 @@ class PrayerService {
     }
   }
 
+  Future editPrayer(
+    PrayerModel prayerData,
+    String prayerID,
+  ) async {
+    // Generate uuid
+    // final _prayerID = Uuid().v1();
+    // final _userPrayerID = Uuid().v1();
+
+    try {
+      return Firestore.instance.runTransaction(
+        (transaction) async {
+          // store prayer
+          await transaction.update(
+              _prayerCollectionReference.document(prayerID),
+              prayerData.toJson());
+
+          //store user prayer
+          // await transaction.set(
+          //     _userPrayerCollectionReference.document(_userPrayerID),
+          //     populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        if (e is PlatformException) {
+          return e.message;
+        }
+        return e.toString();
+      });
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
   Future deletePrayer(String prayerID) async {
     try {
-      return await _prayerCollectionReference.document(prayerID).delete();
+      return Firestore.instance.runTransaction((transaction) async {
+        await transaction.delete(_prayerCollectionReference.document(prayerID));
+        final userPrayerRes = await _userPrayerCollectionReference
+            .where("PrayerId", isEqualTo: prayerID)
+            .limit(1)
+            .getDocuments();
+        print(userPrayerRes);
+        await transaction.delete(_userPrayerCollectionReference
+            .document(userPrayerRes.documents[0].documentID));
+      }).then((val) {
+        return true;
+      }).catchError((e) {
+        if (e is PlatformException) {
+          return e.message;
+        }
+        return e.toString();
+      });
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Stream<DocumentSnapshot> fetchPrayer(String prayerID) {
+    try {
+      return _prayerCollectionReference.document(prayerID).snapshots();
     } catch (e) {
       print(e.toString());
       return null;

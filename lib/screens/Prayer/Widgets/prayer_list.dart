@@ -40,7 +40,7 @@ class PrayerList extends StatelessWidget {
                   children: <Widget>[
                     ...prayers
                         .map(
-                          (p) => PrayerCard(p, groupId, activeList),
+                          (p) => PrayerCard(p, activeList),
                         )
                         .toList(),
                   ],

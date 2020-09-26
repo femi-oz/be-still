@@ -120,8 +120,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          AddPrayer(isEdit: true), //TODO pass prayer
+                      builder: (context) => AddPrayer(
+                        isEdit: true,
+                        prayer: widget.prayer,
+                      ),
                     ),
                   ),
                   child: Container(
