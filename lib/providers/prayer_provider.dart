@@ -7,31 +7,10 @@ import 'package:flutter/cupertino.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
-  // Future<List<PrayerModel>> getPrayers() async {
-  //   return null;
-  // }
 
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
     return _prayerService.fetchPrayers(userId);
   }
-
-  // Future getArchivedPrayers(UserModel user) async {
-  //   final res = await _prayerService.fetchArchivedPrayers(user);
-  //   if (res is String)
-  //     print(res);
-  //   else
-  //     return res;
-  //   notifyListeners();
-  // }
-
-  // Future getAnsweredPrayers(UserModel user) async {
-  //   final res = await _prayerService.fetchAnsweredPrayers(user);
-  //   if (res is String)
-  //     print(res);
-  //   else
-  //     return res;
-  //   notifyListeners();
-  // }
 
   Future addprayer(PrayerModel prayerData, String _userID) async {
     return await _prayerService.addPrayer(prayerData, _userID);

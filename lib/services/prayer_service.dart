@@ -19,7 +19,7 @@ class PrayerService {
           .snapshots()
           .map((convert) {
         return convert.documents.map((f) {
-          Stream<UserPrayerModel> userPrayers = Stream.value(f)
+          Stream<UserPrayerModel> userPrayer = Stream.value(f)
               .map<UserPrayerModel>(
                   (document) => UserPrayerModel.fromData(document));
 
@@ -28,7 +28,7 @@ class PrayerService {
               .snapshots()
               .map<PrayerModel>((document) => PrayerModel.fromData(document));
 
-          return Rx.combineLatest2(userPrayers, prayer,
+          return Rx.combineLatest2(userPrayer, prayer,
               (messages, user) => CombinePrayerStream(messages, user));
         });
       }).switchMap((observables) {

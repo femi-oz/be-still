@@ -154,8 +154,8 @@ class GroupUserModel {
   final String id;
   final String groupId;
   final String userId;
-  final String isAdmin;
-  final String isModerator;
+  final bool isAdmin;
+  final bool isModerator;
   final String status;
   final String createdBy;
   final DateTime createdOn;
