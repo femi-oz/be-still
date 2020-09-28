@@ -2,6 +2,7 @@ import 'package:async/async.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/theme_provider.dart';
@@ -62,64 +63,54 @@ class _PrayerScreenState extends State<PrayerScreen> {
   List<PrayerModel> answeredPrayerList = [];
   List<PrayerModel> screenPrayers = [];
 
-  Future<Stream> getData() async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    Stream prayersStream =
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .getPrayers(_user);
-    Stream archivedPrayersStream =
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .getArchivedPrayers(_user);
-    Stream answeredPrayersStream =
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .getAnsweredPrayers(_user);
-    return StreamZip(
-            [prayersStream, archivedPrayersStream, answeredPrayersStream])
-        .asBroadcastStream();
-  }
+  // Future<Stream> getData() async {
+  //   UserModel _user =
+  //       Provider.of<UserProvider>(context, listen: false).currentUser;
+  //   Stream prayersStream =
+  //       await Provider.of<PrayerProvider>(context, listen: false)
+  //           .getPrayers(_user);
+  //   Stream archivedPrayersStream =
+  //       await Provider.of<PrayerProvider>(context, listen: false)
+  //           .getArchivedPrayers(_user);
+  //   Stream answeredPrayersStream =
+  //       await Provider.of<PrayerProvider>(context, listen: false)
+  //           .getAnsweredPrayers(_user);
+  //   return StreamZip(
+  //           [prayersStream, archivedPrayersStream, answeredPrayersStream])
+  //       .asBroadcastStream();
+  // }
 
-  Future setupData() async {
-    return await getData()
-      ..asBroadcastStream().listen(
-        (data) {
-          List<PrayerModel> prayersRes = [];
-          List<PrayerModel> archivedPrayersRes = [];
-          List<PrayerModel> answeredPrayersRes = [];
-          data[0].documents.map((doc) {
-            prayersRes.add(PrayerModel.fromData(doc));
-          }).toList();
-          data[1].documents.map((doc) {
-            archivedPrayersRes.add(PrayerModel.fromData(doc));
-          }).toList();
-          data[2].documents.map((doc) {
-            answeredPrayersRes.add(PrayerModel.fromData(doc));
-          }).toList();
-          prayerList = prayersRes;
-          archivedPrayerList = archivedPrayersRes;
-          answeredPrayerList = answeredPrayersRes;
+  // Future setupData() async {
+  //   return await getData()
+  //     ..asBroadcastStream().listen(
+  //       (data) {
+  //         List<PrayerModel> prayersRes = [];
+  //         List<PrayerModel> archivedPrayersRes = [];
+  //         List<PrayerModel> answeredPrayersRes = [];
+  //         data[0].documents.map((doc) {
+  //           prayersRes.add(PrayerModel.fromData(doc));
+  //         }).toList();
+  //         data[1].documents.map((doc) {
+  //           archivedPrayersRes.add(PrayerModel.fromData(doc));
+  //         }).toList();
+  //         data[2].documents.map((doc) {
+  //           answeredPrayersRes.add(PrayerModel.fromData(doc));
+  //         }).toList();
+  //         prayerList = prayersRes;
+  //         archivedPrayerList = archivedPrayersRes;
+  //         answeredPrayerList = answeredPrayersRes;
 
-          return screenPrayers;
-        },
-      );
-  }
+  //         return screenPrayers;
+  //       },
+  //     );
+  // }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    screenPrayers = activeList == PrayerActiveScreen.archived
-        ? archivedPrayerList
-        : activeList == PrayerActiveScreen.answered
-            ? answeredPrayerList
-            : activeList == PrayerActiveScreen.personal ? prayerList : [];
-    setState(() {
-      filteredprayers = screenPrayers
-          .where((e) => e.description
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()))
-          .toList();
-    });
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -156,9 +147,11 @@ class _PrayerScreenState extends State<PrayerScreen> {
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.855,
-                child: FutureBuilder(
-                  future: setupData(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                child: StreamBuilder(
+                  stream:
+                      Provider.of<PrayerProvider>(context).getPrayers(_user.id),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<CombinePrayerStream>> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                         return Column(
@@ -174,16 +167,45 @@ class _PrayerScreenState extends State<PrayerScreen> {
                       default:
                         if (snapshot.hasError)
                           return Text('Error: ${snapshot.error}');
-                        else
+                        else {
+                          final activePrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.status == 'Active' &&
+                                  e.prayer.isAnswer == false &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
+                          final archivedPrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.status == 'Inactive' &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
+                          final answeredPrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.isAnswer == false &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
                           return SingleChildScrollView(
                             child: activeList == PrayerActiveScreen.findGroup
                                 ? FindAGroup()
                                 : PrayerList(
                                     activeList: activeList,
                                     groupId: groupId,
-                                    prayers: filteredprayers,
+                                    prayers: activeList ==
+                                            PrayerActiveScreen.archived
+                                        ? archivedPrayers
+                                        : activeList ==
+                                                PrayerActiveScreen.answered
+                                            ? answeredPrayers
+                                            : activeList ==
+                                                    PrayerActiveScreen.personal
+                                                ? activePrayers
+                                                : [],
                                   ),
                           );
+                        }
                     }
                   },
                 ),

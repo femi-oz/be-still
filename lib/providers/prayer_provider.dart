@@ -1,6 +1,6 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,32 +11,27 @@ class PrayerProvider with ChangeNotifier {
   //   return null;
   // }
 
-  Future getPrayers(UserModel user) async {
-    final res = await _prayerService.fetchPrayers(user);
-    if (res is String)
-      print(res);
-    else
-      return res;
-    notifyListeners();
+  Stream<List<CombinePrayerStream>> getPrayers(String userId) {
+    return _prayerService.fetchPrayers(userId);
   }
 
-  Future getArchivedPrayers(UserModel user) async {
-    final res = await _prayerService.fetchArchivedPrayers(user);
-    if (res is String)
-      print(res);
-    else
-      return res;
-    notifyListeners();
-  }
+  // Future getArchivedPrayers(UserModel user) async {
+  //   final res = await _prayerService.fetchArchivedPrayers(user);
+  //   if (res is String)
+  //     print(res);
+  //   else
+  //     return res;
+  //   notifyListeners();
+  // }
 
-  Future getAnsweredPrayers(UserModel user) async {
-    final res = await _prayerService.fetchAnsweredPrayers(user);
-    if (res is String)
-      print(res);
-    else
-      return res;
-    notifyListeners();
-  }
+  // Future getAnsweredPrayers(UserModel user) async {
+  //   final res = await _prayerService.fetchAnsweredPrayers(user);
+  //   if (res is String)
+  //     print(res);
+  //   else
+  //     return res;
+  //   notifyListeners();
+  // }
 
   Future addprayer(PrayerModel prayerData, String _userID) async {
     return await _prayerService.addPrayer(prayerData, _userID);

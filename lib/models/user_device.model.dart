@@ -1,3 +1,5 @@
+import 'package:be_still/models/device.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -43,4 +45,11 @@ class UserDeviceModel {
       'ModifiedOn': modifiedOn,
     };
   }
+}
+
+class CombineDeviceStream {
+  final UserDeviceModel userDevice;
+  final DeviceModel device;
+
+  CombineDeviceStream(this.userDevice, this.device);
 }

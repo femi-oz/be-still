@@ -1,3 +1,4 @@
+import 'package:be_still/models/prayer.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -51,4 +52,11 @@ class UserPrayerModel {
       'ModifiedOn': modifiedOn,
     };
   }
+}
+
+class CombinePrayerStream {
+  final UserPrayerModel userPrayer;
+  final PrayerModel prayer;
+
+  CombinePrayerStream(this.userPrayer, this.prayer);
 }

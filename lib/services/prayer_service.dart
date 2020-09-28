@@ -1,9 +1,9 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PrayerService {
   final CollectionReference _prayerCollectionReference =
@@ -11,46 +11,37 @@ class PrayerService {
   final CollectionReference _userPrayerCollectionReference =
       Firestore.instance.collection("UserPrayer");
 
-  Future fetchPrayers(UserModel user) async {
+  Stream<List<CombinePrayerStream>> _combineStream;
+  Stream<List<CombinePrayerStream>> fetchPrayers(String userId) {
     try {
-      return _prayerCollectionReference
-          .where('UserId', isEqualTo: user.id)
-          .where('Status', isEqualTo: 'Active')
-          .where('IsAnswer', isEqualTo: false)
-          .snapshots();
-    } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
-    }
-  }
+      _combineStream = _userPrayerCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .map((convert) {
+        return convert.documents.map((f) {
+          Stream<UserPrayerModel> userPrayers = Stream.value(f)
+              .map<UserPrayerModel>(
+                  (document) => UserPrayerModel.fromData(document));
 
-  Future fetchArchivedPrayers(UserModel user) async {
-    try {
-      return _prayerCollectionReference
-          .where('UserId', isEqualTo: user.id)
-          .where('Status', isEqualTo: 'Inactive')
-          .snapshots();
-    } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
-    }
-  }
+          Stream<PrayerModel> prayer = _prayerCollectionReference
+              .document(f.data['PrayerId'])
+              .snapshots()
+              .map<PrayerModel>((document) => PrayerModel.fromData(document));
 
-  Future fetchAnsweredPrayers(UserModel user) async {
-    try {
-      return _prayerCollectionReference
-          .where('UserId', isEqualTo: user.id)
-          .where('IsAnswer', isEqualTo: true)
-          .snapshots();
+          return Rx.combineLatest2(userPrayers, prayer,
+              (messages, user) => CombinePrayerStream(messages, user));
+        });
+      }).switchMap((observables) {
+        return observables.length > 0
+            ? Rx.combineLatestList(observables)
+            : Stream.value([]);
+      });
+      return _combineStream;
     } catch (e) {
       if (e is PlatformException) {
-        return e.message;
+        print(e.message);
       }
-      return e.toString();
+      return null;
     }
   }
 

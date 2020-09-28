@@ -1,3 +1,4 @@
+import 'package:be_still/models/prayer.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -199,4 +200,25 @@ class GroupUserModel {
       'ModifiedOn': modifiedOn,
     };
   }
+}
+
+class CombineGroupUserStream {
+  final GroupUserModel userGroup;
+  final GroupModel group;
+
+  CombineGroupUserStream(this.userGroup, this.group);
+}
+
+class CombineGroupPrayerStream {
+  final GroupModel group;
+  final PrayerModel prayer;
+
+  CombineGroupPrayerStream(this.prayer, this.group);
+}
+
+class CombineGroupInviteStream {
+  final GroupModel group;
+  final GroupInviteModel invite;
+
+  CombineGroupInviteStream(this.invite, this.group);
 }
