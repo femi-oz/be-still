@@ -1,8 +1,11 @@
+import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 
 class SharingSettings extends StatefulWidget {
+  final SharingSettingsModel sharingSettings;
   @override
+  SharingSettings(this.sharingSettings);
   _SharingSettingsState createState() => _SharingSettingsState();
 }
 

@@ -1,15 +1,15 @@
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class PrayerSettingsService {
   final CollectionReference _prayerSettingsCollectionReference =
       Firestore.instance.collection("PrayerSettings");
 
-  setPrayerSettings(
-      UserModel userData, PrayerSettingsModel prayerSettingsData) {
+  setPrayerSettings(String userId, UserModel userData) {
     PrayerSettingsModel prayerSettings = PrayerSettingsModel(
-        userId: '',
+        userId: userId,
         frequency: '0',
         date: DateTime.now(),
         time: Timestamp.now(),
@@ -20,27 +20,27 @@ class PrayerSettingsService {
     return prayerSettings;
   }
 
-  Future addPrayerSettings(
-      UserModel userData, PrayerSettingsModel prayerSettingsData) async {
+  Future addPrayerSettings(String userId, UserModel userData) async {
     try {
       //store prayer settings
-      Firestore.instance.runTransaction((transaction) async {
-        await _prayerSettingsCollectionReference
-            .add(setPrayerSettings(userData, prayerSettingsData).toJson());
-      });
+      final prayerSettingsId = Uuid().v1();
+      print('prayer settings data $userData');
+
+      await _prayerSettingsCollectionReference
+          .document(prayerSettingsId)
+          .setData(setPrayerSettings(userId, userData).toJson());
     } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
-  Future getPrayerSettings(String userId) async {
+  Stream<QuerySnapshot> getPrayerSettings(String userId) {
     try {
-      final prayerSettingsRes = await _prayerSettingsCollectionReference
+      return _prayerSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .limit(1)
-          .getDocuments();
-      return PrayerSettingsModel.fromData(prayerSettingsRes.documents[0]);
+          .snapshots();
     } catch (e) {
       return null;
     }

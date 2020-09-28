@@ -1,11 +1,16 @@
 import 'dart:io';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/services/prayer_settings_service.dart';
+import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/services/sharing_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
+
+import '../locator.dart';
 
 class UserService {
   final CollectionReference _userCollectionReference =
@@ -126,6 +131,11 @@ class UserService {
                 populateUserDevice(userData, deviceID.toString(), userID)
                     .toJson(),
               );
+          await locator<SettingsService>().addSettings(userID, userData);
+          await locator<SharingSettingsService>()
+              .addSharingSetting(userID, userData);
+          await locator<PrayerSettingsService>()
+              .addPrayerSettings(userID, userData);
         },
       );
     } catch (e) {

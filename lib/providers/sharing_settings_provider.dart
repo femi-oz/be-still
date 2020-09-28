@@ -1,4 +1,5 @@
 import 'package:be_still/services/sharing_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../locator.dart';
@@ -6,7 +7,11 @@ import '../locator.dart';
 class SharingSettingsProvider with ChangeNotifier {
   SharingSettingsService _sharingSettings = locator<SharingSettingsService>();
 
-  getSharingSettings({String userId}) async {
-    return await _sharingSettings.getSharingSettings(userId);
+  // getSharingSettings({String userId}) async {
+  //   return await _sharingSettings.getSharingSettings(userId);
+  // }
+
+  Stream<QuerySnapshot> getSharingSettings(String userId) {
+    return _sharingSettings.getSharingSettings(userId);
   }
 }

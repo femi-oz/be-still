@@ -67,11 +67,11 @@ class SettingsModel {
         syncAlexa = snapShot.data['SyncAlexa'],
         status = snapShot.data['Status'],
         createdBy = snapShot.data['CreatedBy'],
-        createdOn = snapShot.data['CreatedOn'].toDate(),
+        createdOn = snapShot.data['CreatedOn'],
         modifiedBy = snapShot.data['ModifiedBy'],
-        modifiedOn = snapShot.data['ModifiedOn'].toDate();
+        modifiedOn = snapShot.data['ModifiedOn'];
 
-  Map<String, dynamic> toJSon() {
+  Map<String, dynamic> toJson() {
     return {
       'UserId': userId,
       'DeviceId': deviceId,
@@ -83,6 +83,7 @@ class SettingsModel {
       'AllowPushNotification': allowPushNotification,
       'AllowTextNotification': allowTextNotification,
       'EmailUpdateNotification': emailUpdateNotification,
+      'EmailUpdateFrequency': emailUpdateFrequency,
       'NotifyMeSomeonePostOnGroup': notifyMeSomeonePostOnGroup,
       'NotifyMeSomeoneSharePrayerWithMe': notifyMeSomeoneSharePrayerWithMe,
       'AllowPrayerTimeNotification': allowPrayerTimeNotification,
@@ -92,7 +93,6 @@ class SettingsModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
-      'EmailUpdateFrequency': emailUpdateFrequency,
     };
   }
 }

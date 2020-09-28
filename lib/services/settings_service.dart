@@ -1,61 +1,57 @@
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:uuid/uuid.dart';
 
 class SettingsService {
   final CollectionReference _settingsCollectionReference =
       Firestore.instance.collection("Settings");
 
-  setSettings(UserModel userData, SettingsModel settingsData) {
+  setSettings(String userId, UserModel userData) {
     SettingsModel settings = SettingsModel(
-      userId: '',
-      deviceId: '',
-      appearance: '',
-      defaultSortBy: '',
-      defaultSnoozeDuration: '',
-      archiveAutoDelete: '',
-      includeAnsweredPrayerAutoDelete: '',
-      allowPushNotification: '',
-      allowTextNotification: '',
-      emailUpdateFrequency: '',
-      emailUpdateNotification: '',
-      notifyMeSomeonePostOnGroup: '',
-      notifyMeSomeoneSharePrayerWithMe: '',
-      allowPrayerTimeNotification: '',
-      syncAlexa: '',
-      status: '',
-      createdBy: '${userData.firstName}${userData.lastName}',
-      createdOn: DateTime.now(),
-      modifiedBy: '${userData.firstName}${userData.lastName}',
-      modifiedOn: DateTime.now(),
-    );
-
+        userId: userId,
+        deviceId: '',
+        appearance: '',
+        defaultSortBy: '',
+        defaultSnoozeDuration: '0',
+        archiveAutoDelete: 'false',
+        includeAnsweredPrayerAutoDelete: 'false',
+        allowPushNotification: 'false',
+        allowTextNotification: 'false',
+        emailUpdateFrequency: 'false',
+        emailUpdateNotification: '',
+        notifyMeSomeonePostOnGroup: 'false',
+        notifyMeSomeoneSharePrayerWithMe: 'false',
+        allowPrayerTimeNotification: 'false',
+        syncAlexa: 'false',
+        status: 'Active',
+        createdBy: '${userData.firstName}${userData.lastName}',
+        createdOn: DateTime.now(),
+        modifiedBy: '${userData.firstName}${userData.lastName}',
+        modifiedOn: DateTime.now());
     return settings;
   }
 
-  Future addSettings(
-    UserModel userData,
-    SettingsModel settingsData,
-  ) async {
+  Future addSettings(String userId, UserModel userData) async {
     try {
       //store settings
-      Firestore.instance.runTransaction((transaction) async {
-        await _settingsCollectionReference
-            .add(setSettings(userData, settingsData).toJson());
-      });
+      final settingsId = Uuid().v1();
+      print('settings data $userData');
+      await _settingsCollectionReference
+          .document(settingsId)
+          .setData(setSettings(userId, userData).toJson());
     } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
-  Future getSettingsData(String userId) async {
+  Stream<QuerySnapshot> getSettingsData(String userId) {
     try {
-      final settingRes = await _settingsCollectionReference
+      return _settingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .limit(1)
-          .getDocuments();
-      return SettingsModel.fromData(settingRes.documents[0]);
+          // .limit(1)
+          .snapshots();
     } catch (e) {
       return null;
     }
