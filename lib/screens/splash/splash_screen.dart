@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -54,8 +55,10 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   route() async {
-    await _authenticationProvider.handleStartUpLogic().then((value) {
+    await _authenticationProvider.handleStartUpLogic().then((value) async {
       if (value == true) {
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUserDetails();
         Navigator.of(context).pushNamedAndRemoveUntil(
             PrayerScreen.routeName, (Route<dynamic> route) => false);
       } else {

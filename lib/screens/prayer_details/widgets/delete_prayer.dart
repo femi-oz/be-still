@@ -1,6 +1,8 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class DeletePrayer extends StatelessWidget {
@@ -30,8 +32,9 @@ class DeletePrayer extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(PrayerScreen.routeName);
+              Provider.of<PrayerProvider>(context, listen: false)
+                  .deletePrayer(prayer.id);
+              Navigator.of(context).pushNamed(PrayerScreen.routeName);
             },
             child: Container(
               height: 30,

@@ -68,9 +68,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
       ),
       actions: <Widget>[
         FlatButton(
-          onPressed: () => Navigator.of(context).pushNamed(
-            AddPrayer.routeName,
-            arguments: AddRouteArguments(false, null),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddPrayer(isEdit: false),
+            ),
           ),
           child: Text(
             "ADD A PRAYER",

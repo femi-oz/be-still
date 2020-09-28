@@ -19,74 +19,75 @@ class NoUpdateView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        prayer.user != _currentUser.id
-            ? Container(
-                margin: EdgeInsets.only(bottom: 20),
-                child: Text(
-                  username,
-                  style: TextStyle(
-                      color: context.brightBlue,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.left,
-                ),
-              )
-            : Container(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 30),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    '7:45am',
-                    style: TextStyle(
-                        color: context.dimBlue, fontWeight: FontWeight.w500),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 5,
-                    ),
-                    child: Text(
-                      '|',
-                      style: TextStyle(
-                          color: context.dimBlue, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Text(
-                    DateFormat('hh:mma | MM.dd.yyyy').format(prayer.date),
-                    style: TextStyle(
-                        color: context.dimBlue, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Divider(
-                color: context.prayerDetailsCardBorder,
-                thickness: 1,
-              ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-            child: Center(
-              child: Text(
-                prayer.content,
-                style: TextStyle(
-                  color: context.inputFieldText,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                  height: 2,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-        ),
+        // TODO
+        // prayer.user != _currentUser.id
+        //     ? Container(
+        //         margin: EdgeInsets.only(bottom: 20),
+        //         child: Text(
+        //           username,
+        //           style: TextStyle(
+        //               color: context.brightBlue,
+        //               fontSize: 18,
+        //               fontWeight: FontWeight.w500),
+        //           textAlign: TextAlign.left,
+        //         ),
+        //       )
+        //     : Container(),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: <Widget>[
+        //     Container(
+        //       margin: EdgeInsets.only(right: 30),
+        //       child: Row(
+        //         children: <Widget>[
+        //           Text(
+        //             '7:45am',
+        //             style: TextStyle(
+        //                 color: context.dimBlue, fontWeight: FontWeight.w500),
+        //           ),
+        //           Container(
+        //             margin: EdgeInsets.symmetric(
+        //               horizontal: 5,
+        //             ),
+        //             child: Text(
+        //               '|',
+        //               style: TextStyle(
+        //                   color: context.dimBlue, fontWeight: FontWeight.w500),
+        //             ),
+        //           ),
+        //           Text(
+        //             DateFormat('hh:mma | MM.dd.yyyy').format(prayer.date),
+        //             style: TextStyle(
+        //                 color: context.dimBlue, fontWeight: FontWeight.w500),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //     Expanded(
+        //       child: Divider(
+        //         color: context.prayerDetailsCardBorder,
+        //         thickness: 1,
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        // Expanded(
+        //   child: Padding(
+        //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+        //     child: Center(
+        //       child: Text(
+        //         prayer.content,
+        //         style: TextStyle(
+        //           color: context.inputFieldText,
+        //           fontSize: 14,
+        //           fontWeight: FontWeight.w300,
+        //           height: 2,
+        //         ),
+        //         textAlign: TextAlign.left,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

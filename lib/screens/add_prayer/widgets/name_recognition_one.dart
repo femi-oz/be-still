@@ -1,9 +1,16 @@
 import 'package:be_still/data/user.data.dart';
-import 'package:be_still/screens/add_prayer/Widgets/name_recognition_two.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/app_theme.dart';
+import 'name_recognition_two.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {
+  final PrayerModel prayer;
+
+  final scafoldKey;
+
+  NameRecognitionMenuOne(PrayerModel prayerData,
+      {this.prayer, this.scafoldKey});
   @override
   _NameRecognitionMenuOneState createState() => _NameRecognitionMenuOneState();
 }
@@ -132,7 +139,8 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 backgroundColor: context.toolsBg.withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
-                  return NameRecognitionMenuTwo();
+                  return NameRecognitionMenuTwo(
+                      prayer: widget.prayer, scafoldKey: widget.scafoldKey);
                 },
               ),
               child: Container(

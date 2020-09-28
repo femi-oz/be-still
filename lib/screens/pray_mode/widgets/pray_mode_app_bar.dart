@@ -18,7 +18,8 @@ class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _PrayModeAppBarState extends State<PrayModeAppBar> {
-  final totalPrayers = prayerData.length;
+  // TODO
+  // final totalPrayers = prayerData.length;
   @override
   Widget build(BuildContext context) {
     final current = widget.current;
@@ -40,7 +41,8 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
           ),
         ),
         title: Text(
-          '$current OF $totalPrayers',
+          '// TODO',
+          // '$current OF $totalPrayers',
           style: TextStyle(color: context.brightBlue2, fontSize: 12),
         ),
         actions: <Widget>[

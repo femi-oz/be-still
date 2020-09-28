@@ -1,3 +1,4 @@
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
@@ -8,7 +9,7 @@ import './../../../utils/app_theme.dart';
 class PrayerQuickAccess extends StatefulWidget {
   final y;
 
-  final prayer;
+  final PrayerModel prayer;
 
   PrayerQuickAccess({this.y, this.prayer});
   @override
@@ -61,7 +62,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
-    setReminder(widget.prayer.reminder);
+    //TODO
+    // setReminder(widget.prayer.reminder);
     animationController =
         AnimationController(duration: Duration(milliseconds: 250), vsync: this);
     degOneTranslationAnimation = TweenSequence([
@@ -112,18 +114,19 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: context.brightBlue2,
-                        ),
-                        onClick: () {
-                          Navigator.of(context).pushNamed(
-                            AddPrayer.routeName,
-                            arguments:
-                                AddRouteArguments(true, widget.prayer.id),
-                          );
-                        },
-                      ),
+                          icon: Icon(
+                            Icons.edit,
+                            color: context.brightBlue2,
+                          ),
+                          onClick: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPrayer(
+                                    isEdit: true, prayer: widget.prayer),
+                              ),
+                            );
+                          }),
                     ),
                   ),
                   Transform.translate(

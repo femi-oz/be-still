@@ -50,7 +50,8 @@ class AuthenticationService {
           .then((value) async {
         // user.sendEmailVerification();
         FirebaseUser user = value.user;
-        await locator<UserService>().addUserData(userData, user.uid);
+        await locator<UserService>()
+            .addUserData(userData, settingsData, user.uid);
 
         // Save user information in firestore
 

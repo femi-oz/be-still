@@ -16,9 +16,10 @@ class PrayerPage extends StatelessWidget {
       color: context.prayModeBg,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20),
-        child: prayer.updates.length > 0
-            ? UpdateView(prayer)
-            : NoUpdateView(prayer),
+        // TODO
+        // child: prayer.updates.length > 0
+        //     ? UpdateView(prayer)
+        //     : NoUpdateView(prayer),
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.84,
         padding: EdgeInsets.all(20),

@@ -1,3 +1,5 @@
+import 'package:be_still/models/prayer_settings.model.dart';
+import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -95,4 +97,13 @@ class SettingsModel {
       'ModifiedOn': modifiedOn,
     };
   }
+}
+
+class CombineSettingsStream {
+  final SettingsModel settings;
+  final SharingSettingsModel sharingSettings;
+  final PrayerSettingsModel prayerSettings;
+
+  CombineSettingsStream(
+      this.settings, this.sharingSettings, this.prayerSettings);
 }

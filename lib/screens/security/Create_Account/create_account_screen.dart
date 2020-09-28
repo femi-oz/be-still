@@ -58,17 +58,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       return null;
     }
     _formKey.currentState.save();
+    UserModel _user = Provider.of<UserProvider>(context).currentUser;
 
     final UserModel _userData = UserModel(
       churchId: 0,
-      createdBy: '',
+      createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
       createdOn: DateTime.now(),
       dateOfBirth: _selectedDate,
       email: _emailController.text,
       firstName: _firstnameController.text,
       keyReference: '',
       lastName: _lastnameController.text,
-      modifiedBy: '',
+      modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
       modifiedOn: DateTime.now(),
       phone: '',
     );
@@ -79,7 +80,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     if (result is bool) {
       if (result == true) {
-        Provider.of<UserProvider>(context, listen: false)
+        await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUserDetails();
         setState(() {
           step += 1;

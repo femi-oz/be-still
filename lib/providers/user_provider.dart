@@ -9,8 +9,7 @@ class UserProvider with ChangeNotifier {
 
   UserModel get currentUser => _currentUser;
 
-  void setCurrentUserDetails() async {
-    //Fetch USer from Firestore
+  Future setCurrentUserDetails() async {
     _currentUser = await _userService.getCurrentUser();
   }
 

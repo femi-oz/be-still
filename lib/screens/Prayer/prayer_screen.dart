@@ -1,7 +1,9 @@
-import 'package:be_still/data/group.data.dart';
-import 'package:be_still/data/prayer.data.dart';
+import 'package:async/async.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/user_prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -21,24 +23,19 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  var activeList = PrayerActiveScreen.personal;
+  var activeList;
   var groupId;
-
-  final List<PrayerModel> emptyList = [];
-  List<PrayerModel> prayers = [];
   List<PrayerModel> filteredprayers = [];
 
-  void _onTextchanged(String value) {
-    print(value);
-    setState(() {
-      filteredprayers = prayers
-          .where((p) => p.content.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-    });
+  final TextEditingController _searchController = TextEditingController();
+
+  void _clearSearchField() {
+    _searchController.text = '';
   }
 
   _setCurrentList(_activeList, _groupId) {
     setState(() {
+      _clearSearchField();
       activeList = _activeList;
       groupId = _groupId;
     });
@@ -48,49 +45,19 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   void initState() {
+    activeList = PrayerActiveScreen.personal;
     super.initState();
   }
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    if (!isInitialized) {
-      isInitialized = true;
-      setState(
-        () {
-          // TODO
-          // prayers = activeList == PrayerActiveScreen.personal
-          //     ? prayerData
-          //         .where((p) =>
-          //             _currentUser.prayerList.contains(p.id) &&
-          //             p.status == 'active')
-          //         .toList()
-          //     : activeList == PrayerActiveScreen.archived
-          //         ? prayerData
-          //             .where((p) =>
-          //                 _currentUser.prayerList.contains(p.id) &&
-          //                 p.status == 'archived')
-          //             .toList()
-          //         : activeList == PrayerActiveScreen.answered
-          //             ? prayerData
-          //                 .where((p) =>
-          //                     _currentUser.prayerList.contains(p.id) &&
-          //                     p.status == 'answered')
-          //                 .toList()
-          //             : activeList == PrayerActiveScreen.group
-          //                 ? prayerData
-          //                     .where((p) => groupData
-          //                         .singleWhere((g) => g.id == groupId)
-          //                         .prayerList
-          //                         .contains(p.id))
-          //                     .toList()
-          //                 : emptyList;
-          // filteredprayers = prayers;
-        },
-      );
-    }
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+
     return Scaffold(
+      key: _scaffoldKey,
       appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
@@ -115,21 +82,88 @@ class _PrayerScreenState extends State<PrayerScreen> {
               Container(
                 height: 60,
                 child: PrayerMenu(
-                    setCurrentList: _setCurrentList,
-                    activeList: activeList,
-                    groupId: groupId,
-                    onTextchanged: _onTextchanged),
+                  clearSearchField: _clearSearchField,
+                  searchController: _searchController,
+                  setCurrentList: _setCurrentList,
+                  activeList: activeList,
+                  groupId: groupId,
+                ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.825,
-                child: SingleChildScrollView(
-                  child: activeList == PrayerActiveScreen.findGroup
-                      ? FindAGroup()
-                      : PrayerList(
-                          activeList: activeList,
-                          groupId: groupId,
-                          prayers: filteredprayers,
-                        ),
+                height: MediaQuery.of(context).size.height * 0.855,
+                child: StreamBuilder(
+                  stream:
+                      Provider.of<PrayerProvider>(context).getPrayers(_user.id),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<CombinePrayerStream>> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Column(
+                          children: [
+                            LinearProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                context.brightBlue,
+                              ),
+                              backgroundColor: context.prayerMenuEnd,
+                            ),
+                          ],
+                        );
+                      default:
+                        if (snapshot.hasError)
+                          return Text('Error: ${snapshot.error}');
+                        else {
+                          final activePrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.status == 'Active' &&
+                                  e.prayer.isAnswer == false &&
+                                  e.prayer.groupId == '0' &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
+                          final archivedPrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.status == 'Inactive' &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
+                          final answeredPrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.isAnswer == true &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
+                          final groupPrayers = snapshot.data
+                              .where((e) =>
+                                  e.prayer.status == 'Active' &&
+                                  e.prayer.isAnswer == false &&
+                                  e.prayer.groupId == groupId &&
+                                  e.prayer.description.toLowerCase().contains(
+                                      _searchController.text.toLowerCase()))
+                              .toList();
+                          return SingleChildScrollView(
+                            child: activeList == PrayerActiveScreen.findGroup
+                                ? FindAGroup()
+                                : PrayerList(
+                                    activeList: activeList,
+                                    groupId: groupId,
+                                    prayers: activeList ==
+                                            PrayerActiveScreen.archived
+                                        ? archivedPrayers
+                                        : activeList ==
+                                                PrayerActiveScreen.answered
+                                            ? answeredPrayers
+                                            : activeList ==
+                                                    PrayerActiveScreen.personal
+                                                ? activePrayers
+                                                : activeList ==
+                                                        PrayerActiveScreen.group
+                                                    ? groupPrayers
+                                                    : [],
+                                  ),
+                          );
+                        }
+                    }
+                  },
                 ),
               ),
             ],

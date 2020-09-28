@@ -108,9 +108,11 @@ class CustomDrawer extends StatelessWidget {
                             ),
                           ),
                           ListTile(
-                            onTap: () => Navigator.of(context).pushNamed(
-                              AddPrayer.routeName,
-                              arguments: AddRouteArguments(false, null),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPrayer(isEdit: false),
+                              ),
                             ),
                             title: Text(
                               "ADD A PRAYER",

@@ -14,11 +14,15 @@ import 'group_quick_access.dart';
 class PrayerCard extends StatelessWidget {
   final PrayerModel prayer;
 
-  final groupId;
+  // final groupId;
 
   final activeList;
 
-  PrayerCard(this.prayer, this.groupId, this.activeList);
+  PrayerCard(
+    this.prayer,
+    // this.groupId,
+    this.activeList,
+  );
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
@@ -31,22 +35,22 @@ class PrayerCard extends StatelessWidget {
           backgroundColor: context.prayerMenuStart.withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return (prayer.user != _currentUser.id &&
-                    activeList != PrayerActiveScreen.personal)
-                ? GroupPrayerQuickAccess(y: y, prayer: prayer)
-                : PrayerQuickAccess(y: y, prayer: prayer);
+            return (prayer.userId == _currentUser.id)
+                // &&
+                //         activeList != PrayerActiveScreen.personal)
+                ? PrayerQuickAccess(y: y, prayer: prayer)
+                : GroupPrayerQuickAccess(y: y, prayer: prayer);
           },
         );
       },
       onTap: () {
-        Navigator.of(context).pushNamed(
+        Navigator.of(context).pushReplacementNamed(
           PrayerDetails.routeName,
-          arguments: RouteArguments(
+          arguments: PrayerDetailsRouteArguments(
             prayer.id,
-            groupId,
+            // groupId,
           ),
         );
-        print(groupId);
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5.0),
@@ -75,16 +79,13 @@ class PrayerCard extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: <Widget>[
+                        // TODO
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            prayer.user != _currentUser.id
+                            prayer.userId != _currentUser.id
                                 ? Text(
-                                    'TODO',
-                                    // userData
-                                    //     .singleWhere((u) => u.id == prayer.user)
-                                    //     .fullName
-                                    //     .toUpperCase(),
+                                    prayer.createdBy,
                                     style: TextStyle(
                                       color: context.brightBlue,
                                       fontWeight: FontWeight.w500,
@@ -94,54 +95,55 @@ class PrayerCard extends StatelessWidget {
                                 : Container(),
                             Row(
                               children: <Widget>[
-                                prayer.hasReminder
-                                    ? Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.calendar_today,
-                                            size: 12,
-                                            color: context.prayerReminderIcon,
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                            ),
-                                            child: Text(
-                                              '|',
-                                              style: TextStyle(
-                                                color: context.prayerCardBorder,
-                                                fontSize: 10,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    : Container(),
-                                Row(
-                                  children: prayer.tags.map((tag) {
-                                    return Text(
-                                      tag.toUpperCase(),
-                                      style: TextStyle(
-                                        color: context.prayerCardTags,
-                                        fontSize: 10,
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                                prayer.tags.length > 0
-                                    ? Container(
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                        ),
-                                        child: Text(
-                                          '|',
-                                          style: TextStyle(
-                                              color: context.prayerCardBorder),
-                                        ),
-                                      )
-                                    : Container(),
+                                // prayer.hasReminder
+                                //     ? Row(
+                                //         children: <Widget>[
+                                //           Icon(
+                                //             Icons.calendar_today,
+                                //             size: 12,
+                                //             color: context.prayerReminderIcon,
+                                //           ),
+                                //           Container(
+                                //             margin: EdgeInsets.symmetric(
+                                //               horizontal: 10,
+                                //             ),
+                                //             child: Text(
+                                //               '|',
+                                //               style: TextStyle(
+                                //                 color: context.prayerCardBorder,
+                                //                 fontSize: 10,
+                                //               ),
+                                //             ),
+                                //           )
+                                //         ],
+                                //       )
+                                //     : Container(),
+                                // Row(
+                                //   children: prayer.tags.map((tag) {
+                                //     return Text(
+                                //       tag.toUpperCase(),
+                                //       style: TextStyle(
+                                //         color: context.prayerCardTags,
+                                //         fontSize: 10,
+                                //       ),
+                                //     );
+                                //   }).toList(),
+                                // ),
+                                // prayer.tags.length > 0
+                                //     ? Container(
+                                //         margin: EdgeInsets.symmetric(
+                                //           horizontal: 10,
+                                //         ),
+                                //         child: Text(
+                                //           '|',
+                                //           style: TextStyle(
+                                //               color: context.prayerCardBorder),
+                                //         ),
+                                //       )
+                                //     : Container(),
                                 Text(
-                                  DateFormat('MM.dd.yyyy').format(prayer.date),
+                                  DateFormat('MM.dd.yyyy')
+                                      .format(prayer.createdOn),
                                   style: TextStyle(
                                     color: context.prayerCardPrayer,
                                     fontSize: 10,
@@ -165,7 +167,9 @@ class PrayerCard extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: Text(
-                      prayer.content.substring(0, 100),
+                      prayer.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: context.prayerCardPrayer,
                         fontSize: 12,
@@ -181,11 +185,4 @@ class PrayerCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class RouteArguments {
-  final String id;
-  final String groupId;
-
-  RouteArguments(this.id, this.groupId);
 }

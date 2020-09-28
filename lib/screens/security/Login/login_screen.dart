@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen>
     );
     if (result is bool) {
       if (result == true) {
-        Provider.of<UserProvider>(context, listen: false)
+        await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUserDetails();
         Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
       }

@@ -1,19 +1,17 @@
+import 'package:be_still/enums/groupType.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/input_field.dart';
 
 class CreateGroupForm extends StatefulWidget {
   final groupNameController;
-
   final cityController;
-
   final stateController;
-
   final organizationController;
-
   final descriptionController;
-
-  String option;
+  GroupType option;
+  final formKey;
+  final autoValidate;
 
   CreateGroupForm({
     this.groupNameController,
@@ -22,6 +20,8 @@ class CreateGroupForm extends StatefulWidget {
     this.organizationController,
     this.descriptionController,
     this.option,
+    this.autoValidate,
+    this.formKey,
   });
 
   @override
@@ -32,12 +32,14 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: widget.formKey,
+      autovalidate: widget.autoValidate,
       child: Column(
         children: [
           CustomInput(
             controller: widget.groupNameController,
             label: 'Group Name*',
-            textInputAction: TextInputAction.done,
+            keyboardType: TextInputType.text,
             isRequired: true,
             showSuffix: false,
           ),
@@ -45,6 +47,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           CustomInput(
             controller: widget.cityController,
             label: 'City*',
+            keyboardType: TextInputType.text,
             isRequired: true,
             showSuffix: false,
           ),
@@ -52,6 +55,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           CustomInput(
             controller: widget.stateController,
             label: 'State*',
+            keyboardType: TextInputType.text,
             isRequired: true,
             showSuffix: false,
           ),
@@ -60,6 +64,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
             controller: widget.organizationController,
             label: 'Organization / Church Association',
             isRequired: false,
+            keyboardType: TextInputType.text,
             showSuffix: false,
           ),
           SizedBox(height: 12.0),
@@ -78,7 +83,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
               Container(
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.option == 'normal'
+                  color: widget.option == GroupType.normal
                       ? context.toolsActiveBtn.withOpacity(0.3)
                       : Colors.transparent,
                   border: Border.all(
@@ -98,13 +103,14 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                           fontWeight: FontWeight.w500),
                     ),
                   ),
-                  onPressed: () => setState(() => widget.option = 'normal'),
+                  onPressed: () =>
+                      setState(() => widget.option = GroupType.normal),
                 ),
               ),
               Container(
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.option == 'private'
+                  color: widget.option == GroupType.private
                       ? context.toolsActiveBtn.withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
@@ -126,13 +132,14 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                           fontWeight: FontWeight.w500),
                     ),
                   ),
-                  onPressed: () => setState(() => widget.option = 'private'),
+                  onPressed: () =>
+                      setState(() => widget.option = GroupType.private),
                 ),
               ),
               Container(
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.option == 'feed'
+                  color: widget.option == GroupType.feed
                       ? context.toolsActiveBtn.withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
@@ -154,7 +161,8 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                           fontWeight: FontWeight.w500),
                     ),
                   ),
-                  onPressed: () => setState(() => widget.option = 'feed'),
+                  onPressed: () =>
+                      setState(() => widget.option = GroupType.feed),
                 ),
               ),
             ],
