@@ -33,7 +33,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
           .where(
               (p) => p.description.toLowerCase().contains(value.toLowerCase()))
           .toList();
-      print('--------------$filteredprayers');
     });
   }
 

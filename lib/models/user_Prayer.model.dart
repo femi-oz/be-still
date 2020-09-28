@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class UserPrayerModel {
   final String id;
@@ -31,7 +31,7 @@ class UserPrayerModel {
         prayerId = snapshot.data['PrayerId'],
         userId = snapshot.data['UserId'],
         sequence = snapshot.data['Sequence'],
-        isFavorite = snapshot.data['IsFavorite'],
+        isFavorite = snapshot.data['IsFavourite'],
         status = snapshot.data['Status'],
         createdBy = snapshot.data['CreatedBy'],
         createdOn = snapshot.data['CreatedOn'].toDate(),
@@ -43,7 +43,7 @@ class UserPrayerModel {
       'PrayerId': prayerId,
       'UserId': userId,
       'Sequence': sequence,
-      'IsFavorite': isFavorite,
+      'IsFavourite': isFavorite,
       'Status': status,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
