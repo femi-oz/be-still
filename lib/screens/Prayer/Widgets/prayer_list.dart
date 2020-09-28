@@ -1,3 +1,4 @@
+import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,11 @@ class PrayerList extends StatelessWidget {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddPrayer(isEdit: false),
+                builder: (context) => AddPrayer(
+                  isEdit: false,
+                  isGroup: activeList == PrayerActiveScreen.group,
+                  groupId: groupId,
+                ),
               ),
             ),
             child: Container(

@@ -9,6 +9,8 @@ class GroupModel {
   final String description;
   final String organization;
   final String location;
+  final bool isPrivate;
+  final bool isFeed;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -21,6 +23,8 @@ class GroupModel {
     @required this.description,
     @required this.organization,
     @required this.location,
+    @required this.isPrivate,
+    @required this.isFeed,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -34,6 +38,8 @@ class GroupModel {
         status = snapshot.data['Status'],
         organization = snapshot.data['Organization'],
         location = snapshot.data['Location'],
+        isPrivate = snapshot.data['IsPrivate'],
+        isFeed = snapshot.data['IsFeed'],
         createdBy = snapshot.data['CreatedBy'],
         createdOn = snapshot.data['CreatedOn'].toDate(),
         modifiedBy = snapshot.data['ModifiedBy'],
@@ -46,6 +52,8 @@ class GroupModel {
       'Status': status,
       'Organization': organization,
       'Location': location,
+      'IsPrivate': isPrivate,
+      'IsFeed': isFeed,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

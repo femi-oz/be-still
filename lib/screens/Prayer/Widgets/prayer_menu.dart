@@ -1,5 +1,7 @@
 import 'package:be_still/data/group.data.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/menu_items.dart';
@@ -38,7 +40,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   bool searchMode = false;
   @override
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final _user = Provider.of<UserProvider>(context).currentUser;
     openTools() {
       showModalBottomSheet(
         context: context,
@@ -139,24 +141,36 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           }),
                           openTools: () => openTools(),
                         ),
-                        // TODO
-                        // ...groupData
-                        //     .where((gl) => gl.members.contains(_currentUser.id))
-                        //     .map(
-                        //       (g) => Row(children: [
-                        //         PrayerMenuItem(
-                        //           title: g.name,
-                        //           isActive: widget.activeList ==
-                        //                   PrayerActiveScreen.group &&
-                        //               widget.groupId == g.id,
-                        //           action: () => setState(() {
-                        //             widget.setCurrentList(
-                        //                 PrayerActiveScreen.group, g.id);
-                        //           }),
-                        //           openTools: () => openTools(),
-                        //         ),
-                        //       ]),
-                        //     ),
+                        StreamBuilder(
+                          stream: Provider.of<GroupProvider>(context)
+                              .getGroups(_user.id),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<CombineGroupUserStream>>
+                                  snapshot) {
+                            if (snapshot.hasError)
+                              return Text('Error: ${snapshot.error}');
+                            else if (snapshot.hasData) {
+                              return Row(children: [
+                                for (int i = 0; i < snapshot.data.length; i++)
+                                  PrayerMenuItem(
+                                    title: snapshot.data[i].group.name,
+                                    isActive: widget.activeList ==
+                                            PrayerActiveScreen.group &&
+                                        widget.groupId ==
+                                            snapshot.data[i].group.id,
+                                    action: () => setState(() {
+                                      widget.setCurrentList(
+                                          PrayerActiveScreen.group,
+                                          snapshot.data[i].group.id);
+                                    }),
+                                    openTools: () => openTools(),
+                                  ),
+                              ]);
+                            } else {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                          },
+                        ),
                         PrayerMenuItem(
                           title: 'Archived',
                           isActive:

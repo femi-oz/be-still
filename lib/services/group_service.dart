@@ -8,7 +8,7 @@ class GroupService {
   final CollectionReference _groupCollectionReference =
       Firestore.instance.collection("Group");
   final CollectionReference _groupUserCollectionReference =
-      Firestore.instance.collection("UserGroup");
+      Firestore.instance.collection("GroupUser");
 
   Stream<List<CombineGroupUserStream>> _combineStream;
   Stream<List<CombineGroupUserStream>> fetchGroups(String userId) {
@@ -50,15 +50,16 @@ class GroupService {
     String groupID,
   ) {
     GroupUserModel userPrayer = GroupUserModel(
-        userId: userID,
-        status: 'Active',
-        groupId: groupID,
-        isAdmin: true,
-        isModerator: true,
-        createdBy: groupData.createdBy,
-        createdOn: groupData.createdOn,
-        modifiedBy: groupData.modifiedBy,
-        modifiedOn: groupData.modifiedOn);
+      userId: userID,
+      status: 'Active',
+      groupId: groupID,
+      isAdmin: true,
+      isModerator: true,
+      createdBy: groupData.createdBy,
+      createdOn: groupData.createdOn,
+      modifiedBy: groupData.modifiedBy,
+      modifiedOn: groupData.modifiedOn,
+    );
     return userPrayer;
   }
 
@@ -69,11 +70,11 @@ class GroupService {
     try {
       return Firestore.instance.runTransaction(
         (transaction) async {
-          // store prayer
+          // store group
           await transaction.set(
               _groupCollectionReference.document(_groupID), groupData.toJson());
 
-          //store user prayer
+          //store group user
           await transaction.set(
               _groupUserCollectionReference.document(_groupUserID),
               populateGroupUser(groupData, userID, _groupID).toJson());

@@ -15,11 +15,12 @@ class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
   final bool isEdit;
-
   final PrayerModel prayer;
+  final String groupId;
+  final bool isGroup;
 
   @override
-  AddPrayer({this.isEdit, this.prayer});
+  AddPrayer({this.isEdit, this.prayer, this.groupId, this.isGroup});
   _AddPrayerState createState() => _AddPrayerState();
 }
 
@@ -43,7 +44,7 @@ class _AddPrayerState extends State<AddPrayer> {
       prayerData = PrayerModel(
         title: '',
         isAnswer: false,
-        groupId: '0',
+        groupId: widget.isGroup ? widget.groupId : '0',
         userId: _user.id,
         description: _descriptionController.text,
         status: 'Active',

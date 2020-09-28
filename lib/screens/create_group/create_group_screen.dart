@@ -1,6 +1,9 @@
+import 'package:be_still/enums/groupType.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
-
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
@@ -24,17 +27,48 @@ class CreateGroupScreen extends StatefulWidget {
 }
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  String _option = 'normal';
+  GroupType _option = GroupType.normal;
   int _step = 1;
+
+  final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+  final TextEditingController _groupNameController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _organizationController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  void _save() async {
+    setState(() {
+      _autoValidate = true;
+    });
+    if (!_formKey.currentState.validate()) {
+      // showInSnackBar('Please, enter your prayer');
+      return;
+    }
+    _formKey.currentState.save();
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    GroupModel groupData = GroupModel(
+      name: _groupNameController.text,
+      location: '${_cityController.text}, ${_stateController.text}',
+      organization: _organizationController.text,
+      description: _descriptionController.text,
+      status: 'Active',
+      isPrivate: _option == GroupType.private,
+      isFeed: _option == GroupType.feed,
+      modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+      modifiedOn: DateTime.now(),
+      createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+      createdOn: DateTime.now(),
+    );
+    await Provider.of<GroupProvider>(context, listen: false)
+        .addGroup(groupData, _user.id);
+    setState(() {
+      _step++;
+    });
+  }
+
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    final TextEditingController _groupNameController = TextEditingController();
-    final TextEditingController _cityController = TextEditingController();
-    final TextEditingController _stateController = TextEditingController();
-    final TextEditingController _organizationController =
-        TextEditingController();
-    final TextEditingController _descriptionController =
-        TextEditingController();
 
     return Scaffold(
       appBar: CustomAppBar(),
@@ -56,7 +90,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           ),
         ),
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.895,
+          height: MediaQuery.of(context).size.height * 0.95,
           child: Column(
             children: <Widget>[
               Container(
@@ -89,6 +123,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     children: [
                       _step == 1
                           ? CreateGroupForm(
+                              formKey: _formKey,
+                              autoValidate: _autoValidate,
                               cityController: _cityController,
                               descriptionController: _descriptionController,
                               groupNameController: _groupNameController,
@@ -117,13 +153,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               child: FlatButton(
                                 onPressed: () {
                                   print(_step);
-                                  if (_step > 1) {
+                                  if (_step == 1) {
+                                    _save();
+                                  } else {
                                     Navigator.of(context).pushReplacementNamed(
                                         PrayerScreen.routeName);
-                                  } else {
-                                    setState(() {
-                                      _step++;
-                                    });
                                   }
                                 },
                                 color: Colors.transparent,
