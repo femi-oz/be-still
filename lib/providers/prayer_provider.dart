@@ -36,8 +36,8 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.addPrayer(prayerData, _userID);
   }
 
-  Future editprayer(PrayerModel prayerData, String prayerID) async {
-    return await _prayerService.editPrayer(prayerData, prayerID);
+  Future editprayer(String description, String prayerID) async {
+    return await _prayerService.editPrayer(description, prayerID);
   }
 
   Future archivePrayer(String prayerID) async {

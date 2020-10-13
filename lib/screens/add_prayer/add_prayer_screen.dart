@@ -1,8 +1,7 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/add_prayer/Widgets/name_recognition_one.dart';
-import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
+import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -42,18 +41,20 @@ class _AddPrayerState extends State<AddPrayer> {
     PrayerModel prayerData;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
-        title: '',
-        isAnswer: false,
-        groupId: widget.isGroup ? widget.groupId : '0',
-        userId: _user.id,
-        description: _descriptionController.text,
-        status: 'Active',
-        modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
-        modifiedOn: DateTime.now(),
-        type: '',
-        createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
-        createdOn: DateTime.now(),
-      );
+          title: '',
+          isAnswer: false,
+          groupId: widget.isGroup ? widget.groupId : '0',
+          userId: _user.id,
+          description: _descriptionController.text,
+          status: 'Active',
+          modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+          modifiedOn: DateTime.now(),
+          type: '',
+          createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+          createdOn: DateTime.now(),
+          hideFromAllMembers: false,
+          hideFromMe: false,
+          isInappropriate: false);
       showModalBottomSheet(
         context: context,
         barrierColor: context.toolsBg.withOpacity(0.5),
@@ -65,21 +66,8 @@ class _AddPrayerState extends State<AddPrayer> {
         },
       );
     } else {
-      prayerData = PrayerModel(
-        title: widget.prayer.title,
-        isAnswer: widget.prayer.isAnswer,
-        groupId: widget.prayer.groupId,
-        userId: widget.prayer.userId,
-        description: _descriptionController.text,
-        status: widget.prayer.status,
-        modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
-        modifiedOn: DateTime.now(),
-        type: widget.prayer.type,
-        createdBy: widget.prayer.createdBy,
-        createdOn: widget.prayer.createdOn,
-      );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .editprayer(prayerData, widget.prayer.id);
+          .editprayer(_descriptionController.text, widget.prayer.id);
 
       Navigator.of(context).pushNamed(
         PrayerDetails.routeName,

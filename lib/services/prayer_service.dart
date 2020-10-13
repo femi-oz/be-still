@@ -104,33 +104,13 @@ class PrayerService {
   }
 
   Future editPrayer(
-    PrayerModel prayerData,
+    String description,
     String prayerID,
   ) async {
     try {
       _prayerCollectionReference.document(prayerID).updateData(
-            prayerData.toJson(),
-          );
-      // return Firestore.instance.runTransaction(
-      //   (transaction) async {
-      // store prayer
-      // await transaction.update(
-      //     _prayerCollectionReference.document(prayerID),
-      //     prayerData.toJson());
-
-      //store user prayer
-      // await transaction.set(
-      //     _userPrayerCollectionReference.document(_userPrayerID),
-      //     populateUserPrayer(prayerData, _userID, _prayerID).toJson());
-      // },
-      // ).then((val) {
-      //   return true;
-      // }).catchError((e) {
-      //   if (e is PlatformException) {
-      //     return e.message;
-      //   }
-      //   return e.toString();
-      // });
+        {"Description": description},
+      );
     } catch (e) {
       if (e is PlatformException) {
         return e.message;
