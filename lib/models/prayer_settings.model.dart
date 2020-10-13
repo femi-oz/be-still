@@ -38,7 +38,7 @@ class PrayerSettingsModel {
       'Date': date,
       'Time': time,
       'CreatedBy': createdBy,
-      'createdOn': createdOn,
+      'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn
     };

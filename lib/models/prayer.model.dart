@@ -10,6 +10,9 @@ class PrayerModel {
   final String status;
   final String description;
   final bool isAnswer;
+  final bool isInappropriate;
+  final bool hideFromMe;
+  final bool hideFromAllMembers;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -24,6 +27,9 @@ class PrayerModel {
     @required this.status,
     @required this.description,
     @required this.isAnswer,
+    @required this.isInappropriate,
+    @required this.hideFromMe,
+    @required this.hideFromAllMembers,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -39,6 +45,9 @@ class PrayerModel {
         status = snapshot.data['Status'],
         description = snapshot.data['Description'],
         isAnswer = snapshot.data['IsAnswer'],
+        isInappropriate = snapshot.data['IsInappropriate'],
+        hideFromMe = snapshot.data['HideFromMe'],
+        hideFromAllMembers = snapshot.data['HideFromAllMembers'],
         createdBy = snapshot.data['CreatedBy'],
         createdOn = snapshot.data['CreatedOn'].toDate(),
         modifiedBy = snapshot.data['ModifiedBy'],
@@ -53,6 +62,45 @@ class PrayerModel {
       'Status': status,
       'Description': description,
       'IsAnswer': isAnswer,
+      'IsInappropriate': isInappropriate,
+      'HideFromMe': hideFromMe,
+      'HideFromAllMembers': hideFromAllMembers,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
+class PrayerDisableModel {
+  final String prayerId;
+  final String userId;
+  final String createdBy;
+  final String createdOn;
+  final String modifiedBy;
+  final String modifiedOn;
+
+  const PrayerDisableModel(
+      {@required this.prayerId,
+      @required this.userId,
+      @required this.createdBy,
+      @required this.createdOn,
+      @required this.modifiedBy,
+      @required this.modifiedOn});
+
+  PrayerDisableModel.fromData(DocumentSnapshot snapshot)
+      : prayerId = snapshot.documentID,
+        userId = snapshot.data['UserId'],
+        createdBy = snapshot.data['createdBy'],
+        createdOn = snapshot.data['createdOn'],
+        modifiedBy = snapshot.data['modifiedBy'],
+        modifiedOn = snapshot.data['modifiedOn'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'UserId': userId,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

@@ -7,6 +7,7 @@ import 'package:be_still/services/prayer_settings_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/services/sharing_service.dart';
 import 'package:be_still/services/user_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
@@ -49,13 +50,11 @@ class AuthenticationService {
           .then((value) async {
         // user.sendEmailVerification();
         FirebaseUser user = value.user;
+        await locator<UserService>()
+            .addUserData(userData, settingsData, user.uid);
+
         // Save user information in firestore
-        await locator<UserService>().addUserData(userData, user.uid);
-        await locator<SettingsService>().addSettings(userData, settingsData);
-        await locator<SharingSettingsService>()
-            .addSharingSetting(userData, sharingSettingsData);
-        await locator<PrayerSettingsService>()
-            .addPrayerSettings(userData, prayerSettingsData);
+
         return user != null;
       });
     } catch (e) {

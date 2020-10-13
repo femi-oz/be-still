@@ -1,3 +1,4 @@
+import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,15 @@ import 'package:provider/provider.dart';
 import 'package:be_still/utils/app_theme.dart';
 
 class GeneralSettings extends StatelessWidget {
+  final SettingsModel settings;
+
   @override
+  GeneralSettings(this.settings);
+
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    print(settings);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(

@@ -1,10 +1,14 @@
+import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 
 class PrayerTimeSettings extends StatefulWidget {
+  final PrayerSettingsModel prayerSettings;
+
   @override
+  PrayerTimeSettings(this.prayerSettings);
   _PrayerTimeSettingsState createState() => _PrayerTimeSettingsState();
 }
 

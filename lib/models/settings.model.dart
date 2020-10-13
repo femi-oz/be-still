@@ -1,3 +1,5 @@
+import 'package:be_still/models/prayer_settings.model.dart';
+import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -67,11 +69,11 @@ class SettingsModel {
         syncAlexa = snapShot.data['SyncAlexa'],
         status = snapShot.data['Status'],
         createdBy = snapShot.data['CreatedBy'],
-        createdOn = snapShot.data['CreatedOn'].toDate(),
+        createdOn = snapShot.data['CreatedOn'],
         modifiedBy = snapShot.data['ModifiedBy'],
-        modifiedOn = snapShot.data['ModifiedOn'].toDate();
+        modifiedOn = snapShot.data['ModifiedOn'];
 
-  Map<String, dynamic> toJSon() {
+  Map<String, dynamic> toJson() {
     return {
       'UserId': userId,
       'DeviceId': deviceId,
@@ -83,6 +85,7 @@ class SettingsModel {
       'AllowPushNotification': allowPushNotification,
       'AllowTextNotification': allowTextNotification,
       'EmailUpdateNotification': emailUpdateNotification,
+      'EmailUpdateFrequency': emailUpdateFrequency,
       'NotifyMeSomeonePostOnGroup': notifyMeSomeonePostOnGroup,
       'NotifyMeSomeoneSharePrayerWithMe': notifyMeSomeoneSharePrayerWithMe,
       'AllowPrayerTimeNotification': allowPrayerTimeNotification,
@@ -92,7 +95,15 @@ class SettingsModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
-      'EmailUpdateFrequency': emailUpdateFrequency,
     };
   }
+}
+
+class CombineSettingsStream {
+  final SettingsModel settings;
+  final SharingSettingsModel sharingSettings;
+  final PrayerSettingsModel prayerSettings;
+
+  CombineSettingsStream(
+      this.settings, this.sharingSettings, this.prayerSettings);
 }

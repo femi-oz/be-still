@@ -9,7 +9,8 @@ class NameRecognitionMenuOne extends StatefulWidget {
 
   final scafoldKey;
 
-  NameRecognitionMenuOne({this.prayer, this.scafoldKey});
+  NameRecognitionMenuOne(PrayerModel prayerData,
+      {this.prayer, this.scafoldKey});
   @override
   _NameRecognitionMenuOneState createState() => _NameRecognitionMenuOneState();
 }
