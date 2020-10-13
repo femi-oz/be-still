@@ -8,8 +8,9 @@ class NameRecognitionMenuOne extends StatefulWidget {
   final PrayerModel prayer;
 
   final scafoldKey;
+  final bool isGroup;
 
-  NameRecognitionMenuOne({this.prayer, this.scafoldKey});
+  NameRecognitionMenuOne({this.prayer, this.scafoldKey, this.isGroup});
   @override
   _NameRecognitionMenuOneState createState() => _NameRecognitionMenuOneState();
 }
@@ -139,7 +140,9 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return NameRecognitionMenuTwo(
-                      prayer: widget.prayer, scafoldKey: widget.scafoldKey);
+                      prayer: widget.prayer,
+                      scafoldKey: widget.scafoldKey,
+                      isGroup: widget.isGroup);
                 },
               ),
               child: Container(

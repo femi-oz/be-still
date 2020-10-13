@@ -1,3 +1,4 @@
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
@@ -11,9 +12,11 @@ class PrayerService {
       Firestore.instance.collection("Prayer");
   final CollectionReference _userPrayerCollectionReference =
       Firestore.instance.collection("UserPrayer");
+  final CollectionReference _groupPrayerCollectionReference =
+      Firestore.instance.collection("GroupPrayer");
 
-  final CollectionReference _prayerDisableCollectionRefernce =
-      Firestore.instance.collection("PrayerDisable");
+  // final CollectionReference _prayerDisableCollectionRefernce =
+  //     Firestore.instance.collection("PrayerDisable");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> fetchPrayers(String userId) {
@@ -33,7 +36,7 @@ class PrayerService {
               .map<PrayerModel>((document) => PrayerModel.fromData(document));
 
           return Rx.combineLatest2(userPrayer, prayer,
-              (messages, user) => CombinePrayerStream(messages, user));
+              (userPrayer, prayer) => CombinePrayerStream(userPrayer, prayer));
         });
       }).switchMap((observables) {
         return observables.length > 0
@@ -49,6 +52,44 @@ class PrayerService {
     }
   }
 
+  Stream<List<CombineGroupPrayerStream>> _combineGroupStream;
+  Stream<List<CombineGroupPrayerStream>> fetchGroupPrayers(String groupId) {
+    print(groupId);
+    try {
+      _combineGroupStream = _groupPrayerCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .snapshots()
+          .map((convert) {
+        return convert.documents.map((f) {
+          Stream<GroupPrayerModel> groupPrayer = Stream.value(f)
+              .map<GroupPrayerModel>(
+                  (document) => GroupPrayerModel.fromData(document));
+
+          Stream<PrayerModel> prayer = _prayerCollectionReference
+              .document(f.data['PrayerId'])
+              .snapshots()
+              .map<PrayerModel>((document) => PrayerModel.fromData(document));
+
+          return Rx.combineLatest2(
+              groupPrayer,
+              prayer,
+              (groupPrayer, prayer) =>
+                  CombineGroupPrayerStream(prayer, groupPrayer));
+        });
+      }).switchMap((observables) {
+        return observables.length > 0
+            ? Rx.combineLatestList(observables)
+            : Stream.value([]);
+      });
+      return _combineGroupStream;
+    } catch (e) {
+      if (e is PlatformException) {
+        print(e.message);
+      }
+      return null;
+    }
+  }
+
   populateUserPrayer(
     PrayerModel prayerData,
     String userID,
@@ -56,6 +97,23 @@ class PrayerService {
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
         userId: userID,
+        status: 'Active',
+        sequence: null,
+        prayerId: prayerID,
+        isFavorite: false,
+        createdBy: prayerData.createdBy,
+        createdOn: prayerData.createdOn,
+        modifiedBy: prayerData.modifiedBy,
+        modifiedOn: prayerData.modifiedOn);
+    return userPrayer;
+  }
+
+  populateGroupPrayer(
+    PrayerModel prayerData,
+    String prayerID,
+  ) {
+    GroupPrayerModel userPrayer = GroupPrayerModel(
+        groupId: prayerData.groupId,
         status: 'Active',
         sequence: null,
         prayerId: prayerID,
@@ -86,6 +144,41 @@ class PrayerService {
           await transaction.set(
               _userPrayerCollectionReference.document(_userPrayerID),
               populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        if (e is PlatformException) {
+          return e.message;
+        }
+        return e.toString();
+      });
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
+  Future addGroupPrayer(
+    PrayerModel prayerData,
+  ) async {
+    // Generate uuid
+    final _prayerID = Uuid().v1();
+    final _userPrayerID = Uuid().v1();
+
+    try {
+      return Firestore.instance.runTransaction(
+        (transaction) async {
+          // store prayer
+          await transaction.set(_prayerCollectionReference.document(_prayerID),
+              prayerData.toJson());
+
+          //store user prayer
+          await transaction.set(
+              _groupPrayerCollectionReference.document(prayerData.groupId),
+              populateGroupPrayer(prayerData, _prayerID).toJson());
         },
       ).then((val) {
         return true;

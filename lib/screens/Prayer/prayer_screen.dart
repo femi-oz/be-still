@@ -91,9 +91,9 @@ class _PrayerScreenState extends State<PrayerScreen> {
                 height: MediaQuery.of(context).size.height * 0.855,
                 child: StreamBuilder(
                   stream: Provider.of<PrayerProvider>(context)
-                      .getPrayers(_user.id, activeList, groupId),
+                      .getUserPrayers(_user.id, activeList, groupId),
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<CombinePrayerStream>> snapshot) {
+                      AsyncSnapshot<List<PrayerModel>> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                         return Column(
@@ -110,34 +110,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
                         if (snapshot.hasError)
                           return Text('Error: ${snapshot.error}');
                         else {
-                          // final activePrayers = snapshot.data
-                          //     .where((e) =>
-                          //         e.prayer.status == 'Active' &&
-                          //         e.prayer.isAnswer == false &&
-                          //         e.prayer.groupId == '0' &&
-                          //         e.prayer.description.toLowerCase().contains(
-                          //             _searchController.text.toLowerCase()))
-                          //     .toList();
-                          // final archivedPrayers = snapshot.data
-                          //     .where((e) =>
-                          //         e.prayer.status == 'Inactive' &&
-                          //         e.prayer.description.toLowerCase().contains(
-                          //             _searchController.text.toLowerCase()))
-                          //     .toList();
-                          // final answeredPrayers = snapshot.data
-                          //     .where((e) =>
-                          //         e.prayer.isAnswer == true &&
-                          //         e.prayer.description.toLowerCase().contains(
-                          //             _searchController.text.toLowerCase()))
-                          //     .toList();
-                          // final groupPrayers = snapshot.data
-                          //     .where((e) =>
-                          //         e.prayer.status == 'Active' &&
-                          //         e.prayer.isAnswer == false &&
-                          //         e.prayer.groupId == groupId &&
-                          //         e.prayer.description.toLowerCase().contains(
-                          //             _searchController.text.toLowerCase()))
-                          //     .toList();
                           return SingleChildScrollView(
                             child: activeList == PrayerActiveScreen.findGroup
                                 ? FindAGroup()
@@ -145,19 +117,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
                                     activeList: activeList,
                                     groupId: groupId,
                                     prayers: snapshot.data,
-                                    // prayers: activeList ==
-                                    //         PrayerActiveScreen.archived
-                                    //     ? archivedPrayers
-                                    //     : activeList ==
-                                    //             PrayerActiveScreen.answered
-                                    //         ? answeredPrayers
-                                    //         : activeList ==
-                                    //                 PrayerActiveScreen.personal
-                                    //             ? activePrayers
-                                    //             : activeList ==
-                                    //                     PrayerActiveScreen.group
-                                    //                 ? groupPrayers
-                                    //                 : [],
                                   ),
                           );
                         }

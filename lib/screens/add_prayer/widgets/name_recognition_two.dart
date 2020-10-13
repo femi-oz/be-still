@@ -10,10 +10,11 @@ import '../../../utils/app_theme.dart';
 
 class NameRecognitionMenuTwo extends StatefulWidget {
   final PrayerModel prayer;
+  final bool isGroup;
 
   final scafoldKey;
 
-  NameRecognitionMenuTwo({this.prayer, this.scafoldKey});
+  NameRecognitionMenuTwo({this.prayer, this.scafoldKey, this.isGroup});
   @override
   _NameRecognitionMenuTwoState createState() => _NameRecognitionMenuTwoState();
 }
@@ -147,8 +148,13 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                 SizedBox(height: 40.0),
                 InkWell(
                   onTap: () async {
-                    await Provider.of<PrayerProvider>(context, listen: false)
-                        .addprayer(widget.prayer, _user.id);
+                    if (widget.isGroup) {
+                      await Provider.of<PrayerProvider>(context, listen: false)
+                          .addGroupPrayer(widget.prayer);
+                    } else {
+                      await Provider.of<PrayerProvider>(context, listen: false)
+                          .addPrayer(widget.prayer, _user.id);
+                    }
                     // TODO
                     // if (result is bool) {
                     //   if (result == true) {

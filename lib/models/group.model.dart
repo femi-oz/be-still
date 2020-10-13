@@ -111,7 +111,7 @@ class GroupPrayerModel {
   final String groupId;
   final String prayerId;
   final String sequence;
-  final String isFavorite;
+  final bool isFavorite;
   final String status;
   final String createdBy;
   final DateTime createdOn;
@@ -218,10 +218,10 @@ class CombineGroupUserStream {
 }
 
 class CombineGroupPrayerStream {
-  final GroupModel group;
   final PrayerModel prayer;
+  final GroupPrayerModel groupPrayer;
 
-  CombineGroupPrayerStream(this.prayer, this.group);
+  CombineGroupPrayerStream(this.prayer, this.groupPrayer);
 }
 
 class CombineGroupInviteStream {

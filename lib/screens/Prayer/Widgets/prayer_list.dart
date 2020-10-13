@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:be_still/utils/app_theme.dart';
 
 class PrayerList extends StatelessWidget {
   final activeList;
-  final List<CombinePrayerStream> prayers;
+  final List<PrayerModel> prayers;
   final groupId;
 
   @override
@@ -41,7 +42,7 @@ class PrayerList extends StatelessWidget {
                   children: <Widget>[
                     ...prayers
                         .map(
-                          (p) => PrayerCard(p.prayer, activeList),
+                          (p) => PrayerCard(p, activeList),
                         )
                         .toList(),
                   ],
