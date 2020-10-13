@@ -1,3 +1,4 @@
+import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
@@ -8,7 +9,26 @@ import 'package:flutter/cupertino.dart';
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
 
-  Stream<List<CombinePrayerStream>> getPrayers(String userId) {
+  Stream<List<CombinePrayerStream>> getPrayers(
+      String userId, PrayerActiveScreen activeScreen, String groupId) {
+    _prayerService.fetchPrayers(userId).listen((data) {
+      final activePrayers = data
+          .where((e) =>
+              e.prayer.status == 'Active' &&
+              e.prayer.isAnswer == false &&
+              e.prayer.groupId == '0')
+          .toList();
+      final archivedPrayers =
+          data.where((e) => e.prayer.status == 'Inactive').toList();
+      final answeredPrayers =
+          data.where((e) => e.prayer.isAnswer == true).toList();
+      // final groupPrayers = data
+      //     .where((e) =>
+      //         e.prayer.status == 'Active' &&
+      //         e.prayer.isAnswer == false &&
+      //         e.prayer.groupId == groupId )
+      //     .toList();
+    });
     return _prayerService.fetchPrayers(userId);
   }
 
