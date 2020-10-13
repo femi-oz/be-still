@@ -32,6 +32,18 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.deletePrayer(prayerID);
   }
 
+  Future hidePrayer(String prayerId) async {
+    return await _prayerService.hidePrayer(prayerId);
+  }
+
+  Future hidePrayerFromAllMembers(String prayerId, String groupId) async {
+    return await _prayerService.hideFromAllMembers(prayerId, groupId);
+  }
+
+  Future flagAsInappropriate(String prayerId) async {
+    return await _prayerService.flagAsInappropriate(prayerId);
+  }
+
   Stream<DocumentSnapshot> fetchPrayer(String id) {
     return _prayerService.fetchPrayer(id);
   }

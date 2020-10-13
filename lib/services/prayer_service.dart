@@ -1,5 +1,6 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
+import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
@@ -10,6 +11,9 @@ class PrayerService {
       Firestore.instance.collection("Prayer");
   final CollectionReference _userPrayerCollectionReference =
       Firestore.instance.collection("UserPrayer");
+
+  final CollectionReference _prayerDisableCollectionRefernce =
+      Firestore.instance.collection("PrayerDisable");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> fetchPrayers(String userId) {
@@ -187,12 +191,86 @@ class PrayerService {
     }
   }
 
+  hidePrayer(String prayerId) {
+    try {
+      _prayerCollectionReference
+          .document(prayerId)
+          .updateData({'HideFromMe': true});
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  hideFromAllMembers(String prayerId, String groupId) {
+    try {
+      _prayerCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .snapshots()
+          .map((event) {
+        _prayerCollectionReference
+            .document(prayerId)
+            .updateData({'HideFromAllMembers': true});
+      });
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // hidePrayer(PrayerDisableModel prayerDisable) {
+  //   final prayerDisableId = Uuid().v1();
+  //   try {
+  //     return Firestore.instance.runTransaction((transaction) async {
+  //       await transaction.set(
+  //           _prayerDisableCollectionRefernce.document(prayerDisableId),
+  //           prayerDisable.toJson());
+  //     }).then((value) {
+  //       return true;
+  //     }).catchError((e) {
+  //       if (e is PlatformException) {
+  //         return e.message;
+  //       }
+  //       return e.toString();
+  //     });
+  //   } catch (e) {
+  //     if (e is PlatformException) {
+  //       return e.message;
+  //     }
+  //     return e.toString();
+  //   }
+  // }
+
+  // populatePrayerDisable(String userId, PrayerDisableModel prayerDisableData) {
+  //   PrayerDisableModel hidePrayer = PrayerDisableModel(
+  //       prayerId: prayerDisableData.prayerId,
+  //       userId: userId,
+  //       createdBy: prayerDisableData.createdBy,
+  //       createdOn: prayerDisableData.createdOn,
+  //       modifiedBy: prayerDisableData.modifiedBy,
+  //       modifiedOn: prayerDisableData.modifiedOn);
+  //   return hidePrayer;
+  // }
+
   Stream<DocumentSnapshot> fetchPrayer(String prayerID) {
     try {
       return _prayerCollectionReference.document(prayerID).snapshots();
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  flagAsInappropriate(String prayerId) {
+    try {
+      _prayerCollectionReference
+          .document(prayerId)
+          .updateData({'IsInappropriate': true});
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
     }
   }
 }
