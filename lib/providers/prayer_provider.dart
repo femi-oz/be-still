@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/services/group_service.dart';
@@ -53,6 +52,10 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.addPrayer(prayerData, _userID);
   }
 
+  Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
+    return await _prayerService.addPrayerUpdate(prayerUpdateData);
+  }
+
   Future addGroupPrayer(PrayerModel prayerData) async {
     return await _prayerService.addGroupPrayer(prayerData);
   }
@@ -87,5 +90,11 @@ class PrayerProvider with ChangeNotifier {
 
   Stream<DocumentSnapshot> fetchPrayer(String id) {
     return _prayerService.fetchPrayer(id);
+  }
+
+  Stream<List<PrayerUpdateModel>> fetchPrayerUpdate(
+    String prayerId,
+  ) {
+    return _prayerService.fetchPrayerUpdate(prayerId);
   }
 }

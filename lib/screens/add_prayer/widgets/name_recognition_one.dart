@@ -6,11 +6,18 @@ import 'name_recognition_two.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {
   final PrayerModel prayer;
+  final PrayerUpdateModel prayerUpdate;
+  final bool isUpdate;
 
   final scafoldKey;
   final bool isGroup;
 
-  NameRecognitionMenuOne({this.prayer, this.scafoldKey, this.isGroup});
+  NameRecognitionMenuOne(
+      {this.prayer,
+      this.scafoldKey,
+      this.isGroup,
+      this.prayerUpdate,
+      this.isUpdate});
   @override
   _NameRecognitionMenuOneState createState() => _NameRecognitionMenuOneState();
 }
@@ -140,9 +147,12 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return NameRecognitionMenuTwo(
-                      prayer: widget.prayer,
-                      scafoldKey: widget.scafoldKey,
-                      isGroup: widget.isGroup);
+                    prayerUpdate: widget.prayerUpdate,
+                    prayer: widget.prayer,
+                    scafoldKey: widget.scafoldKey,
+                    isGroup: widget.isGroup,
+                    isUpdate: widget.isUpdate,
+                  );
                 },
               ),
               child: Container(

@@ -59,5 +59,8 @@ class CombinePrayerStream {
   final UserPrayerModel userPrayer;
   final PrayerModel prayer;
 
-  CombinePrayerStream(this.userPrayer, this.prayer);
+  CombinePrayerStream(
+    this.userPrayer,
+    this.prayer,
+  );
 }

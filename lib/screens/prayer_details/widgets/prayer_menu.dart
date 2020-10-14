@@ -13,8 +13,9 @@ import 'delete_prayer.dart';
 
 class PrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
+  final List<PrayerUpdateModel> updates;
   @override
-  PrayerMenu(this.prayer);
+  PrayerMenu(this.prayer, this.updates);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -163,8 +164,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed(AddUpdate.routeName,
-                        arguments: widget.prayer.id);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddUpdate(
+                          prayer: widget.prayer,
+                          updates: widget.updates,
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     height: 50,

@@ -77,9 +77,9 @@ class PrayerDisableModel {
   final String prayerId;
   final String userId;
   final String createdBy;
-  final String createdOn;
+  final DateTime createdOn;
   final String modifiedBy;
-  final String modifiedOn;
+  final DateTime modifiedOn;
 
   const PrayerDisableModel(
       {@required this.prayerId,
@@ -92,15 +92,59 @@ class PrayerDisableModel {
   PrayerDisableModel.fromData(DocumentSnapshot snapshot)
       : prayerId = snapshot.documentID,
         userId = snapshot.data['UserId'],
-        createdBy = snapshot.data['createdBy'],
-        createdOn = snapshot.data['createdOn'],
-        modifiedBy = snapshot.data['modifiedBy'],
-        modifiedOn = snapshot.data['modifiedOn'];
+        createdBy = snapshot.data['CreatedBy'],
+        createdOn = snapshot.data['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data['ModifiedBy'],
+        modifiedOn = snapshot.data['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
       'PrayerId': prayerId,
       'UserId': userId,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
+class PrayerUpdateModel {
+  final String id;
+  final String prayerId;
+  final String title;
+  final String description;
+  final String createdBy;
+  final DateTime createdOn;
+  final String modifiedBy;
+  final DateTime modifiedOn;
+
+  const PrayerUpdateModel({
+    this.id,
+    @required this.prayerId,
+    @required this.title,
+    @required this.description,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+
+  PrayerUpdateModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.documentID,
+        prayerId = snapshot.documentID,
+        title = snapshot.data['Title'],
+        description = snapshot.data['Description'],
+        createdBy = snapshot.data['CreatedBy'],
+        createdOn = snapshot.data['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data['ModifiedBy'],
+        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'Title': title,
+      'Description': description,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

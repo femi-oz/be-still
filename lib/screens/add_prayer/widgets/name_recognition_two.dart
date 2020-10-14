@@ -10,11 +10,18 @@ import '../../../utils/app_theme.dart';
 
 class NameRecognitionMenuTwo extends StatefulWidget {
   final PrayerModel prayer;
+  final PrayerUpdateModel prayerUpdate;
   final bool isGroup;
+  final bool isUpdate;
 
   final scafoldKey;
 
-  NameRecognitionMenuTwo({this.prayer, this.scafoldKey, this.isGroup});
+  NameRecognitionMenuTwo(
+      {this.prayer,
+      this.scafoldKey,
+      this.isGroup,
+      this.prayerUpdate,
+      this.isUpdate = false});
   @override
   _NameRecognitionMenuTwoState createState() => _NameRecognitionMenuTwoState();
 }
@@ -148,21 +155,20 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                 SizedBox(height: 40.0),
                 InkWell(
                   onTap: () async {
-                    if (widget.isGroup) {
+                    if (widget.isUpdate) {
                       await Provider.of<PrayerProvider>(context, listen: false)
-                          .addGroupPrayer(widget.prayer);
+                          .addPrayerUpdate(widget.prayerUpdate);
                     } else {
-                      await Provider.of<PrayerProvider>(context, listen: false)
-                          .addPrayer(widget.prayer, _user.id);
+                      if (widget.isGroup) {
+                        await Provider.of<PrayerProvider>(context,
+                                listen: false)
+                            .addGroupPrayer(widget.prayer);
+                      } else {
+                        await Provider.of<PrayerProvider>(context,
+                                listen: false)
+                            .addPrayer(widget.prayer, _user.id);
+                      }
                     }
-                    // TODO
-                    // if (result is bool) {
-                    //   if (result == true) {
-                    //     showInSnackBar('Prayer created');
-                    //   }
-                    // } else {
-                    //   showInSnackBar(result.toString());
-                    // }
                     Navigator.of(context)
                         .pushReplacementNamed(PrayerScreen.routeName);
                   },

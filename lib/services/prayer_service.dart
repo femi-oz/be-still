@@ -14,6 +14,8 @@ class PrayerService {
       Firestore.instance.collection("UserPrayer");
   final CollectionReference _groupPrayerCollectionReference =
       Firestore.instance.collection("GroupPrayer");
+  final CollectionReference _prayerUpdateCollectionReference =
+      Firestore.instance.collection("PrayerUpdate");
 
   // final CollectionReference _prayerDisableCollectionRefernce =
   //     Firestore.instance.collection("PrayerDisable");
@@ -128,7 +130,6 @@ class PrayerService {
   ) async {
     // Generate uuid
     final _prayerID = Uuid().v1();
-    final _userPrayerID = Uuid().v1();
 
     try {
       return Firestore.instance.runTransaction(
@@ -171,6 +172,41 @@ class PrayerService {
         return e.message;
       }
       return e.toString();
+    }
+  }
+
+  Future addPrayerUpdate(
+    PrayerUpdateModel prayerUpdateData,
+  ) async {
+    try {
+      _prayerUpdateCollectionReference.document().setData(
+            prayerUpdateData.toJson(),
+          );
+    } catch (e) {
+      if (e is PlatformException) {
+        return e.message;
+      }
+      return e.toString();
+    }
+  }
+
+  Stream<List<PrayerUpdateModel>> fetchPrayerUpdate(
+    String prayerId,
+  ) {
+    try {
+      print(prayerId);
+      return _prayerUpdateCollectionReference
+          .where('PrayerId', isEqualTo: prayerId)
+          .snapshots()
+          .asyncMap((event) => event.documents
+              .map((e) => PrayerUpdateModel.fromData(e))
+              .toList());
+    } catch (e) {
+      if (e is PlatformException) {
+        print(e.message);
+      }
+      print(e.message);
+      return null;
     }
   }
 

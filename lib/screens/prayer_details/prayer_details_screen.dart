@@ -9,6 +9,7 @@ import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
+import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -28,15 +29,21 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   bool isGroupAdmin;
 
+  List<PrayerUpdateModel> updates = [];
+
   Widget _buildMenu(PrayerDetailsRouteArguments args, PrayerModel prayer) {
     if ((args.isGroup && isGroupAdmin) ||
         (!args.isGroup && isGroupAdmin && prayer.groupId != '0')) {
       return GroupAdminPrayerMenu(prayer);
     } else if ((args.isGroup && !isGroupAdmin) ||
-        (!args.isGroup && !isGroupAdmin && prayer.id != '0')) {
+        (!args.isGroup && !isGroupAdmin && prayer.groupId != '0')) {
       return OtherMemberPrayerMenu(prayer);
     } else if ((!args.isGroup && prayer.groupId == '0')) {
-      return PrayerMenu(prayer);
+      return StreamBuilder<Object>(
+          stream: null,
+          builder: (context, snapshot) {
+            return PrayerMenu(prayer, updates);
+          });
     } else {
       return Container();
     }
@@ -130,48 +137,60 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                         ],
                       ),
                     ),
-                    // TODO
                     Expanded(
                       child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                context.prayerDetailsCardStart,
-                                context.prayerDetailsCardEnd,
-                              ],
-                            ),
-                            border: Border.all(
-                              color: context.prayerDetailsCardBorder,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        width: double.infinity,
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              context.prayerDetailsCardStart,
+                              context.prayerDetailsCardEnd,
+                            ],
                           ),
-                          child: NoUpdateView(prayer)),
+                          border: Border.all(
+                            color: context.prayerDetailsCardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: StreamBuilder(
+                          stream: Provider.of<PrayerProvider>(context)
+                              .fetchPrayerUpdate(prayer.id),
+                          builder: (context,
+                              AsyncSnapshot<List<PrayerUpdateModel>> snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              updates = snapshot.data;
+                              print(updates);
+                              print(snapshot.data);
+                              return snapshot.data.length > 0
+                                  ? UpdateView(prayer, updates)
+                                  : NoUpdateView(prayer);
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
                     ),
-                    StreamBuilder<Object>(
-                        stream: null,
-                        builder: (context, snapshot) {
-                          return IconButton(
-                            icon: Icon(
-                              Icons.more_horiz,
-                              color: context.brightBlue,
-                            ),
-                            onPressed: () => showModalBottomSheet(
-                              context: context,
-                              barrierColor: context.toolsBg.withOpacity(0.5),
-                              backgroundColor: context.toolsBg.withOpacity(0.9),
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return _buildMenu(args, prayer);
-                              },
-                            ),
-                          );
-                        }),
+                    IconButton(
+                      icon: Icon(
+                        Icons.more_horiz,
+                        color: context.brightBlue,
+                      ),
+                      onPressed: () => showModalBottomSheet(
+                        context: context,
+                        barrierColor: context.toolsBg.withOpacity(0.5),
+                        backgroundColor: context.toolsBg.withOpacity(0.9),
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return _buildMenu(args, prayer);
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
