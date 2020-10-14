@@ -1,4 +1,5 @@
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -11,10 +12,12 @@ class GroupService {
   final CollectionReference _groupUserCollectionReference =
       Firestore.instance.collection("GroupUser");
   final CollectionReference _groupPrayerCollectionReference =
-      Firestore.instance.collection("GroupPryer");
+      Firestore.instance.collection("GroupPrayer");
 
   final CollectionReference _groupInviteCollectionRefernce =
       Firestore.instance.collection("GroupInvite");
+  final CollectionReference _prayerCollectionReference =
+      Firestore.instance.collection("Prayer");
 
   Stream<List<CombineGroupUserStream>> _combineStream;
   Stream<List<CombineGroupUserStream>> fetchGroups(String userId) {
@@ -50,6 +53,16 @@ class GroupService {
     }
   }
 
+  Future<QuerySnapshot> fetchGroupUsers(String groupId) {
+    try {
+      return _groupUserCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .getDocuments();
+    } catch (e) {
+      return null;
+    }
+  }
+
   populateGroupUser(
     GroupModel groupData,
     String userID,
@@ -69,35 +82,36 @@ class GroupService {
     return userPrayer;
   }
 
-  Stream<List<CombineGroupPrayerStream>> _combinePrayerStream;
-  Stream<List<CombineGroupPrayerStream>> fetchPrayerGroups(
-      String userId, String groupId) {
+  Stream<List<CombineGroupPrayerStream>> _combineGroupStream;
+  Stream<List<CombineGroupPrayerStream>> fetchGroupPrayers(String groupId) {
+    print(groupId);
     try {
-      _combinePrayerStream = _groupPrayerCollectionReference
-          .where('UserId', isEqualTo: userId)
-          .where('Status', isEqualTo: 'active')
-          .orderBy('PrayerId')
+      _combineGroupStream = _groupPrayerCollectionReference
+          .where('GroupId', isEqualTo: groupId)
           .snapshots()
           .map((convert) {
         return convert.documents.map((f) {
-          Stream<GroupPrayerModel> prayerGroup = Stream.value(f)
+          Stream<GroupPrayerModel> groupPrayer = Stream.value(f)
               .map<GroupPrayerModel>(
                   (document) => GroupPrayerModel.fromData(document));
 
-          Stream<GroupModel> group = _groupCollectionReference
-              .document(f.data['GroupId'])
+          Stream<PrayerModel> prayer = _prayerCollectionReference
+              .document(f.data['PrayerId'])
               .snapshots()
-              .map<GroupModel>((document) => GroupModel.fromData(document));
+              .map<PrayerModel>((document) => PrayerModel.fromData(document));
 
-          return Rx.combineLatest2(prayerGroup, group,
-              (messages, user) => CombineGroupPrayerStream(messages, user));
+          return Rx.combineLatest2(
+              groupPrayer,
+              prayer,
+              (groupPrayer, prayer) =>
+                  CombineGroupPrayerStream(prayer, groupPrayer));
         });
       }).switchMap((observables) {
         return observables.length > 0
             ? Rx.combineLatestList(observables)
             : Stream.value([]);
       });
-      return _combinePrayerStream;
+      return _combineGroupStream;
     } catch (e) {
       if (e is PlatformException) {
         print(e.message);

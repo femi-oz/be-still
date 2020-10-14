@@ -19,7 +19,7 @@ class PrayerMenu extends StatefulWidget {
 
   final activeList;
 
-  final groupId;
+  final GroupModel group;
   final onTextchanged;
   final searchController;
   final clearSearchField;
@@ -28,7 +28,7 @@ class PrayerMenu extends StatefulWidget {
   PrayerMenu({
     this.setCurrentList,
     this.activeList,
-    this.groupId,
+    this.group,
     this.onTextchanged,
     this.searchController,
     this.clearSearchField,
@@ -156,12 +156,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                     title: snapshot.data[i].group.name,
                                     isActive: widget.activeList ==
                                             PrayerActiveScreen.group &&
-                                        widget.groupId ==
+                                        widget.group.id ==
                                             snapshot.data[i].group.id,
                                     action: () => setState(() {
                                       widget.setCurrentList(
                                           PrayerActiveScreen.group,
-                                          snapshot.data[i].group.id);
+                                          snapshot.data[i].group);
                                     }),
                                     openTools: () => openTools(),
                                   ),

@@ -1,5 +1,6 @@
 import 'package:be_still/data/user.data.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer/Widgets/prayer_quick_acccess.dart';
@@ -13,16 +14,12 @@ import 'group_quick_access.dart';
 
 class PrayerCard extends StatelessWidget {
   final PrayerModel prayer;
+  final PrayerActiveScreen activeList;
 
-  // final groupId;
-
-  final activeList;
-
-  PrayerCard(
+  PrayerCard({
     this.prayer,
-    // this.groupId,
     this.activeList,
-  );
+  });
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
@@ -35,11 +32,11 @@ class PrayerCard extends StatelessWidget {
           backgroundColor: context.prayerMenuStart.withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return (prayer.userId == _currentUser.id)
-                // &&
-                //         activeList != PrayerActiveScreen.personal)
-                ? PrayerQuickAccess(y: y, prayer: prayer)
-                : GroupPrayerQuickAccess(y: y, prayer: prayer);
+            return (activeList == PrayerActiveScreen.group ||
+                    (activeList != PrayerActiveScreen.group &&
+                        prayer.groupId != '0'))
+                ? GroupPrayerQuickAccess(y: y, prayer: prayer)
+                : PrayerQuickAccess(y: y, prayer: prayer);
           },
         );
       },
@@ -47,9 +44,7 @@ class PrayerCard extends StatelessWidget {
         Navigator.of(context).pushReplacementNamed(
           PrayerDetails.routeName,
           arguments: PrayerDetailsRouteArguments(
-            prayer.id,
-            // groupId,
-          ),
+              id: prayer.id, isGroup: activeList == PrayerActiveScreen.group),
         );
       },
       child: Container(

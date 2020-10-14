@@ -52,44 +52,6 @@ class PrayerService {
     }
   }
 
-  Stream<List<CombineGroupPrayerStream>> _combineGroupStream;
-  Stream<List<CombineGroupPrayerStream>> fetchGroupPrayers(String groupId) {
-    print(groupId);
-    try {
-      _combineGroupStream = _groupPrayerCollectionReference
-          .where('GroupId', isEqualTo: groupId)
-          .snapshots()
-          .map((convert) {
-        return convert.documents.map((f) {
-          Stream<GroupPrayerModel> groupPrayer = Stream.value(f)
-              .map<GroupPrayerModel>(
-                  (document) => GroupPrayerModel.fromData(document));
-
-          Stream<PrayerModel> prayer = _prayerCollectionReference
-              .document(f.data['PrayerId'])
-              .snapshots()
-              .map<PrayerModel>((document) => PrayerModel.fromData(document));
-
-          return Rx.combineLatest2(
-              groupPrayer,
-              prayer,
-              (groupPrayer, prayer) =>
-                  CombineGroupPrayerStream(prayer, groupPrayer));
-        });
-      }).switchMap((observables) {
-        return observables.length > 0
-            ? Rx.combineLatestList(observables)
-            : Stream.value([]);
-      });
-      return _combineGroupStream;
-    } catch (e) {
-      if (e is PlatformException) {
-        print(e.message);
-      }
-      return null;
-    }
-  }
-
   populateUserPrayer(
     PrayerModel prayerData,
     String userID,

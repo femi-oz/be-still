@@ -1,7 +1,9 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -21,8 +23,8 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  var activeList;
-  var groupId;
+  PrayerActiveScreen activeList;
+  GroupModel group;
   List<PrayerModel> filteredprayers = [];
 
   final TextEditingController _searchController = TextEditingController();
@@ -31,11 +33,11 @@ class _PrayerScreenState extends State<PrayerScreen> {
     _searchController.text = '';
   }
 
-  _setCurrentList(_activeList, _groupId) {
+  _setCurrentList(PrayerActiveScreen _activeList, GroupModel _group) async {
     setState(() {
       _clearSearchField();
       activeList = _activeList;
-      groupId = _groupId;
+      group = _group;
     });
   }
 
@@ -84,14 +86,16 @@ class _PrayerScreenState extends State<PrayerScreen> {
                   searchController: _searchController,
                   setCurrentList: _setCurrentList,
                   activeList: activeList,
-                  groupId: groupId,
+                  group: group,
                 ),
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.855,
                 child: StreamBuilder(
-                  stream: Provider.of<PrayerProvider>(context)
-                      .getUserPrayers(_user.id, activeList, groupId),
+                  stream: Provider.of<PrayerProvider>(context).getPrayers(
+                      _user.id,
+                      activeList,
+                      activeList == PrayerActiveScreen.group ? group.id : '0'),
                   builder: (BuildContext context,
                       AsyncSnapshot<List<PrayerModel>> snapshot) {
                     switch (snapshot.connectionState) {
@@ -114,8 +118,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
                             child: activeList == PrayerActiveScreen.findGroup
                                 ? FindAGroup()
                                 : PrayerList(
+                                    group: group,
                                     activeList: activeList,
-                                    groupId: groupId,
                                     prayers: snapshot.data,
                                   ),
                           );

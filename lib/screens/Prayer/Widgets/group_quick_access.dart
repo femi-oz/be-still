@@ -1,3 +1,4 @@
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -7,7 +8,7 @@ import '../../../utils/app_theme.dart';
 class GroupPrayerQuickAccess extends StatefulWidget {
   final y;
 
-  final prayer;
+  final PrayerModel prayer;
 
   GroupPrayerQuickAccess({this.y, this.prayer});
   @override
@@ -59,7 +60,7 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
-    setReminder(widget.prayer.reminder);
+    // setReminder(widget.prayer.reminder);
     animationController =
         AnimationController(duration: Duration(milliseconds: 250), vsync: this);
     degOneTranslationAnimation = TweenSequence([

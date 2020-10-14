@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -11,10 +12,10 @@ import 'package:be_still/utils/app_theme.dart';
 class PrayerList extends StatelessWidget {
   final activeList;
   final List<PrayerModel> prayers;
-  final groupId;
+  final GroupModel group;
 
   @override
-  PrayerList({this.activeList, this.groupId, this.prayers});
+  PrayerList({this.activeList, this.prayers, this.group});
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
@@ -42,7 +43,7 @@ class PrayerList extends StatelessWidget {
                   children: <Widget>[
                     ...prayers
                         .map(
-                          (p) => PrayerCard(p, activeList),
+                          (p) => PrayerCard(prayer: p, activeList: activeList),
                         )
                         .toList(),
                   ],
@@ -54,7 +55,7 @@ class PrayerList extends StatelessWidget {
                 builder: (context) => AddPrayer(
                   isEdit: false,
                   isGroup: activeList == PrayerActiveScreen.group,
-                  groupId: groupId,
+                  group: group,
                 ),
               ),
             ),

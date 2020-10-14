@@ -10,9 +10,9 @@ class GroupProvider with ChangeNotifier {
     return _groupService.fetchGroups(userId);
   }
 
-  Stream<List<CombineGroupPrayerStream>> getPrayerGroups(
-      String userId, String groupId) {
-    return _groupService.fetchPrayerGroups(userId, groupId);
+  Future<List<GroupUserModel>> getGroupUsers(String groupId) async {
+    return await _groupService.fetchGroupUsers(groupId).then(
+        (e) => e.documents.map((e) => GroupUserModel.fromData(e)).toList());
   }
 
   Future addGroup(GroupModel groupData, String _userID) async {

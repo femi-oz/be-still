@@ -1,7 +1,13 @@
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/pray_mode/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
+import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -10,8 +16,47 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PrayerDetails extends StatelessWidget {
+class PrayerDetails extends StatefulWidget {
   static const routeName = '/prayer-details';
+
+  @override
+  _PrayerDetailsState createState() => _PrayerDetailsState();
+}
+
+class _PrayerDetailsState extends State<PrayerDetails> {
+  GroupUserModel groupUser;
+
+  bool isGroupAdmin;
+
+  Widget _buildMenu(PrayerDetailsRouteArguments args, PrayerModel prayer) {
+    if ((args.isGroup && isGroupAdmin) ||
+        (!args.isGroup && isGroupAdmin && prayer.groupId != '0')) {
+      return GroupAdminPrayerMenu(prayer);
+    } else if ((args.isGroup && !isGroupAdmin) ||
+        (!args.isGroup && !isGroupAdmin && prayer.id != '0')) {
+      return OtherMemberPrayerMenu(prayer);
+    } else if ((!args.isGroup && prayer.groupId == '0')) {
+      return PrayerMenu(prayer);
+    } else {
+      return Container();
+    }
+  }
+
+  void _setData(PrayerModel prayer) async {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    if (prayer.groupId != '0') {
+      await Provider.of<GroupProvider>(context, listen: false)
+          .getGroupUsers(prayer.groupId)
+          .then((users) {
+        groupUser = users.where((user) => user.userId == _user.id).toList()[0];
+        isGroupAdmin = groupUser.isAdmin;
+      });
+    } else {
+      isGroupAdmin = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final PrayerDetailsRouteArguments args =
@@ -22,6 +67,7 @@ class PrayerDetails extends StatelessWidget {
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             prayer = PrayerModel.fromData(snapshot.data);
+            _setData(prayer);
             return Scaffold(
               appBar: CustomAppBar(),
               body: Container(
@@ -105,34 +151,27 @@ class PrayerDetails extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          child: NoUpdateView(prayer)
-                          // prayer.updates.length > 0
-                          //     ? UpdateView(prayer)
-                          //     : NoUpdateView(prayer),
-                          ),
+                          child: NoUpdateView(prayer)),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.more_horiz,
-                        color: context.brightBlue,
-                      ),
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        barrierColor: context.toolsBg.withOpacity(0.5),
-                        backgroundColor: context.toolsBg.withOpacity(0.9),
-                        isScrollControlled: true,
-                        builder: (BuildContext context) {
-                          return PrayerMenu(prayer);
-                          // isUserPrayer
-                          //     ? PrayerMenu(prayer)
-                          //     : prayer.isAddedFromGroup && isGroupAdmin
-                          //         ? GroupAdminPrayerMenu(prayer)
-                          //         : prayer.isAddedFromGroup && !isGroupAdmin
-                          //             ? OtherMemberPrayerMenu(prayer)
-                          //             : Container();
-                        },
-                      ),
-                    ),
+                    StreamBuilder<Object>(
+                        stream: null,
+                        builder: (context, snapshot) {
+                          return IconButton(
+                            icon: Icon(
+                              Icons.more_horiz,
+                              color: context.brightBlue,
+                            ),
+                            onPressed: () => showModalBottomSheet(
+                              context: context,
+                              barrierColor: context.toolsBg.withOpacity(0.5),
+                              backgroundColor: context.toolsBg.withOpacity(0.9),
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return _buildMenu(args, prayer);
+                              },
+                            ),
+                          );
+                        }),
                   ],
                 ),
               ),
@@ -147,10 +186,10 @@ class PrayerDetails extends StatelessWidget {
 
 class PrayerDetailsRouteArguments {
   final String id;
-  // final String groupId;
+  final bool isGroup;
 
-  PrayerDetailsRouteArguments(
+  PrayerDetailsRouteArguments({
     this.id,
-    // this.groupId,
-  );
+    this.isGroup,
+  });
 }

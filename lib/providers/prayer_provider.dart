@@ -5,43 +5,47 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
+import 'package:be_still/services/group_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
+  GroupService _groupService = locator<GroupService>();
 
-  Stream<List<PrayerModel>> getUserPrayers(
+  Stream<List<PrayerModel>> getPrayers(
       String userId, PrayerActiveScreen activeList, String groupId) {
     if (activeList == PrayerActiveScreen.group) {
-      return _prayerService
+      return _groupService
           .fetchGroupPrayers(groupId)
           .asyncMap((data) => data.map((e) => e.prayer).toList());
     } else {
-      return _prayerService.fetchPrayers(userId).asyncMap((data) {
-        List<CombinePrayerStream> prayers =
-            activeList == PrayerActiveScreen.personal
-                ? data
-                    .where((p) =>
-                        p.prayer.isAnswer == false &&
-                        p.prayer.status.toLowerCase() == 'active')
-                    .toList()
-                : activeList == PrayerActiveScreen.archived
-                    ? data
-                        .where((p) =>
-                            p.prayer.isAnswer == false &&
-                            p.prayer.status.toLowerCase() == 'inactive')
-                        .toList()
-                    : activeList == PrayerActiveScreen.answered
-                        ? data
-                            .where((p) =>
-                                p.prayer.isAnswer == true &&
-                                p.prayer.status.toLowerCase() == 'active')
-                            .toList()
-                        : [];
-        return prayers.map((e) => e.prayer).toList();
-      });
+      return _prayerService.fetchPrayers(userId).asyncMap(
+        (data) {
+          List<CombinePrayerStream> prayers =
+              activeList == PrayerActiveScreen.personal
+                  ? data
+                      .where((p) =>
+                          p.prayer.isAnswer == false &&
+                          p.prayer.status.toLowerCase() == 'active')
+                      .toList()
+                  : activeList == PrayerActiveScreen.archived
+                      ? data
+                          .where((p) =>
+                              p.prayer.isAnswer == false &&
+                              p.prayer.status.toLowerCase() == 'inactive')
+                          .toList()
+                      : activeList == PrayerActiveScreen.answered
+                          ? data
+                              .where((p) =>
+                                  p.prayer.isAnswer == true &&
+                                  p.prayer.status.toLowerCase() == 'active')
+                              .toList()
+                          : [];
+          return prayers.map((e) => e.prayer).toList();
+        },
+      );
     }
   }
 

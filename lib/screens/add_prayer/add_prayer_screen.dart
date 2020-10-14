@@ -1,3 +1,4 @@
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -15,11 +16,11 @@ class AddPrayer extends StatefulWidget {
 
   final bool isEdit;
   final PrayerModel prayer;
-  final String groupId;
+  final GroupModel group;
   final bool isGroup;
 
   @override
-  AddPrayer({this.isEdit, this.prayer, this.groupId, this.isGroup});
+  AddPrayer({this.isEdit, this.prayer, this.group, this.isGroup});
   _AddPrayerState createState() => _AddPrayerState();
 }
 
@@ -43,7 +44,7 @@ class _AddPrayerState extends State<AddPrayer> {
       prayerData = PrayerModel(
           title: '',
           isAnswer: false,
-          groupId: widget.isGroup ? widget.groupId : '0',
+          groupId: widget.isGroup ? widget.group.id : '0',
           userId: _user.id,
           description: _descriptionController.text,
           status: 'Active',
@@ -74,8 +75,7 @@ class _AddPrayerState extends State<AddPrayer> {
       Navigator.of(context).pushNamed(
         PrayerDetails.routeName,
         arguments: PrayerDetailsRouteArguments(
-          widget.prayer.id,
-        ),
+            id: widget.prayer.id, isGroup: widget.isGroup),
       );
     }
   }
