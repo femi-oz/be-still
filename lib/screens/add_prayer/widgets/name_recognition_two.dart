@@ -1,8 +1,10 @@
+import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -158,6 +160,12 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     if (widget.isUpdate) {
                       await Provider.of<PrayerProvider>(context, listen: false)
                           .addPrayerUpdate(widget.prayerUpdate);
+                      Navigator.of(context).pushReplacementNamed(
+                        PrayerDetails.routeName,
+                        arguments: PrayerDetailsRouteArguments(
+                            id: widget.prayerUpdate.prayerId,
+                            isGroup: widget.isGroup),
+                      );
                     } else {
                       if (widget.isGroup) {
                         await Provider.of<PrayerProvider>(context,
@@ -168,9 +176,9 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                                 listen: false)
                             .addPrayer(widget.prayer, _user.id);
                       }
+                      Navigator.of(context)
+                          .pushReplacementNamed(PrayerScreen.routeName);
                     }
-                    Navigator.of(context)
-                        .pushReplacementNamed(PrayerScreen.routeName);
                   },
                   child: Container(
                     padding:

@@ -12,12 +12,13 @@ class NameRecognitionMenuOne extends StatefulWidget {
   final scafoldKey;
   final bool isGroup;
 
-  NameRecognitionMenuOne(
-      {this.prayer,
-      this.scafoldKey,
-      this.isGroup,
-      this.prayerUpdate,
-      this.isUpdate});
+  NameRecognitionMenuOne({
+    this.prayer,
+    this.scafoldKey,
+    this.isGroup,
+    this.prayerUpdate,
+    this.isUpdate,
+  });
   @override
   _NameRecognitionMenuOneState createState() => _NameRecognitionMenuOneState();
 }
