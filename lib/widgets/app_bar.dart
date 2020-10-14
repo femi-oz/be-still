@@ -71,7 +71,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddPrayer(isEdit: false),
+              builder: (context) => AddPrayer(
+                isEdit: false,
+                isGroup: false,
+              ),
             ),
           ),
           child: Text(
