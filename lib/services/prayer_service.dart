@@ -332,6 +332,18 @@ class PrayerService {
     }
   }
 
+  Future addPrayerToMyList(UserPrayerModel userPrayer) async {
+    try {
+      final userPrayerId = Uuid().v1();
+      return await _userPrayerCollectionReference
+          .document(userPrayerId)
+          .setData(userPrayer.toJson());
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   flagAsInappropriate(String prayerId) {
     try {
       _prayerCollectionReference

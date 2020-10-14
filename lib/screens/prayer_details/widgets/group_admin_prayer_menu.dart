@@ -1,5 +1,8 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +14,8 @@ class GroupAdminPrayerMenu extends StatelessWidget {
   @override
   GroupAdminPrayerMenu(this.prayer);
   Widget build(BuildContext context) {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -21,7 +26,23 @@ class GroupAdminPrayerMenu extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    UserPrayerModel userPrayer = UserPrayerModel(
+                      userId: _user.id,
+                      status: 'Active',
+                      sequence: null,
+                      prayerId: prayer.id,
+                      isFavorite: false,
+                      createdBy: prayer.createdBy,
+                      createdOn: DateTime.now(),
+                      modifiedBy: prayer.modifiedBy,
+                      modifiedOn: DateTime.now(),
+                    );
+                    Provider.of<PrayerProvider>(context, listen: false)
+                        .addPrayerToMyList(userPrayer);
+                    Navigator.of(context)
+                        .pushReplacementNamed(PrayerScreen.routeName);
+                  },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),

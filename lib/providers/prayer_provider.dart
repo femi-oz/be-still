@@ -92,6 +92,10 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.flagAsInappropriate(prayerId);
   }
 
+  Future addPrayerToMyList(UserPrayerModel userPrayer) async {
+    return await _prayerService.addPrayerToMyList(userPrayer);
+  }
+
   Stream<DocumentSnapshot> fetchPrayer(String id) {
     return _prayerService.fetchPrayer(id);
   }
