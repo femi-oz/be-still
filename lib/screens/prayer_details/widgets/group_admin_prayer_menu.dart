@@ -1,5 +1,8 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './../../../utils/app_theme.dart';
 
 class GroupAdminPrayerMenu extends StatelessWidget {
@@ -123,7 +126,12 @@ class GroupAdminPrayerMenu extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    await Provider.of<PrayerProvider>(context, listen: false)
+                        .hidePrayer(prayer.id, !prayer.hideFromMe);
+                    Navigator.of(context)
+                        .pushReplacementNamed(PrayerScreen.routeName);
+                  },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -145,7 +153,7 @@ class GroupAdminPrayerMenu extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
-                            'Hide',
+                            prayer.hideFromMe ? 'Show' : 'Hide',
                             style: TextStyle(
                               color: context.brightBlue2,
                               fontSize: 14,
@@ -158,7 +166,13 @@ class GroupAdminPrayerMenu extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    await Provider.of<PrayerProvider>(context, listen: false)
+                        .hidePrayerFromAllMembers(
+                            prayer.id, !prayer.hideFromAllMembers);
+                    Navigator.of(context)
+                        .pushReplacementNamed(PrayerScreen.routeName);
+                  },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -180,7 +194,9 @@ class GroupAdminPrayerMenu extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
-                            'Hide From Group',
+                            prayer.hideFromAllMembers
+                                ? 'Show in Group'
+                                : 'Hide From Group',
                             style: TextStyle(
                               color: context.brightBlue2,
                               fontSize: 14,

@@ -23,7 +23,7 @@ class NameRecognitionMenuTwo extends StatefulWidget {
       this.scafoldKey,
       this.isGroup,
       this.prayerUpdate,
-      this.isUpdate = false});
+      this.isUpdate});
   @override
   _NameRecognitionMenuTwoState createState() => _NameRecognitionMenuTwoState();
 }

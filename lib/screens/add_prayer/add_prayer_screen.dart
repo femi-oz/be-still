@@ -63,6 +63,7 @@ class _AddPrayerState extends State<AddPrayer> {
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
+              isUpdate: false,
               prayer: prayerData,
               scafoldKey: _scaffoldKey,
               isGroup: widget.isGroup);

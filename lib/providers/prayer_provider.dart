@@ -16,9 +16,10 @@ class PrayerProvider with ChangeNotifier {
   Stream<List<PrayerModel>> getPrayers(
       String userId, PrayerActiveScreen activeList, String groupId) {
     if (activeList == PrayerActiveScreen.group) {
-      return _groupService
-          .fetchGroupPrayers(groupId)
-          .asyncMap((data) => data.map((e) => e.prayer).toList());
+      return _groupService.fetchGroupPrayers(groupId).asyncMap((data) => data
+          .map((e) => e.prayer)
+          .where((p) => !p.hideFromAllMembers)
+          .toList());
     } else {
       return _prayerService.fetchPrayers(userId).asyncMap(
         (data) {
@@ -76,13 +77,16 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.deletePrayer(prayerID);
   }
 
-  Future hidePrayer(String prayerId) async {
-    return await _prayerService.hidePrayer(prayerId);
+  Future hidePrayer(String prayerId, bool value) async {
+    return await _prayerService.hidePrayer(prayerId, value);
   }
 
-  Future hidePrayerFromAllMembers(String prayerId, String groupId) async {
-    return await _prayerService.hideFromAllMembers(prayerId, groupId);
+  Future hidePrayerFromAllMembers(String prayerId, bool value) async {
+    return await _prayerService.hideFromAllMembers(prayerId, value);
   }
+  // Future hidePrayerFromAllMembers(String prayerId, String groupId) async {
+  //   return await _prayerService.hideFromAllMembers(prayerId, groupId);
+  // }
 
   Future flagAsInappropriate(String prayerId) async {
     return await _prayerService.flagAsInappropriate(prayerId);

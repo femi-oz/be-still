@@ -130,7 +130,7 @@ class PrayerService {
   ) async {
     // Generate uuid
     final _prayerID = Uuid().v1();
-
+    final groupPrayerId = Uuid().v1();
     try {
       return Firestore.instance.runTransaction(
         (transaction) async {
@@ -140,7 +140,7 @@ class PrayerService {
 
           //store user prayer
           await transaction.set(
-              _groupPrayerCollectionReference.document(prayerData.groupId),
+              _groupPrayerCollectionReference.document(groupPrayerId),
               populateGroupPrayer(prayerData, _prayerID).toJson());
         },
       ).then((val) {
@@ -262,27 +262,27 @@ class PrayerService {
     }
   }
 
-  hidePrayer(String prayerId) {
+  hidePrayer(String prayerId, bool value) {
     try {
       _prayerCollectionReference
           .document(prayerId)
-          .updateData({'HideFromMe': true});
+          .updateData({'HideFromMe': value});
     } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
-  hideFromAllMembers(String prayerId, String groupId) {
+  hideFromAllMembers(String prayerId, bool value) {
     try {
+      // _prayerCollectionReference
+      //     .where('GroupId', isEqualTo: groupId)
+      //     .snapshots()
+      //     .map((event) {
       _prayerCollectionReference
-          .where('GroupId', isEqualTo: groupId)
-          .snapshots()
-          .map((event) {
-        _prayerCollectionReference
-            .document(prayerId)
-            .updateData({'HideFromAllMembers': true});
-      });
+          .document(prayerId)
+          .updateData({'HideFromAllMembers': value});
+      // });
     } catch (e) {
       print(e.toString());
       return null;
