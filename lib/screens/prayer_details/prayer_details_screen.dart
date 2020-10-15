@@ -39,13 +39,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         (!args.isGroup && !isGroupAdmin && prayer.groupId != '0')) {
       return OtherMemberPrayerMenu(prayer);
     } else if ((!args.isGroup && prayer.groupId == '0')) {
-      return StreamBuilder<Object>(
-          stream: null,
-          builder: (context, snapshot) {
-            return PrayerMenu(prayer, updates);
-          });
+      return PrayerMenu(prayer, updates);
     } else {
-      return Container();
+      return PrayerMenu(prayer, updates); //TODO
     }
   }
 

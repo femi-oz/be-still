@@ -33,7 +33,7 @@ class PrayerProvider with ChangeNotifier {
                   : activeList == PrayerActiveScreen.archived
                       ? data
                           .where((p) =>
-                              p.prayer.isAnswer == false &&
+                              // p.prayer.isAnswer == false &&
                               p.prayer.status.toLowerCase() == 'inactive')
                           .toList()
                       : activeList == PrayerActiveScreen.answered
