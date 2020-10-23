@@ -10,7 +10,6 @@ import 'package:be_still/models/user_device.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 import '../locator.dart';
@@ -144,8 +143,7 @@ class UserService {
         },
       );
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -158,10 +156,7 @@ class UserService {
           .getDocuments();
       return UserModel.fromData(userRes.documents[0]);
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return null;
+      throw HttpException(e.message);
     }
   }
 }

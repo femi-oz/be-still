@@ -1,7 +1,4 @@
-import 'package:be_still/data/prayer.data.dart';
-import 'package:be_still/data/user.data.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';

@@ -1,5 +1,4 @@
 import 'package:be_still/models/device.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

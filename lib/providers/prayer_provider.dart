@@ -23,26 +23,24 @@ class PrayerProvider with ChangeNotifier {
     } else {
       return _prayerService.fetchPrayers(userId).asyncMap(
         (data) {
-          List<CombinePrayerStream> prayers =
-              activeList == PrayerActiveScreen.personal
+          List<CombinePrayerStream> prayers = activeList ==
+                  PrayerActiveScreen.personal
+              ? data
+                  .where((p) =>
+                      p.prayer.isAnswer == false &&
+                      p.prayer.status.toLowerCase() == 'active')
+                  .toList()
+              : activeList == PrayerActiveScreen.archived
                   ? data
-                      .where((p) =>
-                          p.prayer.isAnswer == false &&
-                          p.prayer.status.toLowerCase() == 'active')
+                      .where((p) => p.prayer.status.toLowerCase() == 'inactive')
                       .toList()
-                  : activeList == PrayerActiveScreen.archived
+                  : activeList == PrayerActiveScreen.answered
                       ? data
                           .where((p) =>
-                              // p.prayer.isAnswer == false &&
-                              p.prayer.status.toLowerCase() == 'inactive')
+                              p.prayer.isAnswer == true &&
+                              p.prayer.status.toLowerCase() == 'active')
                           .toList()
-                      : activeList == PrayerActiveScreen.answered
-                          ? data
-                              .where((p) =>
-                                  p.prayer.isAnswer == true &&
-                                  p.prayer.status.toLowerCase() == 'active')
-                              .toList()
-                          : [];
+                      : [];
           return prayers.map((e) => e.prayer).toList();
         },
       );

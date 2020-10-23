@@ -1,14 +1,9 @@
-import 'package:be_still/data/group.data.dart';
-import 'package:be_still/data/notification.data.dart';
-import 'package:be_still/data/user.data.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../utils/app_theme.dart';
-import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
 
 class NotificationsScreen extends StatefulWidget {
   NotificationsScreen();

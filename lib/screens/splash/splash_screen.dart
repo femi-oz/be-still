@@ -55,10 +55,11 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   route() async {
-    await _authenticationProvider.handleStartUpLogic().then((value) async {
-      if (value == true) {
+    try {
+      final isLoggedIn = await _authenticationProvider.isLoggedIn();
+      if (isLoggedIn) {
         await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUserDetails();
+            .setCurrentUser();
         Navigator.of(context).pushNamedAndRemoveUntil(
             PrayerScreen.routeName, (Route<dynamic> route) => false);
       } else {
@@ -67,39 +68,12 @@ class _SplashScreenState extends State<SplashScreen>
           (Route<dynamic> route) => false,
         );
       }
-    });
-    // switch (value) {
-    //   case true:
-    //     return Loader();
-    //   default:
-    //     if (snapshot.hasError)
-    //       return Center(
-    //         child: Text(
-    //           'Error: ${snapshot.error}',
-    //         ),
-    //       );
-    //     else
-    //       return snapshot.data
-    //           ? Navigator.of(context).pushNamedAndRemoveUntil(
-    //               PrayerScreen.routeName,
-    //               (Route<dynamic> route) => false,
-    //             )
-    //           : Navigator.of(context).pushNamedAndRemoveUntil(
-    //               LoginScreen.routeName,
-    //               (Route<dynamic> route) => false,
-    //             );
-    // if (_authenticationProvider.isAuthenticated) {
-    //   Navigator.of(context).pushNamedAndRemoveUntil(
-    //     PrayerScreen.routeName,
-    //     (Route<dynamic> route) => false,
-    //   );
-    // } else {
-    //   Navigator.of(context).pushNamedAndRemoveUntil(
-    //     LoginScreen.routeName,
-    //     (Route<dynamic> route) => false,
-    //   );
-    // }
-    // });
+    } catch (e) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        LoginScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   @override

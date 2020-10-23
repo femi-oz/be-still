@@ -1,4 +1,5 @@
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,10 +47,7 @@ class GroupService {
       });
       return _combineStream;
     } catch (e) {
-      if (e is PlatformException) {
-        print(e.message);
-      }
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -59,7 +57,7 @@ class GroupService {
           .where('GroupId', isEqualTo: groupId)
           .getDocuments();
     } catch (e) {
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -113,10 +111,7 @@ class GroupService {
       });
       return _combineGroupStream;
     } catch (e) {
-      if (e is PlatformException) {
-        print(e.message);
-      }
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -156,16 +151,10 @@ class GroupService {
       ).then((val) {
         return true;
       }).catchError((e) {
-        if (e is PlatformException) {
-          return e.message;
-        }
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -197,10 +186,10 @@ class GroupService {
       }).then((value) {
         return true;
       }).catchError((e) {
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -219,13 +208,10 @@ class GroupService {
       }).then((value) {
         return true;
       }).catchError((e) {
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -240,10 +226,7 @@ class GroupService {
             .updateData({'IsAdmin': '1'});
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -258,10 +241,7 @@ class GroupService {
             .updateData({'Status': status});
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -278,14 +258,10 @@ class GroupService {
       }).then((value) {
         return true;
       }).catchError((e) {
-        if (e is PlatformException) {
-          return e.message;
-        }
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 }

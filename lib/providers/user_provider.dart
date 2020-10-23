@@ -9,7 +9,7 @@ class UserProvider with ChangeNotifier {
 
   UserModel get currentUser => _currentUser;
 
-  Future setCurrentUserDetails() async {
+  Future setCurrentUser() async {
     _currentUser = await _userService.getCurrentUser();
   }
 

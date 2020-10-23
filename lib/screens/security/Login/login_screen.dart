@@ -1,9 +1,12 @@
 import 'package:be_still/data/user.data.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
+import 'package:be_still/widgets/dialog.dart';
+import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './../../../utils/app_theme.dart';
@@ -25,41 +28,37 @@ class _LoginScreenState extends State<LoginScreen>
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  _authenticate() async {
-    final _authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
-    setState(() {
-      _autoValidate = true;
-    });
-    if (!_formKey.currentState.validate()) {
-      showInSnackBar('All fields are required');
-      return;
-    }
-    _formKey.currentState.save();
+  final _key = GlobalKey<State>();
 
-    final result = await _authProvider.login(
-      context: context,
-      email: _usernameController.text,
-      password: _passwordController.text,
-    );
-    if (result is bool) {
-      if (result == true) {
+  _login() async {
+    setState(() => _autoValidate = true);
+    if (!_formKey.currentState.validate()) return;
+    _formKey.currentState.save();
+    await BeStilDialog.showLoading(
+        context, _key, context.brightBlue, 'Authenticating');
+    try {
+      final result =
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .login(
+        context: context,
+        email: _usernameController.text,
+        password: _passwordController.text,
+      );
+      if (result) {
+        BeStilDialog.hideLoading(_key);
         await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUserDetails();
+            .setCurrentUser();
         Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
       }
-    } else {
-      showInSnackBar(result.toString());
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(_key);
+      BeStillSnackbar.showInSnackBar(
+          message: 'Username or Password is incorrect.', key: _scaffoldKey);
+    } catch (e) {
+      BeStilDialog.hideLoading(_key);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
     }
-  }
-
-  void showInSnackBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(
-      new SnackBar(
-        backgroundColor: context.offWhite,
-        content: new Text(value),
-      ),
-    );
   }
 
   @override
@@ -129,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     isRequired: true,
                                     textInputAction: TextInputAction.done,
                                     unfocus: true,
-                                    submitForm: () => _authenticate(),
+                                    submitForm: () => _login(),
                                   ),
                                 ],
                               ),
@@ -178,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen>
                       Column(
                         children: <Widget>[
                           GestureDetector(
-                            onTap: _authenticate,
+                            onTap: _login,
                             child: Container(
                               height: 50.0,
                               width: double.infinity,

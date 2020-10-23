@@ -1,9 +1,8 @@
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
-import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -47,10 +46,7 @@ class PrayerService {
       });
       return _combineStream;
     } catch (e) {
-      if (e is PlatformException) {
-        print(e.message);
-      }
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -112,16 +108,10 @@ class PrayerService {
       ).then((val) {
         return true;
       }).catchError((e) {
-        if (e is PlatformException) {
-          return e.message;
-        }
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -146,16 +136,10 @@ class PrayerService {
       ).then((val) {
         return true;
       }).catchError((e) {
-        if (e is PlatformException) {
-          return e.message;
-        }
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -168,10 +152,7 @@ class PrayerService {
         {"Description": description},
       );
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -183,10 +164,7 @@ class PrayerService {
             prayerUpdateData.toJson(),
           );
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -202,11 +180,7 @@ class PrayerService {
               .map((e) => PrayerUpdateModel.fromData(e))
               .toList());
     } catch (e) {
-      if (e is PlatformException) {
-        print(e.message);
-      }
-      print(e.message);
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -216,10 +190,7 @@ class PrayerService {
         {'IsAnswer': true},
       );
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -231,10 +202,7 @@ class PrayerService {
         {'Status': 'Inactive'},
       );
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -251,14 +219,10 @@ class PrayerService {
       }).then((val) {
         return true;
       }).catchError((e) {
-        if (e is PlatformException) {
-          return e.message;
-        }
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -268,8 +232,7 @@ class PrayerService {
           .document(prayerId)
           .updateData({'HideFromMe': value});
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -284,8 +247,7 @@ class PrayerService {
           .updateData({'HideFromAllMembers': value});
       // });
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -327,8 +289,7 @@ class PrayerService {
     try {
       return _prayerCollectionReference.document(prayerID).snapshots();
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -339,8 +300,7 @@ class PrayerService {
           .document(userPrayerId)
           .setData(userPrayer.toJson());
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -350,10 +310,7 @@ class PrayerService {
           .document(prayerId)
           .updateData({'IsInappropriate': true});
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 }

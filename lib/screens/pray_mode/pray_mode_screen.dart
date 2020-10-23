@@ -1,9 +1,6 @@
-import 'package:be_still/data/prayer.data.dart';
 import 'package:be_still/screens/pray_mode/Widgets/pray_mode_app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-
-import 'Widgets/prayer_page.dart';
 
 class PrayerMode extends StatefulWidget {
   static const routeName = '/prayer-mode';

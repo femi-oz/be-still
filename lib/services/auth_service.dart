@@ -1,15 +1,11 @@
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/services/prayer_settings_service.dart';
-import 'package:be_still/services/settings_service.dart';
-import 'package:be_still/services/sharing_service.dart';
 import 'package:be_still/services/user_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -23,14 +19,8 @@ class AuthenticationService {
           email: email, password: password);
       FirebaseUser user = result.user;
       return user != null;
-      // if (user.isEmailVerified) return user.uid;
-      // return null;
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -48,21 +38,13 @@ class AuthenticationService {
         password: password,
       )
           .then((value) async {
-        // user.sendEmailVerification();
         FirebaseUser user = value.user;
         await locator<UserService>()
             .addUserData(userData, settingsData, user.uid);
-
-        // Save user information in firestore
-
         return user != null;
       });
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
@@ -75,15 +57,16 @@ class AuthenticationService {
       await _firebaseAuth.signOut();
       return true;
     } catch (e) {
-      if (e is PlatformException) {
-        return e.message;
-      }
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 
   Future<bool> isUserLoggedIn() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user != null;
+    try {
+      FirebaseUser user = await _firebaseAuth.currentUser();
+      return user != null;
+    } catch (e) {
+      throw HttpException(e.message);
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
@@ -49,7 +50,7 @@ class SettingsService {
       });
       return _combineStream;
     } catch (e) {
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -108,10 +109,10 @@ class SettingsService {
       ).then((val) {
         return true;
       }).catchError((e) {
-        return e.toString();
+        throw HttpException(e.message);
       });
     } catch (e) {
-      return e.toString();
+      throw HttpException(e.message);
     }
   }
 

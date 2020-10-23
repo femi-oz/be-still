@@ -1,3 +1,4 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,8 +31,7 @@ class PrayerSettingsService {
           .document(prayerSettingsId)
           .setData(setPrayerSettings(userId, userData).toJson());
     } catch (e) {
-      print(e.toString());
-      return null;
+      throw HttpException(e.message);
     }
   }
 
@@ -42,7 +42,7 @@ class PrayerSettingsService {
           .limit(1)
           .snapshots();
     } catch (e) {
-      return null;
+      throw HttpException(e.message);
     }
   }
 }

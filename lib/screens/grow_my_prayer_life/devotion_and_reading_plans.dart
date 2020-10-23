@@ -1,5 +1,3 @@
-import 'package:be_still/data/devotional.data.dart';
-import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';

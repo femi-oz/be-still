@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -50,13 +51,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   _createAccount() async {
-    setState(() {
-      _autoValidate = true;
-    });
-    if (!_formKey.currentState.validate()) {
-      showInSnackBar('All fields are required');
-      return null;
-    }
+    setState(() => _autoValidate = true);
+    if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
     UserModel _user = Provider.of<UserProvider>(context).currentUser;
 
@@ -73,27 +69,25 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       modifiedOn: DateTime.now(),
       phone: '',
     );
+    try {
+      final result =
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .registerUser(
+                  password: _passwordController.text, userData: _userData);
 
-    final result = await Provider.of<AuthenticationProvider>(context,
-            listen: false)
-        .registerUser(password: _passwordController.text, userData: _userData);
-
-    if (result is bool) {
-      if (result == true) {
+      if (result) {
         await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUserDetails();
-        setState(() {
-          step += 1;
-        });
+            .setCurrentUser();
+        setState(() => step += 1);
+        return new Timer(
+            Duration(seconds: 2),
+            () => Navigator.of(context)
+                .pushReplacementNamed(PrayerScreen.routeName));
       }
-      return new Timer(
-        Duration(seconds: 2),
-        () => {
-          Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName)
-        },
-      );
-    } else {
-      showInSnackBar(result.toString());
+    } on HttpException catch (e) {
+      showInSnackBar("Your account couldn't be created. Please try again");
+    } catch (e) {
+      showInSnackBar('An error occured. Please try again');
     }
   }
 

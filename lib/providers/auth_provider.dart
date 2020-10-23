@@ -23,7 +23,7 @@ class AuthenticationProvider with ChangeNotifier {
     await _authService.signOut();
   }
 
-  Future<bool> handleStartUpLogic() async {
+  Future<bool> isLoggedIn() async {
     return await _authService.isUserLoggedIn();
   }
 }

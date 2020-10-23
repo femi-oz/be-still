@@ -1,5 +1,3 @@
-import 'package:be_still/data/bible.data.dart';
-import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -7,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
 
 class RecommenededBibles extends StatefulWidget {
   static const routeName = 'recommended-bible';
