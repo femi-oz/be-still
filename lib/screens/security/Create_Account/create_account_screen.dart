@@ -8,6 +8,8 @@ import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/auth_screen_painter.dart';
+import 'package:be_still/widgets/dialog.dart';
+import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
   bool _enableSubmit = false;
+  final _key = GlobalKey<State>();
 
   _selectDate(DateTime value) async {
     setState(() {
@@ -69,6 +72,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       modifiedOn: DateTime.now(),
       phone: '',
     );
+    await BeStilDialog.showLoading(
+        context, _key, context.brightBlue, 'Registering');
     try {
       final result =
           await Provider.of<AuthenticationProvider>(context, listen: false)
@@ -76,6 +81,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   password: _passwordController.text, userData: _userData);
 
       if (result) {
+        BeStilDialog.hideLoading(_key);
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser();
         setState(() => step += 1);
@@ -85,9 +91,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 .pushReplacementNamed(PrayerScreen.routeName));
       }
     } on HttpException catch (e) {
-      showInSnackBar("Your account couldn't be created. Please try again");
+      BeStilDialog.hideLoading(_key);
+      BeStillSnackbar.showInSnackBar(
+          message: "Your account couldn't be created. Please try again",
+          key: _scaffoldKey);
     } catch (e) {
-      showInSnackBar('An error occured. Please try again');
+      BeStilDialog.hideLoading(_key);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
     }
   }
 
