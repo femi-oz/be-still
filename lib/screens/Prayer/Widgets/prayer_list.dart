@@ -59,7 +59,7 @@ class PrayerList extends StatelessWidget {
               width: double.infinity,
               margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
-                color: context.prayerCardBorder,
+                color: AppColors.darkBlue,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   topLeft: Radius.circular(10),

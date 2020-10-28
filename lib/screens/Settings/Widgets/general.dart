@@ -357,7 +357,7 @@ class GeneralSettings extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(
-                    color: context.prayerCardBorder,
+                    color: AppColors.darkBlue,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),

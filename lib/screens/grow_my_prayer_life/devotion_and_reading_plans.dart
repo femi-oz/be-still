@@ -19,7 +19,7 @@ class DevotionPlans extends StatelessWidget {
         backgroundColor:
             AppColors.getPrayerCardBgColor(_themeProvider.isDarkModeEnabled),
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: context.prayerCardBorder),
+          side: BorderSide(color: AppColors.darkBlue),
           borderRadius: BorderRadius.all(
             Radius.circular(10.0),
           ),
@@ -210,7 +210,7 @@ class DevotionPlans extends StatelessWidget {
                     //       decoration: BoxDecoration(
                     //         color: context.prayerCardBg,
                     //         border: Border.all(
-                    //           color: context.prayerCardBorder,
+                    //           color: AppColors.darkBlue,
                     //           width: 1,
                     //         ),
                     //         borderRadius: BorderRadius.circular(10),
@@ -242,7 +242,7 @@ class DevotionPlans extends StatelessWidget {
                     //             padding:
                     //                 const EdgeInsets.symmetric(vertical: 5.0),
                     //             child: Divider(
-                    //               color: context.prayerCardBorder,
+                    //               color: AppColors.darkBlue,
                     //               thickness: 1,
                     //             ),
                     //           ),

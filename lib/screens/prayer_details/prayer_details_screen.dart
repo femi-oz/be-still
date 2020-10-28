@@ -62,13 +62,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    Provider.of<ThemeProvider>(context, listen: false)
-        .changeTheme(ThemeMode.dark);
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   Provider.of<ThemeProvider>(context, listen: false)
+  //       .changeTheme(ThemeMode.dark);
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {

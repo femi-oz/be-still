@@ -51,7 +51,7 @@ class PrayerCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
-          color: context.prayerCardBorder,
+          color: AppColors.darkBlue,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),

@@ -47,8 +47,8 @@ extension ThemeContext on BuildContext {
   Color get prayerNotAvailable =>
       dynamicColor(light: 0xFF193452, dark: 0xFF193452);
 
-  Color get prayerCardBorder =>
-      dynamicColor(light: 0xFFEDEFF0, dark: 0xFF00547D);
+  // Color get prayerCardBorder =>
+  //     dynamicColor(light: 0xFFEDEFF0, dark: 0xFF00547D);
   // Color get prayerDivider => dynamicColor(light: 0xFF0D1319, dark: 0xFF00547D);
   // Color get prayerCardBg => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF012B4D);
   Color get prayerReminderIcon =>

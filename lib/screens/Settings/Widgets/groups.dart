@@ -24,7 +24,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       contentPadding: EdgeInsets.all(0),
       backgroundColor: AppColors.getPrayerCardBgColor(isDark),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: context.prayerCardBorder),
+        side: BorderSide(color: AppColors.darkBlue),
         borderRadius: BorderRadius.all(
           Radius.circular(10.0),
         ),
@@ -100,7 +100,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           //     :
                           color: Colors.transparent,
                           border: Border.all(
-                            color: context.prayerCardBorder,
+                            color: AppColors.darkBlue,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(5),
@@ -135,7 +135,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: context.prayerCardBorder,
+                                  color: AppColors.darkBlue,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -175,7 +175,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               decoration: BoxDecoration(
                                 color: context.toolsActiveBtn.withOpacity(0.3),
                                 border: Border.all(
-                                  color: context.prayerCardBorder,
+                                  color: AppColors.darkBlue,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -215,7 +215,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: context.prayerCardBorder,
+                                  color: AppColors.darkBlue,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -436,7 +436,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                         ),
     //                                   Expanded(
     //                                     child: Divider(
-    //                                       color: context.prayerCardBorder,
+    //                                       color: AppColors.darkBlue,
     //                                       thickness: 1,
     //                                     ),
     //                                   ),
@@ -630,7 +630,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                         ),
     //                                         Expanded(
     //                                           child: Divider(
-    //                                             color: context.prayerCardBorder,
+    //                                             color: AppColors.darkBlue,
     //                                             thickness: 1,
     //                                           ),
     //                                         ),
