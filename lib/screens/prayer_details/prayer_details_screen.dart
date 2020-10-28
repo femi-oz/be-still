@@ -96,7 +96,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             padding: EdgeInsets.all(0),
                             icon: Icon(
                               Icons.arrow_back,
-                              color: context.toolsBackBtn,
+                              color: AppColors.getAppBarColor(
+                                  _themeProvider.isDarkModeEnabled),
                             ),
                             onPressed: () {
                               Navigator.of(context)
@@ -104,10 +105,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             },
                             label: Text(
                               'BACK',
-                              style: TextStyle(
-                                color: context.toolsBackBtn,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                              style: AppTextStyles.boldText20.copyWith(
+                                color: AppColors.getAppBarColor(
+                                    _themeProvider.isDarkModeEnabled),
                               ),
                             ),
                           ),
@@ -138,18 +138,15 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         width: double.infinity,
-                        padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              context.prayerDetailsCardStart,
-                              context.prayerDetailsCardEnd,
-                            ],
+                            colors: AppColors.getDetailBgColor(
+                                _themeProvider.isDarkModeEnabled),
                           ),
                           border: Border.all(
-                            color: context.prayerDetailsCardBorder,
+                            color: AppColors.darkBlue2,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(15),
@@ -161,8 +158,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                               AsyncSnapshot<List<PrayerUpdateModel>> snapshot) {
                             if (snapshot.hasData && snapshot.data != null) {
                               updates = snapshot.data;
-                              print(updates);
-                              print(snapshot.data);
                               return snapshot.data.length > 0
                                   ? UpdateView(prayer, updates)
                                   : NoUpdateView(prayer);

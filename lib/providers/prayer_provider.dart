@@ -27,10 +27,6 @@ class PrayerProvider with ChangeNotifier {
           .listen((data) {
         _streamController.sink.add(data.map((e) => e.prayer).toList());
         _prayers = data.map((e) => e.prayer).toList();
-        // data
-        // .map((e) => e.prayer)
-        // .where((p) => !p.hideFromAllMembers)
-        // .toList());
         notifyListeners();
       });
     } else {
@@ -61,7 +57,6 @@ class PrayerProvider with ChangeNotifier {
                       : [];
           _streamController.sink.add(_prayers);
           notifyListeners();
-          //  prayers.map((e) => e.prayer).toList();
         },
       );
     }

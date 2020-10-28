@@ -18,6 +18,23 @@ class AppColors {
     return retVal;
   }
 
+  static List<Color> getDetailBgColor(bool isDarkMode) {
+    List<Color> retVal;
+    switch (isDarkMode) {
+      case true:
+        retVal = [const Color(0xFF012B4C), const Color(0xFF033565)];
+        break;
+      case false:
+        retVal = [const Color(0xFFf0f4fa), const Color(0xFFE6E9ED)];
+        break;
+      default:
+        retVal = [const Color(0xFFf0f4fa), const Color(0xFFE6E9ED)];
+
+        break;
+    }
+    return retVal;
+  }
+
   static Color getTextFieldBgColor(bool isDarkMode) {
     Color retVal;
     switch (isDarkMode) {
@@ -68,6 +85,23 @@ class AppColors {
     return retVal;
   }
 
+  static Color getPrayerCardBgColor(bool isDarkMode) {
+    Color retVal;
+    switch (isDarkMode) {
+      case true:
+        retVal = const Color(0xFF012B4D);
+        break;
+      case false:
+        retVal = const Color(0xFFFFFFFF);
+        break;
+      default:
+        retVal = const Color(0xFFFFFFFF);
+
+        break;
+    }
+    return retVal;
+  }
+
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),
     const Color(0xFF001B42),
@@ -83,6 +117,7 @@ class AppColors {
   static const Color grey = const Color(0xFF51575C);
   static const Color red = const Color(0xFFbf0606);
   static const Color darkBlue = const Color(0xFF1B3A5E);
+  static const Color darkBlue2 = const Color(0xFF015380);
 
   // static const Color offWhite5 = const Color(0xFF005780);
   // static const Color blueGrey = const Color(0xFF51575C);
@@ -128,6 +163,20 @@ class AppTextStyles {
     height: 1.44,
     color: AppColors.offWhite4,
     fontSize: 16,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText18b = const TextStyle(
+    height: 1.44,
+    color: AppColors.offWhite4,
+    fontSize: 18,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText22 = const TextStyle(
+    height: 1.44,
+    color: AppColors.offWhite4,
+    fontSize: 22,
     fontWeight: FontWeight.w300,
     letterSpacing: 0.5,
   );

@@ -4,6 +4,7 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/user.model.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
@@ -17,11 +18,11 @@ class GroupsSettings extends StatefulWidget {
 }
 
 class _GroupsSettingsState extends State<GroupsSettings> {
-  void _showAlert(UserModel user) {
+  void _showAlert(UserModel user, bool isDark) {
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
-      backgroundColor: context.prayerCardBg,
+      backgroundColor: AppColors.getPrayerCardBgColor(isDark),
       shape: RoundedRectangleBorder(
         side: BorderSide(color: context.prayerCardBorder),
         borderRadius: BorderRadius.all(

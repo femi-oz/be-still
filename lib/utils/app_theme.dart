@@ -49,8 +49,8 @@ extension ThemeContext on BuildContext {
 
   Color get prayerCardBorder =>
       dynamicColor(light: 0xFFEDEFF0, dark: 0xFF00547D);
-  Color get prayerDivider => dynamicColor(light: 0xFF0D1319, dark: 0xFF00547D);
-  Color get prayerCardBg => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF012B4D);
+  // Color get prayerDivider => dynamicColor(light: 0xFF0D1319, dark: 0xFF00547D);
+  // Color get prayerCardBg => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF012B4D);
   Color get prayerReminderIcon =>
       dynamicColor(light: 0xFF0091C0, dark: 0xFF0091C0);
   Color get prayerCardPrayer =>
@@ -76,12 +76,12 @@ extension ThemeContext on BuildContext {
 
   Color get appBarActive => dynamicColor(light: 0xFF005780, dark: 0xFF002D4B);
   Color get appBarInactive => dynamicColor(light: 0xFF51575C, dark: 0xFF51575C);
-  Color get prayerDetailsCardStart =>
-      dynamicColor(light: 0xFFf0f4fa, dark: 0xFF012B4C);
-  Color get prayerDetailsCardEnd =>
-      dynamicColor(light: 0xFFE6E9ED, dark: 0xFF033565);
-  Color get prayerDetailsCardBorder =>
-      dynamicColor(light: 0xFF015380, dark: 0xFF015380);
+  // Color get prayerDetailsCardStart =>
+  //     dynamicColor(light: 0xFFf0f4fa, dark: 0xFF012B4C);
+  // Color get prayerDetailsCardEnd =>
+  //     dynamicColor(light: 0xFFE6E9ED, dark: 0xFF033565);
+  // Color get prayerDetailsCardBorder =>
+  //     dynamicColor(light: 0xFF015380, dark: 0xFF015380);
 
   Color get prayModeBg => dynamicColor(light: 0xFFE6E9ED, dark: 0xFF101820);
   Color get prayModeCardBorder =>

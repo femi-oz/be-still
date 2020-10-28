@@ -16,7 +16,8 @@ class DevotionPlans extends StatelessWidget {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
-        backgroundColor: context.prayerCardBg,
+        backgroundColor:
+            AppColors.getPrayerCardBgColor(_themeProvider.isDarkModeEnabled),
         shape: RoundedRectangleBorder(
           side: BorderSide(color: context.prayerCardBorder),
           borderRadius: BorderRadius.all(

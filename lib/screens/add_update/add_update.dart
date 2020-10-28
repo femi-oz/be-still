@@ -118,7 +118,7 @@ class _AddUpdateState extends State<AddUpdate> {
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: context.prayerDetailsCardBorder,
+                      color: AppColors.darkBlue2,
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -167,7 +167,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                   ),
                                   Expanded(
                                     child: Divider(
-                                      color: context.prayerDetailsCardBorder,
+                                      color: AppColors.darkBlue2,
                                       thickness: 1,
                                     ),
                                   ),
@@ -242,7 +242,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                 ),
                                 Expanded(
                                   child: Divider(
-                                    color: context.prayerDetailsCardBorder,
+                                    color: AppColors.darkBlue2,
                                     thickness: 1,
                                   ),
                                 ),

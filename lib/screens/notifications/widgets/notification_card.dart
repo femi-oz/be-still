@@ -1,5 +1,8 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class NotificationCard extends StatelessWidget {
   // final NotificationModel notification;
@@ -7,6 +10,7 @@ class NotificationCard extends StatelessWidget {
   // NotificationCard(this.notification);
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onLongPressEnd: null,
       onTap: null,
@@ -24,7 +28,8 @@ class NotificationCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: context.prayerCardBg,
+            color: AppColors.getPrayerCardBgColor(
+                _themeProvider.isDarkModeEnabled),
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(9),
               topLeft: Radius.circular(9),
@@ -95,7 +100,8 @@ class NotificationCard extends StatelessWidget {
                 ],
               ),
               Divider(
-                color: context.prayerDivider,
+                color: AppColors.getPrayerCardBgColor(
+                    _themeProvider.isDarkModeEnabled),
                 thickness: 0.5,
               ),
               Row(
