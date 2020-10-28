@@ -30,7 +30,7 @@ class PrayerList extends StatelessWidget {
               ? Container(
                   padding: EdgeInsets.all(60),
                   child: Text(
-                    'You don\'t have any Prayers in your List.',
+                    'You don\'t have any prayer in your List.',
                     style: AppTextStyles.regularText13,
                     textAlign: TextAlign.center,
                   ),

@@ -25,11 +25,10 @@ class AppColors {
         retVal = const Color(0xFF022F52).withOpacity(0.4);
         break;
       case false:
-        retVal = const Color(0xFFFFFFFF).withOpacity(0.4);
+        retVal = const Color(0xFFFFFFFF).withOpacity(0.5);
         break;
       default:
-        retVal = const Color(0xFFFFFFFF).withOpacity(0.4);
-
+        retVal = const Color(0xFFFFFFFF).withOpacity(0.5);
         break;
     }
     return retVal;

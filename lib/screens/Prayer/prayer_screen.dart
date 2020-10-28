@@ -39,24 +39,33 @@ class _PrayerScreenState extends State<PrayerScreen> {
       activeList = _activeList;
       group = _group;
     });
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    Provider.of<PrayerProvider>(context, listen: false).getPrayers(_user.id,
+        activeList, activeList == PrayerActiveScreen.group ? group.id : '0');
   }
 
   bool isInitialized = false;
 
   @override
   void initState() {
-    Provider.of<ThemeProvider>(context, listen: false)
-        .changeTheme(ThemeMode.light);
-    activeList = PrayerActiveScreen.personal;
+    // Provider.of<ThemeProvider>(context, listen: false)
+    //     .changeTheme(ThemeMode.light);
+    // activeList = PrayerActiveScreen.personal;
+    // Provider.of<PrayerProvider>(context, listen: false).getPrayers(_user.id,
+    //     activeList, activeList == PrayerActiveScreen.group ? group.id : '0');
+    _setCurrentList(PrayerActiveScreen.personal, null);
     super.initState();
+  }
+
+  void _searchPrayer(String value) {
+    Provider.of<PrayerProvider>(context, listen: false).searchPrayers(value);
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -81,6 +90,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
               Container(
                 height: 60,
                 child: PrayerMenu(
+                  onTextchanged: _searchPrayer,
                   clearSearchField: _clearSearchField,
                   searchController: _searchController,
                   setCurrentList: _setCurrentList,
@@ -91,19 +101,19 @@ class _PrayerScreenState extends State<PrayerScreen> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.855,
                 child: StreamBuilder(
-                  stream: Provider.of<PrayerProvider>(context).getPrayers(
-                      _user.id,
-                      activeList,
-                      activeList == PrayerActiveScreen.group ? group.id : '0'),
+                  stream:
+                      Provider.of<PrayerProvider>(context).filterPrayersStream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<PrayerModel>> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                         return Column(
                           children: [
-                            SpinKitDoubleBounce(
-                              color: AppColors.lightBlue1,
-                              size: 50.0,
+                            Expanded(
+                              child: SpinKitDoubleBounce(
+                                color: AppColors.lightBlue1,
+                                size: 50.0,
+                              ),
                             ),
                           ],
                         );
@@ -111,9 +121,11 @@ class _PrayerScreenState extends State<PrayerScreen> {
                         if (snapshot.hasError)
                           return Column(
                             children: [
-                              SpinKitDoubleBounce(
-                                color: AppColors.lightBlue1,
-                                size: 50.0,
+                              Expanded(
+                                child: SpinKitDoubleBounce(
+                                  color: AppColors.lightBlue1,
+                                  size: 50.0,
+                                ),
                               ),
                             ],
                           );

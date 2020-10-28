@@ -13,26 +13,42 @@ class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
   GroupService _groupService = locator<GroupService>();
 
-  Stream<List<PrayerModel>> getPrayers(
-      String userId, PrayerActiveScreen activeList, String groupId) {
+  List<PrayerModel> _prayers = [];
+  StreamController<List<PrayerModel>> _streamController =
+      StreamController<List<PrayerModel>>.broadcast();
+  Stream<List<PrayerModel>> get filterPrayersStream => _streamController.stream;
+
+  Future getPrayers(
+      String userId, PrayerActiveScreen activeList, String groupId) async {
     if (activeList == PrayerActiveScreen.group) {
-      return _groupService.fetchGroupPrayers(groupId).asyncMap((data) => data
-          .map((e) => e.prayer)
-          .where((p) => !p.hideFromAllMembers)
-          .toList());
+      _groupService
+          .fetchGroupPrayers(groupId)
+          .asBroadcastStream()
+          .listen((data) {
+        _streamController.sink.add(data.map((e) => e.prayer).toList());
+        _prayers = data.map((e) => e.prayer).toList();
+        // data
+        // .map((e) => e.prayer)
+        // .where((p) => !p.hideFromAllMembers)
+        // .toList());
+        notifyListeners();
+      });
     } else {
-      return _prayerService.fetchPrayers(userId).asyncMap(
+      _prayerService.fetchPrayers(userId).asBroadcastStream().listen(
         (data) {
-          List<CombinePrayerStream> prayers = activeList ==
-                  PrayerActiveScreen.personal
+          _prayers = activeList == PrayerActiveScreen.personal
               ? data
                   .where((p) =>
                       p.prayer.isAnswer == false &&
                       p.prayer.status.toLowerCase() == 'active')
                   .toList()
+                  .map((e) => e.prayer)
+                  .toList()
               : activeList == PrayerActiveScreen.archived
                   ? data
                       .where((p) => p.prayer.status.toLowerCase() == 'inactive')
+                      .toList()
+                      .map((e) => e.prayer)
                       .toList()
                   : activeList == PrayerActiveScreen.answered
                       ? data
@@ -40,11 +56,23 @@ class PrayerProvider with ChangeNotifier {
                               p.prayer.isAnswer == true &&
                               p.prayer.status.toLowerCase() == 'active')
                           .toList()
+                          .map((e) => e.prayer)
+                          .toList()
                       : [];
-          return prayers.map((e) => e.prayer).toList();
+          _streamController.sink.add(_prayers);
+          notifyListeners();
+          //  prayers.map((e) => e.prayer).toList();
         },
       );
     }
+  }
+
+  Future searchPrayers(String searchQuery) async {
+    List<PrayerModel> _filteredPrayers = _prayers
+        .where((PrayerModel data) =>
+            data.description.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+    _streamController.sink.add(_filteredPrayers);
   }
 
   Future addPrayer(PrayerModel prayerData, String _userID) async {
