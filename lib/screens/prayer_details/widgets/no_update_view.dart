@@ -19,12 +19,13 @@ class NoUpdateView extends StatelessWidget {
         // TODO
         prayer.groupId != '0'
             ? Container(
-                padding: EdgeInsets.all(20),
                 margin: EdgeInsets.only(bottom: 20),
                 child: Text(
                   prayer.createdBy,
                   style: AppTextStyles.regularText18b.copyWith(
-                      color: AppColors.lightBlue4, fontWeight: FontWeight.w500),
+                      color: AppColors.getPrayerPrimaryColor(
+                          _themeProvider.isDarkModeEnabled),
+                      fontWeight: FontWeight.w500),
                   textAlign: TextAlign.left,
                 ),
               )
@@ -33,14 +34,14 @@ class NoUpdateView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(20),
               margin: EdgeInsets.only(right: 30),
               child: Row(
                 children: <Widget>[
                   Text(
                     DateFormat('hh:mma | MM.dd.yyyy').format(prayer.createdOn),
                     style: AppTextStyles.regularText16.copyWith(
-                      color: AppColors.lightBlue4,
+                      color: AppColors.getPrayerPrimaryColor(
+                          _themeProvider.isDarkModeEnabled),
                     ),
                   ),
                 ],
@@ -48,7 +49,7 @@ class NoUpdateView extends StatelessWidget {
             ),
             Expanded(
               child: Divider(
-                color: AppColors.getAppBarColor(
+                color: AppColors.getPrayerPrimaryColor(
                   _themeProvider.isDarkModeEnabled,
                 ),
                 thickness: 1,

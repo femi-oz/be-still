@@ -113,7 +113,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             label: Text(
                               'BACK',
                               style: AppTextStyles.boldText20.copyWith(
-                                color: AppColors.getAppBarColor(
+                                color: AppColors.getPrayerPrimaryColor(
                                     _themeProvider.isDarkModeEnabled),
                               ),
                             ),
@@ -153,7 +153,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                 _themeProvider.isDarkModeEnabled),
                           ),
                           border: Border.all(
-                            color: AppColors.darkBlue2,
+                            color: AppColors.getPrayerPrimaryColor(
+                                _themeProvider.isDarkModeEnabled),
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(15),

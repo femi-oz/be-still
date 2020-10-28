@@ -68,17 +68,17 @@ class AppColors {
     return retVal;
   }
 
-  static Color getMenuTitleColor(bool isDarkMode) {
+  static Color getPrayerPrimaryColor(bool isDarkMode) {
     Color retVal;
     switch (isDarkMode) {
       case true:
-        retVal = const Color(0xFF002D4B);
+        retVal = const Color(0xFF014E75);
         break;
       case false:
-        retVal = const Color(0xFF005780);
+        retVal = const Color(0xFF5EC2E1);
         break;
       default:
-        retVal = const Color(0xFF005780);
+        retVal = const Color(0xFF5EC2E1);
 
         break;
     }
