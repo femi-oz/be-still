@@ -1,6 +1,7 @@
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +53,8 @@ class GeneralSettings extends StatelessWidget {
             Container(
               margin:
                   EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 15),
-              color: context.inputFieldBg,
+              color: AppColors.getTextFieldBgColor(
+                  _themeProvider.isDarkModeEnabled),
               child: OutlineButton(
                 borderSide: BorderSide(color: context.inputFieldBorder),
                 child: Padding(
@@ -83,7 +85,8 @@ class GeneralSettings extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(bottom: 15, left: 20.0, right: 20.0),
-              color: context.inputFieldBg,
+              color: AppColors.getTextFieldBgColor(
+                  _themeProvider.isDarkModeEnabled),
               child: OutlineButton(
                 borderSide: BorderSide(color: context.inputFieldBorder),
                 child: Padding(
@@ -114,7 +117,8 @@ class GeneralSettings extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 15),
-              color: context.inputFieldBg,
+              color: AppColors.getTextFieldBgColor(
+                  _themeProvider.isDarkModeEnabled),
               child: OutlineButton(
                 borderSide: BorderSide(color: context.inputFieldBorder),
                 child: Padding(
@@ -231,7 +235,7 @@ class GeneralSettings extends StatelessWidget {
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: _themeProvider.colorMode == 'light'
+                      color: _themeProvider.colorMode == ThemeMode.light
                           ? context.toolsActiveBtn.withOpacity(0.3)
                           : Colors.transparent,
                       border: Border.all(
@@ -251,13 +255,14 @@ class GeneralSettings extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onPressed: () => _themeProvider.changeTheme('light'),
+                      onPressed: () =>
+                          _themeProvider.changeTheme(ThemeMode.light),
                     ),
                   ),
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: _themeProvider.colorMode == 'dark'
+                      color: _themeProvider.colorMode == ThemeMode.dark
                           ? context.toolsActiveBtn.withOpacity(0.5)
                           : Colors.transparent,
                       border: Border.all(
@@ -279,13 +284,14 @@ class GeneralSettings extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onPressed: () => _themeProvider.changeTheme('dark'),
+                      onPressed: () =>
+                          _themeProvider.changeTheme(ThemeMode.dark),
                     ),
                   ),
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
-                      color: _themeProvider.colorMode == 'auto'
+                      color: _themeProvider.colorMode == ThemeMode.system
                           ? context.toolsActiveBtn.withOpacity(0.5)
                           : Colors.transparent,
                       border: Border.all(
@@ -307,7 +313,8 @@ class GeneralSettings extends StatelessWidget {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onPressed: () => _themeProvider.changeTheme('auto'),
+                      onPressed: () =>
+                          _themeProvider.changeTheme(ThemeMode.system),
                     ),
                   ),
                 ],

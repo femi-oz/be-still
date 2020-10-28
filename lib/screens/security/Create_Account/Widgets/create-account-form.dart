@@ -1,8 +1,11 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Create_Account/Widgets/terms_dialog.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CreateAccountForm extends StatefulWidget {
   final datePickerController;
@@ -76,14 +79,14 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               keyboardType: TextInputType.text,
               isRequired: true,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 15.0),
             CustomInput(
               label: 'Last Name',
               controller: widget.lastnameController,
               keyboardType: TextInputType.text,
               isRequired: true,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 15.0),
             CustomInput(
               label: 'Email',
               isEmail: true,
@@ -91,7 +94,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               keyboardType: TextInputType.emailAddress,
               isRequired: true,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 15.0),
             GestureDetector(
               onTap: () => _selectDate(),
               child: Container(
@@ -105,7 +108,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 15.0),
             CustomInput(
               isPassword: true,
               label: 'Password',
@@ -113,7 +116,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               keyboardType: TextInputType.visiblePassword,
               isRequired: true,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 15.0),
             CustomInput(
               isPassword: true,
               label: 'Confirm Password',
@@ -129,22 +132,20 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               textInputAction: TextInputAction.done,
               unfocus: true,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 30.0),
             Column(
               children: <Widget>[
                 InkWell(
                   child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Text(
-                        'Read the Terms of Use/User Agreement',
-                        style: TextStyle(
-                          color: context.brightBlue2,
-                          fontSize: 14,
-                        ),
-                      )),
-                  onTap: () => createDialog(context),
+                    width: double.infinity,
+                    child: Text(
+                      'Read the Terms of Use/User Agreement',
+                      style: AppTextStyles.regularText16,
+                    ),
+                  ),
+                  onTap: () => createTermsDialog(context),
                 ),
+                SizedBox(height: 10),
                 Row(
                   children: <Widget>[
                     Theme(
@@ -154,6 +155,9 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                         value: termsAccepted,
                         onChanged: (val) {
                           setState(() {
+                            Provider.of<ThemeProvider>(context, listen: false)
+                                .changeTheme(
+                                    val ? ThemeMode.dark : ThemeMode.light);
                             widget.agreeTerms(val);
                             termsAccepted = val;
                           });
@@ -165,10 +169,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     ),
                     Text(
                       'I Agree to the Terms of Use',
-                      style: TextStyle(
-                        color: context.brightBlue2,
-                        fontSize: 14,
-                      ),
+                      style: AppTextStyles.regularText16,
                     ),
                   ],
                 )

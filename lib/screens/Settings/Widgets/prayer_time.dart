@@ -1,8 +1,11 @@
 import 'package:be_still/models/prayer_settings.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class PrayerTimeSettings extends StatefulWidget {
   final PrayerSettingsModel prayerSettings;
@@ -42,6 +45,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -152,7 +156,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           ),
           Container(
             margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-            color: context.inputFieldBg,
+            color:
+                AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
               borderSide: BorderSide(color: context.inputFieldBorder),
               child: Padding(

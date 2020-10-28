@@ -1,5 +1,7 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class CustomInput extends StatelessWidget {
   final maxLines;
@@ -43,53 +45,37 @@ class CustomInput extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: TextStyle(
-        color: color == null ? context.brightBlue2 : color,
-        fontSize: 14,
-        height: 1.5,
-        fontWeight: FontWeight.normal,
-      ),
-      cursorColor: color == null ? context.brightBlue2 : color,
+      style: AppTextStyles.regularText16,
+      cursorColor: color == null ? AppColors.lightBlue4 : color,
       maxLines: maxLines,
       decoration: InputDecoration(
         suffixText: showSuffix ? label : '',
         isDense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: padding),
-        suffixStyle: TextStyle(
-          color: context.brightBlue2,
-          fontSize: 14,
-          fontWeight: FontWeight.w200,
-        ),
+        suffixStyle: AppTextStyles.regularText14,
         counterText: '',
         hintText: label,
-        hintStyle: TextStyle(
-          color: color == null ? context.brightBlue2 : color,
-          fontSize: 14,
-          fontWeight: FontWeight.w200,
-        ),
+        hintStyle: AppTextStyles.regularText16,
         errorBorder: new OutlineInputBorder(
           borderSide: new BorderSide(color: Colors.redAccent),
         ),
         errorMaxLines: 5,
-        errorStyle: TextStyle(
-          color: Colors.redAccent,
-          fontSize: 10,
-          fontWeight: FontWeight.normal,
-        ),
+        errorStyle: AppTextStyles.errorText,
         border: OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: context.brightBlue2,
+            color: AppColors.lightBlue4.withOpacity(0.5),
             width: 1.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: context.brightBlue2,
+            color: AppColors.lightBlue4,
             width: 1.0,
           ),
         ),
-        fillColor: context.inputFieldBg,
+        fillColor: AppColors.getTextFieldBgColor(
+            Provider.of<ThemeProvider>(context).isDarkModeEnabled),
         filled: true,
       ),
       obscureText: isPassword ? true : false,

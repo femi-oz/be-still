@@ -6,7 +6,6 @@ import 'package:be_still/providers/prayer_settings_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/sharing_settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';

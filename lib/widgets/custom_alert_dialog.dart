@@ -1,69 +1,5 @@
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import './../utils/app_theme.dart';
-
-class BeStilDialog_ {
-  // static Future<void> showLoading(
-  //     BuildContext context, GlobalKey key, Color color,
-  //     [String message = 'Loading...']) async {
-  //   Dialog dialog = Dialog(
-  //     key: key,
-  //     insetPadding: EdgeInsets.symmetric(
-  //         vertical: MediaQuery.of(context).size.height * 0.35, horizontal: 50),
-  //     backgroundColor: context.offWhite,
-  //     shape: RoundedRectangleBorder(
-  //       side: BorderSide(color: Colors.blue[800]),
-  //       borderRadius: BorderRadius.all(Radius.circular(10.0)),
-  //     ),
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         CircularProgressIndicator(
-  //           valueColor: AlwaysStoppedAnimation(color),
-  //         ),
-  //         SizedBox(height: 10.0),
-  //         Text(message)
-  //       ],
-  //     ),
-  //   );
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return dialog;
-  //     },
-  //   );
-  // }
-
-  // static hideLoading(GlobalKey key) {
-  //   Navigator.of(key.currentContext, rootNavigator: true).pop();
-  // }
-
-  static Future showErrorDialog(BuildContext context, String message) async {
-    await showDialog(
-      context: context,
-      builder: (_) => CustomAlertDialog(
-        type: AlertType.error,
-        confirmText: 'Close',
-        message: message,
-      ),
-    );
-  }
-
-  static Future showConfirmDialog(BuildContext context,
-      {String title, String message, Function onConfirm}) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) => CustomAlertDialog(
-        title: title ?? 'Confirmation',
-        type: AlertType.warning,
-        message: message ?? 'Are you sure want to proceed?',
-        showCancelButton: true,
-        confirmText: 'Yes!',
-        onConfirm: onConfirm,
-      ),
-    );
-  }
-}
 
 enum AlertType {
   info,
@@ -117,7 +53,7 @@ class CustomAlertDialog extends StatelessWidget {
             const SizedBox(height: 10.0),
             Text(
               title.isEmpty ? _getTitle(type) : title,
-              // style: ,
+              style: AppTextStyles.headline6Grey.copyWith(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             Divider(),

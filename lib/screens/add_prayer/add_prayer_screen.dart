@@ -1,10 +1,12 @@
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -90,6 +92,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -101,10 +104,8 @@ class _AddPrayerState extends State<AddPrayer> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  context.mainBgStart,
-                  context.mainBgEnd,
-                ],
+                colors: AppColors.getBackgroudColor(
+                    _themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(20),

@@ -1,4 +1,5 @@
 import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +17,13 @@ class ForgetPasswordOne extends StatefulWidget {
   _ForgetPasswordOneState createState() => _ForgetPasswordOneState();
 }
 
+enum CodeType {
+  email,
+  text,
+}
+
 class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
-  String type = 'email';
+  CodeType type = CodeType.email;
 
   @override
   Widget build(BuildContext context) {
@@ -34,27 +40,24 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
             textInputAction: TextInputAction.done,
             unfocus: true,
           ),
+          SizedBox(height: 40.0),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 40.0),
             child: Text(
               'How would you like to recieve your password reset code?',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: context.inputFieldText,
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-              ),
+              style: AppTextStyles.regularText16b,
             ),
           ),
+          SizedBox(height: 55.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: 15),
                 height: 30,
                 width: MediaQuery.of(context).size.width * 0.4,
                 decoration: BoxDecoration(
-                  color: type == 'email'
+                  color: type == CodeType.email
                       ? context.toolsActiveBtn.withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
@@ -66,27 +69,22 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
                 child: FlatButton(
                   child: Text(
                     'EMAIL',
-                    style: TextStyle(
-                      color: context.brightBlue2,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.regularText16,
                   ),
                   onPressed: () {
                     setState(
                       () {
-                        type = 'email';
+                        type = CodeType.email;
                       },
                     );
                   },
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 15),
                 height: 30,
                 width: MediaQuery.of(context).size.width * 0.42,
                 decoration: BoxDecoration(
-                  color: type == 'text'
+                  color: type == CodeType.text
                       ? context.toolsActiveBtn.withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
@@ -98,16 +96,12 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
                 child: FlatButton(
                   child: Text(
                     'TEXT',
-                    style: TextStyle(
-                      color: context.brightBlue2,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.regularText16,
                   ),
                   onPressed: () {
                     setState(
                       () {
-                        type = 'text';
+                        type = CodeType.text;
                       },
                     );
                   },

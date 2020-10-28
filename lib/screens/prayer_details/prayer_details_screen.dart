@@ -3,6 +3,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/pray_mode/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
@@ -11,6 +12,7 @@ import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -62,6 +64,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     final PrayerDetailsRouteArguments args =
         ModalRoute.of(context).settings.arguments;
     PrayerModel prayer;
@@ -78,10 +81,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      context.mainBgStart,
-                      context.mainBgEnd,
-                    ],
+                    colors: AppColors.getBackgroudColor(
+                        _themeProvider.isDarkModeEnabled),
                   ),
                 ),
                 child: Column(

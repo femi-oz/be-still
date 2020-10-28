@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -77,10 +78,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              context.mainBgStart,
-              context.mainBgEnd,
-            ],
+            colors:
+                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
           ),
           image: DecorationImage(
             image: AssetImage(_themeProvider.isDarkModeEnabled
@@ -145,8 +144,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                   colors: [
-                                    context.authBtnStart,
-                                    context.authBtnEnd,
+                                    AppColors.lightBlue1,
+                                    AppColors.lightBlue2,
                                   ],
                                 ),
                               ),

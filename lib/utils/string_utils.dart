@@ -3,4 +3,24 @@ class StringUtils {
     List<String> paths = enumToString.split(".");
     return paths[paths.length - 1];
   }
+
+  static const String errorOccured = 'An error occured.';
+  static String getBackgroundImage(bool isDarkMode) {
+    String retVal;
+    switch (isDarkMode) {
+      case true:
+        retVal = 'assets/images/background-pattern-dark.png';
+        break;
+      case false:
+        retVal = 'assets/images/background-pattern.png';
+        break;
+      default:
+        retVal = 'assets/images/background-pattern.png';
+
+        break;
+    }
+    return retVal;
+  }
+
+  static String logo = 'assets/images/logo.png';
 }

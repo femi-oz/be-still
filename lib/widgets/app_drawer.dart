@@ -5,6 +5,8 @@ import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
+import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -33,17 +35,15 @@ class CustomDrawer extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    context.mainBgStart,
-                    context.mainBgEnd,
-                  ]),
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.getBackgroudColor(
+                    _themeProvider.isDarkModeEnabled),
+              ),
               image: DecorationImage(
-                image: AssetImage(_themeProvider.isDarkModeEnabled
-                    ? 'assets/images/drawer-bck-dark.png'
-                    : 'assets/images/drawer-bck-light.png'),
-                alignment: Alignment.bottomRight,
+                image: AssetImage(StringUtils.getBackgroundImage(
+                    _themeProvider.isDarkModeEnabled)),
+                alignment: Alignment.bottomCenter,
               ),
             ),
             child: Column(

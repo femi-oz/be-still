@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utils/app_theme.dart';
@@ -85,20 +88,22 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   initScreen(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     double targetValue = MediaQuery.of(context).size.height * 0.3;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              context.splashBgStart,
-              context.splashBgEnd,
-              context.splashBgStart,
-              context.splashBgEnd,
-            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors:
+                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
           ),
+          // image: DecorationImage(
+          //   image: AssetImage(StringUtils.getBackgroundImage(
+          //       _themeProvider.isDarkModeEnabled)),
+          //   alignment: Alignment.bottomCenter,
+          // ),
         ),
         padding: EdgeInsets.symmetric(horizontal: 32),
         child: Column(

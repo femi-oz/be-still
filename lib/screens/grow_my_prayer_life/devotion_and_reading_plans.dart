@@ -1,4 +1,5 @@
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -101,8 +102,8 @@ class DevotionPlans extends StatelessWidget {
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                       colors: [
-                        context.authBtnStart,
-                        context.authBtnEnd,
+                        AppColors.lightBlue1,
+                        AppColors.lightBlue2,
                       ],
                     ),
                   ),
@@ -146,10 +147,8 @@ class DevotionPlans extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              context.mainBgStart,
-              context.mainBgEnd,
-            ],
+            colors:
+                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
           ),
           image: DecorationImage(
             image: AssetImage(_themeProvider.isDarkModeEnabled

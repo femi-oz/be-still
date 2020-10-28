@@ -1,7 +1,9 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
@@ -64,6 +66,7 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -71,10 +74,8 @@ class _AddUpdateState extends State<AddUpdate> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                context.mainBgStart,
-                context.mainBgEnd,
-              ],
+              colors:
+                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
             ),
           ),
           padding: EdgeInsets.all(20),

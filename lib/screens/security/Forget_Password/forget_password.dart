@@ -3,7 +3,10 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/step_three.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/step_two.dart';
-import 'package:be_still/widgets/auth_screen_painter.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:flutter/material.dart';
 
 import 'package:be_still/utils/app_theme.dart';
@@ -74,30 +77,19 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                context.mainBgStart,
-                context.mainBgEnd,
-              ],
+              colors:
+                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
             ),
             image: DecorationImage(
-              image: AssetImage(_themeProvider.isDarkModeEnabled
-                  ? 'assets/images/background-pattern-dark.png'
-                  : 'assets/images/background-pattern.png'),
+              image: AssetImage(StringUtils.getBackgroundImage(
+                  _themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                CustomPaint(
-                  painter: AuthCustomPainter(context.authPainterStart,
-                      context.authPainterEnd, context.authPainterShadow),
-                  child: Container(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: Image.asset('assets/images/logo.png'),
-                  ),
-                ),
+                CustomLogoShape(),
                 Container(
                   padding: EdgeInsets.all(20),
                   width: double.infinity,
@@ -141,9 +133,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                         return new Timer(
                                           Duration(seconds: 5),
                                           () => {
-                                            // _authProvider.login(),
                                             Navigator.of(context).pushNamed(
-                                                PrayerScreen.routeName)
+                                                LoginScreen.routeName)
                                           },
                                         );
                                       }
@@ -159,8 +150,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
                                         colors: [
-                                          context.authBtnStart,
-                                          context.authBtnEnd,
+                                          AppColors.lightBlue1,
+                                          AppColors.lightBlue2,
                                         ],
                                       ),
                                     ),
@@ -175,11 +166,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                     : GestureDetector(
                                         child: Text(
                                           "Go Back",
-                                          style: TextStyle(
-                                            color: context.brightBlue2,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w300,
-                                          ),
+                                          style: AppTextStyles.regularText13,
                                         ),
                                         onTap: () {
                                           if (step == 1) {

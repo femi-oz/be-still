@@ -7,6 +7,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_list.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/app_drawer.dart';
@@ -62,10 +63,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              context.mainBgStart,
-              context.mainBgEnd,
-            ],
+            colors:
+                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
           ),
           image: DecorationImage(
             image: AssetImage(_themeProvider.isDarkModeEnabled

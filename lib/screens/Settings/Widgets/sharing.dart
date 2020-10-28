@@ -1,6 +1,9 @@
 import 'package:be_still/models/sharing_settings.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class SharingSettings extends StatefulWidget {
   final SharingSettingsModel sharingSettings;
@@ -12,6 +15,7 @@ class SharingSettings extends StatefulWidget {
 class _SharingSettingsState extends State<SharingSettings> {
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -139,7 +143,8 @@ class _SharingSettingsState extends State<SharingSettings> {
           Container(
             margin:
                 EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 10),
-            color: context.inputFieldBg,
+            color:
+                AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
               borderSide: BorderSide(color: context.inputFieldBorder),
               child: Padding(
@@ -171,7 +176,8 @@ class _SharingSettingsState extends State<SharingSettings> {
           Container(
             margin:
                 EdgeInsets.only(left: 20.0, right: 20.0, top: 5, bottom: 10),
-            color: context.inputFieldBg,
+            color:
+                AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
               borderSide: BorderSide(color: context.inputFieldBorder),
               child: Padding(
@@ -203,7 +209,8 @@ class _SharingSettingsState extends State<SharingSettings> {
           Container(
             margin:
                 EdgeInsets.only(left: 20.0, right: 20.0, top: 5, bottom: 10),
-            color: context.inputFieldBg,
+            color:
+                AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
               borderSide: BorderSide(color: context.inputFieldBorder),
               child: Padding(
@@ -235,7 +242,8 @@ class _SharingSettingsState extends State<SharingSettings> {
           Container(
             margin:
                 EdgeInsets.only(left: 20.0, right: 20.0, top: 5, bottom: 80),
-            color: context.inputFieldBg,
+            color:
+                AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
               borderSide: BorderSide(color: context.inputFieldBorder),
               child: Padding(

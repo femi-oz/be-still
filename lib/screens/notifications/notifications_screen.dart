@@ -1,9 +1,9 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../utils/app_theme.dart';
 
 class NotificationsScreen extends StatefulWidget {
   NotificationsScreen();
@@ -46,10 +46,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                context.mainBgStart,
-                context.mainBgEnd,
-              ],
+              colors:
+                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
             ),
             image: DecorationImage(
               image: AssetImage(_themeProvider.isDarkModeEnabled

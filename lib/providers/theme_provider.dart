@@ -1,37 +1,32 @@
+import 'package:be_still/utils/prefs.dart';
 import 'package:flutter/material.dart';
 
 class ThemeProvider with ChangeNotifier {
-  String _colorOption =
-      MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                  .platformBrightness ==
-              Brightness.dark
-          ? 'dark'
-          : 'light';
-  String _colorMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-              .platformBrightness ==
-          Brightness.dark
-      ? 'dark'
-      : 'light';
-
+  DarkThemePreferenes darkThemePref = DarkThemePreferenes();
+  bool _isDarkMode = false;
   bool get isDarkModeEnabled {
-    print(_colorOption == 'dark');
-    return _colorMode == 'dark';
+    return _isDarkMode;
   }
 
-  String get colorMode {
-    return _colorOption;
-  }
+  ThemeMode _colorMode;
+  ThemeMode get colorMode => _colorMode;
 
-  void changeTheme(value) {
+  Future changeTheme(ThemeMode value) async {
     _colorMode = value;
-    if (_colorMode == 'auto') {
-      _colorMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+    if (value == ThemeMode.system) {
+      _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                   .platformBrightness ==
               Brightness.dark
-          ? 'dark'
-          : 'light';
+          ? true
+          : false;
+    } else {
+      _isDarkMode = value == ThemeMode.dark ? true : false;
     }
-    _colorOption = value;
+    await darkThemePref.addIsDarkMode(_isDarkMode);
     notifyListeners();
+  }
+
+  Future setDefaultTheme() async {
+    _isDarkMode = await darkThemePref.getIsDarkMode();
   }
 }

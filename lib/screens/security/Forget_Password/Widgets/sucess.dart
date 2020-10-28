@@ -1,5 +1,5 @@
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 
 class ForgetPasswordSucess extends StatelessWidget {
   @override
@@ -9,19 +9,12 @@ class ForgetPasswordSucess extends StatelessWidget {
         children: <Widget>[
           Text(
             'Your password has been succesfully reset.',
-            style: TextStyle(
-              color: context.inputFieldText,
-              fontWeight: FontWeight.w300,
-              fontSize: 14,
-            ),
+            style: AppTextStyles.regularText16,
           ),
+          SizedBox(height: 20),
           Text(
             'Login to your BesStill...',
-            style: TextStyle(
-              color: context.inputFieldText,
-              fontWeight: FontWeight.w300,
-              fontSize: 14,
-            ),
+            style: AppTextStyles.regularText16,
           ),
         ],
       ),

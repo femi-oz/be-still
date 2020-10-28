@@ -6,7 +6,19 @@ import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
 import './utils/routes.dart' as rt;
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
+    // darkThemePref.loadPrefs();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // SystemChrome.setEnabledSystemUIOverlays([]);

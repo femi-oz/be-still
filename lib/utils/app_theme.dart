@@ -32,11 +32,11 @@ extension ThemeContext on BuildContext {
   Color get dimBlue => dynamicColor(light: 0xFF01537B, dark: 0xFF01537B);
   Color get offWhite => dynamicColor(light: 0xFFC1C5C8, dark: 0xFFC1C5C8);
 
-  Color get splashBgStart => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF011d3c);
-  Color get splashBgEnd => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF053566);
+  // Color get splashBgStart => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF011d3c);
+  // Color get splashBgEnd => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF053566);
 
-  Color get mainBgStart => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF021D3C);
-  Color get mainBgEnd => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF073668);
+  // Color get mainBgStart => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF021D3C);
+  // Color get mainBgEnd => dynamicColor(light: 0xFFEDEFF0, dark: 0xFF073668);
 
   Color get prayerMenuStart =>
       dynamicColor(light: 0xFF00438D, dark: 0xFF014A70);
@@ -66,7 +66,7 @@ extension ThemeContext on BuildContext {
   Color get toolsBackBtn => dynamicColor(light: 0xFF01486C, dark: 0xFF01486C);
   Color get toolsBg => dynamicColor(light: 0xFFE6E9ED, dark: 0xFF06213B);
 
-  Color get inputFieldBg => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
+  // Color get inputFieldBg => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
   Color get inputFieldText => dynamicColor(light: 0xFF79858A, dark: 0xFFC1C5C8);
   Color get inputFieldBorder =>
       dynamicColor(light: 0xFFA1DBED, dark: 0xFF004D74);
@@ -92,8 +92,8 @@ extension ThemeContext on BuildContext {
   Color get authPainterEnd => dynamicColor(light: 0xFF001B42, dark: 0xFF001B42);
   Color get authPainterShadow =>
       dynamicColor(light: 0xFF001439, dark: 0xFF001439);
-  Color get authBtnStart => dynamicColor(light: 0xFF005882, dark: 0xFF005882);
-  Color get authBtnEnd => dynamicColor(light: 0xFF009DCE, dark: 0xFF009DCE);
+  // Color get authBtnStart => dynamicColor(light: 0xFF005882, dark: 0xFF005882);
+  // Color get authBtnEnd => dynamicColor(light: 0xFF009DCE, dark: 0xFF009DCE);
   Color get switchThumbActive =>
       dynamicColor(light: 0xFF009FD0, dark: 0xFF009FD0);
 

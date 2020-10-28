@@ -1,6 +1,9 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class AlexaSettings extends StatefulWidget {
   @override
@@ -70,7 +73,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
           ),
           Container(
             margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 40.0),
-            color: context.inputFieldBg,
+            color: AppColors.getTextFieldBgColor(
+                Provider.of<ThemeProvider>(context).isDarkModeEnabled),
             child: OutlineButton(
               borderSide: BorderSide(color: context.inputFieldBorder),
               child: Padding(
