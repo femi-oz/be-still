@@ -23,4 +23,11 @@ class StringUtils {
   }
 
   static String logo = 'assets/images/logo.png';
+  static String splashLogo = 'assets/images/splash_icon.png';
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1)}";
+  }
 }

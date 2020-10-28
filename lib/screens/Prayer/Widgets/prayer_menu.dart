@@ -1,4 +1,3 @@
-import 'package:be_still/data/group.data.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
@@ -10,7 +9,6 @@ import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 

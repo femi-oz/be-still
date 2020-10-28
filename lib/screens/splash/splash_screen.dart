@@ -99,11 +99,6 @@ class _SplashScreenState extends State<SplashScreen>
             colors:
                 AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
           ),
-          // image: DecorationImage(
-          //   image: AssetImage(StringUtils.getBackgroundImage(
-          //       _themeProvider.isDarkModeEnabled)),
-          //   alignment: Alignment.bottomCenter,
-          // ),
         ),
         padding: EdgeInsets.symmetric(horizontal: 32),
         child: Column(
@@ -122,7 +117,7 @@ class _SplashScreenState extends State<SplashScreen>
                       return Container(
                         height: size,
                         child: Image.asset(
-                          'assets/images/splash_icon.png',
+                          StringUtils.splashLogo,
                           fit: BoxFit.cover,
                         ),
                       );
@@ -160,10 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
                           Text(
                             '2020 All Rights reserved',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: context.brightBlue,
-                            ),
+                            style: AppTextStyles.regularText11,
                           ),
                         ],
                       ),
@@ -180,10 +172,7 @@ class _SplashScreenState extends State<SplashScreen>
                           Text(
                             'BeStill is a ministry of Secnd Baptist Church Houston, TX',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: context.brightBlue,
-                            ),
+                            style: AppTextStyles.regularText11,
                           ),
                         ],
                       ),

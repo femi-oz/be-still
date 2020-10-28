@@ -8,11 +8,12 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_list.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/app_drawer.dart';
 import '../../widgets/app_bar.dart';
-import '../../utils/app_theme.dart';
 import 'Widgets/prayer_menu.dart';
 
 class PrayerScreen extends StatefulWidget {
@@ -44,6 +45,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
   @override
   void initState() {
+    Provider.of<ThemeProvider>(context, listen: false)
+        .changeTheme(ThemeMode.light);
     activeList = PrayerActiveScreen.personal;
     super.initState();
   }
@@ -67,9 +70,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
                 AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
           ),
           image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
+            image: AssetImage(StringUtils.getBackgroundImage(
+                _themeProvider.isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -99,17 +101,22 @@ class _PrayerScreenState extends State<PrayerScreen> {
                       case ConnectionState.waiting:
                         return Column(
                           children: [
-                            LinearProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                context.brightBlue,
-                              ),
-                              backgroundColor: context.prayerMenuEnd,
+                            SpinKitDoubleBounce(
+                              color: AppColors.lightBlue1,
+                              size: 50.0,
                             ),
                           ],
                         );
                       default:
                         if (snapshot.hasError)
-                          return Text('Error: ${snapshot.error}');
+                          return Column(
+                            children: [
+                              SpinKitDoubleBounce(
+                                color: AppColors.lightBlue1,
+                                size: 50.0,
+                              ),
+                            ],
+                          );
                         else {
                           return SingleChildScrollView(
                             child: activeList == PrayerActiveScreen.findGroup

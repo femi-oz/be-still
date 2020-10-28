@@ -155,9 +155,6 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                         value: termsAccepted,
                         onChanged: (val) {
                           setState(() {
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                .changeTheme(
-                                    val ? ThemeMode.dark : ThemeMode.light);
                             widget.agreeTerms(val);
                             termsAccepted = val;
                           });

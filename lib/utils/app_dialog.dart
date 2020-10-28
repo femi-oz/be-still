@@ -10,7 +10,7 @@ class BeStilDialog {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SpinKitWave(color: AppColors.blue, size: 50.0),
+          SpinKitWave(color: AppColors.lightBlue1, size: 50.0),
           SizedBox(height: 10.0),
           Text(message)
         ],
@@ -35,7 +35,7 @@ class BeStilDialog {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SpinKitDoubleBounce(
-            color: AppColors.blue,
+            color: AppColors.lightBlue1,
             size: 50.0,
           ),
           SizedBox(height: 10.0),
@@ -99,7 +99,7 @@ class BeStilDialog {
           ),
         ),
         backgroundColor: type == AlertType.info
-            ? AppColors.capriBlue
+            ? AppColors.lightBlue2
             : type == AlertType.error
                 ? Colors.red
                 : type == AlertType.success

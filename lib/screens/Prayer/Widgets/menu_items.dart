@@ -1,5 +1,9 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:be_still/utils/string_utils.dart';
+import 'package:provider/provider.dart';
 
 class PrayerMenuItem extends StatefulWidget {
   final Function action;
@@ -26,16 +30,13 @@ class _PrayerMenuItemState extends State<PrayerMenuItem> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                widget.title,
-                style: TextStyle(
-                  color: widget.isActive
-                      ? context.brightBlue
-                      : context.prayerMenuInactive,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Text(widget.title.capitalize(),
+                  style: widget.isActive
+                      ? AppTextStyles.boldText20
+                      : AppTextStyles.boldText20.copyWith(
+                          color: AppColors.getPrayerMenuColor(
+                              Provider.of<ThemeProvider>(context)
+                                  .isDarkModeEnabled))),
               Container(
                 padding: EdgeInsets.all(0),
                 margin: EdgeInsets.all(0),

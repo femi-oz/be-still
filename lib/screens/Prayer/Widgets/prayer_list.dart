@@ -2,6 +2,7 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../add_prayer/add_prayer_screen.dart';
@@ -29,12 +30,8 @@ class PrayerList extends StatelessWidget {
               ? Container(
                   padding: EdgeInsets.all(60),
                   child: Text(
-                    'No Prayers in My List',
-                    style: TextStyle(
-                      color: context.prayerNotAvailable,
-                      fontSize: 36,
-                      height: 1.5,
-                    ),
+                    'You don\'t have any Prayers in your List.',
+                    style: AppTextStyles.regularText13,
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -84,17 +81,12 @@ class PrayerList extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: null,
-                    icon: Icon(Icons.add,
-                        color: !_themeProvider.isDarkModeEnabled
-                            ? Colors.white
-                            : context.brightBlue),
+                    icon: Icon(Icons.add, color: AppColors.offWhite4),
                     label: Text(
                       'Add New Prayer',
-                      style: TextStyle(
-                          color: !_themeProvider.isDarkModeEnabled
-                              ? Colors.white
-                              : context.brightBlue,
-                          fontSize: 14),
+                      style: AppTextStyles.boldText20.copyWith(
+                        color: AppColors.offWhite4,
+                      ),
                     ),
                   ),
                 ),

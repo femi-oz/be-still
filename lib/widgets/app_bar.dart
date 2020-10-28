@@ -1,12 +1,8 @@
-import 'package:be_still/data/notification.data.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
-import 'package:be_still/utils/app_theme.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   CustomAppBar({Key key})
@@ -25,43 +21,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(''),
-      leading:
-          // TODO
-          // notificationData.length > 0
-          //     ?
-          // FlatButton(
-          //     onPressed: () => showModalBottomSheet(
-          //       context: context,
-          //       barrierColor: context.toolsBg,
-          //       backgroundColor: context.toolsBg,
-          //       isScrollControlled: true,
-          //       builder: (BuildContext context) {
-          //         return MultiProvider(providers: [
-          //           ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
-          //         ], child: NotificationsScreen());
-          //       },
-          //     ),
-          //     child: Stack(
-          //       alignment: Alignment.center,
-          //       children: <Widget>[
-          //         Icon(
-          //           Icons.notifications,
-          //           color: context.prayerCardTags,
-          //         ),
-          //         Container(
-          //           child: Text(
-          //             notificationData.length.toString(),
-          //             style: TextStyle(fontSize: 5, color: Colors.white),
-          //           ),
-          //         )
-          //       ],
-          //     ),
-          //   )
-          // :
-          IconButton(
+      leading: IconButton(
         icon: Icon(
           Icons.notifications_none,
-          color: context.appBarInactive,
+          color: AppColors.grey,
           size: 24,
         ),
         onPressed: null,
@@ -79,9 +42,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
           child: Text(
             "ADD A PRAYER",
-            style: TextStyle(
-              color: context.appBarActive,
-              fontSize: 16,
+            style: AppTextStyles.boldText20.copyWith(
+              color: AppColors.getAppBarColor(true),
             ),
           ),
         ),
@@ -90,9 +52,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
               Navigator.of(context).pushReplacementNamed(PrayerMode.routeName),
           child: Text(
             "PRAY",
-            style: TextStyle(
-              color: context.appBarActive,
-              fontSize: 16,
+            style: AppTextStyles.boldText20.copyWith(
+              color: AppColors.getAppBarColor(true),
             ),
           ),
         ),
@@ -101,7 +62,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             return IconButton(
               icon: Icon(
                 AppIcons.menu,
-                color: context.appBarActive,
+                color: AppColors.getAppBarColor(true),
                 // size: 24,
               ),
               onPressed: () {
