@@ -68,6 +68,23 @@ class AppColors {
     return retVal;
   }
 
+  static Color getMenuTitleColor(bool isDarkMode) {
+    Color retVal;
+    switch (isDarkMode) {
+      case true:
+        retVal = const Color(0xFF002D4B);
+        break;
+      case false:
+        retVal = const Color(0xFF005780);
+        break;
+      default:
+        retVal = const Color(0xFF005780);
+
+        break;
+    }
+    return retVal;
+  }
+
   static Color getPrayerMenuColor(bool isDarkMode) {
     Color retVal;
     switch (isDarkMode) {

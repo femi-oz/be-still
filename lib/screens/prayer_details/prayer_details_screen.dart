@@ -5,9 +5,9 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/pray_mode/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
+import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
@@ -63,6 +63,14 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<ThemeProvider>(context, listen: false)
+        .changeTheme(ThemeMode.dark);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final PrayerDetailsRouteArguments args =
@@ -96,8 +104,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             padding: EdgeInsets.all(0),
                             icon: Icon(
                               Icons.arrow_back,
-                              color: AppColors.getAppBarColor(
-                                  _themeProvider.isDarkModeEnabled),
+                              color: AppColors.lightBlue4,
                             ),
                             onPressed: () {
                               Navigator.of(context)

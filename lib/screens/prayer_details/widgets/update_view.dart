@@ -27,8 +27,7 @@ class UpdateView extends StatelessWidget {
                       child: Text(
                         prayer.createdBy,
                         style: AppTextStyles.regularText18b.copyWith(
-                            color: AppColors.getAppBarColor(
-                                _themeProvider.isDarkModeEnabled),
+                            color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500),
                         textAlign: TextAlign.left,
                       ),

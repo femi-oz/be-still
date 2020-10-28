@@ -1,8 +1,7 @@
-import 'package:be_still/data/user.data.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -12,82 +11,67 @@ class NoUpdateView extends StatelessWidget {
   @override
   NoUpdateView(this.prayer);
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     // TODO
-    final currentUser = Provider.of<UserProvider>(context).currentUser;
-    final username = currentUser.firstName;
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         // TODO
-        // prayer.user != _currentUser.id
-        //     ? Container(
-        //         margin: EdgeInsets.only(bottom: 20),
-        //         child: Text(
-        //           username,
-        //           style: TextStyle(
-        //               color: context.brightBlue,
-        //               fontSize: 18,
-        //               fontWeight: FontWeight.w500),
-        //           textAlign: TextAlign.left,
-        //         ),
-        //       )
-        //     : Container(),
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: <Widget>[
-        //     Container(
-        //       margin: EdgeInsets.only(right: 30),
-        //       child: Row(
-        //         children: <Widget>[
-        //           Text(
-        //             '7:45am',
-        //             style: TextStyle(
-        //                 color: context.dimBlue, fontWeight: FontWeight.w500),
-        //           ),
-        //           Container(
-        //             margin: EdgeInsets.symmetric(
-        //               horizontal: 5,
-        //             ),
-        //             child: Text(
-        //               '|',
-        //               style: TextStyle(
-        //                   color: context.dimBlue, fontWeight: FontWeight.w500),
-        //             ),
-        //           ),
-        //           Text(
-        //             DateFormat('hh:mma | MM.dd.yyyy').format(prayer.date),
-        //             style: TextStyle(
-        //                 color: context.dimBlue, fontWeight: FontWeight.w500),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //     Expanded(
-        //       child: Divider(
-        //         color: context.prayerDetailsCardBorder,
-        //         thickness: 1,
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        // Expanded(
-        //   child: Padding(
-        //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-        //     child: Center(
-        //       child: Text(
-        //         prayer.content,
-        //         style: TextStyle(
-        //           color: context.inputFieldText,
-        //           fontSize: 14,
-        //           fontWeight: FontWeight.w300,
-        //           height: 2,
-        //         ),
-        //         textAlign: TextAlign.left,
-        //       ),
-        //     ),
-        //   ),
-        // ),
+        prayer.groupId != '0'
+            ? Container(
+                padding: EdgeInsets.all(20),
+                margin: EdgeInsets.only(bottom: 20),
+                child: Text(
+                  prayer.createdBy,
+                  style: AppTextStyles.regularText18b.copyWith(
+                      color: AppColors.lightBlue4, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.left,
+                ),
+              )
+            : Container(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.only(right: 30),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    DateFormat('hh:mma | MM.dd.yyyy').format(prayer.createdOn),
+                    style: AppTextStyles.regularText16.copyWith(
+                      color: AppColors.lightBlue4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Divider(
+                color: AppColors.getAppBarColor(
+                  _themeProvider.isDarkModeEnabled,
+                ),
+                thickness: 1,
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+            child: Center(
+              child: Text(
+                prayer.description,
+                style: AppTextStyles.regularText22.copyWith(
+                  color: AppColors.getTextFieldBgColor(
+                    !_themeProvider.isDarkModeEnabled,
+                  ),
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

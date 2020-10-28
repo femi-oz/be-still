@@ -22,9 +22,7 @@ class NoUpdateView extends StatelessWidget {
                 child: Text(
                   prayer.createdBy,
                   style: AppTextStyles.regularText18b.copyWith(
-                      color: AppColors.getAppBarColor(
-                          _themeProvider.isDarkModeEnabled),
-                      fontWeight: FontWeight.w500),
+                      color: AppColors.lightBlue4, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.left,
                 ),
               )
@@ -39,8 +37,7 @@ class NoUpdateView extends StatelessWidget {
                   Text(
                     DateFormat('hh:mma | MM.dd.yyyy').format(prayer.createdOn),
                     style: AppTextStyles.regularText16.copyWith(
-                      color: AppColors.getAppBarColor(
-                          _themeProvider.isDarkModeEnabled),
+                      color: AppColors.lightBlue4,
                     ),
                   ),
                 ],

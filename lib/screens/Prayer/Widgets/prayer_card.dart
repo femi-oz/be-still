@@ -23,7 +23,6 @@ class PrayerCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
@@ -86,8 +85,7 @@ class PrayerCard extends StatelessWidget {
                                     prayer.createdBy,
                                     style: AppTextStyles.regularText14.copyWith(
                                         fontWeight: FontWeight.w500,
-                                        color: AppColors.getAppBarColor(
-                                            _themeProvider.isDarkModeEnabled)),
+                                        color: AppColors.lightBlue4),
                                   )
                                 : Container(),
                             Row(
