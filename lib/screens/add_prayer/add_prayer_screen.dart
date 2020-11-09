@@ -1,5 +1,6 @@
-import 'package:be_still/models/group.model.dart';
+import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -18,11 +19,9 @@ class AddPrayer extends StatefulWidget {
 
   final bool isEdit;
   final PrayerModel prayer;
-  final GroupModel group;
-  final bool isGroup;
 
   @override
-  AddPrayer({this.isEdit, this.prayer, this.group, this.isGroup});
+  AddPrayer({this.isEdit, this.prayer});
   _AddPrayerState createState() => _AddPrayerState();
 }
 
@@ -41,12 +40,17 @@ class _AddPrayerState extends State<AddPrayer> {
     }
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final _isGroup =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayerType ==
+            PrayerActiveScreen.personal;
+    final _group =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
           title: '',
           isAnswer: false,
-          groupId: widget.isGroup ? widget.group.id : '0',
+          groupId: _isGroup ? _group.id : '0',
           userId: _user.id,
           description: _descriptionController.text,
           status: 'Active',
@@ -68,18 +72,14 @@ class _AddPrayerState extends State<AddPrayer> {
               isUpdate: false,
               prayer: prayerData,
               scafoldKey: _scaffoldKey,
-              isGroup: widget.isGroup);
+              isGroup: _isGroup);
         },
       );
     } else {
       await Provider.of<PrayerProvider>(context, listen: false)
           .editprayer(_descriptionController.text, widget.prayer.id);
 
-      Navigator.of(context).pushNamed(
-        PrayerDetails.routeName,
-        arguments: PrayerDetailsRouteArguments(
-            id: widget.prayer.id, isGroup: widget.isGroup),
-      );
+      Navigator.of(context).pushNamed(PrayerDetails.routeName);
     }
   }
 
@@ -93,6 +93,8 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
+    final _group = Provider.of<GroupProvider>(context).currentGroup;
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),

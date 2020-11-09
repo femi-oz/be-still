@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   route() async {
     try {
-      final isLoggedIn = await _authenticationProvider.isLoggedIn();
+      final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (isLoggedIn) {
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser();

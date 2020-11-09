@@ -1,6 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer/Widgets/prayer_quick_acccess.dart';
 import 'package:be_still/utils/app_theme.dart';
@@ -15,15 +16,14 @@ import 'group_quick_access.dart';
 
 class PrayerCard extends StatelessWidget {
   final PrayerModel prayer;
-  final PrayerActiveScreen activeList;
 
   PrayerCard({
     this.prayer,
-    this.activeList,
   });
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
         var y = details.globalPosition.dy;
@@ -33,20 +33,22 @@ class PrayerCard extends StatelessWidget {
           backgroundColor: context.prayerMenuStart.withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return (activeList == PrayerActiveScreen.group ||
-                    (activeList != PrayerActiveScreen.group &&
+            return (_activeList == PrayerActiveScreen.group ||
+                    (_activeList != PrayerActiveScreen.group &&
                         prayer.groupId != '0'))
                 ? GroupPrayerQuickAccess(y: y, prayer: prayer)
                 : PrayerQuickAccess(y: y, prayer: prayer);
           },
         );
       },
-      onTap: () {
-        Navigator.of(context).pushReplacementNamed(
-          PrayerDetails.routeName,
-          arguments: PrayerDetailsRouteArguments(
-              id: prayer.id, isGroup: activeList == PrayerActiveScreen.group),
-        );
+      onTap: () async {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayer(prayer.id);
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayerUpdates(prayer.id);
+        await Provider.of<GroupProvider>(context, listen: false)
+            .setGroupUsers(prayer.groupId);
+        Navigator.of(context).pushNamed(PrayerDetails.routeName);
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),

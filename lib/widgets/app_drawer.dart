@@ -65,7 +65,7 @@ class CustomDrawer extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          _authProvider.logout();
+                          _authProvider.signOut();
                           Navigator.of(context)
                               .pushReplacementNamed(LoginScreen.routeName);
                         },

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class AuthenticationProvider with ChangeNotifier {
   AuthenticationService _authService = locator<AuthenticationService>();
 
-  login({String email, String password, BuildContext context}) async {
+  signIn({String email, String password, BuildContext context}) async {
     return await _authService.signIn(email: email, password: password);
   }
 
@@ -15,15 +15,15 @@ class AuthenticationProvider with ChangeNotifier {
         password: password, userData: userData);
   }
 
-  forgotPassword({String email}) async {
-    return await _authService.forgotPassword(email);
-  }
+  // forgotPassword({String email}) async {
+  //   return await _authService.forgotPassword(email);
+  // }
 
-  void logout() async {
+  void signOut() async {
     await _authService.signOut();
   }
 
-  Future<bool> isLoggedIn() async {
+  Future<bool> isUserLoggedIn() async {
     return await _authService.isUserLoggedIn();
   }
 }

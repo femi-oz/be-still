@@ -1,6 +1,8 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/menu_items.dart';
@@ -13,32 +15,45 @@ import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class PrayerMenu extends StatefulWidget {
-  final setCurrentList;
-
-  final activeList;
-
-  final GroupModel group;
-  final onTextchanged;
-  final searchController;
-  final clearSearchField;
-
-  @override
-  PrayerMenu({
-    this.setCurrentList,
-    this.activeList,
-    this.group,
-    this.onTextchanged,
-    this.searchController,
-    this.clearSearchField,
-  });
   _PrayerMenuState createState() => _PrayerMenuState();
 }
 
 class _PrayerMenuState extends State<PrayerMenu> {
   bool searchMode = false;
+  final TextEditingController _searchController = TextEditingController();
+
+  void _clearSearchField() async {
+    _searchController.text = '';
+    await Provider.of<PrayerProvider>(context, listen: false).searchPrayers('');
+  }
+
+  void _searchPrayer(String value) async {
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value);
+  }
+
+  void _setCurrentList(PrayerActiveScreen activeList, GroupModel group) async {
+    await Provider.of<GroupProvider>(context, listen: false)
+        .setCurrentGroup(group);
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .setCurrentPrayerType(activeList);
+    _setPrayers(group, activeList);
+  }
+
+  void _setPrayers(GroupModel group, PrayerActiveScreen activeList) async {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+        _user.id,
+        activeList,
+        activeList == PrayerActiveScreen.group ? group.id : '0');
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<UserProvider>(context).currentUser;
+    final _groups = Provider.of<GroupProvider>(context).groups;
+    final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
+    final _group = Provider.of<GroupProvider>(context).currentGroup;
     openTools() {
       showModalBottomSheet(
         context: context,
@@ -46,7 +61,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         backgroundColor: context.toolsBg,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return widget.activeList == PrayerActiveScreen.findGroup
+          return _activeList == PrayerActiveScreen.findGroup
               ? FindGroupTools()
               : PrayerTools();
         },
@@ -99,12 +114,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.7,
                       child: CustomInput(
-                        controller: widget.searchController,
+                        controller: _searchController,
                         label: 'Search',
                         padding: 5.0,
                         showSuffix: false,
                         textInputAction: TextInputAction.done,
-                        onTextchanged: widget.onTextchanged,
+                        onTextchanged: _searchPrayer,
                       ),
                     ),
                     IconButton(
@@ -115,7 +130,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       ),
                       onPressed: () => setState(
                         () {
-                          widget.clearSearchField();
+                          _clearSearchField();
                           searchMode = !searchMode;
                         },
                       ),
@@ -131,80 +146,61 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         PrayerMenuItem(
                           title: 'My List',
-                          isActive:
-                              widget.activeList == PrayerActiveScreen.personal,
+                          isActive: _activeList == PrayerActiveScreen.personal,
                           action: () => setState(() {
-                            widget.setCurrentList(
-                                PrayerActiveScreen.personal, null);
+                            _setCurrentList(PrayerActiveScreen.personal, null);
                           }),
                           openTools: () => openTools(),
                         ),
-                        StreamBuilder(
-                          stream: Provider.of<GroupProvider>(context)
-                              .getGroups(_user.id),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<CombineGroupUserStream>>
-                                  snapshot) {
-                            if (snapshot.hasError)
-                              return Text('Error: ${snapshot.error}');
-                            else if (snapshot.hasData) {
-                              return Row(children: [
-                                for (int i = 0; i < snapshot.data.length; i++)
-                                  PrayerMenuItem(
-                                    title: snapshot.data[i].group.name,
-                                    isActive: widget.activeList ==
-                                            PrayerActiveScreen.group &&
-                                        widget.group.id ==
-                                            snapshot.data[i].group.id,
-                                    action: () => setState(() {
-                                      widget.setCurrentList(
-                                          PrayerActiveScreen.group,
-                                          snapshot.data[i].group);
-                                    }),
-                                    openTools: () => openTools(),
-                                  ),
-                              ]);
-                            } else {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                          },
+                        Row(
+                          children: [
+                            for (int i = 0; i < _groups.length; i++)
+                              PrayerMenuItem(
+                                title: _groups[i].group.name,
+                                isActive:
+                                    _activeList == PrayerActiveScreen.group &&
+                                        _groups[i].group.id ==
+                                            Provider.of<GroupProvider>(context)
+                                                .currentGroup
+                                                .id,
+                                action: () => setState(() {
+                                  _setCurrentList(PrayerActiveScreen.group,
+                                      _groups[i].group);
+                                }),
+                                openTools: () => openTools(),
+                              ),
+                          ],
                         ),
                         PrayerMenuItem(
                           title: 'Archived',
-                          isActive:
-                              widget.activeList == PrayerActiveScreen.archived,
+                          isActive: _activeList == PrayerActiveScreen.archived,
                           action: () => setState(() {
-                            widget.setCurrentList(
-                                PrayerActiveScreen.archived, null);
+                            _setCurrentList(PrayerActiveScreen.archived, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Answered',
-                          isActive:
-                              widget.activeList == PrayerActiveScreen.answered,
+                          isActive: _activeList == PrayerActiveScreen.answered,
                           action: () => setState(() {
-                            widget.setCurrentList(
-                                PrayerActiveScreen.answered, null);
+                            _setCurrentList(PrayerActiveScreen.answered, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Find a Group',
-                          isActive:
-                              widget.activeList == PrayerActiveScreen.findGroup,
+                          isActive: _activeList == PrayerActiveScreen.findGroup,
                           action: () => setState(() {
-                            widget.setCurrentList(
-                                PrayerActiveScreen.findGroup, null);
+                            _setCurrentList(PrayerActiveScreen.findGroup, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Create a Group +',
-                          isActive: widget.activeList ==
-                              PrayerActiveScreen.createGroup,
+                          isActive:
+                              _activeList == PrayerActiveScreen.createGroup,
                           action: () => setState(() {
-                            widget.setCurrentList(
+                            _setCurrentList(
                                 PrayerActiveScreen.createGroup, null);
                             Navigator.of(context).pushReplacementNamed(
                                 CreateGroupScreen.routeName);

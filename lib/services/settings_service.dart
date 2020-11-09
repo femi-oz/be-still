@@ -10,10 +10,10 @@ import 'package:uuid/uuid.dart';
 class SettingsService {
   final CollectionReference _settingsCollectionReference =
       Firestore.instance.collection("Settings");
-  final CollectionReference _sharingSettingsCollectionRefernce =
-      Firestore.instance.collection("SharingSettings");
-  final CollectionReference _prayerSettingsCllectionRefernce =
+  final CollectionReference _prayerSettingsCollectionReference =
       Firestore.instance.collection("PrayerSettings");
+  final CollectionReference _sharingSettingsCollectionReference =
+      Firestore.instance.collection("SharingSettings");
 
   Stream<CombineSettingsStream> _combineStream;
   Stream<CombineSettingsStream> fetchSettings(String userId) {
@@ -27,14 +27,14 @@ class SettingsService {
               (document) => SettingsModel.fromData(document));
 
           Stream<SharingSettingsModel> sharingSettings =
-              _sharingSettingsCollectionRefernce
+              _sharingSettingsCollectionReference
                   .document(e.data['UserId'])
                   .snapshots()
                   .map<SharingSettingsModel>(
                       (document) => SharingSettingsModel.fromData(document));
 
           Stream<PrayerSettingsModel> prayerSettings =
-              _prayerSettingsCllectionRefernce
+              _prayerSettingsCollectionReference
                   .document(e.data['UserId'])
                   .snapshots()
                   .map<PrayerSettingsModel>(
@@ -98,12 +98,12 @@ class SettingsService {
 
           //store sharing settings
           await transaction.set(
-              _sharingSettingsCollectionRefernce.document(sharingSettingsId),
+              _sharingSettingsCollectionReference.document(sharingSettingsId),
               populateSettings(settingsData, userId, userData).toJson());
 
           //store prayer settings
           await transaction.set(
-              _prayerSettingsCllectionRefernce.document(prayerSettingsId),
+              _prayerSettingsCollectionReference.document(prayerSettingsId),
               populateSettings(settingsData, userId, userData));
         },
       ).then((val) {
@@ -148,4 +148,79 @@ class SettingsService {
   //     return null;
   //   }
   // }
+  setPrayerSettings(String userId, UserModel userData) {
+    PrayerSettingsModel prayerSettings = PrayerSettingsModel(
+        userId: userId,
+        frequency: '0',
+        date: DateTime.now(),
+        time: Timestamp.now(),
+        createdBy: '${userData.firstName}${userData.lastName}',
+        createdOn: DateTime.now(),
+        modifiedBy: '${userData.firstName}${userData.lastName}',
+        modifiedOn: DateTime.now());
+    return prayerSettings;
+  }
+
+  Future addPrayerSettings(String userId, UserModel userData) async {
+    try {
+      //store prayer settings
+      final prayerSettingsId = Uuid().v1();
+      print('prayer settings data $userData');
+
+      await _prayerSettingsCollectionReference
+          .document(prayerSettingsId)
+          .setData(setPrayerSettings(userId, userData).toJson());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<QuerySnapshot> getPrayerSettings(String userId) {
+    try {
+      return _prayerSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .limit(1)
+          .snapshots();
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  setSharingSettings(String userId, UserModel userData) {
+    SharingSettingsModel sharingSettings = SharingSettingsModel(
+        userId: userId,
+        enableSharingViaEmail: 'false',
+        enableSharingViaText: 'false',
+        churchId: '',
+        phone: '${userData.phone}',
+        status: 'Active',
+        createdBy: '${userData.firstName}${userData.lastName}',
+        createdOn: DateTime.now(),
+        modifiedBy: '${userData.firstName}${userData.lastName}',
+        modifiedOn: DateTime.now());
+    return sharingSettings;
+  }
+
+  Future addSharingSetting(String userId, UserModel userData) async {
+    try {
+      //store share settings
+      final shareSettingsId = Uuid().v1();
+      await _sharingSettingsCollectionReference
+          .document(shareSettingsId)
+          .setData(setSharingSettings(userId, userData).toJson());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<QuerySnapshot> getSharingSettings(String userId) {
+    try {
+      return _sharingSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .limit(1)
+          .snapshots();
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 }

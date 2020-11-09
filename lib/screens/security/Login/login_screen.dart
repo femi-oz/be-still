@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen>
     await BeStilDialog.showLoading(
         context, _key, isDarkModeEnabled, 'Authenticating');
     try {
-      await Provider.of<AuthenticationProvider>(context, listen: false).login(
+      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         context: context,
         email: _usernameController.text,
         password: _passwordController.text,

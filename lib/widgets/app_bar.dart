@@ -36,7 +36,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
             MaterialPageRoute(
               builder: (context) => AddPrayer(
                 isEdit: false,
-                isGroup: false,
               ),
             ),
           ),

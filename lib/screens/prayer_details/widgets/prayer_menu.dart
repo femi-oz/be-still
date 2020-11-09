@@ -1,7 +1,11 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
+import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
@@ -14,8 +18,10 @@ import 'delete_prayer.dart';
 class PrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
   final List<PrayerUpdateModel> updates;
+
+  final BuildContext parentcontext;
   @override
-  PrayerMenu(this.prayer, this.updates);
+  PrayerMenu(this.prayer, this.updates, this.parentcontext);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -45,8 +51,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
-    // TODO
-    // setReminder(this.widget.prayer.reminder);
+    isAnswered = widget.prayer.isAnswer;
     super.initState();
   }
 
@@ -62,6 +67,36 @@ class _PrayerMenuState extends State<PrayerMenu> {
     setState(() {
       snooze = value;
     });
+  }
+
+  var _key = GlobalKey<State>();
+  bool isAnswered = false;
+  _onMarkAsAnswered() async {
+    // Navigator.of(context).pop();
+    try {
+      BeStilDialog.showLoading(
+        widget.parentcontext,
+        _key,
+        Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(widget.prayer.id);
+      setState(() {
+        isAnswered = true;
+      });
+      await Future.delayed(Duration(milliseconds: 100));
+      BeStilDialog.hideLoading(_key);
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 100));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 100));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+
+    // Future.delayed(Duration(seconds: 5), () => BeStilDialog.hideLoading(_key));
   }
 
   Widget build(BuildContext context) {
@@ -313,13 +348,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     ),
                   ),
                 ),
-                widget.prayer.isAnswer == false
+                isAnswered == false
                     ? GestureDetector(
-                        onTap: () {
-                          Provider.of<PrayerProvider>(context, listen: false)
-                              .markPrayerAsAnswered(widget.prayer.id);
-                          Navigator.of(context).pop();
-                        },
+                        onTap: _onMarkAsAnswered,
                         child: Container(
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),

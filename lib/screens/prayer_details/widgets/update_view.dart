@@ -1,4 +1,4 @@
-import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -6,20 +6,23 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class UpdateView extends StatelessWidget {
-  final PrayerModel prayer;
-  final List<PrayerUpdateModel> updates;
+  // final PrayerModel prayer;
+  // final List<PrayerUpdateModel> updates;
 
   static const routeName = '/update';
 
   @override
-  UpdateView(this.prayer, this.updates);
+  UpdateView();
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final prayer = Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerUpdates = Provider.of<PrayerProvider>(context).prayerUpdates;
     return Container(
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               prayer.groupId != '0'
                   ? Container(
@@ -34,7 +37,7 @@ class UpdateView extends StatelessWidget {
                       ),
                     )
                   : Container(),
-              ...updates.map(
+              ...prayerUpdates.map(
                 (u) => Container(
                   margin: EdgeInsets.only(bottom: 30),
                   child: Column(

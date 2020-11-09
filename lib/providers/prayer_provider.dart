@@ -4,33 +4,35 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
-import 'package:be_still/services/group_service.dart';
 import 'package:be_still/services/prayer_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
-  GroupService _groupService = locator<GroupService>();
 
   List<PrayerModel> _prayers = [];
-  StreamController<List<PrayerModel>> _streamController =
-      StreamController<List<PrayerModel>>.broadcast();
-  Stream<List<PrayerModel>> get filterPrayersStream => _streamController.stream;
+  PrayerActiveScreen _currentPrayerType = PrayerActiveScreen.personal;
+  List<PrayerUpdateModel> _prayerUpdates = [];
+  List<PrayerModel> _filteredPrayers = [];
+  PrayerModel _currentPrayer;
+  List<PrayerModel> get filteredPrayers => _filteredPrayers;
+  List<PrayerUpdateModel> get prayerUpdates => _prayerUpdates;
+  PrayerModel get currentPrayer => _currentPrayer;
+  PrayerActiveScreen get currentPrayerType => _currentPrayerType;
 
-  Future getPrayers(
+  Future setPrayers(
       String userId, PrayerActiveScreen activeList, String groupId) async {
     if (activeList == PrayerActiveScreen.group) {
-      _groupService
-          .fetchGroupPrayers(groupId)
+      _prayerService
+          .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((data) {
-        _streamController.sink.add(data.map((e) => e.prayer).toList());
         _prayers = data.map((e) => e.prayer).toList();
+        _filteredPrayers = _prayers;
         notifyListeners();
       });
     } else {
-      _prayerService.fetchPrayers(userId).asBroadcastStream().listen(
+      _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
           _prayers = activeList == PrayerActiveScreen.personal
               ? data
@@ -55,7 +57,8 @@ class PrayerProvider with ChangeNotifier {
                           .map((e) => e.prayer)
                           .toList()
                       : [];
-          _streamController.sink.add(_prayers);
+          _filteredPrayers = _prayers;
+          // _prayersStreamController.sink.add(_prayers);
           notifyListeners();
         },
       );
@@ -63,11 +66,12 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future searchPrayers(String searchQuery) async {
-    List<PrayerModel> _filteredPrayers = _prayers
+    List<PrayerModel> filteredPrayers = _prayers
         .where((PrayerModel data) =>
             data.description.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
-    _streamController.sink.add(_filteredPrayers);
+    _filteredPrayers = filteredPrayers;
+    notifyListeners();
   }
 
   Future addPrayer(PrayerModel prayerData, String _userID) async {
@@ -105,25 +109,34 @@ class PrayerProvider with ChangeNotifier {
   Future hidePrayerFromAllMembers(String prayerId, bool value) async {
     return await _prayerService.hideFromAllMembers(prayerId, value);
   }
-  // Future hidePrayerFromAllMembers(String prayerId, String groupId) async {
-  //   return await _prayerService.hideFromAllMembers(prayerId, groupId);
+
+  // Future flagAsInappropriate(String prayerId) async {
+  //   return await _prayerService.flagAsInappropriate(prayerId);
   // }
 
-  Future flagAsInappropriate(String prayerId) async {
-    return await _prayerService.flagAsInappropriate(prayerId);
+  Future setCurrentPrayerType(PrayerActiveScreen type) async {
+    _currentPrayerType = type;
+    notifyListeners();
   }
 
   Future addPrayerToMyList(UserPrayerModel userPrayer) async {
     return await _prayerService.addPrayerToMyList(userPrayer);
   }
 
-  Stream<DocumentSnapshot> fetchPrayer(String id) {
-    return _prayerService.fetchPrayer(id);
+  Future setPrayer(String id) async {
+    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
+      _currentPrayer = PrayerModel.fromData(prayer);
+      notifyListeners();
+    });
   }
 
-  Stream<List<PrayerUpdateModel>> fetchPrayerUpdate(
-    String prayerId,
-  ) {
-    return _prayerService.fetchPrayerUpdate(prayerId);
+  Future setPrayerUpdates(String prayerId) async {
+    _prayerService
+        .getPrayerUpdates(prayerId)
+        .asBroadcastStream()
+        .listen((prayerUpdates) {
+      _prayerUpdates = prayerUpdates;
+      notifyListeners();
+    });
   }
 }

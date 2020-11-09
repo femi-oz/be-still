@@ -1,6 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -10,14 +11,15 @@ import 'prayer_card.dart';
 import 'package:be_still/utils/app_theme.dart';
 
 class PrayerList extends StatelessWidget {
-  final activeList;
-  final List<PrayerModel> prayers;
-  final GroupModel group;
+  // final activeList;
+  // final List<PrayerModel> prayers;
+  // final GroupModel group;
 
   @override
-  PrayerList({this.activeList, this.prayers, this.group});
+  // PrayerList({this.activeList, this.prayers, this.group});
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     return Container(
       padding: EdgeInsets.only(
         top: 20,
@@ -37,22 +39,14 @@ class PrayerList extends StatelessWidget {
                 )
               : Column(
                   children: <Widget>[
-                    ...prayers
-                        .map(
-                          (p) => PrayerCard(prayer: p, activeList: activeList),
-                        )
-                        .toList(),
+                    ...prayers.map((p) => PrayerCard(prayer: p)).toList(),
                   ],
                 ),
           InkWell(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddPrayer(
-                  isEdit: false,
-                  isGroup: activeList == PrayerActiveScreen.group,
-                  group: group,
-                ),
+                builder: (context) => AddPrayer(isEdit: false),
               ),
             ),
             child: Container(
@@ -70,7 +64,7 @@ class PrayerList extends StatelessWidget {
                 margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
                 decoration: BoxDecoration(
                   color: _themeProvider.isDarkModeEnabled
-                      ? context.brightBlue2.withOpacity(0.8) //TODO
+                      ? context.brightBlue2.withOpacity(0.8)
                       : context.brightBlue,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(9),

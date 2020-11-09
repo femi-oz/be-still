@@ -1,9 +1,7 @@
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
-import 'package:be_still/providers/prayer_settings_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/sharing_settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
@@ -83,16 +81,12 @@ class SettingsTabState extends State<SettingsTab>
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final shareSettingsProvider =
-        Provider.of<SharingSettingsProvider>(context, listen: false);
 
-    final prayerSettingsProvider =
-        Provider.of<PrayerSettingsProvider>(context, listen: false);
     Stream settings = settingsProvider.getSettings(userProvider.currentUser.id);
     Stream shareSettings =
-        shareSettingsProvider.getSharingSettings(userProvider.currentUser.id);
+        settingsProvider.getSharingSettings(userProvider.currentUser.id);
     Stream prayerSettings =
-        prayerSettingsProvider.getPrayerSettings(userProvider.currentUser.id);
+        settingsProvider.getPrayerSettings(userProvider.currentUser.id);
 
     return StreamZip([settings, shareSettings, prayerSettings])
         .asBroadcastStream();
