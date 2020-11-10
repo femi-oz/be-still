@@ -1,13 +1,55 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './../../../utils/app_theme.dart';
 
-class OtherMemberPrayerMenu extends StatelessWidget {
+class OtherMemberPrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
-
   @override
   OtherMemberPrayerMenu(this.prayer);
+
+  @override
+  _OtherMemberPrayerMenuState createState() => _OtherMemberPrayerMenuState();
+}
+
+class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
+  BuildContext bcontext;
+
+  var _key = GlobalKey<State>();
+
+  void _onHide() async {
+    try {
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .hidePrayer(widget.prayer.id, _user);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   Widget build(BuildContext context) {
+    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -158,7 +200,7 @@ class OtherMemberPrayerMenu extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: _onHide,
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),

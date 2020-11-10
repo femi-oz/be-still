@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
 
   List<PrayerModel> _prayers = [];
+  List<HiddenPrayerModel> _hiddenPrayers = [];
   PrayerActiveScreen _currentPrayerType = PrayerActiveScreen.personal;
   List<PrayerUpdateModel> _prayerUpdates = [];
   List<PrayerModel> _filteredPrayers = [];
@@ -19,15 +21,25 @@ class PrayerProvider with ChangeNotifier {
   List<PrayerUpdateModel> get prayerUpdates => _prayerUpdates;
   PrayerModel get currentPrayer => _currentPrayer;
   PrayerActiveScreen get currentPrayerType => _currentPrayerType;
+  List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
 
-  Future setPrayers(
-      String userId, PrayerActiveScreen activeList, String groupId) async {
+  Future setPrayers(String userId, PrayerActiveScreen activeList,
+      String groupId, bool isGroupAdmin) async {
     if (activeList == PrayerActiveScreen.group) {
       _prayerService
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((data) {
-        _prayers = data.map((e) => e.prayer).toList();
+        var hiddenPrayersId =
+            _hiddenPrayers.map((prayer) => prayer.prayerId).toList();
+        _prayers = data
+            .map((e) => e.prayer)
+            .toList()
+            .where((prayer) => !hiddenPrayersId.contains(prayer.id))
+            .toList();
+        if (!isGroupAdmin) {
+          _prayers = _prayers.where((p) => !p.hideFromMe).toList();
+        }
         _filteredPrayers = _prayers;
         notifyListeners();
       });
@@ -102,8 +114,18 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.deletePrayer(prayerID);
   }
 
-  Future hidePrayer(String prayerId, bool value) async {
-    return await _prayerService.hidePrayer(prayerId, value);
+  Future hidePrayer(String prayerId, UserModel user) async {
+    return await _prayerService.hidePrayer(prayerId, user);
+  }
+
+  Future setHiddenPrayers(String userId) async {
+    _prayerService
+        .getHiddenPrayers(userId)
+        .asBroadcastStream()
+        .listen((prayers) {
+      _hiddenPrayers = prayers;
+      notifyListeners();
+    });
   }
 
   Future hidePrayerFromAllMembers(String prayerId, bool value) async {

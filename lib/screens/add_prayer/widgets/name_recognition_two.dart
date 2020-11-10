@@ -1,9 +1,12 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,12 +20,13 @@ class NameRecognitionMenuTwo extends StatefulWidget {
 
   final scafoldKey;
 
-  NameRecognitionMenuTwo(
-      {this.prayer,
-      this.scafoldKey,
-      this.isGroup,
-      this.prayerUpdate,
-      this.isUpdate});
+  NameRecognitionMenuTwo({
+    this.prayer,
+    this.scafoldKey,
+    this.isGroup,
+    this.prayerUpdate,
+    this.isUpdate,
+  });
   @override
   _NameRecognitionMenuTwoState createState() => _NameRecognitionMenuTwoState();
 }
@@ -30,6 +34,8 @@ class NameRecognitionMenuTwo extends StatefulWidget {
 class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
   String _selectedOption;
   bool _showCommentField = false;
+  BuildContext bcontext;
+  var _key = GlobalKey<State>();
 
   void showInSnackBar(String value) {
     widget.scafoldKey.currentState.showSnackBar(
@@ -40,9 +46,48 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
     );
   }
 
+  void _onSave() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      UserModel _user = Provider.of<UserProvider>(context).currentUser;
+      if (widget.isUpdate) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .addPrayerUpdate(widget.prayerUpdate);
+        Navigator.of(context).pushReplacementNamed(
+          PrayerDetails.routeName,
+          arguments: PrayerDetailsRouteArguments(
+              id: widget.prayerUpdate.prayerId, isGroup: widget.isGroup),
+        );
+      } else {
+        if (widget.isGroup) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addGroupPrayer(widget.prayer);
+        } else {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayer(widget.prayer, _user.id);
+        }
+        Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      }
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    UserModel _user = Provider.of<UserProvider>(context).currentUser;
+    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
@@ -155,30 +200,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     : Container(),
                 SizedBox(height: 40.0),
                 InkWell(
-                  onTap: () async {
-                    if (widget.isUpdate) {
-                      await Provider.of<PrayerProvider>(context, listen: false)
-                          .addPrayerUpdate(widget.prayerUpdate);
-                      Navigator.of(context).pushReplacementNamed(
-                        PrayerDetails.routeName,
-                        arguments: PrayerDetailsRouteArguments(
-                            id: widget.prayerUpdate.prayerId,
-                            isGroup: widget.isGroup),
-                      );
-                    } else {
-                      if (widget.isGroup) {
-                        await Provider.of<PrayerProvider>(context,
-                                listen: false)
-                            .addGroupPrayer(widget.prayer);
-                      } else {
-                        await Provider.of<PrayerProvider>(context,
-                                listen: false)
-                            .addPrayer(widget.prayer, _user.id);
-                      }
-                      Navigator.of(context)
-                          .pushReplacementNamed(PrayerScreen.routeName);
-                    }
-                  },
+                  onTap: _onSave,
                   child: Container(
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),

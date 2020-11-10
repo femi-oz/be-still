@@ -1,8 +1,10 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   CustomAppBar({Key key})
@@ -20,6 +22,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: AppColors.appBarBg(
+          Provider.of<ThemeProvider>(context).isDarkModeEnabled),
       title: Text(''),
       leading: IconButton(
         icon: Icon(

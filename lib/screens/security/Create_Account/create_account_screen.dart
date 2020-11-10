@@ -56,8 +56,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   void _createAccount() async {
-    final isDarkModeEnabled =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled;
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
@@ -76,8 +74,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       modifiedOn: DateTime.now(),
       phone: '',
     );
-    await BeStilDialog.showLoading(
-        context, _key, isDarkModeEnabled, 'Registering');
+    await BeStilDialog.showLoading(context, _key, 'Registering');
     try {
       final result =
           await Provider.of<AuthenticationProvider>(context, listen: false)

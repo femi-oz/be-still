@@ -211,10 +211,10 @@ class GroupUserModel {
 }
 
 class CombineGroupUserStream {
-  final GroupUserModel userGroup;
+  final List<GroupUserModel> groupUsers;
   final GroupModel group;
 
-  CombineGroupUserStream(this.userGroup, this.group);
+  CombineGroupUserStream(this.groupUsers, this.group);
 }
 
 class CombineGroupPrayerStream {

@@ -51,7 +51,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
-    isAnswered = widget.prayer.isAnswer;
     super.initState();
   }
 
@@ -69,37 +68,55 @@ class _PrayerMenuState extends State<PrayerMenu> {
     });
   }
 
+  BuildContext bcontext;
+
   var _key = GlobalKey<State>();
-  bool isAnswered = false;
-  _onMarkAsAnswered() async {
-    // Navigator.of(context).pop();
+  void _onMarkAsAnswered() async {
     try {
       BeStilDialog.showLoading(
-        widget.parentcontext,
+        bcontext,
         _key,
-        Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayer.id);
-      setState(() {
-        isAnswered = true;
-      });
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pop();
     } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
+  }
 
-    // Future.delayed(Duration(seconds: 5), () => BeStilDialog.hideLoading(_key));
+  void _onArchive() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .archivePrayer(widget.prayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
   }
 
   Widget build(BuildContext context) {
+    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -348,7 +365,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     ),
                   ),
                 ),
-                isAnswered == false
+                widget.prayer.isAnswer == false
                     ? GestureDetector(
                         onTap: _onMarkAsAnswered,
                         child: Container(
@@ -388,11 +405,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     : Container(),
                 widget.prayer.status == 'Active'
                     ? GestureDetector(
-                        onTap: () {
-                          Provider.of<PrayerProvider>(context, listen: false)
-                              .archivePrayer(widget.prayer.id);
-                          Navigator.of(context).pop();
-                        },
+                        onTap: _onArchive,
                         child: Container(
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),

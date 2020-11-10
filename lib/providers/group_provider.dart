@@ -9,11 +9,11 @@ class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
 
   List<CombineGroupUserStream> _groups = [];
-  List<GroupUserModel> _currentGroupUsers = [];
-  GroupModel _currentGroup;
+  // List<GroupUserModel> _currentGroupUsers = [];
+  CombineGroupUserStream _currentGroup;
   List<CombineGroupUserStream> get groups => _groups;
-  List<GroupUserModel> get currentGroupUsers => _currentGroupUsers;
-  GroupModel get currentGroup => _currentGroup;
+  // List<GroupUserModel> get currentGroupUsers => _currentGroupUsers;
+  CombineGroupUserStream get currentGroup => _currentGroup;
 
   Future setGroups(String userId) async {
     _groupService.getGroups(userId).asBroadcastStream().listen((groups) {
@@ -22,19 +22,19 @@ class GroupProvider with ChangeNotifier {
     });
   }
 
-  Future setGroupUsers(String groupId) async {
-    _groupService.getGroupUsers(groupId).asBroadcastStream().listen((users) {
-      _currentGroupUsers =
-          users.documents.map((user) => GroupUserModel.fromData(user)).toList();
-      notifyListeners();
-    });
-  }
+  // Future setGroupUsers(String groupId) async {
+  //   _groupService.getGroupUsers(groupId).asBroadcastStream().listen((users) {
+  //     _currentGroupUsers =
+  //         users.documents.map((user) => GroupUserModel.fromData(user)).toList();
+  //     notifyListeners();
+  //   });
+  // }
 
   Future addGroup(GroupModel groupData, String _userID) async {
     return await _groupService.addGroup(_userID, groupData);
   }
 
-  Future setCurrentGroup(GroupModel group) async {
+  Future setCurrentGroup(CombineGroupUserStream group) async {
     _currentGroup = group;
     notifyListeners();
   }

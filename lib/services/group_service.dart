@@ -55,15 +55,44 @@ class GroupService {
               .document(f.data['GroupId'])
               .snapshots()
               .map<GroupModel>((document) => GroupModel.fromData(document));
+          Stream<List<GroupUserModel>> groupUsers =
+              _groupUserCollectionReference
+                  .where('GroupId', isEqualTo: f.data['GroupId'])
+                  .snapshots()
+                  .asyncMap((e) => e.documents
+                      .map((doc) => GroupUserModel.fromData(doc))
+                      .toList());
 
-          return Rx.combineLatest2(userGroup, group,
-              (messages, user) => CombineGroupUserStream(messages, user));
+          return Rx.combineLatest2(groupUsers, group,
+              (groupUsers, group) => CombineGroupUserStream(groupUsers, group));
         });
       }).switchMap((observables) {
         return observables.length > 0
             ? Rx.combineLatestList(observables)
             : Stream.value([]);
       });
+      // _combineStream = _groupUserCollectionReference
+      //     .where('UserId', isEqualTo: userId)
+      //     .snapshots()
+      //     .map((convert) {
+      //   return convert.documents.map((f) {
+      //     Stream<GroupUserModel> userGroup = Stream.value(f)
+      //         .map<GroupUserModel>(
+      //             (document) => GroupUserModel.fromData(document));
+
+      //     Stream<GroupModel> group = _groupCollectionReference
+      //         .document(f.data['GroupId'])
+      //         .snapshots()
+      //         .map<GroupModel>((document) => GroupModel.fromData(document));
+
+      //     return Rx.combineLatest2(userGroup, group,
+      //         (messages, user) => CombineGroupUserStream(messages, user));
+      //   });
+      // }).switchMap((observables) {
+      //   return observables.length > 0
+      //       ? Rx.combineLatestList(observables)
+      //       : Stream.value([]);
+      // });
       return _combineStream;
     } catch (e) {
       throw HttpException(e.message);
@@ -98,9 +127,10 @@ class GroupService {
 
   Stream<QuerySnapshot> getGroupUsers(String groupId) {
     try {
-      return _groupUserCollectionReference
+      var users = _groupUserCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .snapshots();
+      return users;
     } catch (e) {
       throw HttpException(e.message);
     }

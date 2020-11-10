@@ -33,13 +33,10 @@ class _LoginScreenState extends State<LoginScreen>
   final _key = GlobalKey<State>();
 
   void _login() async {
-    final isDarkModeEnabled =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled;
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    await BeStilDialog.showLoading(
-        context, _key, isDarkModeEnabled, 'Authenticating');
+    await BeStilDialog.showLoading(context, _key, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         context: context,

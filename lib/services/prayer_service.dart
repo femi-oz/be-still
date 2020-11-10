@@ -1,6 +1,7 @@
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -15,6 +16,8 @@ class PrayerService {
       Firestore.instance.collection("GroupPrayer");
   final CollectionReference _prayerUpdateCollectionReference =
       Firestore.instance.collection("PrayerUpdate");
+  final CollectionReference _hiddenPrayerCollectionReference =
+      Firestore.instance.collection("HiddenPrayer");
 
   // final CollectionReference _prayerDisableCollectionRefernce =
   //     Firestore.instance.collection("PrayerDisable");
@@ -207,12 +210,26 @@ class PrayerService {
     String prayerId,
   ) {
     try {
-      print(prayerId);
       return _prayerUpdateCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
           .snapshots()
           .asyncMap((event) => event.documents
               .map((e) => PrayerUpdateModel.fromData(e))
+              .toList());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<List<HiddenPrayerModel>> getHiddenPrayers(
+    String userId,
+  ) {
+    try {
+      return _hiddenPrayerCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .asyncMap((event) => event.documents
+              .map((e) => HiddenPrayerModel.fromData(e))
               .toList());
     } catch (e) {
       throw HttpException(e.message);
@@ -261,11 +278,20 @@ class PrayerService {
     }
   }
 
-  hidePrayer(String prayerId, bool value) {
+  hidePrayer(String prayerId, UserModel user) {
+    final hiddenPrayerId = Uuid().v1();
+    var hiddenPrayer = HiddenPrayerModel(
+      userId: user.id,
+      prayerId: prayerId,
+      createdBy: '${user.firstName} ${user.lastName}',
+      createdOn: DateTime.now(),
+      modifiedBy: '${user.firstName} ${user.lastName}',
+      modifiedOn: DateTime.now(),
+    );
     try {
-      _prayerCollectionReference
-          .document(prayerId)
-          .updateData({'HideFromMe': value});
+      _hiddenPrayerCollectionReference
+          .document(hiddenPrayerId)
+          .setData(hiddenPrayer.toJson());
     } catch (e) {
       throw HttpException(e.message);
     }

@@ -18,15 +18,14 @@ class BeStilDialog {
     );
   }
 
-  static Future<void> showLoading(
-      BuildContext context, GlobalKey key, bool isDarkMode,
+  static Future<void> showLoading(BuildContext context, GlobalKey key,
       [String message = 'Loading...']) async {
     Dialog dialog = Dialog(
       key: key,
       insetPadding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.35, horizontal: 50),
-      backgroundColor:
-          AppColors.getBackgroudColor(isDarkMode)[0].withOpacity(0.8),
+      backgroundColor: Colors.blueGrey[100].withOpacity(0.5),
+      // AppColors.getBackgroudColor(isDarkMode)[0].withOpacity(0.8),
       shape: RoundedRectangleBorder(
         side: BorderSide(color: AppColors.darkBlue),
         borderRadius: BorderRadius.all(Radius.circular(10.0)),

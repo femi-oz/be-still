@@ -46,8 +46,8 @@ class PrayerCard extends StatelessWidget {
             .setPrayer(prayer.id);
         await Provider.of<PrayerProvider>(context, listen: false)
             .setPrayerUpdates(prayer.id);
-        await Provider.of<GroupProvider>(context, listen: false)
-            .setGroupUsers(prayer.groupId);
+        // await Provider.of<GroupProvider>(context, listen: false)
+        //     .setGroupUsers(prayer.groupId);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
       },
       child: Container(

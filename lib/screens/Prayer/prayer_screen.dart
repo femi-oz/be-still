@@ -1,5 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
@@ -24,31 +25,66 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  @override
-  void initState() {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    Provider.of<GroupProvider>(context, listen: false).setGroups(_user.id);
-    Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayers(_user.id, PrayerActiveScreen.personal, null);
-    super.initState();
+  // BuildContext bcontext;
+  var _key = GlobalKey<State>();
+
+  void _getPrayers() async {
+    try {
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      // BeStilDialog.showLoading(
+      //   context,
+      //   _key,
+      // );
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setGroups(_user.id);
+
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setHiddenPrayers(_user.id);
+      var activeList =
+          Provider.of<PrayerProvider>(context, listen: false).currentPrayerType;
+      var groupData =
+          Provider.of<GroupProvider>(context, listen: false).currentGroup;
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setGroupUsers(group?.id);
+      // var users =
+      //     Provider.of<GroupProvider>(context, listen: false).currentGroupUsers;
+      // var isGroupAdmin = users
+      //         .firstWhere((user) => user?.userId == _user?.id,
+      //             orElse: () => null)
+      //         ?.isAdmin ??
+      //     false;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayers(_user?.id, activeList, groupData?.group?.id, null);
+      // await Future.delayed(Duration(milliseconds: 300));
+      // BeStilDialog.hideLoading(_key);
+    } on HttpException catch (e) {
+      // await Future.delayed(Duration(milliseconds: 300));
+      // BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      // await Future.delayed(Duration(milliseconds: 300));
+      // BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
   }
 
-  // _setPrayers(PrayerActiveScreen activeList, GroupModel group) async {
-  //   UserModel _user =
-  //       Provider.of<UserProvider>(context, listen: false).currentUser;
-  //   await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-  //       _user.id,
-  //       activeList,
-  //       activeList == PrayerActiveScreen.group ? group.id : '0');
-  // }
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _getPrayers();
+      _isInit = false;
+    } // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    // final group = Provider.of<GroupProvider>(context).currentGroup;
-    // final activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
+    // setState(() => this.bcontext = context);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(),

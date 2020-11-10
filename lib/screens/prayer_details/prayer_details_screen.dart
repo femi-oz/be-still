@@ -27,7 +27,7 @@ class PrayerDetails extends StatefulWidget {
 }
 
 class _PrayerDetailsState extends State<PrayerDetails> {
-  GroupUserModel groupUser;
+  // GroupUserModel groupUser;
 
   List<PrayerUpdateModel> updates = [];
 
@@ -35,9 +35,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     PrayerModel prayer = Provider.of<PrayerProvider>(context).currentPrayer;
-    var users =
-        Provider.of<GroupProvider>(context, listen: false).currentGroupUsers;
-    var isGroupAdmin = users
+    var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    var isGroupAdmin = group.groupUsers
             .firstWhere((user) => user.userId == _user.id, orElse: () => null)
             ?.isAdmin ??
         false;

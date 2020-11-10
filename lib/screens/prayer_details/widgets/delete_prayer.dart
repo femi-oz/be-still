@@ -1,16 +1,72 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
-class DeletePrayer extends StatelessWidget {
+class DeletePrayer extends StatefulWidget {
   final PrayerModel prayer;
-
   @override
   DeletePrayer(this.prayer);
+
+  @override
+  _DeletePrayerState createState() => _DeletePrayerState();
+}
+
+class _DeletePrayerState extends State<DeletePrayer> {
+  BuildContext bcontext;
+  var _key = GlobalKey<State>();
+
+  void _onArchive() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .archivePrayer(widget.prayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
+  _onDelete() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .deletePrayer(widget.prayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   Widget build(BuildContext context) {
+    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -31,11 +87,7 @@ class DeletePrayer extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () {
-              Provider.of<PrayerProvider>(context, listen: false)
-                  .deletePrayer(prayer.id);
-              Navigator.of(context).pushNamed(PrayerScreen.routeName);
-            },
+            onTap: _onDelete,
             child: Container(
               height: 30,
               width: double.infinity,
@@ -69,10 +121,7 @@ class DeletePrayer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushReplacementNamed(PrayerScreen.routeName);
-                  },
+                  onTap: _onArchive,
                   child: Container(
                     height: 30,
                     width: MediaQuery.of(context).size.width * .38,

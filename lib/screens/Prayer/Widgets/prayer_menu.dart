@@ -32,28 +32,40 @@ class _PrayerMenuState extends State<PrayerMenu> {
         .searchPrayers(value);
   }
 
-  void _setCurrentList(PrayerActiveScreen activeList, GroupModel group) async {
+  void _setCurrentList(
+      PrayerActiveScreen activeList, CombineGroupUserStream groupData) async {
     await Provider.of<GroupProvider>(context, listen: false)
-        .setCurrentGroup(group);
+        .setCurrentGroup(groupData);
     await Provider.of<PrayerProvider>(context, listen: false)
         .setCurrentPrayerType(activeList);
-    _setPrayers(group, activeList);
+    _setPrayers(groupData, activeList);
   }
 
-  void _setPrayers(GroupModel group, PrayerActiveScreen activeList) async {
+  void _setPrayers(
+      CombineGroupUserStream groupData, PrayerActiveScreen activeList) async {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
+    // await Provider.of<GroupProvider>(context, listen: false)
+    //     .setGroupUsers(group?.id);
+    // var users =
+    // Provider.of<GroupProvider>(context, listen: false).groups.m;
+    print('------------------${groupData.groupUsers}');
+    var isGroupAdmin = groupData.groupUsers
+        .firstWhere((user) => user.userId == _user.id, orElse: () => null)
+        ?.isAdmin;
     await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-        _user.id,
-        activeList,
-        activeList == PrayerActiveScreen.group ? group.id : '0');
+      _user.id,
+      activeList,
+      activeList == PrayerActiveScreen.group ? groupData.group?.id : '0',
+      isGroupAdmin,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final _groups = Provider.of<GroupProvider>(context).groups;
     final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
-    final _group = Provider.of<GroupProvider>(context).currentGroup;
+    // final _group = Provider.of<GroupProvider>(context).currentGroup;
     openTools() {
       showModalBottomSheet(
         context: context,
@@ -162,10 +174,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         _groups[i].group.id ==
                                             Provider.of<GroupProvider>(context)
                                                 .currentGroup
+                                                .group
                                                 .id,
                                 action: () => setState(() {
-                                  _setCurrentList(PrayerActiveScreen.group,
-                                      _groups[i].group);
+                                  _setCurrentList(
+                                      PrayerActiveScreen.group, _groups[i]);
                                 }),
                                 openTools: () => openTools(),
                               ),

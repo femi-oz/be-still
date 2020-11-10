@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
 
+Color dynamicColor({bool isDarkMode, Color light, Color dark}) {
+  Color retVal;
+  switch (isDarkMode) {
+    case true:
+      retVal = const Color(0xFF0D1319);
+      break;
+    case false:
+      retVal = const Color(0xFFFFFFFF);
+      break;
+    default:
+      retVal = const Color(0xFFFFFFFF);
+
+      break;
+  }
+  return retVal;
+}
+
 class AppColors {
+  static Color appBarBg(bool isDarkMode) => dynamicColor(
+      isDarkMode: isDarkMode,
+      light: Color(0xFFFFFFFF),
+      dark: Color(0xFF0D1319));
+
   static List<Color> getBackgroudColor(bool isDarkMode) {
     List<Color> retVal;
     switch (isDarkMode) {
