@@ -1,9 +1,11 @@
-import 'package:be_still/data/group.data.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/group_card.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class FindAGroup extends StatefulWidget {
@@ -13,54 +15,64 @@ class FindAGroup extends StatefulWidget {
 
 class _FindAGroupState extends State<FindAGroup> {
   final TextEditingController _searchController = TextEditingController();
-  String searchText = '';
-  List<GroupModel> filteredGroups = [];
-  void onTextchanged(String value) {
-    // TODO
-    // setState(() {
-    //   searchText = _searchController.text;
-    //   filteredGroups = groupData
-    //       .where((p) => p.name.toLowerCase().contains(value.toLowerCase()))
-    //       .toList();
-    // });
+  bool _isSearchMode = false;
+
+  void _searchGroup(String val) async {
+    await Provider.of<GroupProvider>(context, listen: false)
+        .searchAllGroups(val);
   }
 
   @override
   Widget build(BuildContext context) {
+    var _filteredGroups = Provider.of<GroupProvider>(context).filteredAllGroups;
     return Container(
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.symmetric(vertical: 20.0),
       height: MediaQuery.of(context).size.height * 0.8,
       child: Column(
         children: [
-          CustomInput(
-            controller: _searchController,
-            label: 'Start your Search',
-            padding: 5.0,
-            showSuffix: false,
-            textInputAction: TextInputAction.done,
-            onTextchanged: onTextchanged,
-          ),
+          !_isSearchMode
+              ? GestureDetector(
+                  onTap: () {
+                    setState(() => _isSearchMode = true);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    color: Colors.transparent,
+                    child: IgnorePointer(
+                      child: CustomInput(
+                        controller: null,
+                        label: 'Start your Search',
+                        padding: 5.0,
+                        showSuffix: false,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: CustomInput(
+                    controller: _searchController,
+                    label: 'Start your Search',
+                    padding: 5.0,
+                    showSuffix: false,
+                    textInputAction: TextInputAction.done,
+                    onTextchanged: _searchGroup,
+                  ),
+                ),
           Expanded(
-            child: searchText != ''
+            child: _isSearchMode
                 ? Column(
                     children: [
-                      SizedBox(height: 20.0),
+                      SizedBox(height: 30.0),
                       Text(
-                        '${filteredGroups.length} Groups match your search.',
-                        style: TextStyle(
-                          color: context.brightBlue,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        '${_filteredGroups.length} Groups match your search.',
+                        style: AppTextStyles.boldText20,
                       ),
                       SizedBox(height: 2.0),
                       Text(
                         'Use Advance Search to narrow your results.',
-                        style: TextStyle(
-                          color: context.inputFieldText,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300,
-                        ),
+                        style: AppTextStyles.regularText16
+                            .copyWith(color: AppColors.offWhite4),
                       ),
                       SizedBox(height: 30.0),
                       Container(
@@ -84,10 +96,7 @@ class _FindAGroupState extends State<FindAGroup> {
                                     color: context.brightBlue),
                                 Text(
                                   'ADVANCE SEARCH',
-                                  style: TextStyle(
-                                      color: context.brightBlue,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700),
+                                  style: AppTextStyles.boldText24,
                                 ),
                               ],
                             ),
@@ -107,8 +116,18 @@ class _FindAGroupState extends State<FindAGroup> {
                         ),
                       ),
                       SizedBox(height: 30.0),
-                      for (int i = 0; i < filteredGroups.length; i++)
-                        GroupCard(filteredGroups[i]),
+                      // for (int i = 0; i < _filteredGroups.length; i++)
+                      //   GroupCard(_filteredGroups[i]),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Column(
+                          children: [
+                            ..._filteredGroups.map(
+                              (e) => GroupCard(e),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   )
                 : Center(

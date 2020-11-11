@@ -8,27 +8,38 @@ import 'package:flutter/cupertino.dart';
 class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
 
-  List<CombineGroupUserStream> _groups = [];
-  // List<GroupUserModel> _currentGroupUsers = [];
+  List<CombineGroupUserStream> _userGroups = [];
+  List<CombineGroupUserStream> _allGroups = [];
+  List<CombineGroupUserStream> _filteredAllGroups = [];
   CombineGroupUserStream _currentGroup;
-  List<CombineGroupUserStream> get groups => _groups;
-  // List<GroupUserModel> get currentGroupUsers => _currentGroupUsers;
+  List<CombineGroupUserStream> get userGroups => _userGroups;
+  List<CombineGroupUserStream> get allGroups => _allGroups;
+  List<CombineGroupUserStream> get filteredAllGroups => _filteredAllGroups;
   CombineGroupUserStream get currentGroup => _currentGroup;
 
-  Future setGroups(String userId) async {
-    _groupService.getGroups(userId).asBroadcastStream().listen((groups) {
-      _groups = groups;
+  Future setUserGroups(String userId) async {
+    _groupService.getUserGroups(userId).asBroadcastStream().listen((groups) {
+      _userGroups = groups;
       notifyListeners();
     });
   }
 
-  // Future setGroupUsers(String groupId) async {
-  //   _groupService.getGroupUsers(groupId).asBroadcastStream().listen((users) {
-  //     _currentGroupUsers =
-  //         users.documents.map((user) => GroupUserModel.fromData(user)).toList();
-  //     notifyListeners();
-  //   });
-  // }
+  Future setAllGroups(String userId) async {
+    _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
+      _allGroups = groups;
+      _filteredAllGroups = groups;
+      notifyListeners();
+    });
+  }
+
+  Future searchAllGroups(String searchQuery) async {
+    List<CombineGroupUserStream> filteredGroups = _allGroups
+        .where((CombineGroupUserStream data) =>
+            data.group.name.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+    _filteredAllGroups = filteredGroups;
+    notifyListeners();
+  }
 
   Future addGroup(GroupModel groupData, String _userID) async {
     return await _groupService.addGroup(_userID, groupData);

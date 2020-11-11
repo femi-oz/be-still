@@ -12,13 +12,11 @@ class GroupService {
       Firestore.instance.collection("Group");
   final CollectionReference _groupUserCollectionReference =
       Firestore.instance.collection("GroupUser");
-  final CollectionReference _groupPrayerCollectionReference =
-      Firestore.instance.collection("GroupPrayer");
+  // final CollectionReference _groupPrayerCollectionReference =
+  //     Firestore.instance.collection("GroupPrayer");
 
-  final CollectionReference _groupInviteCollectionRefernce =
-      Firestore.instance.collection("GroupInvite");
-  final CollectionReference _prayerCollectionReference =
-      Firestore.instance.collection("Prayer");
+  // final CollectionReference _groupInviteCollectionRefernce =
+  //     Firestore.instance.collection("GroupInvite");
 
   populateGroupUser(
     GroupModel groupData,
@@ -39,17 +37,47 @@ class GroupService {
     return userPrayer;
   }
 
-  Stream<List<CombineGroupUserStream>> _combineStream;
-  Stream<List<CombineGroupUserStream>> getGroups(String userId) {
+  Stream<List<CombineGroupUserStream>> _combineAllGroupsStream;
+  Stream<List<CombineGroupUserStream>> getAllGroups(String userId) {
     try {
-      _combineStream = _groupUserCollectionReference
+      _combineAllGroupsStream =
+          _groupCollectionReference.snapshots().map((convert) {
+        return convert.documents.map((g) {
+          Stream<GroupModel> group = Stream.value(g)
+              .map<GroupModel>((document) => GroupModel.fromData(document));
+          Stream<List<GroupUserModel>> groupUsers =
+              _groupUserCollectionReference
+                  .where('GroupId', isEqualTo: g.documentID)
+                  .snapshots()
+                  .asyncMap((e) => e.documents
+                      .map((doc) => GroupUserModel.fromData(doc))
+                      .toList());
+
+          return Rx.combineLatest2(groupUsers, group,
+              (groupUsers, group) => CombineGroupUserStream(groupUsers, group));
+        });
+      }).switchMap((observables) {
+        return observables.length > 0
+            ? Rx.combineLatestList(observables)
+            : Stream.value([]);
+      });
+      return _combineAllGroupsStream;
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<List<CombineGroupUserStream>> _combineUserGroupStream;
+  Stream<List<CombineGroupUserStream>> getUserGroups(String userId) {
+    try {
+      _combineUserGroupStream = _groupUserCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((convert) {
         return convert.documents.map((f) {
-          Stream<GroupUserModel> userGroup = Stream.value(f)
-              .map<GroupUserModel>(
-                  (document) => GroupUserModel.fromData(document));
+          // Stream<GroupUserModel> userGroup = Stream.value(f)
+          //     .map<GroupUserModel>(
+          //         (document) => GroupUserModel.fromData(document));
 
           Stream<GroupModel> group = _groupCollectionReference
               .document(f.data['GroupId'])
@@ -71,29 +99,7 @@ class GroupService {
             ? Rx.combineLatestList(observables)
             : Stream.value([]);
       });
-      // _combineStream = _groupUserCollectionReference
-      //     .where('UserId', isEqualTo: userId)
-      //     .snapshots()
-      //     .map((convert) {
-      //   return convert.documents.map((f) {
-      //     Stream<GroupUserModel> userGroup = Stream.value(f)
-      //         .map<GroupUserModel>(
-      //             (document) => GroupUserModel.fromData(document));
-
-      //     Stream<GroupModel> group = _groupCollectionReference
-      //         .document(f.data['GroupId'])
-      //         .snapshots()
-      //         .map<GroupModel>((document) => GroupModel.fromData(document));
-
-      //     return Rx.combineLatest2(userGroup, group,
-      //         (messages, user) => CombineGroupUserStream(messages, user));
-      //   });
-      // }).switchMap((observables) {
-      //   return observables.length > 0
-      //       ? Rx.combineLatestList(observables)
-      //       : Stream.value([]);
-      // });
-      return _combineStream;
+      return _combineUserGroupStream;
     } catch (e) {
       throw HttpException(e.message);
     }

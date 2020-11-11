@@ -48,7 +48,7 @@ class _AddPrayerState extends State<AddPrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _isGroup =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayerType ==
-            PrayerActiveScreen.personal;
+            PrayerActiveScreen.group;
     final _groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
@@ -56,7 +56,7 @@ class _AddPrayerState extends State<AddPrayer> {
       prayerData = PrayerModel(
           title: '',
           isAnswer: false,
-          groupId: _isGroup ? _groupData.group.id : '0',
+          groupId: _isGroup ? _groupData?.group?.id : '0',
           userId: _user.id,
           description: _descriptionController.text,
           status: 'Active',

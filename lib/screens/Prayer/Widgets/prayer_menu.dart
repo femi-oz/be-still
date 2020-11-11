@@ -45,14 +45,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
       CombineGroupUserStream groupData, PrayerActiveScreen activeList) async {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    // await Provider.of<GroupProvider>(context, listen: false)
-    //     .setGroupUsers(group?.id);
-    // var users =
-    // Provider.of<GroupProvider>(context, listen: false).groups.m;
-    print('------------------${groupData.groupUsers}');
-    var isGroupAdmin = groupData.groupUsers
-        .firstWhere((user) => user.userId == _user.id, orElse: () => null)
-        ?.isAdmin;
+    var isGroupAdmin;
+    if (groupData != null) {
+      isGroupAdmin = groupData.groupUsers
+          .firstWhere((user) => user.userId == _user.id, orElse: () => null)
+          ?.isAdmin;
+    }
     await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
       _user.id,
       activeList,
@@ -63,9 +61,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final _groups = Provider.of<GroupProvider>(context).groups;
+    final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
-    // final _group = Provider.of<GroupProvider>(context).currentGroup;
     openTools() {
       showModalBottomSheet(
         context: context,

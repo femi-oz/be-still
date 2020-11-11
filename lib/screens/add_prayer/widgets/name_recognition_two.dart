@@ -52,7 +52,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
         bcontext,
         _key,
       );
-      UserModel _user = Provider.of<UserProvider>(context).currentUser;
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       if (widget.isUpdate) {
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayerUpdate(widget.prayerUpdate);
@@ -73,7 +74,6 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
       }
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
-      Navigator.of(context).pushNamed(PrayerDetails.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);

@@ -198,7 +198,8 @@ class PrayerService {
     PrayerUpdateModel prayerUpdateData,
   ) async {
     try {
-      _prayerUpdateCollectionReference.document().setData(
+      final updateId = Uuid().v1();
+      _prayerUpdateCollectionReference.document(updateId).setData(
             prayerUpdateData.toJson(),
           );
     } catch (e) {

@@ -25,19 +25,16 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  // BuildContext bcontext;
   var _key = GlobalKey<State>();
 
   void _getPrayers() async {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showLoading(
-      //   context,
-      //   _key,
-      // );
       await Provider.of<GroupProvider>(context, listen: false)
-          .setGroups(_user.id);
+          .setUserGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setAllGroups(_user.id);
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .setHiddenPrayers(_user.id);
@@ -45,26 +42,11 @@ class _PrayerScreenState extends State<PrayerScreen> {
           Provider.of<PrayerProvider>(context, listen: false).currentPrayerType;
       var groupData =
           Provider.of<GroupProvider>(context, listen: false).currentGroup;
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setGroupUsers(group?.id);
-      // var users =
-      //     Provider.of<GroupProvider>(context, listen: false).currentGroupUsers;
-      // var isGroupAdmin = users
-      //         .firstWhere((user) => user?.userId == _user?.id,
-      //             orElse: () => null)
-      //         ?.isAdmin ??
-      //     false;
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id, activeList, groupData?.group?.id, null);
-      // await Future.delayed(Duration(milliseconds: 300));
-      // BeStilDialog.hideLoading(_key);
     } on HttpException catch (e) {
-      // await Future.delayed(Duration(milliseconds: 300));
-      // BeStilDialog.hideLoading(_key);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      // await Future.delayed(Duration(milliseconds: 300));
-      // BeStilDialog.hideLoading(_key);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
@@ -75,7 +57,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     if (_isInit) {
       _getPrayers();
       _isInit = false;
-    } // TODO: implement didChangeDependencies
+    }
     super.didChangeDependencies();
   }
 
@@ -83,7 +65,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    // setState(() => this.bcontext = context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -107,63 +88,17 @@ class _PrayerScreenState extends State<PrayerScreen> {
             children: <Widget>[
               Container(
                 height: 60,
-                child: PrayerMenu(
-                    // onTextchanged: _searchPrayer,
-                    // clearSearchField: _clearSearchField,
-                    // searchController: _searchController,
-                    // setCurrentList: _setPrayers,
-                    // activeList: activeList,
-                    // group: group,
-                    ),
+                child: PrayerMenu(),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.855,
-                // child: StreamBuilder(
-                //   stream:
-                //       Provider.of<PrayerProvider>(context).filterPrayersStream,
-                //   builder: (BuildContext context,
-                //       AsyncSnapshot<List<PrayerModel>> snapshot) {
-                //     switch (snapshot.connectionState) {
-                //       case ConnectionState.waiting:
-                //         return Column(
-                //           children: [
-                //             Expanded(
-                //               child: SpinKitDoubleBounce(
-                //                 color: AppColors.lightBlue1,
-                //                 size: 50.0,
-                //               ),
-                //             ),
-                //           ],
-                //         );
-                //       default:
-                //         if (snapshot.hasError)
-                //           return Column(
-                //             children: [
-                //               Expanded(
-                //                 child: SpinKitDoubleBounce(
-                //                   color: AppColors.lightBlue1,
-                //                   size: 50.0,
-                //                 ),
-                //               ),
-                //             ],
-                //           );
-                //         else {
+                height: MediaQuery.of(context).size.height * 0.842,
                 child: SingleChildScrollView(
                   child:
                       Provider.of<PrayerProvider>(context).currentPrayerType ==
                               PrayerActiveScreen.findGroup
                           ? FindAGroup()
-                          : PrayerList(
-                              // group: group,
-                              // activeList: activeList,
-                              // prayers: Provider.of<PrayerProvider>(context)
-                              //     .filteredPrayers,
-                              ),
+                          : PrayerList(),
                 ),
-                // }
-                //       }
-                //     },
-                //   ),
               ),
             ],
           ),
