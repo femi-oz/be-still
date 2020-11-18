@@ -55,7 +55,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -63,17 +64,15 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Preferences',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -89,7 +88,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                   child: Text(
                     'Allow emergency calls (second call from the same number calls within 2 minutes)',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -97,7 +97,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -114,7 +114,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                   child: Text(
                     'Set to Do Not Disturb during Prayer Time?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -122,7 +123,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -139,7 +140,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                   child: Text(
                     'Enable background music during Prayer Mode?F',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -147,7 +149,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -159,7 +161,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             color:
                 AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
-              borderSide: BorderSide(color: context.inputFieldBorder),
+              borderSide: BorderSide(
+                  color: AppColors.getCardBorder(
+                      _themeProvider.isDarkModeEnabled)),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -169,7 +173,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                     Text(
                       'CONNECTED',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w400),
                     ),
@@ -182,7 +186,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         Text(
                           'Spotify',
                           style: TextStyle(
-                              color: context.inputFieldText,
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled),
                               fontSize: 10,
                               fontWeight: FontWeight.w500),
                         ),
@@ -207,7 +212,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                   child: Text(
                     'Auto play music during prayer time?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -215,7 +221,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -228,7 +234,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -236,17 +243,15 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'My Prayer Time',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -266,14 +271,16 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         Text(
                           'T-Th',
                           style: TextStyle(
-                              color: context.inputFieldText,
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled),
                               fontSize: 10,
                               fontWeight: FontWeight.w400),
                         ),
                         Text(
                           'Wed',
                           style: TextStyle(
-                              color: context.inputFieldText,
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled),
                               fontSize: 10,
                               fontWeight: FontWeight.w400),
                         ),
@@ -285,28 +292,32 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                               Text(
                                 '06',
                                 style: TextStyle(
-                                    color: context.inputFieldText,
+                                    color: AppColors.getTextFieldText(
+                                        _themeProvider.isDarkModeEnabled),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w400),
                               ),
                               Text(
                                 ':',
                                 style: TextStyle(
-                                    color: context.inputFieldText,
+                                    color: AppColors.getTextFieldText(
+                                        _themeProvider.isDarkModeEnabled),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w400),
                               ),
                               Text(
                                 '15',
                                 style: TextStyle(
-                                    color: context.inputFieldText,
+                                    color: AppColors.getTextFieldText(
+                                        _themeProvider.isDarkModeEnabled),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w400),
                               ),
                               Text(
                                 'PM',
                                 style: TextStyle(
-                                    color: context.inputFieldText,
+                                    color: AppColors.getTextFieldText(
+                                        _themeProvider.isDarkModeEnabled),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w400),
                               ),
@@ -317,7 +328,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                     ),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -327,13 +338,13 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 IconButton(
                     icon: Icon(
                       Icons.edit,
-                      color: context.brightBlue,
+                      color: AppColors.lightBlue3,
                     ),
                     onPressed: null),
                 IconButton(
                   icon: Icon(
                     Icons.not_interested,
-                    color: context.brightBlue,
+                    color: AppColors.lightBlue3,
                   ),
                   onPressed: null,
                 ),

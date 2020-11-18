@@ -149,8 +149,8 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                 Row(
                   children: <Widget>[
                     Theme(
-                      data:
-                          ThemeData(unselectedWidgetColor: context.brightBlue),
+                      data: ThemeData(
+                          unselectedWidgetColor: AppColors.lightBlue3),
                       child: Switch.adaptive(
                         value: termsAccepted,
                         onChanged: (val) {
@@ -160,7 +160,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                           });
                         },
                         activeColor: Colors.white,
-                        activeTrackColor: context.switchThumbActive,
+                        activeTrackColor: AppColors.lightBlue4,
                         inactiveThumbColor: Colors.white,
                       ),
                     ),

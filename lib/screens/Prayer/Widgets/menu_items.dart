@@ -45,7 +45,7 @@ class _PrayerMenuItemState extends State<PrayerMenuItem> {
                     ? IconButton(
                         icon: Icon(
                           Icons.more_horiz,
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                         ),
                         padding: EdgeInsets.all(0),
                         onPressed: widget.openTools,

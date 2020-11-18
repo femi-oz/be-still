@@ -157,7 +157,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                     ),
                                     child: Icon(
                                       Icons.arrow_forward,
-                                      color: context.offWhite,
+                                      color: AppColors.offWhite1,
                                     ),
                                   ),
                                 ),

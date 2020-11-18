@@ -1,5 +1,6 @@
+import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,34 +8,42 @@ import 'package:flutter/cupertino.dart';
 import '../locator.dart';
 
 class SettingsProvider with ChangeNotifier {
-  SettingsService _settings = locator<SettingsService>();
+  SettingsService _settingsService = locator<SettingsService>();
 
-  Stream<CombineSettingsStream> getSettings(String userId) {
-    return _settings.fetchSettings(userId);
+  SettingsModel _settings;
+  SettingsModel get settings => _settings;
+  PrayerSettingsModel _prayerSettings;
+  PrayerSettingsModel get prayerSetttings => _prayerSettings;
+  SharingSettingsModel _sharingSettings;
+  SharingSettingsModel get sharingSetttings => _sharingSettings;
+
+  Future setSettings(String userId) async {
+    _settingsService
+        .fetchSettings(userId)
+        .asBroadcastStream()
+        .listen((settings) {
+      _settings = settings;
+      notifyListeners();
+    });
   }
 
-  Future addSettings(
-      SettingsModel settingsData, String userId, UserModel userData) async {
-    return await _settings.addSettings(settingsData, userId, userData);
+  Future setPrayerSettings(String userId) async {
+    _settingsService
+        .getPrayerSettings(userId)
+        .asBroadcastStream()
+        .listen((settings) {
+      _prayerSettings = settings;
+      notifyListeners();
+    });
   }
 
-  // Stream<DocumentSnapshot> fetchSetting(String id) {
-  //   return _settings.fetchSetting(id);
-  // }
-
-  // getPrayerSettings({String userId}) async {
-  //   return await _prayerSettings.getPrayerSettings(userId);
-  // }
-
-  Stream<QuerySnapshot> getPrayerSettings(String userId) {
-    return _settings.getPrayerSettings(userId);
-  }
-
-  // getSharingSettings({String userId}) async {
-  //   return await _sharingSettings.getSharingSettings(userId);
-  // }
-
-  Stream<QuerySnapshot> getSharingSettings(String userId) {
-    return _settings.getSharingSettings(userId);
+  Future setSharingSettings(String userId) async {
+    _settingsService
+        .getSharingSettings(userId)
+        .asBroadcastStream()
+        .listen((settings) {
+      _sharingSettings = settings;
+      notifyListeners();
+    });
   }
 }

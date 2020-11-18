@@ -28,6 +28,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -37,7 +38,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -45,17 +47,15 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Preferences',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -66,7 +66,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
             child: Text(
               'How to Enable the BeStill skill on Alexa',
               style: TextStyle(
-                  color: context.brightBlue,
+                  color: AppColors.lightBlue3,
                   fontSize: 14,
                   fontWeight: FontWeight.w400),
             ),
@@ -76,7 +76,9 @@ class _AlexaSettingsState extends State<AlexaSettings> {
             color: AppColors.getTextFieldBgColor(
                 Provider.of<ThemeProvider>(context).isDarkModeEnabled),
             child: OutlineButton(
-              borderSide: BorderSide(color: context.inputFieldBorder),
+              borderSide: BorderSide(
+                  color: AppColors.getCardBorder(
+                      _themeProvider.isDarkModeEnabled)),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
@@ -86,7 +88,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                     Text(
                       'CONNECTED',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w400),
                     ),
@@ -102,7 +104,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                         Text(
                           'alexa',
                           style: TextStyle(
-                              color: context.inputFieldText,
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled),
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                         ),
@@ -112,7 +115,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                       child: Text(
                         'LOGOUT',
                         style: TextStyle(
-                            color: context.prayerCardTags,
+                            color: AppColors.red,
                             fontSize: 14,
                             fontWeight: FontWeight.w400),
                       ),
@@ -134,7 +137,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                   child: Text(
                     'Allow Alexa to notify me of my Prayer Time?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -142,7 +146,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -159,7 +163,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                   child: Text(
                     'Sync Notifications / Reminders with Alexa?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -167,7 +172,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -180,7 +185,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -188,17 +194,15 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Prayer Time',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -214,7 +218,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                   child: Text(
                     'Enable Alexa to read prayers from My List?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -222,7 +227,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -235,7 +240,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
             child: Text(
               'Set pause between prayers during Prayer Time',
               style: TextStyle(
-                color: context.inputFieldText,
+                color: AppColors.getTextFieldText(
+                    _themeProvider.isDarkModeEnabled),
                 fontSize: 12,
                 fontWeight: FontWeight.w300,
               ),

@@ -1,11 +1,14 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +34,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   TabController tabController;
 
-  String title = "Home";
+  // String title = "Home";
 
   @override
   void initState() {
@@ -65,9 +68,35 @@ class SettingsTabState extends State<SettingsTab>
 
   @override
   void initState() {
-    setupData();
     super.initState();
     tabController = new TabController(length: 5, vsync: this);
+  }
+
+  void _getSettings() async {
+    try {
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setPrayerSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSharingSettings(_user.id);
+    } on HttpException catch (e) {
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _getSettings();
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -76,41 +105,10 @@ class SettingsTabState extends State<SettingsTab>
     super.dispose();
   }
 
-  List<dynamic> dataList = [];
-  Future<Stream> getData() async {
-    final settingsProvider =
-        Provider.of<SettingsProvider>(context, listen: false);
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-    Stream settings = settingsProvider.getSettings(userProvider.currentUser.id);
-    Stream shareSettings =
-        settingsProvider.getSharingSettings(userProvider.currentUser.id);
-    Stream prayerSettings =
-        settingsProvider.getPrayerSettings(userProvider.currentUser.id);
-
-    return StreamZip([settings, shareSettings, prayerSettings])
-        .asBroadcastStream();
-  }
-
-  List<SettingsModel> settings = [];
-  List<SharingSettingsModel> shareSettings = [];
-  List<PrayerSettingsModel> prayerSettings = [];
-
-  setupData() async {
-    Stream stream = await getData()
-      ..asBroadcastStream();
-    stream.listen((data) {
-      setState(() {
-        settings = data[0];
-        shareSettings = data[1];
-        prayerSettings = data[2];
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _settingsProvider = Provider.of<SettingsProvider>(context);
     return DefaultTabController(
       length: 7,
       child: Scaffold(
@@ -120,7 +118,8 @@ class SettingsTabState extends State<SettingsTab>
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 0.5),
                   blurRadius: 5.0,
                 ),
@@ -128,17 +127,17 @@ class SettingsTabState extends State<SettingsTab>
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             height: 50.0,
             child: new TabBar(
               indicatorColor: Colors.transparent,
-              unselectedLabelColor: context.prayerMenuInactive,
-              labelColor: context.brightBlue,
+              unselectedLabelColor: AppColors.getInactvePrayerMenu(
+                  _themeProvider.isDarkModeEnabled),
+              labelColor: AppColors.lightBlue4,
+              labelStyle: AppTextStyles.boldText20,
               isScrollable: true,
               tabs: [
                 Tab(
@@ -177,12 +176,12 @@ class SettingsTabState extends State<SettingsTab>
           ),
           child: TabBarView(
             children: [
-              GeneralSettings(settings[0]),
+              GeneralSettings(_settingsProvider.settings),
               MyListSettings(),
-              PrayerTimeSettings(prayerSettings[0]),
+              PrayerTimeSettings(_settingsProvider.prayerSetttings),
               NotificationsSettings(),
               AlexaSettings(),
-              SharingSettings(shareSettings[0]),
+              SharingSettings(_settingsProvider.sharingSetttings),
               GroupsSettings(),
             ],
           ),

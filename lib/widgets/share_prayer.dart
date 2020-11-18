@@ -1,6 +1,8 @@
 import 'package:be_still/data/group.data.dart';
+import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +31,7 @@ class SharePrayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     // TODO
     // final groupsCount =
     //     groupData.where((gl) => gl.members.contains(_currentUser.id)).length;
@@ -46,11 +48,11 @@ class SharePrayer extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: context.toolsBackBtn),
+                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
                     label: Text(
                       'BACK',
                       style: TextStyle(
-                        color: context.toolsBackBtn,
+                        color: AppColors.lightBlue5,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -66,7 +68,7 @@ class SharePrayer extends StatelessWidget {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -75,14 +77,14 @@ class SharePrayer extends StatelessWidget {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Text Message',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -101,7 +103,7 @@ class SharePrayer extends StatelessWidget {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -110,14 +112,14 @@ class SharePrayer extends StatelessWidget {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Email',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -136,7 +138,7 @@ class SharePrayer extends StatelessWidget {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -145,14 +147,14 @@ class SharePrayer extends StatelessWidget {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Direct Message',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -166,8 +168,12 @@ class SharePrayer extends StatelessWidget {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: context.toolsBg.withOpacity(0.5),
-                      backgroundColor: context.toolsBg.withOpacity(0.9),
+                      barrierColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.5),
+                      backgroundColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayerToGroups();
@@ -181,7 +187,7 @@ class SharePrayer extends StatelessWidget {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -190,7 +196,7 @@ class SharePrayer extends StatelessWidget {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Expanded(
                           child: Padding(
@@ -201,7 +207,7 @@ class SharePrayer extends StatelessWidget {
                                 Text(
                                   'Post to Group(s)',
                                   style: TextStyle(
-                                    color: context.brightBlue2,
+                                    color: AppColors.lightBlue4,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -225,7 +231,7 @@ class SharePrayer extends StatelessWidget {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -234,14 +240,14 @@ class SharePrayer extends StatelessWidget {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'To my Church',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -261,7 +267,7 @@ class SharePrayer extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: context.inputFieldText,
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

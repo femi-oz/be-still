@@ -25,7 +25,8 @@ class _SharingSettingsState extends State<SharingSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -33,17 +34,15 @@ class _SharingSettingsState extends State<SharingSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Preferences',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -59,7 +58,8 @@ class _SharingSettingsState extends State<SharingSettings> {
                   child: Text(
                     'Enable sharing via text?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -67,7 +67,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                 Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -84,7 +84,8 @@ class _SharingSettingsState extends State<SharingSettings> {
                   child: Text(
                     'Enable sharing via email?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -92,7 +93,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                 Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -105,7 +106,8 @@ class _SharingSettingsState extends State<SharingSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -113,17 +115,15 @@ class _SharingSettingsState extends State<SharingSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'With My Church',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -135,7 +135,8 @@ class _SharingSettingsState extends State<SharingSettings> {
             child: Text(
               'Set your Church\'s preferred method of submitting prayers here to save it as a quick selection in the sharing options.',
               style: TextStyle(
-                  color: context.inputFieldText,
+                  color: AppColors.getTextFieldText(
+                      _themeProvider.isDarkModeEnabled),
                   fontSize: 12,
                   fontWeight: FontWeight.w300),
             ),
@@ -146,7 +147,9 @@ class _SharingSettingsState extends State<SharingSettings> {
             color:
                 AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
-              borderSide: BorderSide(color: context.inputFieldBorder),
+              borderSide: BorderSide(
+                  color: AppColors.getCardBorder(
+                      _themeProvider.isDarkModeEnabled)),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -156,14 +159,15 @@ class _SharingSettingsState extends State<SharingSettings> {
                     Text(
                       'Carthage Baptist Church',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
                       'Church',
                       style: TextStyle(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                           fontSize: 10,
                           fontWeight: FontWeight.w300),
                     ),
@@ -179,7 +183,9 @@ class _SharingSettingsState extends State<SharingSettings> {
             color:
                 AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
-              borderSide: BorderSide(color: context.inputFieldBorder),
+              borderSide: BorderSide(
+                  color: AppColors.getCardBorder(
+                      _themeProvider.isDarkModeEnabled)),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -189,14 +195,15 @@ class _SharingSettingsState extends State<SharingSettings> {
                     Text(
                       'prayer@carthagebc.com',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
                       'Email',
                       style: TextStyle(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                           fontSize: 10,
                           fontWeight: FontWeight.w300),
                     ),
@@ -212,7 +219,9 @@ class _SharingSettingsState extends State<SharingSettings> {
             color:
                 AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
-              borderSide: BorderSide(color: context.inputFieldBorder),
+              borderSide: BorderSide(
+                  color: AppColors.getCardBorder(
+                      _themeProvider.isDarkModeEnabled)),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -222,14 +231,15 @@ class _SharingSettingsState extends State<SharingSettings> {
                     Text(
                       '771.877.3437',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w400),
                     ),
                     Text(
                       'Phone(mobile only)',
                       style: TextStyle(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                           fontSize: 10,
                           fontWeight: FontWeight.w300),
                     ),
@@ -245,7 +255,9 @@ class _SharingSettingsState extends State<SharingSettings> {
             color:
                 AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
             child: OutlineButton(
-              borderSide: BorderSide(color: context.inputFieldBorder),
+              borderSide: BorderSide(
+                  color: AppColors.getCardBorder(
+                      _themeProvider.isDarkModeEnabled)),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -258,7 +270,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                         strutStyle: StrutStyle(fontSize: 12.0),
                         text: TextSpan(
                             style: TextStyle(
-                                color: context.brightBlue,
+                                color: AppColors.lightBlue3,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400),
                             text: 'carthagebc.com/prayer/request/testing'),
@@ -267,7 +279,8 @@ class _SharingSettingsState extends State<SharingSettings> {
                     Text(
                       'Web Prayer Form',
                       style: TextStyle(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                           fontSize: 10,
                           fontWeight: FontWeight.w300),
                     ),

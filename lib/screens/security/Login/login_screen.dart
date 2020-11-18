@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen>
             Text('Remember Me', style: AppTextStyles.regularText16),
             Switch.adaptive(
               activeColor: Colors.white,
-              activeTrackColor: context.switchThumbActive,
+              activeTrackColor: AppColors.lightBlue4,
               inactiveThumbColor: Colors.white,
               value: rememberMe,
               onChanged: (value) {
@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             child: Icon(
               Icons.arrow_forward,
-              color: context.offWhite,
+              color: AppColors.offWhite1,
             ),
           ),
         ),

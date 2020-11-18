@@ -64,8 +64,8 @@ class PrayerList extends StatelessWidget {
                 margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
                 decoration: BoxDecoration(
                   color: _themeProvider.isDarkModeEnabled
-                      ? context.brightBlue2.withOpacity(0.8)
-                      : context.brightBlue,
+                      ? AppColors.lightBlue3.withOpacity(0.8)
+                      : AppColors.lightBlue3,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(9),
                     topLeft: Radius.circular(9),

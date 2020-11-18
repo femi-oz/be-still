@@ -1,8 +1,11 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class GroupPrayerQuickAccess extends StatefulWidget {
@@ -81,6 +84,7 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
 
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
@@ -113,7 +117,7 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                       child: CircularButton(
                         icon: Icon(
                           Icons.star,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         onClick: () {},
                       ),
@@ -130,13 +134,17 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                       child: CircularButton(
                         icon: Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: context.toolsBg.withOpacity(0.5),
-                            backgroundColor: context.toolsBg.withOpacity(0.9),
+                            barrierColor: AppColors.getDetailBgColor(
+                                    _themeProvider.isDarkModeEnabled)[1]
+                                .withOpacity(0.5),
+                            backgroundColor: AppColors.getDetailBgColor(
+                                    _themeProvider.isDarkModeEnabled)[1]
+                                .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return SharePrayer();
@@ -157,13 +165,17 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                       child: CircularButton(
                         icon: Icon(
                           Icons.calendar_today,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: context.toolsBg.withOpacity(0.5),
-                            backgroundColor: context.toolsBg.withOpacity(0.9),
+                            barrierColor: AppColors.getDetailBgColor(
+                                    _themeProvider.isDarkModeEnabled)[1]
+                                .withOpacity(0.5),
+                            backgroundColor: AppColors.getDetailBgColor(
+                                    _themeProvider.isDarkModeEnabled)[1]
+                                .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return ReminderPicker(setReminder,
@@ -185,13 +197,17 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                       child: CircularButton(
                         icon: Icon(
                           Icons.delete,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: context.toolsBg.withOpacity(0.5),
-                            backgroundColor: context.toolsBg.withOpacity(0.9),
+                            barrierColor: AppColors.getDetailBgColor(
+                                    _themeProvider.isDarkModeEnabled)[1]
+                                .withOpacity(0.5),
+                            backgroundColor: AppColors.getDetailBgColor(
+                                    _themeProvider.isDarkModeEnabled)[1]
+                                .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return DeletePrayer(widget.prayer);
@@ -212,7 +228,7 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                       child: CircularButton(
                         icon: Icon(
                           Icons.check_box,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         onClick: () {
                           print('Fourth Button');
@@ -225,7 +241,7 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                     width: 25,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.brightBlue2,
+                        color: AppColors.lightBlue4,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(50),

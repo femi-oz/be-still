@@ -29,8 +29,12 @@ class PrayerCard extends StatelessWidget {
         var y = details.globalPosition.dy;
         showModalBottomSheet(
           context: context,
-          barrierColor: context.prayerMenuStart.withOpacity(0.3),
-          backgroundColor: context.prayerMenuStart.withOpacity(0.5),
+          barrierColor:
+              AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled)[0]
+                  .withOpacity(0.3),
+          backgroundColor:
+              AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled)[0]
+                  .withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
             return (_activeList == PrayerActiveScreen.group ||
@@ -53,7 +57,7 @@ class PrayerCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
-          color: AppColors.darkBlue,
+          color: AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -86,8 +90,9 @@ class PrayerCard extends StatelessWidget {
                                 ? Text(
                                     prayer.createdBy,
                                     style: AppTextStyles.regularText14.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.lightBlue4),
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.lightBlue4,
+                                    ),
                                   )
                                 : Container(),
                             Row(
@@ -120,7 +125,7 @@ class PrayerCard extends StatelessWidget {
                                 //     return Text(
                                 //       tag.toUpperCase(),
                                 //       style: TextStyle(
-                                //         color: context.prayerCardTags,
+                                //         color: AppColors.red,
                                 //         fontSize: 10,
                                 //       ),
                                 //     );
@@ -158,7 +163,7 @@ class PrayerCard extends StatelessWidget {
                 ],
               ),
               Divider(
-                color: AppColors.darkBlue,
+                color: AppColors.getDivider(_themeProvider.isDarkModeEnabled),
                 thickness: 0.5,
               ),
               Row(

@@ -1,6 +1,9 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class NotificationsSettings extends StatefulWidget {
   @override
@@ -25,6 +28,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
 
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -34,7 +38,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -42,17 +47,15 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Preferences',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -68,7 +71,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                   child: Text(
                     'Allow push Notifications?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -76,7 +80,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -93,7 +97,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                   child: Text(
                     'Allow text Notifications?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -101,7 +106,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -118,7 +123,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                   child: Text(
                     'Send notification email updates?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -126,7 +132,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -139,7 +145,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
             child: Text(
               'Set email update frequency',
               style: TextStyle(
-                color: context.inputFieldText,
+                color: AppColors.getTextFieldText(
+                    _themeProvider.isDarkModeEnabled),
                 fontSize: 12,
                 fontWeight: FontWeight.w300,
               ),
@@ -159,7 +166,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                   child: Text(
                     'Notify me when someone shares a prayer with me',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -167,7 +175,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),
@@ -184,7 +192,8 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                   child: Text(
                     'Notify me when someone posts to a Group I\'m in',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -192,7 +201,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 Switch.adaptive(
                   value: true,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),

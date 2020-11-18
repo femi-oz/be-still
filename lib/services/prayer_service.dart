@@ -166,7 +166,7 @@ class PrayerService {
           await transaction.set(_prayerCollectionReference.document(_prayerID),
               prayerData.toJson());
 
-          //store user prayer
+          //store group prayer
           await transaction.set(
               _groupPrayerCollectionReference.document(groupPrayerId),
               populateGroupPrayer(prayerData, _prayerID).toJson());

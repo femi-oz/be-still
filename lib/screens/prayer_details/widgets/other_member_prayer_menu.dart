@@ -2,9 +2,11 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +51,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
@@ -68,7 +71,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -77,14 +80,14 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.add,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Add to my List',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -103,7 +106,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -112,14 +115,14 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Share',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -138,7 +141,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -147,14 +150,14 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.calendar_today,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Reminder',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -173,7 +176,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -182,14 +185,14 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.brightness_3,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Snooze',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -208,7 +211,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -217,14 +220,14 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.remove_red_eye,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Hide',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -244,7 +247,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: context.inputFieldText,
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

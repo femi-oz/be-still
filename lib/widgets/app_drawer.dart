@@ -58,11 +58,9 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Text(
                           'LOGOUT',
-                          style: TextStyle(
-                            color: context.appBarActive,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppTextStyles.boldText20.copyWith(
+                              color: AppColors.getAppBarColor(
+                                  _themeProvider.isDarkModeEnabled)),
                         ),
                         onTap: () {
                           _authProvider.signOut();
@@ -73,7 +71,8 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Icon(
                           Icons.close,
-                          color: context.appBarActive,
+                          color: AppColors.getAppBarColor(
+                              _themeProvider.isDarkModeEnabled),
                         ),
                         onTap: () {
                           Navigator.pop(context);
@@ -99,13 +98,8 @@ class CustomDrawer extends StatelessWidget {
                               Navigator.of(context)
                                   .pushReplacementNamed(PrayerScreen.routeName);
                             },
-                            title: Text(
-                              "MY LIST",
-                              style: TextStyle(
-                                color: context.brightBlue2,
-                                fontSize: 16,
-                              ),
-                            ),
+                            title: Text("MY LIST",
+                                style: AppTextStyles.boldText20),
                           ),
                           ListTile(
                             onTap: () => Navigator.push(
@@ -114,60 +108,35 @@ class CustomDrawer extends StatelessWidget {
                                 builder: (context) => AddPrayer(isEdit: false),
                               ),
                             ),
-                            title: Text(
-                              "ADD A PRAYER",
-                              style: TextStyle(
-                                color: context.brightBlue2,
-                                fontSize: 16,
-                              ),
-                            ),
+                            title: Text("ADD A PRAYER",
+                                style: AppTextStyles.boldText20),
                           ),
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushReplacementNamed(PrayerMode.routeName),
-                            title: Text(
-                              "PRAY",
-                              style: TextStyle(
-                                color: context.brightBlue2,
-                                fontSize: 16,
-                              ),
-                            ),
+                            title:
+                                Text("PRAY", style: AppTextStyles.boldText20),
                           ),
                           ListTile(
                             onTap: _launchURL,
-                            title: Text(
-                              "BIBLE",
-                              style: TextStyle(
-                                color: context.brightBlue2,
-                                fontSize: 16,
-                              ),
-                            ),
+                            title:
+                                Text("BIBLE", style: AppTextStyles.boldText20),
                           ),
                           ListTile(
                             onTap: () {
                               Navigator.of(context).pushReplacementNamed(
                                   GrowMyPrayerLifeScreen.routeName);
                             },
-                            title: Text(
-                              "GROW MY PRAYER LIFE",
-                              style: TextStyle(
-                                color: context.brightBlue2,
-                                fontSize: 16,
-                              ),
-                            ),
+                            title: Text("GROW MY PRAYER LIFE",
+                                style: AppTextStyles.boldText20),
                           ),
                           ListTile(
                             onTap: () {
                               Navigator.of(context).pushReplacementNamed(
                                   SettingsScreen.routeName);
                             },
-                            title: Text(
-                              "SETTINGS",
-                              style: TextStyle(
-                                color: context.brightBlue2,
-                                fontSize: 16,
-                              ),
-                            ),
+                            title: Text("SETTINGS",
+                                style: AppTextStyles.boldText20),
                           ),
                         ],
                       ),

@@ -99,17 +99,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
-                    colors: [
-                      context.prayerMenuStart,
-                      context.prayerMenuEnd,
-                    ],
+                    colors: AppColors.getPrayerMenu(
+                        _themeProvider.isDarkModeEnabled),
                   ),
                 ),
                 child: Text(
                   'Create a Group',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: context.settingsHeader,
+                      color: AppColors.offWhite2,
                       fontSize: 22,
                       fontWeight: FontWeight.w700),
                 ),
@@ -162,7 +160,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                 color: Colors.transparent,
                                 child: Icon(
                                   Icons.arrow_forward,
-                                  color: context.offWhite,
+                                  color: AppColors.offWhite1,
                                 ),
                               ),
                             ),

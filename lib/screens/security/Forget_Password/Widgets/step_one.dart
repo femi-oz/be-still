@@ -1,7 +1,9 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ForgetPasswordOne extends StatefulWidget {
   final usernameController;
@@ -27,6 +29,7 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
 
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Form(
       key: widget.formKey,
       autovalidate: widget.autoValidate,
@@ -58,10 +61,12 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
                 width: MediaQuery.of(context).size.width * 0.4,
                 decoration: BoxDecoration(
                   color: type == CodeType.email
-                      ? context.toolsActiveBtn.withOpacity(0.5)
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
-                    color: context.inputFieldBorder,
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -85,10 +90,12 @@ class _ForgetPasswordOneState extends State<ForgetPasswordOne> {
                 width: MediaQuery.of(context).size.width * 0.42,
                 decoration: BoxDecoration(
                   color: type == CodeType.text
-                      ? context.toolsActiveBtn.withOpacity(0.5)
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
-                    color: context.inputFieldBorder,
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),

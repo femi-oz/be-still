@@ -1,7 +1,10 @@
 import 'package:be_still/enums/groupType.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:provider/provider.dart';
 
 class CreateGroupForm extends StatefulWidget {
   final groupNameController;
@@ -31,6 +34,7 @@ class CreateGroupForm extends StatefulWidget {
 class _CreateGroupFormState extends State<CreateGroupForm> {
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Form(
       key: widget.formKey,
       autovalidate: widget.autoValidate,
@@ -84,10 +88,12 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 height: 30,
                 decoration: BoxDecoration(
                   color: widget.option == GroupType.normal
-                      ? context.toolsActiveBtn.withOpacity(0.3)
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.3)
                       : Colors.transparent,
                   border: Border.all(
-                    color: context.inputFieldBorder,
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -98,7 +104,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                     child: Text(
                       'NORMAL',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
@@ -111,10 +117,12 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 height: 30,
                 decoration: BoxDecoration(
                   color: widget.option == GroupType.private
-                      ? context.toolsActiveBtn.withOpacity(0.5)
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
-                    color: context.inputFieldBorder,
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -127,7 +135,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                     child: Text(
                       'PRIVATE',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
@@ -140,10 +148,12 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 height: 30,
                 decoration: BoxDecoration(
                   color: widget.option == GroupType.feed
-                      ? context.toolsActiveBtn.withOpacity(0.5)
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
-                    color: context.inputFieldBorder,
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -156,7 +166,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                     child: Text(
                       'FEED',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),

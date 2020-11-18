@@ -9,7 +9,7 @@
 //   //     key: key,
 //   //     insetPadding: EdgeInsets.symmetric(
 //   //         vertical: MediaQuery.of(context).size.height * 0.35, horizontal: 50),
-//   //     backgroundColor: context.offWhite,
+//   //     backgroundColor: AppColors.offWhite1,
 //   //     shape: RoundedRectangleBorder(
 //   //       side: BorderSide(color: Colors.blue[800]),
 //   //       borderRadius: BorderRadius.all(Radius.circular(10.0)),

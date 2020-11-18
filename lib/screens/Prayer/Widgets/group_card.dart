@@ -22,7 +22,9 @@ class GroupCard extends StatelessWidget {
         backgroundColor:
             AppColors.getPrayerCardBgColor(_themeProvider.isDarkModeEnabled),
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: AppColors.lightBlue3),
+          side: BorderSide(
+            color: AppColors.lightBlue3,
+          ),
           borderRadius: BorderRadius.all(
             Radius.circular(10.0),
           ),
@@ -69,7 +71,8 @@ class GroupCard extends StatelessWidget {
                               Text(
                                 '${groupData.group.createdBy}',
                                 style: AppTextStyles.regularText16.copyWith(
-                                  color: context.inputFieldText,
+                                  color: AppColors.getTextFieldText(
+                                      _themeProvider.isDarkModeEnabled),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -86,7 +89,8 @@ class GroupCard extends StatelessWidget {
                               Text(
                                 '${groupData.group.location}',
                                 style: AppTextStyles.regularText16.copyWith(
-                                  color: context.inputFieldText,
+                                  color: AppColors.getTextFieldText(
+                                      _themeProvider.isDarkModeEnabled),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -103,7 +107,8 @@ class GroupCard extends StatelessWidget {
                               Text(
                                 '${groupData.group.organization}',
                                 style: AppTextStyles.regularText16.copyWith(
-                                  color: context.inputFieldText,
+                                  color: AppColors.getTextFieldText(
+                                      _themeProvider.isDarkModeEnabled),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -120,7 +125,8 @@ class GroupCard extends StatelessWidget {
                               Text(
                                 '${groupData.group.status} Group',
                                 style: AppTextStyles.regularText16.copyWith(
-                                  color: context.inputFieldText,
+                                  color: AppColors.getTextFieldText(
+                                      _themeProvider.isDarkModeEnabled),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -134,7 +140,8 @@ class GroupCard extends StatelessWidget {
                           Text(
                             '${groupData.groupUsers.length} current members',
                             style: AppTextStyles.regularText16.copyWith(
-                              color: context.inputFieldText,
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -142,7 +149,8 @@ class GroupCard extends StatelessWidget {
                           Text(
                             '2 contacts',
                             style: AppTextStyles.regularText16.copyWith(
-                              color: context.inputFieldText,
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -152,7 +160,8 @@ class GroupCard extends StatelessWidget {
                       Text(
                         groupData.group.description,
                         style: AppTextStyles.regularText16.copyWith(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -160,7 +169,8 @@ class GroupCard extends StatelessWidget {
                       Text(
                         'Would you like to request to join?',
                         style: AppTextStyles.regularText16.copyWith(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                         ),
                         textAlign: TextAlign.left,
                       ),
@@ -171,7 +181,8 @@ class GroupCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(
-                            color: context.inputFieldBorder,
+                            color: AppColors.getCardBorder(
+                                _themeProvider.isDarkModeEnabled),
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(5),
@@ -183,7 +194,7 @@ class GroupCard extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // Icon(Icons.more_horiz,
-                                //     color: context.brightBlue),
+                                //     color: AppColors.lightBlue3),
                                 Text(
                                   'REQUEST',
                                   style: AppTextStyles.boldText20,
@@ -237,12 +248,12 @@ class GroupCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     groupData.group.name.toUpperCase(),
-                    style: TextStyle(color: context.brightBlue, fontSize: 12),
+                    style: TextStyle(color: AppColors.lightBlue3, fontSize: 12),
                     textAlign: TextAlign.left,
                   ),
                   Text(
                     '${groupData.group.location}'.toUpperCase(),
-                    style: TextStyle(color: context.brightBlue2, fontSize: 10),
+                    style: TextStyle(color: AppColors.lightBlue4, fontSize: 10),
                     textAlign: TextAlign.left,
                   ),
                 ],

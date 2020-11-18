@@ -1,14 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkThemePreferenes {
-  addIsDarkMode(bool isDarkMode) async {
+  addThemeMode(String themeMode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isDarkMode', isDarkMode);
+    prefs.setString('themeMode', themeMode);
   }
 
-  Future<bool> getIsDarkMode() async {
+  Future<String> getThemeMode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool boolValue = prefs.getBool('isDarkMode') ?? false;
-    return boolValue;
+    String themeMode =
+        prefs.getString('themeMode') ?? ThemeMode.light.toString();
+    return themeMode;
   }
 }

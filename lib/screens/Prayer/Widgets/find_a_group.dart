@@ -1,5 +1,6 @@
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -25,6 +26,7 @@ class _FindAGroupState extends State<FindAGroup> {
   @override
   Widget build(BuildContext context) {
     var _filteredGroups = Provider.of<GroupProvider>(context).filteredAllGroups;
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.0),
       height: MediaQuery.of(context).size.height * 0.8,
@@ -81,7 +83,8 @@ class _FindAGroupState extends State<FindAGroup> {
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(
-                            color: context.inputFieldBorder,
+                            color: AppColors.getCardBorder(
+                                _themeProvider.isDarkModeEnabled),
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(5),
@@ -93,7 +96,7 @@ class _FindAGroupState extends State<FindAGroup> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.more_horiz,
-                                    color: context.brightBlue),
+                                    color: AppColors.lightBlue3),
                                 Text(
                                   'ADVANCE SEARCH',
                                   style: AppTextStyles.boldText24,
@@ -105,8 +108,10 @@ class _FindAGroupState extends State<FindAGroup> {
                             FocusScope.of(context).unfocus(),
                             showModalBottomSheet(
                               context: context,
-                              barrierColor: context.toolsBg,
-                              backgroundColor: context.toolsBg,
+                              barrierColor: AppColors.getDetailBgColor(
+                                  _themeProvider.isDarkModeEnabled)[1],
+                              backgroundColor: AppColors.getDetailBgColor(
+                                  _themeProvider.isDarkModeEnabled)[1],
                               isScrollControlled: true,
                               builder: (BuildContext context) {
                                 return FindGroupTools();
@@ -137,7 +142,8 @@ class _FindAGroupState extends State<FindAGroup> {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(
-                          color: context.inputFieldBorder,
+                          color: AppColors.getCardBorder(
+                              _themeProvider.isDarkModeEnabled),
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -148,11 +154,12 @@ class _FindAGroupState extends State<FindAGroup> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.more_horiz, color: context.brightBlue),
+                              Icon(Icons.more_horiz,
+                                  color: AppColors.lightBlue3),
                               Text(
                                 'ADVANCE SEARCH',
                                 style: TextStyle(
-                                    color: context.brightBlue,
+                                    color: AppColors.lightBlue3,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700),
                               ),
@@ -163,8 +170,10 @@ class _FindAGroupState extends State<FindAGroup> {
                           FocusScope.of(context).unfocus(),
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: context.toolsBg,
-                            backgroundColor: context.toolsBg,
+                            barrierColor: AppColors.getDetailBgColor(
+                                _themeProvider.isDarkModeEnabled)[1],
+                            backgroundColor: AppColors.getDetailBgColor(
+                                _themeProvider.isDarkModeEnabled)[1],
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return FindGroupTools();

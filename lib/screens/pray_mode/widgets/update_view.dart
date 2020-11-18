@@ -29,7 +29,7 @@ class UpdateView extends StatelessWidget {
               //           child: Text(
               //             username,
               //             style: TextStyle(
-              //                 color: context.brightBlue,
+              //                 color: AppColors.lightBlue3,
               //                 fontSize: 18,
               //                 fontWeight: FontWeight.w500),
               //             textAlign: TextAlign.center,
@@ -73,7 +73,7 @@ class UpdateView extends StatelessWidget {
               //                           Text(
               //                             t.toUpperCase(),
               //                             style: TextStyle(
-              //                               color: context.prayerCardTags,
+              //                               color: AppColors.red,
               //                             ),
               //                           ),
               //                         ],
@@ -91,7 +91,7 @@ class UpdateView extends StatelessWidget {
               //                 child: Text(
               //                   u.content,
               //                   style: TextStyle(
-              //                     color: context.inputFieldText,
+              //                     color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
               //                     fontSize: 14,
               //                     fontWeight: FontWeight.w300,
               //                     height: 2,
@@ -143,7 +143,7 @@ class UpdateView extends StatelessWidget {
               //                     child: Text(
               //                       t.toUpperCase(),
               //                       style: TextStyle(
-              //                         color: context.prayerCardTags,
+              //                         color: AppColors.red,
               //                       ),
               //                     ),
               //                   ),
@@ -159,7 +159,7 @@ class UpdateView extends StatelessWidget {
               //               child: Text(
               //                 prayer.content,
               //                 style: TextStyle(
-              //                   color: context.inputFieldText,
+              //                   color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
               //                   fontSize: 14,
               //                   fontWeight: FontWeight.w300,
               //                   height: 2,

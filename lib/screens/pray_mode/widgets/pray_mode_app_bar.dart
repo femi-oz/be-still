@@ -1,5 +1,6 @@
 import 'package:be_still/data/prayer.data.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/app_theme.dart';
 
@@ -35,7 +36,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
             children: <Widget>[
               Text(
                 '7:30 AM',
-                style: TextStyle(color: context.brightBlue2, fontSize: 12),
+                style: TextStyle(color: AppColors.lightBlue4, fontSize: 12),
               ),
             ],
           ),
@@ -43,7 +44,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
         title: Text(
           '// TODO',
           // '$current OF $totalPrayers',
-          style: TextStyle(color: context.brightBlue2, fontSize: 12),
+          style: TextStyle(color: AppColors.lightBlue4, fontSize: 12),
         ),
         actions: <Widget>[
           Row(
@@ -53,7 +54,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
                   return IconButton(
                     icon: Icon(
                       AppIcons.menu,
-                      color: context.brightBlue2,
+                      color: AppColors.lightBlue4,
                       size: 24,
                     ),
                     onPressed: () {

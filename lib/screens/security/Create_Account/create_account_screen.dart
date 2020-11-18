@@ -10,13 +10,11 @@ import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
-import 'package:be_still/widgets/dialog.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'Widgets/create-account-form.dart';
-import 'Widgets/success.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   static const routeName = '/create-account';
@@ -59,18 +57,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
-    UserModel _user = Provider.of<UserProvider>(context).currentUser;
 
     final UserModel _userData = UserModel(
       churchId: 0,
-      createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+      createdBy: '${_firstnameController.text} ${_lastnameController.text}'
+          .toUpperCase(),
       createdOn: DateTime.now(),
       dateOfBirth: _selectedDate,
       email: _emailController.text,
       firstName: _firstnameController.text,
       keyReference: '',
       lastName: _lastnameController.text,
-      modifiedBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
+      modifiedBy: '${_firstnameController.text} ${_lastnameController.text}'
+          .toUpperCase(),
       modifiedOn: DateTime.now(),
       phone: '',
     );
@@ -82,14 +81,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   password: _passwordController.text, userData: _userData);
 
       if (result) {
-        BeStilDialog.hideLoading(_key);
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser();
-        // setState(() => step += 1);
         new Timer(
             Duration(seconds: 2),
             () => Navigator.of(context)
                 .pushReplacementNamed(PrayerScreen.routeName));
+        BeStilDialog.hideLoading(_key);
       }
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(_key);
@@ -108,7 +106,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(
       new SnackBar(
-        backgroundColor: context.offWhite,
+        backgroundColor: AppColors.offWhite1,
         content: new Text(value),
       ),
     );
@@ -146,24 +144,21 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     children: <Widget>[
                       Container(
                         child: Container(
-                            child:
-                                // step == 2
-                                //     ?
-                                CreateAccountForm(
-                          autoValidate: _autoValidate,
-                          confirmPasswordController: _confirmPasswordController,
-                          passwordController: _passwordController,
-                          datePickerController: _date,
-                          dobController: _dobController,
-                          emailController: _emailController,
-                          formKey: _formKey,
-                          firstnameController: _firstnameController,
-                          lastnameController: _lastnameController,
-                          selectDate: _selectDate,
-                          agreeTerms: _agreeTerms,
-                        )
-                            // : CreateAccountSuccess(),
-                            ),
+                          child: CreateAccountForm(
+                            autoValidate: _autoValidate,
+                            confirmPasswordController:
+                                _confirmPasswordController,
+                            passwordController: _passwordController,
+                            datePickerController: _date,
+                            dobController: _dobController,
+                            emailController: _emailController,
+                            formKey: _formKey,
+                            firstnameController: _firstnameController,
+                            lastnameController: _lastnameController,
+                            selectDate: _selectDate,
+                            agreeTerms: _agreeTerms,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 10),
                       _buildFooter(),
@@ -179,11 +174,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   _buildFooter() {
-    return
-        // step > 1
-        // ? Container()
-        // :
-        Column(
+    return Column(
       children: <Widget>[
         InkWell(
           onTap: () => !_enableSubmit
@@ -207,7 +198,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             child: Icon(
               _enableSubmit ? Icons.arrow_forward : Icons.do_not_disturb,
-              color: context.offWhite,
+              color: AppColors.offWhite1,
             ),
           ),
         ),

@@ -1,5 +1,8 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/app_theme.dart';
 
@@ -43,6 +46,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   var selectedAMpm = 'AM';
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       child: Column(
@@ -76,7 +80,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                             i,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              color: context.brightBlue2,
+                                              color: AppColors.lightBlue4,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -103,7 +107,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     child: Text(
                                       r,
                                       style: TextStyle(
-                                        color: context.brightBlue2,
+                                        color: AppColors.lightBlue4,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -130,7 +134,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     child: Text(
                                       i < 10 ? '0$i' : '$i',
                                       style: TextStyle(
-                                        color: context.brightBlue2,
+                                        color: AppColors.lightBlue4,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -152,7 +156,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                       ':',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: context.brightBlue2,
+                                        color: AppColors.lightBlue4,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -177,7 +181,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     child: Text(
                                       i < 10 ? '0$i' : '$i',
                                       style: TextStyle(
-                                        color: context.brightBlue2,
+                                        color: AppColors.lightBlue4,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -201,7 +205,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                         child: Text(
                                           x,
                                           style: TextStyle(
-                                            color: context.brightBlue2,
+                                            color: AppColors.lightBlue4,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -240,7 +244,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           width: MediaQuery.of(context).size.width * .38,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: context.inputFieldBorder,
+                              color: AppColors.getCardBorder(
+                                  _themeProvider.isDarkModeEnabled),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -251,7 +256,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               Text(
                                 'SAVE',
                                 style: TextStyle(
-                                  color: context.brightBlue2,
+                                  color: AppColors.lightBlue4,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -269,7 +274,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           width: MediaQuery.of(context).size.width * .38,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: context.inputFieldBorder,
+                              color: AppColors.getCardBorder(
+                                  _themeProvider.isDarkModeEnabled),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -280,7 +286,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               Text(
                                 'CANCEL',
                                 style: TextStyle(
-                                  color: context.brightBlue2,
+                                  color: AppColors.lightBlue4,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),

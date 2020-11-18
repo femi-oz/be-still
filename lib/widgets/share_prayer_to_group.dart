@@ -1,5 +1,7 @@
 import 'package:be_still/data/group.data.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_theme.dart';
@@ -14,6 +16,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    var _themeProvider = Provider.of<ThemeProvider>(context);
 
     // final groups =
     //     groupData.where((gl) => gl.members.contains(_currentUser.id));
@@ -30,11 +33,11 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: context.toolsBackBtn),
+                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
                     label: Text(
                       'BACK',
                       style: TextStyle(
-                        color: context.toolsBackBtn,
+                        color: AppColors.lightBlue5,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -57,10 +60,10 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                 //                 horizontal: 50, vertical: 10),
                 //             decoration: BoxDecoration(
                 //               color: selectedGroup == group.id
-                //                   ? context.toolsActiveBtn.withOpacity(0.2)
+                //                   ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled).withOpacity(0.2)
                 //                   : Colors.transparent,
                 //               border: Border.all(
-                //                 color: context.toolsBtnBorder,
+                //                 color: AppColors.lightBlue6,
                 //                 width: 1,
                 //               ),
                 //               borderRadius: BorderRadius.circular(10),
@@ -72,7 +75,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                 //                   child: Text(
                 //                     group.name,
                 //                     style: TextStyle(
-                //                       color: context.brightBlue2,
+                //                       color: AppColors.lightBlue4,
                 //                       fontSize: 14,
                 //                       fontWeight: FontWeight.w500,
                 //                     ),
@@ -93,7 +96,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: context.inputFieldText,
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

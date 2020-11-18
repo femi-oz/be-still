@@ -1,15 +1,18 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import './../utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class BeStillSnackbar {
   static showInSnackBar({GlobalKey<ScaffoldState> key, String message}) {
     key.currentState.showSnackBar(
       new SnackBar(
-        backgroundColor: key.currentContext.prayerMenuEnd,
+        backgroundColor: AppColors.getPrayerMenu(
+            Provider.of<ThemeProvider>(key.currentContext)
+                .isDarkModeEnabled)[1],
         content: Row(
           children: [
-            Icon(Icons.error,
-                color: key.currentContext.prayerCardTags.withOpacity(0.8)),
+            Icon(Icons.error, color: AppColors.red.withOpacity(0.8)),
             SizedBox(width: 10.0),
             Text(message),
           ],

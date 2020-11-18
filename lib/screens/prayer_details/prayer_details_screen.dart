@@ -100,14 +100,14 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   //           Icon(
                   //             Icons.calendar_today,
                   //             size: 14,
-                  //             color: context.toolsBackBtn,
+                  //             color: AppColors.lightBlue5,
                   //           ),
                   //           Container(
                   //             margin: EdgeInsets.only(left: 10),
                   //             child: Text(
                   //               prayer.reminder,
                   //               style: TextStyle(
-                  //                 color: context.toolsBackBtn,
+                  //                 color: AppColors.lightBlue5,
                   //               ),
                   //             ),
                   //           ),
@@ -145,12 +145,16 @@ class _PrayerDetailsState extends State<PrayerDetails> {
             IconButton(
               icon: Icon(
                 Icons.more_horiz,
-                color: context.brightBlue,
+                color: AppColors.lightBlue3,
               ),
               onPressed: () => showModalBottomSheet(
                 context: context,
-                barrierColor: context.toolsBg.withOpacity(0.5),
-                backgroundColor: context.toolsBg.withOpacity(0.9),
+                barrierColor: AppColors.getDetailBgColor(
+                        _themeProvider.isDarkModeEnabled)[1]
+                    .withOpacity(0.5),
+                backgroundColor: AppColors.getDetailBgColor(
+                        _themeProvider.isDarkModeEnabled)[1]
+                    .withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return _buildMenu();

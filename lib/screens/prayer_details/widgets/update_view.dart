@@ -80,7 +80,7 @@ class UpdateView extends StatelessWidget {
                           //             Text(
                           //               t.toUpperCase(),
                           //               style: TextStyle(
-                          //                 color: context.prayerCardTags,
+                          //                 color: AppColors.red,
                           //               ),
                           //             ),
                           //           ],
@@ -156,7 +156,7 @@ class UpdateView extends StatelessWidget {
                         //         child: Text(
                         //           t.toUpperCase(),
                         //           style: TextStyle(
-                        //             color: context.prayerCardTags,
+                        //             color: AppColors.red,
                         //           ),
                         //         ),
                         //       ),

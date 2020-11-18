@@ -3,9 +3,11 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +76,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -111,7 +114,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -120,14 +123,14 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.add,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Add to my List',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -146,7 +149,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -155,14 +158,14 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Share',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -181,7 +184,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -190,14 +193,14 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.calendar_today,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Reminder',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -216,7 +219,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -225,14 +228,14 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.remove_red_eye,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Hide',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -251,7 +254,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -260,7 +263,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.remove_red_eye,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
@@ -269,7 +272,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                                 ? 'Show in Group'
                                 : 'Hide From Group',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -288,7 +291,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -297,14 +300,14 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.message,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Message Requestor',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -324,7 +327,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: context.inputFieldText,
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

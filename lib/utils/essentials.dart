@@ -1,16 +1,43 @@
 import 'package:flutter/material.dart';
 
-Color dynamicColor({bool isDarkMode, Color light, Color dark}) {
+Color dynamicColor({
+  @required bool isDarkMode,
+  @required int light,
+  @required int dark,
+}) {
   Color retVal;
   switch (isDarkMode) {
     case true:
-      retVal = const Color(0xFF0D1319);
+      retVal = Color(dark);
       break;
     case false:
-      retVal = const Color(0xFFFFFFFF);
+      retVal = Color(light);
       break;
     default:
-      retVal = const Color(0xFFFFFFFF);
+      retVal = Color(light);
+
+      break;
+  }
+  return retVal;
+}
+
+List<Color> dynamicGradientColor({
+  @required bool isDarkMode,
+  @required int light,
+  @required int dark,
+  @required int light2,
+  @required int dark2,
+}) {
+  List<Color> retVal;
+  switch (isDarkMode) {
+    case true:
+      retVal = [Color(dark), Color(dark2)];
+      break;
+    case false:
+      retVal = [Color(light), Color(light2)];
+      break;
+    default:
+      retVal = [Color(light), Color(light2)];
 
       break;
   }
@@ -18,147 +45,124 @@ Color dynamicColor({bool isDarkMode, Color light, Color dark}) {
 }
 
 class AppColors {
-  static Color appBarBg(bool isDarkMode) => dynamicColor(
+  static List<Color> getBackgroudColor(bool isDarkMode) => dynamicGradientColor(
       isDarkMode: isDarkMode,
-      light: Color(0xFFFFFFFF),
-      dark: Color(0xFF0D1319));
+      light: 0xFFCED1D4,
+      light2: 0xFFFAFBFB,
+      dark: 0xFF021D3C,
+      dark2: 0xFF073668);
+  static List<Color> getDetailBgColor(bool isDarkMode) => dynamicGradientColor(
+      isDarkMode: isDarkMode,
+      light: 0xFFF0F4Fa,
+      light2: 0xFFE6E9ED,
+      dark: 0xFF012B4C,
+      dark2: 0xFF033565);
+  static List<Color> getPrayerMenu(bool isDarkMode) => dynamicGradientColor(
+      isDarkMode: isDarkMode,
+      light: 0xFF00438D,
+      light2: 0xFF009CCE,
+      dark: 0xFF014A70,
+      dark2: 0xFF013053);
 
-  static List<Color> getBackgroudColor(bool isDarkMode) {
-    List<Color> retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = [const Color(0xFF021D3C), const Color(0xFF073668)];
-        break;
-      case false:
-        retVal = [const Color(0xFFCED1D4), const Color(0xFFFAFBFB)];
-        break;
-      default:
-        retVal = [const Color(0xFFCED1D4), const Color(0xFFFAFBFB)];
-
-        break;
-    }
-    return retVal;
-  }
-
-  static List<Color> getDetailBgColor(bool isDarkMode) {
-    List<Color> retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = [const Color(0xFF012B4C), const Color(0xFF033565)];
-        break;
-      case false:
-        retVal = [const Color(0xFFf0f4fa), const Color(0xFFE6E9ED)];
-        break;
-      default:
-        retVal = [const Color(0xFFf0f4fa), const Color(0xFFE6E9ED)];
-
-        break;
-    }
-    return retVal;
-  }
-
-  static Color getTextFieldBgColor(bool isDarkMode) {
-    Color retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = const Color(0xFF022F52).withOpacity(0.4);
-        break;
-      case false:
-        retVal = const Color(0xFFFFFFFF).withOpacity(0.5);
-        break;
-      default:
-        retVal = const Color(0xFFFFFFFF).withOpacity(0.5);
-        break;
-    }
-    return retVal;
-  }
-
-  static Color getAppBarColor(bool isDarkMode) {
-    Color retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = const Color(0xFF002D4B);
-        break;
-      case false:
-        retVal = const Color(0xFF005780);
-        break;
-      default:
-        retVal = const Color(0xFF005780);
-
-        break;
-    }
-    return retVal;
-  }
-
-  static Color getPrayerPrimaryColor(bool isDarkMode) {
-    Color retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = const Color(0xFF014E75);
-        break;
-      case false:
-        retVal = const Color(0xFF5EC2E1);
-        break;
-      default:
-        retVal = const Color(0xFF5EC2E1);
-
-        break;
-    }
-    return retVal;
-  }
-
-  static Color getPrayerMenuColor(bool isDarkMode) {
-    Color retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = const Color(0xFF005780);
-        break;
-      case false:
-        retVal = const Color(0xFFFFFFFF);
-        break;
-      default:
-        retVal = const Color(0xFFFFFFFF);
-
-        break;
-    }
-    return retVal;
-  }
-
-  static Color getPrayerCardBgColor(bool isDarkMode) {
-    Color retVal;
-    switch (isDarkMode) {
-      case true:
-        retVal = const Color(0xFF012B4D);
-        break;
-      case false:
-        retVal = const Color(0xFFFFFFFF);
-        break;
-      default:
-        retVal = const Color(0xFFFFFFFF);
-
-        break;
-    }
-    return retVal;
-  }
+  static Color getInactvePrayerMenu(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFFFFFFF,
+        dark: 0xFF005780,
+      );
+  static Color appBarBg(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFFFFFFF,
+        dark: 0xFF0D1319,
+      );
+  static Color getTextFieldBgColor(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFFFFFFF,
+        dark: 0xFF022F52,
+      );
+  static Color getAppBarColor(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF005780,
+        dark: 0xFF002D4B,
+      );
+  static Color getPrayerPrimaryColor(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF5EC2E1,
+        dark: 0xFF014E75,
+      );
+  static Color getPrayerMenuColor(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFFFFFFF,
+        dark: 0xFF005780,
+      );
+  static Color getPrayerCardBgColor(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFFFFFFF,
+        dark: 0xFF012B4D,
+      );
+  static Color getDropShadow(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFBBBDBF,
+        dark: 0xFF011D3D,
+      );
+  static Color getActiveBtn(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF9BD4E5,
+        dark: 0xFF025584,
+      );
+  static Color getCardBorder(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFFFFFFF,
+        dark: 0xFF004E75,
+      );
+  static Color getDivider(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF808C90,
+        dark: 0xFF00547C,
+      );
+  static Color getTextFieldText(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF79858A,
+        dark: 0xFFC1C5C8,
+      );
+  static Color getPrayeModeBg(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFE6E9ED,
+        dark: 0xFF101820,
+      );
+  static Color getPrayeModeBorder(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF0C3A4C,
+        dark: 0xFF0C3A4C,
+      );
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),
     const Color(0xFF001B42),
   ];
   static const Color shadowColor = const Color(0xFF001439);
+
+  static const Color offWhite1 = const Color(0xFF005780);
+  static const Color offWhite2 = const Color(0xFFC1C5C8);
   static const Color offWhite4 = const Color(0xFFF1F5F9);
 
+  static const Color dimBlue = const Color(0xFF01537B);
   static const Color lightBlue1 = const Color(0xFF005882);
   static const Color lightBlue2 = const Color(0xFF009DCE);
   static const Color lightBlue3 = const Color(0xFF00ACD8);
   static const Color lightBlue4 = const Color(0xFF009FD0);
+  static const Color lightBlue5 = const Color(0xFF01486C);
+  static const Color lightBlue6 = const Color(0xFF027BA6);
 
   static const Color grey = const Color(0xFF51575C);
+  static const Color grey2 = const Color(0xFF003B87);
+  static const Color grey3 = const Color(0xFF004166);
+
   static const Color red = const Color(0xFFbf0606);
+
   static const Color darkBlue = const Color(0xFF1B3A5E);
   static const Color darkBlue2 = const Color(0xFF015380);
+  static const Color darkBlue3 = const Color(0xFF31373D);
 
-  // static const Color offWhite5 = const Color(0xFF005780);
   // static const Color blueGrey = const Color(0xFF51575C);
 
   // static const Color lightBlue = const Color(0xFF4BC2FF);

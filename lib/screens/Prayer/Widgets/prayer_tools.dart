@@ -1,4 +1,7 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import './../../../utils/app_theme.dart';
 
 class PrayerTools extends StatefulWidget {
@@ -12,6 +15,7 @@ class PrayerTools extends StatefulWidget {
 class _PrayerToolsState extends State<PrayerTools> {
   var view = 'active';
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.only(top: 40),
       child: Column(
@@ -20,11 +24,11 @@ class _PrayerToolsState extends State<PrayerTools> {
             alignment: Alignment.centerLeft,
             child: FlatButton.icon(
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back, color: context.toolsBackBtn),
+              icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
               label: Text(
                 'BACK',
                 style: TextStyle(
-                  color: context.toolsBackBtn,
+                  color: AppColors.lightBlue5,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -42,7 +46,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                       Text(
                         'VIEW',
                         style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -63,10 +67,12 @@ class _PrayerToolsState extends State<PrayerTools> {
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
                             color: view == 'active'
-                                ? context.toolsActiveBtn.withOpacity(0.2)
+                                ? AppColors.getActiveBtn(
+                                        _themeProvider.isDarkModeEnabled)
+                                    .withOpacity(0.2)
                                 : Colors.transparent,
                             border: Border.all(
-                              color: context.toolsBtnBorder,
+                              color: AppColors.lightBlue6,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
@@ -76,7 +82,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                             child: Text(
                               'ACTIVE',
                               style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -100,10 +106,12 @@ class _PrayerToolsState extends State<PrayerTools> {
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
                             color: view == 'snoozed'
-                                ? context.toolsActiveBtn.withOpacity(0.2)
+                                ? AppColors.getActiveBtn(
+                                        _themeProvider.isDarkModeEnabled)
+                                    .withOpacity(0.2)
                                 : Colors.transparent,
                             border: Border.all(
-                              color: context.toolsBtnBorder,
+                              color: AppColors.lightBlue6,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
@@ -113,7 +121,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                             child: Text(
                               'SNOOZED',
                               style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -137,10 +145,12 @@ class _PrayerToolsState extends State<PrayerTools> {
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
                             color: view == 'archived'
-                                ? context.toolsActiveBtn.withOpacity(0.2)
+                                ? AppColors.getActiveBtn(
+                                        _themeProvider.isDarkModeEnabled)
+                                    .withOpacity(0.2)
                                 : Colors.transparent,
                             border: Border.all(
-                              color: context.toolsBtnBorder,
+                              color: AppColors.lightBlue6,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
@@ -150,7 +160,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                             child: Text(
                               'ARCHIVED',
                               style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -174,10 +184,12 @@ class _PrayerToolsState extends State<PrayerTools> {
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
                             color: view == 'answered'
-                                ? context.toolsActiveBtn.withOpacity(0.2)
+                                ? AppColors.getActiveBtn(
+                                        _themeProvider.isDarkModeEnabled)
+                                    .withOpacity(0.2)
                                 : Colors.transparent,
                             border: Border.all(
-                              color: context.toolsBtnBorder,
+                              color: AppColors.lightBlue6,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
@@ -187,7 +199,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                             child: Text(
                               'ANSWERED',
                               style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),

@@ -1,8 +1,10 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -66,6 +68,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
   }
 
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
@@ -79,7 +82,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
               'Are you sure you want to delete this prayer?',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: context.brightBlue2,
+                color: AppColors.lightBlue4,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 height: 1.5,
@@ -94,7 +97,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
               margin: EdgeInsets.all(40),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: context.prayerCardTags,
+                  color: AppColors.red,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -105,7 +108,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                   Text(
                     'DELETE',
                     style: TextStyle(
-                      color: context.prayerCardTags,
+                      color: AppColors.red,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -127,7 +130,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: MediaQuery.of(context).size.width * .38,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.inputFieldBorder,
+                        color: AppColors.getCardBorder(
+                            _themeProvider.isDarkModeEnabled),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -138,7 +142,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                         Text(
                           'ARCHIVE',
                           style: TextStyle(
-                            color: context.brightBlue2,
+                            color: AppColors.lightBlue4,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
@@ -156,7 +160,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: MediaQuery.of(context).size.width * .38,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.inputFieldBorder,
+                        color: AppColors.getCardBorder(
+                            _themeProvider.isDarkModeEnabled),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -167,7 +172,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                         Text(
                           'CANCEL',
                           style: TextStyle(
-                            color: context.brightBlue2,
+                            color: AppColors.lightBlue4,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),

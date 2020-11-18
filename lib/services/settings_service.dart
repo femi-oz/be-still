@@ -4,84 +4,70 @@ import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsService {
   final CollectionReference _settingsCollectionReference =
-      Firestore.instance.collection("Settings");
+      Firestore.instance.collection("Setting");
   final CollectionReference _prayerSettingsCollectionReference =
-      Firestore.instance.collection("PrayerSettings");
+      Firestore.instance.collection("PrayerSetting");
   final CollectionReference _sharingSettingsCollectionReference =
-      Firestore.instance.collection("SharingSettings");
+      Firestore.instance.collection("SharingSetting");
 
-  Stream<CombineSettingsStream> _combineStream;
-  Stream<CombineSettingsStream> fetchSettings(String userId) {
-    try {
-      _combineStream = _settingsCollectionReference
-          .where(userId, isEqualTo: userId)
-          .snapshots()
-          .map((convert) {
-        return convert.documents.map((e) {
-          Stream<SettingsModel> settings = Stream.value(e).map<SettingsModel>(
-              (document) => SettingsModel.fromData(document));
-
-          Stream<SharingSettingsModel> sharingSettings =
-              _sharingSettingsCollectionReference
-                  .document(e.data['UserId'])
-                  .snapshots()
-                  .map<SharingSettingsModel>(
-                      (document) => SharingSettingsModel.fromData(document));
-
-          Stream<PrayerSettingsModel> prayerSettings =
-              _prayerSettingsCollectionReference
-                  .document(e.data['UserId'])
-                  .snapshots()
-                  .map<PrayerSettingsModel>(
-                      (document) => PrayerSettingsModel.fromData(document));
-
-          return Rx.combineLatest3(settings, sharingSettings, prayerSettings,
-              (s, ss, ps) => CombineSettingsStream(s, ss, ps));
-        });
-      }).switchMap((observables) {
-        return observables.length > 0
-            ? Rx.combineLatestList(observables)
-            : Stream.value(null);
-      });
-      return _combineStream;
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
-
-  populateSettings(
-      SettingsModel settingsData, String userId, UserModel userData) {
+  populateSettings(String deviceId, String userId, UserModel userData) {
     SettingsModel settings = SettingsModel(
         userId: userId,
-        deviceId: '',
+        deviceId: deviceId,
         appearance: '',
-        defaultSortBy: '',
-        defaultSnoozeDuration: '0',
-        archiveAutoDelete: 'false',
-        includeAnsweredPrayerAutoDelete: 'false',
-        allowPushNotification: 'false',
-        allowTextNotification: 'false',
-        emailUpdateFrequency: 'false',
-        emailUpdateNotification: '',
-        notifyMeSomeonePostOnGroup: 'false',
-        notifyMeSomeoneSharePrayerWithMe: 'false',
-        allowPrayerTimeNotification: 'false',
-        syncAlexa: 'false',
+        defaultSortBy: 'date',
+        defaultSnoozeDuration: 0,
+        archiveAutoDelete: false,
+        includeAnsweredPrayerAutoDelete: false,
+        allowPushNotification: false,
+        allowTextNotification: false,
+        emailUpdateFrequency: false,
+        emailUpdateNotification: false,
+        notifyMeSomeonePostOnGroup: false,
+        notifyMeSomeoneSharePrayerWithMe: false,
+        allowPrayerTimeNotification: false,
+        syncAlexa: false,
         status: 'Active',
-        createdBy: '${userData.firstName}${userData.lastName}',
+        createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
         createdOn: DateTime.now(),
-        modifiedBy: '${userData.firstName}${userData.lastName}',
+        modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
         modifiedOn: DateTime.now());
     return settings;
   }
 
-  Future addSettings(
-      SettingsModel settingsData, String userId, UserModel userData) async {
+  populatePrayerSettings(String userId, UserModel userData) {
+    PrayerSettingsModel prayerSettings = PrayerSettingsModel(
+        userId: userId,
+        frequency: 0,
+        date: DateTime.now(),
+        time: Timestamp.now(),
+        createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        createdOn: DateTime.now(),
+        modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        modifiedOn: DateTime.now());
+    return prayerSettings;
+  }
+
+  populateSharingSettings(String userId, UserModel userData) {
+    SharingSettingsModel sharingSettings = SharingSettingsModel(
+        userId: userId,
+        enableSharingViaEmail: false,
+        enableSharingViaText: false,
+        churchId: '',
+        phone: '${userData.phone}',
+        status: 'Active',
+        createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        createdOn: DateTime.now(),
+        modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        modifiedOn: DateTime.now());
+    return sharingSettings;
+  }
+
+  Future addSettings(String deviceId, String userId, UserModel userData) async {
     // Generate uuid
 
     final settingsId = Uuid().v1();
@@ -94,17 +80,17 @@ class SettingsService {
           // store settings
           await transaction.set(
               _settingsCollectionReference.document(settingsId),
-              settingsData.toJson());
+              populateSettings(deviceId, userId, userData).toJson());
 
           //store sharing settings
           await transaction.set(
               _sharingSettingsCollectionReference.document(sharingSettingsId),
-              populateSettings(settingsData, userId, userData).toJson());
+              populateSharingSettings(userId, userData).toJson());
 
           //store prayer settings
           await transaction.set(
               _prayerSettingsCollectionReference.document(prayerSettingsId),
-              populateSettings(settingsData, userId, userData));
+              populatePrayerSettings(userId, userData).toJson());
         },
       ).then((val) {
         return true;
@@ -116,109 +102,39 @@ class SettingsService {
     }
   }
 
-  // Future addSettings(String userId, UserModel userData) async {
-  //   try {
-  //     //store settings
-  //     final settingsId = Uuid().v1();
-  //     print('settings data $userData');
-  //     await _settingsCollectionReference
-  //         .document(settingsId)
-  //         .setData(setSettings(userId, userData).toJson());
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
-  // Stream<QuerySnapshot> getSettingsData(String userId) {
-  //   try {
-  //     return _settingsCollectionReference
-  //         .where('UserId', isEqualTo: userId)
-  //         .limit(1)
-  //         .snapshots();
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
-
-  // Stream<DocumentSnapshot> fetchSetting(String settingsId) {
-  //   try {
-  //     return _settingsCollectionReference.document(settingsId).snapshots();
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
-  setPrayerSettings(String userId, UserModel userData) {
-    PrayerSettingsModel prayerSettings = PrayerSettingsModel(
-        userId: userId,
-        frequency: '0',
-        date: DateTime.now(),
-        time: Timestamp.now(),
-        createdBy: '${userData.firstName}${userData.lastName}',
-        createdOn: DateTime.now(),
-        modifiedBy: '${userData.firstName}${userData.lastName}',
-        modifiedOn: DateTime.now());
-    return prayerSettings;
-  }
-
-  Future addPrayerSettings(String userId, UserModel userData) async {
+  Stream<SettingsModel> fetchSettings(String userId) {
     try {
-      //store prayer settings
-      final prayerSettingsId = Uuid().v1();
-      print('prayer settings data $userData');
-
-      await _prayerSettingsCollectionReference
-          .document(prayerSettingsId)
-          .setData(setPrayerSettings(userId, userData).toJson());
+      return _settingsCollectionReference
+          .where(userId, isEqualTo: userId)
+          .snapshots()
+          .map((doc) =>
+              doc.documents.map((e) => SettingsModel.fromData(e)).toList()[0]);
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  Stream<QuerySnapshot> getPrayerSettings(String userId) {
+  Stream<PrayerSettingsModel> getPrayerSettings(String userId) {
     try {
       return _prayerSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .limit(1)
-          .snapshots();
+          .snapshots()
+          .map((doc) => doc.documents
+              .map((e) => PrayerSettingsModel.fromData(e))
+              .toList()[0]);
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  setSharingSettings(String userId, UserModel userData) {
-    SharingSettingsModel sharingSettings = SharingSettingsModel(
-        userId: userId,
-        enableSharingViaEmail: 'false',
-        enableSharingViaText: 'false',
-        churchId: '',
-        phone: '${userData.phone}',
-        status: 'Active',
-        createdBy: '${userData.firstName}${userData.lastName}',
-        createdOn: DateTime.now(),
-        modifiedBy: '${userData.firstName}${userData.lastName}',
-        modifiedOn: DateTime.now());
-    return sharingSettings;
-  }
-
-  Future addSharingSetting(String userId, UserModel userData) async {
-    try {
-      //store share settings
-      final shareSettingsId = Uuid().v1();
-      await _sharingSettingsCollectionReference
-          .document(shareSettingsId)
-          .setData(setSharingSettings(userId, userData).toJson());
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
-
-  Stream<QuerySnapshot> getSharingSettings(String userId) {
+  Stream<SharingSettingsModel> getSharingSettings(String userId) {
     try {
       return _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .limit(1)
-          .snapshots();
+          .snapshots()
+          .map((doc) => doc.documents
+              .map((e) => SharingSettingsModel.fromData(e))
+              .toList()[0]);
     } catch (e) {
       throw HttpException(e.message);
     }

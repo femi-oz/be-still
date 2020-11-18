@@ -1,5 +1,8 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/app_theme.dart';
 
@@ -23,6 +26,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
   var selectedInterval;
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     FixedExtentScrollController scrollController =
         FixedExtentScrollController(initialItem: selected);
     return Container(
@@ -60,7 +64,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                                           i,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              color: context.brightBlue2,
+                                              color: AppColors.lightBlue4,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -96,7 +100,8 @@ class _SnoozePickerState extends State<SnoozePicker> {
                           width: MediaQuery.of(context).size.width * .38,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: context.inputFieldBorder,
+                              color: AppColors.getCardBorder(
+                                  _themeProvider.isDarkModeEnabled),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -107,7 +112,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                               Text(
                                 'SAVE',
                                 style: TextStyle(
-                                  color: context.brightBlue2,
+                                  color: AppColors.lightBlue4,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -125,7 +130,8 @@ class _SnoozePickerState extends State<SnoozePicker> {
                           width: MediaQuery.of(context).size.width * .38,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: context.inputFieldBorder,
+                              color: AppColors.getCardBorder(
+                                  _themeProvider.isDarkModeEnabled),
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -136,7 +142,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                               Text(
                                 'CANCEL',
                                 style: TextStyle(
-                                  color: context.brightBlue2,
+                                  color: AppColors.lightBlue4,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),

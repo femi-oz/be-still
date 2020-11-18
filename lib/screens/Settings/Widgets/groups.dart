@@ -18,282 +18,288 @@ class GroupsSettings extends StatefulWidget {
 }
 
 class _GroupsSettingsState extends State<GroupsSettings> {
-  void _showAlert(UserModel user, bool isDark) {
-    AlertDialog dialog = AlertDialog(
-      actionsPadding: EdgeInsets.all(0),
-      contentPadding: EdgeInsets.all(0),
-      backgroundColor: AppColors.getPrayerCardBgColor(isDark),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.darkBlue),
-        borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
-        ),
-      ),
-      content: Container(
-        width: double.infinity,
-        // height: MediaQuery.of(context).size.height * 0.6,
-        margin: EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.close),
-                  )
-                ],
-              ),
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 60.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        user.firstName.toUpperCase(), //TODO
-                        style: TextStyle(
-                            color: context.brightBlue,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            height: 1.5),
-                      ),
-                      Text(
-                        user.email,
-                        style: TextStyle(
-                            color: context.inputFieldText,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                            height: 1.5),
-                      ),
-                      Text(
-                        'might be from Houston, TX',
-                        style: TextStyle(
-                            color: context.inputFieldText,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                            height: 1.5),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0),
-                        child: Text(
-                          'Has been a member since 01.07.08',
-                          style: TextStyle(
-                              color: context.inputFieldText,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                              height: 1.5),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 40.0),
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        decoration: BoxDecoration(
-                          // color: sortBy == 'date'
-                          //     ? context.toolsActiveBtn.withOpacity(0.3)
-                          //     :
-                          color: Colors.transparent,
-                          border: Border.all(
-                            color: AppColors.darkBlue,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
-                          child: Container(
-                            child: Text(
-                              'MESSAGE',
-                              style: TextStyle(
-                                  color: context.brightBlue,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              // sortBy = 'date';
-                            });
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 5),
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.darkBlue,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: OutlineButton(
-                                borderSide:
-                                    BorderSide(color: Colors.transparent),
-                                child: Container(
-                                  child: Text(
-                                    'ADMIN',
-                                    style: TextStyle(
-                                        color: context.brightBlue,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor:
-                                        context.toolsBg.withOpacity(0.5),
-                                    backgroundColor:
-                                        context.toolsBg.withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return GroupPrivilegeSettings(
-                                          'admin', user);
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            Container(
-                              height: 30,
-                              margin: EdgeInsets.symmetric(vertical: 5),
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: context.toolsActiveBtn.withOpacity(0.3),
-                                border: Border.all(
-                                  color: AppColors.darkBlue,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: OutlineButton(
-                                borderSide:
-                                    BorderSide(color: Colors.transparent),
-                                child: Container(
-                                  child: Text(
-                                    'MODERATOR',
-                                    style: TextStyle(
-                                        color: context.brightBlue,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor:
-                                        context.toolsBg.withOpacity(0.5),
-                                    backgroundColor:
-                                        context.toolsBg.withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return GroupPrivilegeSettings(
-                                          'moderator', user);
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            Container(
-                              height: 30,
-                              margin: EdgeInsets.symmetric(vertical: 5),
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.darkBlue,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: OutlineButton(
-                                borderSide:
-                                    BorderSide(color: Colors.transparent),
-                                child: Container(
-                                  child: Text(
-                                    'MEMBER',
-                                    style: TextStyle(
-                                        color: context.brightBlue,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor:
-                                        context.toolsBg.withOpacity(0.5),
-                                    backgroundColor:
-                                        context.toolsBg.withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return GroupPrivilegeSettings(
-                                          'member', user);
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 30,
-                        margin: EdgeInsets.only(top: 40, bottom: 0),
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        decoration: BoxDecoration(
-                          // color: sortBy == 'date'
-                          //     ? context.toolsActiveBtn.withOpacity(0.3)
-                          //     :
-                          color: Colors.transparent,
-                          border: Border.all(
-                            color: context.prayerCardTags,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
-                          child: Container(
-                            child: Text(
-                              'REMOVE',
-                              style: TextStyle(
-                                  color: context.prayerCardTags,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              // sortBy = 'date';
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ))
-            ],
-          ),
-        ),
-      ),
-    );
+  // void _showAlert(UserModel user, bool isDark) {
+  //   AlertDialog dialog = AlertDialog(
+  //     actionsPadding: EdgeInsets.all(0),
+  //     contentPadding: EdgeInsets.all(0),
+  //     backgroundColor: AppColors.getPrayerCardBgColor(isDark),
+  //     shape: RoundedRectangleBorder(
+  //       side: BorderSide(color: AppColors.darkBlue),
+  //       borderRadius: BorderRadius.all(
+  //         Radius.circular(10.0),
+  //       ),
+  //     ),
+  //     content: Container(
+  //       width: double.infinity,
+  //       // height: MediaQuery.of(context).size.height * 0.6,
+  //       margin: EdgeInsets.only(bottom: 20),
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  //       ),
+  //       child: SingleChildScrollView(
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.stretch,
+  //           children: <Widget>[
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.end,
+  //               children: <Widget>[
+  //                 IconButton(
+  //                   onPressed: () => Navigator.of(context).pop(),
+  //                   icon: Icon(Icons.close),
+  //                 )
+  //               ],
+  //             ),
+  //             Container(
+  //                 padding: EdgeInsets.symmetric(horizontal: 60.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Text(
+  //                       user.firstName.toUpperCase(), //TODO
+  //                       style: TextStyle(
+  //                           color: AppColors.lightBlue3,
+  //                           fontSize: 14,
+  //                           fontWeight: FontWeight.w500,
+  //                           height: 1.5),
+  //                     ),
+  //                     Text(
+  //                       user.email,
+  //                       style: TextStyle(
+  //                           color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+  //                           fontSize: 12,
+  //                           fontWeight: FontWeight.w300,
+  //                           height: 1.5),
+  //                     ),
+  //                     Text(
+  //                       'might be from Houston, TX',
+  //                       style: TextStyle(
+  //                           color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+  //                           fontSize: 12,
+  //                           fontWeight: FontWeight.w300,
+  //                           height: 1.5),
+  //                     ),
+  //                     Padding(
+  //                       padding: const EdgeInsets.only(top: 30.0),
+  //                       child: Text(
+  //                         'Has been a member since 01.07.08',
+  //                         style: TextStyle(
+  //                             color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+  //                             fontSize: 12,
+  //                             fontWeight: FontWeight.w300,
+  //                             height: 1.5),
+  //                       ),
+  //                     ),
+  //                     Container(
+  //                       margin: const EdgeInsets.symmetric(
+  //                           horizontal: 20.0, vertical: 40.0),
+  //                       height: 30,
+  //                       width: MediaQuery.of(context).size.width * 0.4,
+  //                       decoration: BoxDecoration(
+  //                         // color: sortBy == 'date'
+  //                         //     ? context.toolsActiveBtn.withOpacity(0.3)
+  //                         //     :
+  //                         color: Colors.transparent,
+  //                         border: Border.all(
+  //                           color: AppColors.darkBlue,
+  //                           width: 1,
+  //                         ),
+  //                         borderRadius: BorderRadius.circular(5),
+  //                       ),
+  //                       child: OutlineButton(
+  //                         borderSide: BorderSide(color: Colors.transparent),
+  //                         child: Container(
+  //                           child: Text(
+  //                             'MESSAGE',
+  //                             style: TextStyle(
+  //                                 color: AppColors.lightBlue3,
+  //                                 fontSize: 14,
+  //                                 fontWeight: FontWeight.w500),
+  //                           ),
+  //                         ),
+  //                         onPressed: () {
+  //                           setState(() {
+  //                             // sortBy = 'date';
+  //                           });
+  //                         },
+  //                       ),
+  //                     ),
+  //                     Padding(
+  //                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         children: <Widget>[
+  //                           Container(
+  //                             margin: EdgeInsets.symmetric(vertical: 5),
+  //                             height: 30,
+  //                             width: MediaQuery.of(context).size.width * 0.4,
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.transparent,
+  //                               border: Border.all(
+  //                                 color: AppColors.darkBlue,
+  //                                 width: 1,
+  //                               ),
+  //                               borderRadius: BorderRadius.circular(5),
+  //                             ),
+  //                             child: OutlineButton(
+  //                               borderSide:
+  //                                   BorderSide(color: Colors.transparent),
+  //                               child: Container(
+  //                                 child: Text(
+  //                                   'ADMIN',
+  //                                   style: TextStyle(
+  //                                       color: AppColors.lightBlue3,
+  //                                       fontSize: 14,
+  //                                       fontWeight: FontWeight.w500),
+  //                                 ),
+  //                               ),
+  //                               onPressed: () {
+  //                                 showModalBottomSheet(
+  //                                   context: context,
+  //                                   barrierColor: AppColors.getDetailBgColor(
+  //                                           _themeProvider.isDarkModeEnabled)
+  //                                       .withOpacity(0.5),
+  //                                   backgroundColor: AppColors.getDetailBgColor(
+  //                                           _themeProvider.isDarkModeEnabled)
+  //                                       .withOpacity(0.9),
+  //                                   isScrollControlled: true,
+  //                                   builder: (BuildContext context) {
+  //                                     return GroupPrivilegeSettings(
+  //                                         'admin', user);
+  //                                   },
+  //                                 );
+  //                               },
+  //                             ),
+  //                           ),
+  //                           Container(
+  //                             height: 30,
+  //                             margin: EdgeInsets.symmetric(vertical: 5),
+  //                             width: MediaQuery.of(context).size.width * 0.4,
+  //                             decoration: BoxDecoration(
+  //                               color: context.toolsActiveBtn.withOpacity(0.3),
+  //                               border: Border.all(
+  //                                 color: AppColors.darkBlue,
+  //                                 width: 1,
+  //                               ),
+  //                               borderRadius: BorderRadius.circular(5),
+  //                             ),
+  //                             child: OutlineButton(
+  //                               borderSide:
+  //                                   BorderSide(color: Colors.transparent),
+  //                               child: Container(
+  //                                 child: Text(
+  //                                   'MODERATOR',
+  //                                   style: TextStyle(
+  //                                       color: AppColors.lightBlue3,
+  //                                       fontSize: 14,
+  //                                       fontWeight: FontWeight.w500),
+  //                                 ),
+  //                               ),
+  //                               onPressed: () {
+  //                                 showModalBottomSheet(
+  //                                   context: context,
+  //                                   barrierColor: AppColors.getDetailBgColor(
+  //                                           _themeProvider.isDarkModeEnabled)
+  //                                       .withOpacity(0.5),
+  //                                   backgroundColor: AppColors.getDetailBgColor(
+  //                                           _themeProvider.isDarkModeEnabled)
+  //                                       .withOpacity(0.9),
+  //                                   isScrollControlled: true,
+  //                                   builder: (BuildContext context) {
+  //                                     return GroupPrivilegeSettings(
+  //                                         'moderator', user);
+  //                                   },
+  //                                 );
+  //                               },
+  //                             ),
+  //                           ),
+  //                           Container(
+  //                             height: 30,
+  //                             margin: EdgeInsets.symmetric(vertical: 5),
+  //                             width: MediaQuery.of(context).size.width * 0.4,
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.transparent,
+  //                               border: Border.all(
+  //                                 color: AppColors.darkBlue,
+  //                                 width: 1,
+  //                               ),
+  //                               borderRadius: BorderRadius.circular(5),
+  //                             ),
+  //                             child: OutlineButton(
+  //                               borderSide:
+  //                                   BorderSide(color: Colors.transparent),
+  //                               child: Container(
+  //                                 child: Text(
+  //                                   'MEMBER',
+  //                                   style: TextStyle(
+  //                                       color: AppColors.lightBlue3,
+  //                                       fontSize: 14,
+  //                                       fontWeight: FontWeight.w500),
+  //                                 ),
+  //                               ),
+  //                               onPressed: () {
+  //                                 showModalBottomSheet(
+  //                                   context: context,
+  //                                   barrierColor: AppColors.getDetailBgColor(
+  //                                           _themeProvider.isDarkModeEnabled)[1]
+  //                                       .withOpacity(0.5),
+  //                                   backgroundColor: AppColors.getDetailBgColor(
+  //                                           _themeProvider.isDarkModeEnabled[1]
+  //                                       .withOpacity(0.9),
+  //                                   isScrollControlled: true,
+  //                                   builder: (BuildContext context) {
+  //                                     return GroupPrivilegeSettings(
+  //                                         'member', user);
+  //                                   },
+  //                                 );
+  //                               },
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     Container(
+  //                       height: 30,
+  //                       margin: EdgeInsets.only(top: 40, bottom: 0),
+  //                       width: MediaQuery.of(context).size.width * 0.4,
+  //                       decoration: BoxDecoration(
+  //                         // color: sortBy == 'date'
+  //                         //     ? context.toolsActiveBtn.withOpacity(0.3)
+  //                         //     :
+  //                         color: Colors.transparent,
+  //                         border: Border.all(
+  //                           color: AppColors.red,
+  //                           width: 1,
+  //                         ),
+  //                         borderRadius: BorderRadius.circular(5),
+  //                       ),
+  //                       child: OutlineButton(
+  //                         borderSide: BorderSide(color: Colors.transparent),
+  //                         child: Container(
+  //                           child: Text(
+  //                             'REMOVE',
+  //                             style: TextStyle(
+  //                                 color: AppColors.red,
+  //                                 fontSize: 14,
+  //                                 fontWeight: FontWeight.w500),
+  //                           ),
+  //                         ),
+  //                         onPressed: () {
+  //                           setState(() {
+  //                             // sortBy = 'date';
+  //                           });
+  //                         },
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ))
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
 
-    showDialog(context: context, child: dialog);
-  }
+  //   showDialog(context: context, child: dialog);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +332,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //         child: Text(
     //           'Preferences',
     //           style: TextStyle(
-    //               color: context.settingsHeader,
+    //               color: AppColors.offWhite2,
     //               fontSize: 22,
     //               fontWeight: FontWeight.w700),
     //           textAlign: TextAlign.center,
@@ -342,7 +348,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //               child: Text(
     //                 'Enable notifications from Groups?',
     //                 style: TextStyle(
-    //                     color: context.inputFieldText,
+    //                     color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                     fontSize: 12,
     //                     fontWeight: FontWeight.w300),
     //               ),
@@ -350,7 +356,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //             Switch.adaptive(
     //               value: true,
     //               activeColor: Colors.white,
-    //               activeTrackColor: context.switchThumbActive,
+    //               activeTrackColor: AppColors.lightBlue4,
     //               inactiveThumbColor: Colors.white,
     //               onChanged: (_) {},
     //             ),
@@ -365,7 +371,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                 (GroupModel group) => Container(
     //                   margin: EdgeInsets.symmetric(vertical: 10.0),
     //                   child: custom.ExpansionTile(
-    //                     iconColor: context.brightBlue2,
+    //                     iconColor: AppColors.lightBlue4,
     //                     headerBackgroundColorStart: context.prayerMenuStart,
     //                     headerBackgroundColorEnd: context.prayerMenuEnd,
     //                     shadowColor: context.dropShadow,
@@ -376,7 +382,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                         group.name,
     //                         textAlign: TextAlign.center,
     //                         style: TextStyle(
-    //                             color: context.settingsHeader,
+    //                             color: AppColors.offWhite2,
     //                             fontSize: 22,
     //                             fontWeight: FontWeight.w500),
     //                       ),
@@ -398,7 +404,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                   Text(
     //                                     'I am a',
     //                                     style: TextStyle(
-    //                                         color: context.inputFieldText,
+    //                                         color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                                         fontSize: 12,
     //                                         fontWeight: FontWeight.w300),
     //                                   ),
@@ -457,7 +463,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                     child: Text(
     //                                       'Enable notifications for New Prayers for this group?',
     //                                       style: TextStyle(
-    //                                           color: context.inputFieldText,
+    //                                           color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                                           fontSize: 12,
     //                                           fontWeight: FontWeight.w300),
     //                                     ),
@@ -466,7 +472,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                     value: true,
     //                                     activeColor: Colors.white,
     //                                     activeTrackColor:
-    //                                         context.switchThumbActive,
+    //                                         AppColors.lightBlue4,
     //                                     inactiveThumbColor: Colors.white,
     //                                     onChanged: (_) {},
     //                                   ),
@@ -487,7 +493,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                     child: Text(
     //                                       'Enable notifications for Prayer Updates for this group?',
     //                                       style: TextStyle(
-    //                                           color: context.inputFieldText,
+    //                                           color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                                           fontSize: 12,
     //                                           fontWeight: FontWeight.w300),
     //                                     ),
@@ -496,7 +502,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                     value: true,
     //                                     activeColor: Colors.white,
     //                                     activeTrackColor:
-    //                                         context.switchThumbActive,
+    //                                         AppColors.lightBlue4,
     //                                     inactiveThumbColor: Colors.white,
     //                                     onChanged: (_) {},
     //                                   ),
@@ -520,7 +526,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                             'Notify me when new members joins this group',
     //                                             style: TextStyle(
     //                                                 color:
-    //                                                     context.inputFieldText,
+    //                                                     AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                                                 fontSize: 12,
     //                                                 fontWeight:
     //                                                     FontWeight.w300),
@@ -530,7 +536,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                           value: false,
     //                                           activeColor: Colors.white,
     //                                           activeTrackColor:
-    //                                               context.switchThumbActive,
+    //                                               AppColors.lightBlue4,
     //                                           inactiveThumbColor: Colors.white,
     //                                           onChanged: (_) {},
     //                                         ),
@@ -556,7 +562,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                             'Notify me of membership requests',
     //                                             style: TextStyle(
     //                                                 color:
-    //                                                     context.inputFieldText,
+    //                                                     AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                                                 fontSize: 12,
     //                                                 fontWeight:
     //                                                     FontWeight.w300),
@@ -566,7 +572,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                           value: false,
     //                                           activeColor: Colors.white,
     //                                           activeTrackColor:
-    //                                               context.switchThumbActive,
+    //                                               AppColors.lightBlue4,
     //                                           inactiveThumbColor: Colors.white,
     //                                           onChanged: (_) {},
     //                                         ),
@@ -591,7 +597,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                             'Notify me of flagged prayers',
     //                                             style: TextStyle(
     //                                                 color:
-    //                                                     context.inputFieldText,
+    //                                                     AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
     //                                                 fontSize: 12,
     //                                                 fontWeight:
     //                                                     FontWeight.w300),
@@ -601,7 +607,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                           value: false,
     //                                           activeColor: Colors.white,
     //                                           activeTrackColor:
-    //                                               context.switchThumbActive,
+    //                                               AppColors.lightBlue4,
     //                                           inactiveThumbColor: Colors.white,
     //                                           onChanged: (_) {},
     //                                         ),
@@ -647,7 +653,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                       child: Text(
     //                                         'Send an invite to join group',
     //                                         style: TextStyle(
-    //                                             color: context.brightBlue,
+    //                                             color: AppColors.lightBlue3,
     //                                             fontSize: 14,
     //                                             fontWeight: FontWeight.w400),
     //                                       ),
@@ -659,7 +665,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                     padding:
     //                                         const EdgeInsets.only(bottom: 80.0),
     //                                     child: custom.ExpansionTile(
-    //                                       iconColor: context.brightBlue2,
+    //                                       iconColor: AppColors.lightBlue4,
     //                                       headerBackgroundColorStart:
     //                                           Colors.transparent,
     //                                       headerBackgroundColorEnd:
@@ -785,12 +791,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                 child: Text(
     //                                   'LEAVE',
     //                                   style: TextStyle(
-    //                                       color: context.prayerCardTags,
+    //                                       color: AppColors.red,
     //                                       fontSize: 16,
     //                                       fontWeight: FontWeight.w500),
     //                                 ),
     //                                 borderSide: BorderSide(
-    //                                     color: context.prayerCardTags),
+    //                                     color: AppColors.red),
     //                                 onPressed: () => print(''),
     //                               ),
     //                             ),
@@ -804,12 +810,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     //                                       child: Text(
     //                                         'DELETE',
     //                                         style: TextStyle(
-    //                                             color: context.prayerCardTags,
+    //                                             color: AppColors.red,
     //                                             fontSize: 16,
     //                                             fontWeight: FontWeight.w500),
     //                                       ),
     //                                       borderSide: BorderSide(
-    //                                           color: context.prayerCardTags),
+    //                                           color: AppColors.red),
     //                                       onPressed: () => print(''),
     //                                     ),
     //                                   ),

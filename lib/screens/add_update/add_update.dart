@@ -49,10 +49,15 @@ class _AddUpdateState extends State<AddUpdate> {
       createdBy: '${_user.firstName} ${_user.lastName}'.toUpperCase(),
       createdOn: DateTime.now(),
     );
+    var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showModalBottomSheet(
       context: context,
-      barrierColor: context.toolsBg.withOpacity(0.5),
-      backgroundColor: context.toolsBg.withOpacity(0.9),
+      barrierColor:
+          AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
+              .withOpacity(0.5),
+      backgroundColor:
+          AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
+              .withOpacity(0.9),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return NameRecognitionMenuOne(
@@ -89,7 +94,7 @@ class _AddUpdateState extends State<AddUpdate> {
                       child: Text(
                         'CANCEL',
                         style: TextStyle(
-                            color: context.toolsBackBtn, fontSize: 16),
+                            color: AppColors.lightBlue5, fontSize: 16),
                       ),
                       onTap: () => Navigator.of(context).pop(),
                     ),
@@ -97,7 +102,7 @@ class _AddUpdateState extends State<AddUpdate> {
                       child: Text(
                         'SAVE',
                         style: TextStyle(
-                            color: context.toolsBackBtn, fontSize: 16),
+                            color: AppColors.lightBlue5, fontSize: 16),
                       ),
                       onTap: () => _save(),
                     ),
@@ -135,7 +140,7 @@ class _AddUpdateState extends State<AddUpdate> {
                               child: Text(
                                 widget.prayer.createdBy,
                                 style: TextStyle(
-                                    color: context.brightBlue,
+                                    color: AppColors.lightBlue3,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500),
                                 textAlign: TextAlign.center,
@@ -159,7 +164,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                           DateFormat('hh:mma | MM.dd.yyyy')
                                               .format(u.createdOn),
                                           style: TextStyle(
-                                              color: context.dimBlue,
+                                              color: AppColors.dimBlue,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ],
@@ -181,7 +186,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                   //             Text(
                                   //               t.toUpperCase(),
                                   //               style: TextStyle(
-                                  //                 color: context.prayerCardTags,
+                                  //                 color: AppColors.red,
                                   //               ),
                                   //             ),
                                   //           ],
@@ -198,7 +203,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                     child: Text(
                                       u.description,
                                       style: TextStyle(
-                                        color: context.inputFieldText,
+                                        color: AppColors.getTextFieldText(
+                                            _themeProvider.isDarkModeEnabled),
                                         fontSize: 14,
                                         fontWeight: FontWeight.w300,
                                         height: 2,
@@ -225,7 +231,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                       Text(
                                         'Initial Prayer Request |',
                                         style: TextStyle(
-                                            color: context.dimBlue,
+                                            color: AppColors.dimBlue,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -234,7 +240,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                             .format(widget.prayer.createdOn),
                                         style: TextStyle(
                                             fontSize: 12,
-                                            color: context.dimBlue,
+                                            color: AppColors.dimBlue,
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ],
@@ -255,7 +261,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                 //           t.toUpperCase(),
                                 //           style: TextStyle(
                                 //             fontSize: 12,
-                                //             color: context.prayerCardTags,
+                                //             color: AppColors.red,
                                 //           ),
                                 //         ),
                                 //       ),
@@ -274,7 +280,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                   child: Text(
                                     widget.prayer.description,
                                     style: TextStyle(
-                                      color: context.inputFieldText,
+                                      color: AppColors.getTextFieldText(
+                                          _themeProvider.isDarkModeEnabled),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300,
                                       height: 2,

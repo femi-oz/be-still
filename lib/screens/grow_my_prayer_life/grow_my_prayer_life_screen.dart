@@ -41,7 +41,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
               Text(
                 'Grow My Prayer Life',
                 style: TextStyle(
-                    color: context.brightBlue,
+                    color: AppColors.lightBlue3,
                     fontSize: 20,
                     fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
@@ -53,7 +53,8 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                     child: Text(
                       'Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec sollicitudin molestie malesuada. Proin eget tortor risus. Vestibulum ante ipsum primis in faucibus',
                       style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         height: 1.2,
@@ -65,7 +66,8 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                     child: Text(
                       'Quisque velit nisi, pretium ut lacinia in, elementum id enim. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Sed porttitor lectus nibh. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;',
                       style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         height: 1.2,
@@ -89,7 +91,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                           child: Text(
                             'RECOMMENDED BIBLES',
                             style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
@@ -111,7 +113,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                           child: Text(
                             'DEVOTIONAL AND READING PLANS',
                             style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
@@ -129,7 +131,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                           child: Text(
                             'MY PRAYER GOALS',
                             style: TextStyle(
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,

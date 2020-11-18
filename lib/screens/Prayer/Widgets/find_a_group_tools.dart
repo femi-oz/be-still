@@ -1,5 +1,8 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class FindGroupTools extends StatefulWidget {
@@ -19,6 +22,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
   final TextEditingController _adminNameController = TextEditingController();
   var _option = 'normal';
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
@@ -28,11 +32,11 @@ class _FindGroupToolsState extends State<FindGroupTools> {
             child: FlatButton.icon(
               padding: EdgeInsets.zero,
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back, color: context.toolsBackBtn),
+              icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
               label: Text(
                 'BACK',
                 style: TextStyle(
-                  color: context.toolsBackBtn,
+                  color: AppColors.lightBlue5,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -46,7 +50,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 Text(
                   'ADVANCE SEARCH',
                   style: TextStyle(
-                      color: context.brightBlue,
+                      color: AppColors.lightBlue3,
                       fontSize: 16,
                       fontWeight: FontWeight.w700),
                 ),
@@ -102,10 +106,13 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       height: 30,
                       decoration: BoxDecoration(
                         color: _option == 'normal'
-                            ? context.toolsActiveBtn.withOpacity(0.3)
+                            ? AppColors.getActiveBtn(
+                                    _themeProvider.isDarkModeEnabled)
+                                .withOpacity(0.3)
                             : Colors.transparent,
                         border: Border.all(
-                          color: context.inputFieldBorder,
+                          color: AppColors.getCardBorder(
+                              _themeProvider.isDarkModeEnabled),
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -116,7 +123,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                           child: Text(
                             'NORMAL',
                             style: TextStyle(
-                                color: context.brightBlue,
+                                color: AppColors.lightBlue3,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -129,10 +136,13 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       height: 30,
                       decoration: BoxDecoration(
                         color: _option == 'feed'
-                            ? context.toolsActiveBtn.withOpacity(0.5)
+                            ? AppColors.getActiveBtn(
+                                    _themeProvider.isDarkModeEnabled)
+                                .withOpacity(0.5)
                             : Colors.transparent,
                         border: Border.all(
-                          color: context.inputFieldBorder,
+                          color: AppColors.getCardBorder(
+                              _themeProvider.isDarkModeEnabled),
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -145,7 +155,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                           child: Text(
                             'FEED',
                             style: TextStyle(
-                                color: context.brightBlue,
+                                color: AppColors.lightBlue3,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -162,7 +172,8 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(
-                      color: context.inputFieldBorder,
+                      color: AppColors.getCardBorder(
+                          _themeProvider.isDarkModeEnabled),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -173,7 +184,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       child: Text(
                         'SEARCH',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 class SharingSettingsModel {
   final String userId;
-  final String enableSharingViaText;
-  final String enableSharingViaEmail;
+  final bool enableSharingViaText;
+  final bool enableSharingViaEmail;
   final String churchId;
   final String phone;
   final String status;

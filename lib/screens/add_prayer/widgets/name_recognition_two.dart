@@ -2,10 +2,12 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +42,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
   void showInSnackBar(String value) {
     widget.scafoldKey.currentState.showSnackBar(
       new SnackBar(
-        backgroundColor: context.offWhite,
+        backgroundColor: AppColors.offWhite1,
         content: new Text(value),
       ),
     );
@@ -87,6 +89,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
 
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
@@ -101,7 +104,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
               child: Text(
                   'Is this request for someone that is currently in the hospital? If so, would you like to share with the prayer and pastoral staff at Second Baptist Church?',
                   style: TextStyle(
-                    color: context.brightBlue,
+                    color: AppColors.lightBlue3,
                     fontWeight: FontWeight.w500,
                     height: 1.7,
                     fontSize: 16,
@@ -128,10 +131,14 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
                       color: _selectedOption == 'yes'
-                          ? context.toolsActiveBtn.withOpacity(0.2)
-                          : context.toolsActiveBtn.withOpacity(0.1),
+                          ? AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.2)
+                          : AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.1),
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -141,7 +148,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                       child: Text(
                         'YES',
                         style: TextStyle(
-                          color: context.offWhite,
+                          color: AppColors.offWhite1,
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),
@@ -165,10 +172,14 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
                       color: _selectedOption == 'no'
-                          ? context.toolsActiveBtn.withOpacity(0.2)
-                          : context.toolsActiveBtn.withOpacity(0.1),
+                          ? AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.2)
+                          : AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.1),
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -178,7 +189,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                       child: Text(
                         'NO',
                         style: TextStyle(
-                          color: context.offWhite,
+                          color: AppColors.offWhite1,
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),
@@ -194,7 +205,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                             label: 'Add additional comments',
                             controller: null,
                             maxLines: 8,
-                            color: context.offWhite,
+                            color: AppColors.offWhite1,
                             showSuffix: false),
                       )
                     : Container(),
@@ -205,13 +216,15 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
                     decoration: BoxDecoration(
-                      border: Border.all(color: context.inputFieldBorder),
+                      border: Border.all(
+                          color: AppColors.getCardBorder(
+                              _themeProvider.isDarkModeEnabled)),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: Text(
                       'SAVE',
                       style: TextStyle(
-                        color: context.brightBlue2,
+                        color: AppColors.lightBlue4,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),

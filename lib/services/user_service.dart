@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:be_still/models/device.model.dart';
-import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/models/user_device.model.dart';
@@ -91,11 +90,10 @@ class UserService {
 
   Future addUserData(
     UserModel userData,
-    SettingsModel settingsData,
     String authUid,
   ) async {
     // Generate uuid
-    final deviceID = Uuid().v1();
+    // final deviceID = Uuid().v1();
     final userID = Uuid().v1();
     final userDeviceID = Uuid().v1();
 
@@ -103,14 +101,17 @@ class UserService {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String deviceModel;
     String deviceName;
+    String deviceID;
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       deviceModel = androidInfo.model;
       deviceName = androidInfo.brand;
+      deviceID = androidInfo.androidId;
     } else if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       deviceModel = iosInfo.utsname.machine;
       deviceName = iosInfo.name;
+      deviceID = iosInfo.identifierForVendor;
     }
 
     try {
@@ -133,9 +134,7 @@ class UserService {
                     .toJson(),
               );
           await locator<SettingsService>()
-              .addSettings(settingsData, userID, userData);
-          await locator<SettingsService>().addSharingSetting(userID, userData);
-          await locator<SettingsService>().addPrayerSettings(userID, userData);
+              .addSettings(deviceID, userID, userData);
         },
       );
     } catch (e) {

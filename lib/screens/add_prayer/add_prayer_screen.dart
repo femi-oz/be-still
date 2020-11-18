@@ -68,10 +68,15 @@ class _AddPrayerState extends State<AddPrayer> {
           hideFromAllMembers: false,
           hideFromMe: false,
           isInappropriate: false);
+      var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
       showModalBottomSheet(
         context: context,
-        barrierColor: context.toolsBg.withOpacity(0.5),
-        backgroundColor: context.toolsBg.withOpacity(0.9),
+        barrierColor:
+            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
+                .withOpacity(0.5),
+        backgroundColor:
+            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
+                .withOpacity(0.9),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
@@ -141,7 +146,7 @@ class _AddPrayerState extends State<AddPrayer> {
                         child: Text(
                           'CANCEL',
                           style: TextStyle(
-                              color: context.toolsBackBtn, fontSize: 16),
+                              color: AppColors.lightBlue5, fontSize: 16),
                         ),
                         onTap: () => Navigator.of(context).pop(),
                       ),
@@ -149,7 +154,7 @@ class _AddPrayerState extends State<AddPrayer> {
                           child: Text(
                             'SAVE',
                             style: TextStyle(
-                                color: context.toolsBackBtn, fontSize: 16),
+                                color: AppColors.lightBlue5, fontSize: 16),
                           ),
                           onTap: () => _save()),
                     ],
@@ -169,12 +174,16 @@ class _AddPrayerState extends State<AddPrayer> {
                   IconButton(
                     icon: Icon(
                       Icons.more_horiz,
-                      color: context.brightBlue2,
+                      color: AppColors.lightBlue4,
                     ),
                     onPressed: () => showModalBottomSheet(
                       context: context,
-                      barrierColor: context.toolsBg.withOpacity(0.5),
-                      backgroundColor: context.toolsBg.withOpacity(0.9),
+                      barrierColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.5),
+                      backgroundColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return AddPrayerMenu();

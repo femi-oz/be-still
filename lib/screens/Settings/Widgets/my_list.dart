@@ -1,6 +1,9 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class MyListSettings extends StatefulWidget {
   @override
@@ -34,6 +37,7 @@ class _MyListSettingsState extends State<MyListSettings> {
   ];
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -43,7 +47,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 0.5),
                   blurRadius: 5.0,
                 ),
@@ -51,17 +56,15 @@ class _MyListSettingsState extends State<MyListSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Default Sort By',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -77,10 +80,13 @@ class _MyListSettingsState extends State<MyListSettings> {
                   width: MediaQuery.of(context).size.width * 0.4,
                   decoration: BoxDecoration(
                     color: sortBy == 'date'
-                        ? context.toolsActiveBtn.withOpacity(0.3)
+                        ? AppColors.getActiveBtn(
+                                _themeProvider.isDarkModeEnabled)
+                            .withOpacity(0.3)
                         : Colors.transparent,
                     border: Border.all(
-                      color: context.inputFieldBorder,
+                      color: AppColors.getCardBorder(
+                          _themeProvider.isDarkModeEnabled),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -91,7 +97,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                       child: Text(
                         'DATE',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
@@ -108,10 +114,13 @@ class _MyListSettingsState extends State<MyListSettings> {
                   width: MediaQuery.of(context).size.width * 0.4,
                   decoration: BoxDecoration(
                     color: sortBy == 'tag'
-                        ? context.toolsActiveBtn.withOpacity(0.5)
+                        ? AppColors.getActiveBtn(
+                                _themeProvider.isDarkModeEnabled)
+                            .withOpacity(0.5)
                         : Colors.transparent,
                     border: Border.all(
-                      color: context.inputFieldBorder,
+                      color: AppColors.getCardBorder(
+                          _themeProvider.isDarkModeEnabled),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -124,7 +133,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                       child: Text(
                         'TAG',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
@@ -145,7 +154,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -153,17 +163,15 @@ class _MyListSettingsState extends State<MyListSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Default Snooze Duration',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -177,7 +185,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -185,17 +194,15 @@ class _MyListSettingsState extends State<MyListSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Active Default Sort By',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -211,10 +218,13 @@ class _MyListSettingsState extends State<MyListSettings> {
                   height: 30,
                   decoration: BoxDecoration(
                     color: activeSortBy == 'date'
-                        ? context.toolsActiveBtn.withOpacity(0.3)
+                        ? AppColors.getActiveBtn(
+                                _themeProvider.isDarkModeEnabled)
+                            .withOpacity(0.3)
                         : Colors.transparent,
                     border: Border.all(
-                      color: context.inputFieldBorder,
+                      color: AppColors.getCardBorder(
+                          _themeProvider.isDarkModeEnabled),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -225,7 +235,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                       child: Text(
                         'DATE',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
@@ -241,10 +251,13 @@ class _MyListSettingsState extends State<MyListSettings> {
                   height: 30,
                   decoration: BoxDecoration(
                     color: activeSortBy == 'tag'
-                        ? context.toolsActiveBtn.withOpacity(0.5)
+                        ? AppColors.getActiveBtn(
+                                _themeProvider.isDarkModeEnabled)
+                            .withOpacity(0.5)
                         : Colors.transparent,
                     border: Border.all(
-                      color: context.inputFieldBorder,
+                      color: AppColors.getCardBorder(
+                          _themeProvider.isDarkModeEnabled),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -257,7 +270,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                       child: Text(
                         'TAG',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
@@ -273,10 +286,13 @@ class _MyListSettingsState extends State<MyListSettings> {
                   height: 30,
                   decoration: BoxDecoration(
                     color: activeSortBy == 'answered'
-                        ? context.toolsActiveBtn.withOpacity(0.5)
+                        ? AppColors.getActiveBtn(
+                                _themeProvider.isDarkModeEnabled)
+                            .withOpacity(0.5)
                         : Colors.transparent,
                     border: Border.all(
-                      color: context.inputFieldBorder,
+                      color: AppColors.getCardBorder(
+                          _themeProvider.isDarkModeEnabled),
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),
@@ -289,7 +305,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                       child: Text(
                         'ANSWERED',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
@@ -309,7 +325,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: context.dropShadow,
+                  color:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
                   offset: Offset(0.0, 1.0),
                   blurRadius: 6.0,
                 ),
@@ -317,17 +334,15 @@ class _MyListSettingsState extends State<MyListSettings> {
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [
-                  context.prayerMenuStart,
-                  context.prayerMenuEnd,
-                ],
+                colors:
+                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
             ),
             padding: EdgeInsets.all(10),
             child: Text(
               'Active Auto Delete',
               style: TextStyle(
-                  color: context.settingsHeader,
+                  color: AppColors.offWhite2,
                   fontSize: 22,
                   fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
@@ -346,7 +361,8 @@ class _MyListSettingsState extends State<MyListSettings> {
                   child: Text(
                     'Include Answered Prayers in Auto Delete?',
                     style: TextStyle(
-                        color: context.inputFieldText,
+                        color: AppColors.getTextFieldText(
+                            _themeProvider.isDarkModeEnabled),
                         fontSize: 12,
                         fontWeight: FontWeight.w300),
                   ),
@@ -354,7 +370,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                 Switch.adaptive(
                   value: false,
                   activeColor: Colors.white,
-                  activeTrackColor: context.switchThumbActive,
+                  activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
                   onChanged: (_) {},
                 ),

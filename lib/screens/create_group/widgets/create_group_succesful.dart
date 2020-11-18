@@ -1,5 +1,8 @@
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class GroupCreated extends StatefulWidget {
   @override
@@ -10,6 +13,7 @@ class _GroupCreatedState extends State<GroupCreated> {
   var option = 'email';
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Column(
       children: [
         SizedBox(height: 10.0),
@@ -17,7 +21,7 @@ class _GroupCreatedState extends State<GroupCreated> {
           'CONGRATULATIONS!',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: context.settingsHeader,
+              color: AppColors.offWhite2,
               fontSize: 22,
               fontWeight: FontWeight.w700),
         ),
@@ -26,7 +30,7 @@ class _GroupCreatedState extends State<GroupCreated> {
           'Your Group',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: context.settingsHeader,
+              color: AppColors.offWhite2,
               fontSize: 16,
               fontWeight: FontWeight.w500),
         ),
@@ -35,7 +39,7 @@ class _GroupCreatedState extends State<GroupCreated> {
           'DRINNON\'S IT HEROES',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: context.brightBlue2,
+              color: AppColors.lightBlue4,
               fontSize: 22,
               fontWeight: FontWeight.w700),
         ),
@@ -44,7 +48,7 @@ class _GroupCreatedState extends State<GroupCreated> {
           'has been created.',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: context.settingsHeader,
+              color: AppColors.offWhite2,
               fontSize: 16,
               fontWeight: FontWeight.w500),
         ),
@@ -56,7 +60,7 @@ class _GroupCreatedState extends State<GroupCreated> {
             'Now spread the news and send some invitations.',
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: context.settingsHeader,
+                color: AppColors.offWhite2,
                 fontSize: 16,
                 fontWeight: FontWeight.w400),
           ),
@@ -70,10 +74,12 @@ class _GroupCreatedState extends State<GroupCreated> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: option == 'email'
-                    ? context.toolsActiveBtn.withOpacity(0.3)
+                    ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                        .withOpacity(0.3)
                     : Colors.transparent,
                 border: Border.all(
-                  color: context.inputFieldBorder,
+                  color:
+                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -84,7 +90,7 @@ class _GroupCreatedState extends State<GroupCreated> {
                   child: Text(
                     'SEND AN EMAIL',
                     style: TextStyle(
-                        color: context.brightBlue,
+                        color: AppColors.lightBlue3,
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
                   ),
@@ -98,10 +104,12 @@ class _GroupCreatedState extends State<GroupCreated> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: option == 'text'
-                    ? context.toolsActiveBtn.withOpacity(0.5)
+                    ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                        .withOpacity(0.5)
                     : Colors.transparent,
                 border: Border.all(
-                  color: context.inputFieldBorder,
+                  color:
+                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -114,7 +122,7 @@ class _GroupCreatedState extends State<GroupCreated> {
                   child: Text(
                     'TEXT MESSAGE',
                     style: TextStyle(
-                        color: context.brightBlue,
+                        color: AppColors.lightBlue3,
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
                   ),
@@ -128,10 +136,12 @@ class _GroupCreatedState extends State<GroupCreated> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: option == 'code'
-                    ? context.toolsActiveBtn.withOpacity(0.5)
+                    ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                        .withOpacity(0.5)
                     : Colors.transparent,
                 border: Border.all(
-                  color: context.inputFieldBorder,
+                  color:
+                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -144,7 +154,7 @@ class _GroupCreatedState extends State<GroupCreated> {
                   child: Text(
                     'QR CODE',
                     style: TextStyle(
-                        color: context.brightBlue,
+                        color: AppColors.lightBlue3,
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
                   ),

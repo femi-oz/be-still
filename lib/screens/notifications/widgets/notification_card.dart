@@ -53,7 +53,7 @@ class NotificationCard extends StatelessWidget {
                         //                 .fullName
                         //                 .toUpperCase(),
                         //             style: TextStyle(
-                        //               color: context.brightBlue,
+                        //               color: AppColors.lightBlue3,
                         //               fontWeight: FontWeight.w500,
                         //               fontSize: 10,
                         //             ),
@@ -68,7 +68,7 @@ class NotificationCard extends StatelessWidget {
                         //               .name
                         //               .toUpperCase(),
                         //           style: TextStyle(
-                        //             color: context.prayerCardTags,
+                        //             color: AppColors.red,
                         //             fontSize: 10,
                         //           ),
                         //         ),

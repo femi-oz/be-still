@@ -3,6 +3,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,10 +24,13 @@ class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return AppBar(
       title: Text('SETTINGS',
           style: TextStyle(
-            color: context.settingsTitle,
+            color: _themeProvider.isDarkModeEnabled
+                ? AppColors.darkBlue3
+                : AppColors.grey2,
             fontSize: 28,
             fontWeight: FontWeight.w500,
           )),
@@ -37,8 +41,8 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           //     ? FlatButton(
           //         onPressed: () => showModalBottomSheet(
           //           context: context,
-          //           barrierColor: context.toolsBg,
-          //           backgroundColor: context.toolsBg,
+          //           barrierColor: AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled),
+          //           backgroundColor: AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled),
           //           isScrollControlled: true,
           //           builder: (BuildContext context) {
           //             return MultiProvider(providers: [
@@ -51,7 +55,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           //           children: <Widget>[
           //             Icon(
           //               Icons.notifications,
-          //               color: context.prayerCardTags,
+          //               color: AppColors.red,
           //             ),
           //             Container(
           //               child: Text(
@@ -66,7 +70,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           IconButton(
         icon: Icon(
           Icons.notifications_none,
-          color: context.appBarInactive,
+          color: AppColors.grey,
           size: 24,
         ),
         onPressed: null,
@@ -77,7 +81,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
             return IconButton(
               icon: Icon(
                 AppIcons.menu,
-                color: context.appBarActive,
+                color: AppColors.grey,
                 size: 24,
               ),
               onPressed: () {

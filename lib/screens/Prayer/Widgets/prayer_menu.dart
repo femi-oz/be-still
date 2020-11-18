@@ -3,12 +3,14 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/menu_items.dart';
 import 'package:be_still/screens/prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,11 +65,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
   Widget build(BuildContext context) {
     final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     openTools() {
       showModalBottomSheet(
         context: context,
-        barrierColor: context.toolsBg,
-        backgroundColor: context.toolsBg,
+        barrierColor:
+            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
+        backgroundColor:
+            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
         isScrollControlled: true,
         builder: (BuildContext context) {
           return _activeList == PrayerActiveScreen.findGroup
@@ -81,7 +86,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: context.dropShadow,
+            color: AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
             offset: Offset(0.0, 0.5),
             blurRadius: 5.0,
           ),
@@ -89,10 +94,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [
-            context.prayerMenuStart,
-            context.prayerMenuEnd,
-          ],
+          colors: AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
         ),
       ),
       width: double.infinity,
@@ -106,7 +108,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             child: IconButton(
               icon: Icon(
                 AppIcons.search,
-                color: context.brightBlue,
+                color: AppColors.lightBlue3,
                 size: 25,
               ),
               onPressed: () => setState(
@@ -134,7 +136,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     IconButton(
                       icon: Icon(
                         Icons.close,
-                        color: context.brightBlue,
+                        color: AppColors.lightBlue3,
                         size: 25,
                       ),
                       onPressed: () => setState(

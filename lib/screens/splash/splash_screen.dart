@@ -150,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen>
                           Icon(
                             Icons.copyright,
                             size: 12,
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                           ),
                           Text(
                             '2020 All Rights reserved',
@@ -166,7 +166,7 @@ class _SplashScreenState extends State<SplashScreen>
                           Icon(
                             AppIcons.second_logo,
                             size: 16,
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                           ),
                           SizedBox(width: 10.0),
                           Text(

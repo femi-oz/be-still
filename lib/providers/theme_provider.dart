@@ -22,11 +22,21 @@ class ThemeProvider with ChangeNotifier {
     } else {
       _isDarkMode = value == ThemeMode.dark ? true : false;
     }
-    await darkThemePref.addIsDarkMode(_isDarkMode);
+    await darkThemePref.addThemeMode(value.toString());
     notifyListeners();
   }
 
   Future setDefaultTheme() async {
-    _isDarkMode = await darkThemePref.getIsDarkMode();
+    var value = await darkThemePref.getThemeMode();
+    if (value == ThemeMode.system.toString()) {
+      _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+                  .platformBrightness ==
+              Brightness.dark
+          ? true
+          : false;
+    } else {
+      _isDarkMode = value == ThemeMode.dark.toString() ? true : false;
+    }
+    notifyListeners();
   }
 }

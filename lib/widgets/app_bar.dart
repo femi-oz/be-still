@@ -21,9 +21,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
+    bool isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return AppBar(
-      backgroundColor: AppColors.appBarBg(
-          Provider.of<ThemeProvider>(context).isDarkModeEnabled),
+      backgroundColor: AppColors.appBarBg(isDark),
       title: Text(''),
       leading: IconButton(
         icon: Icon(
@@ -46,7 +46,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           child: Text(
             "ADD A PRAYER",
             style: AppTextStyles.boldText20.copyWith(
-              color: AppColors.getAppBarColor(true),
+              color: AppColors.getAppBarColor(isDark),
             ),
           ),
         ),
@@ -56,7 +56,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           child: Text(
             "PRAY",
             style: AppTextStyles.boldText20.copyWith(
-              color: AppColors.getAppBarColor(true),
+              color: AppColors.getAppBarColor(isDark),
             ),
           ),
         ),
@@ -65,7 +65,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             return IconButton(
               icon: Icon(
                 AppIcons.menu,
-                color: AppColors.getAppBarColor(true),
+                color: AppColors.getAppBarColor(isDark),
                 // size: 24,
               ),
               onPressed: () {

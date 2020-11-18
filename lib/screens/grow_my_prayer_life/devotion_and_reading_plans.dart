@@ -53,7 +53,7 @@ class DevotionPlans extends StatelessWidget {
                         child: Text(
                           dev.title,
                           style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 18.0,
                           ),
                           textAlign: TextAlign.center,
@@ -70,7 +70,8 @@ class DevotionPlans extends StatelessWidget {
                         child: Text(
                           'Length: ${dev.length}',
                           style: TextStyle(
-                            color: context.inputFieldText,
+                            color: AppColors.getTextFieldText(
+                                _themeProvider.isDarkModeEnabled),
                             fontSize: 14.0,
                           ),
                           textAlign: TextAlign.center,
@@ -87,7 +88,8 @@ class DevotionPlans extends StatelessWidget {
                         child: Text(
                           dev.description,
                           style: TextStyle(
-                            color: context.inputFieldText,
+                            color: AppColors.getTextFieldText(
+                                _themeProvider.isDarkModeEnabled),
                             fontSize: 14.0,
                           ),
                           textAlign: TextAlign.left,
@@ -167,11 +169,11 @@ class DevotionPlans extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: context.toolsBackBtn),
+                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
                     label: Text(
                       'BACK',
                       style: TextStyle(
-                        color: context.toolsBackBtn,
+                        color: AppColors.lightBlue5,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -184,7 +186,7 @@ class DevotionPlans extends StatelessWidget {
                 child: Text(
                   'Devotionals & Reading Plans',
                   style: TextStyle(
-                      color: context.brightBlue,
+                      color: AppColors.lightBlue3,
                       fontSize: 20,
                       fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
@@ -251,7 +253,7 @@ class DevotionPlans extends StatelessWidget {
                     //               Text(
                     //                 dev.title,
                     //                 style: TextStyle(
-                    //                     color: context.brightBlue2,
+                    //                     color: AppColors.lightBlue4,
                     //                     fontSize: 14),
                     //                 textAlign: TextAlign.left,
                     //               ),

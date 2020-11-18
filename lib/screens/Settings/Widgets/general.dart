@@ -15,6 +15,7 @@ class GeneralSettings extends StatelessWidget {
 
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     print(settings);
     return SingleChildScrollView(
@@ -36,14 +37,14 @@ class GeneralSettings extends StatelessWidget {
                   Text(
                     _currentUser.firstName, //TODO
                     style: TextStyle(
-                        color: context.settingsUsername,
+                        color: AppColors.grey3,
                         fontSize: 28,
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
                     DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
                     style: TextStyle(
-                        color: context.settingsUsername.withOpacity(0.9),
+                        color: AppColors.grey3.withOpacity(0.9),
                         fontSize: 12,
                         fontWeight: FontWeight.w500),
                   ),
@@ -56,7 +57,9 @@ class GeneralSettings extends StatelessWidget {
               color: AppColors.getTextFieldBgColor(
                   _themeProvider.isDarkModeEnabled),
               child: OutlineButton(
-                borderSide: BorderSide(color: context.inputFieldBorder),
+                borderSide: BorderSide(
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled)),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -66,14 +69,15 @@ class GeneralSettings extends StatelessWidget {
                       Text(
                         'UPDATE',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
                         _currentUser.email,
                         style: TextStyle(
-                            color: context.inputFieldText,
+                            color: AppColors.getTextFieldText(
+                                _themeProvider.isDarkModeEnabled),
                             fontSize: 10,
                             fontWeight: FontWeight.w300),
                       ),
@@ -88,7 +92,9 @@ class GeneralSettings extends StatelessWidget {
               color: AppColors.getTextFieldBgColor(
                   _themeProvider.isDarkModeEnabled),
               child: OutlineButton(
-                borderSide: BorderSide(color: context.inputFieldBorder),
+                borderSide: BorderSide(
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled)),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -98,14 +104,15 @@ class GeneralSettings extends StatelessWidget {
                       Text(
                         'UPDATE',
                         style: TextStyle(
-                            color: context.brightBlue,
+                            color: AppColors.lightBlue3,
                             fontSize: 14,
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
                         'password',
                         style: TextStyle(
-                            color: context.inputFieldText,
+                            color: AppColors.getTextFieldText(
+                                _themeProvider.isDarkModeEnabled),
                             fontSize: 10,
                             fontWeight: FontWeight.w300),
                       ),
@@ -120,7 +127,9 @@ class GeneralSettings extends StatelessWidget {
               color: AppColors.getTextFieldBgColor(
                   _themeProvider.isDarkModeEnabled),
               child: OutlineButton(
-                borderSide: BorderSide(color: context.inputFieldBorder),
+                borderSide: BorderSide(
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled)),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
@@ -130,14 +139,15 @@ class GeneralSettings extends StatelessWidget {
                       Text(
                         'ADD',
                         style: TextStyle(
-                            color: context.prayerCardTags,
+                            color: AppColors.red,
                             fontSize: 14,
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
                         'Two-Factor Authentication',
                         style: TextStyle(
-                            color: context.inputFieldText,
+                            color: AppColors.getTextFieldText(
+                                _themeProvider.isDarkModeEnabled),
                             fontSize: 10,
                             fontWeight: FontWeight.w300),
                       ),
@@ -157,7 +167,8 @@ class GeneralSettings extends StatelessWidget {
                     child: Text(
                       'Allow BeStill to access Contacts?',
                       style: TextStyle(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                           fontSize: 12,
                           fontWeight: FontWeight.w300),
                     ),
@@ -165,7 +176,7 @@ class GeneralSettings extends StatelessWidget {
                   Switch.adaptive(
                     value: true,
                     activeColor: Colors.white,
-                    activeTrackColor: context.switchThumbActive,
+                    activeTrackColor: AppColors.lightBlue4,
                     inactiveThumbColor: Colors.white,
                     onChanged: (_) {},
                   ),
@@ -182,7 +193,8 @@ class GeneralSettings extends StatelessWidget {
                     child: Text(
                       'Enable Face/Touch ID',
                       style: TextStyle(
-                          color: context.inputFieldText,
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled),
                           fontSize: 12,
                           fontWeight: FontWeight.w300),
                     ),
@@ -190,7 +202,7 @@ class GeneralSettings extends StatelessWidget {
                   Switch.adaptive(
                     value: false,
                     activeColor: Colors.white,
-                    activeTrackColor: context.switchThumbActive,
+                    activeTrackColor: AppColors.lightBlue4,
                     inactiveThumbColor: Colors.white,
                     onChanged: (_) {},
                   ),
@@ -202,7 +214,7 @@ class GeneralSettings extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: context.dropShadow,
+                    color: AppColors.getDropShadow(_isDark),
                     offset: Offset(0.0, 1.0),
                     blurRadius: 6.0,
                   ),
@@ -210,17 +222,15 @@ class GeneralSettings extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: [
-                    context.prayerMenuStart,
-                    context.prayerMenuEnd,
-                  ],
+                  colors:
+                      AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
                 ),
               ),
               padding: EdgeInsets.all(10),
               child: Text(
                 'App Appearance',
                 style: TextStyle(
-                    color: context.settingsHeader,
+                    color: AppColors.offWhite2,
                     fontSize: 22,
                     fontWeight: FontWeight.w700),
                 textAlign: TextAlign.center,
@@ -236,10 +246,13 @@ class GeneralSettings extends StatelessWidget {
                     height: 30,
                     decoration: BoxDecoration(
                       color: _themeProvider.colorMode == ThemeMode.light
-                          ? context.toolsActiveBtn.withOpacity(0.3)
+                          ? AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.3)
                           : Colors.transparent,
                       border: Border.all(
-                        color: context.inputFieldBorder,
+                        color: AppColors.getCardBorder(
+                            _themeProvider.isDarkModeEnabled),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -250,7 +263,7 @@ class GeneralSettings extends StatelessWidget {
                         child: Text(
                           'LIGHT',
                           style: TextStyle(
-                              color: context.brightBlue,
+                              color: AppColors.lightBlue3,
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                         ),
@@ -263,10 +276,13 @@ class GeneralSettings extends StatelessWidget {
                     height: 30,
                     decoration: BoxDecoration(
                       color: _themeProvider.colorMode == ThemeMode.dark
-                          ? context.toolsActiveBtn.withOpacity(0.5)
+                          ? AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.5)
                           : Colors.transparent,
                       border: Border.all(
-                        color: context.inputFieldBorder,
+                        color: AppColors.getCardBorder(
+                            _themeProvider.isDarkModeEnabled),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -279,7 +295,7 @@ class GeneralSettings extends StatelessWidget {
                         child: Text(
                           'DARK',
                           style: TextStyle(
-                              color: context.brightBlue,
+                              color: AppColors.lightBlue3,
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                         ),
@@ -292,10 +308,13 @@ class GeneralSettings extends StatelessWidget {
                     height: 30,
                     decoration: BoxDecoration(
                       color: _themeProvider.colorMode == ThemeMode.system
-                          ? context.toolsActiveBtn.withOpacity(0.5)
+                          ? AppColors.getActiveBtn(
+                                  _themeProvider.isDarkModeEnabled)
+                              .withOpacity(0.5)
                           : Colors.transparent,
                       border: Border.all(
-                        color: context.inputFieldBorder,
+                        color: AppColors.getCardBorder(
+                            _themeProvider.isDarkModeEnabled),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -308,7 +327,7 @@ class GeneralSettings extends StatelessWidget {
                         child: Text(
                           'AUTO',
                           style: TextStyle(
-                              color: context.brightBlue,
+                              color: AppColors.lightBlue3,
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                         ),
@@ -325,7 +344,7 @@ class GeneralSettings extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: context.dropShadow,
+                    color: AppColors.getDropShadow(_isDark),
                     offset: Offset(0.0, 1.0),
                     blurRadius: 6.0,
                   ),
@@ -333,17 +352,15 @@ class GeneralSettings extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: [
-                    context.prayerMenuStart,
-                    context.prayerMenuEnd,
-                  ],
+                  colors:
+                      AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
                 ),
               ),
               padding: EdgeInsets.all(10),
               child: Text(
                 'App Data',
                 style: TextStyle(
-                    color: context.settingsHeader,
+                    color: AppColors.offWhite2,
                     fontSize: 22,
                     fontWeight: FontWeight.w700),
                 textAlign: TextAlign.center,
@@ -368,7 +385,7 @@ class GeneralSettings extends StatelessWidget {
                     child: Text(
                       'EXPORT',
                       style: TextStyle(
-                          color: context.brightBlue,
+                          color: AppColors.lightBlue3,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
@@ -385,7 +402,8 @@ class GeneralSettings extends StatelessWidget {
                   Text(
                     'App is running the latest version',
                     style: TextStyle(
-                      color: context.inputFieldText,
+                      color: AppColors.getTextFieldText(
+                          _themeProvider.isDarkModeEnabled),
                       fontSize: 11,
                       fontWeight: FontWeight.w300,
                     ),
@@ -393,7 +411,7 @@ class GeneralSettings extends StatelessWidget {
                   Text(
                     '1.02',
                     style: TextStyle(
-                      color: context.brightBlue,
+                      color: AppColors.lightBlue3,
                       fontSize: 11,
                       fontWeight: FontWeight.w300,
                     ),
@@ -409,7 +427,7 @@ class GeneralSettings extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(
-                    color: context.prayerCardTags,
+                    color: AppColors.red,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -420,7 +438,7 @@ class GeneralSettings extends StatelessWidget {
                     child: Text(
                       'DELETE ACCOUNT & ALL DATA',
                       style: TextStyle(
-                          color: context.prayerCardTags,
+                          color: AppColors.red,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),

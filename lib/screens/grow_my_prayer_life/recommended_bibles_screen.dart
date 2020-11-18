@@ -54,11 +54,11 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: context.toolsBackBtn),
+                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
                     label: Text(
                       'BACK',
                       style: TextStyle(
-                        color: context.toolsBackBtn,
+                        color: AppColors.lightBlue5,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -71,7 +71,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 child: Text(
                   'Recommeneded Bibles',
                   style: TextStyle(
-                      color: context.brightBlue,
+                      color: AppColors.lightBlue3,
                       fontSize: 20,
                       fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
@@ -83,7 +83,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 child: Text(
                   'Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Donec rutrum congue leo eget malesuada. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Proin eget tortor risus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
                   style: TextStyle(
-                    color: context.inputFieldText,
+                    color: AppColors.getTextFieldText(
+                        _themeProvider.isDarkModeEnabled),
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
                     height: 1.2,
@@ -110,7 +111,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             //       (BibleModel bible) => Container(
             //         margin: EdgeInsets.symmetric(vertical: 10.0),
             //         child: custom.ExpansionTile(
-            //           iconColor: context.brightBlue2,
+            //           iconColor: AppColors.lightBlue4,
             //           headerBackgroundColorStart: context.prayerMenuStart,
             //           headerBackgroundColorEnd: context.prayerMenuEnd,
             //           shadowColor: context.dropShadow,
@@ -121,7 +122,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             //               bible.shortName,
             //               textAlign: TextAlign.center,
             //               style: TextStyle(
-            //                   color: context.inputFieldText,
+            //                   color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
             //                   fontSize: 22,
             //                   fontWeight: FontWeight.w500),
             //             ),
@@ -140,7 +141,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             //                     child: Text(
             //                       bible.name,
             //                       style: TextStyle(
-            //                         color: context.inputFieldText,
+            //                         color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
             //                         fontSize: 11,
             //                       ),
             //                     ),
@@ -158,7 +159,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             //                     child: Text(
             //                       bible.description,
             //                       style: TextStyle(
-            //                         color: context.inputFieldText,
+            //                         color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
             //                         fontSize: 11,
             //                         height: 1.3,
             //                       ),
@@ -173,7 +174,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             //                     child: Text(
             //                       'READ NOW',
             //                       style: TextStyle(
-            //                         color: context.brightBlue2,
+            //                         color: AppColors.lightBlue4,
             //                         fontSize: 14,
             //                         fontWeight: FontWeight.w500,
             //                         height: 1.3,

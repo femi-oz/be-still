@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PrayerSettingsModel {
   final String userId;
-  final String frequency;
+  final int frequency;
   final DateTime date;
   final Timestamp time;
   final String createdBy;

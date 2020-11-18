@@ -76,7 +76,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             //       (notificationByType) => Container(
             //         margin: EdgeInsets.only(bottom: 10.0),
             //         child: custom.ExpansionTile(
-            //           iconColor: context.brightBlue2,
+            //           iconColor: AppColors.lightBlue4,
             //           headerBackgroundColorStart: context.prayerMenuStart,
             //           headerBackgroundColorEnd: context.prayerMenuEnd,
             //           shadowColor: context.dropShadow,
@@ -87,7 +87,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             //               notificationByType['title'],
             //               textAlign: TextAlign.center,
             //               style: TextStyle(
-            //                   color: context.inputFieldText,
+            //                   color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
             //                   fontSize: 22,
             //                   fontWeight: FontWeight.w500),
             //             ),

@@ -1,5 +1,8 @@
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/app_theme.dart';
 
 class GroupPrivilegeSettings extends StatelessWidget {
@@ -10,6 +13,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
   @override
   GroupPrivilegeSettings(this.status, this.user);
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -26,7 +30,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                     'Confirm transfer of Admin Privilege to',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: context.brightBlue2,
+                      color: AppColors.lightBlue4,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       height: 1.5,
@@ -40,7 +44,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                     user.firstName.toUpperCase(), //TODO
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: context.brightBlue2,
+                      color: AppColors.lightBlue4,
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       height: 1.5,
@@ -53,7 +57,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                     'Your account will be updated to Moderator',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: context.brightBlue2,
+                      color: AppColors.lightBlue4,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       height: 1.5,
@@ -73,7 +77,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: context.prayerCardTags,
+                  color: AppColors.red,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -84,7 +88,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                   Text(
                     'CONFIRM',
                     style: TextStyle(
-                      color: context.prayerCardTags,
+                      color: AppColors.red,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -103,7 +107,8 @@ class GroupPrivilegeSettings extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: context.inputFieldBorder,
+                  color:
+                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -114,7 +119,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                   Text(
                     'CANCEL',
                     style: TextStyle(
-                      color: context.brightBlue2,
+                      color: AppColors.lightBlue4,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),

@@ -5,6 +5,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
@@ -116,6 +117,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
@@ -130,8 +132,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: context.toolsBg.withOpacity(0.5),
-                      backgroundColor: context.toolsBg.withOpacity(0.9),
+                      barrierColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.5),
+                      backgroundColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer();
@@ -145,7 +151,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -154,14 +160,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.share,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Share',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -188,7 +194,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -197,14 +203,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.edit,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Edit',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -233,7 +239,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -242,14 +248,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.add_circle_outline,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Add an Update',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -263,8 +269,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: context.toolsBg.withOpacity(0.5),
-                      backgroundColor: context.toolsBg.withOpacity(0.9),
+                      barrierColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.5),
+                      backgroundColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
@@ -279,7 +289,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -288,7 +298,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.calendar_today,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Expanded(
                           child: Row(
@@ -299,7 +309,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 child: Text(
                                   'Reminder',
                                   style: TextStyle(
-                                    color: context.brightBlue2,
+                                    color: AppColors.lightBlue4,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -308,7 +318,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               Text(
                                 reminder,
                                 style: TextStyle(
-                                  color: context.brightBlue2,
+                                  color: AppColors.lightBlue4,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -324,8 +334,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: context.toolsBg.withOpacity(0.5),
-                      backgroundColor: context.toolsBg.withOpacity(0.9),
+                      barrierColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.5),
+                      backgroundColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SnoozePicker(snoozeInterval, setSnooze, false);
@@ -339,7 +353,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -348,14 +362,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.brightness_3,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Snooze',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -376,7 +390,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: context.toolsBtnBorder,
+                              color: AppColors.lightBlue6,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
@@ -385,14 +399,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             children: <Widget>[
                               Icon(
                                 Icons.check_box,
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Text(
                                   'Mark as Answered',
                                   style: TextStyle(
-                                    color: context.brightBlue2,
+                                    color: AppColors.lightBlue4,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -414,7 +428,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: context.toolsBtnBorder,
+                              color: AppColors.lightBlue6,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(10),
@@ -423,14 +437,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             children: <Widget>[
                               Icon(
                                 Icons.archive,
-                                color: context.brightBlue2,
+                                color: AppColors.lightBlue4,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Text(
                                   'Archive',
                                   style: TextStyle(
-                                    color: context.brightBlue2,
+                                    color: AppColors.lightBlue4,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -445,8 +459,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: context.toolsBg.withOpacity(0.5),
-                      backgroundColor: context.toolsBg.withOpacity(0.9),
+                      barrierColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.5),
+                      backgroundColor: AppColors.getDetailBgColor(
+                              _themeProvider.isDarkModeEnabled)[1]
+                          .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return DeletePrayer(widget.prayer);
@@ -460,7 +478,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: context.toolsBtnBorder,
+                        color: AppColors.lightBlue6,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -469,14 +487,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         Icon(
                           Icons.delete,
-                          color: context.brightBlue2,
+                          color: AppColors.lightBlue4,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
                             'Delete',
                             style: TextStyle(
-                              color: context.brightBlue2,
+                              color: AppColors.lightBlue4,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -496,7 +514,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: context.inputFieldText,
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),
