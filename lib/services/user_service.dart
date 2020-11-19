@@ -93,7 +93,7 @@ class UserService {
     String authUid,
   ) async {
     // Generate uuid
-    // final deviceID = Uuid().v1();
+    final deviceIdGuid = Uuid().v1();
     final userID = Uuid().v1();
     final userDeviceID = Uuid().v1();
 
@@ -123,7 +123,7 @@ class UserService {
               );
 
           //store device
-          await _deviceCollectionReference.document(deviceID).setData(
+          await _deviceCollectionReference.document(deviceIdGuid).setData(
                 populateDevice(userData, deviceModel, deviceName, deviceID)
                     .toJson(),
               );
