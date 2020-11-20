@@ -60,16 +60,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     final UserModel _userData = UserModel(
       churchId: 0,
-      createdBy: '${_firstnameController.text} ${_lastnameController.text}'
-          .toUpperCase(),
+      createdBy: _emailController.text.toUpperCase(),
       createdOn: DateTime.now(),
       dateOfBirth: _selectedDate,
       email: _emailController.text,
       firstName: _firstnameController.text,
       keyReference: '',
       lastName: _lastnameController.text,
-      modifiedBy: '${_firstnameController.text} ${_lastnameController.text}'
-          .toUpperCase(),
+      modifiedBy: _emailController.text.toUpperCase(),
       modifiedOn: DateTime.now(),
       phone: '',
     );

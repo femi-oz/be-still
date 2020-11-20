@@ -69,9 +69,9 @@ class SettingsModel {
         syncAlexa = snapShot.data['SyncAlexa'],
         status = snapShot.data['Status'],
         createdBy = snapShot.data['CreatedBy'],
-        createdOn = snapShot.data['CreatedOn'],
+        createdOn = snapShot.data['CreatedOn'].toDate(),
         modifiedBy = snapShot.data['ModifiedBy'],
-        modifiedOn = snapShot.data['ModifiedOn'];
+        modifiedOn = snapShot.data['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

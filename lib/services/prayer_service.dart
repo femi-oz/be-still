@@ -19,9 +19,6 @@ class PrayerService {
   final CollectionReference _hiddenPrayerCollectionReference =
       Firestore.instance.collection("HiddenPrayer");
 
-  // final CollectionReference _prayerDisableCollectionRefernce =
-  //     Firestore.instance.collection("PrayerDisable");
-
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
     try {
@@ -284,9 +281,9 @@ class PrayerService {
     var hiddenPrayer = HiddenPrayerModel(
       userId: user.id,
       prayerId: prayerId,
-      createdBy: '${user.firstName} ${user.lastName}',
+      createdBy: user.email,
       createdOn: DateTime.now(),
-      modifiedBy: '${user.firstName} ${user.lastName}',
+      modifiedBy: user.email,
       modifiedOn: DateTime.now(),
     );
     try {

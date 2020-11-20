@@ -133,6 +133,7 @@ class UserService {
                 populateUserDevice(userData, deviceID.toString(), userID)
                     .toJson(),
               );
+          // store defaul settings
           await locator<SettingsService>()
               .addSettings(deviceID, userID, userData);
         },

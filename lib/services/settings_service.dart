@@ -32,9 +32,9 @@ class SettingsService {
         allowPrayerTimeNotification: false,
         syncAlexa: false,
         status: 'Active',
-        createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        createdBy: userData.createdBy,
         createdOn: DateTime.now(),
-        modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        modifiedBy: userData.createdBy,
         modifiedOn: DateTime.now());
     return settings;
   }
@@ -45,9 +45,9 @@ class SettingsService {
         frequency: 0,
         date: DateTime.now(),
         time: Timestamp.now(),
-        createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        createdBy: userData.createdBy,
         createdOn: DateTime.now(),
-        modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        modifiedBy: userData.createdBy,
         modifiedOn: DateTime.now());
     return prayerSettings;
   }
@@ -60,9 +60,9 @@ class SettingsService {
         churchId: '',
         phone: '${userData.phone}',
         status: 'Active',
-        createdBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        createdBy: userData.createdBy,
         createdOn: DateTime.now(),
-        modifiedBy: '${userData.firstName} ${userData.lastName}'.toUpperCase(),
+        modifiedBy: userData.createdBy,
         modifiedOn: DateTime.now());
     return sharingSettings;
   }

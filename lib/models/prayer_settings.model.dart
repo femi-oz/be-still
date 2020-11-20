@@ -27,9 +27,9 @@ class PrayerSettingsModel {
         date = snapshot.data["Date"],
         time = snapshot.data["Time"],
         createdBy = snapshot.data["CreatedBy"],
-        createdOn = snapshot.data["CreatedOn"],
+        createdOn = snapshot.data["CreatedOn"].toDate(),
         modifiedBy = snapshot.data["ModifiedBy"],
-        modifiedOn = snapshot.data["ModifiedOn"];
+        modifiedOn = snapshot.data["ModifiedOn"].toDate();
 
   Map<String, dynamic> toJson() {
     return {
