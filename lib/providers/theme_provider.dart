@@ -28,6 +28,11 @@ class ThemeProvider with ChangeNotifier {
 
   Future setDefaultTheme() async {
     var value = await darkThemePref.getThemeMode();
+    _colorMode = value == ThemeMode.system.toString()
+        ? ThemeMode.system
+        : value == ThemeMode.dark.toString()
+            ? ThemeMode.dark
+            : ThemeMode.light;
     if (value == ThemeMode.system.toString()) {
       _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                   .platformBrightness ==

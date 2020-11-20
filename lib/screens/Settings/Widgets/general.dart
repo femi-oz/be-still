@@ -9,7 +9,10 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_version/get_version.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
 class GeneralSettings extends StatefulWidget {
@@ -29,6 +32,21 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newPassword = TextEditingController();
   BuildContext bcontext;
   var _key = GlobalKey<State>();
+  var _version = '';
+
+  getVersion() async {
+    // PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    //   return packageInfo.version;
+    // });
+    // String projectCode;
+// Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      _version = await GetVersion.projectVersion;
+    } on PlatformException {
+      _version = '0.0';
+    }
+  }
+
   void _updateEmail(UserModel user) async {
     BeStilDialog.showConfirmDialog(context,
         message: 'Are you sure you want to update your email?',
@@ -140,6 +158,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Widget build(BuildContext context) {
+    getVersion();
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     setState(() => this.bcontext = context);
@@ -472,7 +491,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       style: AppTextStyles.regularText16.copyWith(
                           color: AppColors.getTextFieldText(
                               _themeProvider.isDarkModeEnabled))),
-                  Text('1.02', style: AppTextStyles.regularText16),
+                  Text(_version, style: AppTextStyles.regularText16),
                 ],
               ),
             ),
