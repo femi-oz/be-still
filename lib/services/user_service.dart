@@ -155,4 +155,25 @@ class UserService {
       throw HttpException(e.message);
     }
   }
+
+  Future updateEmail(String newEmail, String userId) async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    try {
+      await user.updateEmail(newEmail);
+      await _userCollectionReference
+          .document(userId)
+          .updateData({'Email': newEmail});
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updatePassword(String newPassword) async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    try {
+      user.updatePassword(newPassword);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 }

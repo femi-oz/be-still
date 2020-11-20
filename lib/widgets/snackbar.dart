@@ -8,7 +8,7 @@ class BeStillSnackbar {
     key.currentState.showSnackBar(
       new SnackBar(
         backgroundColor: AppColors.getPrayerMenu(
-            Provider.of<ThemeProvider>(key.currentContext)
+            Provider.of<ThemeProvider>(key.currentContext, listen: false)
                 .isDarkModeEnabled)[1],
         content: Row(
           children: [

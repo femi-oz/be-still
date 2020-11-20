@@ -24,7 +24,7 @@ class PrayerSettingsModel {
   PrayerSettingsModel.fromData(DocumentSnapshot snapshot)
       : userId = snapshot.documentID,
         frequency = snapshot.data["Frequency"],
-        date = snapshot.data["Date"],
+        date = snapshot.data["Date"].toDate(),
         time = snapshot.data["Time"],
         createdBy = snapshot.data["CreatedBy"],
         createdOn = snapshot.data["CreatedOn"].toDate(),

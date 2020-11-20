@@ -281,9 +281,9 @@ class PrayerService {
     var hiddenPrayer = HiddenPrayerModel(
       userId: user.id,
       prayerId: prayerId,
-      createdBy: user.email,
+      createdBy: user.id,
       createdOn: DateTime.now(),
-      modifiedBy: user.email,
+      modifiedBy: user.id,
       modifiedOn: DateTime.now(),
     );
     try {

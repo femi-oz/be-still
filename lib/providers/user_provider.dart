@@ -11,9 +11,20 @@ class UserProvider with ChangeNotifier {
 
   Future setCurrentUser() async {
     _currentUser = await _userService.getCurrentUser();
+    notifyListeners();
   }
 
   UserModel get user {
     return _currentUser;
+  }
+
+  updateEmail(String newEmail, String userId) async {
+    await _userService.updateEmail(newEmail, userId);
+    setCurrentUser();
+  }
+
+  updatePassword(String newPassword) async {
+    await _userService.updatePassword(newPassword);
+    setCurrentUser();
   }
 }

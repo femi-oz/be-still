@@ -5,6 +5,7 @@ class StringUtils {
   }
 
   static const String errorOccured = 'An error occured.';
+  static const String reloginErrorOccured = 'An error occured. lease re-login';
   static String getBackgroundImage(bool isDarkMode) {
     String retVal;
     switch (isDarkMode) {

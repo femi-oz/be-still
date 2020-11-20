@@ -56,9 +56,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       status: 'Active',
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
-      modifiedBy: _user.email,
+      modifiedBy: _user.id,
       modifiedOn: DateTime.now(),
-      createdBy: _user.email,
+      createdBy: _user.id,
       createdOn: DateTime.now(),
     );
     await Provider.of<GroupProvider>(context, listen: false)

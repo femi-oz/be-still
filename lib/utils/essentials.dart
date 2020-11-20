@@ -124,6 +124,11 @@ class AppColors {
         light: 0xFF79858A,
         dark: 0xFFC1C5C8,
       );
+  static Color getTextFieldBorder(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFFB4E3F1,
+        dark: 0xFF014C73,
+      );
   static Color getPrayeModeBg(bool isDarkMode) => dynamicColor(
         isDarkMode: isDarkMode,
         light: 0xFFE6E9ED,
@@ -232,6 +237,18 @@ class AppTextStyles {
   static const TextStyle boldText24 = const TextStyle(
     color: AppColors.lightBlue4,
     fontSize: 24,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText28 = const TextStyle(
+    color: AppColors.grey3,
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText30 = const TextStyle(
+    color: AppColors.grey3,
+    fontSize: 30,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.5,
   );

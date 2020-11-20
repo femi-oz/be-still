@@ -1,23 +1,148 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:be_still/utils/app_theme.dart';
 
-class GeneralSettings extends StatelessWidget {
+class GeneralSettings extends StatefulWidget {
   final SettingsModel settings;
 
   @override
   GeneralSettings(this.settings);
 
+  @override
+  _GeneralSettingsState createState() => _GeneralSettingsState();
+}
+
+enum _ModalType { email, password, auth }
+
+class _GeneralSettingsState extends State<GeneralSettings> {
+  TextEditingController _newEmail = TextEditingController();
+  TextEditingController _newPassword = TextEditingController();
+  BuildContext bcontext;
+  var _key = GlobalKey<State>();
+  void _updateEmail(UserModel user) async {
+    BeStilDialog.showConfirmDialog(context,
+        message: 'Are you sure you want to update your email?',
+        title: 'Update Email', onConfirm: () async {
+      try {
+        BeStilDialog.showLoading(
+          bcontext,
+          _key,
+        );
+        await Provider.of<UserProvider>(context, listen: false)
+            .updateEmail(_newEmail.text, user.id);
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(_key);
+        Navigator.of(context).pop();
+      } on HttpException catch (e) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(_key);
+        BeStilDialog.showErrorDialog(context, e.message);
+      } catch (e) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(_key);
+        BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      }
+    });
+  }
+
+  _updatePassword() {
+    BeStilDialog.showConfirmDialog(context,
+        message: 'Are you sure you want to update your password?',
+        title: 'Update Password', onConfirm: () async {
+      try {
+        BeStilDialog.showLoading(
+          bcontext,
+          _key,
+        );
+        await Provider.of<UserProvider>(context, listen: false)
+            .updatePassword(_newPassword.text);
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(_key);
+        Navigator.of(context).pop();
+      } on HttpException catch (e) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(_key);
+        BeStilDialog.showErrorDialog(context, e.message);
+      } catch (e) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(_key);
+        BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      }
+    });
+  }
+
+  void _showAlert(_ModalType type) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          var _user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: type == _ModalType.email
+                          ? CustomInput(
+                              label: 'New Email', controller: _newEmail)
+                          : type == _ModalType.password
+                              ? CustomInput(
+                                  label: 'New Email', controller: _newPassword)
+                              : Text('Auth'),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FlatButton(
+                          color: AppColors.grey.withOpacity(0.5),
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(
+                            'Cancel',
+                            style: AppTextStyles.regularText16.copyWith(
+                              color: Colors.white,
+                            ),
+                          )),
+                      FlatButton(
+                        color: AppColors.lightBlue3,
+                        onPressed: () => type == _ModalType.email
+                            ? _updateEmail(_user)
+                            : type == _ModalType.password
+                                ? _updatePassword
+                                : null,
+                        child: Text('Submit',
+                            style: AppTextStyles.regularText16.copyWith(
+                              color: Colors.white,
+                            )),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    final _isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    print(settings);
+    setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(
@@ -34,155 +159,111 @@ class GeneralSettings extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  Text('${_currentUser.firstName} ${_currentUser.lastName}',
+                      style: AppTextStyles.boldText30),
                   Text(
-                    _currentUser.firstName, //TODO
-                    style: TextStyle(
-                        color: AppColors.grey3,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
-                    style: TextStyle(
-                        color: AppColors.grey3.withOpacity(0.9),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500),
-                  ),
+                      DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
+                      style: AppTextStyles.normalDarkBlue),
                 ],
               ),
             ),
-            Container(
-              margin:
-                  EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 15),
-              color: AppColors.getTextFieldBgColor(
-                  _themeProvider.isDarkModeEnabled),
-              child: OutlineButton(
-                borderSide: BorderSide(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled)),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'UPDATE',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        _currentUser.email,
-                        style: TextStyle(
-                            color: AppColors.getTextFieldText(
-                                _themeProvider.isDarkModeEnabled),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                ),
-                onPressed: () => print('test'),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(bottom: 15, left: 20.0, right: 20.0),
-              color: AppColors.getTextFieldBgColor(
-                  _themeProvider.isDarkModeEnabled),
-              child: OutlineButton(
-                borderSide: BorderSide(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled)),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'UPDATE',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        'password',
-                        style: TextStyle(
-                            color: AppColors.getTextFieldText(
-                                _themeProvider.isDarkModeEnabled),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                ),
-                onPressed: () => print('test'),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 15),
-              color: AppColors.getTextFieldBgColor(
-                  _themeProvider.isDarkModeEnabled),
-              child: OutlineButton(
-                borderSide: BorderSide(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled)),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'ADD',
-                        style: TextStyle(
-                            color: AppColors.red,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        'Two-Factor Authentication',
-                        style: TextStyle(
-                            color: AppColors.getTextFieldText(
-                                _themeProvider.isDarkModeEnabled),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                ),
-                onPressed: () => print('test'),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text(
-                      'Allow BeStill to access Contacts?',
-                      style: TextStyle(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300),
+            SizedBox(height: 25),
+            GestureDetector(
+              onTap: () => _showAlert(_ModalType.email),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColors.getTextFieldBorder(
+                          _themeProvider.isDarkModeEnabled),
                     ),
-                  ),
-                  Switch.adaptive(
-                    value: true,
-                    activeColor: Colors.white,
-                    activeTrackColor: AppColors.lightBlue4,
-                    inactiveThumbColor: Colors.white,
-                    onChanged: (_) {},
-                  ),
-                ],
+                    borderRadius: BorderRadius.circular(3.0),
+                    color: AppColors.getTextFieldBgColor(
+                        _themeProvider.isDarkModeEnabled)),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'UPDATE',
+                      style: AppTextStyles.regularText18b
+                          .copyWith(color: AppColors.lightBlue4),
+                    ),
+                    Text(
+                      _currentUser.email,
+                      style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled)),
+                    ),
+                  ],
+                ),
               ),
             ),
+            SizedBox(height: 10),
+            GestureDetector(
+              onTap: () => _showAlert(_ModalType.password),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColors.getTextFieldBorder(
+                          _themeProvider.isDarkModeEnabled),
+                    ),
+                    borderRadius: BorderRadius.circular(3.0),
+                    color: AppColors.getTextFieldBgColor(
+                        _themeProvider.isDarkModeEnabled)),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'UPDATE',
+                      style: AppTextStyles.regularText18b
+                          .copyWith(color: AppColors.lightBlue4),
+                    ),
+                    Text(
+                      'password',
+                      style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            GestureDetector(
+              onTap: () => _showAlert(_ModalType.auth),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColors.getTextFieldBorder(
+                          _themeProvider.isDarkModeEnabled),
+                    ),
+                    borderRadius: BorderRadius.circular(3.0),
+                    color: AppColors.getTextFieldBgColor(
+                        _themeProvider.isDarkModeEnabled)),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'ADD',
+                      style: AppTextStyles.regularText18b
+                          .copyWith(color: AppColors.red),
+                    ),
+                    Text(
+                      'Two-Factor Authentication',
+                      style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
             Container(
               padding: EdgeInsets.only(left: 20.0, right: 20.0),
               child: Row(
@@ -190,14 +271,10 @@ class GeneralSettings extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text(
-                      'Enable Face/Touch ID',
-                      style: TextStyle(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300),
-                    ),
+                    child: Text('Enable Face/Touch ID',
+                        style: AppTextStyles.regularText16.copyWith(
+                            color: AppColors.getTextFieldText(
+                                _themeProvider.isDarkModeEnabled))),
                   ),
                   Switch.adaptive(
                     value: false,
@@ -210,11 +287,37 @@ class GeneralSettings extends StatelessWidget {
               ),
             ),
             Container(
+              margin: EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      'Allow BeStill to access Contacts?',
+                      style: AppTextStyles.regularText16.copyWith(
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled)),
+                    ),
+                  ),
+                  Switch.adaptive(
+                    value: true,
+                    activeColor: Colors.white,
+                    activeTrackColor: AppColors.lightBlue4,
+                    inactiveThumbColor: Colors.white,
+                    onChanged: (_) {},
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.getDropShadow(_isDark),
+                    color: AppColors.getDropShadow(
+                        _themeProvider.isDarkModeEnabled),
                     offset: Offset(0.0, 1.0),
                     blurRadius: 6.0,
                   ),
@@ -229,10 +332,7 @@ class GeneralSettings extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: Text(
                 'App Appearance',
-                style: TextStyle(
-                    color: AppColors.offWhite2,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700),
+                style: AppTextStyles.boldText24.copyWith(color: Colors.white70),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -242,98 +342,73 @@ class GeneralSettings extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: _themeProvider.colorMode == ThemeMode.light
-                          ? AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.3)
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: AppColors.getCardBorder(
-                            _themeProvider.isDarkModeEnabled),
-                        width: 1,
+                  GestureDetector(
+                    onTap: () => _themeProvider.changeTheme(ThemeMode.light),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: _themeProvider.colorMode == ThemeMode.light
+                            ? AppColors.getActiveBtn(
+                                    _themeProvider.isDarkModeEnabled)
+                                .withOpacity(0.3)
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: AppColors.getTextFieldBorder(
+                              _themeProvider.isDarkModeEnabled),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: OutlineButton(
-                      borderSide: BorderSide(color: Colors.transparent),
                       child: Container(
-                        child: Text(
-                          'LIGHT',
-                          style: TextStyle(
-                              color: AppColors.lightBlue3,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
-                        ),
+                        child: Text('LIGHT', style: AppTextStyles.boldText20),
                       ),
-                      onPressed: () =>
-                          _themeProvider.changeTheme(ThemeMode.light),
                     ),
                   ),
-                  Container(
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: _themeProvider.colorMode == ThemeMode.dark
-                          ? AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.5)
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: AppColors.getCardBorder(
-                            _themeProvider.isDarkModeEnabled),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: OutlineButton(
-                      borderSide: BorderSide(color: Colors.transparent),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 5),
-                        child: Text(
-                          'DARK',
-                          style: TextStyle(
-                              color: AppColors.lightBlue3,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
+                  GestureDetector(
+                    onTap: () => _themeProvider.changeTheme(ThemeMode.dark),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: _themeProvider.colorMode == ThemeMode.dark
+                            ? AppColors.getActiveBtn(
+                                    _themeProvider.isDarkModeEnabled)
+                                .withOpacity(0.3)
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: AppColors.getTextFieldBorder(
+                              _themeProvider.isDarkModeEnabled),
+                          width: 1,
                         ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      onPressed: () =>
-                          _themeProvider.changeTheme(ThemeMode.dark),
+                      child: Container(
+                        child: Text('DARK', style: AppTextStyles.boldText20),
+                      ),
                     ),
                   ),
-                  Container(
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: _themeProvider.colorMode == ThemeMode.system
-                          ? AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.5)
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: AppColors.getCardBorder(
-                            _themeProvider.isDarkModeEnabled),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: OutlineButton(
-                      borderSide: BorderSide(color: Colors.transparent),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 5),
-                        child: Text(
-                          'AUTO',
-                          style: TextStyle(
-                              color: AppColors.lightBlue3,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
+                  GestureDetector(
+                    onTap: () => _themeProvider.changeTheme(ThemeMode.system),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: _themeProvider.colorMode == ThemeMode.system
+                            ? AppColors.getActiveBtn(
+                                    _themeProvider.isDarkModeEnabled)
+                                .withOpacity(0.3)
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: AppColors.getTextFieldBorder(
+                              _themeProvider.isDarkModeEnabled),
+                          width: 1,
                         ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      onPressed: () =>
-                          _themeProvider.changeTheme(ThemeMode.system),
+                      child: Container(
+                        child: Text('AUTO', style: AppTextStyles.boldText20),
+                      ),
                     ),
                   ),
                 ],
@@ -344,7 +419,8 @@ class GeneralSettings extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.getDropShadow(_isDark),
+                    color: AppColors.getDropShadow(
+                        _themeProvider.isDarkModeEnabled),
                     offset: Offset(0.0, 1.0),
                     blurRadius: 6.0,
                   ),
@@ -359,38 +435,31 @@ class GeneralSettings extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: Text(
                 'App Data',
-                style: TextStyle(
-                    color: AppColors.offWhite2,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700),
+                style: AppTextStyles.boldText24.copyWith(color: Colors.white70),
                 textAlign: TextAlign.center,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            GestureDetector(
+              onTap: () => _themeProvider.changeTheme(ThemeMode.system),
               child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                 width: double.infinity,
-                height: 30,
+                padding: EdgeInsets.symmetric(vertical: 7),
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(
-                    color: AppColors.darkBlue,
+                    color: AppColors.getTextFieldBorder(
+                        _themeProvider.isDarkModeEnabled),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: OutlineButton(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  child: Container(
-                    child: Text(
-                      'EXPORT',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    ),
+                child: Container(
+                  child: Text(
+                    'EXPORT',
+                    style: AppTextStyles.boldText20,
+                    textAlign: TextAlign.center,
                   ),
-                  onPressed: null,
                 ),
               ),
             ),
@@ -399,31 +468,20 @@ class GeneralSettings extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    'App is running the latest version',
-                    style: TextStyle(
-                      color: AppColors.getTextFieldText(
-                          _themeProvider.isDarkModeEnabled),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  Text(
-                    '1.02',
-                    style: TextStyle(
-                      color: AppColors.lightBlue3,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
+                  Text('App is running the latest version',
+                      style: AppTextStyles.regularText16.copyWith(
+                          color: AppColors.getTextFieldText(
+                              _themeProvider.isDarkModeEnabled))),
+                  Text('1.02', style: AppTextStyles.regularText16),
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 80),
+            GestureDetector(
+              onTap: () => _themeProvider.changeTheme(ThemeMode.system),
               child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                 width: double.infinity,
-                height: 30,
+                padding: EdgeInsets.symmetric(vertical: 7),
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(
@@ -432,18 +490,13 @@ class GeneralSettings extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: OutlineButton(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  child: Container(
-                    child: Text(
-                      'DELETE ACCOUNT & ALL DATA',
-                      style: TextStyle(
-                          color: AppColors.red,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    ),
+                child: Container(
+                  child: Text(
+                    'DELETE ACCOUNT & ALL DATA',
+                    style:
+                        AppTextStyles.boldText20.copyWith(color: AppColors.red),
+                    textAlign: TextAlign.center,
                   ),
-                  onPressed: null,
                 ),
               ),
             ),

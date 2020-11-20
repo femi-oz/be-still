@@ -44,9 +44,9 @@ class _AddUpdateState extends State<AddUpdate> {
       prayerId: widget.prayer.id,
       title: '',
       description: _descriptionController.text,
-      modifiedBy: _user.email,
+      modifiedBy: _user.id,
       modifiedOn: DateTime.now(),
-      createdBy: _user.email,
+      createdBy: _user.id,
       createdOn: DateTime.now(),
     );
     var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);

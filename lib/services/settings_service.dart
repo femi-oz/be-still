@@ -105,7 +105,7 @@ class SettingsService {
   Stream<SettingsModel> fetchSettings(String userId) {
     try {
       return _settingsCollectionReference
-          .where(userId, isEqualTo: userId)
+          .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((doc) =>
               doc.documents.map((e) => SettingsModel.fromData(e)).toList()[0]);
