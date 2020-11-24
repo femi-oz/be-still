@@ -3,7 +3,6 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_version/get_version.dart';
 import 'package:intl/intl.dart';
-import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
 class GeneralSettings extends StatefulWidget {
@@ -35,11 +33,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   var _version = '';
 
   getVersion() async {
-    // PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-    //   return packageInfo.version;
-    // });
-    // String projectCode;
-// Platform messages may fail, so we use a try/catch PlatformException.
     try {
       _version = await GetVersion.projectVersion;
     } on PlatformException {

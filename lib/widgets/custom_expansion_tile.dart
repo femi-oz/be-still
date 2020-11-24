@@ -169,15 +169,15 @@ class _ExpansionTileState extends State<ExpansionTile>
             data: IconThemeData(color: _iconColor.value),
             child: Container(
               // color: widget.headerBackgroundColor ?? Colors.black,
-              
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: widget.shadowColor,
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
-                ),
-              ],
+
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.shadowColor,
+                    offset: Offset(0.0, 1.0),
+                    blurRadius: 6.0,
+                  ),
+                ],
                 gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
@@ -202,6 +202,7 @@ class _ExpansionTileState extends State<ExpansionTile>
                       turns: _iconTurns,
                       child: Icon(
                         Icons.expand_more,
+                        size: 32,
                         color: widget.iconColor,
                       ),
                     ),

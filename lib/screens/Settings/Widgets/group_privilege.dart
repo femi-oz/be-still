@@ -1,3 +1,4 @@
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -8,7 +9,7 @@ import '../../../utils/app_theme.dart';
 class GroupPrivilegeSettings extends StatelessWidget {
   final String status;
 
-  final UserModel user;
+  final GroupUserModel user;
 
   @override
   GroupPrivilegeSettings(this.status, this.user);
@@ -41,7 +42,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(horizontal: 100.0, vertical: 20.0),
                   child: Text(
-                    user.firstName.toUpperCase(), //TODO
+                    user.userId.toUpperCase(), //TODO
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.lightBlue4,
