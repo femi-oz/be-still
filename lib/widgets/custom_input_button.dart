@@ -1,7 +1,7 @@
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
-class CustomInputButton extends StatelessWidget {
+class CustomOutlineButton extends StatelessWidget {
   final bool isDarkModeEnabled;
   final String actionText;
   final String value;
@@ -10,7 +10,7 @@ class CustomInputButton extends StatelessWidget {
   final String textIcon;
   final String icon;
   final Color textColor;
-  CustomInputButton({
+  CustomOutlineButton({
     this.actionText,
     this.actionColor = AppColors.lightBlue4,
     this.textColor,

@@ -48,7 +48,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                 ),
               ),
               SizedBox(height: 40),
-              CustomInputButton(
+              CustomOutlineButton(
                 actionText: 'CONNECTED',
                 value: 'LOGOUT',
                 icon: 'assets/images/amazon.png',

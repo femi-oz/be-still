@@ -211,21 +211,21 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             SizedBox(height: 25),
             Column(
               children: [
-                CustomInputButton(
+                CustomOutlineButton(
                     actionColor: AppColors.lightBlue4,
                     actionText: 'UPDATE',
                     onPressed: () => _showAlert(_ModalType.email),
                     isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
                     value: _currentUser.email),
                 SizedBox(height: 10),
-                CustomInputButton(
+                CustomOutlineButton(
                     actionColor: AppColors.lightBlue4,
                     actionText: 'UPDATE',
                     onPressed: () => _showAlert(_ModalType.password),
                     isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
                     value: 'password'),
                 SizedBox(height: 10),
-                CustomInputButton(
+                CustomOutlineButton(
                     actionColor: AppColors.red,
                     actionText: 'ADD',
                     onPressed: () => null,

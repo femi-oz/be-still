@@ -97,7 +97,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: widget.prayerSettings.enableBackgroundMusic,
               ),
               SizedBox(height: 20),
-              CustomInputButton(
+              CustomOutlineButton(
                 actionColor: AppColors.lightBlue4,
                 actionText: 'CONNECTED',
                 textIcon: 'assets/images/spotify.png',
