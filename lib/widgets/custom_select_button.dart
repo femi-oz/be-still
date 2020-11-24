@@ -14,9 +14,9 @@ class CustomButtonGroup extends StatelessWidget {
     this.isSelected: false,
     @required this.title,
     @required this.onSelected,
-    @required this.length,
-    @required this.index,
-    @required this.color,
+    this.length = 1,
+    this.index = 0,
+    this.color = AppColors.lightBlue4,
   });
   @override
   Widget build(BuildContext context) {

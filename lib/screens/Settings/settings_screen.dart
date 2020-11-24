@@ -178,7 +178,8 @@ class SettingsTabState extends State<SettingsTab>
             children: [
               GeneralSettings(_settingsProvider.settings),
               MyListSettings(_settingsProvider.settings),
-              PrayerTimeSettings(_settingsProvider.prayerSetttings),
+              PrayerTimeSettings(_settingsProvider.prayerSetttings,
+                  _settingsProvider.settings),
               NotificationsSettings(),
               AlexaSettings(),
               SharingSettings(_settingsProvider.sharingSetttings),

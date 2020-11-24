@@ -67,9 +67,9 @@ class SettingsModel {
             snapShot.data['NotifyMeSomeonePostOnGroup'],
         notifyMeSomeoneSharePrayerWithMe =
             snapShot.data['NotifyMeSomeoneSharePrayerWithMe'],
+        syncAlexa = snapShot.data['SyncAlexa'],
         allowPrayerTimeNotification =
             snapShot.data['AllowPrayerTimeNotification'],
-        syncAlexa = snapShot.data['SyncAlexa'],
         status = snapShot.data['Status'],
         createdBy = snapShot.data['CreatedBy'],
         createdOn = snapShot.data['CreatedOn'].toDate(),

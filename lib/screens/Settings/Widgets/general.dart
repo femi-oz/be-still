@@ -271,7 +271,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           onSelected: (value) =>
                               _themeProvider.changeTheme(value),
                           title: _themeModes[i],
-                          color: AppColors.lightBlue4,
                           index: i,
                         ),
                     ],
@@ -288,11 +287,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   child: Row(
                     children: [
                       CustomButtonGroup(
-                        length: 1,
                         onSelected: () => null,
                         title: 'EXPORT',
-                        color: AppColors.lightBlue4,
-                        index: 0,
                       ),
                     ],
                   ),
@@ -316,8 +312,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   child: Row(
                     children: [
                       CustomButtonGroup(
-                        index: 0,
-                        length: 1,
                         onSelected: () => null,
                         title: 'DELETE ACCOUNT & ALL DATA',
                         color: AppColors.red,

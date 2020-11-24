@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 
 class PrayerSettingsModel {
   final String userId;
-  final int frequency;
+  final String frequency;
   final DateTime date;
   final Timestamp time;
+  final bool doNotDisturb;
+  final bool allowEmergencyCalls;
+  final bool enableBackgroundMusic;
+  final bool autoPlayMusic;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -16,6 +20,10 @@ class PrayerSettingsModel {
       @required this.frequency,
       @required this.date,
       @required this.time,
+      @required this.doNotDisturb,
+      @required this.allowEmergencyCalls,
+      @required this.autoPlayMusic,
+      @required this.enableBackgroundMusic,
       @required this.createdBy,
       @required this.createdOn,
       @required this.modifiedBy,
@@ -26,6 +34,10 @@ class PrayerSettingsModel {
         frequency = snapshot.data["Frequency"],
         date = snapshot.data["Date"].toDate(),
         time = snapshot.data["Time"],
+        doNotDisturb = snapshot.data['DoNotDisturb'] ?? false,
+        allowEmergencyCalls = snapshot.data['AllowEmergencyCalls'] ?? false,
+        autoPlayMusic = snapshot.data['AutoPlayMusic'] ?? false,
+        enableBackgroundMusic = snapshot.data['EnableBackgroundMusic'] ?? false,
         createdBy = snapshot.data["CreatedBy"],
         createdOn = snapshot.data["CreatedOn"].toDate(),
         modifiedBy = snapshot.data["ModifiedBy"],
@@ -37,6 +49,10 @@ class PrayerSettingsModel {
       'Frequency': frequency,
       'Date': date,
       'Time': time,
+      'DoNotDisturb': doNotDisturb,
+      'AllowEmergencyCalls': allowEmergencyCalls,
+      'EnableBackgroundMusic': enableBackgroundMusic,
+      'AutoPlayMusic': autoPlayMusic,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

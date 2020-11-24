@@ -1,52 +1,58 @@
+import 'package:be_still/enums/reminder.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/app_theme.dart';
-
 class ReminderPicker extends StatefulWidget {
-  final _setReminder;
-
-  final interval;
-
-  final reminderDays;
-
-  final hideActionuttons;
+  final Function onSave;
+  final Function onCancel;
+  final List<String> frequency;
+  final List<String> reminderDays;
+  final bool hideActionuttons;
 
   @override
-  ReminderPicker(this._setReminder, this.interval, this.reminderDays,
-      this.hideActionuttons);
+  ReminderPicker({
+    this.onSave,
+    this.frequency,
+    this.reminderDays,
+    this.hideActionuttons,
+    this.onCancel,
+  });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
 
 class _ReminderPickerState extends State<ReminderPicker> {
-  int selected = 0;
-
   double itemExtent = 30.0;
 
-  FixedExtentScrollController daysController =
-      FixedExtentScrollController(initialItem: 2);
-  FixedExtentScrollController hourController =
-      FixedExtentScrollController(initialItem: 5);
-  FixedExtentScrollController minuteController =
-      FixedExtentScrollController(initialItem: 15);
-  FixedExtentScrollController intervalController =
-      FixedExtentScrollController(initialItem: 2);
-  FixedExtentScrollController ampmController =
-      FixedExtentScrollController(initialItem: 1);
+  var selectedFrequency = ReminderFrequency.daily;
+  var selectedDay = DaysOfWeek.wed;
+  var selectedPeriod = PeriodOfDay.pm;
+  var selectedHour = 3;
+  var selectedMinute = 30;
 
-  List<String> ampm = ['AM', 'PM'];
+  List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
+  var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
+  var minInTheHour = new List<int>.generate(60, (i) => i + 1);
 
-  var selectedInterval = 'Hourly';
-  var selectedDay = '01';
-  var selectedHour = '01';
-  var selectedMinute = '00';
-  var selectedAMpm = 'AM';
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
+    FixedExtentScrollController frequencyController =
+        FixedExtentScrollController(
+            initialItem: widget.frequency.indexOf(selectedFrequency));
+    FixedExtentScrollController daysController = FixedExtentScrollController(
+        initialItem: widget.reminderDays.indexOf(selectedDay));
+    FixedExtentScrollController periodController = FixedExtentScrollController(
+        initialItem: periodOfDay.indexOf(selectedPeriod));
+    FixedExtentScrollController hourController = FixedExtentScrollController(
+        initialItem: hoursOfTheDay.indexOf(selectedHour));
+    FixedExtentScrollController minuteController = FixedExtentScrollController(
+        initialItem: minInTheHour.indexOf(selectedMinute));
+    var _isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return Container(
       width: double.infinity,
       child: Column(
@@ -67,13 +73,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: CupertinoPicker(
-                              scrollController: intervalController,
+                              scrollController: frequencyController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() {
-                                selectedInterval = widget.interval[i];
-                              }),
+                              onSelectedItemChanged: (i) => setState(() =>
+                                  selectedFrequency = widget.frequency[i]),
                               children: <Widget>[
-                                ...widget.interval
+                                ...widget.frequency
                                     .map((i) => Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
@@ -92,100 +97,87 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: CupertinoPicker(
-                              scrollController: daysController,
-                              itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() {
-                                var selected = i + 1;
-                                selectedDay =
-                                    selected < 10 ? '0$selected' : '$selected';
-                              }),
-                              children: <Widget>[
-                                ...widget.reminderDays.map(
-                                  (r) => Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      r,
-                                      style: TextStyle(
-                                        color: AppColors.lightBlue4,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                            child: selectedFrequency == ReminderFrequency.weekly
+                                ? CupertinoPicker(
+                                    scrollController: daysController,
+                                    itemExtent: itemExtent,
+                                    onSelectedItemChanged: (i) => setState(
+                                        () => selectedDay = reminderDays[i]),
+                                    children: <Widget>[
+                                      ...widget.reminderDays.map(
+                                        (r) => Align(
+                                          alignment: Alignment.center,
+                                          child: Text(r,
+                                              style:
+                                                  AppTextStyles.regularText16),
+                                        ),
                                       ),
-                                    ),
+                                    ],
+                                  )
+                                : Container(
+                                    height: 31,
+                                    decoration: BoxDecoration(
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide(
+                                                color: _isDark
+                                                    ? Colors.white12
+                                                    : Colors.grey[350]))),
                                   ),
-                                ),
-                              ],
-                            ),
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.05,
                             child: CupertinoPicker(
                               scrollController: hourController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() {
-                                var selected = i + 1;
-                                selectedHour =
-                                    selected < 10 ? '0$selected' : '$selected';
-                              }),
+                              onSelectedItemChanged: (i) => setState(
+                                  () => selectedHour = minInTheHour[i]),
                               children: <Widget>[
-                                for (var i = 1; i <= 12; i++)
+                                for (var i = 0; i < hoursOfTheDay.length; i++)
                                   Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      i < 10 ? '0$i' : '$i',
-                                      style: TextStyle(
-                                        color: AppColors.lightBlue4,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                        hoursOfTheDay[i] < 10
+                                            ? '0${hoursOfTheDay[i]}'
+                                            : '${hoursOfTheDay[i]}',
+                                        style: AppTextStyles.regularText16),
                                   ),
                               ],
                             ),
                           ),
                           Container(
+                            height: 31,
+                            decoration: BoxDecoration(
+                              border: Border.symmetric(
+                                horizontal: BorderSide(
+                                    color: _isDark
+                                        ? Colors.white12
+                                        : Colors.grey[350]),
+                              ),
+                            ),
                             width: MediaQuery.of(context).size.width * 0.05,
-                            child: CupertinoPicker(
-                                // scrollController: minuteController,
-                                itemExtent: itemExtent,
-                                onSelectedItemChanged: (i) => null,
-                                children: <Widget>[
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      ':',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: AppColors.lightBlue4,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(':',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.regularText16),
+                            ),
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.05,
                             child: CupertinoPicker(
                               scrollController: minuteController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() {
-                                var selected = i + 1;
-                                selectedMinute =
-                                    selected < 10 ? '0$selected' : '$selected';
-                              }),
+                              onSelectedItemChanged: (i) => setState(
+                                  () => selectedMinute = minInTheHour[i]),
                               children: <Widget>[
-                                for (var i = 0; i < 60; i++)
+                                for (var i = 0; i < minInTheHour.length; i++)
                                   Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      i < 10 ? '0$i' : '$i',
-                                      style: TextStyle(
-                                        color: AppColors.lightBlue4,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                        i < 10
+                                            ? '0${minInTheHour[i]}'
+                                            : '${minInTheHour[i]}',
+                                        style: AppTextStyles.regularText16),
                                   ),
                               ],
                             ),
@@ -193,13 +185,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.1,
                             child: CupertinoPicker(
-                              scrollController: ampmController,
+                              scrollController: periodController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
-                                selectedAMpm = ampm[i];
+                                selectedPeriod = periodOfDay[i];
                               }),
                               children: <Widget>[
-                                ...ampm
+                                ...periodOfDay
                                     .map(
                                       (x) => Align(
                                         child: Text(
@@ -232,72 +224,25 @@ class _ReminderPickerState extends State<ReminderPicker> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          var amPm = selectedAMpm == 'PM' ? 'P' : 'A';
-                          widget._setReminder(
-                              '$selectedInterval | $selectedDay | $selectedHour:$selectedMinute$amPm');
-                          Navigator.of(context).pop();
+                      CustomButtonGroup(
+                        title: 'SAVE',
+                        onSelected: (_) {
+                          var date = DateTime.parse(
+                              '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${selectedPeriod == PeriodOfDay.am ? '0$selectedHour' : selectedHour + 10}:$selectedMinute');
+                          widget.onSave(selectedDay, selectedFrequency, date);
                         },
-                        child: Container(
-                          height: 30,
-                          width: MediaQuery.of(context).size.width * .38,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.getCardBorder(
-                                  _themeProvider.isDarkModeEnabled),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'SAVE',
-                                style: TextStyle(
-                                  color: AppColors.lightBlue4,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        length: 2,
+                        index: 0,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          height: 30,
-                          width: MediaQuery.of(context).size.width * .38,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.getCardBorder(
-                                  _themeProvider.isDarkModeEnabled),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'CANCEL',
-                                style: TextStyle(
-                                  color: AppColors.lightBlue4,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      CustomButtonGroup(
+                        title: 'CANCEL',
+                        onSelected: (_) => widget.onCancel(),
+                        length: 2,
+                        index: 1,
+                      )
                     ],
                   ),
-                )
+                ),
         ],
       ),
     );

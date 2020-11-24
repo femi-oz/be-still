@@ -1,17 +1,23 @@
+import 'package:be_still/enums/reminder.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
+import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/custom_input_button.dart';
+import 'package:be_still/widgets/custom_section_header.dart';
+import 'package:be_still/widgets/custom_select_button.dart';
+import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class PrayerTimeSettings extends StatefulWidget {
   final PrayerSettingsModel prayerSettings;
+  final SettingsModel settings;
 
   @override
-  PrayerTimeSettings(this.prayerSettings);
+  PrayerTimeSettings(this.prayerSettings, this.settings);
   _PrayerTimeSettingsState createState() => _PrayerTimeSettingsState();
 }
 
@@ -25,7 +31,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  List<String> prayerTimeInterval = [
+  List<String> songs = [
     'Evening Listening',
     'Rock Jams',
     'Prayer Time',
@@ -33,9 +39,22 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     'New Hits'
   ];
 
-  List<String> reminderInterval = ['Daily', 'Weekly', 'T-Th', 'M-W-F'];
+  List<String> reminderInterval = [
+    ReminderFrequency.daily,
+    ReminderFrequency.weekly,
+    ReminderFrequency.t_th,
+    ReminderFrequency.m_w_f,
+  ];
 
-  List reminderDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  List<String> reminderDays = [
+    DaysOfWeek.sun,
+    DaysOfWeek.mon,
+    DaysOfWeek.tue,
+    DaysOfWeek.wed,
+    DaysOfWeek.thu,
+    DaysOfWeek.fri,
+    DaysOfWeek.sat,
+  ];
 
   setReminder(value) {
     setState(() {
@@ -43,322 +62,95 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
+  _savePrayerTime(String selectedDay, String selectedFrequency, DateTime date) {
+    // TODO save prayer time service
+    print('$selectedDay, $selectedFrequency, $date');
+  }
+
+  bool _addPrayerTypeMode = false;
+
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 40),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
-              ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Preferences',
-              style: TextStyle(
-                  color: AppColors.offWhite2,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
+          SizedBox(height: 30),
+          Column(
+            children: [
+              CustomSectionHeder('Preference'),
+              SizedBox(height: 20),
+              CustomToggle(
+                onChange: () => null,
+                title:
                     'Allow emergency calls (second call from the same number calls within 2 minutes)',
-                    style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ),
-                Switch.adaptive(
-                  value: false,
-                  activeColor: Colors.white,
-                  activeTrackColor: AppColors.lightBlue4,
-                  inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    'Set to Do Not Disturb during Prayer Time?',
-                    style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ),
-                Switch.adaptive(
-                  value: true,
-                  activeColor: Colors.white,
-                  activeTrackColor: AppColors.lightBlue4,
-                  inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    'Enable background music during Prayer Mode?F',
-                    style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ),
-                Switch.adaptive(
-                  value: false,
-                  activeColor: Colors.white,
-                  activeTrackColor: AppColors.lightBlue4,
-                  inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-            color:
-                AppColors.getTextFieldBgColor(_themeProvider.isDarkModeEnabled),
-            child: OutlineButton(
-              borderSide: BorderSide(
-                  color: AppColors.getCardBorder(
-                      _themeProvider.isDarkModeEnabled)),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'CONNECTED',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Image.asset('assets/images/spotify.png'),
-                        ),
-                        Text(
-                          'Spotify',
-                          style: TextStyle(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                value: widget.prayerSettings.allowEmergencyCalls,
               ),
-              onPressed: () => print('test'),
-            ),
-          ),
-          Container(
-            child: SnoozePicker(prayerTimeInterval, setSnooze, true, null),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    'Auto play music during prayer time?',
-                    style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ),
-                Switch.adaptive(
-                  value: true,
-                  activeColor: Colors.white,
-                  activeTrackColor: AppColors.lightBlue4,
-                  inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 40),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+              CustomToggle(
+                onChange: () => null,
+                title: 'Set to Do Not Disturb during Prayer Time?',
+                value: widget.prayerSettings.doNotDisturb,
               ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'My Prayer Time',
-              style: TextStyle(
-                  color: AppColors.offWhite2,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
+              CustomToggle(
+                onChange: () => null,
+                title: 'Enable background music during Prayer Mode?',
+                value: widget.prayerSettings.enableBackgroundMusic,
+              ),
+              SizedBox(height: 20),
+              CustomInputButton(
+                actionColor: AppColors.lightBlue4,
+                actionText: 'CONNECTED',
+                icon: 'assets/images/spotify.png',
+                onPressed: () => null,
+                isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                value: 'Spotify',
+              ),
+              Container(
+                child: SnoozePicker(songs, setSnooze, true, 2),
+              ),
+              CustomToggle(
+                title: 'Auto play music during prayer time?',
+                onChange: () => null,
+                value: widget.prayerSettings.autoPlayMusic,
+              ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          'T-Th',
-                          style: TextStyle(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Text(
-                          'Wed',
-                          style: TextStyle(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Container(
-                          width: 80,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                '06',
-                                style: TextStyle(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              Text(
-                                ':',
-                                style: TextStyle(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              Text(
-                                '15',
-                                style: TextStyle(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              Text(
-                                'PM',
-                                style: TextStyle(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
+          SizedBox(height: 30),
+          CustomSectionHeder('My Prayer Time'),
+          Column(
+            children: [
+              !_addPrayerTypeMode
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 40),
+                      child: Row(
+                        children: [
+                          CustomButtonGroup(
+                            title: 'ADD PRAYER TIME',
+                            onSelected: (_) =>
+                                setState(() => _addPrayerTypeMode = true),
+                          )
+                        ],
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
-                IconButton(
-                    icon: Icon(
-                      Icons.edit,
-                      color: AppColors.lightBlue3,
-                    ),
-                    onPressed: null),
-                IconButton(
-                  icon: Icon(
-                    Icons.not_interested,
-                    color: AppColors.lightBlue3,
-                  ),
-                  onPressed: null,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(bottom: 80.0),
-            child: ReminderPicker(
-              setReminder,
-              reminderInterval,
-              reminderDays,
-              false,
-            ),
+                    )
+                  : Container(),
+              _addPrayerTypeMode
+                  ? Container(
+                      margin: EdgeInsets.only(bottom: 80.0),
+                      child: ReminderPicker(
+                        hideActionuttons: false,
+                        frequency: reminderInterval,
+                        reminderDays: reminderDays,
+                        onCancel: () =>
+                            setState(() => _addPrayerTypeMode = false),
+                        onSave: (selectedDay, selectedFrequency, date) =>
+                            _savePrayerTime(
+                                selectedDay, selectedFrequency, date),
+                      ),
+                    )
+                  : Container(),
+              SizedBox(height: 100),
+            ],
           ),
         ],
       ),

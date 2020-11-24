@@ -1,4 +1,5 @@
 import 'package:be_still/enums/interval.dart';
+import 'package:be_still/enums/reminder.dart';
 import 'package:be_still/enums/sortBy.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
@@ -44,8 +45,12 @@ class SettingsService {
 
   populatePrayerSettings(String userId, UserModel userData) {
     PrayerSettingsModel prayerSettings = PrayerSettingsModel(
+        allowEmergencyCalls: false,
+        autoPlayMusic: false,
+        doNotDisturb: false,
+        enableBackgroundMusic: false,
         userId: userId,
-        frequency: 0,
+        frequency: ReminderFrequency.m_w_f,
         date: DateTime.now(),
         time: Timestamp.now(),
         createdBy: userData.createdBy,

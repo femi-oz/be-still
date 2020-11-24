@@ -7,12 +7,15 @@ class CustomInputButton extends StatelessWidget {
   final String value;
   final Color actionColor;
   final Function onPressed;
-  CustomInputButton(
-      {this.actionText,
-      this.actionColor,
-      this.isDarkModeEnabled,
-      this.value,
-      this.onPressed});
+  final String icon;
+  CustomInputButton({
+    this.actionText,
+    this.actionColor,
+    this.isDarkModeEnabled,
+    this.value,
+    this.onPressed,
+    this.icon = '',
+  });
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -33,11 +36,21 @@ class CustomInputButton extends StatelessWidget {
               actionText,
               style: AppTextStyles.regularText18b.copyWith(color: actionColor),
             ),
-            Text(
-              value,
-              style: AppTextStyles.regularText14.copyWith(
-                  color: AppColors.getTextFieldText(isDarkModeEnabled)),
-            ),
+            Row(
+              children: [
+                icon != ''
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Image.asset(icon),
+                      )
+                    : Container(),
+                Text(
+                  value,
+                  style: AppTextStyles.regularText14.copyWith(
+                      color: AppColors.getTextFieldText(isDarkModeEnabled)),
+                ),
+              ],
+            )
           ],
         ),
       ),

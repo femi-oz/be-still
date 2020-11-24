@@ -178,8 +178,13 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
-                              return ReminderPicker(setReminder,
-                                  reminderInterval, reminderDays, false);
+                              return ReminderPicker(
+                                hideActionuttons: false,
+                                frequency: reminderInterval,
+                                reminderDays: reminderDays,
+                                onCancel: null,
+                                onSave: null,
+                              );
                             },
                           );
                         },

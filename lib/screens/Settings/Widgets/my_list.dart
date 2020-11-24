@@ -64,7 +64,6 @@ class _MyListSettingsState extends State<MyListSettings> {
                         onSelected: null, // TODO default sort by update service
                         title: defaultSortBy[i],
                         length: defaultSortBy.length,
-                        color: AppColors.lightBlue4,
                         index: i,
                       ),
                   ],
@@ -101,7 +100,6 @@ class _MyListSettingsState extends State<MyListSettings> {
                         onSelected: null, // TODO archive sort by update service
                         title: archiveSortBy[i],
                         length: archiveSortBy.length,
-                        color: AppColors.lightBlue4,
                         index: i,
                       ),
                   ],
@@ -128,6 +126,7 @@ class _MyListSettingsState extends State<MyListSettings> {
               )
             ],
           ),
+          SizedBox(height: 80),
         ],
       ),
     );
