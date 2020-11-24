@@ -1,3 +1,4 @@
+import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/utils/prefs.dart';
 import 'package:flutter/material.dart';
 
@@ -8,39 +9,39 @@ class ThemeProvider with ChangeNotifier {
     return _isDarkMode;
   }
 
-  ThemeMode _colorMode;
-  ThemeMode get colorMode => _colorMode;
+  String _colorMode;
+  String get colorMode => _colorMode;
 
-  Future changeTheme(ThemeMode value) async {
+  Future changeTheme(String value) async {
     _colorMode = value;
-    if (value == ThemeMode.system) {
+    if (value == BThemeMode.auto) {
       _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                   .platformBrightness ==
               Brightness.dark
           ? true
           : false;
     } else {
-      _isDarkMode = value == ThemeMode.dark ? true : false;
+      _isDarkMode = value == BThemeMode.dark ? true : false;
     }
-    await darkThemePref.setThemeMode(value.toString());
+    await darkThemePref.setThemeMode(value);
     notifyListeners();
   }
 
   Future setDefaultTheme() async {
     var value = await darkThemePref.getThemeMode();
-    _colorMode = value == ThemeMode.system.toString()
-        ? ThemeMode.system
-        : value == ThemeMode.dark.toString()
-            ? ThemeMode.dark
-            : ThemeMode.light;
-    if (value == ThemeMode.system.toString()) {
+    _colorMode = value == BThemeMode.auto
+        ? BThemeMode.auto
+        : value == BThemeMode.dark
+            ? BThemeMode.dark
+            : BThemeMode.light;
+    if (value == BThemeMode.auto) {
       _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                   .platformBrightness ==
               Brightness.dark
           ? true
           : false;
     } else {
-      _isDarkMode = value == ThemeMode.dark.toString() ? true : false;
+      _isDarkMode = value == BThemeMode.dark ? true : false;
     }
     notifyListeners();
   }

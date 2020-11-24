@@ -2,12 +2,14 @@ import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/utils/prefs.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../locator.dart';
 
 class SettingsProvider with ChangeNotifier {
   SettingsService _settingsService = locator<SettingsService>();
+  SettingsPrefrences _settingsPrefs = SettingsPrefrences();
 
   SettingsModel _settings;
   SettingsModel get settings => _settings;
@@ -15,6 +17,10 @@ class SettingsProvider with ChangeNotifier {
   PrayerSettingsModel get prayerSetttings => _prayerSettings;
   SharingSettingsModel _sharingSettings;
   SharingSettingsModel get sharingSetttings => _sharingSettings;
+  bool _isFaceIdEnabled = false;
+  bool get isFaceIdEnabled => _isFaceIdEnabled;
+  bool _hasAccessToContact = false;
+  bool get hasAccessToContact => _hasAccessToContact;
 
   Future setSettings(String userId) async {
     _settingsService
@@ -44,5 +50,23 @@ class SettingsProvider with ChangeNotifier {
       _sharingSettings = settings;
       notifyListeners();
     });
+  }
+
+  Future setDefaultSettings() async {
+    _isFaceIdEnabled = await _settingsPrefs.getFaceIdSetting();
+    _hasAccessToContact = await _settingsPrefs.getContactAccessSetting();
+    notifyListeners();
+  }
+
+  Future setFaceIdSetting(bool value) async {
+    await _settingsPrefs.setFaceIdSetting(value);
+    _isFaceIdEnabled = value;
+    notifyListeners();
+  }
+
+  Future grantAccessToContact(bool value) async {
+    await _settingsPrefs.grantAccessToContacts(value);
+    _hasAccessToContact = value;
+    notifyListeners();
   }
 }

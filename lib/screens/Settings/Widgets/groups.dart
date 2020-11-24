@@ -860,8 +860,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           : Container(),
                       SizedBox(height: 40),
                       GestureDetector(
-                        onTap: () =>
-                            _themeProvider.changeTheme(ThemeMode.system),
+                        onTap: () => null,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
@@ -887,8 +886,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       SizedBox(height: 20),
                       isAdmin
                           ? GestureDetector(
-                              onTap: () =>
-                                  _themeProvider.changeTheme(ThemeMode.system),
+                              onTap: () => null,
                               child: Container(
                                 margin: EdgeInsets.symmetric(
                                   horizontal: 20,

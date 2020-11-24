@@ -43,23 +43,29 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
   @override
   Widget build(BuildContext context) {
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
+          SizedBox(height: 15),
           Column(
             children: [
               CustomSectionHeder('Default Sort By'),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 40.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     for (int i = 0; i < defaultSortBy.length; i++)
-                      CustomSelectButton(
+                      CustomButtonGroup(
                         isSelected:
                             widget.settings.defaultSortBy == defaultSortBy[i],
                         onSelected: null, // TODO default sort by update service
                         title: defaultSortBy[i],
+                        length: defaultSortBy.length,
+                        color: AppColors.lightBlue4,
+                        index: i,
                       ),
                   ],
                 ),
@@ -89,11 +95,14 @@ class _MyListSettingsState extends State<MyListSettings> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     for (int i = 0; i < archiveSortBy.length; i++)
-                      CustomSelectButton(
+                      CustomButtonGroup(
                         isSelected:
                             widget.settings.archiveSortBy == archiveSortBy[i],
                         onSelected: null, // TODO archive sort by update service
                         title: archiveSortBy[i],
+                        length: archiveSortBy.length,
+                        color: AppColors.lightBlue4,
+                        index: i,
                       ),
                   ],
                 ),

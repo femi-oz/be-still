@@ -1,12 +1,17 @@
+import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/prefs.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/custom_input_button.dart';
+import 'package:be_still/widgets/custom_section_header.dart';
+import 'package:be_still/widgets/custom_select_button.dart';
+import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,12 +34,9 @@ enum _ModalType { email, password, auth }
 class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
   TextEditingController _newPassword = TextEditingController();
-  SettingsPrefrences _settingsPrefs = SettingsPrefrences();
   BuildContext bcontext;
   var _key = GlobalKey<State>();
   var _version = '';
-  bool _isFaceIdEnabled = false;
-  bool _hasAccessToContact = false;
 
   getVersion() async {
     try {
@@ -97,16 +99,23 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _showAlert(_ModalType type) {
+    final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showModalBottomSheet(
         isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         context: context,
         builder: (context) {
           var _user =
               Provider.of<UserProvider>(context, listen: false).currentUser;
-
           return Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              color: AppColors.getBackgroudColor(
+                  _themeProvider.isDarkModeEnabled)[1],
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
@@ -154,20 +163,22 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         });
   }
 
-  _setSettings() async {
-    _isFaceIdEnabled = await _settingsPrefs.getFaceIdSetting();
-    _hasAccessToContact = await _settingsPrefs.getContactAccessSetting();
-  }
-
   bool _isInit = true;
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
-      _setSettings();
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setDefaultSettings();
       _isInit = false;
     }
     super.didChangeDependencies();
   }
+
+  List<String> _themeModes = [
+    BThemeMode.light,
+    BThemeMode.dark,
+    BThemeMode.auto,
+  ];
 
   Widget build(BuildContext context) {
     getVersion();
@@ -183,9 +194,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(
-                left: 20.0,
-                right: 20.0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,339 +209,123 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               ),
             ),
             SizedBox(height: 25),
-            GestureDetector(
-              onTap: () => _showAlert(_ModalType.email),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.getTextFieldBorder(
-                          _themeProvider.isDarkModeEnabled),
-                    ),
-                    borderRadius: BorderRadius.circular(3.0),
-                    color: AppColors.getTextFieldBgColor(
-                        _themeProvider.isDarkModeEnabled)),
-                margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'UPDATE',
-                      style: AppTextStyles.regularText18b
-                          .copyWith(color: AppColors.lightBlue4),
-                    ),
-                    Text(
-                      _currentUser.email,
-                      style: AppTextStyles.regularText14.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled)),
-                    ),
-                  ],
+            Column(
+              children: [
+                CustomInputButton(
+                    actionColor: AppColors.lightBlue4,
+                    actionText: 'UPDATE',
+                    onPressed: () => _showAlert(_ModalType.email),
+                    isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                    value: _currentUser.email),
+                SizedBox(height: 10),
+                CustomInputButton(
+                    actionColor: AppColors.lightBlue4,
+                    actionText: 'UPDATE',
+                    onPressed: () => _showAlert(_ModalType.password),
+                    isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                    value: 'password'),
+                SizedBox(height: 10),
+                CustomInputButton(
+                    actionColor: AppColors.red,
+                    actionText: 'ADD',
+                    onPressed: () => null,
+                    isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                    value: 'Two-Factor Authentication'),
+                SizedBox(height: 10),
+              ],
+            ),
+            Column(
+              children: [
+                CustomToggle(
+                  onChange: (value) =>
+                      Provider.of<SettingsProvider>(context, listen: false)
+                          .setFaceIdSetting(value),
+                  title: 'Enable Face/Touch ID',
+                  value: Provider.of<SettingsProvider>(context).isFaceIdEnabled,
                 ),
-              ),
+                CustomToggle(
+                  onChange: (value) =>
+                      Provider.of<SettingsProvider>(context, listen: false)
+                          .grantAccessToContact(value),
+                  title: 'Allow BeStill to access Contacts?',
+                  value:
+                      Provider.of<SettingsProvider>(context).hasAccessToContact,
+                ),
+              ],
             ),
             SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _showAlert(_ModalType.password),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.getTextFieldBorder(
-                          _themeProvider.isDarkModeEnabled),
-                    ),
-                    borderRadius: BorderRadius.circular(3.0),
-                    color: AppColors.getTextFieldBgColor(
-                        _themeProvider.isDarkModeEnabled)),
-                margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'UPDATE',
-                      style: AppTextStyles.regularText18b
-                          .copyWith(color: AppColors.lightBlue4),
-                    ),
-                    Text(
-                      'password',
-                      style: AppTextStyles.regularText14.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _showAlert(_ModalType.auth),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.getTextFieldBorder(
-                          _themeProvider.isDarkModeEnabled),
-                    ),
-                    borderRadius: BorderRadius.circular(3.0),
-                    color: AppColors.getTextFieldBgColor(
-                        _themeProvider.isDarkModeEnabled)),
-                margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'ADD',
-                      style: AppTextStyles.regularText18b
-                          .copyWith(color: AppColors.red),
-                    ),
-                    Text(
-                      'Two-Factor Authentication',
-                      style: AppTextStyles.regularText14.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              padding: EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text('Enable Face/Touch ID',
-                        style: AppTextStyles.regularText16.copyWith(
-                            color: AppColors.getTextFieldText(
-                                _themeProvider.isDarkModeEnabled))),
-                  ),
-                  Switch.adaptive(
-                    value: _isFaceIdEnabled,
-                    activeColor: Colors.white,
-                    activeTrackColor: AppColors.lightBlue4,
-                    inactiveThumbColor: Colors.white,
-                    onChanged: (value) =>
-                        _settingsPrefs.setFaceIdSetting(value),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text(
-                      'Allow BeStill to access Contacts?',
-                      style: AppTextStyles.regularText16.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled)),
-                    ),
-                  ),
-                  Switch.adaptive(
-                    value: _hasAccessToContact,
-                    activeColor: Colors.white,
-                    activeTrackColor: AppColors.lightBlue4,
-                    inactiveThumbColor: Colors.white,
-                    onChanged: (value) =>
-                        _settingsPrefs.setContactAccessSetting(value),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.getDropShadow(
-                        _themeProvider.isDarkModeEnabled),
-                    offset: Offset(0.0, 1.0),
-                    blurRadius: 6.0,
-                  ),
-                ],
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors:
-                      AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
-                ),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Text(
-                'App Appearance',
-                style: AppTextStyles.boldText24.copyWith(color: Colors.white70),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => _themeProvider.changeTheme(ThemeMode.light),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: _themeProvider.colorMode == ThemeMode.light
-                            ? AppColors.getActiveBtn(
-                                    _themeProvider.isDarkModeEnabled)
-                                .withOpacity(0.3)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: AppColors.getTextFieldBorder(
-                              _themeProvider.isDarkModeEnabled),
-                          width: 1,
+            Column(
+              children: [
+                CustomSectionHeder('App Appearance'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 40.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      for (int i = 0; i < _themeModes.length; i++)
+                        CustomButtonGroup(
+                          isSelected:
+                              _themeProvider.colorMode == _themeModes[i],
+                          length: _themeModes.length,
+                          onSelected: (value) =>
+                              _themeProvider.changeTheme(value),
+                          title: _themeModes[i],
+                          color: AppColors.lightBlue4,
+                          index: i,
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Container(
-                        child: Text('LIGHT', style: AppTextStyles.boldText20),
-                      ),
-                    ),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () => _themeProvider.changeTheme(ThemeMode.dark),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: _themeProvider.colorMode == ThemeMode.dark
-                            ? AppColors.getActiveBtn(
-                                    _themeProvider.isDarkModeEnabled)
-                                .withOpacity(0.3)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: AppColors.getTextFieldBorder(
-                              _themeProvider.isDarkModeEnabled),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Container(
-                        child: Text('DARK', style: AppTextStyles.boldText20),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => _themeProvider.changeTheme(ThemeMode.system),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: _themeProvider.colorMode == ThemeMode.system
-                            ? AppColors.getActiveBtn(
-                                    _themeProvider.isDarkModeEnabled)
-                                .withOpacity(0.3)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: AppColors.getTextFieldBorder(
-                              _themeProvider.isDarkModeEnabled),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Container(
-                        child: Text('AUTO', style: AppTextStyles.boldText20),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.getDropShadow(
-                        _themeProvider.isDarkModeEnabled),
-                    offset: Offset(0.0, 1.0),
-                    blurRadius: 6.0,
-                  ),
-                ],
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors:
-                      AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
-                ),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Text(
-                'App Data',
-                style: AppTextStyles.boldText24.copyWith(color: Colors.white70),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => _themeProvider.changeTheme(ThemeMode.system),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 7),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.getTextFieldBorder(
-                        _themeProvider.isDarkModeEnabled),
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Container(
-                  child: Text(
-                    'EXPORT',
-                    style: AppTextStyles.boldText20,
-                    textAlign: TextAlign.center,
+            Column(
+              children: [
+                CustomSectionHeder('App Data'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 40.0, horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      CustomButtonGroup(
+                        length: 1,
+                        onSelected: () => null,
+                        title: 'EXPORT',
+                        color: AppColors.lightBlue4,
+                        index: 0,
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('App is running the latest version',
-                      style: AppTextStyles.regularText16.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled))),
-                  Text(_version, style: AppTextStyles.regularText16),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: () => _themeProvider.changeTheme(ThemeMode.system),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 7),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.red,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Container(
-                  child: Text(
-                    'DELETE ACCOUNT & ALL DATA',
-                    style:
-                        AppTextStyles.boldText20.copyWith(color: AppColors.red),
-                    textAlign: TextAlign.center,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('App is running the latest version',
+                          style: AppTextStyles.regularText16.copyWith(
+                              color: AppColors.getTextFieldText(
+                                  _themeProvider.isDarkModeEnabled))),
+                      Text(_version, style: AppTextStyles.regularText16),
+                    ],
                   ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 40.0, horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      CustomButtonGroup(
+                        index: 0,
+                        length: 1,
+                        onSelected: () => null,
+                        title: 'DELETE ACCOUNT & ALL DATA',
+                        color: AppColors.red,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -46,8 +46,6 @@ class _SnoozePickerState extends State<SnoozePicker> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.85,
                             child: CupertinoPicker(
-                              // looping: true,
-
                               scrollController: scrollController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
@@ -57,16 +55,11 @@ class _SnoozePickerState extends State<SnoozePicker> {
                                 ...widget.interval
                                     .map(
                                       (i) => Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          i,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue4,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
+                                          alignment: Alignment.center,
+                                          child: Text(i,
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  AppTextStyles.regularText16)),
                                     )
                                     .toList(),
                               ],
@@ -107,14 +100,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                'SAVE',
-                                style: TextStyle(
-                                  color: AppColors.lightBlue4,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              Text('SAVE', style: AppTextStyles.boldText18),
                             ],
                           ),
                         ),
@@ -137,14 +123,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                'CANCEL',
-                                style: TextStyle(
-                                  color: AppColors.lightBlue4,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              Text('CANCEL', style: AppTextStyles.boldText18),
                             ],
                           ),
                         ),

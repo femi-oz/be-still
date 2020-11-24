@@ -29,10 +29,7 @@ class CustomSectionHeder extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Text(
         title,
-        style: TextStyle(
-            color: AppColors.offWhite2,
-            fontSize: 22,
-            fontWeight: FontWeight.w700),
+        style: AppTextStyles.boldText24.copyWith(color: Colors.white70),
         textAlign: TextAlign.center,
       ),
     );

@@ -18,6 +18,7 @@ class SettingsService {
 
   populateSettings(String deviceId, String userId, UserModel userData) {
     SettingsModel settings = SettingsModel(
+        archiveSortBy: SortType.date,
         userId: userId,
         deviceId: deviceId,
         appearance: '',

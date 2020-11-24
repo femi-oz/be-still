@@ -21,7 +21,7 @@ class SettingsPrefrences {
     prefs.setBool('isFaceIdEnabled', value);
   }
 
-  setContactAccessSetting(bool value) async {
+  grantAccessToContacts(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('hasAccessToContact', value);
   }
