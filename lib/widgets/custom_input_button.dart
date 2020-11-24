@@ -7,13 +7,17 @@ class CustomInputButton extends StatelessWidget {
   final String value;
   final Color actionColor;
   final Function onPressed;
+  final String textIcon;
   final String icon;
+  final Color textColor;
   CustomInputButton({
     this.actionText,
-    this.actionColor,
+    this.actionColor = AppColors.lightBlue4,
+    this.textColor,
     this.isDarkModeEnabled,
     this.value,
     this.onPressed,
+    this.textIcon = '',
     this.icon = '',
   });
   @override
@@ -36,18 +40,28 @@ class CustomInputButton extends StatelessWidget {
               actionText,
               style: AppTextStyles.regularText18b.copyWith(color: actionColor),
             ),
+            icon != ''
+                ? Container(
+                    height: 20,
+                    child: Image.asset(
+                      icon,
+                    ),
+                  )
+                : Container(),
             Row(
               children: [
-                icon != ''
+                textIcon != ''
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Image.asset(icon),
+                        child: Image.asset(textIcon),
                       )
                     : Container(),
                 Text(
                   value,
-                  style: AppTextStyles.regularText14.copyWith(
-                      color: AppColors.getTextFieldText(isDarkModeEnabled)),
+                  style: AppTextStyles.regularText16.copyWith(
+                      color: textColor == null
+                          ? AppColors.getTextFieldText(isDarkModeEnabled)
+                          : textColor),
                 ),
               ],
             )

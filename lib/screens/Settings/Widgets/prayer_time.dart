@@ -100,7 +100,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               CustomInputButton(
                 actionColor: AppColors.lightBlue4,
                 actionText: 'CONNECTED',
-                icon: 'assets/images/spotify.png',
+                textIcon: 'assets/images/spotify.png',
                 onPressed: () => null,
                 isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
                 value: 'Spotify',

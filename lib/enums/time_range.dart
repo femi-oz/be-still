@@ -21,3 +21,10 @@ class PeriodOfDay {
   static const am = 'AM';
   static const pm = 'PM';
 }
+
+class SecondsInterval {
+  static const ten = '10s';
+  static const twenty = '20s';
+  static const thirty = '30s';
+  static const fourty = '40s';
+}

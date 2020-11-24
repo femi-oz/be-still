@@ -14,6 +14,7 @@ class SettingsModel {
   final bool includeAnsweredPrayerAutoDelete;
   final bool allowPushNotification;
   final bool allowTextNotification;
+  final bool allowAlexaReadPrayer;
   final bool emailUpdateNotification;
   final bool emailUpdateFrequency;
   final bool notifyMeSomeoneSharePrayerWithMe;
@@ -37,6 +38,7 @@ class SettingsModel {
       @required this.includeAnsweredPrayerAutoDelete,
       @required this.allowPushNotification,
       @required this.allowTextNotification,
+      @required this.allowAlexaReadPrayer,
       @required this.emailUpdateFrequency,
       @required this.emailUpdateNotification,
       @required this.notifyMeSomeonePostOnGroup,
@@ -61,6 +63,7 @@ class SettingsModel {
             snapShot.data['IncludeAnsweredPrayerAutoDelete'],
         allowPushNotification = snapShot.data['AllowPushNotification'],
         allowTextNotification = snapShot.data['AllowTextNotification'],
+        allowAlexaReadPrayer = snapShot.data['AllowAlexaReadPrayer'],
         emailUpdateFrequency = snapShot.data['EmailUpdateFrequency'],
         emailUpdateNotification = snapShot.data['EmailUpdateNotification'],
         notifyMeSomeonePostOnGroup =
@@ -86,6 +89,7 @@ class SettingsModel {
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
       'IncludeAnsweredPrayerAutoDelete': includeAnsweredPrayerAutoDelete,
+      'AllowAlexaReadPrayer': allowAlexaReadPrayer,
       'AllowPushNotification': allowPushNotification,
       'AllowTextNotification': allowTextNotification,
       'EmailUpdateNotification': emailUpdateNotification,
