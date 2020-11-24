@@ -154,7 +154,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
             ),
           ),
           Container(
-            child: SnoozePicker(emailFrequency, setSnooze, true),
+            child: SnoozePicker(emailFrequency, setSnooze, true, null),
           ),
           Container(
             padding: EdgeInsets.only(left: 20.0, right: 20.0),

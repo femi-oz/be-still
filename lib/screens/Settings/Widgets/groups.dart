@@ -6,10 +6,13 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:provider/provider.dart';
 
 import 'group_privilege.dart';
@@ -20,11 +23,12 @@ class GroupsSettings extends StatefulWidget {
 }
 
 class _GroupsSettingsState extends State<GroupsSettings> {
+  BuildContext bcontext;
+  var _key = GlobalKey<State>();
   void _getGroups() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<GroupProvider>(context, listen: false)
         .setUserGroups(_user.id);
-    super.initState();
   }
 
   void _showAlert(GroupUserModel user) {
@@ -327,11 +331,38 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     super.didChangeDependencies();
   }
 
+  void _sendInvite(GroupModel group) async {
+    final Email email = Email(
+      body:
+          '<p>You\'ve been invited to join ${group.name}. Click <a href="http://www.google.com">here</a> to join.</p>',
+      subject: 'BeStill group invitation email',
+      recipients: [_emailController.text],
+      isHTML: false,
+      cc: [],
+      bcc: [],
+    );
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      await FlutterEmailSender.send(email);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(_key);
+      _emailController.text = '';
+    } catch (e) {
+      BeStilDialog.showErrorDialog(context, e.message.toString());
+    }
+  }
+
+  TextEditingController _emailController = new TextEditingController();
+  bool _inviteMode = false;
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _groups = Provider.of<GroupProvider>(context).userGroups;
+    setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -395,6 +426,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 var isModerator = data.groupUsers
                     .firstWhere((g) => g.userId == _currentUser.id)
                     .isModerator;
+                var isMember = !data.groupUsers
+                        .firstWhere((g) => g.userId == _currentUser.id)
+                        .isModerator &&
+                    !data.groupUsers
+                        .firstWhere((g) => g.userId == _currentUser.id)
+                        .isAdmin;
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 10.0),
                   child: custom.ExpansionTile(
@@ -416,8 +453,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       ),
                     ),
                     initiallyExpanded: false,
-                    // onExpansionChanged: (bool isExpanded) {
-                    // },
                     children: <Widget>[
                       custom.ExpansionTile(
                           iconColor: AppColors.lightBlue1,
@@ -428,7 +463,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             children: <Widget>[
                               SizedBox(width: 3),
                               Text('Group Info',
-                                  style: AppTextStyles.boldText14),
+                                  style: AppTextStyles.boldText16),
                               SizedBox(width: 10),
                               Expanded(
                                 child: Divider(
@@ -457,304 +492,336 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   : isModerator
                                       ? 'MODERATOR'
                                       : 'MEMBER',
-                              style: AppTextStyles.boldText24.copyWith(
-                                color: AppColors.getInactvePrayerMenu(
-                                  _themeProvider.isDarkModeEnabled,
-                                ),
-                              ),
+                              style: AppTextStyles.boldText24
+                                  .copyWith(color: AppColors.lightBlue1),
                             ),
                           ],
                         ),
                       ),
                       SizedBox(height: 25),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'My Notifications',
-                              style: AppTextStyles.boldText14,
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Divider(
-                                color: AppColors.darkBlue,
-                                thickness: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              child: Text(
-                                'Enable notifications for New Prayers for this group?',
-                                style: AppTextStyles.regularText16.copyWith(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled)),
-                              ),
-                            ),
-                            Switch.adaptive(
-                              value: true,
-                              activeColor: Colors.white,
-                              activeTrackColor: AppColors.lightBlue4,
-                              inactiveThumbColor: Colors.white,
-                              onChanged: (_) {},
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              child: Text(
-                                'Enable notifications for Prayer Updates for this group?',
-                                style: AppTextStyles.regularText16.copyWith(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled)),
-                              ),
-                            ),
-                            Switch.adaptive(
-                              value: true,
-                              activeColor: Colors.white,
-                              activeTrackColor: AppColors.lightBlue4,
-                              inactiveThumbColor: Colors.white,
-                              onChanged: (_) {},
-                            ),
-                          ],
-                        ),
-                      ),
-                      !isAdmin
-                          ? Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.7,
-                                    child: Text(
-                                      'Notify me when new members joins this group',
-                                      style: AppTextStyles.regularText16
-                                          .copyWith(
-                                              color: AppColors.getTextFieldText(
-                                                  _themeProvider
-                                                      .isDarkModeEnabled)),
-                                    ),
-                                  ),
-                                  Switch.adaptive(
-                                    value: false,
-                                    activeColor: Colors.white,
-                                    activeTrackColor: AppColors.lightBlue4,
-                                    inactiveThumbColor: Colors.white,
-                                    onChanged: (_) {},
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Container(),
-                      !isAdmin
-                          ? Container()
-                          : Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.7,
-                                    child: Text(
-                                      'Notify me of membership requests',
-                                      style: AppTextStyles.regularText16
-                                          .copyWith(
-                                              color: AppColors.getTextFieldText(
-                                                  _themeProvider
-                                                      .isDarkModeEnabled)),
-                                    ),
-                                  ),
-                                  Switch.adaptive(
-                                    value: false,
-                                    activeColor: Colors.white,
-                                    activeTrackColor: AppColors.lightBlue4,
-                                    inactiveThumbColor: Colors.white,
-                                    onChanged: (_) {},
-                                  ),
-                                ],
-                              ),
-                            ),
-                      !isAdmin
-                          ? Container()
-                          : Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.7,
-                                    child: Text(
-                                      'Notify me of flagged prayers',
-                                      style: TextStyle(
-                                          color: AppColors.getTextFieldText(
-                                              _themeProvider.isDarkModeEnabled),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                  ),
-                                  Switch.adaptive(
-                                    value: false,
-                                    activeColor: Colors.white,
-                                    activeTrackColor: AppColors.lightBlue4,
-                                    inactiveThumbColor: Colors.white,
-                                    onChanged: (_) {},
-                                  ),
-                                ],
-                              ),
-                            ),
-                      !isAdmin
-                          ? Container()
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 10.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10.0),
-                                    child: Text(
-                                      'Invite',
-                                      style: TextStyle(
-                                          color: AppColors.getInactvePrayerMenu(
-                                              _themeProvider.isDarkModeEnabled),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: AppColors.darkBlue,
-                                      thickness: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                      isAdmin
-                          ? Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: GestureDetector(
-                                onTap: null,
-                                child: Text(
-                                  'Send an invite to join group',
-                                  style: TextStyle(
-                                      color: AppColors.lightBlue3,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400),
+                      Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  'My Notifications',
+                                  style: AppTextStyles.boldText16,
                                 ),
-                              ),
-                            )
-                          : !data.groupUsers
-                                  .firstWhere(
-                                      (g) => g.userId == _currentUser.id)
-                                  .isModerator
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Divider(
+                                    color: AppColors.darkBlue,
+                                    thickness: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.7,
+                                  child: Text(
+                                    'Enable notifications for New Prayers for this group?',
+                                    style: AppTextStyles.regularText16.copyWith(
+                                        color: AppColors.getTextFieldText(
+                                            _themeProvider.isDarkModeEnabled)),
+                                  ),
+                                ),
+                                Switch.adaptive(
+                                  value: true,
+                                  activeColor: Colors.white,
+                                  activeTrackColor: AppColors.lightBlue4,
+                                  inactiveThumbColor: Colors.white,
+                                  onChanged: (_) {},
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.7,
+                                  child: Text(
+                                    'Enable notifications for Prayer Updates for this group?',
+                                    style: AppTextStyles.regularText16.copyWith(
+                                        color: AppColors.getTextFieldText(
+                                            _themeProvider.isDarkModeEnabled)),
+                                  ),
+                                ),
+                                Switch.adaptive(
+                                  value: true,
+                                  activeColor: Colors.white,
+                                  activeTrackColor: AppColors.lightBlue4,
+                                  inactiveThumbColor: Colors.white,
+                                  onChanged: (_) {},
+                                ),
+                              ],
+                            ),
+                          ),
+                          isMember
                               ? Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20.0),
-                                  child: GestureDetector(
-                                    onTap: null,
-                                    child: Text(
-                                      'Send an invite to join group',
-                                      style: TextStyle(
-                                          color: AppColors.lightBlue3,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400),
-                                    ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        child: Text(
+                                          'Notify me when new members joins this group',
+                                          style: AppTextStyles.regularText16
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .getTextFieldText(
+                                                          _themeProvider
+                                                              .isDarkModeEnabled)),
+                                        ),
+                                      ),
+                                      Switch.adaptive(
+                                        value: false,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (_) {},
+                                      ),
+                                    ],
                                   ),
                                 )
                               : Container(),
-                      !isAdmin
-                          ? Container()
-                          : Padding(
-                              padding: const EdgeInsets.only(bottom: 80.0),
-                              child: custom.ExpansionTile(
-                                iconColor: AppColors.lightBlue4,
-                                headerBackgroundColorStart: Colors.transparent,
-                                headerBackgroundColorEnd: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                title: Padding(
+                          (isAdmin || isModerator)
+                              ? Container(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0),
+                                      horizontal: 20.0),
                                   child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 10.0),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
                                         child: Text(
-                                          'Members | ${data.groupUsers.length}',
-                                          style: TextStyle(
-                                              color: AppColors
-                                                  .getInactvePrayerMenu(
-                                                      _themeProvider
-                                                          .isDarkModeEnabled),
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w300),
+                                          'Notify me of membership requests',
+                                          style: AppTextStyles.regularText16
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .getTextFieldText(
+                                                          _themeProvider
+                                                              .isDarkModeEnabled)),
                                         ),
                                       ),
+                                      Switch.adaptive(
+                                        value: false,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (_) {},
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          (isAdmin || isModerator)
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        child: Text(
+                                          'Notify me of flagged prayers',
+                                          style: AppTextStyles.regularText16
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .getTextFieldText(
+                                                          _themeProvider
+                                                              .isDarkModeEnabled)),
+                                        ),
+                                      ),
+                                      Switch.adaptive(
+                                        value: false,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (_) {},
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      ),
+                      (isAdmin || isModerator)
+                          ? Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0, vertical: 10.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text('Invite',
+                                          style: AppTextStyles.boldText16),
+                                      SizedBox(width: 10),
                                       Expanded(
                                         child: Divider(
-                                          color: AppColors.getCardBorder(
-                                              _themeProvider.isDarkModeEnabled),
+                                          color: AppColors.darkBlue,
                                           thickness: 1,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                initiallyExpanded: false,
-                                // onExpansionChanged: (bool isExpanded) {
-                                // },
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ...data.groupUsers.map(
-                                          (user) => GestureDetector(
-                                            onTap: () => _showAlert(user),
+                                Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0),
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            setState(() => _inviteMode = true),
+                                        child: Text(
+                                          'Send an invite to join group',
+                                          style: AppTextStyles.regularText20,
+                                        ),
+                                      ),
+                                    ),
+                                    _inviteMode
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 15.0,
+                                                horizontal: 20.0),
+                                            child: Column(
+                                              children: [
+                                                CustomInput(
+                                                  label: 'Email Address',
+                                                  controller: _emailController,
+                                                  isEmail: true,
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    FlatButton(
+                                                        color: Colors.grey[700],
+                                                        onPressed: () =>
+                                                            setState(() =>
+                                                                _inviteMode =
+                                                                    false),
+                                                        child: Text('Cancel',
+                                                            style: AppTextStyles
+                                                                .regularText14)),
+                                                    SizedBox(width: 15),
+                                                    FlatButton(
+                                                        color:
+                                                            AppColors.dimBlue,
+                                                        onPressed: () =>
+                                                            _sendInvite(
+                                                                data.group),
+                                                        child: Text(
+                                                          'Send Invite',
+                                                          style: AppTextStyles
+                                                              .regularText14,
+                                                        )),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : Container()
+                                  ],
+                                )
+                              ],
+                            )
+                          : Container(),
+                      (isAdmin || isModerator)
+                          ? custom.ExpansionTile(
+                              iconColor: AppColors.lightBlue4,
+                              headerBackgroundColorStart: Colors.transparent,
+                              headerBackgroundColorEnd: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              title: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text('Members | ${data.groupUsers.length}',
+                                        style: AppTextStyles.boldText16),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Divider(
+                                        color: AppColors.lightBlue1,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              initiallyExpanded: false,
+                              // onExpansionChanged: (bool isExpanded) {
+                              // },
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      ...data.groupUsers.map(
+                                        (user) => GestureDetector(
+                                          onTap: () => _showAlert(user),
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 7.0),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.getCardBorder(
+                                                  _themeProvider
+                                                      .isDarkModeEnabled),
+                                              borderRadius: BorderRadius.only(
+                                                bottomLeft: Radius.circular(10),
+                                                topLeft: Radius.circular(10),
+                                              ),
+                                            ),
                                             child: Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 5.0),
-                                              padding: EdgeInsets.all(15.0),
+                                              margin:
+                                                  EdgeInsetsDirectional.only(
+                                                      start: 1,
+                                                      bottom: 1,
+                                                      top: 1),
+                                              padding: EdgeInsets.all(20),
+                                              width: double.infinity,
                                               decoration: BoxDecoration(
                                                 color: AppColors
-                                                    .getTextFieldBgColor(
+                                                    .getPrayerCardBgColor(
                                                         _themeProvider
                                                             .isDarkModeEnabled),
-                                                border: Border.all(
-                                                  color: AppColors.getCardBorder(
-                                                      _themeProvider
-                                                          .isDarkModeEnabled),
-                                                  width: 1,
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(9),
+                                                  topLeft: Radius.circular(9),
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
                                               ),
                                               child: Row(
                                                 mainAxisAlignment:
@@ -762,62 +829,41 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         .spaceBetween,
                                                 children: <Widget>[
                                                   Text(
-                                                    // userData
-                                                    //     .singleWhere(
-                                                    //         (user) =>
-                                                    //             user.id ==
-                                                    //             id)
-                                                    //     .fullName
-                                                    'TODO'.toUpperCase(),
-                                                    style: TextStyle(
-                                                        color: AppColors
-                                                            .lightBlue3,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w300),
-                                                  ),
+                                                      user.fullName
+                                                              ?.toUpperCase() ??
+                                                          'N/A',
+                                                      style: AppTextStyles
+                                                          .regularText16),
                                                   Text(
-                                                    data.groupUsers
-                                                            .firstWhere((g) =>
-                                                                g.userId ==
-                                                                _currentUser.id)
-                                                            .isAdmin
+                                                    isAdmin
                                                         ? 'ADMIN'
-                                                        : data.groupUsers
-                                                                .firstWhere((g) =>
-                                                                    g.userId ==
-                                                                    _currentUser
-                                                                        .id)
-                                                                .isModerator
+                                                        : isModerator
                                                             ? 'MODERATOR'
-                                                            : 'MEMBER'
-                                                                .toUpperCase(),
-                                                    style: TextStyle(
-                                                        color: AppColors
-                                                            .getInactvePrayerMenu(
-                                                                _themeProvider
-                                                                    .isDarkModeEnabled),
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w300),
+                                                            : 'MEMBER',
+                                                    style: AppTextStyles
+                                                        .regularText16
+                                                        .copyWith(
+                                                            color: AppColors
+                                                                .lightBlue1),
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      SizedBox(height: 40),
                       GestureDetector(
                         onTap: () =>
                             _themeProvider.changeTheme(ThemeMode.system),
                         child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 30),
+                          margin: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(vertical: 7),
                           decoration: BoxDecoration(
@@ -838,24 +884,37 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           ),
                         ),
                       ),
-                      !isAdmin
-                          ? Container()
-                          : Container(
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 5.0, horizontal: 20.0),
-                              width: double.infinity,
-                              child: OutlineButton(
-                                child: Text(
-                                  'DELETE',
-                                  style: TextStyle(
-                                      color: AppColors.red,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
+                      SizedBox(height: 20),
+                      isAdmin
+                          ? GestureDetector(
+                              onTap: () =>
+                                  _themeProvider.changeTheme(ThemeMode.system),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 20,
                                 ),
-                                borderSide: BorderSide(color: AppColors.red),
-                                onPressed: () => print(''),
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(vertical: 7),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(
+                                    color: AppColors.red,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Container(
+                                  child: Text(
+                                    'DELETE',
+                                    style: AppTextStyles.boldText20
+                                        .copyWith(color: AppColors.red),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
                             )
+                          : Container(),
+                      SizedBox(height: 100)
                     ],
                   ),
                 );

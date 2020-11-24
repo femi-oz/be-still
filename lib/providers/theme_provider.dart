@@ -22,7 +22,7 @@ class ThemeProvider with ChangeNotifier {
     } else {
       _isDarkMode = value == ThemeMode.dark ? true : false;
     }
-    await darkThemePref.addThemeMode(value.toString());
+    await darkThemePref.setThemeMode(value.toString());
     notifyListeners();
   }
 

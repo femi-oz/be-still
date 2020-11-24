@@ -41,8 +41,8 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addGroup(GroupModel groupData, String _userID) async {
-    return await _groupService.addGroup(_userID, groupData);
+  Future addGroup(GroupModel groupData, String userID, String fullName) async {
+    return await _groupService.addGroup(userID, groupData, fullName);
   }
 
   Future setCurrentGroup(CombineGroupUserStream group) async {

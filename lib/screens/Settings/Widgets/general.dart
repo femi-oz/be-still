@@ -5,6 +5,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/prefs.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +29,12 @@ enum _ModalType { email, password, auth }
 class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
   TextEditingController _newPassword = TextEditingController();
+  SettingsPrefrences _settingsPrefs = SettingsPrefrences();
   BuildContext bcontext;
   var _key = GlobalKey<State>();
   var _version = '';
+  bool _isFaceIdEnabled = false;
+  bool _hasAccessToContact = false;
 
   getVersion() async {
     try {
@@ -148,6 +152,21 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ),
           );
         });
+  }
+
+  _setSettings() async {
+    _isFaceIdEnabled = await _settingsPrefs.getFaceIdSetting();
+    _hasAccessToContact = await _settingsPrefs.getContactAccessSetting();
+  }
+
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _setSettings();
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   Widget build(BuildContext context) {
@@ -289,11 +308,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                 _themeProvider.isDarkModeEnabled))),
                   ),
                   Switch.adaptive(
-                    value: false,
+                    value: _isFaceIdEnabled,
                     activeColor: Colors.white,
                     activeTrackColor: AppColors.lightBlue4,
                     inactiveThumbColor: Colors.white,
-                    onChanged: (_) {},
+                    onChanged: (value) =>
+                        _settingsPrefs.setFaceIdSetting(value),
                   ),
                 ],
               ),
@@ -313,11 +333,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     ),
                   ),
                   Switch.adaptive(
-                    value: true,
+                    value: _hasAccessToContact,
                     activeColor: Colors.white,
                     activeTrackColor: AppColors.lightBlue4,
                     inactiveThumbColor: Colors.white,
-                    onChanged: (_) {},
+                    onChanged: (value) =>
+                        _settingsPrefs.setContactAccessSetting(value),
                   ),
                 ],
               ),

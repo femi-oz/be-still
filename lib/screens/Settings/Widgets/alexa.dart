@@ -250,7 +250,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
           ),
           Container(
             margin: EdgeInsets.only(bottom: 80.0),
-            child: SnoozePicker(prayerTimeInterval, setSnooze, true),
+            child: SnoozePicker(prayerTimeInterval, setSnooze, true, null),
           ),
         ],
       ),

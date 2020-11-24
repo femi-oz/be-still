@@ -164,6 +164,7 @@ class GroupUserModel {
   final String userId;
   final bool isAdmin;
   final bool isModerator;
+  final String fullName;
   final String status;
   final String createdBy;
   final DateTime createdOn;
@@ -176,6 +177,7 @@ class GroupUserModel {
     @required this.userId,
     @required this.isAdmin,
     @required this.isModerator,
+    @required this.fullName,
     @required this.status,
     @required this.createdBy,
     @required this.createdOn,
@@ -189,6 +191,7 @@ class GroupUserModel {
         groupId = snapshot.data['GroupId'],
         isAdmin = snapshot.data['IsAdmin'],
         isModerator = snapshot.data['IsModerator'],
+        fullName = snapshot.data['FullName'],
         status = snapshot.data['Status'],
         createdBy = snapshot.data['CreatedBy'],
         createdOn = snapshot.data['CreatedOn'].toDate(),
@@ -201,6 +204,7 @@ class GroupUserModel {
       'GroupId': groupId,
       'IsAdmin': isAdmin,
       'IsModerator': isModerator,
+      'FullName': fullName,
       'Status': status,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,

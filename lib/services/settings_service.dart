@@ -1,3 +1,5 @@
+import 'package:be_still/enums/interval.dart';
+import 'package:be_still/enums/sortBy.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
@@ -19,9 +21,9 @@ class SettingsService {
         userId: userId,
         deviceId: deviceId,
         appearance: '',
-        defaultSortBy: 'date',
-        defaultSnoozeDuration: 0,
-        archiveAutoDelete: false,
+        defaultSortBy: SortType.date,
+        defaultSnoozeDuration: IntervalRange.thirtyDays,
+        archiveAutoDelete: IntervalRange.oneYear,
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,
         allowTextNotification: false,

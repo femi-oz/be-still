@@ -342,7 +342,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SnoozePicker(snoozeInterval, setSnooze, false);
+                        return SnoozePicker(
+                            snoozeInterval, setSnooze, false, null);
                       },
                     );
                   },

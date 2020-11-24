@@ -4,23 +4,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/app_theme.dart';
-
 class SnoozePicker extends StatefulWidget {
-  final _setSnooze;
+  final Function setSnooze;
+  final int selected;
+  final bool hideActionuttons;
 
-  final hideActionuttons;
-
-  final interval;
+  final List<String> interval;
 
   @override
-  SnoozePicker(this.interval, this._setSnooze, this.hideActionuttons);
+  SnoozePicker(
+      this.interval, this.setSnooze, this.hideActionuttons, this.selected);
   _SnoozePickerState createState() => _SnoozePickerState();
 }
 
 class _SnoozePickerState extends State<SnoozePicker> {
-  int selected = 2;
-
   double itemExtent = 30.0;
 
   var selectedInterval;
@@ -28,7 +25,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
     FixedExtentScrollController scrollController =
-        FixedExtentScrollController(initialItem: selected);
+        FixedExtentScrollController(initialItem: widget.selected);
     return Container(
       width: double.infinity,
       child: Column(
@@ -50,6 +47,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                             width: MediaQuery.of(context).size.width * 0.85,
                             child: CupertinoPicker(
                               // looping: true,
+
                               scrollController: scrollController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
@@ -92,7 +90,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          widget._setSnooze('$selectedInterval');
+                          widget.setSnooze('$selectedInterval');
                           Navigator.of(context).pop();
                         },
                         child: Container(

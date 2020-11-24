@@ -8,8 +8,9 @@ class SettingsModel {
   final String deviceId;
   final String appearance;
   final String defaultSortBy;
-  final int defaultSnoozeDuration;
-  final bool archiveAutoDelete;
+  final String defaultSnoozeDuration;
+  final String archiveSortBy;
+  final String archiveAutoDelete;
   final bool includeAnsweredPrayerAutoDelete;
   final bool allowPushNotification;
   final bool allowTextNotification;
@@ -31,6 +32,7 @@ class SettingsModel {
       @required this.appearance,
       @required this.defaultSortBy,
       @required this.defaultSnoozeDuration,
+      @required this.archiveSortBy,
       @required this.archiveAutoDelete,
       @required this.includeAnsweredPrayerAutoDelete,
       @required this.allowPushNotification,
@@ -53,6 +55,7 @@ class SettingsModel {
         appearance = snapShot.data['Appearance'],
         defaultSortBy = snapShot.data['DefaultSortBy'],
         defaultSnoozeDuration = snapShot.data['DefaultSnoozeDuration'],
+        archiveSortBy = snapShot.data['ArchiveSortBy'],
         archiveAutoDelete = snapShot.data['ArchiveAutoDelete'],
         includeAnsweredPrayerAutoDelete =
             snapShot.data['IncludeAnsweredPrayerAutoDelete'],
@@ -80,6 +83,7 @@ class SettingsModel {
       'Appearance': appearance,
       'DefaultSortBy': defaultSortBy,
       'DefaultSnoozeDuration': defaultSnoozeDuration,
+      'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
       'IncludeAnsweredPrayerAutoDelete': includeAnsweredPrayerAutoDelete,
       'AllowPushNotification': allowPushNotification,

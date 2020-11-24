@@ -21,6 +21,7 @@ class GroupService {
   populateGroupUser(
     GroupModel groupData,
     String userID,
+    String fullName,
     String groupID,
   ) {
     GroupUserModel userPrayer = GroupUserModel(
@@ -29,6 +30,7 @@ class GroupService {
       groupId: groupID,
       isAdmin: true,
       isModerator: true,
+      fullName: fullName,
       createdBy: groupData.createdBy,
       createdOn: groupData.createdOn,
       modifiedBy: groupData.modifiedBy,
@@ -105,7 +107,7 @@ class GroupService {
     }
   }
 
-  addGroup(String userID, GroupModel groupData) {
+  addGroup(String userID, GroupModel groupData, String fullName) {
     // Generate uuid
     final _groupID = Uuid().v1();
     final _groupUserID = Uuid().v1();
@@ -119,7 +121,8 @@ class GroupService {
           //store group user
           await transaction.set(
               _groupUserCollectionReference.document(_groupUserID),
-              populateGroupUser(groupData, userID, _groupID).toJson());
+              populateGroupUser(groupData, userID, fullName, _groupID)
+                  .toJson());
         },
       ).then((val) {
         return true;

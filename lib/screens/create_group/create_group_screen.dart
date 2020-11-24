@@ -62,7 +62,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       createdOn: DateTime.now(),
     );
     await Provider.of<GroupProvider>(context, listen: false)
-        .addGroup(groupData, _user.id);
+        .addGroup(groupData, _user.id, '${_user.firstName} ${_user.lastName}');
     setState(() {
       _step++;
     });

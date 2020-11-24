@@ -2,7 +2,6 @@ import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/services/settings_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../locator.dart';

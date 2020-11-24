@@ -1,381 +1,123 @@
+import 'package:be_still/enums/interval.dart';
+import 'package:be_still/enums/sortBy.dart';
+import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/custom_section_header.dart';
+import 'package:be_still/widgets/custom_select_button.dart';
+import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/snooze_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class MyListSettings extends StatefulWidget {
+  final SettingsModel settings;
+  MyListSettings(this.settings);
   @override
   _MyListSettingsState createState() => _MyListSettingsState();
 }
 
 class _MyListSettingsState extends State<MyListSettings> {
-  var sortBy = 'date';
-  var snooze;
-  var activeSortBy = 'date';
-
-  setSnooze(value) {
-    setState(() {
-      snooze = value;
-    });
+  _setDefaultSnooze(value) {
+    //TODO default snooze update  service
+  }
+  _setAutoDelete(value) {
+    // TODO auto delete update service
   }
 
   List<String> snoozeInterval = [
-    '7 Days',
-    '14 Days',
-    '30 Days',
-    '90 Days',
-    '1 Year'
+    IntervalRange.sevenDays,
+    IntervalRange.fourtheenDays,
+    IntervalRange.thirtyDays,
+    IntervalRange.ninetyDays,
+    IntervalRange.oneYear,
   ];
   List<String> autoDeleteInterval = [
-    '30 Days',
-    '90 Days',
-    '1 Year',
-    '2 Years',
-    'Never'
+    IntervalRange.thirtyDays,
+    IntervalRange.ninetyDays,
+    IntervalRange.oneYear,
+    IntervalRange.twoYears,
+    IntervalRange.never,
   ];
+  List<String> defaultSortBy = [SortType.date, SortType.tag];
+  List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 40),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
-                  offset: Offset(0.0, 0.5),
-                  blurRadius: 5.0,
+          Column(
+            children: [
+              CustomSectionHeder('Default Sort By'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    for (int i = 0; i < defaultSortBy.length; i++)
+                      CustomSelectButton(
+                        isSelected:
+                            widget.settings.defaultSortBy == defaultSortBy[i],
+                        onSelected: null, // TODO default sort by update service
+                        title: defaultSortBy[i],
+                      ),
+                  ],
                 ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Default Sort By',
-              style: TextStyle(
-                  color: AppColors.offWhite2,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  decoration: BoxDecoration(
-                    color: sortBy == 'date'
-                        ? AppColors.getActiveBtn(
-                                _themeProvider.isDarkModeEnabled)
-                            .withOpacity(0.3)
-                        : Colors.transparent,
-                    border: Border.all(
-                      color: AppColors.getCardBorder(
-                          _themeProvider.isDarkModeEnabled),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
-                    child: Container(
-                      child: Text(
-                        'DATE',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        sortBy = 'date';
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  decoration: BoxDecoration(
-                    color: sortBy == 'tag'
-                        ? AppColors.getActiveBtn(
-                                _themeProvider.isDarkModeEnabled)
-                            .withOpacity(0.5)
-                        : Colors.transparent,
-                    border: Border.all(
-                      color: AppColors.getCardBorder(
-                          _themeProvider.isDarkModeEnabled),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5.0, vertical: 5),
-                      child: Text(
-                        'TAG',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        sortBy = 'tag';
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 40.0),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+          Column(
+            children: [
+              CustomSectionHeder('Default Snooze Duration'),
+              Container(
+                child: SnoozePicker(
+                    snoozeInterval,
+                    _setDefaultSnooze,
+                    true,
+                    snoozeInterval
+                        .indexOf(widget.settings.defaultSnoozeDuration)),
               ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Default Snooze Duration',
-              style: TextStyle(
-                  color: AppColors.offWhite2,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
+            ],
           ),
-          Container(
-            child: SnoozePicker(snoozeInterval, setSnooze, true),
-          ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
+          Column(
+            children: [
+              CustomSectionHeder('Archive Default Sort By'),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 40.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    for (int i = 0; i < archiveSortBy.length; i++)
+                      CustomSelectButton(
+                        isSelected:
+                            widget.settings.archiveSortBy == archiveSortBy[i],
+                        onSelected: null, // TODO archive sort by update service
+                        title: archiveSortBy[i],
+                      ),
+                  ],
                 ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
               ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Active Default Sort By',
-              style: TextStyle(
-                  color: AppColors.offWhite2,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
+            ],
           ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: activeSortBy == 'date'
-                        ? AppColors.getActiveBtn(
-                                _themeProvider.isDarkModeEnabled)
-                            .withOpacity(0.3)
-                        : Colors.transparent,
-                    border: Border.all(
-                      color: AppColors.getCardBorder(
-                          _themeProvider.isDarkModeEnabled),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
-                    child: Container(
-                      child: Text(
-                        'DATE',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        activeSortBy = 'date';
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: activeSortBy == 'tag'
-                        ? AppColors.getActiveBtn(
-                                _themeProvider.isDarkModeEnabled)
-                            .withOpacity(0.5)
-                        : Colors.transparent,
-                    border: Border.all(
-                      color: AppColors.getCardBorder(
-                          _themeProvider.isDarkModeEnabled),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5.0, vertical: 5),
-                      child: Text(
-                        'TAG',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        activeSortBy = 'tag';
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: activeSortBy == 'answered'
-                        ? AppColors.getActiveBtn(
-                                _themeProvider.isDarkModeEnabled)
-                            .withOpacity(0.5)
-                        : Colors.transparent,
-                    border: Border.all(
-                      color: AppColors.getCardBorder(
-                          _themeProvider.isDarkModeEnabled),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5.0, vertical: 5),
-                      child: Text(
-                        'ANSWERED',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        activeSortBy = 'answered';
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+          Column(
+            children: [
+              CustomSectionHeder('Archive Auto Delete'),
+              Container(
+                child: SnoozePicker(
+                    autoDeleteInterval,
+                    _setAutoDelete,
+                    true,
+                    autoDeleteInterval
+                        .indexOf(widget.settings.archiveAutoDelete)),
               ),
-            ),
-            padding: EdgeInsets.all(10),
-            child: Text(
-              'Active Auto Delete',
-              style: TextStyle(
-                  color: AppColors.offWhite2,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Container(
-            child: SnoozePicker(autoDeleteInterval, setSnooze, true),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 80.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    'Include Answered Prayers in Auto Delete?',
-                    style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300),
-                  ),
-                ),
-                Switch.adaptive(
-                  value: false,
-                  activeColor: Colors.white,
-                  activeTrackColor: AppColors.lightBlue4,
-                  inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
-                ),
-              ],
-            ),
+              CustomToggle(
+                title: 'Include Answered Prayers in Auto Delete?',
+                onChange:
+                    null, // TODO includeAnsweredPrayerAutoDelete update service
+                value: widget.settings.includeAnsweredPrayerAutoDelete,
+              )
+            ],
           ),
         ],
       ),

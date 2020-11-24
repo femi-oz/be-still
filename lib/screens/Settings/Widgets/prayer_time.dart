@@ -200,7 +200,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             ),
           ),
           Container(
-            child: SnoozePicker(prayerTimeInterval, setSnooze, true),
+            child: SnoozePicker(prayerTimeInterval, setSnooze, true, null),
           ),
           Container(
             padding: EdgeInsets.only(left: 20.0, right: 20.0),

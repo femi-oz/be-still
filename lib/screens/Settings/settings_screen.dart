@@ -177,7 +177,7 @@ class SettingsTabState extends State<SettingsTab>
           child: TabBarView(
             children: [
               GeneralSettings(_settingsProvider.settings),
-              MyListSettings(),
+              MyListSettings(_settingsProvider.settings),
               PrayerTimeSettings(_settingsProvider.prayerSetttings),
               NotificationsSettings(),
               AlexaSettings(),
