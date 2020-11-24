@@ -1,6 +1,6 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/snooze_picker.dart';
+import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -250,7 +250,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
           ),
           Container(
             margin: EdgeInsets.only(bottom: 80.0),
-            child: SnoozePicker(prayerTimeInterval, setSnooze, true, null),
+            child: CustomPicker(prayerTimeInterval, setSnooze, true, null),
           ),
         ],
       ),

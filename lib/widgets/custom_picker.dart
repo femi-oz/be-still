@@ -4,20 +4,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SnoozePicker extends StatefulWidget {
-  final Function setSnooze;
+class CustomPicker extends StatefulWidget {
+  final Function onChange;
   final int selected;
   final bool hideActionuttons;
 
   final List<String> interval;
 
   @override
-  SnoozePicker(
-      this.interval, this.setSnooze, this.hideActionuttons, this.selected);
-  _SnoozePickerState createState() => _SnoozePickerState();
+  CustomPicker(
+      this.interval, this.onChange, this.hideActionuttons, this.selected);
+  _CustomPickerState createState() => _CustomPickerState();
 }
 
-class _SnoozePickerState extends State<SnoozePicker> {
+class _CustomPickerState extends State<CustomPicker> {
   double itemExtent = 30.0;
 
   var selectedInterval;
@@ -83,7 +83,7 @@ class _SnoozePickerState extends State<SnoozePicker> {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          widget.setSnooze('$selectedInterval');
+                          widget.onChange('$selectedInterval');
                           Navigator.of(context).pop();
                         },
                         child: Container(

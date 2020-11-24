@@ -1,5 +1,7 @@
-class ReminderFrequency {
+class Frequency {
   static const daily = 'Daily';
+  static const monthly = 'Monthly';
+  static const per_instance = 'Per Instance';
   static const weekly = 'Weekly';
   static const t_th = 'T-Th';
   static const m_w_f = 'M-W-F';

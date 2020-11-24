@@ -180,7 +180,7 @@ class SettingsTabState extends State<SettingsTab>
               MyListSettings(_settingsProvider.settings),
               PrayerTimeSettings(_settingsProvider.prayerSetttings,
                   _settingsProvider.settings),
-              NotificationsSettings(),
+              NotificationsSettings(_settingsProvider.settings),
               AlexaSettings(),
               SharingSettings(_settingsProvider.sharingSetttings),
               GroupsSettings(),

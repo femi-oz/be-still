@@ -1,4 +1,4 @@
-import 'package:be_still/enums/reminder.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -8,7 +8,7 @@ import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:be_still/widgets/snooze_picker.dart';
+import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,10 +40,10 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   ];
 
   List<String> reminderInterval = [
-    ReminderFrequency.daily,
-    ReminderFrequency.weekly,
-    ReminderFrequency.t_th,
-    ReminderFrequency.m_w_f,
+    Frequency.daily,
+    Frequency.weekly,
+    Frequency.t_th,
+    Frequency.m_w_f,
   ];
 
   List<String> reminderDays = [
@@ -106,7 +106,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: 'Spotify',
               ),
               Container(
-                child: SnoozePicker(songs, setSnooze, true, 2),
+                child: CustomPicker(songs, setSnooze, true, 2),
               ),
               CustomToggle(
                 title: 'Auto play music during prayer time?',

@@ -1,5 +1,5 @@
 import 'package:be_still/enums/interval.dart';
-import 'package:be_still/enums/reminder.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/sortBy.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
@@ -50,7 +50,7 @@ class SettingsService {
         doNotDisturb: false,
         enableBackgroundMusic: false,
         userId: userId,
-        frequency: ReminderFrequency.m_w_f,
+        frequency: Frequency.m_w_f,
         date: DateTime.now(),
         time: Timestamp.now(),
         createdBy: userData.createdBy,

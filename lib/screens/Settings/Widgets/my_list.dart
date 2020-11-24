@@ -6,7 +6,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
-import 'package:be_still/widgets/snooze_picker.dart';
+import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,7 +75,7 @@ class _MyListSettingsState extends State<MyListSettings> {
             children: [
               CustomSectionHeder('Default Snooze Duration'),
               Container(
-                child: SnoozePicker(
+                child: CustomPicker(
                     snoozeInterval,
                     _setDefaultSnooze,
                     true,
@@ -111,7 +111,7 @@ class _MyListSettingsState extends State<MyListSettings> {
             children: [
               CustomSectionHeder('Archive Auto Delete'),
               Container(
-                child: SnoozePicker(
+                child: CustomPicker(
                     autoDeleteInterval,
                     _setAutoDelete,
                     true,

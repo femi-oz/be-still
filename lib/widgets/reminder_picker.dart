@@ -1,4 +1,4 @@
-import 'package:be_still/enums/reminder.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -29,7 +29,7 @@ class ReminderPicker extends StatefulWidget {
 class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
-  var selectedFrequency = ReminderFrequency.daily;
+  var selectedFrequency = Frequency.daily;
   var selectedDay = DaysOfWeek.wed;
   var selectedPeriod = PeriodOfDay.pm;
   var selectedHour = 3;
@@ -97,7 +97,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: selectedFrequency == ReminderFrequency.weekly
+                            child: selectedFrequency == Frequency.weekly
                                 ? CupertinoPicker(
                                     scrollController: daysController,
                                     itemExtent: itemExtent,

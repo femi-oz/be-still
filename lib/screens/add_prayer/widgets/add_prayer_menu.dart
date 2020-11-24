@@ -2,7 +2,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:be_still/widgets/snooze_picker.dart';
+import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './../../../utils/app_theme.dart';
@@ -180,7 +180,7 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                           .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SnoozePicker(
+                        return CustomPicker(
                             snoozeInterval, setSnooze, false, null);
                       },
                     );
