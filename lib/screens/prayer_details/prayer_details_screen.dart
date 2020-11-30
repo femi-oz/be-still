@@ -36,10 +36,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         Provider.of<UserProvider>(context, listen: false).currentUser;
     PrayerModel prayer = Provider.of<PrayerProvider>(context).currentPrayer;
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    var isGroupAdmin = group.groupUsers
-            .firstWhere((user) => user.userId == _user.id, orElse: () => null)
-            ?.isAdmin ??
-        false;
+    var isGroupAdmin = false;
+    if (group != null) {
+      isGroupAdmin = group.groupUsers
+              .firstWhere((user) => user.userId == _user.id, orElse: () => null)
+              ?.isAdmin ??
+          false;
+    }
     var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType !=
         PrayerActiveScreen.personal;
     if ((isGroup && isGroupAdmin) ||
