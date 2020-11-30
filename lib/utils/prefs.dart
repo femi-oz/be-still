@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:be_still/enums/theme_mode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkThemePreferenes {
@@ -10,7 +10,7 @@ class DarkThemePreferenes {
   Future<String> getThemeMode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String themeMode =
-        prefs.getString('themeMode') ?? ThemeMode.light.toString();
+        prefs.getString('themeMode') ?? BThemeMode.light.toString();
     return themeMode;
   }
 }

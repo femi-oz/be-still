@@ -65,7 +65,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(),

@@ -19,6 +19,7 @@ class SettingsService {
 
   populateSettings(String deviceId, String userId, UserModel userData) {
     SettingsModel settings = SettingsModel(
+        allowAlexaReadPrayer: false,
         archiveSortBy: SortType.date,
         userId: userId,
         deviceId: deviceId,

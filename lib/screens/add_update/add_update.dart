@@ -42,6 +42,7 @@ class _AddUpdateState extends State<AddUpdate> {
     PrayerUpdateModel prayerUpdateData;
     prayerUpdateData = PrayerUpdateModel(
       prayerId: widget.prayer.id,
+      userId: _user.id,
       title: '',
       description: _descriptionController.text,
       modifiedBy: _user.id,

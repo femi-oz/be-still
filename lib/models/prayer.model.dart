@@ -112,6 +112,7 @@ class PrayerDisableModel {
 class PrayerUpdateModel {
   final String id;
   final String prayerId;
+  final String userId;
   final String title;
   final String description;
   final String createdBy;
@@ -122,6 +123,7 @@ class PrayerUpdateModel {
   const PrayerUpdateModel({
     this.id,
     @required this.prayerId,
+    @required this.userId,
     @required this.title,
     @required this.description,
     @required this.createdBy,
@@ -133,6 +135,7 @@ class PrayerUpdateModel {
   PrayerUpdateModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.documentID,
         prayerId = snapshot.documentID,
+        userId = snapshot.data['UserId'],
         title = snapshot.data['Title'],
         description = snapshot.data['Description'],
         createdBy = snapshot.data['CreatedBy'],
@@ -143,6 +146,7 @@ class PrayerUpdateModel {
   Map<String, dynamic> toJson() {
     return {
       'PrayerId': prayerId,
+      'UserId': userId,
       'Title': title,
       'Description': description,
       'CreatedBy': createdBy,
