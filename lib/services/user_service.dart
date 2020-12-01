@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/settings_service.dart';
@@ -46,7 +47,7 @@ class UserService {
       model: deviceModel.toUpperCase(),
       deviceId: deviceID,
       name: deviceName.toUpperCase(),
-      status: 'Active',
+      status: Status.active,
     );
     return device;
   }
@@ -83,7 +84,7 @@ class UserService {
       modifiedBy: userData.modifiedBy,
       deviceId: deviceID,
       userId: userID,
-      status: 'Active',
+      status: Status.active,
     );
     return userDevice;
   }

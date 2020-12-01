@@ -19,7 +19,7 @@ class PrayerList extends StatelessWidget {
   // PrayerList({this.activeList, this.prayers, this.group});
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    final data = Provider.of<PrayerProvider>(context).filteredPrayers;
     return Container(
       padding: EdgeInsets.only(
         top: 20,
@@ -28,7 +28,7 @@ class PrayerList extends StatelessWidget {
       ),
       child: Column(
         children: <Widget>[
-          prayers.length < 1
+          data.length < 1
               ? Container(
                   padding: EdgeInsets.all(60),
                   child: Text(
@@ -39,7 +39,7 @@ class PrayerList extends StatelessWidget {
                 )
               : Column(
                   children: <Widget>[
-                    ...prayers.map((p) => PrayerCard(prayer: p)).toList(),
+                    ...data.map((e) => PrayerCard(prayer: e.prayer)).toList(),
                   ],
                 ),
           InkWell(

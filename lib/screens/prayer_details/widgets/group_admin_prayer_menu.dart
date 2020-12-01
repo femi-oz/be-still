@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
@@ -93,7 +94,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                   onTap: () {
                     UserPrayerModel userPrayer = UserPrayerModel(
                       userId: _user.id,
-                      status: 'Active',
+                      status: Status.active,
                       sequence: null,
                       prayerId: widget.prayer.id,
                       isFavorite: false,

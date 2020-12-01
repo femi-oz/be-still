@@ -1,4 +1,5 @@
 import 'package:be_still/enums/interval.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/sortBy.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -36,7 +37,7 @@ class SettingsService {
         notifyMeSomeoneSharePrayerWithMe: false,
         allowPrayerTimeNotification: false,
         syncAlexa: false,
-        status: 'Active',
+        status: Status.active,
         createdBy: userData.createdBy,
         createdOn: DateTime.now(),
         modifiedBy: userData.createdBy,
@@ -68,7 +69,7 @@ class SettingsService {
         enableSharingViaText: false,
         churchId: '',
         phone: '${userData.phone}',
-        status: 'Active',
+        status: Status.active,
         createdBy: userData.createdBy,
         createdOn: DateTime.now(),
         modifiedBy: userData.createdBy,

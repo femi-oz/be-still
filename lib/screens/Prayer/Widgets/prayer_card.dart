@@ -37,9 +37,8 @@ class PrayerCard extends StatelessWidget {
                   .withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return (_activeList == PrayerActiveScreen.group ||
-                    (_activeList != PrayerActiveScreen.group &&
-                        prayer.groupId != '0'))
+            return (_activeList == PrayerType.group ||
+                    (_activeList != PrayerType.group && prayer.groupId != '0'))
                 ? GroupPrayerQuickAccess(y: y, prayer: prayer)
                 : PrayerQuickAccess(y: y, prayer: prayer);
           },
@@ -48,8 +47,8 @@ class PrayerCard extends StatelessWidget {
       onTap: () async {
         await Provider.of<PrayerProvider>(context, listen: false)
             .setPrayer(prayer.id);
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayerUpdates(prayer.id);
+        // await Provider.of<PrayerProvider>(context, listen: false)
+        //     .setPrayerUpdates(prayer.id);
         // await Provider.of<GroupProvider>(context, listen: false)
         //     .setGroupUsers(prayer.groupId);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);

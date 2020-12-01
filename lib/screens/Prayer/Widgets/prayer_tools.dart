@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class PrayerTools extends StatefulWidget {
 }
 
 class _PrayerToolsState extends State<PrayerTools> {
-  var view = 'active';
+  var view = Status.active;
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
@@ -55,7 +56,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                         onTap: () {
                           setState(
                             () {
-                              view = 'active';
+                              view = Status.active;
                             },
                           );
                         },
@@ -66,7 +67,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                           margin: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: view == 'active'
+                            color: view == Status.active
                                 ? AppColors.getActiveBtn(
                                         _themeProvider.isDarkModeEnabled)
                                     .withOpacity(0.2)
@@ -80,7 +81,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'ACTIVE',
+                              Status.active,
                               style: TextStyle(
                                 color: AppColors.lightBlue4,
                                 fontSize: 14,

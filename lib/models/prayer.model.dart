@@ -1,3 +1,5 @@
+import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/user_Prayer.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -195,4 +197,20 @@ class HiddenPrayerModel {
       'ModifiedOn': modifiedOn,
     };
   }
+}
+
+class CombinePrayerStream {
+  final UserPrayerModel userPrayer;
+  final GroupPrayerModel groupPrayer;
+  @required
+  final PrayerModel prayer;
+  @required
+  final PrayerUpdateModel updates;
+
+  CombinePrayerStream({
+    this.userPrayer,
+    this.groupPrayer,
+    this.prayer,
+    this.updates,
+  });
 }

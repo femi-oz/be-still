@@ -94,7 +94,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
                 child: SingleChildScrollView(
                   child:
                       Provider.of<PrayerProvider>(context).currentPrayerType ==
-                              PrayerActiveScreen.findGroup
+                              PrayerType.findGroup
                           ? FindAGroup()
                           : PrayerList(),
                 ),

@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -423,7 +424,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                       )
                     : Container(),
-                widget.prayer.status == 'Active'
+                widget.prayer.status == Status.active
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(

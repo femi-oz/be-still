@@ -1,4 +1,5 @@
 import 'package:be_still/enums/groupType.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
@@ -53,7 +54,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       location: '${_cityController.text}, ${_stateController.text}',
       organization: _organizationController.text,
       description: _descriptionController.text,
-      status: 'Active',
+      status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
       modifiedBy: _user.id,

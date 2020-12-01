@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -26,7 +27,7 @@ class GroupService {
   ) {
     GroupUserModel userPrayer = GroupUserModel(
       userId: userID,
-      status: 'Active',
+      status: Status.active,
       groupId: groupID,
       isAdmin: true,
       isModerator: true,

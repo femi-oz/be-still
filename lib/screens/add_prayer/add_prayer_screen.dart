@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
@@ -48,7 +49,7 @@ class _AddPrayerState extends State<AddPrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _isGroup =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayerType ==
-            PrayerActiveScreen.group;
+            PrayerType.group;
     final _groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
@@ -59,7 +60,7 @@ class _AddPrayerState extends State<AddPrayer> {
           groupId: _isGroup ? _groupData?.group?.id : '0',
           userId: _user.id,
           description: _descriptionController.text,
-          status: 'Active',
+          status: Status.active,
           modifiedBy: _user.id,
           modifiedOn: DateTime.now(),
           type: '',

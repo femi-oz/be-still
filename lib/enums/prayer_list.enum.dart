@@ -1,5 +1,5 @@
-enum PrayerActiveScreen {
-  personal,
+enum PrayerType {
+  userPrayers,
   group,
   archived,
   answered,

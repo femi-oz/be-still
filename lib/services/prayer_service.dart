@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -36,8 +37,21 @@ class PrayerService {
               .snapshots()
               .map<PrayerModel>((document) => PrayerModel.fromData(document));
 
-          return Rx.combineLatest2(userPrayer, prayer,
-              (userPrayer, prayer) => CombinePrayerStream(userPrayer, prayer));
+          Stream<PrayerUpdateModel> updates = _prayerUpdateCollectionReference
+              .document(f.data['PrayerId'])
+              .snapshots()
+              .map<PrayerUpdateModel>(
+                  (document) => PrayerUpdateModel.fromData(document));
+
+          return Rx.combineLatest3(
+              userPrayer,
+              prayer,
+              updates,
+              (userPrayer, prayer, updates) => CombinePrayerStream(
+                    prayer: prayer,
+                    updates: updates,
+                    userPrayer: userPrayer,
+                  ));
         });
       }).switchMap((observables) {
         return observables.length > 0
@@ -57,7 +71,7 @@ class PrayerService {
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
         userId: userID,
-        status: 'Active',
+        status: Status.active,
         sequence: null,
         prayerId: prayerID,
         isFavorite: false,
@@ -74,7 +88,7 @@ class PrayerService {
   ) {
     GroupPrayerModel userPrayer = GroupPrayerModel(
         groupId: prayerData.groupId,
-        status: 'Active',
+        status: Status.active,
         sequence: null,
         prayerId: prayerID,
         isFavorite: false,
@@ -115,8 +129,8 @@ class PrayerService {
     }
   }
 
-  Stream<List<CombineGroupPrayerStream>> _combineGroupStream;
-  Stream<List<CombineGroupPrayerStream>> getGroupPrayers(String groupId) {
+  Stream<List<CombinePrayerStream>> _combineGroupStream;
+  Stream<List<CombinePrayerStream>> getGroupPrayers(String groupId) {
     print(groupId);
     try {
       _combineGroupStream = _groupPrayerCollectionReference
@@ -132,12 +146,22 @@ class PrayerService {
               .document(f.data['PrayerId'])
               .snapshots()
               .map<PrayerModel>((document) => PrayerModel.fromData(document));
+          Stream<PrayerUpdateModel> updates = _prayerUpdateCollectionReference
+              .document(f.data['PrayerId'])
+              .snapshots()
+              .map<PrayerUpdateModel>(
+                  (document) => PrayerUpdateModel.fromData(document));
 
-          return Rx.combineLatest2(
-              groupPrayer,
-              prayer,
-              (groupPrayer, prayer) =>
-                  CombineGroupPrayerStream(prayer, groupPrayer));
+          return Rx.combineLatest3(
+            groupPrayer,
+            prayer,
+            updates,
+            (groupPrayer, prayer, updates) => CombinePrayerStream(
+              groupPrayer: groupPrayer,
+              prayer: prayer,
+              updates: updates,
+            ),
+          );
         });
       }).switchMap((observables) {
         return observables.length > 0
@@ -249,7 +273,7 @@ class PrayerService {
   ) async {
     try {
       _prayerCollectionReference.document(prayerID).updateData(
-        {'Status': 'Inactive'},
+        {'Status': Status.inactive},
       );
     } catch (e) {
       throw HttpException(e.message);
@@ -309,40 +333,6 @@ class PrayerService {
       throw HttpException(e.message);
     }
   }
-
-  // hidePrayer(PrayerDisableModel prayerDisable) {
-  //   final prayerDisableId = Uuid().v1();
-  //   try {
-  //     return Firestore.instance.runTransaction((transaction) async {
-  //       await transaction.set(
-  //           _prayerDisableCollectionRefernce.document(prayerDisableId),
-  //           prayerDisable.toJson());
-  //     }).then((value) {
-  //       return true;
-  //     }).catchError((e) {
-  //       if (e is PlatformException) {
-  //         return e.message;
-  //       }
-  //       return e.toString();
-  //     });
-  //   } catch (e) {
-  //     if (e is PlatformException) {
-  //       return e.message;
-  //     }
-  //     return e.toString();
-  //   }
-  // }
-
-  // populatePrayerDisable(String userId, PrayerDisableModel prayerDisableData) {
-  //   PrayerDisableModel hidePrayer = PrayerDisableModel(
-  //       prayerId: prayerDisableData.prayerId,
-  //       userId: userId,
-  //       createdBy: prayerDisableData.createdBy,
-  //       createdOn: prayerDisableData.createdOn,
-  //       modifiedBy: prayerDisableData.modifiedBy,
-  //       modifiedOn: prayerDisableData.modifiedOn);
-  //   return hidePrayer;
-  // }
 
   Stream<DocumentSnapshot> getPrayer(String prayerID) {
     try {

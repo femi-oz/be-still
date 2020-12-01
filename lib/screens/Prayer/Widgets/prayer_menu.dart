@@ -35,7 +35,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _setCurrentList(
-      PrayerActiveScreen activeList, CombineGroupUserStream groupData) async {
+      PrayerType activeList, CombineGroupUserStream groupData) async {
     await Provider.of<GroupProvider>(context, listen: false)
         .setCurrentGroup(groupData);
     await Provider.of<PrayerProvider>(context, listen: false)
@@ -44,7 +44,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _setPrayers(
-      CombineGroupUserStream groupData, PrayerActiveScreen activeList) async {
+      CombineGroupUserStream groupData, PrayerType activeList) async {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     var isGroupAdmin;
@@ -56,7 +56,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
       _user.id,
       activeList,
-      activeList == PrayerActiveScreen.group ? groupData.group?.id : '0',
+      activeList == PrayerType.group ? groupData.group?.id : '0',
       isGroupAdmin,
     );
   }
@@ -75,7 +75,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return _activeList == PrayerActiveScreen.findGroup
+          return _activeList == PrayerType.findGroup
               ? FindGroupTools()
               : PrayerTools();
         },
@@ -157,9 +157,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         PrayerMenuItem(
                           title: 'My List',
-                          isActive: _activeList == PrayerActiveScreen.personal,
+                          isActive: _activeList == PrayerType.userPrayers,
                           action: () => setState(() {
-                            _setCurrentList(PrayerActiveScreen.personal, null);
+                            _setCurrentList(PrayerType.userPrayers, null);
                           }),
                           openTools: () => openTools(),
                         ),
@@ -168,16 +168,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             for (int i = 0; i < _groups.length; i++)
                               PrayerMenuItem(
                                 title: _groups[i].group.name,
-                                isActive:
-                                    _activeList == PrayerActiveScreen.group &&
-                                        _groups[i].group.id ==
-                                            Provider.of<GroupProvider>(context)
-                                                .currentGroup
-                                                .group
-                                                .id,
+                                isActive: _activeList == PrayerType.group &&
+                                    _groups[i].group.id ==
+                                        Provider.of<GroupProvider>(context)
+                                            .currentGroup
+                                            .group
+                                            .id,
                                 action: () => setState(() {
-                                  _setCurrentList(
-                                      PrayerActiveScreen.group, _groups[i]);
+                                  _setCurrentList(PrayerType.group, _groups[i]);
                                 }),
                                 openTools: () => openTools(),
                               ),
@@ -185,35 +183,33 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         PrayerMenuItem(
                           title: 'Archived',
-                          isActive: _activeList == PrayerActiveScreen.archived,
+                          isActive: _activeList == PrayerType.archived,
                           action: () => setState(() {
-                            _setCurrentList(PrayerActiveScreen.archived, null);
+                            _setCurrentList(PrayerType.archived, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Answered',
-                          isActive: _activeList == PrayerActiveScreen.answered,
+                          isActive: _activeList == PrayerType.answered,
                           action: () => setState(() {
-                            _setCurrentList(PrayerActiveScreen.answered, null);
+                            _setCurrentList(PrayerType.answered, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Find a Group',
-                          isActive: _activeList == PrayerActiveScreen.findGroup,
+                          isActive: _activeList == PrayerType.findGroup,
                           action: () => setState(() {
-                            _setCurrentList(PrayerActiveScreen.findGroup, null);
+                            _setCurrentList(PrayerType.findGroup, null);
                           }),
                           openTools: () => openTools(),
                         ),
                         PrayerMenuItem(
                           title: 'Create a Group +',
-                          isActive:
-                              _activeList == PrayerActiveScreen.createGroup,
+                          isActive: _activeList == PrayerType.createGroup,
                           action: () => setState(() {
-                            _setCurrentList(
-                                PrayerActiveScreen.createGroup, null);
+                            _setCurrentList(PrayerType.createGroup, null);
                             Navigator.of(context).pushReplacementNamed(
                                 CreateGroupScreen.routeName);
                           }),

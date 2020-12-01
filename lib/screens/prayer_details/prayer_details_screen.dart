@@ -44,7 +44,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
           false;
     }
     var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType !=
-        PrayerActiveScreen.personal;
+        PrayerType.userPrayers;
     if ((isGroup && isGroupAdmin) ||
         (!isGroup && isGroupAdmin && prayer.groupId != '0')) {
       return GroupAdminPrayerMenu(prayer);
