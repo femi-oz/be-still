@@ -64,6 +64,7 @@ class _AddPrayerState extends State<AddPrayer> {
           modifiedBy: _user.id,
           modifiedOn: DateTime.now(),
           type: '',
+          creatorName: '${_user.firstName} ${_user.lastName}',
           createdBy: _user.id,
           createdOn: DateTime.now(),
           hideFromAllMembers: false,

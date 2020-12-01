@@ -72,10 +72,10 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
           await Provider.of<PrayerProvider>(context, listen: false)
               .addPrayer(widget.prayer, _user.id);
         }
-        Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
       }
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
+      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);

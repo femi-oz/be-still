@@ -138,10 +138,6 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.hideFromAllMembers(prayerId, value);
   }
 
-  // Future flagAsInappropriate(String prayerId) async {
-  //   return await _prayerService.flagAsInappropriate(prayerId);
-  // }
-
   Future setCurrentPrayerType(PrayerType type) async {
     _currentPrayerType = type;
     notifyListeners();

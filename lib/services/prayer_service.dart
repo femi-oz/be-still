@@ -37,17 +37,22 @@ class PrayerService {
               .snapshots()
               .map<PrayerModel>((document) => PrayerModel.fromData(document));
 
-          Stream<PrayerUpdateModel> updates = _prayerUpdateCollectionReference
-              .document(f.data['PrayerId'])
-              .snapshots()
-              .map<PrayerUpdateModel>(
-                  (document) => PrayerUpdateModel.fromData(document));
+          Stream<List<PrayerUpdateModel>> updates =
+              _prayerUpdateCollectionReference
+                  // .document(f.data['PrayerId'])
+                  .where('PrayerId', isEqualTo: f.data['PrayerId'])
+                  .snapshots()
+                  .map<List<PrayerUpdateModel>>((list) => list.documents
+                      .map((e) => PrayerUpdateModel.fromData(e))
+                      .toList());
 
           return Rx.combineLatest3(
               userPrayer,
               prayer,
               updates,
-              (userPrayer, prayer, updates) => CombinePrayerStream(
+              (UserPrayerModel userPrayer, PrayerModel prayer,
+                      List<PrayerUpdateModel> updates) =>
+                  CombinePrayerStream(
                     prayer: prayer,
                     updates: updates,
                     userPrayer: userPrayer,
@@ -146,17 +151,21 @@ class PrayerService {
               .document(f.data['PrayerId'])
               .snapshots()
               .map<PrayerModel>((document) => PrayerModel.fromData(document));
-          Stream<PrayerUpdateModel> updates = _prayerUpdateCollectionReference
-              .document(f.data['PrayerId'])
-              .snapshots()
-              .map<PrayerUpdateModel>(
-                  (document) => PrayerUpdateModel.fromData(document));
+          Stream<List<PrayerUpdateModel>> updates =
+              _prayerUpdateCollectionReference
+                  .where('PrayerId', isEqualTo: f.data['PrayerId'])
+                  .snapshots()
+                  .map<List<PrayerUpdateModel>>((list) => list.documents
+                      .map((e) => PrayerUpdateModel.fromData(e))
+                      .toList());
 
           return Rx.combineLatest3(
             groupPrayer,
             prayer,
             updates,
-            (groupPrayer, prayer, updates) => CombinePrayerStream(
+            (GroupPrayerModel groupPrayer, PrayerModel prayer,
+                    List<PrayerUpdateModel> updates) =>
+                CombinePrayerStream(
               groupPrayer: groupPrayer,
               prayer: prayer,
               updates: updates,

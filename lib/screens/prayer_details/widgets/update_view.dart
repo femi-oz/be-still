@@ -28,7 +28,7 @@ class UpdateView extends StatelessWidget {
                   ? Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        prayer.createdBy,
+                        prayer.creatorName,
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.getPrayerPrimaryColor(
                                 _themeProvider.isDarkModeEnabled),

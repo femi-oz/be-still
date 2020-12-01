@@ -47,8 +47,8 @@ class PrayerCard extends StatelessWidget {
       onTap: () async {
         await Provider.of<PrayerProvider>(context, listen: false)
             .setPrayer(prayer.id);
-        // await Provider.of<PrayerProvider>(context, listen: false)
-        //     .setPrayerUpdates(prayer.id);
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayerUpdates(prayer.id);
         // await Provider.of<GroupProvider>(context, listen: false)
         //     .setGroupUsers(prayer.groupId);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
@@ -87,7 +87,7 @@ class PrayerCard extends StatelessWidget {
                           children: <Widget>[
                             prayer.groupId != '0'
                                 ? Text(
-                                    prayer.createdBy,
+                                    prayer.creatorName,
                                     style: AppTextStyles.regularText14.copyWith(
                                       fontWeight: FontWeight.w500,
                                       color: AppColors.lightBlue4,
