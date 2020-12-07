@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class PrayerSettingsModel {
+  final String id;
   final String userId;
   final String frequency;
-  final DateTime date;
-  final Timestamp time;
+  // final DateTime date;
+  final String day;
+  final String time;
   final bool doNotDisturb;
   final bool allowEmergencyCalls;
   final bool enableBackgroundMusic;
@@ -15,24 +17,29 @@ class PrayerSettingsModel {
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const PrayerSettingsModel(
-      {@required this.userId,
-      @required this.frequency,
-      @required this.date,
-      @required this.time,
-      @required this.doNotDisturb,
-      @required this.allowEmergencyCalls,
-      @required this.autoPlayMusic,
-      @required this.enableBackgroundMusic,
-      @required this.createdBy,
-      @required this.createdOn,
-      @required this.modifiedBy,
-      @required this.modifiedOn});
+  const PrayerSettingsModel({
+    this.id,
+    @required this.userId,
+    @required this.frequency,
+    // @required this.date,
+    @required this.time,
+    @required this.day,
+    @required this.doNotDisturb,
+    @required this.allowEmergencyCalls,
+    @required this.autoPlayMusic,
+    @required this.enableBackgroundMusic,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
 
   PrayerSettingsModel.fromData(DocumentSnapshot snapshot)
-      : userId = snapshot.documentID,
+      : id = snapshot.documentID,
+        userId = snapshot.data["UserId"],
         frequency = snapshot.data["Frequency"],
-        date = snapshot.data["Date"].toDate(),
+        // date = snapshot.data["Date"].toDate(),
+        day = snapshot.data["Day"],
         time = snapshot.data["Time"],
         doNotDisturb = snapshot.data['DoNotDisturb'],
         allowEmergencyCalls = snapshot.data['AllowEmergencyCalls'],
@@ -47,7 +54,8 @@ class PrayerSettingsModel {
     return {
       'UserId': userId,
       'Frequency': frequency,
-      'Date': date,
+      // 'Date': date,
+      'Day': day,
       'Time': time,
       'DoNotDisturb': doNotDisturb,
       'AllowEmergencyCalls': allowEmergencyCalls,

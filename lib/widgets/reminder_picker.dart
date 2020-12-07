@@ -5,7 +5,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ReminderPicker extends StatefulWidget {
@@ -227,8 +226,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                       CustomButtonGroup(
                         title: 'SAVE',
                         onSelected: (_) {
-                          var date = DateTime.parse(
-                              '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${selectedPeriod == PeriodOfDay.am ? '0$selectedHour' : selectedHour + 10}:$selectedMinute');
+                          var date =
+                              '$selectedHour:$selectedMinute $selectedPeriod';
                           widget.onSave(selectedDay, selectedFrequency, date);
                         },
                         length: 2,

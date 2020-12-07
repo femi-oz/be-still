@@ -1,8 +1,8 @@
 import 'package:be_still/enums/interval.dart';
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/sortBy.dart';
 import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
@@ -19,10 +19,17 @@ class MyListSettings extends StatefulWidget {
 
 class _MyListSettingsState extends State<MyListSettings> {
   _setDefaultSnooze(value) {
-    //TODO default snooze update  service
+    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+        key: SettingsKey.defaultSnoozeDuration,
+        value: value,
+        settingsId: widget.settings.id);
   }
+
   _setAutoDelete(value) {
-    // TODO auto delete update service
+    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+        key: SettingsKey.archiveAutoDelete,
+        value: value,
+        settingsId: widget.settings.id);
   }
 
   List<String> snoozeInterval = [
@@ -43,7 +50,8 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final setingProvider = Provider.of<SettingsProvider>(context);
+
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -61,7 +69,10 @@ class _MyListSettingsState extends State<MyListSettings> {
                       CustomButtonGroup(
                         isSelected:
                             widget.settings.defaultSortBy == defaultSortBy[i],
-                        onSelected: null, // TODO default sort by update service
+                        onSelected: (value) => setingProvider.updateSettings(
+                            key: SettingsKey.defaultSortBy,
+                            value: value,
+                            settingsId: widget.settings.id),
                         title: defaultSortBy[i],
                         length: defaultSortBy.length,
                         index: i,
@@ -97,7 +108,10 @@ class _MyListSettingsState extends State<MyListSettings> {
                       CustomButtonGroup(
                         isSelected:
                             widget.settings.archiveSortBy == archiveSortBy[i],
-                        onSelected: null, // TODO archive sort by update service
+                        onSelected: (value) => setingProvider.updateSettings(
+                            key: SettingsKey.archiveSortBy,
+                            value: value,
+                            settingsId: widget.settings.id),
                         title: archiveSortBy[i],
                         length: archiveSortBy.length,
                         index: i,
@@ -120,8 +134,10 @@ class _MyListSettingsState extends State<MyListSettings> {
               ),
               CustomToggle(
                 title: 'Include Answered Prayers in Auto Delete?',
-                onChange:
-                    null, // TODO includeAnsweredPrayerAutoDelete update service
+                onChange: (value) => setingProvider.updateSettings(
+                    key: SettingsKey.includeAnsweredPrayerAutoDelete,
+                    value: value,
+                    settingsId: widget.settings.id),
                 value: widget.settings.includeAnsweredPrayerAutoDelete,
               )
             ],

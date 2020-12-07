@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SettingsModel {
+  final String id;
   final String userId;
   final String deviceId;
   final String appearance;
@@ -27,32 +28,35 @@ class SettingsModel {
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const SettingsModel(
-      {@required this.userId,
-      @required this.deviceId,
-      @required this.appearance,
-      @required this.defaultSortBy,
-      @required this.defaultSnoozeDuration,
-      @required this.archiveSortBy,
-      @required this.archiveAutoDelete,
-      @required this.includeAnsweredPrayerAutoDelete,
-      @required this.allowPushNotification,
-      @required this.allowTextNotification,
-      @required this.allowAlexaReadPrayer,
-      @required this.emailUpdateFrequency,
-      @required this.emailUpdateNotification,
-      @required this.notifyMeSomeonePostOnGroup,
-      @required this.notifyMeSomeoneSharePrayerWithMe,
-      @required this.allowPrayerTimeNotification,
-      @required this.syncAlexa,
-      @required this.status,
-      @required this.createdBy,
-      @required this.createdOn,
-      @required this.modifiedBy,
-      @required this.modifiedOn});
+  const SettingsModel({
+    this.id,
+    @required this.userId,
+    @required this.deviceId,
+    @required this.appearance,
+    @required this.defaultSortBy,
+    @required this.defaultSnoozeDuration,
+    @required this.archiveSortBy,
+    @required this.archiveAutoDelete,
+    @required this.includeAnsweredPrayerAutoDelete,
+    @required this.allowPushNotification,
+    @required this.allowTextNotification,
+    @required this.allowAlexaReadPrayer,
+    @required this.emailUpdateFrequency,
+    @required this.emailUpdateNotification,
+    @required this.notifyMeSomeonePostOnGroup,
+    @required this.notifyMeSomeoneSharePrayerWithMe,
+    @required this.allowPrayerTimeNotification,
+    @required this.syncAlexa,
+    @required this.status,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
 
   SettingsModel.fromData(DocumentSnapshot snapShot)
-      : userId = snapShot.documentID,
+      : id = snapShot.documentID,
+        userId = snapShot.data['UserId'],
         deviceId = snapShot.data['DeviceId'],
         appearance = snapShot.data['Appearance'],
         defaultSortBy = snapShot.data['DefaultSortBy'],

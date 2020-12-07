@@ -8,6 +8,7 @@ import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsService {
@@ -53,8 +54,9 @@ class SettingsService {
         enableBackgroundMusic: false,
         userId: userId,
         frequency: Frequency.m_w_f,
-        date: DateTime.now(),
-        time: Timestamp.now(),
+        // date: DateTime.now(),
+        time: DateFormat('hh:mma').format(DateTime.now()),
+        day: DateFormat('ddd').format(DateTime.now()),
         createdBy: userData.createdBy,
         createdOn: DateTime.now(),
         modifiedBy: userData.createdBy,
@@ -145,6 +147,38 @@ class SettingsService {
           .map((doc) => doc.documents
               .map((e) => SharingSettingsModel.fromData(e))
               .toList()[0]);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updateSettings({String key, dynamic value, String settingsId}) async {
+    try {
+      _settingsCollectionReference.document(settingsId).updateData(
+        {key: value},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updatePrayerSettings(
+      {String key, dynamic value, String settingsId}) async {
+    try {
+      _prayerSettingsCollectionReference.document(settingsId).updateData(
+        {key: value},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updateSharingSettings(
+      {String key, dynamic value, String settingsId}) async {
+    try {
+      _sharingSettingsCollectionReference.document(settingsId).updateData(
+        {key: value},
+      );
     } catch (e) {
       throw HttpException(e.message);
     }

@@ -1,6 +1,8 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
@@ -62,15 +64,31 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  _savePrayerTime(String selectedDay, String selectedFrequency, DateTime date) {
-    // TODO save prayer time service
-    print('$selectedDay, $selectedFrequency, $date');
+  _savePrayerTime(
+      String selectedDay, String selectedFrequency, String date) async {
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .updatePrayerSettings(
+            key: SettingsKey.day,
+            value: selectedDay,
+            settingsId: widget.prayerSettings.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .updatePrayerSettings(
+            key: SettingsKey.frequency,
+            value: selectedFrequency,
+            settingsId: widget.prayerSettings.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .updatePrayerSettings(
+            key: SettingsKey.time,
+            value: date,
+            settingsId: widget.prayerSettings.id);
+    setState(() => _addPrayerTypeMode = false);
   }
 
   bool _addPrayerTypeMode = false;
 
   @override
   Widget build(BuildContext context) {
+    final setingProvider = Provider.of<SettingsProvider>(context);
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
@@ -81,18 +99,27 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               CustomSectionHeder('Preference'),
               SizedBox(height: 20),
               CustomToggle(
-                onChange: () => null,
+                onChange: (value) => setingProvider.updatePrayerSettings(
+                    key: SettingsKey.allowEmergencyCalls,
+                    value: value,
+                    settingsId: widget.prayerSettings.id),
                 title:
                     'Allow emergency calls (second call from the same number calls within 2 minutes)',
                 value: widget.prayerSettings.allowEmergencyCalls,
               ),
               CustomToggle(
-                onChange: () => null,
+                onChange: (value) => setingProvider.updatePrayerSettings(
+                    key: SettingsKey.doNotDisturb,
+                    value: value,
+                    settingsId: widget.prayerSettings.id),
                 title: 'Set to Do Not Disturb during Prayer Time?',
                 value: widget.prayerSettings.doNotDisturb,
               ),
               CustomToggle(
-                onChange: () => null,
+                onChange: (value) => setingProvider.updatePrayerSettings(
+                    key: SettingsKey.enableBackgroundMusic,
+                    value: value,
+                    settingsId: widget.prayerSettings.id),
                 title: 'Enable background music during Prayer Mode?',
                 value: widget.prayerSettings.enableBackgroundMusic,
               ),
@@ -110,7 +137,10 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               ),
               CustomToggle(
                 title: 'Auto play music during prayer time?',
-                onChange: () => null,
+                onChange: (value) => setingProvider.updatePrayerSettings(
+                    key: SettingsKey.autoPlayMusic,
+                    value: value,
+                    settingsId: widget.prayerSettings.id),
                 value: widget.prayerSettings.autoPlayMusic,
               ),
             ],
@@ -144,8 +174,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         onCancel: () =>
                             setState(() => _addPrayerTypeMode = false),
                         onSave: (selectedDay, selectedFrequency, date) =>
-                            _savePrayerTime(
-                                selectedDay, selectedFrequency, date),
+                            _savePrayerTime(selectedDay, selectedFrequency,
+                                date), // TODO pass the right value
                       ),
                     )
                   : Container(),

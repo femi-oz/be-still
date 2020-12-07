@@ -50,6 +50,7 @@ class _CustomPickerState extends State<CustomPicker> {
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
                                 selectedInterval = widget.interval[i];
+                                widget.onChange('$selectedInterval');
                               }),
                               children: <Widget>[
                                 ...widget.interval

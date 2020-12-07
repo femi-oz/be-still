@@ -69,4 +69,21 @@ class SettingsProvider with ChangeNotifier {
     _hasAccessToContact = value;
     notifyListeners();
   }
+
+  Future updateSettings({String key, dynamic value, String settingsId}) async {
+    await _settingsService.updateSettings(
+        key: key, settingsId: settingsId, value: value);
+  }
+
+  Future updatePrayerSettings(
+      {String key, dynamic value, String settingsId}) async {
+    await _settingsService.updatePrayerSettings(
+        key: key, settingsId: settingsId, value: value);
+  }
+
+  Future updateSharingSettings(
+      {String key, dynamic value, String settingsId}) async {
+    await _settingsService.updateSharingSettings(
+        key: key, settingsId: settingsId, value: value);
+  }
 }

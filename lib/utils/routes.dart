@@ -10,6 +10,7 @@ import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
+import 'package:be_still/screens/security/local_auth/local_auth.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 
 final routes = {
@@ -27,4 +28,5 @@ final routes = {
   RecommenededBibles.routeName: (context) => RecommenededBibles(),
   DevotionPlans.routeName: (context) => DevotionPlans(),
   CreateGroupScreen.routeName: (context) => CreateGroupScreen(),
+  LocalAuth.routeName: (context) => LocalAuth(),
 };

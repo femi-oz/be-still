@@ -10,7 +10,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../utils/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = '/splash';
