@@ -5,7 +5,6 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 
 class AddPrayerMenu extends StatefulWidget {
   @override

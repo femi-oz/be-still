@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/filter.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -18,12 +18,14 @@ class PrayerProvider with ChangeNotifier {
   List<PrayerUpdateModel> _prayerUpdates = [];
   List<CombinePrayerStream> _filteredPrayers = [];
   PrayerModel _currentPrayer;
+  FilterType _filterOptions;
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
   List<PrayerUpdateModel> get prayerUpdates => _prayerUpdates;
-  PrayerModel get currentPrayer => _currentPrayer;
   PrayerType get currentPrayerType => _currentPrayerType;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
+  PrayerModel get currentPrayer => _currentPrayer;
+  FilterType get filterOptions => _filterOptions;
 
   Future setPrayers(String userId, PrayerType activeList, String groupId,
       bool isGroupAdmin) async {
@@ -34,48 +36,41 @@ class PrayerProvider with ChangeNotifier {
           .listen((data) {
         var hiddenPrayersId =
             _hiddenPrayers.map((prayer) => prayer.prayerId).toList();
-        _prayers = data
-            // .map((e) => e.prayer)
-            // .toList()
-            .where((e) => !hiddenPrayersId.contains(e.prayer.id))
-            .toList();
+        _prayers =
+            data.where((e) => !hiddenPrayersId.contains(e.prayer.id)).toList();
         if (!isGroupAdmin) {
           _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
         }
         _filteredPrayers = _prayers;
+
+        _filterOptions = FilterType(
+          isAnswered: false,
+          isArchived: false,
+          isSnoozed: false,
+          status: Status.active,
+        );
         notifyListeners();
       });
     } else {
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = activeList == PrayerType.userPrayers
-              ? data
-                  .where(
-                    (p) =>
-                        p.prayer.isAnswer == false &&
-                        p.prayer.status.toLowerCase() ==
-                            Status.active.toLowerCase(),
-                  )
-                  .toList()
-              : activeList == PrayerType.archived
-                  ? data
-                      .where(
-                        (p) =>
-                            p.prayer.status.toLowerCase() ==
-                            Status.inactive.toLowerCase(),
-                      )
-                      .toList()
-                  : activeList == PrayerType.answered
-                      ? data
-                          .where(
-                            (p) =>
-                                p.prayer.isAnswer == true &&
-                                p.prayer.status.toLowerCase() ==
-                                    Status.active.toLowerCase(),
-                          )
-                          .toList()
-                      : [];
+          if (activeList == PrayerType.userPrayers) {
+            _prayers =
+                data.where((p) => p.prayer.status == Status.active).toList();
+          } else if (activeList == PrayerType.archived) {
+            _prayers = data.where((p) => p.prayer.isArchived == true).toList();
+          } else if (activeList == PrayerType.answered) {
+            _prayers = data.where((p) => p.prayer.isAnswer == true).toList();
+          }
+
           _filteredPrayers = _prayers;
+
+          _filterOptions = FilterType(
+            isAnswered: false,
+            isArchived: false,
+            isSnoozed: false,
+            status: Status.active,
+          );
           notifyListeners();
         },
       );
@@ -88,6 +83,41 @@ class PrayerProvider with ChangeNotifier {
             .toLowerCase()
             .contains(searchQuery.toLowerCase()))
         .toList();
+    _filteredPrayers = filteredPrayers;
+    notifyListeners();
+  }
+
+  Future filterPrayers({
+    String status,
+    bool isSnoozed,
+    bool isArchived,
+    bool isAnswered,
+  }) async {
+    _filterOptions = FilterType(
+      isAnswered: isAnswered,
+      isArchived: isArchived,
+      isSnoozed: isSnoozed,
+      status: status,
+    );
+    List<CombinePrayerStream> filteredPrayers = _prayers
+        .where((CombinePrayerStream data) =>
+            data.prayer.status.toLowerCase() == status.toLowerCase())
+        .toList();
+    if (isAnswered == true) {
+      filteredPrayers = filteredPrayers
+          .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
+          .toList();
+    }
+    if (isArchived == true) {
+      filteredPrayers = filteredPrayers
+          .where((CombinePrayerStream data) => data.prayer.isArchived == true)
+          .toList();
+    }
+    if (isSnoozed == true) {
+      filteredPrayers = filteredPrayers
+          .where((CombinePrayerStream data) => data.prayer.isSnoozed == true)
+          .toList();
+    }
     _filteredPrayers = filteredPrayers;
     notifyListeners();
   }

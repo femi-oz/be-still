@@ -20,6 +20,8 @@ class PrayerList extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final data = Provider.of<PrayerProvider>(context).filteredPrayers;
+    final currentPrayerType =
+        Provider.of<PrayerProvider>(context).currentPrayerType;
     return Container(
       padding: EdgeInsets.only(
         top: 20,
@@ -42,51 +44,55 @@ class PrayerList extends StatelessWidget {
                     ...data.map((e) => PrayerCard(prayer: e.prayer)).toList(),
                   ],
                 ),
-          InkWell(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddPrayer(isEdit: false),
-              ),
-            ),
-            child: Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                color: AppColors.darkBlue,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  topLeft: Radius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity,
-                margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
-                decoration: BoxDecoration(
-                  color: _themeProvider.isDarkModeEnabled
-                      ? AppColors.lightBlue3.withOpacity(0.8)
-                      : AppColors.lightBlue3,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(9),
-                    topLeft: Radius.circular(9),
+          currentPrayerType == PrayerType.archived ||
+                  currentPrayerType == PrayerType.answered
+              ? Container()
+              : InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPrayer(isEdit: false),
+                    ),
                   ),
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: FlatButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.add, color: AppColors.offWhite4),
-                    label: Text(
-                      'Add New Prayer',
-                      style: AppTextStyles.boldText20.copyWith(
-                        color: AppColors.offWhite4,
+                  child: Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(top: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.darkBlue,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        topLeft: Radius.circular(10),
+                      ),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsetsDirectional.only(
+                          start: 1, bottom: 1, top: 1),
+                      decoration: BoxDecoration(
+                        color: _themeProvider.isDarkModeEnabled
+                            ? AppColors.lightBlue3.withOpacity(0.8)
+                            : AppColors.lightBlue3,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(9),
+                          topLeft: Radius.circular(9),
+                        ),
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FlatButton.icon(
+                          onPressed: null,
+                          icon: Icon(Icons.add, color: AppColors.offWhite4),
+                          label: Text(
+                            'Add New Prayer',
+                            style: AppTextStyles.boldText20.copyWith(
+                              color: AppColors.offWhite4,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
     );

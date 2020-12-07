@@ -6,7 +6,6 @@ import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

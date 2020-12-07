@@ -9,7 +9,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -55,21 +54,24 @@ class _AddPrayerState extends State<AddPrayer> {
     PrayerModel prayerData;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
-          title: '',
-          isAnswer: false,
-          groupId: _isGroup ? _groupData?.group?.id : '0',
-          userId: _user.id,
-          description: _descriptionController.text,
-          status: Status.active,
-          modifiedBy: _user.id,
-          modifiedOn: DateTime.now(),
-          type: '',
-          creatorName: '${_user.firstName} ${_user.lastName}',
-          createdBy: _user.id,
-          createdOn: DateTime.now(),
-          hideFromAllMembers: false,
-          hideFromMe: false,
-          isInappropriate: false);
+        title: '',
+        isAnswer: false,
+        groupId: _isGroup ? _groupData?.group?.id : '0',
+        userId: _user.id,
+        isArchived: false,
+        isSnoozed: false,
+        description: _descriptionController.text,
+        status: Status.active,
+        modifiedBy: _user.id,
+        modifiedOn: DateTime.now(),
+        type: '',
+        creatorName: '${_user.firstName} ${_user.lastName}',
+        createdBy: _user.id,
+        createdOn: DateTime.now(),
+        hideFromAllMembers: false,
+        hideFromMe: false,
+        isInappropriate: false,
+      );
       var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
       showModalBottomSheet(
         context: context,

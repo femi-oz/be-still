@@ -1,9 +1,14 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/pray_mode/Widgets/pray_mode_app_bar.dart';
+import 'package:be_still/screens/pray_mode/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PrayerMode extends StatefulWidget {
   static const routeName = '/prayer-mode';
@@ -20,7 +25,12 @@ class _PrayerModeState extends State<PrayerMode> {
   var currentPage = 1;
 
   void _getPrayers() async {
-    try {} on HttpException catch (e) {
+    try {
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayers(_user?.id, PrayerType.userPrayers, null, null);
+    } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       BeStilDialog.showErrorDialog(context, e.toString());
@@ -46,17 +56,18 @@ class _PrayerModeState extends State<PrayerMode> {
 
   @override
   Widget build(BuildContext context) {
+    var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     return Scaffold(
       appBar: PrayModeAppBar(
         current: currentPage,
+        totalPrayers: prayers.length,
       ),
       body: PageView.builder(
         controller: _controller,
         itemBuilder: (context, index) {
-          // TODO
-          // return PrayerPage(prayerData[index]);
+          return PrayerView(prayers[index]);
         },
-        // itemCount: prayerData.length,
+        itemCount: prayers.length,
         onPageChanged: (value) => {
           setState(
             () => {

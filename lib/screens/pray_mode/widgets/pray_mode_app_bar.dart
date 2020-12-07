@@ -1,13 +1,13 @@
-import 'package:be_still/data/prayer.data.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import '../../../utils/app_theme.dart';
+import 'package:intl/intl.dart';
 
 class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final current;
+  final totalPrayers;
 
-  PrayModeAppBar({this.current, Key key})
+  PrayModeAppBar({this.current, Key key, this.totalPrayers})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -19,11 +19,8 @@ class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _PrayModeAppBarState extends State<PrayModeAppBar> {
-  // TODO
-  // final totalPrayers = prayerData.length;
   @override
   Widget build(BuildContext context) {
-    final current = widget.current;
     return Container(
       color: Theme.of(context).appBarTheme.color,
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -35,15 +32,14 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
           child: Row(
             children: <Widget>[
               Text(
-                '7:30 AM',
+                DateFormat('hh:mm').format(DateTime.now()),
                 style: TextStyle(color: AppColors.lightBlue4, fontSize: 12),
               ),
             ],
           ),
         ),
         title: Text(
-          '// TODO',
-          // '$current OF $totalPrayers',
+          '${widget.current} OF ${widget.totalPrayers}',
           style: TextStyle(color: AppColors.lightBlue4, fontSize: 12),
         ),
         actions: <Widget>[

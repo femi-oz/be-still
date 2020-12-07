@@ -11,6 +11,8 @@ class PrayerModel {
   final String status;
   final String description;
   final bool isAnswer;
+  final bool isArchived;
+  final bool isSnoozed;
   final bool isInappropriate;
   final bool hideFromMe;
   final bool hideFromAllMembers;
@@ -29,6 +31,8 @@ class PrayerModel {
     @required this.status,
     @required this.description,
     @required this.isAnswer,
+    @required this.isSnoozed,
+    @required this.isArchived,
     @required this.isInappropriate,
     @required this.hideFromMe,
     @required this.hideFromAllMembers,
@@ -48,6 +52,8 @@ class PrayerModel {
         status = snapshot.data['Status'],
         description = snapshot.data['Description'],
         isAnswer = snapshot.data['IsAnswer'],
+        isArchived = snapshot.data['IsArchived'],
+        isSnoozed = snapshot.data['IsSnoozed'],
         isInappropriate = snapshot.data['IsInappropriate'],
         hideFromMe = snapshot.data['HideFromMe'],
         hideFromAllMembers = snapshot.data['HideFromAllMembers'],
@@ -66,6 +72,8 @@ class PrayerModel {
       'Status': status,
       'Description': description,
       'IsAnswer': isAnswer,
+      'IsArchived': isArchived,
+      'IsSnoozed': isSnoozed,
       'IsInappropriate': isInappropriate,
       'HideFromMe': hideFromMe,
       'HideFromAllMembers': hideFromAllMembers,

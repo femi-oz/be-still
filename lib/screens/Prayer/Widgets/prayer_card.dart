@@ -2,11 +2,11 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer/Widgets/prayer_quick_acccess.dart';
 import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +24,7 @@ class PrayerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
+    final _user = Provider.of<UserProvider>(context).currentUser;
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
         var y = details.globalPosition.dy;
@@ -85,7 +86,7 @@ class PrayerCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            prayer.groupId != '0'
+                            prayer.userId != _user.id
                                 ? Text(
                                     prayer.creatorName,
                                     style: AppTextStyles.regularText14.copyWith(
@@ -170,7 +171,7 @@ class PrayerCard extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: Text(
-                      prayer.description.capitalize(),
+                      prayer.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.regularText18b.copyWith(

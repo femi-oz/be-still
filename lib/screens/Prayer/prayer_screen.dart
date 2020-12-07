@@ -1,7 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -31,6 +29,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
+
       await Provider.of<GroupProvider>(context, listen: false)
           .setUserGroups(_user.id);
       await Provider.of<GroupProvider>(context, listen: false)

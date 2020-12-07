@@ -5,12 +5,11 @@ import 'package:be_still/screens/pray_mode/Widgets/update_view.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 
-class PrayerPage extends StatelessWidget {
-  final PrayerModel prayer;
+class PrayerView extends StatelessWidget {
+  final CombinePrayerStream data;
 
-  PrayerPage(this.prayer);
+  PrayerView(this.data);
   @override
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
@@ -20,10 +19,7 @@ class PrayerPage extends StatelessWidget {
       color: AppColors.getPrayeModeBg(_themeProvider.isDarkModeEnabled),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20),
-        // TODO
-        // child: prayer.updates.length > 0
-        //     ? UpdateView(prayer)
-        //     : NoUpdateView(prayer),
+        child: data.updates.length > 0 ? UpdateView(data) : NoUpdateView(data),
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.84,
         padding: EdgeInsets.all(20),

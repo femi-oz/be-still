@@ -3,7 +3,6 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/app_theme.dart';
 import 'name_recognition_two.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {

@@ -282,7 +282,7 @@ class PrayerService {
   ) async {
     try {
       _prayerCollectionReference.document(prayerID).updateData(
-        {'Status': Status.inactive},
+        {'IsArchived': true},
       );
     } catch (e) {
       throw HttpException(e.message);

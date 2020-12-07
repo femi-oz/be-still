@@ -1,22 +1,28 @@
+import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 
-class PrayerTools extends StatefulWidget {
+class PrayerFilters extends StatefulWidget {
   @override
-  PrayerTools();
-
-  @override
-  _PrayerToolsState createState() => _PrayerToolsState();
+  _PrayerFiltersState createState() => _PrayerFiltersState();
 }
 
-class _PrayerToolsState extends State<PrayerTools> {
-  var view = Status.active;
+class _PrayerFiltersState extends State<PrayerFilters> {
+  String status;
+  bool isSnoozed;
+  bool isAnswered;
+  bool isArchived;
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
+    var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
+    status = filterOptions.status;
+    isSnoozed = filterOptions.isSnoozed;
+    isAnswered = filterOptions.isAnswered;
+    isArchived = filterOptions.isArchived;
     return Container(
       padding: EdgeInsets.only(top: 40),
       child: Column(
@@ -24,7 +30,15 @@ class _PrayerToolsState extends State<PrayerTools> {
           Align(
             alignment: Alignment.centerLeft,
             child: FlatButton.icon(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () async {
+                // await Provider.of<PrayerProvider>(context).filterPrayers(
+                //   isAnswered: isAnswered,
+                //   isArchived: isArchived,
+                //   isSnoozed: isSnoozed,
+                //   status: status,
+                // );
+                Navigator.of(context).pop();
+              },
               icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
               label: Text(
                 'BACK',
@@ -55,8 +69,18 @@ class _PrayerToolsState extends State<PrayerTools> {
                       GestureDetector(
                         onTap: () {
                           setState(
-                            () {
-                              view = Status.active;
+                            () async {
+                              status = status == Status.active
+                                  ? Status.inactive
+                                  : Status.active;
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
+                                isAnswered: isAnswered,
+                                isArchived: isArchived,
+                                isSnoozed: isSnoozed,
+                                status: status,
+                              );
                             },
                           );
                         },
@@ -67,7 +91,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                           margin: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: view == Status.active
+                            color: filterOptions.status == Status.active
                                 ? AppColors.getActiveBtn(
                                         _themeProvider.isDarkModeEnabled)
                                     .withOpacity(0.2)
@@ -94,8 +118,16 @@ class _PrayerToolsState extends State<PrayerTools> {
                       GestureDetector(
                         onTap: () {
                           setState(
-                            () {
-                              view = 'snoozed';
+                            () async {
+                              isSnoozed = !isSnoozed;
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
+                                isAnswered: isAnswered,
+                                isArchived: isArchived,
+                                isSnoozed: isSnoozed,
+                                status: status,
+                              );
                             },
                           );
                         },
@@ -106,7 +138,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                           margin: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: view == 'snoozed'
+                            color: filterOptions.isSnoozed == true
                                 ? AppColors.getActiveBtn(
                                         _themeProvider.isDarkModeEnabled)
                                     .withOpacity(0.2)
@@ -133,8 +165,16 @@ class _PrayerToolsState extends State<PrayerTools> {
                       GestureDetector(
                         onTap: () {
                           setState(
-                            () {
-                              view = 'archived';
+                            () async {
+                              isArchived = !isArchived;
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
+                                isAnswered: isAnswered,
+                                isArchived: isArchived,
+                                isSnoozed: isSnoozed,
+                                status: status,
+                              );
                             },
                           );
                         },
@@ -145,7 +185,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                           margin: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: view == 'archived'
+                            color: filterOptions.isArchived == true
                                 ? AppColors.getActiveBtn(
                                         _themeProvider.isDarkModeEnabled)
                                     .withOpacity(0.2)
@@ -172,8 +212,16 @@ class _PrayerToolsState extends State<PrayerTools> {
                       GestureDetector(
                         onTap: () {
                           setState(
-                            () {
-                              view = 'answered';
+                            () async {
+                              isAnswered = !isAnswered;
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
+                                isAnswered: isAnswered,
+                                isArchived: isArchived,
+                                isSnoozed: isSnoozed,
+                                status: status,
+                              );
                             },
                           );
                         },
@@ -184,7 +232,7 @@ class _PrayerToolsState extends State<PrayerTools> {
                           margin: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: view == 'answered'
+                            color: filterOptions.isAnswered == true
                                 ? AppColors.getActiveBtn(
                                         _themeProvider.isDarkModeEnabled)
                                     .withOpacity(0.2)
@@ -208,6 +256,42 @@ class _PrayerToolsState extends State<PrayerTools> {
                           ),
                         ),
                       ),
+                      Provider.of<PrayerProvider>(context).currentPrayerType ==
+                              PrayerType.group
+                          ? GestureDetector(
+                              onTap: () => null,
+                              child: Container(
+                                height: 50,
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: filterOptions.isAnswered == true
+                                      ? AppColors.getActiveBtn(
+                                              _themeProvider.isDarkModeEnabled)
+                                          .withOpacity(0.2)
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                    color: AppColors.lightBlue6,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'GROUP SETTINGS',
+                                    style: TextStyle(
+                                      color: AppColors.lightBlue4,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 )

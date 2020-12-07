@@ -5,16 +5,15 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/menu_items.dart';
-import 'package:be_still/screens/prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/app_theme.dart';
 
 class PrayerMenu extends StatefulWidget {
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -66,7 +65,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    openTools() {
+    openFilter() {
       showModalBottomSheet(
         context: context,
         barrierColor:
@@ -77,7 +76,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         builder: (BuildContext context) {
           return _activeList == PrayerType.findGroup
               ? FindGroupTools()
-              : PrayerTools();
+              : PrayerFilters();
         },
       );
     }
@@ -161,7 +160,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           action: () => setState(() {
                             _setCurrentList(PrayerType.userPrayers, null);
                           }),
-                          openTools: () => openTools(),
+                          openTools: () => openFilter(),
                         ),
                         Row(
                           children: [
@@ -177,7 +176,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 action: () => setState(() {
                                   _setCurrentList(PrayerType.group, _groups[i]);
                                 }),
-                                openTools: () => openTools(),
+                                openTools: () => openFilter(),
                               ),
                           ],
                         ),
@@ -187,7 +186,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           action: () => setState(() {
                             _setCurrentList(PrayerType.archived, null);
                           }),
-                          openTools: () => openTools(),
+                          openTools: () => openFilter(),
                         ),
                         PrayerMenuItem(
                           title: 'Answered',
@@ -195,7 +194,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           action: () => setState(() {
                             _setCurrentList(PrayerType.answered, null);
                           }),
-                          openTools: () => openTools(),
+                          openTools: () => openFilter(),
                         ),
                         PrayerMenuItem(
                           title: 'Find a Group',
@@ -203,7 +202,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           action: () => setState(() {
                             _setCurrentList(PrayerType.findGroup, null);
                           }),
-                          openTools: () => openTools(),
+                          openTools: () => openFilter(),
                         ),
                         PrayerMenuItem(
                           title: 'Create a Group +',
@@ -213,7 +212,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             Navigator.of(context).pushReplacementNamed(
                                 CreateGroupScreen.routeName);
                           }),
-                          openTools: () => openTools(),
+                          openTools: () => openFilter(),
                         ),
                       ],
                     ),
