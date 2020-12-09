@@ -9,7 +9,11 @@ class SettingsKey {
   static const allowTextNotification = 'AllowTextNotification';
   static const allowAlexaReadPrayer = 'AllowAlexaReadPrayer';
   static const emailUpdateFrequency = 'EmailUpdateFrequency';
+  static const enableSharingViaText = 'EnableSharingViaText';
+  static const enableSharingViaEmail = 'EnableSharingViaEmail';
   static const emailUpdateNotification = 'EmailUpdateNotification';
+  static const syncAlexa = 'SyncAlexa';
+  static const pauseInterval = 'PauseInterval';
   static const notifyMeSomeonePostOnGroup = 'NotifyMeSomeonePostOnGroup';
   static const notifyMeSomeoneSharePrayerWithMe =
       'NotifyMeSomeoneSharePrayerWithMe';

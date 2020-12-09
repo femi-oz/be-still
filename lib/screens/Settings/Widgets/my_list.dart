@@ -1,6 +1,6 @@
 import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/settings_key.dart';
-import 'package:be_still/enums/sortBy.dart';
+import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/widgets/custom_section_header.dart';

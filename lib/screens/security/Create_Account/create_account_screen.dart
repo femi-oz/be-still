@@ -1,20 +1,15 @@
-import 'dart:async';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
-import 'package:be_still/widgets/snackbar.dart';
+import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import 'Widgets/create-account-form.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   static const routeName = '/create-account';
@@ -24,12 +19,9 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
-  // var step = 1;
-
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
 
-  TextEditingController _date = new TextEditingController();
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
@@ -41,9 +33,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool _enableSubmit = false;
   final _key = GlobalKey<State>();
 
-  _selectDate(DateTime value) async {
+  var termsAccepted = false;
+
+  _selectDob() async {
+    FocusScope.of(context).unfocus();
+    var pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate == null ? DateTime.now() : _selectedDate,
+      firstDate: DateTime(1901, 1),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate == null) {
+      return null;
+    }
     setState(() {
-      _selectedDate = value;
+      _selectedDate = pickedDate;
+      _dobController.text = DateFormat('MM/dd/yyyy').format(_selectedDate);
     });
   }
 
@@ -58,57 +64,29 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
-    final UserModel _userData = UserModel(
-      churchId: 0,
-      createdBy: _emailController.text.toUpperCase(),
-      createdOn: DateTime.now(),
-      dateOfBirth: _selectedDate,
-      email: _emailController.text,
-      firstName: _firstnameController.text,
-      keyReference: '',
-      lastName: _lastnameController.text,
-      modifiedBy: _emailController.text.toUpperCase(),
-      modifiedOn: DateTime.now(),
-      phone: '',
-    );
-    await BeStilDialog.showLoading(context, _key, 'Registering');
     try {
-      final result =
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .registerUser(
-                  password: _passwordController.text, userData: _userData);
-
-      if (result) {
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser();
-        new Timer(
-            Duration(seconds: 2),
-            () => Navigator.of(context)
-                .pushReplacementNamed(PrayerScreen.routeName));
-        BeStilDialog.hideLoading(_key);
-      }
+      await BeStilDialog.showLoading(context, _key, 'Registering...');
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .registerUser(
+        password: _passwordController.text,
+        email: _emailController.text,
+        firstName: _firstnameController.text,
+        lastName: _lastnameController.text,
+        dob: _selectedDate,
+      );
+      BeStilDialog.hideLoading(_key);
+      Navigator.of(context)
+          .pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(_key);
-      BeStillSnackbar.showInSnackBar(
-          message: "Your account couldn't be created. Please try again",
-          key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       BeStilDialog.hideLoading(_key);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  void showInSnackBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(
-      new SnackBar(
-        backgroundColor: AppColors.offWhite1,
-        content: new Text(value),
-      ),
-    );
-  }
 
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
@@ -142,20 +120,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     children: <Widget>[
                       Container(
                         child: Container(
-                          child: CreateAccountForm(
-                            autoValidate: _autoValidate,
-                            confirmPasswordController:
-                                _confirmPasswordController,
-                            passwordController: _passwordController,
-                            datePickerController: _date,
-                            dobController: _dobController,
-                            emailController: _emailController,
-                            formKey: _formKey,
-                            firstnameController: _firstnameController,
-                            lastnameController: _lastnameController,
-                            selectDate: _selectDate,
-                            agreeTerms: _agreeTerms,
-                          ),
+                          child: _buildForm(),
                         ),
                       ),
                       SizedBox(height: 10),
@@ -176,8 +141,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       children: <Widget>[
         InkWell(
           onTap: () => !_enableSubmit
-              ? showInSnackBar(
-                  'Accept terms to proceed',
+              ? BeStilDialog.showErrorDialog(
+                  context,
+                  'You must accept terms to proceed',
                 )
               : _createAccount(),
           child: Container(
@@ -202,7 +168,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         ),
         InkWell(
           child: Text(
-            "Go Back",
+            StringUtils.backText,
             style: AppTextStyles.regularText13,
           ),
           onTap: () {
@@ -211,6 +177,191 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         ),
         SizedBox(height: 20.0),
       ],
+    );
+  }
+
+  _buildForm() {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        autovalidate: _autoValidate,
+        child: Column(
+          children: <Widget>[
+            CustomInput(
+              label: 'First Name',
+              controller: _firstnameController,
+              keyboardType: TextInputType.text,
+              isRequired: true,
+            ),
+            SizedBox(height: 15.0),
+            CustomInput(
+              label: 'Last Name',
+              controller: _lastnameController,
+              keyboardType: TextInputType.text,
+              isRequired: true,
+            ),
+            SizedBox(height: 15.0),
+            CustomInput(
+              label: 'Email',
+              isEmail: true,
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              isRequired: true,
+            ),
+            SizedBox(height: 15.0),
+            GestureDetector(
+              onTap: () => _selectDob(),
+              child: Container(
+                color: Colors.transparent,
+                child: IgnorePointer(
+                  child: CustomInput(
+                    label: 'Birthday',
+                    controller: _dobController,
+                    isRequired: true,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 15.0),
+            CustomInput(
+              isPassword: true,
+              label: 'Password',
+              controller: _passwordController,
+              keyboardType: TextInputType.visiblePassword,
+              isRequired: true,
+            ),
+            SizedBox(height: 15.0),
+            CustomInput(
+              isPassword: true,
+              label: 'Confirm Password',
+              controller: _confirmPasswordController,
+              keyboardType: TextInputType.visiblePassword,
+              isRequired: true,
+              validator: (value) {
+                if (_passwordController.text != value) {
+                  return 'Password fields do not match';
+                }
+                return null;
+              },
+              textInputAction: TextInputAction.done,
+              unfocus: true,
+            ),
+            SizedBox(height: 30.0),
+            Column(
+              children: <Widget>[
+                InkWell(
+                  child: Container(
+                    width: double.infinity,
+                    child: Text(
+                      'Read the Terms of Use/User Agreement',
+                      style: AppTextStyles.regularText16,
+                    ),
+                  ),
+                  onTap: () => _createTermsDialog(context),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: <Widget>[
+                    Theme(
+                      data: ThemeData(
+                          unselectedWidgetColor: AppColors.lightBlue3),
+                      child: Switch.adaptive(
+                        value: termsAccepted,
+                        onChanged: (val) {
+                          setState(() {
+                            _agreeTerms(val);
+                            termsAccepted = val;
+                          });
+                        },
+                        activeColor: Colors.white,
+                        activeTrackColor: AppColors.lightBlue4,
+                        inactiveThumbColor: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      'I Agree to the Terms of Use',
+                      style: AppTextStyles.regularText16,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _createTermsDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Theme.of(context).appBarTheme.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(20),
+            ),
+          ),
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          color: Theme.of(context).textTheme.bodyText1.color,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  Text('Terms of Use', style: AppTextStyles.boldText24),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          child: Text(
+                            "Random things here about how you use the app. What things,. app is willing to be responsible' for, and what things it spouts as being at Me users' own risk. Legal jargon and etc. such Mat it delineates and follows whatever parameters any and all lawyers are happy with to use here as a terms for service with or without a synopsis or conclusion. ",
+                            style: AppTextStyles.regularText16b,
+                          ),
+                        ),
+                        SizedBox(height: 15.0),
+                        Container(
+                          child: Text(
+                            "SOMEWHERE IN HERE THERE WILL BE TEXT THAT IS ALL CAPS FOR NO REASON OTHER THAN LAWYER PEOPLE LOVE SHOUTING CERTAIN THINGS WHEN PUTTING THEM DOWN ON PAPER/DOCUMENT. ",
+                            style: AppTextStyles.regularText16b,
+                          ),
+                        ),
+                        SizedBox(height: 15.0),
+                        Container(
+                          child: Text(
+                            "Also, you have. make the terms and verbiage of the terms extremely long,. who in Me legal world would ever say that something that should be legally binding could be short, concise, and easy to understand by Me regular Joe being as-that's who is normally going to be legally bound by said legal verbiage. ",
+                            style: AppTextStyles.regularText16b,
+                          ),
+                        ),
+                        SizedBox(height: 15.0),
+                        Container(
+                          child: Text(
+                            "If you have gotten this far in reading -.i.e., I hope you've really enjoyed (or under.00d) the level of dry-sarcasm involved in the voicing these particular views. Phase, feel free to acknowledge your own opinion, however you should be fonmamed [hag it differs from my own view in anyway, I may dismiss it as irrelevant and misguided. ",
+                            style: AppTextStyles.regularText16b,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

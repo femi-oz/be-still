@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SharingSettingsModel {
+  final String id;
   final String userId;
   final bool enableSharingViaText;
   final bool enableSharingViaEmail;
@@ -13,20 +14,23 @@ class SharingSettingsModel {
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const SharingSettingsModel(
-      {@required this.userId,
-      @required this.enableSharingViaEmail,
-      @required this.enableSharingViaText,
-      @required this.churchId,
-      @required this.phone,
-      @required this.status,
-      @required this.createdBy,
-      @required this.createdOn,
-      @required this.modifiedBy,
-      @required this.modifiedOn});
+  const SharingSettingsModel({
+    this.id,
+    @required this.userId,
+    @required this.enableSharingViaEmail,
+    @required this.enableSharingViaText,
+    @required this.churchId,
+    @required this.phone,
+    @required this.status,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
 
   SharingSettingsModel.fromData(DocumentSnapshot snapShot)
-      : userId = snapShot.documentID,
+      : id = snapShot.documentID,
+        userId = snapShot.data["UserId"],
         enableSharingViaEmail = snapShot.data["EnableSharingViaEmail"],
         enableSharingViaText = snapShot.data["EnableSharingViaText"],
         churchId = snapShot.data["ChurchId"],

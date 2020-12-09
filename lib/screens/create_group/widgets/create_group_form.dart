@@ -1,4 +1,4 @@
-import 'package:be_still/enums/groupType.dart';
+import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';

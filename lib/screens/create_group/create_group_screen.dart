@@ -1,4 +1,4 @@
-import 'package:be_still/enums/groupType.dart';
+import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';

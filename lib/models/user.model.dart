@@ -5,7 +5,6 @@ class UserModel {
   final String id;
   final String firstName;
   final String lastName;
-  final String phone;
   final String email;
   final String keyReference;
   final int churchId;
@@ -19,7 +18,6 @@ class UserModel {
     this.id,
     @required this.firstName,
     @required this.lastName,
-    @required this.phone,
     @required this.email,
     @required this.keyReference,
     @required this.churchId,
@@ -34,7 +32,6 @@ class UserModel {
       : id = snapshot.documentID,
         firstName = snapshot.data['FirstName'],
         lastName = snapshot.data['LastName'],
-        phone = snapshot.data['Phone'],
         email = snapshot.data['Email'],
         keyReference = snapshot.data['KeyReference'],
         churchId = snapshot.data['ChurchId'],
@@ -48,7 +45,6 @@ class UserModel {
     return {
       'FirstName': firstName,
       'LastName': lastName,
-      'Phone': phone,
       'Email': email,
       'DOB': dateOfBirth,
       'KeyReference': keyReference,

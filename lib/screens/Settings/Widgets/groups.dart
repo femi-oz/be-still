@@ -362,6 +362,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _groups = Provider.of<GroupProvider>(context).userGroups;
+    // TODO create default grop settings when group is created
     setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Column(

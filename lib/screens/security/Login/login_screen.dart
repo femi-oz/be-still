@@ -7,11 +7,9 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
-import 'package:be_still/widgets/dialog.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
@@ -39,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen>
     await BeStilDialog.showLoading(context, _key, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
-        context: context,
         email: _usernameController.text,
         password: _passwordController.text,
       );

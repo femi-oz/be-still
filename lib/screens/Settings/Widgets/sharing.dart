@@ -1,4 +1,6 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
@@ -18,6 +20,7 @@ class _SharingSettingsState extends State<SharingSettings> {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final setingProvider = Provider.of<SettingsProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -27,12 +30,18 @@ class _SharingSettingsState extends State<SharingSettings> {
               CustomSectionHeder('Preferences'),
               CustomToggle(
                 title: 'Enable sharing via text?',
-                onChange: null,
+                onChange: (value) => setingProvider.updateSharingSettings(
+                    key: SettingsKey.enableSharingViaText,
+                    value: value,
+                    settingsId: widget.sharingSettings.id),
                 value: widget.sharingSettings.enableSharingViaText,
               ),
               CustomToggle(
                 title: 'Enable sharing via email?',
-                onChange: null,
+                onChange: (value) => setingProvider.updateSharingSettings(
+                    key: SettingsKey.enableSharingViaEmail,
+                    value: value,
+                    settingsId: widget.sharingSettings.id),
                 value: widget.sharingSettings.enableSharingViaEmail,
               ),
             ],

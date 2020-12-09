@@ -1,11 +1,10 @@
 import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/enums/sortBy.dart';
+import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +18,7 @@ class SettingsService {
   final CollectionReference _sharingSettingsCollectionReference =
       Firestore.instance.collection("SharingSetting");
 
-  populateSettings(String deviceId, String userId, UserModel userData) {
+  populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
         allowAlexaReadPrayer: false,
         archiveSortBy: SortType.date,
@@ -32,21 +31,22 @@ class SettingsService {
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,
         allowTextNotification: false,
-        emailUpdateFrequency: false,
+        pauseInterval: SecondsInterval.ten,
+        emailUpdateFrequency: Frequency.daily,
         emailUpdateNotification: false,
         notifyMeSomeonePostOnGroup: false,
         notifyMeSomeoneSharePrayerWithMe: false,
         allowPrayerTimeNotification: false,
         syncAlexa: false,
         status: Status.active,
-        createdBy: userData.createdBy,
+        createdBy: email,
         createdOn: DateTime.now(),
-        modifiedBy: userData.createdBy,
+        modifiedBy: email,
         modifiedOn: DateTime.now());
     return settings;
   }
 
-  populatePrayerSettings(String userId, UserModel userData) {
+  populatePrayerSettings(String userId, String email) {
     PrayerSettingsModel prayerSettings = PrayerSettingsModel(
         allowEmergencyCalls: false,
         autoPlayMusic: false,
@@ -57,29 +57,29 @@ class SettingsService {
         // date: DateTime.now(),
         time: DateFormat('hh:mma').format(DateTime.now()),
         day: DateFormat('ddd').format(DateTime.now()),
-        createdBy: userData.createdBy,
+        createdBy: email,
         createdOn: DateTime.now(),
-        modifiedBy: userData.createdBy,
+        modifiedBy: email,
         modifiedOn: DateTime.now());
     return prayerSettings;
   }
 
-  populateSharingSettings(String userId, UserModel userData) {
+  populateSharingSettings(String userId, String email) {
     SharingSettingsModel sharingSettings = SharingSettingsModel(
         userId: userId,
         enableSharingViaEmail: false,
         enableSharingViaText: false,
         churchId: '',
-        phone: '${userData.phone}',
+        phone: '',
         status: Status.active,
-        createdBy: userData.createdBy,
+        createdBy: email,
         createdOn: DateTime.now(),
-        modifiedBy: userData.createdBy,
+        modifiedBy: email,
         modifiedOn: DateTime.now());
     return sharingSettings;
   }
 
-  Future addSettings(String deviceId, String userId, UserModel userData) async {
+  Future addSettings(String deviceId, String userId, String email) async {
     // Generate uuid
 
     final settingsId = Uuid().v1();
@@ -92,17 +92,17 @@ class SettingsService {
           // store settings
           await transaction.set(
               _settingsCollectionReference.document(settingsId),
-              populateSettings(deviceId, userId, userData).toJson());
+              populateSettings(deviceId, userId, email).toJson());
 
           //store sharing settings
           await transaction.set(
               _sharingSettingsCollectionReference.document(sharingSettingsId),
-              populateSharingSettings(userId, userData).toJson());
+              populateSharingSettings(userId, email).toJson());
 
           //store prayer settings
           await transaction.set(
               _prayerSettingsCollectionReference.document(prayerSettingsId),
-              populatePrayerSettings(userId, userData).toJson());
+              populatePrayerSettings(userId, email).toJson());
         },
       ).then((val) {
         return true;

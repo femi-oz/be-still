@@ -12,12 +12,13 @@ class SettingsModel {
   final String defaultSnoozeDuration;
   final String archiveSortBy;
   final String archiveAutoDelete;
+  final String pauseInterval;
   final bool includeAnsweredPrayerAutoDelete;
   final bool allowPushNotification;
   final bool allowTextNotification;
   final bool allowAlexaReadPrayer;
   final bool emailUpdateNotification;
-  final bool emailUpdateFrequency;
+  final String emailUpdateFrequency;
   final bool notifyMeSomeoneSharePrayerWithMe;
   final bool notifyMeSomeonePostOnGroup;
   final bool allowPrayerTimeNotification;
@@ -35,6 +36,7 @@ class SettingsModel {
     @required this.appearance,
     @required this.defaultSortBy,
     @required this.defaultSnoozeDuration,
+    @required this.pauseInterval,
     @required this.archiveSortBy,
     @required this.archiveAutoDelete,
     @required this.includeAnsweredPrayerAutoDelete,
@@ -59,6 +61,7 @@ class SettingsModel {
         userId = snapShot.data['UserId'],
         deviceId = snapShot.data['DeviceId'],
         appearance = snapShot.data['Appearance'],
+        pauseInterval = snapShot.data['PauseInterval'],
         defaultSortBy = snapShot.data['DefaultSortBy'],
         defaultSnoozeDuration = snapShot.data['DefaultSnoozeDuration'],
         archiveSortBy = snapShot.data['ArchiveSortBy'],
@@ -89,6 +92,7 @@ class SettingsModel {
       'DeviceId': deviceId,
       'Appearance': appearance,
       'DefaultSortBy': defaultSortBy,
+      'PauseInterval': pauseInterval,
       'DefaultSnoozeDuration': defaultSnoozeDuration,
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,

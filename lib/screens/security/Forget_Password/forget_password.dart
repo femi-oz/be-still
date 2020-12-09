@@ -1,18 +1,14 @@
 import 'dart:async';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
-import 'package:be_still/screens/security/Forget_Password/Widgets/step_three.dart';
-import 'package:be_still/screens/security/Forget_Password/Widgets/step_two.dart';
+import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
+import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'Widgets/step_one.dart';
-import 'Widgets/sucess.dart';
 
 class ForgetPassword extends StatefulWidget {
   static const routeName = '/forget-password';
@@ -36,12 +32,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   bool _autoValidate1 = false;
   bool _autoValidate2 = false;
   bool _autoValidate3 = false;
-
-  Map<String, String> _formData = {
-    'userName': '',
-    'code': '',
-    'password': '',
-  };
+  var notificationType = NotificationType.email;
 
   _next() {
     setState(() {
@@ -49,19 +40,15 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         _autoValidate1 = true;
         if (!_formKey1.currentState.validate()) return;
         _formKey1.currentState.save();
-        _formData['userName'] = _usernameController.text;
       } else if (step == 2) {
         _autoValidate2 = true;
         if (!_formKey2.currentState.validate()) return;
         _formKey2.currentState.save();
-        _formData['code'] = _codeController.text;
       } else if (step == 3) {
         _autoValidate3 = true;
         if (!_formKey3.currentState.validate()) return;
         _formKey3.currentState.save();
-        _formData['password'] = _passwordController.text;
       }
-      print(_formData);
       step += 1;
     });
   }
@@ -98,27 +85,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     children: <Widget>[
                       Expanded(
                         child: step == 1
-                            ? ForgetPasswordOne(
-                                autoValidate: _autoValidate1,
-                                formKey: _formKey1,
-                                usernameController: _usernameController,
-                              )
+                            ? _buildEmailForm(context)
                             : step == 2
-                                ? ForgetPasswordTwo(
-                                    autoValidate: _autoValidate2,
-                                    formKey: _formKey2,
-                                    codeController: _codeController,
-                                    confirmcodeController:
-                                        _confirmcodeController,
-                                  )
+                                ? _buildTokenForm()
                                 : step == 3
-                                    ? ForgetPasswordThree(
-                                        autoValidate: _autoValidate3,
-                                        formKey: _formKey3,
-                                        confirmPasswordController:
-                                            _confirmPasswordController,
-                                        passwordController: _passwordController,
-                                      )
+                                    ? _buildPasswordForm()
                                     : ForgetPasswordSucess(),
                       ),
                       step > 3
@@ -129,16 +100,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                   onTap: () => {
                                     setState(() {
                                       _next();
-                                      if (step == 4) {
-                                        return new Timer(
-                                          Duration(seconds: 5),
-                                          () => {
-                                            Navigator.of(context).pushNamed(
-                                                LoginScreen.routeName)
-                                          },
-                                        );
-                                      }
-                                      return null;
                                     })
                                   },
                                   child: Container(
@@ -187,6 +148,159 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  _buildEmailForm(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
+    return Form(
+      key: _formKey1,
+      autovalidate: _autoValidate1,
+      child: Column(
+        children: <Widget>[
+          CustomInput(
+            label: 'Username',
+            controller: _usernameController,
+            keyboardType: TextInputType.text,
+            isRequired: true,
+            textInputAction: TextInputAction.done,
+            unfocus: true,
+          ),
+          SizedBox(height: 40.0),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 40.0),
+            child: Text(
+              'How would you like to recieve your password reset code?',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.regularText16b,
+            ),
+          ),
+          SizedBox(height: 55.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                height: 30,
+                width: MediaQuery.of(context).size.width * 0.4,
+                decoration: BoxDecoration(
+                  color: notificationType == NotificationType.email
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.5)
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: FlatButton(
+                  child: Text(
+                    NotificationType.email.toUpperCase(),
+                    style: AppTextStyles.regularText16,
+                  ),
+                  onPressed: () {
+                    setState(
+                      () {
+                        notificationType = NotificationType.email;
+                      },
+                    );
+                  },
+                ),
+              ),
+              Container(
+                height: 30,
+                width: MediaQuery.of(context).size.width * 0.42,
+                decoration: BoxDecoration(
+                  color: notificationType == NotificationType.text
+                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
+                          .withOpacity(0.5)
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: AppColors.getCardBorder(
+                        _themeProvider.isDarkModeEnabled),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: FlatButton(
+                  child: Text(
+                    NotificationType.text.toUpperCase(),
+                    style: AppTextStyles.regularText16,
+                  ),
+                  onPressed: () {
+                    setState(
+                      () {
+                        notificationType = NotificationType.text;
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildTokenForm() {
+    return Form(
+      autovalidate: _autoValidate2,
+      key: _formKey2,
+      child: Column(
+        children: <Widget>[
+          CustomInput(
+            label: 'Enter Code',
+            controller: _codeController,
+            keyboardType: TextInputType.number,
+            isRequired: true,
+          ),
+          SizedBox(height: 10.0),
+          CustomInput(
+            label: 'Confirm Code',
+            controller: _confirmcodeController,
+            keyboardType: TextInputType.number,
+            isRequired: true,
+            validator: (value) {
+              if (_codeController.text != value) {
+                return 'Password fields do not match';
+              }
+              return null;
+            },
+            textInputAction: TextInputAction.done,
+            unfocus: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildPasswordForm() {
+    return Form(
+      key: _formKey3,
+      autovalidate: _autoValidate3,
+      child: Column(
+        children: <Widget>[
+          CustomInput(
+            isPassword: true,
+            label: 'New Password',
+            controller: _passwordController,
+            keyboardType: TextInputType.visiblePassword,
+            isRequired: true,
+          ),
+          SizedBox(height: 10.0),
+          CustomInput(
+            isPassword: true,
+            controller: _confirmPasswordController,
+            keyboardType: TextInputType.visiblePassword,
+            isRequired: true,
+            label: 'Confirm Password',
+            textInputAction: TextInputAction.done,
+            unfocus: true,
+          ),
+        ],
       ),
     );
   }

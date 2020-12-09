@@ -25,6 +25,7 @@ class StringUtils {
 
   static String logo = 'assets/images/logo.png';
   static String splashLogo = 'assets/images/splash_icon.png';
+  static String backText = "Go Back";
 }
 
 extension StringExtension on String {

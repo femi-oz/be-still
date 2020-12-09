@@ -34,16 +34,16 @@ class UserService {
   }
 
   populateDevice(
-    UserModel userData,
     String deviceModel,
     String deviceName,
     String deviceID,
+    String email,
   ) {
     DeviceModel device = DeviceModel(
-      createdBy: userData.createdBy,
-      createdOn: userData.createdOn,
-      modifiedOn: userData.modifiedOn,
-      modifiedBy: userData.modifiedBy,
+      createdBy: email,
+      createdOn: DateTime.now(),
+      modifiedOn: DateTime.now(),
+      modifiedBy: email,
       model: deviceModel.toUpperCase(),
       deviceId: deviceID,
       name: deviceName.toUpperCase(),
@@ -52,36 +52,16 @@ class UserService {
     return device;
   }
 
-  populateUser(
-    UserModel userData,
-    String authUid,
-  ) {
-    UserModel user = UserModel(
-      churchId: 0,
-      createdBy: userData.createdBy,
-      createdOn: DateTime.now(),
-      dateOfBirth: userData.dateOfBirth,
-      email: userData.email,
-      firstName: userData.firstName.toUpperCase(),
-      keyReference: authUid,
-      lastName: userData.lastName.toUpperCase(),
-      modifiedBy: userData.modifiedBy,
-      modifiedOn: DateTime.now(),
-      phone: '',
-    );
-    return user;
-  }
-
   populateUserDevice(
-    UserModel userData,
     String deviceID,
     String userID,
+    String email,
   ) {
     UserDeviceModel userDevice = UserDeviceModel(
-      createdBy: userData.createdBy,
-      createdOn: userData.createdOn,
-      modifiedOn: userData.modifiedOn,
-      modifiedBy: userData.modifiedBy,
+      createdBy: email,
+      createdOn: DateTime.now(),
+      modifiedOn: DateTime.now(),
+      modifiedBy: email,
       deviceId: deviceID,
       userId: userID,
       status: Status.active,
@@ -90,9 +70,26 @@ class UserService {
   }
 
   Future addUserData(
-    UserModel userData,
-    String authUid,
+    String uid,
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+    DateTime dob,
   ) async {
+    final UserModel _userData = UserModel(
+      churchId: 0,
+      createdBy: email.toUpperCase(),
+      createdOn: DateTime.now(),
+      dateOfBirth: dob,
+      email: email,
+      firstName: firstName,
+      keyReference: uid,
+      lastName: lastName,
+      modifiedBy: email,
+      modifiedOn: DateTime.now(),
+    );
+
     // Generate uuid
     final deviceIdGuid = Uuid().v1();
     final userID = Uuid().v1();
@@ -120,23 +117,21 @@ class UserService {
         (transaction) async {
           // store user details
           await _userCollectionReference.document(userID).setData(
-                populateUser(userData, authUid).toJson(),
+                _userData.toJson(),
               );
 
           //store device
           await _deviceCollectionReference.document(deviceIdGuid).setData(
-                populateDevice(userData, deviceModel, deviceName, deviceID)
+                populateDevice(email, deviceModel, deviceName, deviceID)
                     .toJson(),
               );
 
           // store user device
           await _userDeviceCollectionReference.document(userDeviceID).setData(
-                populateUserDevice(userData, deviceID.toString(), userID)
-                    .toJson(),
+                populateUserDevice(email, deviceID.toString(), userID).toJson(),
               );
           // store defaul settings
-          await locator<SettingsService>()
-              .addSettings(deviceID, userID, userData);
+          await locator<SettingsService>().addSettings(deviceID, userID, email);
         },
       );
     } catch (e) {
