@@ -14,27 +14,3 @@ class DarkThemePreferenes {
     return themeMode;
   }
 }
-
-class SettingsPrefrences {
-  setFaceIdSetting(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFaceIdEnabled', value);
-  }
-
-  grantAccessToContacts(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('hasAccessToContact', value);
-  }
-
-  Future<bool> getFaceIdSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFaceIdEnabled = prefs.getBool('isFaceIdEnabled') ?? false;
-    return isFaceIdEnabled;
-  }
-
-  Future<bool> getContactAccessSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool hasAccessToContact = prefs.getBool('hasAccessToContact') ?? false;
-    return hasAccessToContact;
-  }
-}

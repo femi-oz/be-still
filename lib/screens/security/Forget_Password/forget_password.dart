@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
@@ -35,22 +36,22 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var notificationType = NotificationType.email;
 
   _next() {
-    setState(() {
-      if (step == 1) {
-        _autoValidate1 = true;
-        if (!_formKey1.currentState.validate()) return;
-        _formKey1.currentState.save();
-      } else if (step == 2) {
-        _autoValidate2 = true;
-        if (!_formKey2.currentState.validate()) return;
-        _formKey2.currentState.save();
-      } else if (step == 3) {
-        _autoValidate3 = true;
-        if (!_formKey3.currentState.validate()) return;
-        _formKey3.currentState.save();
-      }
-      step += 1;
-    });
+    if (step == 1) {
+      setState(() => _autoValidate1 = true);
+      if (!_formKey1.currentState.validate()) return;
+      _formKey1.currentState.save();
+      Provider.of<AuthenticationProvider>(context)
+          .forgotPassword(_usernameController.text);
+    } else if (step == 2) {
+      setState(() => _autoValidate2 = true);
+      if (!_formKey2.currentState.validate()) return;
+      _formKey2.currentState.save();
+    } else if (step == 3) {
+      setState(() => _autoValidate3 = true);
+      if (!_formKey3.currentState.validate()) return;
+      _formKey3.currentState.save();
+    }
+    setState(() => step += 1);
   }
 
   @override

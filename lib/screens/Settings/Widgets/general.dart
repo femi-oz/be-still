@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_version/get_version.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class GeneralSettings extends StatefulWidget {
@@ -38,11 +39,31 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   var _key = GlobalKey<State>();
   var _version = '';
 
-  getVersion() async {
+  _getVersion() async {
     try {
       _version = await GetVersion.projectVersion;
     } on PlatformException {
       _version = '0.0';
+    }
+  }
+
+  Future<PermissionStatus> _getPermission() async {
+    final PermissionStatus permission = await Permission.contacts.status;
+    if (permission != PermissionStatus.granted &&
+        permission != PermissionStatus.denied) {
+      final Map<Permission, PermissionStatus> permissionStatus =
+          await [Permission.contacts].request();
+      return permissionStatus[Permission.contacts] ??
+          PermissionStatus.undetermined;
+    } else {
+      return permission;
+    }
+  }
+
+  _initiatePermission() async {
+    final PermissionStatus permissionStatus = await _getPermission();
+    if (permissionStatus == PermissionStatus.granted) {
+      //We can now access our contacts here
     }
   }
 
@@ -163,17 +184,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         });
   }
 
-  bool _isInit = true;
-  @override
-  void didChangeDependencies() async {
-    if (_isInit) {
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setDefaultSettings();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
   List<String> _themeModes = [
     BThemeMode.light,
     BThemeMode.dark,
@@ -181,7 +191,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   ];
 
   Widget build(BuildContext context) {
-    getVersion();
+    _getVersion();
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     setState(() => this.bcontext = context);
@@ -237,16 +247,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             Column(
               children: [
                 CustomToggle(
-                  onChange: (value) =>
-                      Provider.of<SettingsProvider>(context, listen: false)
-                          .setFaceIdSetting(value),
+                  onChange: (value) => null,
                   title: 'Enable Face/Touch ID',
                   value: Provider.of<SettingsProvider>(context).isFaceIdEnabled,
                 ),
                 CustomToggle(
-                  onChange: (value) =>
-                      Provider.of<SettingsProvider>(context, listen: false)
-                          .grantAccessToContact(value),
+                  onChange: (value) => _initiatePermission(),
                   title: 'Allow BeStill to access Contacts?',
                   value:
                       Provider.of<SettingsProvider>(context).hasAccessToContact,

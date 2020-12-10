@@ -81,7 +81,7 @@ class AppColors {
       );
   static Color getAppBarColor(bool isDarkMode) => dynamicColor(
         isDarkMode: isDarkMode,
-        light: 0xFF005780,
+        light: 0xFFFFFFFF,
         dark: 0xFF002D4B,
       );
   static Color getPrayerPrimaryColor(bool isDarkMode) => dynamicColor(

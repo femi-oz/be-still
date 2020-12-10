@@ -1,13 +1,13 @@
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  CustomAppBar({Key key})
+  final String title;
+
+  CustomAppBar({Key key, this.title = 'MY LIST'})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -24,42 +24,77 @@ class _CustomAppBarState extends State<CustomAppBar> {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return AppBar(
       backgroundColor: AppColors.appBarBg(isDark),
-      title: Text(''),
-      leading: IconButton(
-        icon: Icon(
-          Icons.notifications_none,
-          color: AppColors.grey,
-          size: 24,
-        ),
-        onPressed: null,
+      automaticallyImplyLeading: false, // Don't show the leading button
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          InkWell(
+            child: Icon(
+              Icons.notifications_none,
+              color: AppColors.getAppBarColor(isDark),
+              size: 24,
+            ),
+          ),
+          SizedBox(width: 10),
+          InkWell(
+            child: Icon(
+              AppIcons.search,
+              color: AppColors.getAppBarColor(isDark),
+              size: 24,
+            ),
+          ),
+          SizedBox(width: 10),
+          InkWell(
+            child: Icon(
+              Icons.filter_list_alt,
+              color: AppColors.getAppBarColor(isDark),
+              size: 24,
+            ),
+          ),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.15),
+          Container(
+              child: Text(widget.title,
+                  style: TextStyle(
+                    color: AppColors.getAppBarColor(isDark),
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                  )))
+        ],
       ),
+      // leadingWidth: MediaQuery.of(context).size.width * 0.5,
+      // leading: Row(
+      //   children: [
+
+      //   ],
+      // ),
       actions: <Widget>[
-        FlatButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddPrayer(
-                isEdit: false,
-              ),
-            ),
-          ),
-          child: Text(
-            "ADD A PRAYER",
-            style: AppTextStyles.boldText20.copyWith(
-              color: AppColors.getAppBarColor(isDark),
-            ),
-          ),
-        ),
-        FlatButton(
-          onPressed: () =>
-              Navigator.of(context).pushReplacementNamed(PrayerMode.routeName),
-          child: Text(
-            "PRAY",
-            style: AppTextStyles.boldText20.copyWith(
-              color: AppColors.getAppBarColor(isDark),
-            ),
-          ),
-        ),
+        //   FlatButton(
+        //     onPressed: () => Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => AddPrayer(
+        //           isEdit: false,
+        //         ),
+        //       ),
+        //     ),
+        //     child: Text(
+        //       "ADD A PRAYER",
+        //       style: AppTextStyles.boldText20.copyWith(
+        //         color: AppColors.getAppBarColor(isDark),
+        //       ),
+        //     ),
+        //   ),
+        //   FlatButton(
+        //     onPressed: () =>
+        //         Navigator.of(context).pushReplacementNamed(PrayerMode.routeName),
+        //     child: Text(
+        //       "PRAY",
+        //       style: AppTextStyles.boldText20.copyWith(
+        //         color: AppColors.getAppBarColor(isDark),
+        //       ),
+        //     ),
+        //   ),
         Builder(
           builder: (BuildContext context) {
             return IconButton(
