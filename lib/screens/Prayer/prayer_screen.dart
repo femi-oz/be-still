@@ -95,22 +95,22 @@ class _PrayerScreenState extends State<PrayerScreen> {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.menu),
         activeColor: AppColors.getAppBarColor(isDark),
-        inactiveColor: AppColors.lightBlue4,
+        inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.settings),
         activeColor: AppColors.getAppBarColor(isDark),
-        inactiveColor: AppColors.lightBlue4,
+        inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.add),
         activeColor: AppColors.getAppBarColor(isDark),
-        inactiveColor: AppColors.lightBlue4,
+        inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(AppIcons.second_logo),
         activeColor: AppColors.getAppBarColor(isDark),
-        inactiveColor: AppColors.lightBlue4,
+        inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
     ];
   }
