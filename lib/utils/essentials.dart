@@ -71,7 +71,7 @@ class AppColors {
       );
   static Color appBarBg(bool isDarkMode) => dynamicColor(
         isDarkMode: isDarkMode,
-        light: 0xFFFFFFFF,
+        light: 0xFF009FD0,
         dark: 0xFF0D1319,
       );
   static Color getTextFieldBgColor(bool isDarkMode) => dynamicColor(
