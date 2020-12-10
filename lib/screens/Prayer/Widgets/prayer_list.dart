@@ -16,6 +16,7 @@ class PrayerList extends StatelessWidget {
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return Container(
+      padding: EdgeInsets.only(left: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -31,6 +32,7 @@ class PrayerList extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            SizedBox(height: 20),
             data.length == 0
                 ? Container(
                     padding: EdgeInsets.all(60),
@@ -41,11 +43,6 @@ class PrayerList extends StatelessWidget {
                     ),
                   )
                 : Container(
-                    padding: EdgeInsets.only(
-                      top: 20,
-                      left: 20,
-                      bottom: 80,
-                    ),
                     child: Column(
                       children: <Widget>[
                         ...data
@@ -54,55 +51,56 @@ class PrayerList extends StatelessWidget {
                       ],
                     ),
                   ),
-            // currentPrayerType == PrayerType.archived ||
-            //         currentPrayerType == PrayerType.answered
-            //     ? Container()
-            //     : InkWell(
-            //         onTap: () => Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //             builder: (context) => AddPrayer(isEdit: false),
-            //           ),
-            //         ),
-            //         child: Container(
-            //           width: double.infinity,
-            //           margin: EdgeInsets.only(top: 10),
-            //           decoration: BoxDecoration(
-            //             color: AppColors.darkBlue,
-            //             borderRadius: BorderRadius.only(
-            //               bottomLeft: Radius.circular(10),
-            //               topLeft: Radius.circular(10),
-            //             ),
-            //           ),
-            //           child: Container(
-            //             width: double.infinity,
-            //             margin: EdgeInsetsDirectional.only(
-            //                 start: 1, bottom: 1, top: 1),
-            //             decoration: BoxDecoration(
-            //               color: _themeProvider.isDarkModeEnabled
-            //                   ? AppColors.lightBlue3.withOpacity(0.8)
-            //                   : AppColors.lightBlue3,
-            //               borderRadius: BorderRadius.only(
-            //                 bottomLeft: Radius.circular(9),
-            //                 topLeft: Radius.circular(9),
-            //               ),
-            //             ),
-            //             child: Align(
-            //               alignment: Alignment.centerLeft,
-            //               child: FlatButton.icon(
-            //                 onPressed: null,
-            //                 icon: Icon(Icons.add, color: AppColors.offWhite4),
-            //                 label: Text(
-            //                   'Add New Prayer',
-            //                   style: AppTextStyles.boldText20.copyWith(
-            //                     color: AppColors.offWhite4,
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
+            currentPrayerType == PrayerType.archived ||
+                    currentPrayerType == PrayerType.answered
+                ? Container()
+                : InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddPrayer(isEdit: false),
+                      ),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.darkBlue,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          topLeft: Radius.circular(10),
+                        ),
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        margin: EdgeInsetsDirectional.only(
+                            start: 1, bottom: 1, top: 1),
+                        decoration: BoxDecoration(
+                          color: _themeProvider.isDarkModeEnabled
+                              ? AppColors.lightBlue3.withOpacity(0.8)
+                              : AppColors.lightBlue3,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(9),
+                            topLeft: Radius.circular(9),
+                          ),
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: FlatButton.icon(
+                            onPressed: null,
+                            icon: Icon(Icons.add, color: AppColors.offWhite4),
+                            label: Text(
+                              'Add New Prayer',
+                              style: AppTextStyles.boldText20.copyWith(
+                                color: AppColors.offWhite4,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+            SizedBox(height: 80),
           ],
         ),
       ),
