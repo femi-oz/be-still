@@ -29,7 +29,7 @@ class _PrayerModeState extends State<PrayerMode> {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id, PrayerType.userPrayers, null, null);
+          .setPrayers(_user?.id);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {

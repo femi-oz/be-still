@@ -63,17 +63,24 @@ class AppColors {
       light2: 0xFF009CCE,
       dark: 0xFF014A70,
       dark2: 0xFF013053);
+  // static Color appBarBg(bool isDarkMode) => dynamicColor(
+  //       isDarkMode: isDarkMode,
+  //       light: 0xFF009FD0,
+  //       dark: 0xFF0D1319,
+  //     );
+  static List<Color> appBarBg(bool isDarkMode) => dynamicGradientColor(
+      isDarkMode: isDarkMode,
+      light: 0xFF00438d,
+      light2: 0xFF0098cb,
+      dark: 0xFF0D1319,
+      dark2: 0xFF0D1319);
 
   static Color getInactvePrayerMenu(bool isDarkMode) => dynamicColor(
         isDarkMode: isDarkMode,
         light: 0xFFFFFFFF,
         dark: 0xFF005780,
       );
-  static Color appBarBg(bool isDarkMode) => dynamicColor(
-        isDarkMode: isDarkMode,
-        light: 0xFF009FD0,
-        dark: 0xFF0D1319,
-      );
+
   static Color getTextFieldBgColor(bool isDarkMode) => dynamicColor(
         isDarkMode: isDarkMode,
         light: 0xFFFFFFFF,

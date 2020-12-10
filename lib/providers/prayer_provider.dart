@@ -27,22 +27,13 @@ class PrayerProvider with ChangeNotifier {
   PrayerModel get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
 
-  Future setPrayers(String userId, PrayerType activeList, String groupId,
-      bool isGroupAdmin) async {
-    if (activeList == PrayerType.group) {
-      _prayerService
-          .getGroupPrayers(groupId)
-          .asBroadcastStream()
-          .listen((data) {
-        var hiddenPrayersId =
-            _hiddenPrayers.map((prayer) => prayer.prayerId).toList();
-        _prayers =
-            data.where((e) => !hiddenPrayersId.contains(e.prayer.id)).toList();
-        if (!isGroupAdmin) {
-          _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
-        }
+  Future setPrayers(
+    String userId,
+  ) async {
+    _prayerService.getPrayers(userId).asBroadcastStream().listen(
+      (data) {
+        _prayers = data.where((p) => p.prayer.status == Status.active).toList();
         _filteredPrayers = _prayers;
-
         _filterOptions = FilterType(
           isAnswered: false,
           isArchived: false,
@@ -50,31 +41,30 @@ class PrayerProvider with ChangeNotifier {
           status: Status.active,
         );
         notifyListeners();
-      });
-    } else {
-      _prayerService.getPrayers(userId).asBroadcastStream().listen(
-        (data) {
-          if (activeList == PrayerType.userPrayers) {
-            _prayers =
-                data.where((p) => p.prayer.status == Status.active).toList();
-          } else if (activeList == PrayerType.archived) {
-            _prayers = data.where((p) => p.prayer.isArchived == true).toList();
-          } else if (activeList == PrayerType.answered) {
-            _prayers = data.where((p) => p.prayer.isAnswer == true).toList();
-          }
+      },
+    );
+  }
 
-          _filteredPrayers = _prayers;
+  Future setGroupPrayers(String userId, PrayerType activeList, String groupId,
+      bool isGroupAdmin) async {
+    _prayerService.getGroupPrayers(groupId).asBroadcastStream().listen((data) {
+      var hiddenPrayersId =
+          _hiddenPrayers.map((prayer) => prayer.prayerId).toList();
+      _prayers =
+          data.where((e) => !hiddenPrayersId.contains(e.prayer.id)).toList();
+      if (!isGroupAdmin) {
+        _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
+      }
+      _filteredPrayers = _prayers;
 
-          _filterOptions = FilterType(
-            isAnswered: false,
-            isArchived: false,
-            isSnoozed: false,
-            status: Status.active,
-          );
-          notifyListeners();
-        },
+      _filterOptions = FilterType(
+        isAnswered: false,
+        isArchived: false,
+        isSnoozed: false,
+        status: Status.active,
       );
-    }
+      notifyListeners();
+    });
   }
 
   Future searchPrayers(String searchQuery) async {

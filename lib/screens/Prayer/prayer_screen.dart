@@ -37,12 +37,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .setHiddenPrayers(_user.id);
-      var activeList =
-          Provider.of<PrayerProvider>(context, listen: false).currentPrayerType;
-      var groupData =
-          Provider.of<GroupProvider>(context, listen: false).currentGroup;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id, activeList, groupData?.group?.id, null);
+          .setPrayers(_user?.id);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -70,16 +66,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  // @override
-  // List<Widget> _buildScreens() {
-  //   return [
-  //     Container(),
-  //     Container(),
-  //     Container(),
-  //     Container(),
-  //     Container(),
-  //   ];
-  // }
   List<Widget> _buildScreens() {
     return [
       PrayerList(),
@@ -87,6 +73,11 @@ class _PrayerScreenState extends State<PrayerScreen> {
       Container(),
       Container(),
     ];
+  }
+
+  void _searchPrayer(String value) async {
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value);
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -114,118 +105,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
       ),
     ];
   }
-  // List<PersistentBottomNavBarItem> _navBarsItems() {
-  //   return [
-  //     PersistentBottomNavBarItem(
-  //       icon: Icon(Icons.home),
-  //       title: "Home",
-  //       activeColor: Colors.blue,
-  //       inactiveColor: Colors.grey,
-  //     ),
-  //     PersistentBottomNavBarItem(
-  //       icon: Icon(Icons.search),
-  //       title: ("Search"),
-  //       activeColor: Colors.teal,
-  //       inactiveColor: Colors.grey,
-  //     ),
-  //     PersistentBottomNavBarItem(
-  //       icon: Icon(Icons.add),
-  //       title: ("Add"),
-  //       activeColor: Colors.blueAccent,
-  //       inactiveColor: Colors.grey,
-  //       activeColorAlternate: Colors.white,
-  //     ),
-  //     PersistentBottomNavBarItem(
-  //       icon: Icon(Icons.message),
-  //       title: ("Messages"),
-  //       activeColor: Colors.deepOrange,
-  //       inactiveColor: Colors.grey,
-  //     ),
-  //     PersistentBottomNavBarItem(
-  //       icon: Icon(Icons.settings),
-  //       title: ("Settings"),
-  //       activeColor: Colors.indigo,
-  //       inactiveColor: Colors.grey,
-  //     ),
-  //   ];
-  // }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Navigation Bar Demo')),
-//       drawer: Drawer(
-//         child: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: <Widget>[
-//               const Text('This is the Drawer'),
-//             ],
-//           ),
-//         ),
-//       ),
-//       body: PersistentTabView(
-//         context,
-//         controller: _controller,
-//         screens: _buildScreens(),
-//         items: _navBarsItems(),
-//         confineInSafeArea: true,
-//         backgroundColor: Colors.white,
-//         handleAndroidBackButtonPress: true,
-//         resizeToAvoidBottomInset: true,
-//         stateManagement: true,
-//         navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0
-//             ? 0.0
-//             : kBottomNavigationBarHeight,
-//         hideNavigationBarWhenKeyboardShows: true,
-//         margin: EdgeInsets.all(10.0),
-//         popActionScreens: PopActionScreensType.once,
-//         bottomScreenMargin: 0.0,
-//         routeAndNavigatorSettings: RouteAndNavigatorSettings(
-//           initialRoute: '/',
-//           routes: {},
-//         ),
-//         onWillPop: () async {
-//           await showDialog(
-//             context: context,
-//             useSafeArea: true,
-//             builder: (context) => Container(
-//               height: 50.0,
-//               width: 50.0,
-//               color: Colors.white,
-//               child: RaisedButton(
-//                 child: Text("Close"),
-//                 onPressed: () {
-//                   Navigator.pop(context);
-//                 },
-//               ),
-//             ),
-//           );
-//           return false;
-//         },
-//         selectedTabScreenContext: (context) {
-//           selectedContext = context;
-//         },
-//         hideNavigationBar: _hideNavBar,
-//         decoration: NavBarDecoration(
-//             colorBehindNavBar: Colors.indigo,
-//             borderRadius: BorderRadius.circular(20.0)),
-//         popAllScreensOnTapOfSelectedTab: true,
-//         itemAnimationProperties: ItemAnimationProperties(
-//           duration: Duration(milliseconds: 400),
-//           curve: Curves.ease,
-//         ),
-//         screenTransitionAnimation: ScreenTransitionAnimation(
-//           animateTabTransition: true,
-//           curve: Curves.ease,
-//           duration: Duration(milliseconds: 200),
-//         ),
-//         navBarStyle:
-//             NavBarStyle.style15, // Choose the nav bar style with this property
-//       ),
-//     );
-//   }
-// }
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
@@ -251,7 +131,14 @@ class _PrayerScreenState extends State<PrayerScreen> {
           screens: _buildScreens(),
           items: _navBarsItems(),
           confineInSafeArea: true,
-          backgroundColor: AppColors.appBarBg(_themeProvider.isDarkModeEnabled),
+          decoration: NavBarDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.topRight,
+              colors: AppColors.appBarBg(_themeProvider.isDarkModeEnabled),
+            ),
+          ),
+          // backgroundColor: AppColors.appBarBg(_themeProvider.isDarkModeEnabled),
           handleAndroidBackButtonPress: true,
           resizeToAvoidBottomInset: true,
           stateManagement: true,
@@ -262,14 +149,14 @@ class _PrayerScreenState extends State<PrayerScreen> {
           // margin: EdgeInsets.all(10.0),
           popActionScreens: PopActionScreensType.once,
           bottomScreenMargin: 0.0,
-          routeAndNavigatorSettings: RouteAndNavigatorSettings(
-            initialRoute: '/',
-            routes: {
-              PrayerScreen.routeName: (context) => PrayerScreen(),
-              AddPrayer.routeName: (context) => AddPrayer(),
-              // PrayerScreen.routeName: (context) => PrayerScreen(),
-            },
-          ),
+          // routeAndNavigatorSettings: RouteAndNavigatorSettings(
+          //   initialRoute: '/',
+          //   routes: {
+          //     PrayerScreen.routeName: (context) => PrayerScreen(),
+          //     AddPrayer.routeName: (context) => AddPrayer(),
+          //     // PrayerScreen.routeName: (context) => PrayerScreen(),
+          //   },
+          // ),
           onWillPop: () async {
             await showDialog(
               context: context,
@@ -292,9 +179,6 @@ class _PrayerScreenState extends State<PrayerScreen> {
             selectedContext = context;
           },
           hideNavigationBar: _hideNavBar,
-          // decoration: NavBarDecoration(
-          //     colorBehindNavBar: Colors.indigo,
-          //     borderRadius: BorderRadius.circular(20.0)),
           popAllScreensOnTapOfSelectedTab: true,
           itemAnimationProperties: ItemAnimationProperties(
             duration: Duration(milliseconds: 400),
@@ -305,51 +189,10 @@ class _PrayerScreenState extends State<PrayerScreen> {
             curve: Curves.ease,
             duration: Duration(milliseconds: 200),
           ),
-          navBarStyle: NavBarStyle
-              .style12, // Choose the nav bar style with this property
+          navBarStyle: NavBarStyle.style12,
         ),
       ),
       endDrawer: CustomDrawer(),
     );
   }
 }
-
-//             child: Container(
-//         decoration: BoxDecoration(
-//           gradient: LinearGradient(
-//             begin: Alignment.topCenter,
-//             end: Alignment.bottomCenter,
-//             colors:
-//                 AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
-//           ),
-//           image: DecorationImage(
-//             image: AssetImage(StringUtils.getBackgroundImage(
-//                 _themeProvider.isDarkModeEnabled)),
-//             alignment: Alignment.bottomCenter,
-//           ),
-//         ),
-//         child: SingleChildScrollView(
-//           child: Column(
-//             children: <Widget>[
-//               Container(
-//                 height: 60,
-//                 child: PrayerMenu(),
-//               ),
-//               Container(
-//                 height: MediaQuery.of(context).size.height * 0.842,
-//                 child: SingleChildScrollView(
-//                   child:
-//                       Provider.of<PrayerProvider>(context).currentPrayerType ==
-//                               PrayerType.findGroup
-//                           ? FindAGroup()
-//                           : PrayerList(),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     ),
-//     endDrawer: CustomDrawer(),
-//   );
-// }

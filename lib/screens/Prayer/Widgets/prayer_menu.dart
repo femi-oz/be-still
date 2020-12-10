@@ -52,12 +52,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .firstWhere((user) => user.userId == _user.id, orElse: () => null)
           ?.isAdmin;
     }
-    await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-      _user.id,
-      activeList,
-      activeList == PrayerType.group ? groupData.group?.id : '0',
-      isGroupAdmin,
-    );
+    // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+    //   _user.id,
+    //   activeList,
+    //   activeList == PrayerType.group ? groupData.group?.id : '0',
+    //   isGroupAdmin,
+    // );
   }
 
   @override
@@ -111,9 +111,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 size: 25,
               ),
               onPressed: () => setState(
-                () => {
-                  searchMode = !searchMode,
-                },
+                () => searchMode = !searchMode,
               ),
             ),
           ),
