@@ -6,7 +6,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
-import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
+import 'package:be_still/screens/groups/widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/menu_items.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/utils/app_icons.dart';

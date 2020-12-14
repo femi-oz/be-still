@@ -12,11 +12,11 @@ import 'package:uuid/uuid.dart';
 
 class SettingsService {
   final CollectionReference _settingsCollectionReference =
-      Firestore.instance.collection("Setting");
+      FirebaseFirestore.instance.collection("Setting");
   final CollectionReference _prayerSettingsCollectionReference =
-      Firestore.instance.collection("PrayerSetting");
+      FirebaseFirestore.instance.collection("PrayerSetting");
   final CollectionReference _sharingSettingsCollectionReference =
-      Firestore.instance.collection("SharingSetting");
+      FirebaseFirestore.instance.collection("SharingSetting");
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
@@ -87,21 +87,20 @@ class SettingsService {
     final prayerSettingsId = Uuid().v1();
 
     try {
-      return Firestore.instance.runTransaction(
+      return FirebaseFirestore.instance.runTransaction(
         (transaction) async {
           // store settings
-          await transaction.set(
-              _settingsCollectionReference.document(settingsId),
+          transaction.set(_settingsCollectionReference.doc(settingsId),
               populateSettings(deviceId, userId, email).toJson());
 
           //store sharing settings
-          await transaction.set(
-              _sharingSettingsCollectionReference.document(sharingSettingsId),
+          transaction.set(
+              _sharingSettingsCollectionReference.doc(sharingSettingsId),
               populateSharingSettings(userId, email).toJson());
 
           //store prayer settings
-          await transaction.set(
-              _prayerSettingsCollectionReference.document(prayerSettingsId),
+          transaction.set(
+              _prayerSettingsCollectionReference.doc(prayerSettingsId),
               populatePrayerSettings(userId, email).toJson());
         },
       ).then((val) {
@@ -120,7 +119,7 @@ class SettingsService {
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((doc) =>
-              doc.documents.map((e) => SettingsModel.fromData(e)).toList()[0]);
+              doc.docs.map((e) => SettingsModel.fromData(e)).toList()[0]);
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -131,9 +130,8 @@ class SettingsService {
       return _prayerSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
-          .map((doc) => doc.documents
-              .map((e) => PrayerSettingsModel.fromData(e))
-              .toList()[0]);
+          .map((doc) =>
+              doc.docs.map((e) => PrayerSettingsModel.fromData(e)).toList()[0]);
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -144,7 +142,7 @@ class SettingsService {
       return _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
-          .map((doc) => doc.documents
+          .map((doc) => doc.docs
               .map((e) => SharingSettingsModel.fromData(e))
               .toList()[0]);
     } catch (e) {
@@ -154,7 +152,7 @@ class SettingsService {
 
   Future updateSettings({String key, dynamic value, String settingsId}) async {
     try {
-      _settingsCollectionReference.document(settingsId).updateData(
+      _settingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
     } catch (e) {
@@ -165,7 +163,7 @@ class SettingsService {
   Future updatePrayerSettings(
       {String key, dynamic value, String settingsId}) async {
     try {
-      _prayerSettingsCollectionReference.document(settingsId).updateData(
+      _prayerSettingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
     } catch (e) {
@@ -176,7 +174,7 @@ class SettingsService {
   Future updateSharingSettings(
       {String key, dynamic value, String settingsId}) async {
     try {
-      _sharingSettingsCollectionReference.document(settingsId).updateData(
+      _sharingSettingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
     } catch (e) {

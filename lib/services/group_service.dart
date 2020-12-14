@@ -1,18 +1,15 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 class GroupService {
   final CollectionReference _groupCollectionReference =
-      Firestore.instance.collection("Group");
+      FirebaseFirestore.instance.collection("Group");
   final CollectionReference _groupUserCollectionReference =
-      Firestore.instance.collection("GroupUser");
+      FirebaseFirestore.instance.collection("GroupUser");
   // final CollectionReference _groupPrayerCollectionReference =
   //     Firestore.instance.collection("GroupPrayer");
 
@@ -45,14 +42,14 @@ class GroupService {
     try {
       _combineAllGroupsStream =
           _groupCollectionReference.snapshots().map((convert) {
-        return convert.documents.map((g) {
+        return convert.docs.map((g) {
           Stream<GroupModel> group = Stream.value(g)
               .map<GroupModel>((document) => GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
               _groupUserCollectionReference
-                  .where('GroupId', isEqualTo: g.documentID)
+                  .where('GroupId', isEqualTo: g.id)
                   .snapshots()
-                  .asyncMap((e) => e.documents
+                  .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
 
@@ -77,20 +74,20 @@ class GroupService {
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((convert) {
-        return convert.documents.map((f) {
+        return convert.docs.map((f) {
           // Stream<GroupUserModel> userGroup = Stream.value(f)
           //     .map<GroupUserModel>(
           //         (document) => GroupUserModel.fromData(document));
 
           Stream<GroupModel> group = _groupCollectionReference
-              .document(f.data['GroupId'])
+              .doc(f.data()['GroupId'])
               .snapshots()
               .map<GroupModel>((document) => GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
               _groupUserCollectionReference
-                  .where('GroupId', isEqualTo: f.data['GroupId'])
+                  .where('GroupId', isEqualTo: f.data()['GroupId'])
                   .snapshots()
-                  .asyncMap((e) => e.documents
+                  .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
 
@@ -113,15 +110,15 @@ class GroupService {
     final _groupID = Uuid().v1();
     final _groupUserID = Uuid().v1();
     try {
-      return Firestore.instance.runTransaction(
+      return FirebaseFirestore.instance.runTransaction(
         (transaction) async {
           // store group
-          await transaction.set(
-              _groupCollectionReference.document(_groupID), groupData.toJson());
+          transaction.set(
+              _groupCollectionReference.doc(_groupID), groupData.toJson());
 
           //store group user
-          await transaction.set(
-              _groupUserCollectionReference.document(_groupUserID),
+          transaction.set(
+              _groupUserCollectionReference.doc(_groupUserID),
               populateGroupUser(groupData, userID, fullName, _groupID)
                   .toJson());
         },
@@ -141,6 +138,23 @@ class GroupService {
           .where('GroupId', isEqualTo: groupId)
           .snapshots();
       return users;
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future leaveGroup(String userGroupId) {
+    try {
+      _groupUserCollectionReference.doc(userGroupId).delete();
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future deleteGroup(String userGroupId, String groupId) {
+    try {
+      _groupUserCollectionReference.doc(userGroupId).delete();
+      _groupCollectionReference.doc(groupId).delete();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -237,7 +251,7 @@ class GroupService {
   //           .limit(1)
   //           .getDocuments();
   //       await transaction.delete(_groupUserCollectionReference
-  //           .document(userGroupRes.documents[0].documentID));
+  //           .document(userGroupRes.documents[0].id));
   //     }).then((value) {
   //       return true;
   //     }).catchError((e) {

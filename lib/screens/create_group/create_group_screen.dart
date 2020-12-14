@@ -9,14 +9,12 @@ import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/app_bar.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CreateGroupScreen extends StatefulWidget {
-  static const routeName = 'create-group';
+  static const routeName = '/create-group';
   final activeList;
   final List<PrayerModel> prayers;
   final groupId;
@@ -106,7 +104,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           organizationController: _organizationController,
                           stateController: _stateController,
                         )
-                      : GroupCreated(),
+                      : GroupCreated(_groupNameController.text),
                   SizedBox(height: 30.0),
                   Container(
                     child: Column(
@@ -130,8 +128,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               if (_step == 1) {
                                 _save();
                               } else {
-                                Navigator.of(context).pushReplacementNamed(
-                                    PrayerScreen.routeName);
+                                Navigator.pushReplacement(
+                                  context,
+                                  new MaterialPageRoute(
+                                    builder: (context) => new PrayerScreen(),
+                                  ),
+                                );
+                                // Navigator.of(context).pushReplacementNamed(
+                                //     PrayerScreen.routeName);
                               }
                             },
                             color: Colors.transparent,

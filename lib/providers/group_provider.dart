@@ -45,6 +45,14 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.addGroup(userID, groupData, fullName);
   }
 
+  Future leaveGroup(String userGroupId) async {
+    return await _groupService.leaveGroup(userGroupId);
+  }
+
+  Future deleteGroup(String userGroupId, String groupId) async {
+    return await _groupService.deleteGroup(userGroupId, groupId);
+  }
+
   Future setCurrentGroup(CombineGroupUserStream group) async {
     _currentGroup = group;
     notifyListeners();

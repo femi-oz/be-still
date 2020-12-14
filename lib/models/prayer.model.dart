@@ -44,24 +44,24 @@ class PrayerModel {
   });
 
   PrayerModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.documentID,
-        groupId = snapshot.data['GroupId'],
-        userId = snapshot.data['UserId'],
-        type = snapshot.data['Type'],
-        title = snapshot.data['Title'],
-        status = snapshot.data['Status'],
-        description = snapshot.data['Description'],
-        isAnswer = snapshot.data['IsAnswer'],
-        isArchived = snapshot.data['IsArchived'],
-        isSnoozed = snapshot.data['IsSnoozed'],
-        isInappropriate = snapshot.data['IsInappropriate'],
-        hideFromMe = snapshot.data['HideFromMe'],
-        hideFromAllMembers = snapshot.data['HideFromAllMembers'],
-        creatorName = snapshot.data['CreatorName'] ?? 'N/A',
-        createdBy = snapshot.data['CreatedBy'],
-        createdOn = snapshot.data['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data['ModifiedBy'],
-        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+      : id = snapshot.id,
+        groupId = snapshot.data()['GroupId'],
+        userId = snapshot.data()['UserId'],
+        type = snapshot.data()['Type'],
+        title = snapshot.data()['Title'],
+        status = snapshot.data()['Status'],
+        description = snapshot.data()['Description'],
+        isAnswer = snapshot.data()['IsAnswer'],
+        isArchived = snapshot.data()['IsArchived'],
+        isSnoozed = snapshot.data()['IsSnoozed'],
+        isInappropriate = snapshot.data()['IsInappropriate'],
+        hideFromMe = snapshot.data()['HideFromMe'],
+        hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
+        creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -103,12 +103,12 @@ class PrayerDisableModel {
       @required this.modifiedOn});
 
   PrayerDisableModel.fromData(DocumentSnapshot snapshot)
-      : prayerId = snapshot.documentID,
-        userId = snapshot.data['UserId'],
-        createdBy = snapshot.data['CreatedBy'],
-        createdOn = snapshot.data['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data['ModifiedBy'],
-        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+      : prayerId = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -146,15 +146,15 @@ class PrayerUpdateModel {
   });
 
   PrayerUpdateModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.documentID,
-        prayerId = snapshot.documentID,
-        userId = snapshot.data['UserId'],
-        title = snapshot.data['Title'],
-        description = snapshot.data['Description'],
-        createdBy = snapshot.data['CreatedBy'],
-        createdOn = snapshot.data['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data['ModifiedBy'],
-        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+      : id = snapshot.id,
+        prayerId = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        title = snapshot.data()['Title'],
+        description = snapshot.data()['Description'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -196,16 +196,16 @@ class UserPrayerModel {
   });
 
   UserPrayerModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.documentID,
-        prayerId = snapshot.data['PrayerId'],
-        userId = snapshot.data['UserId'],
-        sequence = snapshot.data['Sequence'],
-        isFavorite = snapshot.data['IsFavourite'],
-        status = snapshot.data['Status'],
-        createdBy = snapshot.data['CreatedBy'],
-        createdOn = snapshot.data['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data['ModifiedBy'],
-        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+      : id = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
+        userId = snapshot.data()['UserId'],
+        sequence = snapshot.data()['Sequence'],
+        isFavorite = snapshot.data()['IsFavourite'],
+        status = snapshot.data()['Status'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -242,13 +242,13 @@ class HiddenPrayerModel {
   });
 
   HiddenPrayerModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.documentID,
-        prayerId = snapshot.data['PrayerId'],
-        userId = snapshot.data['UserId'],
-        createdBy = snapshot.data['CreatedBy'],
-        createdOn = snapshot.data['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data['ModifiedBy'],
-        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+      : id = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
+        userId = snapshot.data()['UserId'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

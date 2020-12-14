@@ -14,11 +14,7 @@ import '../locator.dart';
 
 class UserService {
   final CollectionReference _userCollectionReference =
-      Firestore.instance.collection("User");
-  final CollectionReference _userDeviceCollectionReference =
-      Firestore.instance.collection("UserDevice");
-  final CollectionReference _deviceCollectionReference =
-      Firestore.instance.collection("Device");
+      FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   deviceModel() async {
@@ -31,42 +27,6 @@ class UserService {
 
       print(andriodInfo);
     }
-  }
-
-  populateDevice(
-    String deviceModel,
-    String deviceName,
-    String deviceID,
-    String email,
-  ) {
-    DeviceModel device = DeviceModel(
-      createdBy: email,
-      createdOn: DateTime.now(),
-      modifiedOn: DateTime.now(),
-      modifiedBy: email,
-      model: deviceModel.toUpperCase(),
-      deviceId: deviceID,
-      name: deviceName.toUpperCase(),
-      status: Status.active,
-    );
-    return device;
-  }
-
-  populateUserDevice(
-    String deviceID,
-    String userID,
-    String email,
-  ) {
-    UserDeviceModel userDevice = UserDeviceModel(
-      createdBy: email,
-      createdOn: DateTime.now(),
-      modifiedOn: DateTime.now(),
-      modifiedBy: email,
-      deviceId: deviceID,
-      userId: userID,
-      status: Status.active,
-    );
-    return userDevice;
   }
 
   Future addUserData(
@@ -91,47 +51,37 @@ class UserService {
     );
 
     // Generate uuid
-    final deviceIdGuid = Uuid().v1();
+    // final deviceIdGuid = Uuid().v1();
     final userID = Uuid().v1();
-    final userDeviceID = Uuid().v1();
+    // final userDeviceID = Uuid().v1();
 
-    // get device infomation
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    String deviceModel;
-    String deviceName;
-    String deviceID;
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      deviceModel = androidInfo.model;
-      deviceName = androidInfo.brand;
-      deviceID = androidInfo.androidId;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      deviceModel = iosInfo.utsname.machine;
-      deviceName = iosInfo.name;
-      deviceID = iosInfo.identifierForVendor;
-    }
+    // // get device infomation
+    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    // String deviceModel;
+    // String deviceName;
+    // String deviceID;
+    // if (Platform.isAndroid) {
+    //   AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    //   deviceModel = androidInfo.model;
+    //   deviceName = androidInfo.brand;
+    //   deviceID = androidInfo.androidId;
+    // } else if (Platform.isIOS) {
+    //   IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    //   deviceModel = iosInfo.utsname.machine;
+    //   deviceName = iosInfo.name;
+    //   deviceID = iosInfo.identifierForVendor;
+    // }
 
     try {
-      Firestore.instance.runTransaction(
+      FirebaseFirestore.instance.runTransaction(
         (transaction) async {
           // store user details
-          await _userCollectionReference.document(userID).setData(
+          await _userCollectionReference.doc(userID).set(
                 _userData.toJson(),
               );
 
-          //store device
-          await _deviceCollectionReference.document(deviceIdGuid).setData(
-                populateDevice(email, deviceModel, deviceName, deviceID)
-                    .toJson(),
-              );
-
-          // store user device
-          await _userDeviceCollectionReference.document(userDeviceID).setData(
-                populateUserDevice(email, deviceID.toString(), userID).toJson(),
-              );
-          // store defaul settings
-          await locator<SettingsService>().addSettings(deviceID, userID, email);
+          // store default settings
+          await locator<SettingsService>().addSettings('', userID, email);
         },
       );
     } catch (e) {
@@ -140,32 +90,30 @@ class UserService {
   }
 
   Future getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+    User user = _firebaseAuth.currentUser;
     try {
       final userRes = await _userCollectionReference
           .where('KeyReference', isEqualTo: user.uid)
           .limit(1)
-          .getDocuments();
-      return UserModel.fromData(userRes.documents[0]);
+          .get();
+      return UserModel.fromData(userRes.docs[0]);
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
   Future updateEmail(String newEmail, String userId) async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+    User user = _firebaseAuth.currentUser;
     try {
       await user.updateEmail(newEmail);
-      await _userCollectionReference
-          .document(userId)
-          .updateData({'Email': newEmail});
+      await _userCollectionReference.doc(userId).update({'Email': newEmail});
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
   Future updatePassword(String newPassword) async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+    User user = _firebaseAuth.currentUser;
     try {
       user.updatePassword(newPassword);
     } catch (e) {

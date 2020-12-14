@@ -27,16 +27,16 @@
 //   });
 
 //   UserPrayerModel.fromData(DocumentSnapshot snapshot)
-//       : id = snapshot.documentID,
-//         prayerId = snapshot.data['PrayerId'],
-//         userId = snapshot.data['UserId'],
-//         sequence = snapshot.data['Sequence'],
-//         isFavorite = snapshot.data['IsFavourite'],
-//         status = snapshot.data['Status'],
-//         createdBy = snapshot.data['CreatedBy'],
-//         createdOn = snapshot.data['CreatedOn'].toDate(),
-//         modifiedBy = snapshot.data['ModifiedBy'],
-//         modifiedOn = snapshot.data['ModifiedOn'].toDate();
+//       : id = snapshot.id,
+//         prayerId = snapshot.data()['PrayerId'],
+//         userId = snapshot.data()['UserId'],
+//         sequence = snapshot.data()['Sequence'],
+//         isFavorite = snapshot.data()['IsFavourite'],
+//         status = snapshot.data()['Status'],
+//         createdBy = snapshot.data()['CreatedBy'],
+//         createdOn = snapshot.data()['CreatedOn'].toDate(),
+//         modifiedBy = snapshot.data()['ModifiedBy'],
+//         modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
 //   Map<String, dynamic> toJson() {
 //     return {

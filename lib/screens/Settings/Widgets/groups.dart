@@ -861,7 +861,21 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           : Container(),
                       SizedBox(height: 40),
                       GestureDetector(
-                        onTap: () => null,
+                        onTap: () async {
+                          var id = data.groupUsers
+                              .firstWhere((e) => e.userId == _currentUser.id,
+                                  orElse: () => null)
+                              .id;
+                          if (id != null) {
+                            await BeStilDialog.showLoading(context, _key, '');
+
+                            await Provider.of<GroupProvider>(context,
+                                    listen: false)
+                                .leaveGroup(id);
+                            await Future.delayed(Duration(milliseconds: 300));
+                            BeStilDialog.hideLoading(_key);
+                          }
+                        },
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
@@ -887,7 +901,23 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       SizedBox(height: 20),
                       isAdmin
                           ? GestureDetector(
-                              onTap: () => null,
+                              onTap: () async {
+                                var id = data.groupUsers
+                                    .firstWhere(
+                                        (e) => e.userId == _currentUser.id,
+                                        orElse: () => null)
+                                    .id;
+                                if (id != null) {
+                                  await BeStilDialog.showLoading(
+                                      context, _key, '');
+                                  Provider.of<GroupProvider>(context,
+                                          listen: false)
+                                      .deleteGroup(id, data.group.id);
+                                  await Future.delayed(
+                                      Duration(milliseconds: 300));
+                                  BeStilDialog.hideLoading(_key);
+                                }
+                              },
                               child: Container(
                                 margin: EdgeInsets.symmetric(
                                   horizontal: 20,

@@ -28,18 +28,18 @@ class SharingSettingsModel {
     @required this.modifiedOn,
   });
 
-  SharingSettingsModel.fromData(DocumentSnapshot snapShot)
-      : id = snapShot.documentID,
-        userId = snapShot.data["UserId"],
-        enableSharingViaEmail = snapShot.data["EnableSharingViaEmail"],
-        enableSharingViaText = snapShot.data["EnableSharingViaText"],
-        churchId = snapShot.data["ChurchId"],
-        phone = snapShot.data["Phone"],
-        status = snapShot.data["Status"],
-        createdBy = snapShot.data["CreatedBy"],
-        createdOn = snapShot.data["CreatedOn"].toDate(),
-        modifiedBy = snapShot.data["ModifiedBy"],
-        modifiedOn = snapShot.data["ModifiedOn"].toDate();
+  SharingSettingsModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        userId = snapshot.data()["UserId"],
+        enableSharingViaEmail = snapshot.data()["EnableSharingViaEmail"],
+        enableSharingViaText = snapshot.data()["EnableSharingViaText"],
+        churchId = snapshot.data()["ChurchId"],
+        phone = snapshot.data()["Phone"],
+        status = snapshot.data()["Status"],
+        createdBy = snapshot.data()["CreatedBy"],
+        createdOn = snapshot.data()["CreatedOn"].toDate(),
+        modifiedBy = snapshot.data()["ModifiedBy"],
+        modifiedOn = snapshot.data()["ModifiedOn"].toDate();
 
   Map<String, dynamic> toJson() {
     return {

@@ -35,20 +35,20 @@ class PrayerSettingsModel {
   });
 
   PrayerSettingsModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.documentID,
-        userId = snapshot.data["UserId"],
-        frequency = snapshot.data["Frequency"],
-        // date = snapshot.data["Date"].toDate(),
-        day = snapshot.data["Day"],
-        time = snapshot.data["Time"],
-        doNotDisturb = snapshot.data['DoNotDisturb'],
-        allowEmergencyCalls = snapshot.data['AllowEmergencyCalls'],
-        autoPlayMusic = snapshot.data['AutoPlayMusic'],
-        enableBackgroundMusic = snapshot.data['EnableBackgroundMusic'],
-        createdBy = snapshot.data["CreatedBy"],
-        createdOn = snapshot.data["CreatedOn"].toDate(),
-        modifiedBy = snapshot.data["ModifiedBy"],
-        modifiedOn = snapshot.data["ModifiedOn"].toDate();
+      : id = snapshot.id,
+        userId = snapshot.data()["UserId"],
+        frequency = snapshot.data()["Frequency"],
+        // date = snapshot.data()["Date"].toDate(),
+        day = snapshot.data()["Day"],
+        time = snapshot.data()["Time"],
+        doNotDisturb = snapshot.data()['DoNotDisturb'],
+        allowEmergencyCalls = snapshot.data()['AllowEmergencyCalls'],
+        autoPlayMusic = snapshot.data()['AutoPlayMusic'],
+        enableBackgroundMusic = snapshot.data()['EnableBackgroundMusic'],
+        createdBy = snapshot.data()["CreatedBy"],
+        createdOn = snapshot.data()["CreatedOn"].toDate(),
+        modifiedBy = snapshot.data()["ModifiedBy"],
+        modifiedOn = snapshot.data()["ModifiedOn"].toDate();
 
   Map<String, dynamic> toJson() {
     return {

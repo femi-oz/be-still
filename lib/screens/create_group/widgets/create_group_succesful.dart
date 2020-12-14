@@ -1,16 +1,18 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class GroupCreated extends StatefulWidget {
+  final String groupName;
+  GroupCreated(this.groupName);
   @override
   _GroupCreatedState createState() => _GroupCreatedState();
 }
 
 class _GroupCreatedState extends State<GroupCreated> {
-  var option = 'email';
+  var option = NotificationType.email;
   @override
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
@@ -36,7 +38,7 @@ class _GroupCreatedState extends State<GroupCreated> {
         ),
         SizedBox(height: 5.0),
         Text(
-          'DRINNON\'S IT HEROES',
+          widget.groupName.toUpperCase(),
           textAlign: TextAlign.center,
           style: TextStyle(
               color: AppColors.lightBlue4,
@@ -73,7 +75,7 @@ class _GroupCreatedState extends State<GroupCreated> {
               height: 30,
               width: double.maxFinite,
               decoration: BoxDecoration(
-                color: option == 'email'
+                color: option == NotificationType.email
                     ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
                         .withOpacity(0.3)
                     : Colors.transparent,
@@ -95,7 +97,8 @@ class _GroupCreatedState extends State<GroupCreated> {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                onPressed: () => setState(() => option = 'email'),
+                onPressed: () =>
+                    setState(() => option = NotificationType.email),
               ),
             ),
             SizedBox(height: 20.0),
@@ -103,7 +106,7 @@ class _GroupCreatedState extends State<GroupCreated> {
               height: 30,
               width: double.maxFinite,
               decoration: BoxDecoration(
-                color: option == 'text'
+                color: option == NotificationType.text
                     ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
                         .withOpacity(0.5)
                     : Colors.transparent,
@@ -127,7 +130,7 @@ class _GroupCreatedState extends State<GroupCreated> {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                onPressed: () => setState(() => option = 'text'),
+                onPressed: () => setState(() => option = NotificationType.text),
               ),
             ),
             SizedBox(height: 20.0),
@@ -135,7 +138,7 @@ class _GroupCreatedState extends State<GroupCreated> {
               height: 30,
               width: double.maxFinite,
               decoration: BoxDecoration(
-                color: option == 'code'
+                color: option == NotificationType.qr_code
                     ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
                         .withOpacity(0.5)
                     : Colors.transparent,
@@ -159,7 +162,8 @@ class _GroupCreatedState extends State<GroupCreated> {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                onPressed: () => setState(() => option = 'code'),
+                onPressed: () =>
+                    setState(() => option = NotificationType.qr_code),
               ),
             ),
             SizedBox(height: 150.0),

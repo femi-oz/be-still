@@ -2,7 +2,6 @@ import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:provider/provider.dart';
 

@@ -30,7 +30,7 @@ class AuthenticationService {
         email: email,
         password: password,
       );
-      FirebaseUser user = await _firebaseAuth.currentUser();
+      User user = _firebaseAuth.currentUser;
       await locator<UserService>().addUserData(
         user.uid,
         email,
@@ -58,7 +58,7 @@ class AuthenticationService {
 
   Future<bool> isUserLoggedIn() async {
     try {
-      FirebaseUser user = await _firebaseAuth.currentUser();
+      User user = _firebaseAuth.currentUser;
       return user != null;
     } catch (e) {
       throw HttpException(e.message);

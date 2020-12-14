@@ -9,15 +9,15 @@ import 'package:rxdart/rxdart.dart';
 
 class PrayerService {
   final CollectionReference _prayerCollectionReference =
-      Firestore.instance.collection("Prayer");
+      FirebaseFirestore.instance.collection("Prayer");
   final CollectionReference _userPrayerCollectionReference =
-      Firestore.instance.collection("UserPrayer");
+      FirebaseFirestore.instance.collection("UserPrayer");
   final CollectionReference _groupPrayerCollectionReference =
-      Firestore.instance.collection("GroupPrayer");
+      FirebaseFirestore.instance.collection("GroupPrayer");
   final CollectionReference _prayerUpdateCollectionReference =
-      Firestore.instance.collection("PrayerUpdate");
+      FirebaseFirestore.instance.collection("PrayerUpdate");
   final CollectionReference _hiddenPrayerCollectionReference =
-      Firestore.instance.collection("HiddenPrayer");
+      FirebaseFirestore.instance.collection("HiddenPrayer");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
@@ -26,22 +26,21 @@ class PrayerService {
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((convert) {
-        return convert.documents.map((f) {
+        return convert.docs.map((f) {
           Stream<UserPrayerModel> userPrayer = Stream.value(f)
-              .map<UserPrayerModel>(
-                  (document) => UserPrayerModel.fromData(document));
+              .map<UserPrayerModel>((doc) => UserPrayerModel.fromData(doc));
 
           Stream<PrayerModel> prayer = _prayerCollectionReference
-              .document(f.data['PrayerId'])
+              .doc(f.data()['PrayerId'])
               .snapshots()
-              .map<PrayerModel>((document) => PrayerModel.fromData(document));
+              .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
 
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  // .document(f.data['PrayerId'])
-                  .where('PrayerId', isEqualTo: f.data['PrayerId'])
+                  // .doc(f.data()['PrayerId'])
+                  .where('PrayerId', isEqualTo: f.data()['PrayerId'])
                   .snapshots()
-                  .map<List<PrayerUpdateModel>>((list) => list.documents
+                  .map<List<PrayerUpdateModel>>((list) => list.docs
                       .map((e) => PrayerUpdateModel.fromData(e))
                       .toList());
 
@@ -112,15 +111,14 @@ class PrayerService {
     final _userPrayerID = Uuid().v1();
 
     try {
-      return Firestore.instance.runTransaction(
+      return FirebaseFirestore.instance.runTransaction(
         (transaction) async {
           // store prayer
-          await transaction.set(_prayerCollectionReference.document(_prayerID),
-              prayerData.toJson());
+          transaction.set(
+              _prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
           //store user prayer
-          await transaction.set(
-              _userPrayerCollectionReference.document(_userPrayerID),
+          transaction.set(_userPrayerCollectionReference.doc(_userPrayerID),
               populateUserPrayer(prayerData, _userID, _prayerID).toJson());
         },
       ).then((val) {
@@ -141,20 +139,19 @@ class PrayerService {
           .where('GroupId', isEqualTo: groupId)
           .snapshots()
           .map((convert) {
-        return convert.documents.map((f) {
+        return convert.docs.map((f) {
           Stream<GroupPrayerModel> groupPrayer = Stream.value(f)
-              .map<GroupPrayerModel>(
-                  (document) => GroupPrayerModel.fromData(document));
+              .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
 
           Stream<PrayerModel> prayer = _prayerCollectionReference
-              .document(f.data['PrayerId'])
+              .doc(f.data()['PrayerId'])
               .snapshots()
-              .map<PrayerModel>((document) => PrayerModel.fromData(document));
+              .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  .where('PrayerId', isEqualTo: f.data['PrayerId'])
+                  .where('PrayerId', isEqualTo: f.data()['PrayerId'])
                   .snapshots()
-                  .map<List<PrayerUpdateModel>>((list) => list.documents
+                  .map<List<PrayerUpdateModel>>((list) => list.docs
                       .map((e) => PrayerUpdateModel.fromData(e))
                       .toList());
 
@@ -189,15 +186,14 @@ class PrayerService {
     final _prayerID = Uuid().v1();
     final groupPrayerId = Uuid().v1();
     try {
-      return Firestore.instance.runTransaction(
+      return FirebaseFirestore.instance.runTransaction(
         (transaction) async {
           // store prayer
-          await transaction.set(_prayerCollectionReference.document(_prayerID),
-              prayerData.toJson());
+          transaction.set(
+              _prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
           //store group prayer
-          await transaction.set(
-              _groupPrayerCollectionReference.document(groupPrayerId),
+          transaction.set(_groupPrayerCollectionReference.doc(groupPrayerId),
               populateGroupPrayer(prayerData, _prayerID).toJson());
         },
       ).then((val) {
@@ -215,7 +211,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
-      _prayerCollectionReference.document(prayerID).updateData(
+      _prayerCollectionReference.doc(prayerID).update(
         {"Description": description},
       );
     } catch (e) {
@@ -224,12 +220,12 @@ class PrayerService {
   }
 
   Future addPrayerUpdate(
-    PrayerUpdateModel prayerUpdateData,
+    PrayerUpdateModel prayerupdate,
   ) async {
     try {
       final updateId = Uuid().v1();
-      _prayerUpdateCollectionReference.document(updateId).setData(
-            prayerUpdateData.toJson(),
+      _prayerUpdateCollectionReference.doc(updateId).set(
+            prayerupdate.toJson(),
           );
     } catch (e) {
       throw HttpException(e.message);
@@ -243,9 +239,8 @@ class PrayerService {
       return _prayerUpdateCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
           .snapshots()
-          .asyncMap((event) => event.documents
-              .map((e) => PrayerUpdateModel.fromData(e))
-              .toList());
+          .asyncMap((event) =>
+              event.docs.map((e) => PrayerUpdateModel.fromData(e)).toList());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -258,9 +253,8 @@ class PrayerService {
       return _hiddenPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
-          .asyncMap((event) => event.documents
-              .map((e) => HiddenPrayerModel.fromData(e))
-              .toList());
+          .asyncMap((event) =>
+              event.docs.map((e) => HiddenPrayerModel.fromData(e)).toList());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -268,7 +262,7 @@ class PrayerService {
 
   Future markPrayerAsAnswered(String prayerID) async {
     try {
-      _prayerCollectionReference.document(prayerID).updateData(
+      _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': true},
       );
     } catch (e) {
@@ -280,7 +274,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
-      _prayerCollectionReference.document(prayerID).updateData(
+      _prayerCollectionReference.doc(prayerID).update(
         {'IsArchived': true},
       );
     } catch (e) {
@@ -290,14 +284,14 @@ class PrayerService {
 
   Future deletePrayer(String prayerID) async {
     try {
-      return Firestore.instance.runTransaction((transaction) async {
-        await transaction.delete(_prayerCollectionReference.document(prayerID));
+      return FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.delete(_prayerCollectionReference.doc(prayerID));
         final userPrayerRes = await _userPrayerCollectionReference
             .where("PrayerId", isEqualTo: prayerID)
             .limit(1)
-            .getDocuments();
-        await transaction.delete(_userPrayerCollectionReference
-            .document(userPrayerRes.documents[0].documentID));
+            .get();
+        transaction.delete(
+            _userPrayerCollectionReference.doc(userPrayerRes.docs[0].id));
       }).then((val) {
         return true;
       }).catchError((e) {
@@ -320,8 +314,8 @@ class PrayerService {
     );
     try {
       _hiddenPrayerCollectionReference
-          .document(hiddenPrayerId)
-          .setData(hiddenPrayer.toJson());
+          .doc(hiddenPrayerId)
+          .set(hiddenPrayer.toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -334,8 +328,8 @@ class PrayerService {
       //     .snapshots()
       //     .map((event) {
       _prayerCollectionReference
-          .document(prayerId)
-          .updateData({'HideFromAllMembers': value});
+          .doc(prayerId)
+          .update({'HideFromAllMembers': value});
       // });
     } catch (e) {
       throw HttpException(e.message);
@@ -344,7 +338,7 @@ class PrayerService {
 
   Stream<DocumentSnapshot> getPrayer(String prayerID) {
     try {
-      return _prayerCollectionReference.document(prayerID).snapshots();
+      return _prayerCollectionReference.doc(prayerID).snapshots();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -354,8 +348,8 @@ class PrayerService {
     try {
       final userPrayerId = Uuid().v1();
       return await _userPrayerCollectionReference
-          .document(userPrayerId)
-          .setData(userPrayer.toJson());
+          .doc(userPrayerId)
+          .set(userPrayer.toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -364,8 +358,8 @@ class PrayerService {
   flagAsInappropriate(String prayerId) {
     try {
       _prayerCollectionReference
-          .document(prayerId)
-          .updateData({'IsInappropriate': true});
+          .doc(prayerId)
+          .update({'IsInappropriate': true});
     } catch (e) {
       throw HttpException(e.message);
     }

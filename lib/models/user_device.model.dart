@@ -24,14 +24,14 @@ class UserDeviceModel {
   });
 
   UserDeviceModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.documentID,
-        deviceId = snapshot.data['DeviceId'],
-        userId = snapshot.data['UserId'],
-        status = snapshot.data['Status'],
-        createdBy = snapshot.data['CreatedBy'],
-        createdOn = snapshot.data['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data['ModifiedBy'],
-        modifiedOn = snapshot.data['ModifiedOn'].toDate();
+      : id = snapshot.id,
+        deviceId = snapshot.data()['DeviceId'],
+        userId = snapshot.data()['UserId'],
+        status = snapshot.data()['Status'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

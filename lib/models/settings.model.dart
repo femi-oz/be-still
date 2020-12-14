@@ -56,35 +56,35 @@ class SettingsModel {
     @required this.modifiedOn,
   });
 
-  SettingsModel.fromData(DocumentSnapshot snapShot)
-      : id = snapShot.documentID,
-        userId = snapShot.data['UserId'],
-        deviceId = snapShot.data['DeviceId'],
-        appearance = snapShot.data['Appearance'],
-        pauseInterval = snapShot.data['PauseInterval'],
-        defaultSortBy = snapShot.data['DefaultSortBy'],
-        defaultSnoozeDuration = snapShot.data['DefaultSnoozeDuration'],
-        archiveSortBy = snapShot.data['ArchiveSortBy'],
-        archiveAutoDelete = snapShot.data['ArchiveAutoDelete'],
+  SettingsModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        deviceId = snapshot.data()['DeviceId'],
+        appearance = snapshot.data()['Appearance'],
+        pauseInterval = snapshot.data()['PauseInterval'],
+        defaultSortBy = snapshot.data()['DefaultSortBy'],
+        defaultSnoozeDuration = snapshot.data()['DefaultSnoozeDuration'],
+        archiveSortBy = snapshot.data()['ArchiveSortBy'],
+        archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
         includeAnsweredPrayerAutoDelete =
-            snapShot.data['IncludeAnsweredPrayerAutoDelete'],
-        allowPushNotification = snapShot.data['AllowPushNotification'],
-        allowTextNotification = snapShot.data['AllowTextNotification'],
-        allowAlexaReadPrayer = snapShot.data['AllowAlexaReadPrayer'],
-        emailUpdateFrequency = snapShot.data['EmailUpdateFrequency'],
-        emailUpdateNotification = snapShot.data['EmailUpdateNotification'],
+            snapshot.data()['IncludeAnsweredPrayerAutoDelete'],
+        allowPushNotification = snapshot.data()['AllowPushNotification'],
+        allowTextNotification = snapshot.data()['AllowTextNotification'],
+        allowAlexaReadPrayer = snapshot.data()['AllowAlexaReadPrayer'],
+        emailUpdateFrequency = snapshot.data()['EmailUpdateFrequency'],
+        emailUpdateNotification = snapshot.data()['EmailUpdateNotification'],
         notifyMeSomeonePostOnGroup =
-            snapShot.data['NotifyMeSomeonePostOnGroup'],
+            snapshot.data()['NotifyMeSomeonePostOnGroup'],
         notifyMeSomeoneSharePrayerWithMe =
-            snapShot.data['NotifyMeSomeoneSharePrayerWithMe'],
-        syncAlexa = snapShot.data['SyncAlexa'],
+            snapshot.data()['NotifyMeSomeoneSharePrayerWithMe'],
+        syncAlexa = snapshot.data()['SyncAlexa'],
         allowPrayerTimeNotification =
-            snapShot.data['AllowPrayerTimeNotification'],
-        status = snapShot.data['Status'],
-        createdBy = snapShot.data['CreatedBy'],
-        createdOn = snapShot.data['CreatedOn'].toDate(),
-        modifiedBy = snapShot.data['ModifiedBy'],
-        modifiedOn = snapShot.data['ModifiedOn'].toDate();
+            snapshot.data()['AllowPrayerTimeNotification'],
+        status = snapshot.data()['Status'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
