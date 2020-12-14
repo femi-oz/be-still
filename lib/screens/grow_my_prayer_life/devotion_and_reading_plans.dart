@@ -3,7 +3,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class DevotionPlans extends StatelessWidget {
@@ -140,6 +139,7 @@ class DevotionPlans extends StatelessWidget {
       showDialog(context: context, child: dialog);
     }
 
+    var devotionalData = [];
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
@@ -201,69 +201,70 @@ class DevotionPlans extends StatelessWidget {
                 ),
                 child: Column(
                   children: <Widget>[
-                    // ...devotionalData.map(
-                    //   (dev) => GestureDetector(
-                    //     onTap: () => _showAlert(dev),
-                    //     child: Container(
-                    //       margin: EdgeInsets.symmetric(vertical: 5.0),
-                    //       padding: EdgeInsets.symmetric(
-                    //           vertical: 10, horizontal: 20),
-                    //       width: double.infinity,
-                    //       decoration: BoxDecoration(
-                    //         color: context.prayerCardBg,
-                    //         border: Border.all(
-                    //           color: AppColors.darkBlue,
-                    //           width: 1,
-                    //         ),
-                    //         borderRadius: BorderRadius.circular(10),
-                    //       ),
-                    //       child: Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: <Widget>[
-                    //           Row(
-                    //             mainAxisAlignment:
-                    //                 MainAxisAlignment.spaceBetween,
-                    //             children: <Widget>[
-                    //               Text(
-                    //                 dev.type.toUpperCase(),
-                    //                 style: TextStyle(
-                    //                   color: context.devotionalGrey,
-                    //                   fontSize: 10,
-                    //                 ),
-                    //               ),
-                    //               Text(
-                    //                 'LENGTH: ${dev.length}'.toUpperCase(),
-                    //                 style: TextStyle(
-                    //                   color: context.devotionalGrey,
-                    //                   fontSize: 10,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Padding(
-                    //             padding:
-                    //                 const EdgeInsets.symmetric(vertical: 5.0),
-                    //             child: Divider(
-                    //               color: AppColors.darkBlue,
-                    //               thickness: 1,
-                    //             ),
-                    //           ),
-                    //           Column(
-                    //             children: <Widget>[
-                    //               Text(
-                    //                 dev.title,
-                    //                 style: TextStyle(
-                    //                     color: AppColors.lightBlue4,
-                    //                     fontSize: 14),
-                    //                 textAlign: TextAlign.left,
-                    //               ),
-                    //             ],
-                    //           )
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    ...devotionalData.map(
+                      (dev) => GestureDetector(
+                        onTap: () => _showAlert(dev),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 5.0),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppColors.getPrayerCardBgColor(
+                                _themeProvider.isDarkModeEnabled),
+                            border: Border.all(
+                              color: AppColors.darkBlue,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    dev.type.toUpperCase(),
+                                    style: TextStyle(
+                                      color: AppColors.grey,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  Text(
+                                    'LENGTH: ${dev.length}'.toUpperCase(),
+                                    style: TextStyle(
+                                      color: AppColors.grey,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5.0),
+                                child: Divider(
+                                  color: AppColors.darkBlue,
+                                  thickness: 1,
+                                ),
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Text(
+                                    dev.title,
+                                    style: TextStyle(
+                                        color: AppColors.lightBlue4,
+                                        fontSize: 14),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

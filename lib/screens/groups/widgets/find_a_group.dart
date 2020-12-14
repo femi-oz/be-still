@@ -1,13 +1,12 @@
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/prayer/Widgets/find_a_group_tools.dart';
-import 'package:be_still/screens/prayer/Widgets/group_card.dart';
+import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
+import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/app_theme.dart';
 
 class FindAGroup extends StatefulWidget {
   @override
@@ -30,6 +29,18 @@ class _FindAGroupState extends State<FindAGroup> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.0),
       height: MediaQuery.of(context).size.height * 0.8,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+        ),
+        image: DecorationImage(
+          image: AssetImage(
+              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          alignment: Alignment.bottomCenter,
+        ),
+      ),
       child: Column(
         children: [
           !_isSearchMode

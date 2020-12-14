@@ -1,60 +1,16 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../add_prayer/add_prayer_screen.dart';
-import 'prayer_card.dart';
 
-class PrayerList extends StatefulWidget {
-  @override
-  _PrayerListState createState() => _PrayerListState();
-}
-
-class _PrayerListState extends State<PrayerList> {
-  void _getPrayers() async {
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
-
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
-  }
-
-  bool _isInit = true;
-
-  BuildContext selectedContext;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _getPrayers();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
+class GroupPrayers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);

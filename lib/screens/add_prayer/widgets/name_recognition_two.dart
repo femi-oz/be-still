@@ -74,7 +74,12 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
       }
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
-      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      // Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PrayerScreen(),
+          ));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);

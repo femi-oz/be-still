@@ -6,7 +6,6 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../utils/app_theme.dart';
 
 class GrowMyPrayerLifeScreen extends StatelessWidget {
   static const routeName = 'grow-prayer';

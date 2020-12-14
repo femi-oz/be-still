@@ -45,8 +45,8 @@ class PrayerProvider with ChangeNotifier {
     );
   }
 
-  Future setGroupPrayers(String userId, PrayerType activeList, String groupId,
-      bool isGroupAdmin) async {
+  Future setGroupPrayers(
+      String userId, String groupId, bool isGroupAdmin) async {
     _prayerService.getGroupPrayers(groupId).asBroadcastStream().listen((data) {
       var hiddenPrayersId =
           _hiddenPrayers.map((prayer) => prayer.prayerId).toList();

@@ -7,7 +7,6 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 
 class PrayerQuickAccess extends StatefulWidget {
   final y;
@@ -127,7 +126,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddPrayer(
-                                    isEdit: true, prayer: widget.prayer),
+                                    isEdit: true,
+                                    prayer: widget.prayer,
+                                    isGroup: false),
                               ),
                             );
                           }),

@@ -20,11 +20,18 @@ import 'Widgets/add_prayer_menu.dart';
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
+  final bool showCancel;
   final bool isEdit;
+  final bool isGroup;
   final PrayerModel prayer;
 
   @override
-  AddPrayer({this.isEdit, this.prayer});
+  AddPrayer({
+    this.isEdit,
+    this.prayer,
+    this.isGroup,
+    this.showCancel = true,
+  });
   _AddPrayerState createState() => _AddPrayerState();
 }
 
@@ -46,9 +53,7 @@ class _AddPrayerState extends State<AddPrayer> {
     }
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final _isGroup =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayerType ==
-            PrayerType.group;
+
     final _groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
@@ -56,7 +61,7 @@ class _AddPrayerState extends State<AddPrayer> {
       prayerData = PrayerModel(
         title: '',
         isAnswer: false,
-        groupId: _isGroup ? _groupData?.group?.id : '0',
+        groupId: widget.isGroup ? _groupData?.group?.id : '0',
         userId: _user.id,
         isArchived: false,
         isSnoozed: false,
@@ -84,10 +89,11 @@ class _AddPrayerState extends State<AddPrayer> {
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
-              isUpdate: false,
-              prayer: prayerData,
-              scafoldKey: _scaffoldKey,
-              isGroup: _isGroup);
+            isUpdate: false,
+            prayer: prayerData,
+            scafoldKey: _scaffoldKey,
+            isGroup: widget.isGroup,
+          );
         },
       );
     } else {
@@ -127,79 +133,83 @@ class _AddPrayerState extends State<AddPrayer> {
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-        child: Scaffold(
-          key: _scaffoldKey,
-          body: Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled),
-              ),
+        child:
+            // Scaffold(
+            //   key: _scaffoldKey,
+            //   body:
+            Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors:
+                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
             ),
-            padding: EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
+          ),
+          padding: EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    widget.showCancel
+                        ? InkWell(
+                            child: Text(
+                              'CANCEL',
+                              style: TextStyle(
+                                  color: AppColors.lightBlue5, fontSize: 16),
+                            ),
+                            onTap: () => Navigator.of(context).pop(),
+                          )
+                        : Container(),
+                    InkWell(
                         child: Text(
-                          'CANCEL',
+                          'SAVE',
                           style: TextStyle(
                               color: AppColors.lightBlue5, fontSize: 16),
                         ),
-                        onTap: () => Navigator.of(context).pop(),
-                      ),
-                      InkWell(
-                          child: Text(
-                            'SAVE',
-                            style: TextStyle(
-                                color: AppColors.lightBlue5, fontSize: 16),
-                          ),
-                          onTap: () => _save()),
-                    ],
+                        onTap: () => _save()),
+                  ],
+                ),
+                SizedBox(height: 50.0),
+                Form(
+                  autovalidate: _autoValidate,
+                  key: _formKey,
+                  child: CustomInput(
+                    label: 'Prayer description',
+                    controller: _descriptionController,
+                    maxLines: 23,
+                    isRequired: true,
+                    showSuffix: false,
                   ),
-                  SizedBox(height: 30.0),
-                  Form(
-                    autovalidate: _autoValidate,
-                    key: _formKey,
-                    child: CustomInput(
-                      label: 'Prayer description',
-                      controller: _descriptionController,
-                      maxLines: 23,
-                      isRequired: true,
-                      showSuffix: false,
-                    ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: AppColors.lightBlue4,
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.more_horiz,
-                      color: AppColors.lightBlue4,
-                    ),
-                    onPressed: () => showModalBottomSheet(
-                      context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return AddPrayerMenu();
-                      },
-                    ),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor: AppColors.getDetailBgColor(
+                            _themeProvider.isDarkModeEnabled)[1]
+                        .withOpacity(0.5),
+                    backgroundColor: AppColors.getDetailBgColor(
+                            _themeProvider.isDarkModeEnabled)[1]
+                        .withOpacity(0.9),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return AddPrayerMenu();
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
+      // ),
     );
   }
 }

@@ -1,9 +1,10 @@
+import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
+import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,6 +24,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     }
   }
 
+  var bibleData = [];
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
@@ -92,7 +94,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              _buildPanel(),
+              _buildPanel(_themeProvider),
             ],
           ),
         ),
@@ -100,95 +102,78 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     );
   }
 
-  Widget _buildPanel() {
+  Widget _buildPanel(_themeProvider) {
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
         child: Column(
           children: <Widget>[
-            // ...bibleData
-            //     .map(
-            //       (BibleModel bible) => Container(
-            //         margin: EdgeInsets.symmetric(vertical: 10.0),
-            //         child: custom.ExpansionTile(
-            //           iconColor: AppColors.lightBlue4,
-            //           headerBackgroundColorStart: context.prayerMenuStart,
-            //           headerBackgroundColorEnd: context.prayerMenuEnd,
-            //           shadowColor: context.dropShadow,
-            //           title: Container(
-            //             margin: EdgeInsets.only(
-            //                 left: MediaQuery.of(context).size.width * 0.1),
-            //             child: Text(
-            //               bible.shortName,
-            //               textAlign: TextAlign.center,
-            //               style: TextStyle(
-            //                   color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
-            //                   fontSize: 22,
-            //                   fontWeight: FontWeight.w500),
-            //             ),
-            //           ),
-            //           initiallyExpanded: false,
-            //           // onExpansionChanged: (bool isExpanded) {
-            //           // },
-            //           children: <Widget>[
-            //             Container(
-            //               padding: EdgeInsets.only(bottom: 20),
-            //               width: double.infinity,
-            //               child: Column(
-            //                 children: <Widget>[
-            //                   Padding(
-            //                     padding: const EdgeInsets.only(top: 20.0),
-            //                     child: Text(
-            //                       bible.name,
-            //                       style: TextStyle(
-            //                         color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
-            //                         fontSize: 11,
-            //                       ),
-            //                     ),
-            //                   ),
-            //                   Text(
-            //                     bible.type,
-            //                     style: TextStyle(
-            //                         color: context.prayerCardBorder,
-            //                         fontSize: 10,
-            //                         height: 1.5),
-            //                   ),
-            //                   Padding(
-            //                     padding: const EdgeInsets.symmetric(
-            //                         horizontal: 40.0, vertical: 20.0),
-            //                     child: Text(
-            //                       bible.description,
-            //                       style: TextStyle(
-            //                         color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
-            //                         fontSize: 11,
-            //                         height: 1.3,
-            //                       ),
-            //                       textAlign: TextAlign.center,
-            //                     ),
-            //                   ),
-            //                   OutlineButton(
-            //                     disabledBorderColor: context.prayerCardBorder,
-            //                     borderSide:
-            //                         BorderSide(color: context.prayerCardBorder),
-            //                     onPressed: () => _launchURL(bible.link),
-            //                     child: Text(
-            //                       'READ NOW',
-            //                       style: TextStyle(
-            //                         color: AppColors.lightBlue4,
-            //                         fontSize: 14,
-            //                         fontWeight: FontWeight.w500,
-            //                         height: 1.3,
-            //                       ),
-            //                     ),
-            //                   ),
-            //                 ],
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     )
-            //     .toList(),
+            for (int i = 0; 1 < bibleData.length; i++)
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10.0),
+                child: custom.ExpansionTile(
+                  iconColor: AppColors.lightBlue4,
+                  headerBackgroundColorStart: AppColors.getPrayerMenu(
+                      _themeProvider.isDarkModeEnabled)[0],
+                  headerBackgroundColorEnd: AppColors.getPrayerMenu(
+                      _themeProvider.isDarkModeEnabled)[1],
+                  shadowColor:
+                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+                  title: Container(
+                    margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.1),
+                    child: Text(bibleData[i].shortName,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.boldText24),
+                  ),
+                  initiallyExpanded: false,
+                  // onExpansionChanged: (bool isExpanded) {
+                  // },
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      width: double.infinity,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Text(bibleData[i].name,
+                                style: AppTextStyles.regularText13),
+                          ),
+                          Text(
+                            bibleData[i].type,
+                            style: AppTextStyles.regularText11,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40.0, vertical: 20.0),
+                            child: Text(
+                              bibleData[i].description,
+                              style: AppTextStyles.regularText13,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          OutlineButton(
+                            borderSide: BorderSide(
+                                color: AppColors.getCardBorder(
+                                    _themeProvider.isDarkModeEnabled)),
+                            onPressed: () => _launchURL(bibleData[i].link),
+                            child: Text(
+                              'READ NOW',
+                              style: TextStyle(
+                                color: AppColors.lightBlue4,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

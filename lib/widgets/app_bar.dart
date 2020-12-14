@@ -2,6 +2,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
+import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -9,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  CustomAppBar({Key key})
+  final formKey;
+  CustomAppBar({Key key, this.formKey})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -69,6 +71,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: <Widget>[
           SizedBox(width: 20),
           InkWell(
+            onTap: () =>
+                Navigator.of(context).pushNamed(NotificationsScreen.routeName),
             child: Icon(
               Icons.notifications_none,
               color: AppColors.getAppBarColor(isDark),
@@ -98,15 +102,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
       title: searchMode
           ? Row(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  child: CustomInput(
-                    controller: _searchController,
-                    label: 'Search',
-                    padding: 5.0,
-                    showSuffix: false,
-                    textInputAction: TextInputAction.done,
-                    onTextchanged: _searchPrayer,
+                Expanded(
+                  child: Form(
+                    key: widget.formKey,
+                    autovalidateMode: AutovalidateMode.disabled,
+                    child: CustomInput(
+                      controller: _searchController,
+                      label: 'Search',
+                      padding: 5.0,
+                      showSuffix: false,
+                      textInputAction: TextInputAction.done,
+                      onTextchanged: _searchPrayer,
+                    ),
                   ),
                 ),
                 IconButton(

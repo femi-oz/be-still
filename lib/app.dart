@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
       theme: Provider.of<ThemeProvider>(context).isDarkModeEnabled
           ? appThemeData[AppTheme.DarkTheme]
           : appThemeData[AppTheme.LightTheme],
-      initialRoute: '/splash',
+      initialRoute: '/',
       routes: rt.routes,
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (ctx) => SplashScreen());

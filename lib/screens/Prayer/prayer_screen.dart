@@ -6,6 +6,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -25,38 +26,10 @@ class PrayerScreen extends StatefulWidget {
 class _PrayerScreenState extends State<PrayerScreen> {
   PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
-  void _getPrayers() async {
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
-
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
-  }
-
-  bool _isInit = true;
+  static final _formKey = new GlobalKey<FormState>();
   bool _hideNavBar;
   BuildContext selectedContext;
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _getPrayers();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
 
   @override
   void initState() {
@@ -69,8 +42,12 @@ class _PrayerScreenState extends State<PrayerScreen> {
   List<Widget> _buildScreens() {
     return [
       PrayerList(),
-      Container(),
-      Container(),
+      GroupScreen(),
+      AddPrayer(
+        isEdit: false,
+        isGroup: false,
+        showCancel: false,
+      ),
       Container(),
     ];
   }
@@ -110,7 +87,9 @@ class _PrayerScreenState extends State<PrayerScreen> {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        formKey: _formKey,
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

@@ -101,16 +101,17 @@ class CustomDrawer extends StatelessWidget {
                             title: Text("MY LIST",
                                 style: AppTextStyles.boldText20),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddPrayer(isEdit: false),
-                              ),
-                            ),
-                            title: Text("ADD A PRAYER",
-                                style: AppTextStyles.boldText20),
-                          ),
+                          // ListTile(
+                          //   onTap: () => Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) =>
+                          //           AddPrayer(isEdit: false, isGroup: false),
+                          //     ),
+                          //   ),
+                          //   title: Text("ADD A PRAYER",
+                          //       style: AppTextStyles.boldText20),
+                          // ),
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushReplacementNamed(PrayerMode.routeName),

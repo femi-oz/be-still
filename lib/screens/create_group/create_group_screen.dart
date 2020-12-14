@@ -11,6 +11,7 @@ import 'package:be_still/screens/create_group/widgets/create_group_succesful.dar
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
+import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -71,111 +72,85 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
 
-    return Scaffold(
-      appBar: CustomAppBar(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
-          ),
-          image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
-            alignment: Alignment.bottomCenter,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
         ),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.95,
-          child: Column(
-            children: <Widget>[
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: AppColors.getPrayerMenu(
-                        _themeProvider.isDarkModeEnabled),
-                  ),
-                ),
-                child: Text(
-                  'Create a Group',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: AppColors.offWhite2,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700),
-                ),
-              ),
-              Expanded(
-                  child: SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      _step == 1
-                          ? CreateGroupForm(
-                              formKey: _formKey,
-                              autoValidate: _autoValidate,
-                              cityController: _cityController,
-                              descriptionController: _descriptionController,
-                              groupNameController: _groupNameController,
-                              option: _option,
-                              organizationController: _organizationController,
-                              stateController: _stateController,
-                            )
-                          : GroupCreated(),
-                      SizedBox(height: 30.0),
-                      Container(
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              width: double.infinity,
-                              margin: EdgeInsets.only(bottom: 20),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    AppColors.lightBlue1,
-                                    AppColors.lightBlue2,
-                                  ],
-                                ),
-                              ),
-                              child: FlatButton(
-                                onPressed: () {
-                                  print(_step);
-                                  if (_step == 1) {
-                                    _save();
-                                  } else {
-                                    Navigator.of(context).pushReplacementNamed(
-                                        PrayerScreen.routeName);
-                                  }
-                                },
-                                color: Colors.transparent,
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: AppColors.offWhite1,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )),
-            ],
-          ),
+        image: DecorationImage(
+          image: AssetImage(_themeProvider.isDarkModeEnabled
+              ? 'assets/images/background-pattern-dark.png'
+              : 'assets/images/background-pattern.png'),
+          alignment: Alignment.bottomCenter,
         ),
       ),
-      endDrawer: CustomDrawer(),
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            CustomSectionHeder('Create a Group'),
+            Expanded(
+                child: SingleChildScrollView(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  _step == 1
+                      ? CreateGroupForm(
+                          formKey: _formKey,
+                          autoValidate: _autoValidate,
+                          cityController: _cityController,
+                          descriptionController: _descriptionController,
+                          groupNameController: _groupNameController,
+                          option: _option,
+                          organizationController: _organizationController,
+                          stateController: _stateController,
+                        )
+                      : GroupCreated(),
+                  SizedBox(height: 30.0),
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                AppColors.lightBlue1,
+                                AppColors.lightBlue2,
+                              ],
+                            ),
+                          ),
+                          child: FlatButton(
+                            onPressed: () {
+                              print(_step);
+                              if (_step == 1) {
+                                _save();
+                              } else {
+                                Navigator.of(context).pushReplacementNamed(
+                                    PrayerScreen.routeName);
+                              }
+                            },
+                            color: Colors.transparent,
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: AppColors.offWhite1,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 60.0),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+        ),
+      ),
     );
   }
 }
