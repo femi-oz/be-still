@@ -44,8 +44,31 @@ class AuthenticationService {
     }
   }
 
-  Future<void> forgotPassword(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  Future<void> sendVerificationEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<void> confirmToken(String code) async {
+    try {
+      await _firebaseAuth.verifyPasswordResetCode(code);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<void> forgotPassword(String code, String newPassword) async {
+    try {
+      await _firebaseAuth.confirmPasswordReset(
+        code: code,
+        newPassword: newPassword,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
   }
 
   Future signOut() async {

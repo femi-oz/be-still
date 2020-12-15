@@ -1,9 +1,8 @@
-import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
@@ -20,7 +19,7 @@ class ForgetPassword extends StatefulWidget {
 
 class _ForgetPasswordState extends State<ForgetPassword> {
   int step = 1;
-  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   TextEditingController _codeController = new TextEditingController();
   TextEditingController _confirmcodeController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
@@ -35,21 +34,26 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   bool _autoValidate3 = false;
   var notificationType = NotificationType.email;
 
-  _next() {
+  _next() async {
     if (step == 1) {
       setState(() => _autoValidate1 = true);
       if (!_formKey1.currentState.validate()) return;
       _formKey1.currentState.save();
-      Provider.of<AuthenticationProvider>(context)
-          .forgotPassword(_usernameController.text);
+      await Provider.of<AuthenticationProvider>(context)
+          .sendVerificationEmail(_emailController.text);
     } else if (step == 2) {
       setState(() => _autoValidate2 = true);
       if (!_formKey2.currentState.validate()) return;
       _formKey2.currentState.save();
+      await Provider.of<AuthenticationProvider>(context)
+          .confirmToken(_codeController.text);
     } else if (step == 3) {
       setState(() => _autoValidate3 = true);
       if (!_formKey3.currentState.validate()) return;
       _formKey3.currentState.save();
+      await Provider.of<AuthenticationProvider>(context)
+          .changePassword(_codeController.text, _passwordController.text);
+      await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
     }
     setState(() => step += 1);
   }
@@ -162,7 +166,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         children: <Widget>[
           CustomInput(
             label: 'Username',
-            controller: _usernameController,
+            controller: _emailController,
             keyboardType: TextInputType.text,
             isRequired: true,
             textInputAction: TextInputAction.done,
@@ -300,6 +304,12 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             label: 'Confirm Password',
             textInputAction: TextInputAction.done,
             unfocus: true,
+            validator: (value) {
+              if (_passwordController.text != value) {
+                return 'Password fields do not match';
+              }
+              return null;
+            },
           ),
         ],
       ),

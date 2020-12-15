@@ -25,8 +25,16 @@ class AuthenticationProvider with ChangeNotifier {
     );
   }
 
-  forgotPassword(String email) async {
-    return await _authService.forgotPassword(email);
+  sendVerificationEmail(String email) async {
+    return await _authService.sendVerificationEmail(email);
+  }
+
+  confirmToken(String code) async {
+    return await _authService.confirmToken(code);
+  }
+
+  changePassword(String code, String newPassword) async {
+    return await _authService.forgotPassword(code, newPassword);
   }
 
   Future<void> signOut() async {

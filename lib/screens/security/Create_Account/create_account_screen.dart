@@ -1,6 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -74,6 +75,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         lastName: _lastnameController.text,
         dob: _selectedDate,
       );
+      await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       BeStilDialog.hideLoading(_key);
       Navigator.of(context)
           .pushReplacementNamed(CreateAccountSuccess.routeName);
