@@ -287,18 +287,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             Column(
               children: [
                 CustomSectionHeder('App Data'),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      CustomButtonGroup(
-                        onSelected: () => null,
-                        title: 'EXPORT',
-                      ),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //       vertical: 40.0, horizontal: 20.0),
+                //   child: Row(
+                //     children: [
+                //       CustomButtonGroup(
+                //         onSelected: () => null,
+                //         title: 'EXPORT',
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
