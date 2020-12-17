@@ -32,75 +32,74 @@ class CustomAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      elevation: 5,
-      content: Container(
-        margin: const EdgeInsets.all(8.0),
-        padding: const EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
-          color: Colors.white,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(height: 10.0),
-            Icon(
-              _getIcon(type),
-              color: _getColor(type),
-              size: 50,
-            ),
-            const SizedBox(height: 10.0),
-            Text(
-              title.isEmpty ? _getTitle(type) : title,
-              style: AppTextStyles.headline6Grey.copyWith(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            Divider(),
-            Text(
-              message ?? 'An error occured!',
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20.0),
-            SizedBox(
-              width: double.maxFinite,
-              child: Row(
-                children: <Widget>[
+      ),
+      backgroundColor: Colors.white,
+      elevation: 5,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(height: 10.0),
+          Icon(
+            _getIcon(type),
+            color: _getColor(type),
+            size: 50,
+          ),
+          const SizedBox(height: 10.0),
+          Text(
+            title.isEmpty ? _getTitle(type) : title,
+            style: AppTextStyles.headline6Grey.copyWith(fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          Divider(),
+          Text(
+            message ?? 'An error occured!',
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20.0),
+          SizedBox(
+            width: double.maxFinite,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: FlatButton(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      confirmText,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    color: _getColor(type),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      if (onConfirm != null) {
+                        onConfirm();
+                      }
+                    },
+                  ),
+                ),
+                if (showCancelButton)
                   Expanded(
                     child: FlatButton(
                       padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        confirmText,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      color: _getColor(type),
-                      textColor: Colors.white,
+                      child: Text(cancelText),
                       onPressed: () {
                         Navigator.pop(context);
-                        if (onConfirm != null) {
-                          onConfirm();
+                        if (onCancel != null) {
+                          onCancel();
                         }
                       },
                     ),
                   ),
-                  if (showCancelButton)
-                    Expanded(
-                      child: FlatButton(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(cancelText),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          if (onCancel != null) {
-                            onCancel();
-                          }
-                        },
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
