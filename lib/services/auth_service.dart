@@ -44,32 +44,42 @@ class AuthenticationService {
     }
   }
 
-  Future<void> sendVerificationEmail(String email) async {
-    try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
+  // Future<void> sendVerificationEmail(String email) async {
+  //   try {
+  //     await _firebaseAuth.sendPasswordResetEmail(
+  //       email: email,
+  //       actionCodeSettings: ActionCodeSettings(
+  //         url: "https://example.web.app",
+  //         androidPackageName: "org.second.bestill.dev",
+  //         androidInstallApp: true,
+  //         androidMinimumVersion: '12',
+  //         iOSBundleId: "org.second.bestill.dev",
+  //         handleCodeInApp: true,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
-  Future<void> confirmToken(String code) async {
-    try {
-      await _firebaseAuth.verifyPasswordResetCode(code);
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
+  // Future<void> confirmToken(String code) async {
+  //   try {
+  //     await _firebaseAuth.verifyPasswordResetCode(code);
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
-  Future<void> forgotPassword(String code, String newPassword) async {
-    try {
-      await _firebaseAuth.confirmPasswordReset(
-        code: code,
-        newPassword: newPassword,
-      );
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
+  // Future<void> forgotPassword(String code, String newPassword) async {
+  //   try {
+  //     await _firebaseAuth.confirmPasswordReset(
+  //       code: code,
+  //       newPassword: newPassword,
+  //     );
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
   Future signOut() async {
     try {

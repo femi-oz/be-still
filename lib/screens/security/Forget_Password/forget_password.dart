@@ -35,26 +35,26 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var notificationType = NotificationType.email;
 
   _next() async {
-    if (step == 1) {
-      setState(() => _autoValidate1 = true);
-      if (!_formKey1.currentState.validate()) return;
-      _formKey1.currentState.save();
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .sendVerificationEmail(_emailController.text);
-    } else if (step == 2) {
-      setState(() => _autoValidate2 = true);
-      if (!_formKey2.currentState.validate()) return;
-      _formKey2.currentState.save();
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .confirmToken(_codeController.text);
-    } else if (step == 3) {
-      setState(() => _autoValidate3 = true);
-      if (!_formKey3.currentState.validate()) return;
-      _formKey3.currentState.save();
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .changePassword(_codeController.text, _passwordController.text);
-      await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-    }
+    // if (step == 1) {
+    //   setState(() => _autoValidate1 = true);
+    //   if (!_formKey1.currentState.validate()) return;
+    //   _formKey1.currentState.save();
+    //   await Provider.of<AuthenticationProvider>(context, listen: false)
+    //       .sendVerificationEmail(_emailController.text);
+    // } else if (step == 2) {
+    //   setState(() => _autoValidate2 = true);
+    //   if (!_formKey2.currentState.validate()) return;
+    //   _formKey2.currentState.save();
+    //   await Provider.of<AuthenticationProvider>(context, listen: false)
+    //       .confirmToken(_codeController.text);
+    // } else if (step == 3) {
+    //   setState(() => _autoValidate3 = true);
+    //   if (!_formKey3.currentState.validate()) return;
+    //   _formKey3.currentState.save();
+    //   await Provider.of<AuthenticationProvider>(context, listen: false)
+    //       .changePassword(_codeController.text, _passwordController.text);
+    //   await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
+    // }
     setState(() => step += 1);
   }
 
