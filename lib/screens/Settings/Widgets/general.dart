@@ -159,7 +159,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           onPressed: () => Navigator.of(context).pop(),
                           child: Text(
                             'Cancel',
-                            style: AppTextStyles.regularText16.copyWith(
+                            style: AppTextStyles.regularText15.copyWith(
                               color: Colors.white,
                             ),
                           )),
@@ -171,7 +171,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                 ? _updatePassword
                                 : null,
                         child: Text('Submit',
-                            style: AppTextStyles.regularText16.copyWith(
+                            style: AppTextStyles.regularText15.copyWith(
                               color: Colors.white,
                             )),
                       )
@@ -305,10 +305,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text('App is running the latest version',
-                          style: AppTextStyles.regularText16.copyWith(
+                          style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.getTextFieldText(
                                   _themeProvider.isDarkModeEnabled))),
-                      Text(_version, style: AppTextStyles.regularText16),
+                      Text(_version, style: AppTextStyles.regularText15),
                     ],
                   ),
                 ),

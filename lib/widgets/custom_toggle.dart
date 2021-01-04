@@ -20,7 +20,7 @@ class CustomToggle extends StatelessWidget {
             width: MediaQuery.of(context).size.width * 0.7,
             child: Text(
               title,
-              style: AppTextStyles.regularText16.copyWith(
+              style: AppTextStyles.regularText15.copyWith(
                 color: AppColors.getTextFieldText(
                     _themeProvider.isDarkModeEnabled),
               ),

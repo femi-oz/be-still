@@ -58,7 +58,7 @@ class CustomOutlineButton extends StatelessWidget {
                     : Container(),
                 Text(
                   value,
-                  style: AppTextStyles.regularText16.copyWith(
+                  style: AppTextStyles.regularText15.copyWith(
                       color: textColor == null
                           ? AppColors.getTextFieldText(isDarkModeEnabled)
                           : textColor),

@@ -53,7 +53,7 @@ class UpdateView extends StatelessWidget {
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
                                       .format(prayer.createdOn),
-                                  style: AppTextStyles.regularText16.copyWith(
+                                  style: AppTextStyles.regularText15.copyWith(
                                     color: AppColors.getPrayerPrimaryColor(
                                         _themeProvider.isDarkModeEnabled),
                                   ),
@@ -126,7 +126,7 @@ class UpdateView extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'Initial Prayer Request |',
-                                style: AppTextStyles.regularText16.copyWith(
+                                style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getPrayerPrimaryColor(
                                       _themeProvider.isDarkModeEnabled),
                                 ),
@@ -134,7 +134,7 @@ class UpdateView extends StatelessWidget {
                               Text(
                                 DateFormat(' MM.dd.yyyy')
                                     .format(prayer.createdOn),
-                                style: AppTextStyles.regularText16.copyWith(
+                                style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getPrayerPrimaryColor(
                                       _themeProvider.isDarkModeEnabled),
                                 ),

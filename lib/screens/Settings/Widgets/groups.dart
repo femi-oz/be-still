@@ -1,7 +1,4 @@
-import 'package:be_still/data/group.data.dart';
-import 'package:be_still/data/user.data.dart';
 import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 
@@ -10,9 +7,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:provider/provider.dart';
 
 import 'group_privilege.dart';
@@ -332,21 +327,21 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   void _sendInvite(GroupModel group) async {
-    final Email email = Email(
-      body:
-          '<p>You\'ve been invited to join ${group.name}. Click <a href="http://www.google.com">here</a> to join.</p>',
-      subject: 'BeStill group invitation email',
-      recipients: [_emailController.text],
-      isHTML: false,
-      cc: [],
-      bcc: [],
-    );
+    // final Email email = Email(
+    //   body:
+    //       '<p>You\'ve been invited to join ${group.name}. Click <a href="http://www.google.com">here</a> to join.</p>',
+    //   subject: 'BeStill group invitation email',
+    //   recipients: [_emailController.text],
+    //   isHTML: false,
+    //   cc: [],
+    //   bcc: [],
+    // );
     try {
       BeStilDialog.showLoading(
         bcontext,
         _key,
       );
-      await FlutterEmailSender.send(email);
+      // await FlutterEmailSender.send(email);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
       _emailController.text = '';
@@ -403,7 +398,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   width: MediaQuery.of(context).size.width * 0.7,
                   child: Text(
                     'Enable notifications from Groups?',
-                    style: AppTextStyles.regularText16.copyWith(
+                    style: AppTextStyles.regularText15.copyWith(
                         color: AppColors.getTextFieldText(
                             _themeProvider.isDarkModeEnabled)),
                   ),
@@ -483,7 +478,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           children: <Widget>[
                             Text(
                               'I am a',
-                              style: AppTextStyles.regularText16.copyWith(
+                              style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled)),
                             ),
@@ -533,7 +528,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MediaQuery.of(context).size.width * 0.7,
                                   child: Text(
                                     'Enable notifications for New Prayers for this group?',
-                                    style: AppTextStyles.regularText16.copyWith(
+                                    style: AppTextStyles.regularText15.copyWith(
                                         color: AppColors.getTextFieldText(
                                             _themeProvider.isDarkModeEnabled)),
                                   ),
@@ -559,7 +554,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MediaQuery.of(context).size.width * 0.7,
                                   child: Text(
                                     'Enable notifications for Prayer Updates for this group?',
-                                    style: AppTextStyles.regularText16.copyWith(
+                                    style: AppTextStyles.regularText15.copyWith(
                                         color: AppColors.getTextFieldText(
                                             _themeProvider.isDarkModeEnabled)),
                                   ),
@@ -588,7 +583,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 0.7,
                                         child: Text(
                                           'Notify me when new members joins this group',
-                                          style: AppTextStyles.regularText16
+                                          style: AppTextStyles.regularText15
                                               .copyWith(
                                                   color: AppColors
                                                       .getTextFieldText(
@@ -621,7 +616,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 0.7,
                                         child: Text(
                                           'Notify me of membership requests',
-                                          style: AppTextStyles.regularText16
+                                          style: AppTextStyles.regularText15
                                               .copyWith(
                                                   color: AppColors
                                                       .getTextFieldText(
@@ -654,7 +649,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 0.7,
                                         child: Text(
                                           'Notify me of flagged prayers',
-                                          style: AppTextStyles.regularText16
+                                          style: AppTextStyles.regularText15
                                               .copyWith(
                                                   color: AppColors
                                                       .getTextFieldText(
@@ -834,7 +829,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               ?.toUpperCase() ??
                                                           'N/A',
                                                       style: AppTextStyles
-                                                          .regularText16),
+                                                          .regularText15),
                                                   Text(
                                                     isAdmin
                                                         ? 'ADMIN'
@@ -842,7 +837,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                             ? 'MODERATOR'
                                                             : 'MEMBER',
                                                     style: AppTextStyles
-                                                        .regularText16
+                                                        .regularText15
                                                         .copyWith(
                                                             color: AppColors
                                                                 .lightBlue1),

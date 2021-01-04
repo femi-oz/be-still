@@ -84,7 +84,7 @@ class _FindAGroupState extends State<FindAGroup> {
                       SizedBox(height: 2.0),
                       Text(
                         'Use Advance Search to narrow your results.',
-                        style: AppTextStyles.regularText16
+                        style: AppTextStyles.regularText15
                             .copyWith(color: AppColors.offWhite4),
                       ),
                       SizedBox(height: 30.0),

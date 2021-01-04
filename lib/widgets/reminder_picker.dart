@@ -108,7 +108,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                           alignment: Alignment.center,
                                           child: Text(r,
                                               style:
-                                                  AppTextStyles.regularText16),
+                                                  AppTextStyles.regularText15),
                                         ),
                                       ),
                                     ],
@@ -138,7 +138,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                         hoursOfTheDay[i] < 10
                                             ? '0${hoursOfTheDay[i]}'
                                             : '${hoursOfTheDay[i]}',
-                                        style: AppTextStyles.regularText16),
+                                        style: AppTextStyles.regularText15),
                                   ),
                               ],
                             ),
@@ -158,7 +158,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               alignment: Alignment.center,
                               child: Text(':',
                                   textAlign: TextAlign.center,
-                                  style: AppTextStyles.regularText16),
+                                  style: AppTextStyles.regularText15),
                             ),
                           ),
                           Container(
@@ -176,7 +176,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                         i < 10
                                             ? '0${minInTheHour[i]}'
                                             : '${minInTheHour[i]}',
-                                        style: AppTextStyles.regularText16),
+                                        style: AppTextStyles.regularText15),
                                   ),
                               ],
                             ),

@@ -144,14 +144,14 @@ class _LoginScreenState extends State<LoginScreen>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         InkWell(
-          child: Text("Create an Account", style: AppTextStyles.regularText16),
+          child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
             Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
           },
         ),
         Row(
           children: <Widget>[
-            Text('Remember Me', style: AppTextStyles.regularText16),
+            Text('Remember Me', style: AppTextStyles.regularText15),
             Switch.adaptive(
               activeColor: Colors.white,
               activeTrackColor: AppColors.lightBlue4,

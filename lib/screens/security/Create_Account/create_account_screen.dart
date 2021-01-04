@@ -256,7 +256,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     width: double.infinity,
                     child: Text(
                       'Read the Terms of Use/User Agreement',
-                      style: AppTextStyles.regularText16,
+                      style: AppTextStyles.regularText15,
                     ),
                   ),
                   onTap: () => _createTermsDialog(context),
@@ -282,7 +282,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     Text(
                       'I Agree to the Terms of Use',
-                      style: AppTextStyles.regularText16,
+                      style: AppTextStyles.regularText15,
                     ),
                   ],
                 )

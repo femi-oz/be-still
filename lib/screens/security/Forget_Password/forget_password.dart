@@ -203,7 +203,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 child: FlatButton(
                   child: Text(
                     NotificationType.email.toUpperCase(),
-                    style: AppTextStyles.regularText16,
+                    style: AppTextStyles.regularText15,
                   ),
                   onPressed: () {
                     setState(
@@ -231,8 +231,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 ),
                 child: FlatButton(
                   child: Text(
-                    NotificationType.text.toUpperCase(),
-                    style: AppTextStyles.regularText16,
+                    NotificationType.text.toLowerCase(),
+                    style: AppTextStyles.regularText15,
                   ),
                   onPressed: () {
                     setState(

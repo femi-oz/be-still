@@ -45,7 +45,7 @@ class CustomInput extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: AppTextStyles.regularText16,
+      style: AppTextStyles.regularText15,
       cursorColor: color == null ? AppColors.lightBlue4 : color,
       maxLines: maxLines,
       decoration: InputDecoration(
@@ -55,7 +55,7 @@ class CustomInput extends StatelessWidget {
         suffixStyle: AppTextStyles.regularText14,
         counterText: '',
         hintText: label,
-        hintStyle: AppTextStyles.regularText16,
+        hintStyle: AppTextStyles.regularText15,
         errorBorder: new OutlineInputBorder(
           borderSide: new BorderSide(color: Colors.redAccent),
         ),

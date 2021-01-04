@@ -40,7 +40,7 @@ class BeStilDialog {
           SizedBox(height: 10.0),
           Text(
             message,
-            style: AppTextStyles.regularText16,
+            style: AppTextStyles.regularText15,
           )
         ],
       ),

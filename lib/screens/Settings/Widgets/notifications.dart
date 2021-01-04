@@ -72,7 +72,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 width: double.infinity,
                 child: Text(
                   'Set email update frequency',
-                  style: AppTextStyles.regularText16.copyWith(
+                  style: AppTextStyles.regularText15.copyWith(
                       color: AppColors.getTextFieldText(
                           _themeProvider.isDarkModeEnabled)),
                   textAlign: TextAlign.left,

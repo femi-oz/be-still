@@ -109,7 +109,7 @@ class PrayerCard extends StatelessWidget {
                               Text(
                                 DateFormat('MM.dd.yyyy')
                                     .format(prayer.createdOn),
-                                style: AppTextStyles.regularText16b.copyWith(
+                                style: AppTextStyles.regularText15b.copyWith(
                                   fontSize: 14,
                                   color: AppColors.getPrayerMenuColor(
                                     !_themeProvider.isDarkModeEnabled,
@@ -137,7 +137,7 @@ class PrayerCard extends StatelessWidget {
                     prayer.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.regularText18b.copyWith(
+                    style: AppTextStyles.regularText16b.copyWith(
                       color: AppColors.getPrayerMenuColor(
                         !_themeProvider.isDarkModeEnabled,
                       ),

@@ -39,7 +39,7 @@ class NoUpdateView extends StatelessWidget {
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
                           .format(prayer.createdOn),
-                      style: AppTextStyles.regularText16.copyWith(
+                      style: AppTextStyles.regularText15.copyWith(
                         color: AppColors.getPrayerPrimaryColor(
                             _themeProvider.isDarkModeEnabled),
                       ),

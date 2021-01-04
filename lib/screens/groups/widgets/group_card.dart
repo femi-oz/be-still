@@ -64,11 +64,11 @@ class GroupCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Admin: ',
-                                style: AppTextStyles.regularText16,
+                                style: AppTextStyles.regularText15,
                               ),
                               Text(
                                 '${groupData.group.createdBy}',
-                                style: AppTextStyles.regularText16.copyWith(
+                                style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
                                 ),
@@ -82,11 +82,11 @@ class GroupCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Based in: ',
-                                style: AppTextStyles.regularText16,
+                                style: AppTextStyles.regularText15,
                               ),
                               Text(
                                 '${groupData.group.location}',
-                                style: AppTextStyles.regularText16.copyWith(
+                                style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
                                 ),
@@ -100,11 +100,11 @@ class GroupCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Associated with: ',
-                                style: AppTextStyles.regularText16,
+                                style: AppTextStyles.regularText15,
                               ),
                               Text(
                                 '${groupData.group.organization}',
-                                style: AppTextStyles.regularText16.copyWith(
+                                style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
                                 ),
@@ -118,11 +118,11 @@ class GroupCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Type: ',
-                                style: AppTextStyles.regularText16,
+                                style: AppTextStyles.regularText15,
                               ),
                               Text(
                                 '${groupData.group.status} Group',
-                                style: AppTextStyles.regularText16.copyWith(
+                                style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
                                 ),
@@ -137,7 +137,7 @@ class GroupCard extends StatelessWidget {
                         children: [
                           Text(
                             '${groupData.groupUsers.length} current members',
-                            style: AppTextStyles.regularText16.copyWith(
+                            style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.getTextFieldText(
                                   _themeProvider.isDarkModeEnabled),
                             ),
@@ -146,7 +146,7 @@ class GroupCard extends StatelessWidget {
                           SizedBox(height: 5.0),
                           Text(
                             '2 contacts',
-                            style: AppTextStyles.regularText16.copyWith(
+                            style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.getTextFieldText(
                                   _themeProvider.isDarkModeEnabled),
                             ),
@@ -157,7 +157,7 @@ class GroupCard extends StatelessWidget {
                       SizedBox(height: 30.0),
                       Text(
                         groupData.group.description,
-                        style: AppTextStyles.regularText16.copyWith(
+                        style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.getTextFieldText(
                               _themeProvider.isDarkModeEnabled),
                         ),
@@ -166,7 +166,7 @@ class GroupCard extends StatelessWidget {
                       SizedBox(height: 30.0),
                       Text(
                         'Would you like to request to join?',
-                        style: AppTextStyles.regularText16.copyWith(
+                        style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.getTextFieldText(
                               _themeProvider.isDarkModeEnabled),
                         ),

@@ -60,7 +60,7 @@ class _CustomPickerState extends State<CustomPicker> {
                                           child: Text(i,
                                               textAlign: TextAlign.center,
                                               style:
-                                                  AppTextStyles.regularText16)),
+                                                  AppTextStyles.regularText15)),
                                     )
                                     .toList(),
                               ],

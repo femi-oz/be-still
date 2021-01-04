@@ -56,7 +56,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'Set your Church\'s preferred method of submitting prayers here to save it as a quick selection in the sharing options.',
-                  style: AppTextStyles.regularText16.copyWith(
+                  style: AppTextStyles.regularText15.copyWith(
                       color: AppColors.getTextFieldText(
                           _themeProvider.isDarkModeEnabled)),
                 ),

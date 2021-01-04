@@ -100,7 +100,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                     width: double.infinity,
                     child: Text(
                       'Set pause between prayers during Prayer Time',
-                      style: AppTextStyles.regularText16.copyWith(
+                      style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.getTextFieldText(
                               _themeProvider.isDarkModeEnabled)),
                       textAlign: TextAlign.left,
