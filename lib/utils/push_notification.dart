@@ -28,7 +28,6 @@ class PushNotificationsManager {
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();
-      print("FirebaseMessaging token: $token");
       final deviceId = Uuid().v1();
       final userDeviceID = Uuid().v1();
       //store device

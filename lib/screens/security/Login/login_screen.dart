@@ -120,8 +120,9 @@ class _LoginScreenState extends State<LoginScreen>
           CustomInput(
             label: 'Username',
             controller: _usernameController,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.emailAddress,
             isRequired: true,
+            isEmail: true,
           ),
           SizedBox(height: 15.0),
           CustomInput(

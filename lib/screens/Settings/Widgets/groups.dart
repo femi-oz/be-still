@@ -326,22 +326,20 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     super.didChangeDependencies();
   }
 
-  void _sendInvite(GroupModel group) async {
-    // final Email email = Email(
-    //   body:
-    //       '<p>You\'ve been invited to join ${group.name}. Click <a href="http://www.google.com">here</a> to join.</p>',
-    //   subject: 'BeStill group invitation email',
-    //   recipients: [_emailController.text],
-    //   isHTML: false,
-    //   cc: [],
-    //   bcc: [],
-    // );
+  void _sendInvite(String groupName, String groupId) async {
     try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
         _key,
       );
-      // await FlutterEmailSender.send(email);
+      await Provider.of<GroupProvider>(context, listen: false).inviteMember(
+          groupName,
+          groupId,
+          _emailController.text,
+          '${_user.firstName} ${_user.lastName}',
+          _user.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
       _emailController.text = '';
@@ -737,7 +735,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                             AppColors.dimBlue,
                                                         onPressed: () =>
                                                             _sendInvite(
-                                                                data.group),
+                                                                data.group.name,
+                                                                data.group.id),
                                                         child: Text(
                                                           'Send Invite',
                                                           style: AppTextStyles

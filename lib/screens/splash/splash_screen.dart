@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
@@ -62,6 +64,11 @@ class _SplashScreenState extends State<SplashScreen>
       if (isLoggedIn) {
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser();
+        UserModel _user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .setUserNotifications(_user?.id);
         Navigator.of(context).pushNamedAndRemoveUntil(
             PrayerScreen.routeName, (Route<dynamic> route) => false);
       } else {

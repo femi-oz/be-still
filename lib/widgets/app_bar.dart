@@ -1,4 +1,6 @@
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
@@ -52,6 +54,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
+    List<NotificationModel> notifications =
+        Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
@@ -73,11 +77,30 @@ class _CustomAppBarState extends State<CustomAppBar> {
           InkWell(
             onTap: () =>
                 Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-            child: Icon(
-              Icons.notifications_none,
-              color: AppColors.getAppBarColor(isDark),
-              size: 24,
-            ),
+            child: notifications.length == 0
+                ? Icon(
+                    Icons.notifications_none,
+                    color: AppColors.getAppBarColor(isDark),
+                    size: 24,
+                  )
+                : Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        Icons.notifications,
+                        color: AppColors.red,
+                        size: 24,
+                      ),
+                      Text(
+                        notifications.length.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
           ),
           SizedBox(width: 10),
           InkWell(

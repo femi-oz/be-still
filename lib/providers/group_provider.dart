@@ -58,11 +58,16 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future inviteMember(GroupInviteModel groupInvite, String userId,
-  //     String groupId, UserModel userData) async {
-  //   return await _groupService.inviteMember(
-  //       groupInvite, userId, groupId, userData);
-  // }
+  Future inviteMember(
+    String groupName,
+    String groupId,
+    String email,
+    String sender,
+    String senderId,
+  ) async {
+    return await _groupService.inviteMember(
+        groupName, groupId, email, sender, senderId);
+  }
 
   // Future updateMemberType(String userId, String groupId) async {
   //   return await _groupService.updateMemberType(userId, groupId);

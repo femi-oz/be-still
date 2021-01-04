@@ -4,12 +4,15 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
+import 'package:dio/dio.dart';
 
 class GroupService {
   final CollectionReference _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
   final CollectionReference _groupUserCollectionReference =
       FirebaseFirestore.instance.collection("GroupUser");
+  final CollectionReference _userCollectionReference =
+      FirebaseFirestore.instance.collection("User");
   // final CollectionReference _groupPrayerCollectionReference =
   //     Firestore.instance.collection("GroupPrayer");
 
@@ -143,7 +146,7 @@ class GroupService {
     }
   }
 
-  Future leaveGroup(String userGroupId) {
+  leaveGroup(String userGroupId) {
     try {
       _groupUserCollectionReference.doc(userGroupId).delete();
     } catch (e) {
@@ -151,7 +154,7 @@ class GroupService {
     }
   }
 
-  Future deleteGroup(String userGroupId, String groupId) {
+  deleteGroup(String userGroupId, String groupId) {
     try {
       _groupUserCollectionReference.doc(userGroupId).delete();
       _groupCollectionReference.doc(groupId).delete();
@@ -160,57 +163,34 @@ class GroupService {
     }
   }
 
-//   populateGroupPrayer(UserModel userData, String groupPrayerID, String groupID,
-//       GroupPrayerModel groupPrayerData) {
-//     GroupPrayerModel groupPrayer = GroupPrayerModel(
-//       id: groupPrayerID,
-//       status: groupPrayerData.status,
-//       groupId: groupID,
-//       prayerId: groupPrayerData.prayerId,
-//       sequence: groupPrayerData.sequence,
-//       isFavorite: groupPrayerData.isFavorite,
-//       createdBy: userData.createdBy,
-//       createdOn: userData.createdOn,
-//       modifiedBy: userData.modifiedBy,
-//       modifiedOn: userData.modifiedOn,
-//     );
-//     return groupPrayer;
-//   }
-
-//   populateGroupInvite(GroupInviteModel groupInviteData, String groupInviteId,
-//       String userId, String groupId, UserModel userData) {
-//     GroupInviteModel groupInvite = GroupInviteModel(
-//         id: groupInviteId,
-//         userId: userId,
-//         groupId: groupId,
-//         status: groupInviteData.status,
-//         createdBy: userData.createdBy,
-//         createdOn: userData.createdOn,
-//         modifiedBy: userData.modifiedBy,
-//         modifiedOn: userData.modifiedOn);
-//     return groupInvite;
-//   }
-
-//   inviteMember(GroupInviteModel groupInvite, String userId, String groupId,
-//       UserModel userData) {
-//     final groupInviteId = Uuid().v1();
-
-//     try {
-//       return Firestore.instance.runTransaction((transaction) async {
-//         await transaction.set(
-//             _groupInviteCollectionRefernce.document(groupInviteId),
-//             populateGroupInvite(
-//                     groupInvite, groupInviteId, userId, groupId, userData)
-//                 .toJson());
-//       }).then((value) {
-//         return true;
-//       }).catchError((e) {
-//         throw HttpException(e.message);
-//       });
-//     } catch (e) {
-//       throw HttpException(e.message);
-//     }
-//   }
+  inviteMember(String groupName, String groupId, String email, String sender,
+      String senderId) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var user = await _userCollectionReference
+          .where('Email', isEqualTo: email)
+          .limit(1)
+          .get();
+      if (user.docs.length == 0) {
+        throw HttpException(
+            'This email is not registered on BeStill! Please try with a registered email');
+      }
+      var data = {
+        'groupname': groupName,
+        'groupid': groupId,
+        'userid': user.docs[0].id,
+        'email': email,
+        'sender': sender,
+        'senderId': senderId,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/GroupInvite',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 
 //   Future updateMemberType(String userId, String groupId) async {
 //     try {
@@ -227,20 +207,22 @@ class GroupService {
 //     }
 //   }
 
-//   acceptInvite(String groupId, String userId, String status) {
-//     try {
-//       _groupCollectionReference
-//           .where('UserId', isEqualTo: userId)
-//           .snapshots()
-//           .map((event) {
-//         _groupCollectionReference
-//             .document(groupId)
-//             .updateData({'Status': status});
-//       });
-//     } catch (e) {
-//       throw HttpException(e.message);
-//     }
-//   }
+  acceptInvite(String groupId, String userId, String email, String name) async {
+    try {
+      var dio = Dio();
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
+        data: {
+          'groupId': groupId,
+          'userId': userId,
+          'email': email,
+          'name': name,
+        },
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 
 //   Future removeMemberFromGroup(String userId, String groupId) async {
   //   try {

@@ -63,10 +63,15 @@ class GroupModel {
 }
 
 class GroupInviteModel {
-  final String id;
-  final String userId;
+  final String groupName;
   final String groupId;
-  final String status;
+  final String email;
+  final String sender;
+  final String senderId;
+  final String id;
+  // final String userId;
+  // final String groupId;
+  // final String status;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -74,9 +79,14 @@ class GroupInviteModel {
 
   const GroupInviteModel({
     this.id,
-    @required this.userId,
+    // @required this.userId,
+    // @required this.groupId,
+    // @required this.status,
+    @required this.groupName,
     @required this.groupId,
-    @required this.status,
+    @required this.email,
+    @required this.sender,
+    @required this.senderId,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -85,9 +95,11 @@ class GroupInviteModel {
 
   GroupInviteModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
+        groupName = snapshot.data()['GroupName'],
         groupId = snapshot.data()['GroupId'],
-        status = snapshot.data()['Status'],
+        email = snapshot.data()['Email'],
+        sender = snapshot.data()['Sender'],
+        senderId = snapshot.data()['SenderId'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -95,9 +107,11 @@ class GroupInviteModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'UserId': userId,
+      'GroupName': groupName,
       'GroupId': groupId,
-      'Status': status,
+      'Email': email,
+      'Sender': sender,
+      'SenderId': senderId,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
