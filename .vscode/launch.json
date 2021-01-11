@@ -21,12 +21,12 @@
       "args": ["--flavor", "dev"]
     },
     {
-      "name": "Test",
+      "name": "Staging",
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
       "program": "lib/main_test.dart",
-      "args": ["--flavor", "test"]
+      "args": ["--flavor", "staging"]
     },
     {
       "name": "Prod",
