@@ -18,7 +18,7 @@ flutter doctor
 
 echo "Installed flutter to `pwd`/flutter"
 
-$flavor = $APP_ENVIRONMENT
+$flavor = "%$APP_ENVIRONMENT%"
 
 if($APP_ENVIRONMENT -eq 'Staging'){
 	$flavor = 'test'
