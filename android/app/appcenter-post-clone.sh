@@ -16,17 +16,16 @@ export PATH=`pwd`/flutter/bin:$PATH
 flutter channel stable
 flutter doctor
 
-
-
 echo "Installed flutter to `pwd`/flutter"
 
 
-if($APP_ENVIRONMENT -eq 'Staging'){
+if ($APP_ENVIRONMENT -eq 'Staging') {
 # build APK
 flutter build apk --release  --build-number $APPCENTER_BUILD_ID --flavor $APP_ENVIRONMENT --target=lib/main_test.dart
 
 # if you need build bundle (AAB) in addition to your APK, uncomment line below and last line of this script.
 flutter build appbundle --release --build-number $APPCENTER_BUILD_ID --flavor $APP_ENVIRONMENT --target=lib/main_test.dart
+
 } else {
 # build APK
 flutter build apk --release  --build-number $APPCENTER_BUILD_ID --flavor $APP_ENVIRONMENT --target=lib/main_$APP_ENVIRONMENT.dart
