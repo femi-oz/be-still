@@ -116,6 +116,11 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.addPrayer(prayerData, _userID);
   }
 
+  Future sendPrayerRequestMessage(
+      PrayerRequestMessageModel prayerRequestData) async {
+    return await _prayerService.prayerRequestMessage(prayerRequestData);
+  }
+
   Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
     return await _prayerService.addPrayerUpdate(prayerUpdateData);
   }

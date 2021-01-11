@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -18,6 +20,8 @@ class PrayerService {
       FirebaseFirestore.instance.collection("PrayerUpdate");
   final CollectionReference _hiddenPrayerCollectionReference =
       FirebaseFirestore.instance.collection("HiddenPrayer");
+  final CollectionReference _prayerRequestMessageCollectionReference =
+      FirebaseFirestore.instance.collection("PrayerRequestMessage");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
@@ -100,6 +104,27 @@ class PrayerService {
         modifiedBy: prayerData.modifiedBy,
         modifiedOn: prayerData.modifiedOn);
     return userPrayer;
+  }
+
+  Future prayerRequestMessage(
+    PrayerRequestMessageModel prayerRequestData,
+  ) async {
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          transaction.set(
+              _prayerRequestMessageCollectionReference
+                  .doc(prayerRequestData.senderId),
+              prayerRequestData.toJson());
+        },
+      ).then((value) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
   }
 
   Future addPrayer(
