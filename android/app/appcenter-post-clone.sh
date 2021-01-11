@@ -16,13 +16,15 @@ export PATH=`pwd`/flutter/bin:$PATH
 flutter channel stable
 flutter doctor
 
-echo "Installed flutter to `pwd`/flutter"
-
-$flavor = "%$APP_ENVIRONMENT%"
+$flavor = '$APP_ENVIRONMENT'
 
 if($APP_ENVIRONMENT -eq 'Staging'){
 	$flavor = 'test'
 }
+
+echo "Installed flutter to `pwd`/flutter"
+
+
 
 # build APK
 flutter build apk --release  --build-number $APPCENTER_BUILD_ID --flavor $APP_ENVIRONMENT --target=lib/main_$flavor.dart
