@@ -141,7 +141,7 @@ class PrayerService {
       }
       var data = {
         'recieverId': requestMessageModel.receiverId,
-        'reciever': requestMessageModel.receiver,
+        'receiver': requestMessageModel.receiver,
         'message': user.docs[0].id,
         'email': requestMessageModel.email,
         'sender': requestMessageModel.sender,
@@ -149,6 +149,25 @@ class PrayerService {
       };
       await dio.post(
         'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  tagPrayer(
+      String prayerId, String userId, String tagger, String taggerId) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {
+        'prayerId': prayerId,
+        'userId': userId,
+        'tagger': tagger,
+        'taggerId': taggerId,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
         data: data,
       );
     } catch (e) {

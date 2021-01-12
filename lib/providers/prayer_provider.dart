@@ -116,9 +116,13 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.addPrayer(prayerData, _userID);
   }
 
-  Future sendPrayerRequestMessage(
-      PrayerRequestMessageModel prayerRequestData) async {
+  Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
     return await _prayerService.messageRequestor(prayerRequestData);
+  }
+
+  Future tagPrayer(
+      String userId, String prayerId, String tagger, String taggerId) async {
+    return await _prayerService.tagPrayer(prayerId, userId, tagger, taggerId);
   }
 
   Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
