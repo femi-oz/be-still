@@ -118,7 +118,7 @@ class PrayerProvider with ChangeNotifier {
 
   Future sendPrayerRequestMessage(
       PrayerRequestMessageModel prayerRequestData) async {
-    return await _prayerService.prayerRequestMessage(prayerRequestData);
+    return await _prayerService.messageRequestor(prayerRequestData);
   }
 
   Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
