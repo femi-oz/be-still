@@ -200,6 +200,7 @@ class GroupService {
         'userId': userId,
         'userName': userName,
       };
+      print(data);
       await dio.post(
         'https://us-central1-bestill-app.cloudfunctions.net/JoinRequest',
         data: data,

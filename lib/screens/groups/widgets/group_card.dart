@@ -1,16 +1,62 @@
+import 'dart:io';
+
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class GroupCard extends StatelessWidget {
+class GroupCard extends StatefulWidget {
   final CombineGroupUserStream groupData;
 
-  GroupCard(this.groupData);
+  GroupCard(this.groupData) : super();
+
+  @override
+  _GroupCardState createState() => _GroupCardState();
+}
+
+class _GroupCardState extends State<GroupCard> {
+  BuildContext bcontext;
+  var _key = GlobalKey<State>();
+  @override
+  void initState() {
+    super.initState();
+    // you can use this.widget.foo here
+  }
+
+  _joinGroupInvite(String groupId, String userId, String userName) async {
+    try {
+      // BeStilDialog.showLoading(
+      //   bcontext,
+      //   _key,
+      // );
+      await Provider.of<GroupProvider>(context, listen: false)
+          .joinGroupInvite(groupId, userId, userName);
+    } catch (e) {
+      // BeStilDialog.showErrorDialog(context, e.message.toString());
+    }
+  }
+
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      // _getGroups();
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+
     // return Container();
     void _showAlert() {
       FocusScope.of(context).unfocus();
@@ -42,7 +88,8 @@ class GroupCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
                       icon: Icon(Icons.close),
                     )
                   ],
@@ -52,7 +99,7 @@ class GroupCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        groupData.group.name.toUpperCase(),
+                        this.widget.groupData.group.name.toUpperCase(),
                         style: AppTextStyles.boldText20,
                         textAlign: TextAlign.center,
                       ),
@@ -67,7 +114,7 @@ class GroupCard extends StatelessWidget {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${groupData.group.createdBy}',
+                                '${this.widget.groupData.group.createdBy}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
@@ -85,7 +132,7 @@ class GroupCard extends StatelessWidget {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${groupData.group.location}',
+                                '${this.widget.groupData.group.location}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
@@ -103,7 +150,7 @@ class GroupCard extends StatelessWidget {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${groupData.group.organization}',
+                                '${this.widget.groupData.group.organization}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
@@ -121,7 +168,7 @@ class GroupCard extends StatelessWidget {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${groupData.group.status} Group',
+                                '${this.widget.groupData.group.status} Group',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled),
@@ -136,7 +183,7 @@ class GroupCard extends StatelessWidget {
                       Column(
                         children: [
                           Text(
-                            '${groupData.groupUsers.length} current members',
+                            '${this.widget.groupData.groupUsers.length} current members',
                             style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.getTextFieldText(
                                   _themeProvider.isDarkModeEnabled),
@@ -156,7 +203,7 @@ class GroupCard extends StatelessWidget {
                       ),
                       SizedBox(height: 30.0),
                       Text(
-                        groupData.group.description,
+                        this.widget.groupData.group.description,
                         style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.getTextFieldText(
                               _themeProvider.isDarkModeEnabled),
@@ -200,7 +247,10 @@ class GroupCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => _joinGroupInvite(
+                              this.widget.groupData.group.id,
+                              _currentUser.id,
+                              _currentUser.email),
                         ),
                       ),
                     ],
@@ -245,12 +295,12 @@ class GroupCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    groupData.group.name.toUpperCase(),
+                    this.widget.groupData.group.name.toUpperCase(),
                     style: TextStyle(color: AppColors.lightBlue3, fontSize: 12),
                     textAlign: TextAlign.left,
                   ),
                   Text(
-                    '${groupData.group.location}'.toUpperCase(),
+                    '${this.widget.groupData.group.location}'.toUpperCase(),
                     style: TextStyle(color: AppColors.lightBlue4, fontSize: 10),
                     textAlign: TextAlign.left,
                   ),
