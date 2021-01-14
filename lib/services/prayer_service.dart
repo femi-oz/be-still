@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -18,6 +21,8 @@ class PrayerService {
       FirebaseFirestore.instance.collection("PrayerUpdate");
   final CollectionReference _hiddenPrayerCollectionReference =
       FirebaseFirestore.instance.collection("HiddenPrayer");
+  final CollectionReference _userCollectionReference =
+      FirebaseFirestore.instance.collection("User");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
@@ -100,6 +105,74 @@ class PrayerService {
         modifiedBy: prayerData.modifiedBy,
         modifiedOn: prayerData.modifiedOn);
     return userPrayer;
+  }
+
+  // Future prayerRequestMessage(
+  //   PrayerRequestMessageModel prayerRequestData,
+  // ) async {
+  //   try {
+  //     return FirebaseFirestore.instance.runTransaction(
+  //       (transaction) async {
+  //         transaction.set(
+  //             _prayerRequestMessageCollectionReference
+  //                 .doc(prayerRequestData.senderId),
+  //             prayerRequestData.toJson());
+  //       },
+  //     ).then((value) {
+  //       return true;
+  //     }).catchError((e) {
+  //       throw HttpException(e.message);
+  //     });
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
+
+  messageRequestor(PrayerRequestMessageModel requestMessageModel) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var user = await _userCollectionReference
+          .where('Email', isEqualTo: requestMessageModel.email)
+          .limit(1)
+          .get();
+      if (user.docs.length == 0) {
+        throw HttpException(
+            'This email is not registered on BeStill! Please try with a registered email');
+      }
+      var data = {
+        'recieverId': requestMessageModel.receiverId,
+        'receiver': requestMessageModel.receiver,
+        'message': user.docs[0].id,
+        'email': requestMessageModel.email,
+        'sender': requestMessageModel.sender,
+        'senderId': user.docs[0].id,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  tagPrayer(
+      String prayerId, String userId, String tagger, String taggerId) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {
+        'prayerId': prayerId,
+        'userId': userId,
+        'tagger': tagger,
+        'taggerId': taggerId,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
   }
 
   Future addPrayer(

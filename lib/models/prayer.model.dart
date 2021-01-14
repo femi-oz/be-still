@@ -122,6 +122,42 @@ class PrayerDisableModel {
   }
 }
 
+class PrayerRequestMessageModel {
+  final String senderId;
+  final String receiverId;
+  final String message;
+  final String email;
+  final String sender;
+  final String receiver;
+
+  const PrayerRequestMessageModel(
+      {@required this.senderId,
+      @required this.receiverId,
+      @required this.message,
+      @required this.email,
+      @required this.sender,
+      @required this.receiver});
+
+  PrayerRequestMessageModel.fromData(DocumentSnapshot snapshot)
+      : senderId = snapshot.id,
+        receiverId = snapshot.data()['ReceiverId'],
+        message = snapshot.data()['Message'],
+        email = snapshot.data()['Email'],
+        sender = snapshot.data()['Sender'],
+        receiver = snapshot.data()['Receiver'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'SenderId': senderId,
+      'ReceiverId': receiverId,
+      'Message': message,
+      'Email': email,
+      'Sender': sender,
+      'Receiver': receiver,
+    };
+  }
+}
+
 class PrayerUpdateModel {
   final String id;
   final String prayerId;

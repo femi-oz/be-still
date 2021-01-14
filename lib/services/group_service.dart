@@ -192,6 +192,24 @@ class GroupService {
     }
   }
 
+  joinGroupInvite(String groupId, String userId, String userName) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {
+        'groupId': groupId,
+        'userId': userId,
+        'userName': userName,
+      };
+      print(data);
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/JoinRequest',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
 //   Future updateMemberType(String userId, String groupId) async {
 //     try {
 //       _groupCollectionReference
