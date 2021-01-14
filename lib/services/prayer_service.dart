@@ -102,6 +102,21 @@ class PrayerService {
     return userPrayer;
   }
 
+  populateGroupPrayerByGroupID(
+      PrayerModel prayerData, String prayerID, String groupID) {
+    GroupPrayerModel userPrayer = GroupPrayerModel(
+        groupId: groupID,
+        status: Status.active,
+        sequence: null,
+        prayerId: prayerID,
+        isFavorite: false,
+        createdBy: prayerData.createdBy,
+        createdOn: prayerData.createdOn,
+        modifiedBy: prayerData.modifiedBy,
+        modifiedOn: prayerData.modifiedOn);
+    return userPrayer;
+  }
+
   Future addPrayer(
     PrayerModel prayerData,
     String _userID,
@@ -120,6 +135,44 @@ class PrayerService {
           //store user prayer
           transaction.set(_userPrayerCollectionReference.doc(_userPrayerID),
               populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addPrayerWithGroup(
+    PrayerModel prayerData,
+    List groups,
+    String _userID,
+  ) async {
+    // Generate uuid
+    final _prayerID = Uuid().v1();
+    final _userPrayerID = Uuid().v1();
+
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          // store prayer
+          transaction.set(
+              _prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+
+          //store user prayer
+          transaction.set(_userPrayerCollectionReference.doc(_userPrayerID),
+              populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+
+          for (var groupId in groups) {
+            var groupPrayerId = Uuid().v1();
+            transaction.set(
+                _groupPrayerCollectionReference.doc(groupPrayerId),
+                populateGroupPrayerByGroupID(prayerData, _prayerID, groupId)
+                    .toJson());
+          }
         },
       ).then((val) {
         return true;
@@ -182,6 +235,31 @@ class PrayerService {
   Future addGroupPrayer(
     PrayerModel prayerData,
   ) async {
+    // Generate uuid
+    final _prayerID = Uuid().v1();
+    final groupPrayerId = Uuid().v1();
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          // store prayer
+          transaction.set(
+              _prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+
+          //store group prayer
+          transaction.set(_groupPrayerCollectionReference.doc(groupPrayerId),
+              populateGroupPrayer(prayerData, _prayerID).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addPrayerToGroup(PrayerModel prayerData, List selectedGroups) async {
     // Generate uuid
     final _prayerID = Uuid().v1();
     final groupPrayerId = Uuid().v1();

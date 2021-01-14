@@ -5,6 +5,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/push_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -76,6 +77,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         dob: _selectedDate,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
+      await PushNotificationsManager().init(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(_key);
       Navigator.of(context)
           .pushReplacementNamed(CreateAccountSuccess.routeName);

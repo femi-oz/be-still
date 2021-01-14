@@ -7,6 +7,7 @@ import 'name_recognition_two.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {
   final PrayerModel prayer;
+  final List selectedGroups;
   final PrayerUpdateModel prayerUpdate;
   final bool isUpdate;
 
@@ -17,6 +18,7 @@ class NameRecognitionMenuOne extends StatefulWidget {
     this.prayer,
     this.scafoldKey,
     this.isGroup,
+    this.selectedGroups,
     this.prayerUpdate,
     this.isUpdate,
   });
@@ -159,6 +161,7 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                     prayerUpdate: widget.prayerUpdate,
                     prayer: widget.prayer,
                     scafoldKey: widget.scafoldKey,
+                    selectedGroups: widget.selectedGroups,
                     isGroup: widget.isGroup,
                     isUpdate: widget.isUpdate,
                   );

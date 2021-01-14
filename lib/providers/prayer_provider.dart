@@ -116,6 +116,11 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.addPrayer(prayerData, _userID);
   }
 
+  Future addPrayerWithGroups(
+      PrayerModel prayerData, List groups, String _userID) async {
+    return await _prayerService.addPrayerWithGroup(prayerData, groups, _userID);
+  }
+
   Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
     return await _prayerService.addPrayerUpdate(prayerUpdateData);
   }

@@ -6,13 +6,17 @@ import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddPrayerMenu extends StatefulWidget {
+class AddPrayerMenus extends StatefulWidget {
+  final String prayer;
+  AddPrayerMenus({this.prayer});
+
   @override
   _AddPrayerMenuState createState() => _AddPrayerMenuState();
 }
 
-class _AddPrayerMenuState extends State<AddPrayerMenu> {
+class _AddPrayerMenuState extends State<AddPrayerMenus> {
   var reminder = '';
+  List groups = [];
   var snooze = '';
   List reminderDays = [];
   initState() {
@@ -130,9 +134,15 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                           .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SharePrayer();
+                        return SharePrayer(
+                          prayer: widget.prayer,
+                        );
                       },
-                    );
+                    ).then((value) {
+                      setState(() {
+                        groups = value;
+                      });
+                    });
                   },
                   child: Container(
                     height: 50,
@@ -225,7 +235,7 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
               Icons.close,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(groups);
             },
             color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),

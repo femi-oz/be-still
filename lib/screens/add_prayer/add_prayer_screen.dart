@@ -6,6 +6,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/add_prayer/widgets/add_prayer_menu.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -39,6 +40,7 @@ class _AddPrayerState extends State<AddPrayer> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
+  List groups = [];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   BuildContext bcontext;
   var _key = GlobalKey<State>();
@@ -91,6 +93,7 @@ class _AddPrayerState extends State<AddPrayer> {
           return NameRecognitionMenuOne(
             isUpdate: false,
             prayer: prayerData,
+            selectedGroups: groups,
             scafoldKey: _scaffoldKey,
             isGroup: widget.isGroup,
           );
@@ -200,9 +203,14 @@ class _AddPrayerState extends State<AddPrayer> {
                         .withOpacity(0.9),
                     isScrollControlled: true,
                     builder: (BuildContext context) {
-                      return AddPrayerMenu();
+                      return AddPrayerMenus(
+                          prayer: _descriptionController.text);
                     },
-                  ),
+                  ).then((value) {
+                    setState(() {
+                      groups = value;
+                    });
+                  }),
                 ),
               ],
             ),

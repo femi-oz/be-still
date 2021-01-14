@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 
 class NameRecognitionMenuTwo extends StatefulWidget {
   final PrayerModel prayer;
+  final List selectedGroups;
   final PrayerUpdateModel prayerUpdate;
   final bool isGroup;
   final bool isUpdate;
@@ -25,6 +26,7 @@ class NameRecognitionMenuTwo extends StatefulWidget {
     this.prayer,
     this.scafoldKey,
     this.isGroup,
+    this.selectedGroups,
     this.prayerUpdate,
     this.isUpdate,
   });
@@ -68,8 +70,14 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
           await Provider.of<PrayerProvider>(context, listen: false)
               .addGroupPrayer(widget.prayer);
         } else {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayer(widget.prayer, _user.id);
+          if (widget.selectedGroups.length > 0) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayerWithGroups(
+                    widget.prayer, widget.selectedGroups, _user.id);
+          } else {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayer(widget.prayer, _user.id);
+          }
         }
       }
       await Future.delayed(Duration(milliseconds: 300));

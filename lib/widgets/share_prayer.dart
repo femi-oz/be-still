@@ -9,10 +9,22 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../utils/app_theme.dart';
 
-class SharePrayer extends StatelessWidget {
+class SharePrayer extends StatefulWidget {
   // PrayerModel prayer;
+  String prayer;
+  SharePrayer({this.prayer});
+
+  _SharePrayerState createState() => _SharePrayerState();
+}
+
+class _SharePrayerState extends State<SharePrayer> {
+  List groups = [];
+
   _emailLink() async {
-    const url = 'mailto:?subject=prayer subject&body=prayer body';
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    var _prayer = widget.prayer;
+    var name = _user.firstName;
+    var url = 'mailto:?subject=$name share prayer with you&body=$_prayer';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -178,7 +190,11 @@ class SharePrayer extends StatelessWidget {
                       builder: (BuildContext context) {
                         return SharePrayerToGroups();
                       },
-                    );
+                    ).then((value) {
+                      setState(() {
+                        groups = value;
+                      });
+                    });
                   },
                   child: Container(
                     height: 50,
@@ -265,7 +281,7 @@ class SharePrayer extends StatelessWidget {
               Icons.close,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(groups);
             },
             color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
