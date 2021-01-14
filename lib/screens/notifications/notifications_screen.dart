@@ -22,6 +22,8 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  BuildContext bcontext;
+  var _key = GlobalKey<State>();
   OverlayEntry _overlayEntry;
 
   @override
@@ -30,13 +32,35 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   _closeOverlay() {
-    this._overlayEntry.remove();
+    if (this._overlayEntry != null) {
+      this._overlayEntry.remove();
+      this._overlayEntry = null;
+    }
   }
 
   _callRequestAction() {
     print('clicked');
     this._overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(this._overlayEntry);
+  }
+
+  _acceptInvite(
+      String groupId, String userId, String name, String email) async {
+    try {
+      _closeOverlay();
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .acceptGroupInvite(groupId, userId, name, email);
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showSnackBar(_key, 'Request has been accepted');
+    } catch (e) {
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message.toString());
+      _closeOverlay();
+    }
   }
 
   void _getNotifications() async {
@@ -65,42 +89,59 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   OverlayEntry _createOverlayEntry() {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final data =
+        Provider.of<NotificationProvider>(context, listen: false).notifications;
+
     RenderBox renderBox = context.findRenderObject();
     var size = renderBox.size;
-    var offset = renderBox.localToGlobal(Offset.zero);
     return OverlayEntry(
-        opaque: false,
-        builder: (context) => Positioned(
-              // left: offset.dx,
-              // top: offset.dy + size.height + 5.0,
+        builder: (context) => Opacity(
+            opacity: 0.9,
+            child: Positioned(
               width: size.width,
               height: size.height,
               child: Material(
                   elevation: 4.0,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      GestureDetector(
-                        child: Icon(Icons.check_circle_rounded,
-                            color: AppColors.lightBlue4, size: 50),
-                      ),
-                      GestureDetector(
-                        onTap: () => _closeOverlay(),
-                        child: Icon(Icons.circle,
-                            color: AppColors.lightBlue4, size: 50),
-                      ),
-                      GestureDetector(
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.all(24),
+                    padding: EdgeInsets.only(top: 60, left: 80),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        ...data
+                            .where((e) =>
+                                e.messageType == NotificationType.request)
+                            .map((request) => GestureDetector(
+                                  onTap: () => _acceptInvite(request.id,
+                                      _user.id, _user.firstName, _user.email),
+                                  child: Icon(Icons.check_circle_outline,
+                                      color: AppColors.lightBlue4, size: 50),
+                                )),
+                        SizedBox(height: 20),
+                        GestureDetector(
                           onTap: () => _closeOverlay(),
-                          child: Icon(Icons.cancel_rounded,
-                              color: AppColors.red, size: 50))
-                    ],
+                          child: Icon(Icons.brightness_1_outlined,
+                              color: AppColors.lightBlue4, size: 51),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                            onTap: () => _closeOverlay(),
+                            child: Icon(Icons.block_outlined,
+                                color: AppColors.red, size: 50))
+                      ],
+                    ),
                   )),
-            ));
+            )));
   }
 
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
+    setState(() => this.bcontext = context);
     return SafeArea(
       child: Scaffold(
         appBar: NotificationBar(),
