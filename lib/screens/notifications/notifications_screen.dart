@@ -22,9 +22,21 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  OverlayEntry _overlayEntry;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  _closeOverlay() {
+    this._overlayEntry.remove();
+  }
+
+  _callRequestAction() {
+    print('clicked');
+    this._overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(this._overlayEntry);
   }
 
   void _getNotifications() async {
@@ -50,6 +62,40 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       _isInit = false;
     }
     super.didChangeDependencies();
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject();
+    var size = renderBox.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+    return OverlayEntry(
+        opaque: false,
+        builder: (context) => Positioned(
+              // left: offset.dx,
+              // top: offset.dy + size.height + 5.0,
+              width: size.width,
+              height: size.height,
+              child: Material(
+                  elevation: 4.0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      GestureDetector(
+                        child: Icon(Icons.check_circle_rounded,
+                            color: AppColors.lightBlue4, size: 50),
+                      ),
+                      GestureDetector(
+                        onTap: () => _closeOverlay(),
+                        child: Icon(Icons.circle,
+                            color: AppColors.lightBlue4, size: 50),
+                      ),
+                      GestureDetector(
+                          onTap: () => _closeOverlay(),
+                          child: Icon(Icons.cancel_rounded,
+                              color: AppColors.red, size: 50))
+                    ],
+                  )),
+            ));
   }
 
   @override
@@ -123,7 +169,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                   SizedBox(height: 10),
                                   GestureDetector(
                                     onLongPressEnd: null,
-                                    onTap: null,
+                                    onTap: () => _callRequestAction(),
                                     child: Container(
                                       margin: EdgeInsets.only(left: 20.0),
                                       decoration: BoxDecoration(
@@ -240,8 +286,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .width *
                                                       0.8,
                                                   child: Text(
-                                                    notifiaction.message
-                                                        .substring(0, 100),
+                                                    notifiaction.message,
+                                                    // .substring(0, 100),
                                                     style: AppTextStyles
                                                         .regularText16b
                                                         .copyWith(
