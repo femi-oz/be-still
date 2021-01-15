@@ -203,8 +203,7 @@ class _AddPrayerState extends State<AddPrayer> {
                         .withOpacity(0.9),
                     isScrollControlled: true,
                     builder: (BuildContext context) {
-                      return AddPrayerMenus(
-                          prayer: _descriptionController.text);
+                      return AddPrayerMenu(prayer: _descriptionController.text);
                     },
                   ).then((value) {
                     setState(() {
