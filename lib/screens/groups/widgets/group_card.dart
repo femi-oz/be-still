@@ -30,14 +30,17 @@ class _GroupCardState extends State<GroupCard> {
 
   _joinGroupInvite(String groupId, String userId, String userName) async {
     try {
-      // BeStilDialog.showLoading(
-      //   bcontext,
-      //   _key,
-      // );
+      BeStilDialog.showLoading(
+        bcontext,
+        _key,
+      );
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinGroupInvite(groupId, userId, userName);
+          .joinRequest(groupId, userId, userName);
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showSnackBar(_key, 'Request has been sent');
     } catch (e) {
-      // BeStilDialog.showErrorDialog(context, e.message.toString());
+      BeStilDialog.hideLoading(_key);
+      BeStilDialog.showErrorDialog(context, e.message.toString());
     }
   }
 
@@ -54,6 +57,7 @@ class _GroupCardState extends State<GroupCard> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() => this.bcontext = context);
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
 

@@ -192,7 +192,7 @@ class GroupService {
     }
   }
 
-  joinGroupInvite(String groupId, String userId, String userName) async {
+  joinRequest(String groupId, String userId, String userName) async {
     try {
       var dio = Dio(BaseOptions(followRedirects: false));
       var data = {
