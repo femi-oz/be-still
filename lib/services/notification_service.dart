@@ -37,4 +37,19 @@ class NotificationService {
       throw HttpException(e.message);
     }
   }
+
+  newPrayerGroupNotification(String prayerId, String groupId) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {'groupId': groupId, 'prayerId': prayerId};
+      print(data);
+
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/NewPrayer',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 }

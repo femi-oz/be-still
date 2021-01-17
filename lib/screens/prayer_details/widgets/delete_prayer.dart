@@ -2,6 +2,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -55,6 +56,10 @@ class _DeletePrayerState extends State<DeletePrayer> {
           .deletePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => PrayerList()));
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));

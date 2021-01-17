@@ -1,6 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -68,7 +69,11 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
       } else {
         if (widget.isGroup) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addGroupPrayer(widget.prayer);
+              .addGroupPrayer(widget.prayer)
+              .then((value) =>
+                  Provider.of<NotificationProvider>(context, listen: false)
+                      .newPrayerGroupNotification(
+                          widget.prayer.id, widget.prayer.groupId));
         } else {
           if (widget.selectedGroups.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
