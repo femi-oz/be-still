@@ -60,11 +60,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    return
-        // Scaffold(
-        //   appBar: CustomAppBar(),
-        //   body:
-        Container(
+    return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,

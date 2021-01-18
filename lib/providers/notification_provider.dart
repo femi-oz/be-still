@@ -25,4 +25,9 @@ class NotificationProvider with ChangeNotifier {
     return await _notificationService.acceptGroupInvite(
         groupId, userId, name, email);
   }
+
+  Future newPrayerGroupNotification(String prayerId, String groupId) async {
+    return await _notificationService.newPrayerGroupNotification(
+        prayerId, groupId);
+  }
 }

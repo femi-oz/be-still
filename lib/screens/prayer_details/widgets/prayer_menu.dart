@@ -141,7 +141,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           .withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SharePrayer();
+                        return SharePrayer(
+                          prayer: widget.prayer.description,
+                        );
                       },
                     );
                   },
