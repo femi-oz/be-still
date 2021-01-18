@@ -63,6 +63,15 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.close,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(groups);
+            },
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -229,15 +238,6 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop(groups);
-            },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

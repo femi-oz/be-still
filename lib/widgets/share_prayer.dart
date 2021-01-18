@@ -54,6 +54,15 @@ class _SharePrayerState extends State<SharePrayer> {
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.close,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(groups);
+            },
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -277,15 +286,6 @@ class _SharePrayerState extends State<SharePrayer> {
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop(groups);
-            },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

@@ -25,7 +25,6 @@ class NotificationModel {
     @required this.extra2,
     @required this.extra3,
   });
-
   NotificationModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
         message = snapshot.data()['Message'],

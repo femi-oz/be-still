@@ -28,11 +28,12 @@ class NotificationService {
         'name': name,
         'email': email
       };
+      print(data);
+
       await dio.post(
         'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
         data: data,
       );
-      print(data);
     } catch (e) {
       throw HttpException(e.message);
     }

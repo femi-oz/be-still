@@ -69,16 +69,12 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
       } else {
         if (widget.isGroup) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addGroupPrayer(widget.prayer)
-              .then((value) =>
-                  Provider.of<NotificationProvider>(context, listen: false)
-                      .newPrayerGroupNotification(
-                          widget.prayer.id, widget.prayer.groupId));
+              .addGroupPrayer(context, widget.prayer);
         } else {
           if (widget.selectedGroups.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerWithGroups(
-                    widget.prayer, widget.selectedGroups, _user.id);
+                    context, widget.prayer, widget.selectedGroups, _user.id);
           } else {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayer(widget.prayer, _user.id);

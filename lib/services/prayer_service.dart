@@ -5,8 +5,11 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -220,6 +223,7 @@ class PrayerService {
   }
 
   Future addPrayerWithGroup(
+    BuildContext context,
     PrayerModel prayerData,
     List groups,
     String _userID,
@@ -248,7 +252,10 @@ class PrayerService {
           }
         },
       ).then((val) {
-        return true;
+        for (var groupId in groups) {
+          Provider.of<NotificationProvider>(context, listen: false)
+              .newPrayerGroupNotification(_prayerID, groupId);
+        }
       }).catchError((e) {
         throw HttpException(e.message);
       });
@@ -306,6 +313,7 @@ class PrayerService {
   }
 
   Future addGroupPrayer(
+    BuildContext context,
     PrayerModel prayerData,
   ) async {
     // Generate uuid
@@ -323,7 +331,8 @@ class PrayerService {
               populateGroupPrayer(prayerData, _prayerID).toJson());
         },
       ).then((val) {
-        return true;
+        Provider.of<NotificationProvider>(context, listen: false)
+            .newPrayerGroupNotification(_prayerID, prayerData.groupId);
       }).catchError((e) {
         throw HttpException(e.message);
       });
