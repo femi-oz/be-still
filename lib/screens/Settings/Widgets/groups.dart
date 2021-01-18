@@ -396,7 +396,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   width: MediaQuery.of(context).size.width * 0.7,
                   child: Text(
                     'Enable notifications from Groups?',
-                    style: AppTextStyles.regularText15.copyWith(
+                    style: AppTextStyles.regularText14.copyWith(
                         color: AppColors.getTextFieldText(
                             _themeProvider.isDarkModeEnabled)),
                   ),
@@ -497,7 +497,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    'group_7745@bestillapp.com',
+                                    // 'group_7745@bestillapp.com',
+                                    data.group.email.toString(),
                                     style: AppTextStyles.regularText16b
                                         .copyWith(color: AppColors.lightBlue3),
                                   ),
@@ -534,9 +535,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 children: <Widget>[
                                   Flexible(
                                     child: Text(
-                                      'This is the group description that was input when the group was created, '
-                                      'and should probably have a character limit. But mostly just grows or shrinks'
-                                      'based on the amount of description.',
+                                      // 'This is the group description that was input when the group was created, '
+                                      // 'and should probably have a character limit. But mostly just grows or shrinks'
+                                      // 'based on the amount of description.'
+                                      data.group.description,
                                       style: AppTextStyles.regularText14
                                           .copyWith(
                                               color: AppColors.getTextFieldText(
@@ -576,7 +578,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    'Second Baptist Church',
+                                    // 'Second Baptist Church',
+                                    data.group.organization,
                                     style: AppTextStyles.regularText16b
                                         .copyWith(color: AppColors.lightBlue3),
                                   ),
@@ -613,7 +616,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 children: <Widget>[
                                   Flexible(
                                     child: Text(
-                                      'Houston, TX',
+                                      // 'Houston, TX',
+                                      data.group.location,
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.getTextFieldText(
