@@ -2,9 +2,11 @@ import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
+import 'package:be_still/screens/Settings/Widgets/groups.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,8 @@ class SettingsService {
       FirebaseFirestore.instance.collection("PrayerSetting");
   final CollectionReference _sharingSettingsCollectionReference =
       FirebaseFirestore.instance.collection("SharingSetting");
+  final CollectionReference _groupSettingsCollectionReference =
+      FirebaseFirestore.instance.collection("GroupSettings");
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
@@ -64,6 +68,21 @@ class SettingsService {
     return prayerSettings;
   }
 
+  populateGroupSettings(String userId, String email) {
+    GroupSettings groupsSettings = GroupSettings(
+        id: userId,
+        enableNotificationFormNewPrayers: false,
+        enableNotificationForUpdates: false,
+        notifyOfMembershipRequest: false,
+        notifyMeofFlaggedPrayers: false,
+        notifyWhenNewMemberJoins: false,
+        createdBy: email,
+        createdOn: DateTime.now(),
+        modifiedBy: email,
+        modifiedOn: DateTime.now());
+    return groupsSettings;
+  }
+
   populateSharingSettings(String userId, String email) {
     SharingSettingsModel sharingSettings = SharingSettingsModel(
         userId: userId,
@@ -79,12 +98,14 @@ class SettingsService {
     return sharingSettings;
   }
 
-  Future addSettings(String deviceId, String userId, String email) async {
+  Future addSettings(
+      String deviceId, String userId, String email, String groupId) async {
     // Generate uuid
 
     final settingsId = Uuid().v1();
     final sharingSettingsId = Uuid().v1();
     final prayerSettingsId = Uuid().v1();
+    final groupSettingsId = Uuid().v1();
 
     try {
       return FirebaseFirestore.instance.runTransaction(
@@ -102,6 +123,9 @@ class SettingsService {
           transaction.set(
               _prayerSettingsCollectionReference.doc(prayerSettingsId),
               populatePrayerSettings(userId, email).toJson());
+          transaction.set(
+              _groupSettingsCollectionReference.doc(groupSettingsId),
+              populateGroupSettings(groupId, email).toJson());
         },
       ).then((val) {
         return true;
@@ -150,6 +174,18 @@ class SettingsService {
     }
   }
 
+  Stream<GroupSettings> getGroupSettings(String userId) {
+    try {
+      return _groupSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .map((doc) =>
+              doc.docs.map((e) => GroupSettings.fromData(e)).toList()[0]);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future updateSettings({String key, dynamic value, String settingsId}) async {
     try {
       _settingsCollectionReference.doc(settingsId).update(
@@ -175,6 +211,17 @@ class SettingsService {
       {String key, dynamic value, String settingsId}) async {
     try {
       _sharingSettingsCollectionReference.doc(settingsId).update(
+        {key: value},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updateGroupSettings(
+      {String key, dynamic value, String groupSettingsId}) async {
+    try {
+      _groupSettingsCollectionReference.doc(groupSettingsId).update(
         {key: value},
       );
     } catch (e) {

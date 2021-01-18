@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class GrupSettings {
+class GroupSettings {
   final String id;
   final bool enableNotificationFormNewPrayers;
   final bool enableNotificationForUpdates;
-  final bool noityOfMembershipRequest;
+  final bool notifyOfMembershipRequest;
   final bool notifyMeofFlaggedPrayers;
   final bool notifyWhenNewMemberJoins;
   final String createdBy;
@@ -13,11 +13,11 @@ class GrupSettings {
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const GrupSettings({
+  const GroupSettings({
     this.id,
     @required this.enableNotificationFormNewPrayers,
     @required this.enableNotificationForUpdates,
-    @required this.noityOfMembershipRequest,
+    @required this.notifyOfMembershipRequest,
     @required this.notifyMeofFlaggedPrayers,
     @required this.notifyWhenNewMemberJoins,
     @required this.createdBy,
@@ -26,13 +26,14 @@ class GrupSettings {
     @required this.modifiedOn,
   });
 
-  GrupSettings.fromData(DocumentSnapshot snapshot)
+  GroupSettings.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
         enableNotificationFormNewPrayers =
             snapshot.data()['enableNotificationFormNewPrayers'],
         enableNotificationForUpdates =
             snapshot.data()['enableNotificationForUpdates'],
-        noityOfMembershipRequest = snapshot.data()['noityOfMembershipRequest'],
+        notifyOfMembershipRequest =
+            snapshot.data()['notifyOfMembershipRequest'],
         notifyMeofFlaggedPrayers = snapshot.data()['notifyMeofFlaggedPrayers'],
         notifyWhenNewMemberJoins = snapshot.data()['notifyWhenNewMemberJoins'],
         createdBy = snapshot.data()['CreatedBy'],
@@ -44,7 +45,7 @@ class GrupSettings {
     return {
       'enableNotificationFormNewPrayers': enableNotificationFormNewPrayers,
       'enableNotificationForUpdates': enableNotificationForUpdates,
-      'noityOfMembershipRequest': noityOfMembershipRequest,
+      'notifyOfMembershipRequest': notifyOfMembershipRequest,
       'notifyMeofFlaggedPrayers': notifyMeofFlaggedPrayers,
       'notifyWhenNewMemberJoins': notifyWhenNewMemberJoins,
       'CreatedBy': createdBy,

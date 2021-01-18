@@ -81,7 +81,7 @@ class UserService {
               );
 
           // store default settings
-          await locator<SettingsService>().addSettings('', userID, email);
+          await locator<SettingsService>().addSettings('', userID, email, '');
         },
       );
     } catch (e) {
