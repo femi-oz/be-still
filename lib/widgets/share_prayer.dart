@@ -34,10 +34,8 @@ class _SharePrayerState extends State<SharePrayer> {
   }
 
   _textLink() async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     var _prayer = widget.prayer;
-    var name = _user.firstName;
-    var url = 'sms:?subject=$name shared prayer with you&body=$_prayer';
+    var url = 'sms:?body=$_prayer';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
