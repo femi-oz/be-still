@@ -33,7 +33,8 @@ class _SharePrayerState extends State<SharePrayer> {
   }
 
   _textLink() async {
-    const url = 'sms:';
+    var _prayer = widget.prayer;
+    var url = 'sms:?body=$_prayer';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
