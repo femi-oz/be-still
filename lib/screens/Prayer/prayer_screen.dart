@@ -30,7 +30,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
   void initState() {
     super.initState();
     _controller = PersistentTabController(initialIndex: 0);
-    _hideNavBar = false;
+    _hideNavBar = true;
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();

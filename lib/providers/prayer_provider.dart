@@ -125,17 +125,18 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.tagPrayer(prayerId, userId, tagger, taggerId);
   }
 
-  Future addPrayerWithGroups(
-      PrayerModel prayerData, List groups, String _userID) async {
-    return await _prayerService.addPrayerWithGroup(prayerData, groups, _userID);
+  Future addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
+      List groups, String _userID) async {
+    return await _prayerService.addPrayerWithGroup(
+        context, prayerData, groups, _userID);
   }
 
   Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
     return await _prayerService.addPrayerUpdate(prayerUpdateData);
   }
 
-  Future addGroupPrayer(PrayerModel prayerData) async {
-    return await _prayerService.addGroupPrayer(prayerData);
+  Future addGroupPrayer(BuildContext context, PrayerModel prayerData) async {
+    return await _prayerService.addGroupPrayer(context, prayerData);
   }
 
   Future editprayer(String description, String prayerID) async {

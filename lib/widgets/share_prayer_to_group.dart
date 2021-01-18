@@ -44,6 +44,15 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.close,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(selectedGroups);
+            },
+            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -108,15 +117,6 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                     .toList(),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop(selectedGroups);
-            },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

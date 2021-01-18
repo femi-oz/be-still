@@ -392,7 +392,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           notifiaction.sender !=
                                                                   ''
                                                               ? Text(
-                                                                  'SENDER NAME',
+                                                                  notifiaction
+                                                                      .extra3
+                                                                      .toUpperCase(),
                                                                   style: AppTextStyles
                                                                       .regularText15b
                                                                       .copyWith(
@@ -406,7 +408,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           Row(
                                                             children: <Widget>[
                                                               Text(
-                                                                'GROUP NAME',
+                                                                notifiaction
+                                                                    .extra1
+                                                                    .toUpperCase(),
                                                                 style: AppTextStyles
                                                                     .regularText15b
                                                                     .copyWith(
@@ -571,7 +575,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           notifiaction.sender !=
                                                                   ''
                                                               ? Text(
-                                                                  'SENDER NAME',
+                                                                  notifiaction
+                                                                      .extra1,
                                                                   style: AppTextStyles
                                                                       .regularText15b
                                                                       .copyWith(
