@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 class GroupSettings {
   final String id;
+  final String userId;
+  final String groupId;
   final bool enableNotificationFormNewPrayers;
   final bool enableNotificationForUpdates;
   final bool notifyOfMembershipRequest;
@@ -15,6 +17,8 @@ class GroupSettings {
 
   const GroupSettings({
     this.id,
+    @required this.userId,
+    @required this.groupId,
     @required this.enableNotificationFormNewPrayers,
     @required this.enableNotificationForUpdates,
     @required this.notifyOfMembershipRequest,
@@ -28,14 +32,16 @@ class GroupSettings {
 
   GroupSettings.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        groupId = snapshot.data()['GroupId'],
         enableNotificationFormNewPrayers =
-            snapshot.data()['enableNotificationFormNewPrayers'],
+            snapshot.data()['EnableNotificationFormNewPrayers'],
         enableNotificationForUpdates =
-            snapshot.data()['enableNotificationForUpdates'],
+            snapshot.data()['EnableNotificationForUpdates'],
         notifyOfMembershipRequest =
-            snapshot.data()['notifyOfMembershipRequest'],
-        notifyMeofFlaggedPrayers = snapshot.data()['notifyMeofFlaggedPrayers'],
-        notifyWhenNewMemberJoins = snapshot.data()['notifyWhenNewMemberJoins'],
+            snapshot.data()['NotifyOfMembershipRequest'],
+        notifyMeofFlaggedPrayers = snapshot.data()['NotifyMeofFlaggedPrayers'],
+        notifyWhenNewMemberJoins = snapshot.data()['NotifyWhenNewMemberJoins'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -43,15 +49,41 @@ class GroupSettings {
 
   Map<String, dynamic> toJson() {
     return {
-      'enableNotificationFormNewPrayers': enableNotificationFormNewPrayers,
-      'enableNotificationForUpdates': enableNotificationForUpdates,
-      'notifyOfMembershipRequest': notifyOfMembershipRequest,
-      'notifyMeofFlaggedPrayers': notifyMeofFlaggedPrayers,
-      'notifyWhenNewMemberJoins': notifyWhenNewMemberJoins,
+      'UserId': userId,
+      'GroupId': groupId,
+      'EnableNotificationFormNewPrayers': enableNotificationFormNewPrayers,
+      'EnableNotificationForUpdates': enableNotificationForUpdates,
+      'NotifyOfMembershipRequest': notifyOfMembershipRequest,
+      'NotifyMeofFlaggedPrayers': notifyMeofFlaggedPrayers,
+      'NotifyWhenNewMemberJoins': notifyWhenNewMemberJoins,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
+class GroupPreferenceSettings {
+  final String id;
+  final String userId;
+  final bool enableNotificationForAllGroups;
+
+  const GroupPreferenceSettings({
+    this.id,
+    @required this.userId,
+    @required this.enableNotificationForAllGroups,
+  });
+
+  GroupPreferenceSettings.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        enableNotificationForAllGroups =
+            snapshot.data()['EnableNotificationForAllGroups'];
+  Map<String, dynamic> toJson() {
+    return {
+      'UserId': userId,
+      'EnableNotificationForAllGroups': enableNotificationForAllGroups,
     };
   }
 }

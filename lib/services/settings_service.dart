@@ -21,6 +21,8 @@ class SettingsService {
       FirebaseFirestore.instance.collection("SharingSetting");
   final CollectionReference _groupSettingsCollectionReference =
       FirebaseFirestore.instance.collection("GroupSettings");
+  final CollectionReference _groupPrefernceSettingsCollectionReference =
+      FirebaseFirestore.instance.collection("GroupPreferenceSettings");
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
@@ -68,9 +70,16 @@ class SettingsService {
     return prayerSettings;
   }
 
-  populateGroupSettings(String userId, String email) {
+  populateGroupPreferenceSettings(String userId) {
+    GroupPreferenceSettings groupPreferenceSettings = GroupPreferenceSettings(
+        userId: userId, enableNotificationForAllGroups: false);
+    return groupPreferenceSettings;
+  }
+
+  populateGroupSettings(String userId, String email, String groupId) {
     GroupSettings groupsSettings = GroupSettings(
-        id: userId,
+        userId: userId,
+        groupId: groupId,
         enableNotificationFormNewPrayers: false,
         enableNotificationForUpdates: false,
         notifyOfMembershipRequest: false,
@@ -98,14 +107,12 @@ class SettingsService {
     return sharingSettings;
   }
 
-  Future addSettings(
-      String deviceId, String userId, String email, String groupId) async {
+  Future addSettings(String deviceId, String userId, String email) async {
     // Generate uuid
 
     final settingsId = Uuid().v1();
     final sharingSettingsId = Uuid().v1();
     final prayerSettingsId = Uuid().v1();
-    final groupSettingsId = Uuid().v1();
 
     try {
       return FirebaseFirestore.instance.runTransaction(
@@ -123,9 +130,46 @@ class SettingsService {
           transaction.set(
               _prayerSettingsCollectionReference.doc(prayerSettingsId),
               populatePrayerSettings(userId, email).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addGroupSettings(String userId, String email, String groupId) {
+    final groupSettingsId = Uuid().v1();
+
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
           transaction.set(
               _groupSettingsCollectionReference.doc(groupSettingsId),
-              populateGroupSettings(groupId, email).toJson());
+              populateGroupSettings(userId, email, groupId).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  addGroupPreferenceSettings(String userId) {
+    final groupPreferenceSettingsId = Uuid().v1();
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          transaction.set(
+              _groupPrefernceSettingsCollectionReference
+                  .doc(groupPreferenceSettingsId),
+              populateGroupPreferenceSettings(userId).toJson());
         },
       ).then((val) {
         return true;
@@ -174,13 +218,26 @@ class SettingsService {
     }
   }
 
-  Stream<GroupSettings> getGroupSettings(String userId) {
+  Stream<List<GroupSettings>> getGroupSettings(String userId) {
     try {
       return _groupSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
-          .map((doc) =>
-              doc.docs.map((e) => GroupSettings.fromData(e)).toList()[0]);
+          .asyncMap(
+              (e) => e.docs.map((doc) => GroupSettings.fromData(doc)).toList());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<GroupPreferenceSettings> getGroupPreferenceSettings(String userId) {
+    try {
+      return _groupPrefernceSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .asyncMap((e) => e.docs
+              .map((doc) => GroupPreferenceSettings.fromData(doc))
+              .toList()[0]);
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -222,6 +279,19 @@ class SettingsService {
       {String key, dynamic value, String groupSettingsId}) async {
     try {
       _groupSettingsCollectionReference.doc(groupSettingsId).update(
+        {key: value},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updateGroupPreferenceSettings(
+      {String key, dynamic value, String groupPreferenceSettingsId}) async {
+    try {
+      _groupPrefernceSettingsCollectionReference
+          .doc(groupPreferenceSettingsId)
+          .update(
         {key: value},
       );
     } catch (e) {

@@ -1,5 +1,7 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -24,6 +26,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<GroupProvider>(context, listen: false)
         .setUserGroups(_user.id);
+  }
+
+  void _getGroupSettings() async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setGroupSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setGroupPreferenceSettings(_user.id);
   }
 
   void _showAlert(GroupUserModel user) {
@@ -321,6 +332,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   void didChangeDependencies() {
     if (_isInit) {
       _getGroups();
+      _getGroupSettings();
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -348,6 +360,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     }
   }
 
+  updateGroupSettings() {}
+
   TextEditingController _emailController = new TextEditingController();
   bool _inviteMode = false;
   @override
@@ -355,6 +369,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _groups = Provider.of<GroupProvider>(context).userGroups;
+    final _groupSettings = Provider.of<SettingsProvider>(context).groupSettings;
+    final _groupPreferenceSettings =
+        Provider.of<SettingsProvider>(context).groupPreferenceSettings;
+    // print(_groupSettings);
     // TODO create default grop settings when group is created
     setState(() => this.bcontext = context);
     return SingleChildScrollView(
@@ -402,11 +420,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   ),
                 ),
                 Switch.adaptive(
-                  value: true,
+                  value:
+                      _groupPreferenceSettings.enableNotificationForAllGroups,
                   activeColor: Colors.white,
                   activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
+                  onChanged: (value) => SettingsProvider()
+                      .updateGroupPrefenceSettings(
+                          key: 'EnableNotificationForAllGroups',
+                          value: value,
+                          settingsId: _groupPreferenceSettings.id),
                 ),
               ],
             ),
@@ -696,13 +719,24 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             _themeProvider.isDarkModeEnabled)),
                                   ),
                                 ),
-                                Switch.adaptive(
-                                  value: true,
-                                  activeColor: Colors.white,
-                                  activeTrackColor: AppColors.lightBlue4,
-                                  inactiveThumbColor: Colors.white,
-                                  onChanged: (_) {},
-                                ),
+                                ..._groupSettings
+                                    .where((element) =>
+                                        element.groupId == data.group.id)
+                                    .map(
+                                      (e) => Switch.adaptive(
+                                        value:
+                                            e.enableNotificationFormNewPrayers,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (value) => SettingsProvider()
+                                            .updateGroupSettings(
+                                                key:
+                                                    'EnableNotificationFormNewPrayers',
+                                                value: value,
+                                                settingsId: e.id),
+                                      ),
+                                    ),
                               ],
                             ),
                           ),
@@ -722,13 +756,23 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             _themeProvider.isDarkModeEnabled)),
                                   ),
                                 ),
-                                Switch.adaptive(
-                                  value: true,
-                                  activeColor: Colors.white,
-                                  activeTrackColor: AppColors.lightBlue4,
-                                  inactiveThumbColor: Colors.white,
-                                  onChanged: (_) {},
-                                ),
+                                ..._groupSettings
+                                    .where((element) =>
+                                        element.groupId == data.group.id)
+                                    .map(
+                                      (e) => Switch.adaptive(
+                                        value: e.enableNotificationForUpdates,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (value) => SettingsProvider()
+                                            .updateGroupSettings(
+                                                key:
+                                                    'EnableNotificationForUpdates',
+                                                value: value,
+                                                settingsId: e.id),
+                                      ),
+                                    ),
                               ],
                             ),
                           ),
@@ -754,13 +798,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               .isDarkModeEnabled)),
                                         ),
                                       ),
-                                      Switch.adaptive(
-                                        value: false,
-                                        activeColor: Colors.white,
-                                        activeTrackColor: AppColors.lightBlue4,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
+                                      ..._groupSettings
+                                          .where((element) =>
+                                              element.groupId == data.group.id)
+                                          .map(
+                                            (e) => Switch.adaptive(
+                                              value: e.notifyWhenNewMemberJoins,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.lightBlue4,
+                                              inactiveThumbColor: Colors.white,
+                                              onChanged: (value) =>
+                                                  SettingsProvider()
+                                                      .updateGroupSettings(
+                                                          key:
+                                                              'NotifyWhenNewMemberJoins',
+                                                          value: value,
+                                                          settingsId: e.id),
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 )
@@ -787,13 +843,26 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               .isDarkModeEnabled)),
                                         ),
                                       ),
-                                      Switch.adaptive(
-                                        value: false,
-                                        activeColor: Colors.white,
-                                        activeTrackColor: AppColors.lightBlue4,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
+                                      ..._groupSettings
+                                          .where((element) =>
+                                              element.groupId == data.group.id)
+                                          .map(
+                                            (e) => Switch.adaptive(
+                                              value:
+                                                  e.notifyOfMembershipRequest,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.lightBlue4,
+                                              inactiveThumbColor: Colors.white,
+                                              onChanged: (value) =>
+                                                  SettingsProvider()
+                                                      .updateGroupSettings(
+                                                          key:
+                                                              'NotifyOfMembershipRequest',
+                                                          value: value,
+                                                          settingsId: e.id),
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 )
@@ -820,13 +889,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               .isDarkModeEnabled)),
                                         ),
                                       ),
-                                      Switch.adaptive(
-                                        value: false,
-                                        activeColor: Colors.white,
-                                        activeTrackColor: AppColors.lightBlue4,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
+                                      ..._groupSettings
+                                          .where((element) =>
+                                              element.groupId == data.group.id)
+                                          .map(
+                                            (e) => Switch.adaptive(
+                                              value: e.notifyMeofFlaggedPrayers,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.lightBlue4,
+                                              inactiveThumbColor: Colors.white,
+                                              onChanged: (value) =>
+                                                  SettingsProvider()
+                                                      .updateGroupSettings(
+                                                          key:
+                                                              'NotifyMeofFlaggedPrayers',
+                                                          value: value,
+                                                          settingsId: e.id),
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 )
