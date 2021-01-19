@@ -1,5 +1,7 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -24,6 +26,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<GroupProvider>(context, listen: false)
         .setUserGroups(_user.id);
+  }
+
+  void _getGroupSettings() async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setGroupSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setGroupPreferenceSettings(_user.id);
   }
 
   void _showAlert(GroupUserModel user) {
@@ -321,6 +332,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   void didChangeDependencies() {
     if (_isInit) {
       _getGroups();
+      _getGroupSettings();
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -348,6 +360,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     }
   }
 
+  updateGroupSettings() {}
+
   TextEditingController _emailController = new TextEditingController();
   bool _inviteMode = false;
   @override
@@ -355,6 +369,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final _groups = Provider.of<GroupProvider>(context).userGroups;
+    final _groupSettings = Provider.of<SettingsProvider>(context).groupSettings;
+    final _groupPreferenceSettings =
+        Provider.of<SettingsProvider>(context).groupPreferenceSettings;
+    // print(_groupSettings);
     // TODO create default grop settings when group is created
     setState(() => this.bcontext = context);
     return SingleChildScrollView(
@@ -396,17 +414,22 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   width: MediaQuery.of(context).size.width * 0.7,
                   child: Text(
                     'Enable notifications from Groups?',
-                    style: AppTextStyles.regularText15.copyWith(
+                    style: AppTextStyles.regularText14.copyWith(
                         color: AppColors.getTextFieldText(
                             _themeProvider.isDarkModeEnabled)),
                   ),
                 ),
                 Switch.adaptive(
-                  value: true,
+                  value:
+                      _groupPreferenceSettings.enableNotificationForAllGroups,
                   activeColor: Colors.white,
                   activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
-                  onChanged: (_) {},
+                  onChanged: (value) => SettingsProvider()
+                      .updateGroupPrefenceSettings(
+                          key: 'EnableNotificationForAllGroups',
+                          value: value,
+                          settingsId: _groupPreferenceSettings.id),
                 ),
               ],
             ),
@@ -457,7 +480,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             children: <Widget>[
                               SizedBox(width: 3),
                               Text('Group Info',
-                                  style: AppTextStyles.boldText16),
+                                  style: AppTextStyles.regularText11),
                               SizedBox(width: 10),
                               Expanded(
                                 child: Divider(
@@ -468,15 +491,179 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ],
                           ),
                           initiallyExpanded: false,
-                          children: <Widget>[Text('TODO DESCRIPTION')]),
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                      'To submit prayers to this group via email:',
+                                      style: AppTextStyles.regularText13
+                                          .copyWith(
+                                              color: AppColors.getTextFieldText(
+                                                  _themeProvider
+                                                      .isDarkModeEnabled)))
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 30),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    // 'group_7745@bestillapp.com',
+                                    data.group.email.toString(),
+                                    style: AppTextStyles.regularText16b
+                                        .copyWith(color: AppColors.lightBlue3),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'Group Description',
+                                    style: AppTextStyles.regularText11
+                                        .copyWith(color: AppColors.lightBlue2),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Text(
+                                      // 'This is the group description that was input when the group was created, '
+                                      // 'and should probably have a character limit. But mostly just grows or shrinks'
+                                      // 'based on the amount of description.'
+                                      data.group.description,
+                                      style: AppTextStyles.regularText14
+                                          .copyWith(
+                                              color: AppColors.getTextFieldText(
+                                                  _themeProvider
+                                                      .isDarkModeEnabled)),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text('Associated Church/Organisation',
+                                      style: AppTextStyles.regularText11
+                                          .copyWith(
+                                              color: AppColors.lightBlue2))
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    // 'Second Baptist Church',
+                                    data.group.organization,
+                                    style: AppTextStyles.regularText16b
+                                        .copyWith(color: AppColors.lightBlue3),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'Based in',
+                                    style: AppTextStyles.regularText11
+                                        .copyWith(color: AppColors.lightBlue2),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Text(
+                                      // 'Houston, TX',
+                                      data.group.location,
+                                      style: AppTextStyles.regularText16b
+                                          .copyWith(
+                                              color: AppColors.getTextFieldText(
+                                                  _themeProvider
+                                                      .isDarkModeEnabled)),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ]),
+                      SizedBox(
+                        height: 30,
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              'I am a',
-                              style: AppTextStyles.regularText15.copyWith(
+                              'I am a/an',
+                              style: AppTextStyles.regularText14.copyWith(
                                   color: AppColors.getTextFieldText(
                                       _themeProvider.isDarkModeEnabled)),
                             ),
@@ -502,7 +689,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               children: <Widget>[
                                 Text(
                                   'My Notifications',
-                                  style: AppTextStyles.boldText16,
+                                  style: AppTextStyles.regularText11
+                                      .copyWith(color: AppColors.lightBlue1),
                                 ),
                                 SizedBox(width: 10),
                                 Expanded(
@@ -526,18 +714,29 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MediaQuery.of(context).size.width * 0.7,
                                   child: Text(
                                     'Enable notifications for New Prayers for this group?',
-                                    style: AppTextStyles.regularText15.copyWith(
+                                    style: AppTextStyles.regularText14.copyWith(
                                         color: AppColors.getTextFieldText(
                                             _themeProvider.isDarkModeEnabled)),
                                   ),
                                 ),
-                                Switch.adaptive(
-                                  value: true,
-                                  activeColor: Colors.white,
-                                  activeTrackColor: AppColors.lightBlue4,
-                                  inactiveThumbColor: Colors.white,
-                                  onChanged: (_) {},
-                                ),
+                                ..._groupSettings
+                                    .where((element) =>
+                                        element.groupId == data.group.id)
+                                    .map(
+                                      (e) => Switch.adaptive(
+                                        value:
+                                            e.enableNotificationFormNewPrayers,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (value) => SettingsProvider()
+                                            .updateGroupSettings(
+                                                key:
+                                                    'EnableNotificationFormNewPrayers',
+                                                value: value,
+                                                settingsId: e.id),
+                                      ),
+                                    ),
                               ],
                             ),
                           ),
@@ -552,18 +751,28 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MediaQuery.of(context).size.width * 0.7,
                                   child: Text(
                                     'Enable notifications for Prayer Updates for this group?',
-                                    style: AppTextStyles.regularText15.copyWith(
+                                    style: AppTextStyles.regularText14.copyWith(
                                         color: AppColors.getTextFieldText(
                                             _themeProvider.isDarkModeEnabled)),
                                   ),
                                 ),
-                                Switch.adaptive(
-                                  value: true,
-                                  activeColor: Colors.white,
-                                  activeTrackColor: AppColors.lightBlue4,
-                                  inactiveThumbColor: Colors.white,
-                                  onChanged: (_) {},
-                                ),
+                                ..._groupSettings
+                                    .where((element) =>
+                                        element.groupId == data.group.id)
+                                    .map(
+                                      (e) => Switch.adaptive(
+                                        value: e.enableNotificationForUpdates,
+                                        activeColor: Colors.white,
+                                        activeTrackColor: AppColors.lightBlue4,
+                                        inactiveThumbColor: Colors.white,
+                                        onChanged: (value) => SettingsProvider()
+                                            .updateGroupSettings(
+                                                key:
+                                                    'EnableNotificationForUpdates',
+                                                value: value,
+                                                settingsId: e.id),
+                                      ),
+                                    ),
                               ],
                             ),
                           ),
@@ -581,7 +790,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 0.7,
                                         child: Text(
                                           'Notify me when new members joins this group',
-                                          style: AppTextStyles.regularText15
+                                          style: AppTextStyles.regularText14
                                               .copyWith(
                                                   color: AppColors
                                                       .getTextFieldText(
@@ -589,13 +798,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               .isDarkModeEnabled)),
                                         ),
                                       ),
-                                      Switch.adaptive(
-                                        value: false,
-                                        activeColor: Colors.white,
-                                        activeTrackColor: AppColors.lightBlue4,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
+                                      ..._groupSettings
+                                          .where((element) =>
+                                              element.groupId == data.group.id)
+                                          .map(
+                                            (e) => Switch.adaptive(
+                                              value: e.notifyWhenNewMemberJoins,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.lightBlue4,
+                                              inactiveThumbColor: Colors.white,
+                                              onChanged: (value) =>
+                                                  SettingsProvider()
+                                                      .updateGroupSettings(
+                                                          key:
+                                                              'NotifyWhenNewMemberJoins',
+                                                          value: value,
+                                                          settingsId: e.id),
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 )
@@ -614,7 +835,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 0.7,
                                         child: Text(
                                           'Notify me of membership requests',
-                                          style: AppTextStyles.regularText15
+                                          style: AppTextStyles.regularText14
                                               .copyWith(
                                                   color: AppColors
                                                       .getTextFieldText(
@@ -622,13 +843,26 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               .isDarkModeEnabled)),
                                         ),
                                       ),
-                                      Switch.adaptive(
-                                        value: false,
-                                        activeColor: Colors.white,
-                                        activeTrackColor: AppColors.lightBlue4,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
+                                      ..._groupSettings
+                                          .where((element) =>
+                                              element.groupId == data.group.id)
+                                          .map(
+                                            (e) => Switch.adaptive(
+                                              value:
+                                                  e.notifyOfMembershipRequest,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.lightBlue4,
+                                              inactiveThumbColor: Colors.white,
+                                              onChanged: (value) =>
+                                                  SettingsProvider()
+                                                      .updateGroupSettings(
+                                                          key:
+                                                              'NotifyOfMembershipRequest',
+                                                          value: value,
+                                                          settingsId: e.id),
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 )
@@ -647,7 +881,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 0.7,
                                         child: Text(
                                           'Notify me of flagged prayers',
-                                          style: AppTextStyles.regularText15
+                                          style: AppTextStyles.regularText14
                                               .copyWith(
                                                   color: AppColors
                                                       .getTextFieldText(
@@ -655,13 +889,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               .isDarkModeEnabled)),
                                         ),
                                       ),
-                                      Switch.adaptive(
-                                        value: false,
-                                        activeColor: Colors.white,
-                                        activeTrackColor: AppColors.lightBlue4,
-                                        inactiveThumbColor: Colors.white,
-                                        onChanged: (_) {},
-                                      ),
+                                      ..._groupSettings
+                                          .where((element) =>
+                                              element.groupId == data.group.id)
+                                          .map(
+                                            (e) => Switch.adaptive(
+                                              value: e.notifyMeofFlaggedPrayers,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.lightBlue4,
+                                              inactiveThumbColor: Colors.white,
+                                              onChanged: (value) =>
+                                                  SettingsProvider()
+                                                      .updateGroupSettings(
+                                                          key:
+                                                              'NotifyMeofFlaggedPrayers',
+                                                          value: value,
+                                                          settingsId: e.id),
+                                            ),
+                                          ),
                                     ],
                                   ),
                                 )
@@ -677,7 +923,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   child: Row(
                                     children: <Widget>[
                                       Text('Invite',
-                                          style: AppTextStyles.boldText16),
+                                          style: AppTextStyles.regularText11),
                                       SizedBox(width: 10),
                                       Expanded(
                                         child: Divider(
@@ -698,7 +944,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             setState(() => _inviteMode = true),
                                         child: Text(
                                           'Send an invite to join group',
-                                          style: AppTextStyles.regularText20,
+                                          style: AppTextStyles.regularText16b
+                                              .copyWith(
+                                                  color: AppColors.lightBlue3),
                                         ),
                                       ),
                                     ),
@@ -765,7 +1013,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 child: Row(
                                   children: <Widget>[
                                     Text('Members | ${data.groupUsers.length}',
-                                        style: AppTextStyles.boldText16),
+                                        style: AppTextStyles.regularText11),
                                     SizedBox(width: 10),
                                     Expanded(
                                       child: Divider(
@@ -828,7 +1076,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               ?.toUpperCase() ??
                                                           'N/A',
                                                       style: AppTextStyles
-                                                          .regularText15),
+                                                          .boldText14
+                                                          .copyWith(
+                                                              color: AppColors
+                                                                  .lightBlue4)),
                                                   Text(
                                                     isAdmin
                                                         ? 'ADMIN'
@@ -836,7 +1087,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                             ? 'MODERATOR'
                                                             : 'MEMBER',
                                                     style: AppTextStyles
-                                                        .regularText15
+                                                        .regularText14
                                                         .copyWith(
                                                             color: AppColors
                                                                 .lightBlue1),

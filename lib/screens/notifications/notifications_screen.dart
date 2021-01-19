@@ -42,7 +42,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   _callRequestAction() {
     // this._overlayEntry = _createOverlayEntry();
     // Overlay.of(context).insert(this._overlayEntry);
-    _showAlert();
   }
 
   _acceptInvite(
@@ -89,13 +88,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     super.didChangeDependencies();
   }
 
-  void _showAlert() {
+  void _showAlert(String groupId, String message) {
     final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final data =
         Provider.of<NotificationProvider>(context, listen: false).notifications;
-    final _groups =
-        Provider.of<GroupProvider>(context, listen: false).userGroups;
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
@@ -137,15 +134,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    ...data
-                        .where((e) => e.messageType == NotificationType.request)
-                        .map(
-                          (request) => Text(
-                            request.message,
-                            style: AppTextStyles.regularText11,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                    Text(
+                      message,
+                      style: AppTextStyles.regularText13,
+                    ),
+                    //         textAlign: TextAlign.center,),
+                    // ...data
+                    //     .where((e) => e.messageType == NotificationType.request)
+                    //     .map(
+                    //       (request) => Text(
+                    //         request.message,
+                    //         style: AppTextStyles.regularText11,
+                    //         textAlign: TextAlign.center,
+                    //       ),
+                    //     ),
 
                     SizedBox(height: 20.0),
 
@@ -180,8 +182,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               ],
                             ),
                           ),
-                          onPressed: () => _acceptInvite(_user.id, _user.id,
-                              _user.firstName, _user.email)),
+                          onPressed: () => _acceptInvite(
+                              groupId, _user.id, _user.firstName, _user.email)),
                     ),
 
                     Container(
@@ -352,7 +354,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                   SizedBox(height: 10),
                                   GestureDetector(
                                     onLongPressEnd: null,
-                                    onTap: () => _callRequestAction(),
+                                    onTap: () => _showAlert(
+                                      notifiaction.extra2,
+                                      notifiaction.message,
+                                    ),
                                     child: Container(
                                       margin: EdgeInsets.only(left: 20.0),
                                       decoration: BoxDecoration(
@@ -535,7 +540,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                   SizedBox(height: 10),
                                   GestureDetector(
                                     onLongPressEnd: null,
-                                    onTap: () => _callRequestAction(),
+                                    onTap: () => null,
                                     child: Container(
                                       margin: EdgeInsets.only(left: 20.0),
                                       decoration: BoxDecoration(
@@ -590,7 +595,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           Row(
                                                             children: <Widget>[
                                                               Text(
-                                                                'GROUP NAME',
+                                                                notifiaction
+                                                                    .extra2,
                                                                 style: AppTextStyles
                                                                     .regularText15b
                                                                     .copyWith(
