@@ -47,7 +47,7 @@ class AppColors {
   static List<Color> get backgroundColor => dynamicGradientColor(
       light: 0xFFCED1D4,
       light2: 0xFFFAFBFB,
-      dark: 0xFF021D3C,
+      dark: 0xFF043569,
       dark2: 0xFF073668);
   static List<Color> get detailBackgroundColor => dynamicGradientColor(
       light: 0xFFF0F4Fa,
@@ -90,7 +90,7 @@ class AppColors {
       );
   static Color get activeButton => dynamicColor(
         light: 0xFF9BD4E5,
-        dark: 0xFF025584,
+        dark: 0xFF005780,
       );
   static Color get cardBorder => dynamicColor(
         light: 0xFFFFFFFF,
@@ -128,7 +128,7 @@ class AppColors {
   static const Color shadowColor = const Color(0xFF001439);
   static const Color appbarColor = const Color(0xFF0D1319);
 
-  static const Color offWhite1 = const Color(0xFF005780);
+  static const Color offWhite1 = const Color(0xFF788489);
   static const Color offWhite2 = const Color(0xFFC1C5C8);
   static const Color offWhite4 = const Color(0xFFF1F5F9);
 
@@ -153,6 +153,7 @@ class AppColors {
   static const Color darkBlue4 = const Color(0xFF043569);
 
   static const Color menuColor = const Color(0xFF718B92);
+  static const Color nameRecogntionColor = const Color(0xFF0D1319);
 
   // static const Color blueGrey = const Color(0xFF51575C);
 
@@ -244,6 +245,13 @@ class AppTextStyles {
     fontSize: 34,
     fontWeight: FontWeight.w500,
     letterSpacing: 3.5,
+  );
+
+  static const TextStyle boldText9 = const TextStyle(
+    color: AppColors.lightBlue1,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
   );
   static const TextStyle boldText14 = const TextStyle(
     color: AppColors.lightBlue1,

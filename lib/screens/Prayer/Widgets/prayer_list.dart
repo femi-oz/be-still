@@ -70,8 +70,7 @@ class _PrayerListState extends State<PrayerList> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(
-              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(StringUtils.getBackgroundImage(true)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -115,6 +114,7 @@ class _PrayerListState extends State<PrayerList> {
                       ],
                     ),
                   ),
+            SizedBox(height: 5),
             currentPrayerType == PrayerType.archived ||
                     currentPrayerType == PrayerType.answered
                 ? Container()
@@ -127,12 +127,8 @@ class _PrayerListState extends State<PrayerList> {
                       ),
                     ),
                     text: 'Add New Prayer',
-                    backgroundColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.backgroundColor[1]
-                        : AppColors.lightBlue3,
-                    textColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.lightBlue3
-                        : Colors.white,
+                    backgroundColor: AppColors.backgroundColor[1],
+                    textColor: AppColors.lightBlue3,
                     icon: Icons.add,
                   ),
             SizedBox(height: 80),
