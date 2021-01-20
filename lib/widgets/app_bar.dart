@@ -29,8 +29,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController _searchController = TextEditingController();
 
   void _searchPrayer(String value) async {
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value);
+    await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(value);
   }
 
   void _clearSearchField() async {
@@ -41,8 +40,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   _openFilter(bool isDark) {
     showModalBottomSheet(
       context: context,
-      barrierColor: AppColors.getDetailBgColor(isDark)[1],
-      backgroundColor: AppColors.getDetailBgColor(isDark)[1],
+      barrierColor: AppColors.detailBackgroundColor[1],
+      backgroundColor: AppColors.detailBackgroundColor[1],
       isScrollControlled: true,
       builder: (BuildContext context) {
         return PrayerFilters();
@@ -54,8 +53,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     bool isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    List<NotificationModel> notifications =
-        Provider.of<NotificationProvider>(context).notifications;
+    List<NotificationModel> notifications = Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
@@ -63,7 +61,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.topRight,
-            colors: AppColors.appBarBg(isDark),
+            colors: AppColors.appBarBackground,
           ),
         ),
       ),
@@ -75,12 +73,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: <Widget>[
           SizedBox(width: 20),
           InkWell(
-            onTap: () =>
-                Navigator.of(context).pushNamed(NotificationsScreen.routeName),
+            onTap: () => Navigator.of(context).pushNamed(NotificationsScreen.routeName),
             child: notifications.length == 0
                 ? Icon(
                     Icons.notifications_none,
-                    color: AppColors.getAppBarColor(isDark),
+                    color: AppColors.appBarColor,
                     size: 24,
                   )
                 : Stack(
@@ -107,7 +104,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             onTap: () => setState(() => searchMode = !searchMode),
             child: Icon(
               AppIcons.search,
-              color: AppColors.getAppBarColor(isDark),
+              color: AppColors.appBarColor,
               size: 24,
             ),
           ),
@@ -116,7 +113,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             onTap: () => _openFilter(isDark),
             child: Icon(
               Icons.filter_list_alt,
-              color: AppColors.getAppBarColor(isDark),
+              color: AppColors.appBarColor,
               size: 24,
             ),
           ),
@@ -157,7 +154,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           : Text(
               pageTitle,
               style: TextStyle(
-                color: AppColors.getAppBarColor(isDark),
+                color: AppColors.appBarColor,
                 fontSize: 32,
                 fontWeight: FontWeight.w700,
               ),
@@ -168,7 +165,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             return InkWell(
               child: Icon(
                 AppIcons.menu,
-                color: AppColors.getAppBarColor(isDark),
+                color: AppColors.appBarColor,
               ),
               onTap: () {
                 Scaffold.of(context).openEndDrawer();

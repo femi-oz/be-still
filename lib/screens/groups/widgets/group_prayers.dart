@@ -15,19 +15,17 @@ class GroupPrayers extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final data = Provider.of<PrayerProvider>(context).filteredPrayers;
-    final currentPrayerType =
-        Provider.of<PrayerProvider>(context).currentPrayerType;
+    final currentPrayerType = Provider.of<PrayerProvider>(context).currentPrayerType;
     return Container(
       padding: EdgeInsets.only(left: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(
-              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -50,12 +48,8 @@ class GroupPrayers extends StatelessWidget {
                         ...data
                             .map((e) => GestureDetector(
                                 onTap: () async {
-                                  await Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .setPrayer(e.prayer.id);
-                                  await Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .setPrayerUpdates(e.prayer.id);
+                                  await Provider.of<PrayerProvider>(context, listen: false).setPrayer(e.prayer.id);
+                                  await Provider.of<PrayerProvider>(context, listen: false).setPrayerUpdates(e.prayer.id);
                                   Navigator.push(
                                     context,
                                     new MaterialPageRoute(
@@ -68,25 +62,18 @@ class GroupPrayers extends StatelessWidget {
                       ],
                     ),
                   ),
-            currentPrayerType == PrayerType.archived ||
-                    currentPrayerType == PrayerType.answered
+            currentPrayerType == PrayerType.archived || currentPrayerType == PrayerType.answered
                 ? Container()
                 : LongButton(
                     onPress: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            AddPrayer(isEdit: false, isGroup: false),
+                        builder: (context) => AddPrayer(isEdit: false, isGroup: false),
                       ),
                     ),
                     text: 'Add New Prayer',
-                    backgroundColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.getBackgroudColor(
-                            _themeProvider.isDarkModeEnabled)[1]
-                        : AppColors.lightBlue3,
-                    textColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.lightBlue3
-                        : Colors.white,
+                    backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[1] : AppColors.lightBlue3,
+                    textColor: _themeProvider.isDarkModeEnabled ? AppColors.lightBlue3 : Colors.white,
                     icon: Icons.add,
                   ),
             SizedBox(height: 80),

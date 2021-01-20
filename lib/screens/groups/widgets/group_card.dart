@@ -33,8 +33,7 @@ class _GroupCardState extends State<GroupCard> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupId, userId, userName);
+      await Provider.of<GroupProvider>(context, listen: false).joinRequest(groupId, userId, userName);
       BeStilDialog.hideLoading(context);
       BeStilDialog.showSnackBar(_key, 'Request has been sent');
     } catch (e) {
@@ -66,8 +65,7 @@ class _GroupCardState extends State<GroupCard> {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
-        backgroundColor:
-            AppColors.getPrayerCardBgColor(_themeProvider.isDarkModeEnabled),
+        backgroundColor: AppColors.prayerCardBgColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: AppColors.lightBlue3,
@@ -91,8 +89,7 @@ class _GroupCardState extends State<GroupCard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                      onPressed: () =>
-                          Navigator.of(context, rootNavigator: true).pop(),
+                      onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
                       icon: Icon(Icons.close),
                     )
                   ],
@@ -119,8 +116,7 @@ class _GroupCardState extends State<GroupCard> {
                               Text(
                                 '${this.widget.groupData.group.createdBy}',
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.getTextFieldText(
-                                      _themeProvider.isDarkModeEnabled),
+                                  color: AppColors.textFieldText,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -137,8 +133,7 @@ class _GroupCardState extends State<GroupCard> {
                               Text(
                                 '${this.widget.groupData.group.location}',
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.getTextFieldText(
-                                      _themeProvider.isDarkModeEnabled),
+                                  color: AppColors.textFieldText,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -155,8 +150,7 @@ class _GroupCardState extends State<GroupCard> {
                               Text(
                                 '${this.widget.groupData.group.organization}',
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.getTextFieldText(
-                                      _themeProvider.isDarkModeEnabled),
+                                  color: AppColors.textFieldText,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -173,8 +167,7 @@ class _GroupCardState extends State<GroupCard> {
                               Text(
                                 '${this.widget.groupData.group.status} Group',
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.getTextFieldText(
-                                      _themeProvider.isDarkModeEnabled),
+                                  color: AppColors.textFieldText,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -188,8 +181,7 @@ class _GroupCardState extends State<GroupCard> {
                           Text(
                             '${this.widget.groupData.groupUsers.length} current members',
                             style: AppTextStyles.regularText15.copyWith(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled),
+                              color: AppColors.textFieldText,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -197,8 +189,7 @@ class _GroupCardState extends State<GroupCard> {
                           Text(
                             '2 contacts',
                             style: AppTextStyles.regularText15.copyWith(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled),
+                              color: AppColors.textFieldText,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -208,8 +199,7 @@ class _GroupCardState extends State<GroupCard> {
                       Text(
                         this.widget.groupData.group.description,
                         style: AppTextStyles.regularText15.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled),
+                          color: AppColors.textFieldText,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -217,8 +207,7 @@ class _GroupCardState extends State<GroupCard> {
                       Text(
                         'Would you like to request to join?',
                         style: AppTextStyles.regularText15.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled),
+                          color: AppColors.textFieldText,
                         ),
                         textAlign: TextAlign.left,
                       ),
@@ -229,8 +218,7 @@ class _GroupCardState extends State<GroupCard> {
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(
-                            color: AppColors.getCardBorder(
-                                _themeProvider.isDarkModeEnabled),
+                            color: AppColors.cardBorder,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(5),
@@ -250,10 +238,7 @@ class _GroupCardState extends State<GroupCard> {
                               ],
                             ),
                           ),
-                          onPressed: () => _joinGroupInvite(
-                              this.widget.groupData.group.id,
-                              _currentUser.id,
-                              _currentUser.email),
+                          onPressed: () => _joinGroupInvite(this.widget.groupData.group.id, _currentUser.id, _currentUser.email),
                         ),
                       ),
                     ],
@@ -284,8 +269,7 @@ class _GroupCardState extends State<GroupCard> {
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: AppColors.getPrayerCardBgColor(
-                _themeProvider.isDarkModeEnabled),
+            color: AppColors.prayerCardBgColor,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(9),
               topLeft: Radius.circular(9),

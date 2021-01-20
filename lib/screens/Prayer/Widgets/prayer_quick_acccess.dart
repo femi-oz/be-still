@@ -18,8 +18,7 @@ class PrayerQuickAccess extends StatefulWidget {
   _PrayerQuickAccessState createState() => _PrayerQuickAccessState();
 }
 
-class _PrayerQuickAccessState extends State<PrayerQuickAccess>
-    with TickerProviderStateMixin {
+class _PrayerQuickAccessState extends State<PrayerQuickAccess> with TickerProviderStateMixin {
   AnimationController animationController;
 
   Animation degOneTranslationAnimation;
@@ -31,13 +30,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     return degree / unitRadian;
   }
 
-  List<String> reminderInterval = [
-    'Hourly',
-    'Daily',
-    'Weekly',
-    'Monthly',
-    'Yearly'
-  ];
+  List<String> reminderInterval = ['Hourly', 'Daily', 'Weekly', 'Monthly', 'Yearly'];
 
   var reminder = '';
 
@@ -66,17 +59,13 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     }
     //TODO
     // setReminder(widget.prayer.reminder);
-    animationController =
-        AnimationController(duration: Duration(milliseconds: 250), vsync: this);
+    animationController = AnimationController(duration: Duration(milliseconds: 250), vsync: this);
     degOneTranslationAnimation = TweenSequence([
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.0, end: 1.2), weight: 75.0),
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 1.2, end: 1.0), weight: 25.0),
+      TweenSequenceItem<double>(tween: Tween<double>(begin: 0.0, end: 1.2), weight: 75.0),
+      TweenSequenceItem<double>(tween: Tween<double>(begin: 1.2, end: 1.0), weight: 25.0),
     ]).animate(animationController);
 
-    rotationAnimation = Tween<double>(begin: 180.0, end: 0.0).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.easeOut));
+    rotationAnimation = Tween<double>(begin: 180.0, end: 0.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOut));
     super.initState();
     animationController.addListener(() {
       setState(() {});
@@ -96,9 +85,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
           children: <Widget>[
             Positioned(
               left: 30,
-              top: widget.y + 100 > size.height
-                  ? size.height - 175
-                  : widget.y - 75,
+              top: widget.y + 100 > size.height ? size.height - 175 : widget.y - 75,
               child: Stack(
                 alignment: Alignment.centerLeft,
                 children: <Widget>[
@@ -109,12 +96,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(270),
-                        degOneTranslationAnimation.value * 60),
+                    offset: Offset.fromDirection(getRadiansFromDegree(270), degOneTranslationAnimation.value * 60),
                     child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
+                      transform: Matrix4.rotationZ(getRadiansFromDegree(rotationAnimation.value))..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
                           icon: Icon(
@@ -125,22 +109,16 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddPrayer(
-                                    isEdit: true,
-                                    prayer: widget.prayer,
-                                    isGroup: false),
+                                builder: (context) => AddPrayer(isEdit: true, prayer: widget.prayer, isGroup: false),
                               ),
                             );
                           }),
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(315),
-                        degOneTranslationAnimation.value * 60),
+                    offset: Offset.fromDirection(getRadiansFromDegree(315), degOneTranslationAnimation.value * 60),
                     child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
+                      transform: Matrix4.rotationZ(getRadiansFromDegree(rotationAnimation.value))..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
@@ -150,12 +128,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
-                                .withOpacity(0.9),
+                            barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                            backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return SharePrayer();
@@ -166,12 +140,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(360),
-                        degOneTranslationAnimation.value * 60),
+                    offset: Offset.fromDirection(getRadiansFromDegree(360), degOneTranslationAnimation.value * 60),
                     child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
+                      transform: Matrix4.rotationZ(getRadiansFromDegree(rotationAnimation.value))..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
@@ -181,12 +152,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
-                                .withOpacity(0.9),
+                            barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                            backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return ReminderPicker(
@@ -203,12 +170,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(45),
-                        degOneTranslationAnimation.value * 60),
+                    offset: Offset.fromDirection(getRadiansFromDegree(45), degOneTranslationAnimation.value * 60),
                     child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
+                      transform: Matrix4.rotationZ(getRadiansFromDegree(rotationAnimation.value))..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
@@ -218,12 +182,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
-                                .withOpacity(0.9),
+                            barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                            backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return DeletePrayer(widget.prayer);
@@ -234,12 +194,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(90),
-                        degOneTranslationAnimation.value * 60),
+                    offset: Offset.fromDirection(getRadiansFromDegree(90), degOneTranslationAnimation.value * 60),
                     child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
+                      transform: Matrix4.rotationZ(getRadiansFromDegree(rotationAnimation.value))..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(

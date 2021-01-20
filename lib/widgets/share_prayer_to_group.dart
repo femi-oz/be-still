@@ -17,10 +17,8 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   List selectedGroups = [];
 
   void _getGroup() async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    await Provider.of<GroupProvider>(context, listen: false)
-        .setAllGroups(_user.id);
+    UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<GroupProvider>(context, listen: false).setAllGroups(_user.id);
   }
 
   bool _isInit = true;
@@ -51,7 +49,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
             onPressed: () {
               Navigator.of(context).pop(selectedGroups);
             },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+            color: AppColors.textFieldText,
           ),
           Expanded(
             child: Column(
@@ -83,14 +81,9 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             width: double.infinity,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 10),
+                            margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                             decoration: BoxDecoration(
-                              color: selectedGroups.contains(group.group.id)
-                                  ? AppColors.getActiveBtn(
-                                          _themeProvider.isDarkModeEnabled)
-                                      .withOpacity(0.2)
-                                  : Colors.transparent,
+                              color: selectedGroups.contains(group.group.id) ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
                               border: Border.all(
                                 color: AppColors.lightBlue6,
                                 width: 1,

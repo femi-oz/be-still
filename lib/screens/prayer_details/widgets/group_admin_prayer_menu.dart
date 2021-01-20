@@ -31,13 +31,11 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
 
   void _onHide() async {
     try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .hidePrayer(widget.prayer.id, _user);
+      await Provider.of<PrayerProvider>(context, listen: false).hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
@@ -57,9 +55,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .hidePrayerFromAllMembers(
-              widget.prayer.id, !widget.prayer.hideFromAllMembers);
+      await Provider.of<PrayerProvider>(context, listen: false).hidePrayerFromAllMembers(widget.prayer.id, !widget.prayer.hideFromAllMembers);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
@@ -77,8 +73,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
+    UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -101,10 +96,8 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                       modifiedBy: widget.prayer.modifiedBy,
                       modifiedOn: DateTime.now(),
                     );
-                    Provider.of<PrayerProvider>(context, listen: false)
-                        .addPrayerToMyList(userPrayer);
-                    Navigator.of(context)
-                        .pushReplacementNamed(PrayerScreen.routeName);
+                    Provider.of<PrayerProvider>(context, listen: false).addPrayerToMyList(userPrayer);
+                    Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
                   },
                   child: Container(
                     height: 50,
@@ -267,9 +260,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
-                            widget.prayer.hideFromAllMembers
-                                ? 'Show in Group'
-                                : 'Hide From Group',
+                            widget.prayer.hideFromAllMembers ? 'Show in Group' : 'Hide From Group',
                             style: TextStyle(
                               color: AppColors.lightBlue4,
                               fontSize: 14,
@@ -326,7 +317,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+            color: AppColors.textFieldText,
           ),
         ],
       ),

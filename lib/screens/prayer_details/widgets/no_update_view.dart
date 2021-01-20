@@ -21,10 +21,7 @@ class NoUpdateView extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
                     prayer.creatorName,
-                    style: AppTextStyles.regularText18b.copyWith(
-                        color: AppColors.getPrayerPrimaryColor(
-                            _themeProvider.isDarkModeEnabled),
-                        fontWeight: FontWeight.w500),
+                    style: AppTextStyles.regularText18b.copyWith(color: AppColors.prayerPrimaryColor, fontWeight: FontWeight.w500),
                     textAlign: TextAlign.left,
                   ),
                 )
@@ -37,11 +34,9 @@ class NoUpdateView extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(prayer.createdOn),
+                      DateFormat('hh:mma | MM.dd.yyyy').format(prayer.createdOn),
                       style: AppTextStyles.regularText15.copyWith(
-                        color: AppColors.getPrayerPrimaryColor(
-                            _themeProvider.isDarkModeEnabled),
+                        color: AppColors.prayerPrimaryColor,
                       ),
                     ),
                   ],
@@ -49,9 +44,7 @@ class NoUpdateView extends StatelessWidget {
               ),
               Expanded(
                 child: Divider(
-                  color: AppColors.getPrayerPrimaryColor(
-                    _themeProvider.isDarkModeEnabled,
-                  ),
+                  color: AppColors.prayerPrimaryColor,
                   thickness: 1,
                 ),
               ),
@@ -64,9 +57,7 @@ class NoUpdateView extends StatelessWidget {
                 child: Text(
                   prayer.description,
                   style: AppTextStyles.regularText22.copyWith(
-                    color: AppColors.getTextFieldBgColor(
-                      !_themeProvider.isDarkModeEnabled,
-                    ),
+                    color: AppColors.textFieldBackgroundColor,
                   ),
                   textAlign: TextAlign.left,
                 ),

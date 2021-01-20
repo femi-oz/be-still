@@ -49,12 +49,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<PermissionStatus> _getPermission() async {
     final PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.denied) {
-      final Map<Permission, PermissionStatus> permissionStatus =
-          await [Permission.contacts].request();
-      return permissionStatus[Permission.contacts] ??
-          PermissionStatus.undetermined;
+    if (permission != PermissionStatus.granted && permission != PermissionStatus.denied) {
+      final Map<Permission, PermissionStatus> permissionStatus = await [Permission.contacts].request();
+      return permissionStatus[Permission.contacts] ?? PermissionStatus.undetermined;
     } else {
       return permission;
     }
@@ -68,15 +65,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _updateEmail(UserModel user) async {
-    BeStilDialog.showConfirmDialog(context,
-        message: 'Are you sure you want to update your email?',
-        title: 'Update Email', onConfirm: () async {
+    BeStilDialog.showConfirmDialog(context, message: 'Are you sure you want to update your email?', title: 'Update Email', onConfirm: () async {
       try {
         BeStilDialog.showLoading(
           bcontext,
         );
-        await Provider.of<UserProvider>(context, listen: false)
-            .updateEmail(_newEmail.text, user.id);
+        await Provider.of<UserProvider>(context, listen: false).updateEmail(_newEmail.text, user.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         Navigator.of(context).pop();
@@ -93,15 +87,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   _updatePassword() {
-    BeStilDialog.showConfirmDialog(context,
-        message: 'Are you sure you want to update your password?',
-        title: 'Update Password', onConfirm: () async {
+    BeStilDialog.showConfirmDialog(context, message: 'Are you sure you want to update your password?', title: 'Update Password', onConfirm: () async {
       try {
         BeStilDialog.showLoading(
           bcontext,
         );
-        await Provider.of<UserProvider>(context, listen: false)
-            .updatePassword(_newPassword.text);
+        await Provider.of<UserProvider>(context, listen: false).updatePassword(_newPassword.text);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         Navigator.of(context).pop();
@@ -123,29 +114,23 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         isDismissible: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         context: context,
         builder: (context) {
-          var _user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+          var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
           return Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
-              color: AppColors.getBackgroudColor(
-                  _themeProvider.isDarkModeEnabled)[1],
+              color: AppColors.backgroundColor[1],
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
                   Expanded(
                     child: Center(
                       child: type == _ModalType.email
-                          ? CustomInput(
-                              label: 'New Email', controller: _newEmail)
+                          ? CustomInput(label: 'New Email', controller: _newEmail)
                           : type == _ModalType.password
-                              ? CustomInput(
-                                  label: 'New Email', controller: _newPassword)
+                              ? CustomInput(label: 'New Email', controller: _newPassword)
                               : Text('Auth'),
                     ),
                   ),
@@ -183,9 +168,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   List<String> _themeModes = [
-    BThemeMode.light,
-    BThemeMode.dark,
-    BThemeMode.auto,
+    BsThemeMode.light,
+    BsThemeMode.dark,
+    BsThemeMode.auto,
   ];
 
   Widget build(BuildContext context) {
@@ -208,11 +193,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('${_currentUser.firstName} ${_currentUser.lastName}',
-                      style: AppTextStyles.boldText30),
-                  Text(
-                      DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
-                      style: AppTextStyles.normalDarkBlue),
+                  Text('${_currentUser.firstName} ${_currentUser.lastName}', style: AppTextStyles.boldText30),
+                  Text(DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth), style: AppTextStyles.normalDarkBlue),
                 ],
               ),
             ),
@@ -252,8 +234,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 CustomToggle(
                   onChange: (value) => _initiatePermission(),
                   title: 'Allow BeStill to access Contacts?',
-                  value:
-                      Provider.of<SettingsProvider>(context).hasAccessToContact,
+                  value: Provider.of<SettingsProvider>(context).hasAccessToContact,
                 ),
               ],
             ),
@@ -262,18 +243,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               children: [
                 CustomSectionHeder('App Appearance'),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 40.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       for (int i = 0; i < _themeModes.length; i++)
                         CustomButtonGroup(
-                          isSelected:
-                              _themeProvider.colorMode == _themeModes[i],
+                          isSelected: _themeProvider.currentTheme == _themeModes[i],
                           length: _themeModes.length,
-                          onSelected: (value) =>
-                              _themeProvider.changeTheme(value),
+                          onSelected: (value) => _themeProvider.changeTheme(value),
                           title: _themeModes[i],
                           index: i,
                         ),
@@ -302,17 +280,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('App is running the latest version',
-                          style: AppTextStyles.regularText15.copyWith(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled))),
+                      Text('App is running the latest version', style: AppTextStyles.regularText15.copyWith(color: AppColors.textFieldText)),
                       Text(_version, style: AppTextStyles.regularText15),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
                   child: Row(
                     children: [
                       CustomButtonGroup(

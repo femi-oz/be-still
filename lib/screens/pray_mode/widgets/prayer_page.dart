@@ -16,7 +16,7 @@ class PrayerView extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 20),
-      color: AppColors.getPrayeModeBg(_themeProvider.isDarkModeEnabled),
+      color: AppColors.prayeModeBg,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20),
         child: data.updates.length > 0 ? UpdateView(data) : NoUpdateView(data),
@@ -25,8 +25,7 @@ class PrayerView extends StatelessWidget {
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           border: Border.all(
-            color:
-                AppColors.getPrayeModeBorder(_themeProvider.isDarkModeEnabled),
+            color: AppColors.prayeModeBorder,
             width: 1,
           ),
           borderRadius: BorderRadius.circular(15),

@@ -23,6 +23,7 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
+  bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -45,7 +46,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-
+    _isUnderAge =
+        (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
+                    .isAfter(DateTime.now())
+                ? DateTime.now().year - pickedDate.year - 1
+                : DateTime.now().year - pickedDate.year) <
+            18;
     if (pickedDate == null) {
       return null;
     }
@@ -106,8 +112,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors:
-                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+              colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
               image: AssetImage(StringUtils.getBackgroundImage(
@@ -119,6 +124,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             child: Column(
               children: <Widget>[
                 CustomLogoShape(),
+                Container(
+                  child: Text('Create an Account',
+                      style: AppTextStyles.boldText18),
+                ),
+                SizedBox(height: 10),
                 Container(
                   padding: EdgeInsets.all(20),
                   child: Column(
@@ -167,7 +177,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             child: Icon(
               _enableSubmit ? Icons.arrow_forward : Icons.do_not_disturb,
-              color: AppColors.offWhite1,
+              color: AppColors.offWhite4,
             ),
           ),
         ),
@@ -223,6 +233,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Birthday',
                     controller: _dobController,
                     isRequired: true,
+                    validator: (value) {
+                      if (_isUnderAge) {
+                        return 'You must be 18 or older to use this app';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ),
@@ -284,7 +300,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                     ),
                     Text(
-                      'I Agree to the Terms of Use',
+                      'I agree to the Terms of Use',
                       style: AppTextStyles.regularText15,
                     ),
                   ],

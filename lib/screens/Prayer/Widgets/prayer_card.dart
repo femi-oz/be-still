@@ -20,7 +20,7 @@ class PrayerCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 7.0),
       decoration: BoxDecoration(
-        color: AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
+        color: AppColors.cardBorder,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(10),
           topLeft: Radius.circular(10),
@@ -31,8 +31,7 @@ class PrayerCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         width: double.infinity,
         decoration: BoxDecoration(
-          color:
-              AppColors.getPrayerCardBgColor(_themeProvider.isDarkModeEnabled),
+          color: AppColors.prayerCardBgColor,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(9),
             topLeft: Radius.circular(9),
@@ -107,14 +106,8 @@ class PrayerCard extends StatelessWidget {
                               //       )
                               //     : Container(),
                               Text(
-                                DateFormat('MM.dd.yyyy')
-                                    .format(prayer.createdOn),
-                                style: AppTextStyles.regularText15b.copyWith(
-                                  fontSize: 14,
-                                  color: AppColors.getPrayerMenuColor(
-                                    !_themeProvider.isDarkModeEnabled,
-                                  ),
-                                ),
+                                DateFormat('MM.dd.yyyy').format(prayer.createdOn),
+                                style: AppTextStyles.regularText15b.copyWith(fontSize: 14, color: AppColors.prayerMenuColor),
                               ),
                             ],
                           )
@@ -126,7 +119,7 @@ class PrayerCard extends StatelessWidget {
               ],
             ),
             Divider(
-              color: AppColors.getDivider(_themeProvider.isDarkModeEnabled),
+              color: AppColors.divider,
               thickness: 0.5,
             ),
             Row(
@@ -137,11 +130,7 @@ class PrayerCard extends StatelessWidget {
                     prayer.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.regularText16b.copyWith(
-                      color: AppColors.getPrayerMenuColor(
-                        !_themeProvider.isDarkModeEnabled,
-                      ),
-                    ),
+                    style: AppTextStyles.regularText16b.copyWith(color: AppColors.prayerMenuColor),
                   ),
                 ),
               ],

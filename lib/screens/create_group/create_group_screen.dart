@@ -62,8 +62,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    await Provider.of<GroupProvider>(context, listen: false)
-        .addGroup(groupData, _user.id, '${_user.firstName} ${_user.lastName}');
+    await Provider.of<GroupProvider>(context, listen: false).addGroup(groupData, _user.id, '${_user.firstName} ${_user.lastName}');
     setState(() {
       _step++;
     });
@@ -77,12 +76,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(_themeProvider.isDarkModeEnabled
-              ? 'assets/images/background-pattern-dark.png'
-              : 'assets/images/background-pattern.png'),
+          image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
           alignment: Alignment.bottomCenter,
         ),
       ),

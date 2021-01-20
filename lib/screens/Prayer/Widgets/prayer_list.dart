@@ -67,7 +67,7 @@ class _PrayerListState extends State<PrayerList> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
           image: AssetImage(
@@ -81,13 +81,16 @@ class _PrayerListState extends State<PrayerList> {
             SizedBox(height: 20),
             data.length == 0
                 ? Container(
-                    padding: EdgeInsets.all(60),
-                    child: Text(
-                      'You don\'t have any prayer in your List.',
-                      style: AppTextStyles.regularText13,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
+                    padding: EdgeInsets.only(
+                        left: 60, right: 100, top: 60, bottom: 60),
+                    child: Opacity(
+                      opacity: 0.3,
+                      child: Text(
+                        'No Prayers in My List',
+                        style: AppTextStyles.demiBoldText34,
+                        textAlign: TextAlign.center,
+                      ),
+                    ))
                 : Container(
                     child: Column(
                       children: <Widget>[
@@ -125,8 +128,7 @@ class _PrayerListState extends State<PrayerList> {
                     ),
                     text: 'Add New Prayer',
                     backgroundColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.getBackgroudColor(
-                            _themeProvider.isDarkModeEnabled)[1]
+                        ? AppColors.backgroundColor[1]
                         : AppColors.lightBlue3,
                     textColor: _themeProvider.isDarkModeEnabled
                         ? AppColors.lightBlue3

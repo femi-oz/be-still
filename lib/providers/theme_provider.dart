@@ -1,48 +1,27 @@
 import 'package:be_still/enums/theme_mode.dart';
-import 'package:be_still/utils/prefs.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class ThemeProvider with ChangeNotifier {
-  DarkThemePreferenes darkThemePref = DarkThemePreferenes();
+  Settings darkThemePref = Settings();
   bool _isDarkMode = false;
-  bool get isDarkModeEnabled {
-    return _isDarkMode;
-  }
+  bool get isDarkModeEnabled => _isDarkMode;
 
-  String _colorMode;
-  String get colorMode => _colorMode;
+  String _currentTheme;
+  String get currentTheme => _currentTheme;
 
-  Future changeTheme(String value) async {
-    _colorMode = value;
-    if (value == BThemeMode.auto) {
-      _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                  .platformBrightness ==
-              Brightness.dark
-          ? true
-          : false;
-    } else {
-      _isDarkMode = value == BThemeMode.dark ? true : false;
-    }
-    await darkThemePref.setThemeMode(value);
+  Future changeTheme(String theme) async {
+    _currentTheme = theme;
+    _isDarkMode = theme == BsThemeMode.auto ? MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark : theme == BsThemeMode.dark;
+
+    Settings.themeMode = theme;
     notifyListeners();
   }
 
   Future setDefaultTheme() async {
-    var value = await darkThemePref.getThemeMode();
-    _colorMode = value == BThemeMode.auto
-        ? BThemeMode.auto
-        : value == BThemeMode.dark
-            ? BThemeMode.dark
-            : BThemeMode.light;
-    if (value == BThemeMode.auto) {
-      _isDarkMode = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                  .platformBrightness ==
-              Brightness.dark
-          ? true
-          : false;
-    } else {
-      _isDarkMode = value == BThemeMode.dark ? true : false;
-    }
-    notifyListeners();
+    _currentTheme = Settings.themeMode ?? BsThemeMode.auto;
+    _isDarkMode = _currentTheme == BsThemeMode.auto
+        ? MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark
+        : _currentTheme == BsThemeMode.dark;
   }
 }

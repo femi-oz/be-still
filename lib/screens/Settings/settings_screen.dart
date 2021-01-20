@@ -30,8 +30,7 @@ class SettingsScreen extends StatefulWidget {
   _SettingsScreenPage createState() => _SettingsScreenPage();
 }
 
-class _SettingsScreenPage extends State<SettingsScreen>
-    with SingleTickerProviderStateMixin {
+class _SettingsScreenPage extends State<SettingsScreen> with SingleTickerProviderStateMixin {
   TabController tabController;
 
   // String title = "Home";
@@ -50,10 +49,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: SettingsAppBar(),
-        endDrawer: CustomDrawer(),
-        body: SettingsTab());
+    return new Scaffold(appBar: SettingsAppBar(), endDrawer: CustomDrawer(), body: SettingsTab());
   }
 }
 
@@ -62,8 +58,7 @@ class SettingsTab extends StatefulWidget {
   SettingsTabState createState() => SettingsTabState();
 }
 
-class SettingsTabState extends State<SettingsTab>
-    with SingleTickerProviderStateMixin {
+class SettingsTabState extends State<SettingsTab> with SingleTickerProviderStateMixin {
   TabController tabController;
 
   @override
@@ -74,14 +69,10 @@ class SettingsTabState extends State<SettingsTab>
 
   void _getSettings() async {
     try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(_user.id);
+      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<SettingsProvider>(context, listen: false).setPrayerSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false).setSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false).setSharingSettings(_user.id);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -118,8 +109,7 @@ class SettingsTabState extends State<SettingsTab>
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+                  color: AppColors.dropShadow,
                   offset: Offset(0.0, 0.5),
                   blurRadius: 5.0,
                 ),
@@ -127,15 +117,13 @@ class SettingsTabState extends State<SettingsTab>
               gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors:
-                    AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+                colors: AppColors.prayerMenu,
               ),
             ),
             height: 50.0,
             child: new TabBar(
               indicatorColor: Colors.transparent,
-              unselectedLabelColor: AppColors.getInactvePrayerMenu(
-                  _themeProvider.isDarkModeEnabled),
+              unselectedLabelColor: AppColors.inactvePrayerMenu,
               labelColor: AppColors.lightBlue4,
               labelStyle: AppTextStyles.boldText20,
               isScrollable: true,
@@ -170,16 +158,14 @@ class SettingsTabState extends State<SettingsTab>
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors:
-                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+              colors: AppColors.backgroundColor,
             ),
           ),
           child: TabBarView(
             children: [
               GeneralSettings(_settingsProvider.settings),
               MyListSettings(_settingsProvider.settings),
-              PrayerTimeSettings(_settingsProvider.prayerSetttings,
-                  _settingsProvider.settings),
+              PrayerTimeSettings(_settingsProvider.prayerSetttings, _settingsProvider.settings),
               NotificationsSettings(_settingsProvider.settings),
               AlexaSettings(_settingsProvider.settings),
               SharingSettings(_settingsProvider.sharingSetttings),

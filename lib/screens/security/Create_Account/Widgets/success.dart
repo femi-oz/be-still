@@ -18,8 +18,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () =>
-            Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName),
+        () => Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName),
       ),
     );
   }
@@ -35,12 +34,10 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -49,8 +46,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             Text(
               'Your account has been succesfully created.',
               style: TextStyle(
-                color: AppColors.getTextFieldText(
-                    _themeProvider.isDarkModeEnabled),
+                color: AppColors.textFieldText,
                 fontWeight: FontWeight.w300,
                 fontSize: 14,
               ),
@@ -58,8 +54,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             Text(
               'Login to your BeStill...',
               style: TextStyle(
-                color: AppColors.getTextFieldText(
-                    _themeProvider.isDarkModeEnabled),
+                color: AppColors.textFieldText,
                 fontWeight: FontWeight.w300,
                 fontSize: 14,
               ),
