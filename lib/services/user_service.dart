@@ -73,18 +73,18 @@ class UserService {
     // }
 
     try {
-      FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store user details
-          await _userCollectionReference.doc(userID).set(
-                _userData.toJson(),
-              );
+      // FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store user details
+      await _userCollectionReference.doc(userID).set(
+            _userData.toJson(),
+          );
 
-          // store default settings
-          await locator<SettingsService>().addSettings('', userID, email);
-          await locator<SettingsService>().addGroupPreferenceSettings(userID);
-        },
-      );
+      // store default settings
+      await locator<SettingsService>().addSettings('', userID, email);
+      await locator<SettingsService>().addGroupPreferenceSettings(userID);
+      //   },
+      // );
     } catch (e) {
       throw HttpException(e.message);
     }
