@@ -91,6 +91,17 @@ flutter:
   - family: AppIcons
     fonts:
       - asset: assets/fonts/AppIcons.ttf
+  - family: Avenir Next
+    fonts:
+      - asset: assets/fonts/avenir_next_medium.ttf
+        weight: 400
+      - asset: assets/fonts/avenir_next_regular.ttf
+        weight: 300
+      - asset: assets/fonts/avenir_next_bold.ttf
+        weight: 700
+      - asset: assets/fonts/avenir_next_demi.ttf
+        weight: 500
+  
   # fonts:
   #   - family: Schyler
   #     fonts:

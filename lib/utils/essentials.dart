@@ -146,6 +146,11 @@ class AppColors {
         light: 0xFF0C3A4C,
         dark: 0xFF0C3A4C,
       );
+  static Color splashTextColor(bool isDarkMode) => dynamicColor(
+        isDarkMode: isDarkMode,
+        light: 0xFF005780,
+        dark: 0xFF00ACD8,
+      );
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),
@@ -190,6 +195,12 @@ class AppColors {
 }
 
 class AppTextStyles {
+  static TextStyle get medium10 => const TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w300,
+        letterSpacing: 0.5,
+      );
+
   static const TextStyle regularText11 = const TextStyle(
     color: AppColors.lightBlue4,
     fontSize: 11,

@@ -100,11 +100,14 @@ class _SplashScreenState extends State<SplashScreen>
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
-          ),
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color(0xFF043569),
+                Color(0xFF011730),
+                Color(0xFF043467),
+                Color(0xFF01162E),
+              ]),
         ),
         padding: EdgeInsets.symmetric(horizontal: 32),
         child: Column(
@@ -135,56 +138,48 @@ class _SplashScreenState extends State<SplashScreen>
             AnimatedBuilder(
               animation: _textAnimationController,
               builder: (context, widget) {
-                return ShaderMask(
-                  shaderCallback: (rect) {
-                    return LinearGradient(
-                      colors: [Colors.grey, Colors.white, Colors.grey],
-                      stops: [
-                        _textAnimationController.value - 0.3,
-                        _textAnimationController.value,
-                        _textAnimationController.value + 0.3
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.copyright,
+                          size: 12,
+                          color: AppColors.splashTextColor(
+                              _themeProvider.isDarkModeEnabled),
+                        ),
+                        Text(
+                          StringUtils.copyRight1,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.medium10.copyWith(
+                            color: AppColors.splashTextColor(
+                                _themeProvider.isDarkModeEnabled),
+                          ),
+                        ),
                       ],
-                    ).createShader(
-                      Rect.fromLTWH(0, 0, rect.width, rect.height),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.copyright,
-                            size: 12,
-                            color: AppColors.lightBlue3,
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          AppIcons.second_logo,
+                          size: 16,
+                          color: AppColors.lightBlue3,
+                        ),
+                        SizedBox(width: 10.0),
+                        Text(
+                          StringUtils.copyRight2,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.medium10.copyWith(
+                            color: AppColors.splashTextColor(
+                                _themeProvider.isDarkModeEnabled),
                           ),
-                          Text(
-                            '2020 All Rights reserved',
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.regularText11,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            AppIcons.second_logo,
-                            size: 16,
-                            color: AppColors.lightBlue3,
-                          ),
-                          SizedBox(width: 10.0),
-                          Text(
-                            'BeStill is a ministry of Secnd Baptist Church Houston, TX',
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.regularText11,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  blendMode: BlendMode.srcIn,
+                        ),
+                      ],
+                    ),
+                  ],
                 );
               },
             ),
