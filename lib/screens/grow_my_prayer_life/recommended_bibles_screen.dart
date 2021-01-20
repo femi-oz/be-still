@@ -37,13 +37,10 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
+            image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -72,21 +69,16 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Text(
                   'Recommeneded Bibles',
-                  style: TextStyle(
-                      color: AppColors.lightBlue3,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500),
+                  style: TextStyle(color: AppColors.lightBlue3, fontSize: 20, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 40.0, horizontal: 40.0),
+                padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0),
                 child: Text(
                   'Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Donec rutrum congue leo eget malesuada. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Proin eget tortor risus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
                   style: TextStyle(
-                    color: AppColors.getTextFieldText(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.textFieldText,
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
                     height: 1.2,
@@ -113,18 +105,12 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 margin: EdgeInsets.symmetric(vertical: 10.0),
                 child: custom.ExpansionTile(
                   iconColor: AppColors.lightBlue4,
-                  headerBackgroundColorStart: AppColors.getPrayerMenu(
-                      _themeProvider.isDarkModeEnabled)[0],
-                  headerBackgroundColorEnd: AppColors.getPrayerMenu(
-                      _themeProvider.isDarkModeEnabled)[1],
-                  shadowColor:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+                  headerBackgroundColorStart: AppColors.prayerMenu[0],
+                  headerBackgroundColorEnd: AppColors.prayerMenu[1],
+                  shadowColor: AppColors.dropShadow,
                   title: Container(
-                    margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.1),
-                    child: Text(bibleData[i].shortName,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.boldText24),
+                    margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.1),
+                    child: Text(bibleData[i].shortName, textAlign: TextAlign.center, style: AppTextStyles.boldText24),
                   ),
                   initiallyExpanded: false,
                   // onExpansionChanged: (bool isExpanded) {
@@ -137,16 +123,14 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(bibleData[i].name,
-                                style: AppTextStyles.regularText13),
+                            child: Text(bibleData[i].name, style: AppTextStyles.regularText13),
                           ),
                           Text(
                             bibleData[i].type,
                             style: AppTextStyles.regularText11,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40.0, vertical: 20.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
                             child: Text(
                               bibleData[i].description,
                               style: AppTextStyles.regularText13,
@@ -154,9 +138,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                             ),
                           ),
                           OutlineButton(
-                            borderSide: BorderSide(
-                                color: AppColors.getCardBorder(
-                                    _themeProvider.isDarkModeEnabled)),
+                            borderSide: BorderSide(color: AppColors.cardBorder),
                             onPressed: () => _launchURL(bibleData[i].link),
                             child: Text(
                               'READ NOW',

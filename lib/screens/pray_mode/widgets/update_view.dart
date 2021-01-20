@@ -25,10 +25,7 @@ class UpdateView extends StatelessWidget {
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
                         data.prayer.creatorName,
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500),
+                        style: TextStyle(color: AppColors.lightBlue3, fontSize: 18, fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -46,18 +43,15 @@ class UpdateView extends StatelessWidget {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(u.createdOn),
-                                  style: TextStyle(
-                                      color: AppColors.dimBlue,
-                                      fontWeight: FontWeight.w500),
+                                  DateFormat('hh:mma | MM.dd.yyyy').format(u.createdOn),
+                                  style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
                                 ),
                               ],
                             ),
                           ),
                           Expanded(
                             child: Divider(
-                              color: AppColors.getPrayeModeBorder(isDark),
+                              color: AppColors.prayeModeBorder,
                               thickness: 1,
                             ),
                           ),
@@ -82,13 +76,12 @@ class UpdateView extends StatelessWidget {
                       ),
                       Container(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 100.0, horizontal: 20),
+                          padding: EdgeInsets.symmetric(vertical: 100.0, horizontal: 20),
                           child: Center(
                             child: Text(
                               u.description,
                               style: TextStyle(
-                                color: AppColors.getTextFieldText(isDark),
+                                color: AppColors.textFieldText,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w300,
                                 height: 2,
@@ -114,23 +107,18 @@ class UpdateView extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'Initial Prayer Request |',
-                                style: TextStyle(
-                                    color: AppColors.dimBlue,
-                                    fontWeight: FontWeight.w500),
+                                style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                DateFormat(' MM.dd.yyyy')
-                                    .format(data.prayer.createdOn),
-                                style: TextStyle(
-                                    color: AppColors.dimBlue,
-                                    fontWeight: FontWeight.w500),
+                                DateFormat(' MM.dd.yyyy').format(data.prayer.createdOn),
+                                style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
                         ),
                         Expanded(
                           child: Divider(
-                            color: AppColors.getPrayeModeBorder(isDark),
+                            color: AppColors.prayeModeBorder,
                             thickness: 1,
                           ),
                         ),
@@ -151,13 +139,12 @@ class UpdateView extends StatelessWidget {
                     ),
                     Container(
                       child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                         child: Center(
                           child: Text(
                             data.prayer.description,
                             style: TextStyle(
-                              color: AppColors.getTextFieldText(isDark),
+                              color: AppColors.textFieldText,
                               fontSize: 14,
                               fontWeight: FontWeight.w300,
                               height: 2,

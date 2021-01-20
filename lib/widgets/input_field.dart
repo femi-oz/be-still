@@ -74,18 +74,12 @@ class CustomInput extends StatelessWidget {
             width: 1.0,
           ),
         ),
-        fillColor: AppColors.getTextFieldBgColor(
-            Provider.of<ThemeProvider>(context).isDarkModeEnabled),
+        fillColor: AppColors.textFieldBackgroundColor,
         filled: true,
       ),
       obscureText: isPassword ? true : false,
       validator: (value) => _validatorFn(value),
-      onFieldSubmitted: (_) => {
-        unfocus
-            ? FocusScope.of(context).unfocus()
-            : FocusScope.of(context).nextFocus(),
-        unfocus ? submitForm : null
-      },
+      onFieldSubmitted: (_) => {unfocus ? FocusScope.of(context).unfocus() : FocusScope.of(context).nextFocus(), unfocus ? submitForm : null},
       textInputAction: textInputAction,
       onChanged: onTextchanged,
     );
@@ -98,13 +92,7 @@ class CustomInput extends StatelessWidget {
       }
     }
     if (isEmail && value.isNotEmpty) {
-      String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
-          "\\@" +
-          "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-          "(" +
-          "\\." +
-          "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-          ")+";
+      String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" + "\\@" + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\." + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" + ")+";
       RegExp regExp = new RegExp(p);
       if (!regExp.hasMatch(value)) {
         return 'Enter a valid email address';
@@ -120,8 +108,7 @@ class CustomInput extends StatelessWidget {
     if (isPassword && value.isNotEmpty) {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(value))
-        return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
+      if (!regex.hasMatch(value)) return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
     }
     if (validator != null) {
       return validator(value);

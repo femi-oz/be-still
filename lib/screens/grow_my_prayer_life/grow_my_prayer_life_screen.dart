@@ -21,13 +21,10 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
+            image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -39,10 +36,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 'Grow My Prayer Life',
-                style: TextStyle(
-                    color: AppColors.lightBlue3,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500),
+                style: TextStyle(color: AppColors.lightBlue3, fontSize: 20, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
               ),
               Column(
@@ -52,8 +46,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                     child: Text(
                       'Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec sollicitudin molestie malesuada. Proin eget tortor risus. Vestibulum ante ipsum primis in faucibus',
                       style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
+                        color: AppColors.textFieldText,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         height: 1.2,
@@ -65,8 +58,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                     child: Text(
                       'Quisque velit nisi, pretium ut lacinia in, elementum id enim. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Sed porttitor lectus nibh. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;',
                       style: TextStyle(
-                        color: AppColors.getTextFieldText(
-                            _themeProvider.isDarkModeEnabled),
+                        color: AppColors.textFieldText,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         height: 1.2,
@@ -84,15 +76,11 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(RecommenededBibles.routeName);
+                            Navigator.of(context).pushNamed(RecommenededBibles.routeName);
                           },
                           child: Text(
                             'RECOMMENDED BIBLES',
-                            style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: AppColors.lightBlue4, fontSize: 18, fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -106,15 +94,11 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(DevotionPlans.routeName);
+                            Navigator.of(context).pushNamed(DevotionPlans.routeName);
                           },
                           child: Text(
                             'DEVOTIONAL AND READING PLANS',
-                            style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: AppColors.lightBlue4, fontSize: 18, fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -129,10 +113,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                           onTap: () {},
                           child: Text(
                             'MY PRAYER GOALS',
-                            style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: AppColors.lightBlue4, fontSize: 18, fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
                           ),
                         ),

@@ -30,8 +30,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
         _key,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false).archivePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
       Navigator.of(context).pop();
@@ -52,8 +51,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
         _key,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .deletePrayer(widget.prayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false).deletePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(_key);
       // Navigator.push(
@@ -135,8 +133,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: MediaQuery.of(context).size.width * .38,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: AppColors.getCardBorder(
-                            _themeProvider.isDarkModeEnabled),
+                        color: AppColors.cardBorder,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -165,8 +162,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: MediaQuery.of(context).size.width * .38,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: AppColors.getCardBorder(
-                            _themeProvider.isDarkModeEnabled),
+                        color: AppColors.cardBorder,
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),

@@ -28,8 +28,7 @@ class NotificationCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: AppColors.getPrayerCardBgColor(
-                _themeProvider.isDarkModeEnabled),
+            color: AppColors.prayerCardBgColor,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(9),
               topLeft: Radius.circular(9),
@@ -100,8 +99,7 @@ class NotificationCard extends StatelessWidget {
                 ],
               ),
               Divider(
-                color: AppColors.getPrayerCardBgColor(
-                    _themeProvider.isDarkModeEnabled),
+                color: AppColors.prayerCardBgColor,
                 thickness: 0.5,
               ),
               Row(

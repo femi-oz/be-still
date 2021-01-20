@@ -28,7 +28,7 @@ class NotificationBarState extends State<NotificationBar> {
       leading: IconButton(
         icon: Icon(
           Icons.close,
-          color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+          color: AppColors.textFieldText,
           size: 24,
         ),
         onPressed: () => Navigator.of(context).pop(),
@@ -39,7 +39,7 @@ class NotificationBarState extends State<NotificationBar> {
           child: Text(
             "CLEAR ALL",
             style: TextStyle(
-              color: AppColors.getAppBarColor(_themeProvider.isDarkModeEnabled),
+              color: AppColors.appBarColor,
               fontSize: 16,
             ),
           ),
@@ -50,8 +50,7 @@ class NotificationBarState extends State<NotificationBar> {
             return IconButton(
               icon: Icon(
                 AppIcons.menu,
-                color:
-                    AppColors.getAppBarColor(_themeProvider.isDarkModeEnabled),
+                color: AppColors.appBarColor,
                 // size: 24,
               ),
               onPressed: () {

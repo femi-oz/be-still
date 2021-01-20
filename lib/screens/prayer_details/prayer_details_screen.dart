@@ -31,24 +31,17 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   List<PrayerUpdateModel> updates = [];
 
   Widget _buildMenu() {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
+    UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     PrayerModel prayer = Provider.of<PrayerProvider>(context).currentPrayer;
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
     var isGroupAdmin = false;
     if (group != null) {
-      isGroupAdmin = group.groupUsers
-              .firstWhere((user) => user.userId == _user.id, orElse: () => null)
-              ?.isAdmin ??
-          false;
+      isGroupAdmin = group.groupUsers.firstWhere((user) => user.userId == _user.id, orElse: () => null)?.isAdmin ?? false;
     }
-    var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType !=
-        PrayerType.userPrayers;
-    if ((isGroup && isGroupAdmin) ||
-        (!isGroup && isGroupAdmin && prayer.groupId != '0')) {
+    var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType != PrayerType.userPrayers;
+    if ((isGroup && isGroupAdmin) || (!isGroup && isGroupAdmin && prayer.groupId != '0')) {
       return GroupAdminPrayerMenu(prayer);
-    } else if ((isGroup && !isGroupAdmin) ||
-        (!isGroup && !isGroupAdmin && prayer.groupId != '0')) {
+    } else if ((isGroup && !isGroupAdmin) || (!isGroup && !isGroupAdmin && prayer.groupId != '0')) {
       return OtherMemberPrayerMenu(prayer);
     } else if ((!isGroup && prayer.groupId == '0')) {
       return PrayerMenu(prayer, updates, context);
@@ -65,7 +58,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
       ),
       child: Column(
@@ -85,8 +78,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   label: Text(
                     'BACK',
                     style: AppTextStyles.boldText20.copyWith(
-                      color: AppColors.getPrayerPrimaryColor(
-                          _themeProvider.isDarkModeEnabled),
+                      color: AppColors.prayerPrimaryColor,
                     ),
                   ),
                 ),
@@ -121,20 +113,15 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: AppColors.getDetailBgColor(
-                      _themeProvider.isDarkModeEnabled),
+                  colors: AppColors.detailBackgroundColor,
                 ),
                 border: Border.all(
-                  color: AppColors.getPrayerPrimaryColor(
-                      _themeProvider.isDarkModeEnabled),
+                  color: AppColors.prayerPrimaryColor,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child:
-                  Provider.of<PrayerProvider>(context).prayerUpdates.length > 0
-                      ? UpdateView()
-                      : NoUpdateView(),
+              child: Provider.of<PrayerProvider>(context).prayerUpdates.length > 0 ? UpdateView() : NoUpdateView(),
             ),
           ),
           IconButton(
@@ -144,12 +131,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
             ),
             onPressed: () => showModalBottomSheet(
               context: context,
-              barrierColor: AppColors.getDetailBgColor(
-                      _themeProvider.isDarkModeEnabled)[1]
-                  .withOpacity(0.5),
-              backgroundColor: AppColors.getDetailBgColor(
-                      _themeProvider.isDarkModeEnabled)[1]
-                  .withOpacity(0.9),
+              barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+              backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
               isScrollControlled: true,
               builder: (BuildContext context) {
                 return _buildMenu();

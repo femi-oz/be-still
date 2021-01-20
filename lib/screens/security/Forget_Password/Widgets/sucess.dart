@@ -18,8 +18,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () =>
-            Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName),
+        () => Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName),
       ),
     );
   }
@@ -35,12 +34,10 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),

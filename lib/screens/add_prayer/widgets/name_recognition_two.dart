@@ -56,28 +56,21 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
         bcontext,
         _key,
       );
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       if (widget.isUpdate) {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayerUpdate(widget.prayerUpdate);
+        await Provider.of<PrayerProvider>(context, listen: false).addPrayerUpdate(widget.prayerUpdate);
         Navigator.of(context).pushReplacementNamed(
           PrayerDetails.routeName,
-          arguments: PrayerDetailsRouteArguments(
-              id: widget.prayerUpdate.prayerId, isGroup: widget.isGroup),
+          arguments: PrayerDetailsRouteArguments(id: widget.prayerUpdate.prayerId, isGroup: widget.isGroup),
         );
       } else {
         if (widget.isGroup) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addGroupPrayer(context, widget.prayer);
+          await Provider.of<PrayerProvider>(context, listen: false).addGroupPrayer(context, widget.prayer);
         } else {
           if (widget.selectedGroups.length > 0) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerWithGroups(
-                    context, widget.prayer, widget.selectedGroups, _user.id);
+            await Provider.of<PrayerProvider>(context, listen: false).addPrayerWithGroups(context, widget.prayer, widget.selectedGroups, _user.id);
           } else {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayer(widget.prayer, _user.id);
+            await Provider.of<PrayerProvider>(context, listen: false).addPrayer(widget.prayer, _user.id);
           }
         }
       }
@@ -107,8 +100,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
-      margin: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.1),
+      margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.1),
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -143,13 +135,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     width: double.infinity,
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
-                      color: _selectedOption == 'yes'
-                          ? AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.2)
-                          : AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.1),
+                      color: _selectedOption == 'yes' ? AppColors.activeButton.withOpacity(0.2) : AppColors.activeButton.withOpacity(0.1),
                       border: Border.all(
                         color: AppColors.lightBlue6,
                         width: 1,
@@ -184,13 +170,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     width: double.infinity,
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
-                      color: _selectedOption == 'no'
-                          ? AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.2)
-                          : AppColors.getActiveBtn(
-                                  _themeProvider.isDarkModeEnabled)
-                              .withOpacity(0.1),
+                      color: _selectedOption == 'no' ? AppColors.activeButton.withOpacity(0.2) : AppColors.activeButton.withOpacity(0.1),
                       border: Border.all(
                         color: AppColors.lightBlue6,
                         width: 1,
@@ -214,24 +194,16 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                 _showCommentField
                     ? Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: CustomInput(
-                            label: 'Add additional comments',
-                            controller: null,
-                            maxLines: 8,
-                            color: AppColors.offWhite1,
-                            showSuffix: false),
+                        child: CustomInput(label: 'Add additional comments', controller: null, maxLines: 8, color: AppColors.offWhite1, showSuffix: false),
                       )
                     : Container(),
                 SizedBox(height: 40.0),
                 InkWell(
                   onTap: _onSave,
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+                    padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          color: AppColors.getCardBorder(
-                              _themeProvider.isDarkModeEnabled)),
+                      border: Border.all(color: AppColors.cardBorder),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: Text(

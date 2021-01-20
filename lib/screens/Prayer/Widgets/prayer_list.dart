@@ -23,18 +23,13 @@ class PrayerList extends StatefulWidget {
 class _PrayerListState extends State<PrayerList> {
   void _getPrayers() async {
     try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false).setUserGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false).setAllGroups(_user.id);
 
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
+      await Provider.of<PrayerProvider>(context, listen: false).setHiddenPrayers(_user.id);
+      await Provider.of<PrayerProvider>(context, listen: false).setPrayers(_user?.id);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -59,19 +54,17 @@ class _PrayerListState extends State<PrayerList> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final data = Provider.of<PrayerProvider>(context).filteredPrayers;
-    final currentPrayerType =
-        Provider.of<PrayerProvider>(context).currentPrayerType;
+    final currentPrayerType = Provider.of<PrayerProvider>(context).currentPrayerType;
     return Container(
       padding: EdgeInsets.only(left: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(
-              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -94,12 +87,8 @@ class _PrayerListState extends State<PrayerList> {
                         ...data
                             .map((e) => GestureDetector(
                                 onTap: () async {
-                                  await Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .setPrayer(e.prayer.id);
-                                  await Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .setPrayerUpdates(e.prayer.id);
+                                  await Provider.of<PrayerProvider>(context, listen: false).setPrayer(e.prayer.id);
+                                  await Provider.of<PrayerProvider>(context, listen: false).setPrayerUpdates(e.prayer.id);
                                   Navigator.push(
                                     context,
                                     new MaterialPageRoute(
@@ -112,25 +101,18 @@ class _PrayerListState extends State<PrayerList> {
                       ],
                     ),
                   ),
-            currentPrayerType == PrayerType.archived ||
-                    currentPrayerType == PrayerType.answered
+            currentPrayerType == PrayerType.archived || currentPrayerType == PrayerType.answered
                 ? Container()
                 : LongButton(
                     onPress: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            AddPrayer(isEdit: false, isGroup: false),
+                        builder: (context) => AddPrayer(isEdit: false, isGroup: false),
                       ),
                     ),
                     text: 'Add New Prayer',
-                    backgroundColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.getBackgroudColor(
-                            _themeProvider.isDarkModeEnabled)[1]
-                        : AppColors.lightBlue3,
-                    textColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.lightBlue3
-                        : Colors.white,
+                    backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[1] : AppColors.lightBlue3,
+                    textColor: _themeProvider.isDarkModeEnabled ? AppColors.lightBlue3 : Colors.white,
                     icon: Icons.add,
                   ),
             SizedBox(height: 80),

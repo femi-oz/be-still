@@ -30,18 +30,12 @@ class _SharingSettingsState extends State<SharingSettings> {
               CustomSectionHeder('Preferences'),
               CustomToggle(
                 title: 'Enable sharing via text?',
-                onChange: (value) => setingProvider.updateSharingSettings(
-                    key: SettingsKey.enableSharingViaText,
-                    value: value,
-                    settingsId: widget.sharingSettings.id),
+                onChange: (value) => setingProvider.updateSharingSettings(key: SettingsKey.enableSharingViaText, value: value, settingsId: widget.sharingSettings.id),
                 value: widget.sharingSettings.enableSharingViaText,
               ),
               CustomToggle(
                 title: 'Enable sharing via email?',
-                onChange: (value) => setingProvider.updateSharingSettings(
-                    key: SettingsKey.enableSharingViaEmail,
-                    value: value,
-                    settingsId: widget.sharingSettings.id),
+                onChange: (value) => setingProvider.updateSharingSettings(key: SettingsKey.enableSharingViaEmail, value: value, settingsId: widget.sharingSettings.id),
                 value: widget.sharingSettings.enableSharingViaEmail,
               ),
             ],
@@ -56,9 +50,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'Set your Church\'s preferred method of submitting prayers here to save it as a quick selection in the sharing options.',
-                  style: AppTextStyles.regularText15.copyWith(
-                      color: AppColors.getTextFieldText(
-                          _themeProvider.isDarkModeEnabled)),
+                  style: AppTextStyles.regularText15.copyWith(color: AppColors.textFieldText),
                 ),
               ),
               SizedBox(height: 30),

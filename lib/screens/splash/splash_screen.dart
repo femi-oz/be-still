@@ -20,8 +20,7 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController _textAnimationController;
   AuthenticationProvider _authenticationProvider = AuthenticationProvider();
@@ -30,9 +29,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    _textAnimationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 3))
-          ..repeat();
+    _textAnimationController = AnimationController(vsync: this, duration: Duration(seconds: 3))..repeat();
     super.initState();
   }
 
@@ -62,15 +59,11 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (isLoggedIn) {
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser();
-        UserModel _user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+        await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
+        UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .setUserNotifications(_user?.id);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            PrayerScreen.routeName, (Route<dynamic> route) => false);
+        await Provider.of<NotificationProvider>(context, listen: false).setUserNotifications(_user?.id);
+        Navigator.of(context).pushNamedAndRemoveUntil(PrayerScreen.routeName, (Route<dynamic> route) => false);
       } else {
         Navigator.of(context).pushNamedAndRemoveUntil(
           LoginScreen.routeName,
@@ -102,8 +95,7 @@ class _SplashScreenState extends State<SplashScreen>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
         ),
         padding: EdgeInsets.symmetric(horizontal: 32),
@@ -139,11 +131,7 @@ class _SplashScreenState extends State<SplashScreen>
                   shaderCallback: (rect) {
                     return LinearGradient(
                       colors: [Colors.grey, Colors.white, Colors.grey],
-                      stops: [
-                        _textAnimationController.value - 0.3,
-                        _textAnimationController.value,
-                        _textAnimationController.value + 0.3
-                      ],
+                      stops: [_textAnimationController.value - 0.3, _textAnimationController.value, _textAnimationController.value + 0.3],
                     ).createShader(
                       Rect.fromLTWH(0, 0, rect.width, rect.height),
                     );

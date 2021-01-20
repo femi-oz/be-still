@@ -9,11 +9,7 @@ class CustomLogoShape extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return CustomPaint(
-      painter: AuthCustomPainter(
-          AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled)
-              .reversed
-              .toList(),
-          AppColors.shadowColor),
+      painter: AuthCustomPainter(AppColors.backgroundColor.reversed.toList(), AppColors.shadowColor),
       child: Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.4,
