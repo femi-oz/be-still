@@ -27,8 +27,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController =
-      new TextEditingController();
+  TextEditingController _confirmPasswordController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
@@ -68,8 +67,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     try {
       await BeStilDialog.showLoading(context, 'Registering...');
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .registerUser(
+      await Provider.of<AuthenticationProvider>(context, listen: false).registerUser(
         password: _passwordController.text,
         email: _emailController.text,
         firstName: _firstnameController.text,
@@ -77,11 +75,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         dob: _selectedDate,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context)
-          .pushReplacementNamed(CreateAccountSuccess.routeName);
+      Navigator.of(context).pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
@@ -106,12 +102,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors:
-                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+              colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(
-                  _themeProvider.isDarkModeEnabled)),
+              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -268,8 +262,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 Row(
                   children: <Widget>[
                     Theme(
-                      data: ThemeData(
-                          unselectedWidgetColor: AppColors.lightBlue3),
+                      data: ThemeData(unselectedWidgetColor: AppColors.lightBlue3),
                       child: Switch.adaptive(
                         value: termsAccepted,
                         onChanged: (val) {

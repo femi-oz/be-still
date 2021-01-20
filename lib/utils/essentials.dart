@@ -97,8 +97,7 @@ class AppColors {
         light: 0xFF0C3A4C,
         dark: 0xFF0C3A4C,
       );
-  static Color splashTextColor(bool isDarkMode) => dynamicColor(
-        isDarkMode: isDarkMode,
+  static Color get splashTextColor => dynamicColor(
         light: 0xFF005780,
         dark: 0xFF00ACD8,
       );
