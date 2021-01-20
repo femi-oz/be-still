@@ -180,6 +180,8 @@ class AppColors {
   static const Color darkBlue2 = const Color(0xFF015380);
   static const Color darkBlue3 = const Color(0xFF31373D);
 
+  static const Color menuColor = const Color(0xFF718B92);
+
   // static const Color blueGrey = const Color(0xFF51575C);
 
   // static const Color lightBlue = const Color(0xFF4BC2FF);
@@ -352,5 +354,12 @@ class AppTextStyles {
     fontSize: 16,
     fontWeight: FontWeight.normal,
     letterSpacing: 1,
+  );
+
+  static const TextStyle drawerMenu = const TextStyle(
+    color: AppColors.menuColor,
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
   );
 }

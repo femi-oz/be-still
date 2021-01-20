@@ -99,45 +99,45 @@ class CustomDrawer extends StatelessWidget {
                                   .pushReplacementNamed(PrayerScreen.routeName);
                             },
                             title: Text("MY LIST",
-                                style: AppTextStyles.boldText20),
-                          ),
-                          // ListTile(
-                          //   onTap: () => Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           AddPrayer(isEdit: false, isGroup: false),
-                          //     ),
-                          //   ),
-                          //   title: Text("ADD A PRAYER",
-                          //       style: AppTextStyles.boldText20),
-                          // ),
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(PrayerMode.routeName),
-                            title:
-                                Text("PRAY", style: AppTextStyles.boldText20),
+                                style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
-                            onTap: _launchURL,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AddPrayer(isEdit: false, isGroup: false),
+                              ),
+                            ),
+                            title: Text("ADD A PRAYER",
+                                style: AppTextStyles.drawerMenu),
+                          ),
+                          ListTile(
+                            // onTap: () => Navigator.of(context)
+                            //     .pushReplacementNamed(PrayerMode.routeName),
                             title:
-                                Text("BIBLE", style: AppTextStyles.boldText20),
+                                Text("PRAY", style: AppTextStyles.drawerMenu),
+                          ),
+                          ListTile(
+                            // onTap: _launchURL,
+                            title:
+                                Text("BIBLE", style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed(
-                                  GrowMyPrayerLifeScreen.routeName);
+                              // Navigator.of(context).pushReplacementNamed(
+                              //     GrowMyPrayerLifeScreen.routeName);
                             },
                             title: Text("GROW MY PRAYER LIFE",
-                                style: AppTextStyles.boldText20),
+                                style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed(
-                                  SettingsScreen.routeName);
+                              // Navigator.of(context).pushReplacementNamed(
+                              //     SettingsScreen.routeName);
                             },
                             title: Text("SETTINGS",
-                                style: AppTextStyles.boldText20),
+                                style: AppTextStyles.drawerMenu),
                           ),
                         ],
                       ),

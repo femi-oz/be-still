@@ -120,6 +120,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               children: <Widget>[
                 CustomLogoShape(),
                 Container(
+                  child: Text('Create an Account',
+                      style: AppTextStyles.boldText18),
+                ),
+                SizedBox(height: 10),
+                Container(
                   padding: EdgeInsets.all(20),
                   child: Column(
                     children: <Widget>[
@@ -167,7 +172,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             child: Icon(
               _enableSubmit ? Icons.arrow_forward : Icons.do_not_disturb,
-              color: AppColors.offWhite1,
+              color: AppColors.offWhite4,
             ),
           ),
         ),
@@ -193,18 +198,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         child: Column(
           children: <Widget>[
             CustomInput(
-              label: 'First Name',
+              label: 'Full Name',
               controller: _firstnameController,
               keyboardType: TextInputType.text,
               isRequired: true,
             ),
             SizedBox(height: 15.0),
-            CustomInput(
-              label: 'Last Name',
-              controller: _lastnameController,
-              keyboardType: TextInputType.text,
-              isRequired: true,
-            ),
+            // CustomInput(
+            //   label: 'Last Name',
+            //   controller: _lastnameController,
+            //   keyboardType: TextInputType.text,
+            //   isRequired: true,
+            // ),
             SizedBox(height: 15.0),
             CustomInput(
               label: 'Email',
@@ -284,7 +289,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                     ),
                     Text(
-                      'I Agree to the Terms of Use',
+                      'I agree to the Terms of Use',
                       style: AppTextStyles.regularText15,
                     ),
                   ],
