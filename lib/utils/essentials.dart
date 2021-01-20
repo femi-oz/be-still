@@ -195,11 +195,14 @@ class AppColors {
 }
 
 class AppTextStyles {
+  // new fonts region
   static TextStyle get medium10 => const TextStyle(
         fontSize: 10,
-        fontWeight: FontWeight.w300,
+        fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
       );
+
+  // end region
 
   static const TextStyle regularText11 = const TextStyle(
     color: AppColors.lightBlue4,
