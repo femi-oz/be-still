@@ -196,6 +196,7 @@ class AppColors {
 
 class AppTextStyles {
   // new fonts region
+  // medium => w400, demi => w500, bold => w700, regular=> w300
   static TextStyle get medium10 => const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w400,
