@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen>
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    await BeStilDialog.showLoading(context, _key, 'Authenticating');
+    await BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: _usernameController.text,
@@ -44,14 +44,14 @@ class _LoginScreenState extends State<LoginScreen>
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'Username or Password is incorrect.', key: _scaffoldKey);
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }

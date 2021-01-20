@@ -344,7 +344,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<GroupProvider>(context, listen: false).inviteMember(
           groupName,
@@ -353,7 +352,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           '${_user.firstName} ${_user.lastName}',
           _user.id);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       _emailController.text = '';
     } catch (e) {
       BeStilDialog.showErrorDialog(context, e.message.toString());
@@ -1112,13 +1111,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   orElse: () => null)
                               .id;
                           if (id != null) {
-                            await BeStilDialog.showLoading(context, _key, '');
+                            await BeStilDialog.showLoading(context, '');
 
                             await Provider.of<GroupProvider>(context,
                                     listen: false)
                                 .leaveGroup(id);
                             await Future.delayed(Duration(milliseconds: 300));
-                            BeStilDialog.hideLoading(_key);
+                            BeStilDialog.hideLoading(context);
                           }
                         },
                         child: Container(
@@ -1153,14 +1152,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         orElse: () => null)
                                     .id;
                                 if (id != null) {
-                                  await BeStilDialog.showLoading(
-                                      context, _key, '');
+                                  await BeStilDialog.showLoading(context, '');
                                   Provider.of<GroupProvider>(context,
                                           listen: false)
                                       .deleteGroup(id, data.group.id);
                                   await Future.delayed(
                                       Duration(milliseconds: 300));
-                                  BeStilDialog.hideLoading(_key);
+                                  BeStilDialog.hideLoading(context);
                                 }
                               },
                               child: Container(

@@ -74,20 +74,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       try {
         BeStilDialog.showLoading(
           bcontext,
-          _key,
         );
         await Provider.of<UserProvider>(context, listen: false)
             .updateEmail(_newEmail.text, user.id);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         Navigator.of(context).pop();
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
       }
     });
@@ -100,20 +99,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       try {
         BeStilDialog.showLoading(
           bcontext,
-          _key,
         );
         await Provider.of<UserProvider>(context, listen: false)
             .updatePassword(_newPassword.text);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         Navigator.of(context).pop();
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
       }
     });

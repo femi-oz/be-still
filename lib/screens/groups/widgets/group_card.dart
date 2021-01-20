@@ -32,14 +32,13 @@ class _GroupCardState extends State<GroupCard> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<GroupProvider>(context, listen: false)
           .joinRequest(groupId, userId, userName);
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showSnackBar(_key, 'Request has been sent');
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message.toString());
     }
   }

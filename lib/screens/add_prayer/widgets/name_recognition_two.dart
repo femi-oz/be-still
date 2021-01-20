@@ -54,7 +54,6 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -82,7 +81,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
         }
       }
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       // Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
       Navigator.push(
           context,
@@ -91,11 +90,11 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
           ));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }

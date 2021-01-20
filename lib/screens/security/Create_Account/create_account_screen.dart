@@ -67,7 +67,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _formKey.currentState.save();
 
     try {
-      await BeStilDialog.showLoading(context, _key, 'Registering...');
+      await BeStilDialog.showLoading(context, 'Registering...');
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .registerUser(
         password: _passwordController.text,
@@ -79,14 +79,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context)
           .pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }

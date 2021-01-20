@@ -101,20 +101,19 @@ class _AddPrayerState extends State<AddPrayer> {
       try {
         BeStilDialog.showLoading(
           bcontext,
-          _key,
         );
         await Provider.of<PrayerProvider>(context, listen: false)
             .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
       }
     }

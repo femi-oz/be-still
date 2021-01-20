@@ -50,14 +50,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       // _closeOverlay();
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<NotificationProvider>(context, listen: false)
           .acceptGroupInvite(groupId, userId, name, email);
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showSnackBar(_key, 'Request has been accepted');
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message.toString());
       // _closeOverlay();
     }
