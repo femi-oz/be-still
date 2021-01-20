@@ -54,7 +54,8 @@ class _AddPrayerState extends State<AddPrayer> {
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    final _groupData = Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    final _groupData =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
@@ -80,7 +81,7 @@ class _AddPrayerState extends State<AddPrayer> {
       showModalBottomSheet(
         context: context,
         barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-        backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+        backgroundColor: AppColors.nameRecogntionColor.withOpacity(0.9),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
@@ -97,7 +98,8 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showLoading(
           bcontext,
         );
-        await Provider.of<PrayerProvider>(context, listen: false).editprayer(_descriptionController.text, widget.prayer.id);
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
@@ -115,7 +117,8 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
-    _descriptionController.text = widget.isEdit ? widget.prayer.description : '';
+    _descriptionController.text =
+        widget.isEdit ? widget.prayer.description : '';
     super.initState();
   }
 
@@ -150,7 +153,8 @@ class _AddPrayerState extends State<AddPrayer> {
                         ? InkWell(
                             child: Text(
                               'CANCEL',
-                              style: TextStyle(color: AppColors.lightBlue5, fontSize: 16),
+                              style: TextStyle(
+                                  color: AppColors.lightBlue5, fontSize: 16),
                             ),
                             onTap: () => Navigator.of(context).pop(),
                           )
@@ -158,7 +162,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     InkWell(
                         child: Text(
                           'SAVE',
-                          style: TextStyle(color: AppColors.lightBlue5, fontSize: 16),
+                          style: TextStyle(
+                              color: AppColors.lightBlue5, fontSize: 16),
                         ),
                         onTap: () => _save()),
                   ],
@@ -182,8 +187,10 @@ class _AddPrayerState extends State<AddPrayer> {
                   ),
                   onPressed: () => showModalBottomSheet(
                     context: context,
-                    barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return AddPrayerMenu(prayer: _descriptionController.text);

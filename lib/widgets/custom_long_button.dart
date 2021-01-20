@@ -32,7 +32,7 @@ class LongButton extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          color: _themeProvider.isDarkModeEnabled ? textColor : backgroundColor,
+          color: AppColors.lightBlue3,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -58,7 +58,7 @@ class LongButton extends StatelessWidget {
                   SizedBox(width: 10),
                   Text(
                     text,
-                    style: AppTextStyles.boldText20.copyWith(color: textColor),
+                    style: AppTextStyles.boldText18.copyWith(color: textColor),
                   ),
                 ],
               ),
