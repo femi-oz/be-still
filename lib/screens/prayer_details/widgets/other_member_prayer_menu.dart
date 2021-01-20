@@ -31,19 +31,18 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
       UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false).hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }

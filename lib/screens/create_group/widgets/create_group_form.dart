@@ -14,6 +14,7 @@ class CreateGroupForm extends StatefulWidget {
   GroupType option;
   final formKey;
   final autoValidate;
+  final emailController;
 
   CreateGroupForm({
     this.groupNameController,
@@ -24,6 +25,7 @@ class CreateGroupForm extends StatefulWidget {
     this.option,
     this.autoValidate,
     this.formKey,
+    this.emailController,
   });
 
   @override
@@ -43,6 +45,14 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
             controller: widget.groupNameController,
             label: 'Group Name*',
             keyboardType: TextInputType.text,
+            isRequired: true,
+            showSuffix: false,
+          ),
+          SizedBox(height: 12.0),
+          CustomInput(
+            controller: widget.emailController,
+            label: 'Email*',
+            keyboardType: TextInputType.emailAddress,
             isRequired: true,
             showSuffix: false,
           ),

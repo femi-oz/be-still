@@ -12,6 +12,7 @@ class NotificationModel {
   final String extra1;
   final String extra2;
   final String extra3;
+
   const NotificationModel({
     this.id,
     @required this.message,
@@ -36,6 +37,7 @@ class NotificationModel {
         extra1 = snapshot.data()['Extra1'],
         extra2 = snapshot.data()['Extra2'],
         extra3 = snapshot.data()['Extra3'];
+
   Map<String, dynamic> toJson() {
     return {
       'Message': message,

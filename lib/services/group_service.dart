@@ -1,10 +1,14 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
+
+import '../locator.dart';
 
 class GroupService {
   final CollectionReference _groupCollectionReference =
@@ -124,6 +128,12 @@ class GroupService {
               _groupUserCollectionReference.doc(_groupUserID),
               populateGroupUser(groupData, userID, fullName, _groupID)
                   .toJson());
+          //store group settings
+
+          var user = await locator<UserService>().getCurrentUser();
+
+          await locator<SettingsService>()
+              .addGroupSettings(userID, user.email, _groupID);
         },
       ).then((val) {
         return true;

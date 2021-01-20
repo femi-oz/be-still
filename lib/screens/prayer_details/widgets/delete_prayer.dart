@@ -28,19 +28,18 @@ class _DeletePrayerState extends State<DeletePrayer> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false).archivePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -49,11 +48,10 @@ class _DeletePrayerState extends State<DeletePrayer> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false).deletePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => PrayerList()));
       Navigator.of(context).pop();
@@ -61,11 +59,11 @@ class _DeletePrayerState extends State<DeletePrayer> {
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }

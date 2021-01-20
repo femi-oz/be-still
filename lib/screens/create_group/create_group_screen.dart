@@ -37,6 +37,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   void _save() async {
     setState(() {
       _autoValidate = true;
@@ -52,6 +53,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       location: '${_cityController.text}, ${_stateController.text}',
       organization: _organizationController.text,
       description: _descriptionController.text,
+      email: _emailController.text,
       status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
@@ -97,6 +99,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           cityController: _cityController,
                           descriptionController: _descriptionController,
                           groupNameController: _groupNameController,
+                          emailController: _emailController,
                           option: _option,
                           organizationController: _organizationController,
                           stateController: _stateController,

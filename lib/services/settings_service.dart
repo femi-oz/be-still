@@ -2,9 +2,11 @@ import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
+import 'package:be_still/screens/Settings/Widgets/groups.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,10 @@ class SettingsService {
       FirebaseFirestore.instance.collection("PrayerSetting");
   final CollectionReference _sharingSettingsCollectionReference =
       FirebaseFirestore.instance.collection("SharingSetting");
+  final CollectionReference _groupSettingsCollectionReference =
+      FirebaseFirestore.instance.collection("GroupSettings");
+  final CollectionReference _groupPrefernceSettingsCollectionReference =
+      FirebaseFirestore.instance.collection("GroupPreferenceSettings");
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
@@ -62,6 +68,28 @@ class SettingsService {
         modifiedBy: email,
         modifiedOn: DateTime.now());
     return prayerSettings;
+  }
+
+  populateGroupPreferenceSettings(String userId) {
+    GroupPreferenceSettings groupPreferenceSettings = GroupPreferenceSettings(
+        userId: userId, enableNotificationForAllGroups: false);
+    return groupPreferenceSettings;
+  }
+
+  populateGroupSettings(String userId, String email, String groupId) {
+    GroupSettings groupsSettings = GroupSettings(
+        userId: userId,
+        groupId: groupId,
+        enableNotificationFormNewPrayers: false,
+        enableNotificationForUpdates: false,
+        notifyOfMembershipRequest: false,
+        notifyMeofFlaggedPrayers: false,
+        notifyWhenNewMemberJoins: false,
+        createdBy: email,
+        createdOn: DateTime.now(),
+        modifiedBy: email,
+        modifiedOn: DateTime.now());
+    return groupsSettings;
   }
 
   populateSharingSettings(String userId, String email) {
@@ -113,6 +141,46 @@ class SettingsService {
     }
   }
 
+  Future addGroupSettings(String userId, String email, String groupId) {
+    final groupSettingsId = Uuid().v1();
+
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          transaction.set(
+              _groupSettingsCollectionReference.doc(groupSettingsId),
+              populateGroupSettings(userId, email, groupId).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  addGroupPreferenceSettings(String userId) {
+    final groupPreferenceSettingsId = Uuid().v1();
+    try {
+      return FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          transaction.set(
+              _groupPrefernceSettingsCollectionReference
+                  .doc(groupPreferenceSettingsId),
+              populateGroupPreferenceSettings(userId).toJson());
+        },
+      ).then((val) {
+        return true;
+      }).catchError((e) {
+        throw HttpException(e.message);
+      });
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Stream<SettingsModel> fetchSettings(String userId) {
     try {
       return _settingsCollectionReference
@@ -150,6 +218,31 @@ class SettingsService {
     }
   }
 
+  Stream<List<GroupSettings>> getGroupSettings(String userId) {
+    try {
+      return _groupSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .asyncMap(
+              (e) => e.docs.map((doc) => GroupSettings.fromData(doc)).toList());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<GroupPreferenceSettings> getGroupPreferenceSettings(String userId) {
+    try {
+      return _groupPrefernceSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .asyncMap((e) => e.docs
+              .map((doc) => GroupPreferenceSettings.fromData(doc))
+              .toList()[0]);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future updateSettings({String key, dynamic value, String settingsId}) async {
     try {
       _settingsCollectionReference.doc(settingsId).update(
@@ -175,6 +268,30 @@ class SettingsService {
       {String key, dynamic value, String settingsId}) async {
     try {
       _sharingSettingsCollectionReference.doc(settingsId).update(
+        {key: value},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updateGroupSettings(
+      {String key, dynamic value, String groupSettingsId}) async {
+    try {
+      _groupSettingsCollectionReference.doc(groupSettingsId).update(
+        {key: value},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future updateGroupPreferenceSettings(
+      {String key, dynamic value, String groupPreferenceSettingsId}) async {
+    try {
+      _groupPrefernceSettingsCollectionReference
+          .doc(groupPreferenceSettingsId)
+          .update(
         {key: value},
       );
     } catch (e) {

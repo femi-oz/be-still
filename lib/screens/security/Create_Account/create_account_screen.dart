@@ -27,7 +27,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController = new TextEditingController();
+  TextEditingController _confirmPasswordController =
+      new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
@@ -66,8 +67,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _formKey.currentState.save();
 
     try {
-      await BeStilDialog.showLoading(context, _key, 'Registering...');
-      await Provider.of<AuthenticationProvider>(context, listen: false).registerUser(
+      await BeStilDialog.showLoading(context, 'Registering...');
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .registerUser(
         password: _passwordController.text,
         email: _emailController.text,
         firstName: _firstnameController.text,
@@ -75,14 +77,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         dob: _selectedDate,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
-      BeStilDialog.hideLoading(_key);
-      Navigator.of(context).pushReplacementNamed(CreateAccountSuccess.routeName);
+      await PushNotificationsManager().init(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context)
+          .pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -102,10 +106,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
+              colors:
+                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+              image: AssetImage(StringUtils.getBackgroundImage(
+                  _themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -262,7 +268,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 Row(
                   children: <Widget>[
                     Theme(
-                      data: ThemeData(unselectedWidgetColor: AppColors.lightBlue3),
+                      data: ThemeData(
+                          unselectedWidgetColor: AppColors.lightBlue3),
                       child: Switch.adaptive(
                         value: termsAccepted,
                         onChanged: (val) {
