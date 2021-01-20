@@ -184,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             ),
             child: Icon(
               Icons.arrow_forward,
-              color: AppColors.offWhite1,
+              color: AppColors.offWhite4,
             ),
           ),
         ),

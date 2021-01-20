@@ -23,11 +23,13 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
+  bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController = new TextEditingController();
+  TextEditingController _confirmPasswordController =
+      new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
@@ -44,7 +46,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-
+    _isUnderAge =
+        (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
+                    .isAfter(DateTime.now())
+                ? DateTime.now().year - pickedDate.year - 1
+                : DateTime.now().year - pickedDate.year) <
+            18;
     if (pickedDate == null) {
       return null;
     }
@@ -67,7 +74,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     try {
       await BeStilDialog.showLoading(context, 'Registering...');
-      await Provider.of<AuthenticationProvider>(context, listen: false).registerUser(
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .registerUser(
         password: _passwordController.text,
         email: _emailController.text,
         firstName: _firstnameController.text,
@@ -75,9 +83,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         dob: _selectedDate,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await PushNotificationsManager().init(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(CreateAccountSuccess.routeName);
+      Navigator.of(context)
+          .pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
@@ -105,7 +115,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+              image: AssetImage(StringUtils.getBackgroundImage(
+                  _themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -113,6 +124,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             child: Column(
               children: <Widget>[
                 CustomLogoShape(),
+                Container(
+                  child: Text('Create an Account',
+                      style: AppTextStyles.boldText18),
+                ),
+                SizedBox(height: 10),
                 Container(
                   padding: EdgeInsets.all(20),
                   child: Column(
@@ -161,7 +177,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             child: Icon(
               _enableSubmit ? Icons.arrow_forward : Icons.do_not_disturb,
-              color: AppColors.offWhite1,
+              color: AppColors.offWhite4,
             ),
           ),
         ),
@@ -217,6 +233,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Birthday',
                     controller: _dobController,
                     isRequired: true,
+                    validator: (value) {
+                      if (_isUnderAge) {
+                        return 'You must be 18 or older to use this app';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ),
@@ -262,7 +284,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 Row(
                   children: <Widget>[
                     Theme(
-                      data: ThemeData(unselectedWidgetColor: AppColors.lightBlue3),
+                      data: ThemeData(
+                          unselectedWidgetColor: AppColors.lightBlue3),
                       child: Switch.adaptive(
                         value: termsAccepted,
                         onChanged: (val) {
@@ -277,7 +300,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                     ),
                     Text(
-                      'I Agree to the Terms of Use',
+                      'I agree to the Terms of Use',
                       style: AppTextStyles.regularText15,
                     ),
                   ],

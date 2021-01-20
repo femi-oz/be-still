@@ -40,14 +40,15 @@ class CustomDrawer extends StatelessWidget {
                 colors: AppColors.backgroundColor,
               ),
               image: DecorationImage(
-                image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+                image: AssetImage(StringUtils.getBackgroundImage(
+                    _themeProvider.isDarkModeEnabled)),
                 alignment: Alignment.bottomCenter,
               ),
             ),
             child: Column(
               children: <Widget>[
                 Container(
-                  color: Theme.of(context).appBarTheme.color,
+                  color: AppColors.appbarColor,
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: Row(
@@ -56,11 +57,13 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Text(
                           'LOGOUT',
-                          style: AppTextStyles.boldText20.copyWith(color: AppColors.appBarColor),
+                          style: AppTextStyles.boldText20
+                              .copyWith(color: AppColors.appBarColor),
                         ),
                         onTap: () {
                           _authProvider.signOut();
-                          Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+                          Navigator.of(context)
+                              .pushReplacementNamed(LoginScreen.routeName);
                         },
                       ),
                       InkWell(
@@ -89,40 +92,49 @@ class CustomDrawer extends StatelessWidget {
                         children: <Widget>[
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+                              Navigator.of(context)
+                                  .pushReplacementNamed(PrayerScreen.routeName);
                             },
-                            title: Text("MY LIST", style: AppTextStyles.boldText20),
+                            title: Text("MY LIST",
+                                style: AppTextStyles.drawerMenu),
                           ),
-                          // ListTile(
-                          //   onTap: () => Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           AddPrayer(isEdit: false, isGroup: false),
-                          //     ),
-                          //   ),
-                          //   title: Text("ADD A PRAYER",
-                          //       style: AppTextStyles.boldText20),
-                          // ),
                           ListTile(
-                            onTap: () => Navigator.of(context).pushReplacementNamed(PrayerMode.routeName),
-                            title: Text("PRAY", style: AppTextStyles.boldText20),
+                            // onTap: () => Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         AddPrayer(isEdit: false, isGroup: false),
+                            //   ),
+                            // ),
+                            title: Text("ADD A PRAYER",
+                                style: AppTextStyles.drawerMenu),
+                          ),
+                          ListTile(
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed(PrayerMode.routeName),
+                            title:
+                                Text("PRAY", style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
                             onTap: _launchURL,
-                            title: Text("BIBLE", style: AppTextStyles.boldText20),
+                            title:
+                                Text("BIBLE", style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed(GrowMyPrayerLifeScreen.routeName);
+                              Navigator.of(context).pushReplacementNamed(
+                                  GrowMyPrayerLifeScreen.routeName);
                             },
-                            title: Text("GROW MY PRAYER LIFE", style: AppTextStyles.boldText20),
+                            title: Text("GROW MY PRAYER LIFE",
+                                style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed(SettingsScreen.routeName);
+                              Navigator.of(context).pushReplacementNamed(
+                                  SettingsScreen.routeName);
                             },
-                            title: Text("SETTINGS", style: AppTextStyles.boldText20),
+                            title: Text("SETTINGS",
+                                style: AppTextStyles.drawerMenu),
                           ),
                         ],
                       ),

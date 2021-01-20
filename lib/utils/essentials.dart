@@ -44,15 +44,34 @@ List<Color> dynamicGradientColor({
 }
 
 class AppColors {
-  static List<Color> get backgroundColor => dynamicGradientColor(light: 0xFFCED1D4, light2: 0xFFFAFBFB, dark: 0xFF021D3C, dark2: 0xFF073668);
-  static List<Color> get detailBackgroundColor => dynamicGradientColor(light: 0xFFF0F4Fa, light2: 0xFFE6E9ED, dark: 0xFF012B4C, dark2: 0xFF033565);
-  static List<Color> get prayerMenu => dynamicGradientColor(light: 0xFF00438D, light2: 0xFF009CCE, dark: 0xFF014A70, dark2: 0xFF013053);
-  static List<Color> get appBarBackground => dynamicGradientColor(light: 0xFF00438d, light2: 0xFF0098cb, dark: 0xFF0D1319, dark2: 0xFF0D1319);
+  static List<Color> get backgroundColor => dynamicGradientColor(
+      light: 0xFFCED1D4,
+      light2: 0xFFFAFBFB,
+      dark: 0xFF021D3C,
+      dark2: 0xFF073668);
+  static List<Color> get detailBackgroundColor => dynamicGradientColor(
+      light: 0xFFF0F4Fa,
+      light2: 0xFFE6E9ED,
+      dark: 0xFF012B4C,
+      dark2: 0xFF033565);
+  static List<Color> get prayerMenu => dynamicGradientColor(
+      light: 0xFF00438D,
+      light2: 0xFF009CCE,
+      dark: 0xFF014A70,
+      dark2: 0xFF013053);
+  static List<Color> get appBarBackground => dynamicGradientColor(
+      light: 0xFF00438d,
+      light2: 0xFF0098cb,
+      dark: 0xFF0D1319,
+      dark2: 0xFF0D1319);
 
-  static Color get inactvePrayerMenu => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
+  static Color get inactvePrayerMenu =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
 
-  static Color get textFieldBackgroundColor => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
-  static Color get appBarColor => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
+  static Color get textFieldBackgroundColor =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
+  static Color get appBarColor =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
   static Color get prayerPrimaryColor => dynamicColor(
         light: 0xFF5EC2E1,
         dark: 0xFF014E75,
@@ -107,6 +126,7 @@ class AppColors {
     const Color(0xFF001B42),
   ];
   static const Color shadowColor = const Color(0xFF001439);
+  static const Color appbarColor = const Color(0xFF0D1319);
 
   static const Color offWhite1 = const Color(0xFF005780);
   static const Color offWhite2 = const Color(0xFFC1C5C8);
@@ -123,12 +143,29 @@ class AppColors {
   static const Color grey = const Color(0xFF51575C);
   static const Color grey2 = const Color(0xFF003B87);
   static const Color grey3 = const Color(0xFF004166);
+  static const Color grey4 = const Color(0xFFC1C5C8);
 
   static const Color red = const Color(0xFFbf0606);
 
   static const Color darkBlue = const Color(0xFF1B3A5E);
   static const Color darkBlue2 = const Color(0xFF015380);
   static const Color darkBlue3 = const Color(0xFF31373D);
+  static const Color darkBlue4 = const Color(0xFF043569);
+
+  static const Color menuColor = const Color(0xFF718B92);
+
+  // static const Color blueGrey = const Color(0xFF51575C);
+
+  // static const Color lightBlue = const Color(0xFF4BC2FF);
+  // static const Color blue = const Color(0xFF2088FC);
+  // static const Color blueAccent = const Color(0xFF2E84F8);
+
+  // static const Color capriBlue = const Color(0xFF4BC2FF);
+  // static const Color turquiose = const Color(0xFF50DFD7);
+
+  // static const Color purple = const Color(0xFFAC5BF7);
+
+  // static const Color yellow = const Color(0xFFFFCE0B);
 }
 
 class AppTextStyles {
@@ -199,6 +236,14 @@ class AppTextStyles {
     fontSize: 22,
     fontWeight: FontWeight.w300,
     letterSpacing: 0.5,
+  );
+
+  static const TextStyle demiBoldText34 = const TextStyle(
+    height: 1.44,
+    color: AppColors.grey4,
+    fontSize: 34,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 3.5,
   );
   static const TextStyle boldText14 = const TextStyle(
     color: AppColors.lightBlue1,
@@ -289,5 +334,12 @@ class AppTextStyles {
     fontSize: 16,
     fontWeight: FontWeight.normal,
     letterSpacing: 1,
+  );
+
+  static const TextStyle drawerMenu = const TextStyle(
+    color: AppColors.menuColor,
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
   );
 }
