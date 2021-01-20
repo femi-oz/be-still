@@ -19,8 +19,7 @@ class PrayerScreen extends StatefulWidget {
 }
 
 class _PrayerScreenState extends State<PrayerScreen> {
-  PersistentTabController _controller =
-      PersistentTabController(initialIndex: 0);
+  PersistentTabController _controller = PersistentTabController(initialIndex: 0);
 
   static final _formKey = new GlobalKey<FormState>();
   bool _hideNavBar;
@@ -48,8 +47,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
   }
 
   void _searchPrayer(String value) async {
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value);
+    await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(value);
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -57,22 +55,22 @@ class _PrayerScreenState extends State<PrayerScreen> {
     return [
       PersistentBottomNavBarItem(
         icon: Icon(Icons.menu),
-        activeColor: AppColors.getAppBarColor(isDark),
+        activeColor: AppColors.appBarColor,
         inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.settings),
-        activeColor: AppColors.getAppBarColor(isDark),
+        activeColor: AppColors.appBarColor,
         inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.add),
-        activeColor: AppColors.getAppBarColor(isDark),
+        activeColor: AppColors.appBarColor,
         inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(AppIcons.second_logo),
-        activeColor: AppColors.getAppBarColor(isDark),
+        activeColor: AppColors.appBarColor,
         inactiveColor: isDark ? AppColors.lightBlue4 : AppColors.offWhite4,
       ),
     ];
@@ -90,12 +88,10 @@ class _PrayerScreenState extends State<PrayerScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -109,16 +105,14 @@ class _PrayerScreenState extends State<PrayerScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.topRight,
-              colors: AppColors.appBarBg(_themeProvider.isDarkModeEnabled),
+              colors: AppColors.appBarBackground,
             ),
           ),
           // backgroundColor: AppColors.appBarBg(_themeProvider.isDarkModeEnabled),
           handleAndroidBackButtonPress: true,
           resizeToAvoidBottomInset: true,
           stateManagement: true,
-          navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0
-              ? 0.0
-              : kBottomNavigationBarHeight,
+          navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0 ? 0.0 : kBottomNavigationBarHeight,
           hideNavigationBarWhenKeyboardShows: true,
           // margin: EdgeInsets.all(10.0),
           popActionScreens: PopActionScreensType.once,

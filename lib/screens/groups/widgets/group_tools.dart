@@ -22,16 +22,12 @@ class GroupTools extends StatefulWidget {
 class _GroupToolsState extends State<GroupTools> {
   void _getPrayers(CombineGroupUserStream data) async {
     try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false).setUserGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false).setAllGroups(_user.id);
 
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
+      await Provider.of<PrayerProvider>(context, listen: false).setHiddenPrayers(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false).setGroupPrayers(
         _user?.id,
         data.group.id,
@@ -54,11 +50,10 @@ class _GroupToolsState extends State<GroupTools> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(
-              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -77,8 +72,7 @@ class _GroupToolsState extends State<GroupTools> {
                 label: Text(
                   'BACK',
                   style: AppTextStyles.boldText20.copyWith(
-                    color: AppColors.getPrayerPrimaryColor(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.prayerPrimaryColor,
                   ),
                 ),
               ),
@@ -88,8 +82,7 @@ class _GroupToolsState extends State<GroupTools> {
           LongButton(
             icon: Icons.settings,
             onPress: () {
-              _getPrayers(Provider.of<GroupProvider>(context, listen: false)
-                  .currentGroup);
+              _getPrayers(Provider.of<GroupProvider>(context, listen: false).currentGroup);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -98,10 +91,7 @@ class _GroupToolsState extends State<GroupTools> {
               );
             },
             text: "View Group",
-            backgroundColor: _themeProvider.isDarkModeEnabled
-                ? AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled)[0]
-                : Colors.white,
+            backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
             textColor: AppColors.lightBlue3,
             onPressMore: () => null,
           ),
@@ -118,10 +108,7 @@ class _GroupToolsState extends State<GroupTools> {
               ),
             ),
             text: "Add a Prayer",
-            backgroundColor: _themeProvider.isDarkModeEnabled
-                ? AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled)[0]
-                : Colors.white,
+            backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
             textColor: AppColors.lightBlue3,
             onPressMore: () => null,
           ),
@@ -130,10 +117,7 @@ class _GroupToolsState extends State<GroupTools> {
             icon: Icons.more_vert,
             onPress: null,
             text: "Manage Settings",
-            backgroundColor: _themeProvider.isDarkModeEnabled
-                ? AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled)[0]
-                : Colors.white,
+            backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
             textColor: AppColors.lightBlue3,
             onPressMore: () => null,
           ),
@@ -142,10 +126,7 @@ class _GroupToolsState extends State<GroupTools> {
             icon: Icons.share,
             onPress: null,
             text: "Invite - Email",
-            backgroundColor: _themeProvider.isDarkModeEnabled
-                ? AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled)[0]
-                : Colors.white,
+            backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
             textColor: AppColors.lightBlue3,
             onPressMore: () => null,
           ),
@@ -154,10 +135,7 @@ class _GroupToolsState extends State<GroupTools> {
             icon: Icons.share,
             onPress: null,
             text: "Invite - Text",
-            backgroundColor: _themeProvider.isDarkModeEnabled
-                ? AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled)[0]
-                : Colors.white,
+            backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
             textColor: AppColors.lightBlue3,
             onPressMore: () => null,
           ),
@@ -166,10 +144,7 @@ class _GroupToolsState extends State<GroupTools> {
             icon: Icons.share,
             onPress: null,
             text: "Invite - QR Code",
-            backgroundColor: _themeProvider.isDarkModeEnabled
-                ? AppColors.getBackgroudColor(
-                    _themeProvider.isDarkModeEnabled)[0]
-                : Colors.white,
+            backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
             textColor: AppColors.lightBlue3,
             onPressMore: () => null,
           ),

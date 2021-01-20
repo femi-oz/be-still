@@ -29,28 +29,20 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _searchPrayer(String value) async {
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value);
+    await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(value);
   }
 
-  void _setCurrentList(
-      PrayerType activeList, CombineGroupUserStream groupData) async {
-    await Provider.of<GroupProvider>(context, listen: false)
-        .setCurrentGroup(groupData);
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .setCurrentPrayerType(activeList);
+  void _setCurrentList(PrayerType activeList, CombineGroupUserStream groupData) async {
+    await Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(groupData);
+    await Provider.of<PrayerProvider>(context, listen: false).setCurrentPrayerType(activeList);
     _setPrayers(groupData, activeList);
   }
 
-  void _setPrayers(
-      CombineGroupUserStream groupData, PrayerType activeList) async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
+  void _setPrayers(CombineGroupUserStream groupData, PrayerType activeList) async {
+    UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     var isGroupAdmin;
     if (groupData != null) {
-      isGroupAdmin = groupData.groupUsers
-          .firstWhere((user) => user.userId == _user.id, orElse: () => null)
-          ?.isAdmin;
+      isGroupAdmin = groupData.groupUsers.firstWhere((user) => user.userId == _user.id, orElse: () => null)?.isAdmin;
     }
     // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
     //   _user.id,
@@ -68,15 +60,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
     openFilter() {
       showModalBottomSheet(
         context: context,
-        barrierColor:
-            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
-        backgroundColor:
-            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
+        barrierColor: AppColors.detailBackgroundColor[1],
+        backgroundColor: AppColors.detailBackgroundColor[1],
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return _activeList == PrayerType.findGroup
-              ? FindGroupTools()
-              : PrayerFilters();
+          return _activeList == PrayerType.findGroup ? FindGroupTools() : PrayerFilters();
         },
       );
     }
@@ -85,7 +73,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+            color: AppColors.dropShadow,
             offset: Offset(0.0, 0.5),
             blurRadius: 5.0,
           ),
@@ -93,7 +81,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.prayerMenu,
         ),
       ),
       width: double.infinity,
@@ -165,12 +153,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             for (int i = 0; i < _groups.length; i++)
                               PrayerMenuItem(
                                 title: _groups[i].group.name,
-                                isActive: _activeList == PrayerType.group &&
-                                    _groups[i].group.id ==
-                                        Provider.of<GroupProvider>(context)
-                                            .currentGroup
-                                            .group
-                                            .id,
+                                isActive: _activeList == PrayerType.group && _groups[i].group.id == Provider.of<GroupProvider>(context).currentGroup.group.id,
                                 action: () => setState(() {
                                   _setCurrentList(PrayerType.group, _groups[i]);
                                 }),
@@ -207,8 +190,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           isActive: _activeList == PrayerType.createGroup,
                           action: () => setState(() {
                             _setCurrentList(PrayerType.createGroup, null);
-                            Navigator.of(context).pushReplacementNamed(
-                                CreateGroupScreen.routeName);
+                            Navigator.of(context).pushReplacementNamed(CreateGroupScreen.routeName);
                           }),
                           openTools: () => openFilter(),
                         ),

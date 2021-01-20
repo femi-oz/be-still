@@ -61,7 +61,7 @@ class _SharePrayerState extends State<SharePrayer> {
             onPressed: () {
               Navigator.of(context).pop(groups);
             },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+            color: AppColors.textFieldText,
           ),
           Expanded(
             child: Column(
@@ -191,12 +191,8 @@ class _SharePrayerState extends State<SharePrayer> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayerToGroups();

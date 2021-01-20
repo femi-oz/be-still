@@ -96,13 +96,9 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
               Container(
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.option == GroupType.normal
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.3)
-                      : Colors.transparent,
+                  color: widget.option == GroupType.normal ? AppColors.activeButton.withOpacity(0.3) : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -112,26 +108,18 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   child: Container(
                     child: Text(
                       'NORMAL',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                      style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  onPressed: () =>
-                      setState(() => widget.option = GroupType.normal),
+                  onPressed: () => setState(() => widget.option = GroupType.normal),
                 ),
               ),
               Container(
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.option == GroupType.private
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.5)
-                      : Colors.transparent,
+                  color: widget.option == GroupType.private ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -139,30 +127,21 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 child: OutlineButton(
                   borderSide: BorderSide(color: Colors.transparent),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5.0, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
                     child: Text(
                       'PRIVATE',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                      style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  onPressed: () =>
-                      setState(() => widget.option = GroupType.private),
+                  onPressed: () => setState(() => widget.option = GroupType.private),
                 ),
               ),
               Container(
                 height: 30,
                 decoration: BoxDecoration(
-                  color: widget.option == GroupType.feed
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.5)
-                      : Colors.transparent,
+                  color: widget.option == GroupType.feed ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -170,18 +149,13 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 child: OutlineButton(
                   borderSide: BorderSide(color: Colors.transparent),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5.0, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
                     child: Text(
                       'FEED',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                      style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ),
-                  onPressed: () =>
-                      setState(() => widget.option = GroupType.feed),
+                  onPressed: () => setState(() => widget.option = GroupType.feed),
                 ),
               ),
             ],

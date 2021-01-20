@@ -39,8 +39,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 100.0, vertical: 20.0),
+                  padding: EdgeInsets.symmetric(horizontal: 100.0, vertical: 20.0),
                   child: Text(
                     user.userId.toUpperCase(), //TODO
                     textAlign: TextAlign.center,
@@ -108,8 +107,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color:
-                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
+                  color: AppColors.cardBorder,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),

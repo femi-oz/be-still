@@ -15,7 +15,7 @@ class CustomSectionHeder extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+            color: AppColors.dropShadow,
             offset: Offset(0.0, 1.0),
             blurRadius: 6.0,
           ),
@@ -23,7 +23,7 @@ class CustomSectionHeder extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.prayerMenu,
         ),
       ),
       padding: EdgeInsets.all(10),

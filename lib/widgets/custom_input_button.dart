@@ -27,10 +27,10 @@ class CustomOutlineButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.getTextFieldBorder(isDarkModeEnabled),
+              color: AppColors.textFieldBorder,
             ),
             borderRadius: BorderRadius.circular(3.0),
-            color: AppColors.getTextFieldBgColor(isDarkModeEnabled)),
+            color: AppColors.textFieldBackgroundColor),
         margin: EdgeInsets.only(left: 20.0, right: 20.0),
         padding: const EdgeInsets.all(15),
         child: Row(
@@ -58,10 +58,7 @@ class CustomOutlineButton extends StatelessWidget {
                     : Container(),
                 Text(
                   value,
-                  style: AppTextStyles.regularText15.copyWith(
-                      color: textColor == null
-                          ? AppColors.getTextFieldText(isDarkModeEnabled)
-                          : textColor),
+                  style: AppTextStyles.regularText15.copyWith(color: textColor == null ? AppColors.textFieldText : textColor),
                 ),
               ],
             )

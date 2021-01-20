@@ -20,19 +20,13 @@ class CustomButtonGroup extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Expanded(
       child: Padding(
-        padding: index < length - 1
-            ? const EdgeInsets.only(right: 20.0)
-            : const EdgeInsets.only(right: 0.0),
+        padding: index < length - 1 ? const EdgeInsets.only(right: 20.0) : const EdgeInsets.only(right: 0.0),
         child: Container(
           height: 35.0,
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                    .withOpacity(0.3)
-                : Colors.transparent,
+            color: isSelected ? AppColors.activeButton.withOpacity(0.3) : Colors.transparent,
             border: Border.all(
               color: color,
               width: 1,

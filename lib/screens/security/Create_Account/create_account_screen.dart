@@ -23,6 +23,7 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
+  bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -45,7 +46,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-
+    _isUnderAge =
+        (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
+                    .isAfter(DateTime.now())
+                ? DateTime.now().year - pickedDate.year - 1
+                : DateTime.now().year - pickedDate.year) <
+            18;
     if (pickedDate == null) {
       return null;
     }
@@ -67,7 +73,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _formKey.currentState.save();
 
     try {
-      await BeStilDialog.showLoading(context, _key, 'Registering...');
+      await BeStilDialog.showLoading(context, 'Registering...');
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .registerUser(
         password: _passwordController.text,
@@ -79,14 +85,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context)
           .pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -106,8 +112,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors:
-                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+              colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
               image: AssetImage(StringUtils.getBackgroundImage(
@@ -198,18 +203,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         child: Column(
           children: <Widget>[
             CustomInput(
-              label: 'Full Name',
+              label: 'First Name',
               controller: _firstnameController,
               keyboardType: TextInputType.text,
               isRequired: true,
             ),
             SizedBox(height: 15.0),
-            // CustomInput(
-            //   label: 'Last Name',
-            //   controller: _lastnameController,
-            //   keyboardType: TextInputType.text,
-            //   isRequired: true,
-            // ),
+            CustomInput(
+              label: 'Last Name',
+              controller: _lastnameController,
+              keyboardType: TextInputType.text,
+              isRequired: true,
+            ),
             SizedBox(height: 15.0),
             CustomInput(
               label: 'Email',
@@ -228,6 +233,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Birthday',
                     controller: _dobController,
                     isRequired: true,
+                    validator: (value) {
+                      if (_isUnderAge) {
+                        return 'You must be 18 or older to use this app';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ),

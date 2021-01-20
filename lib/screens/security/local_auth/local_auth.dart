@@ -22,12 +22,10 @@ class LocalAuth extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),
