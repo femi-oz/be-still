@@ -64,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen>
       child: Scaffold(
           key: _scaffoldKey,
           body: Container(
+            height: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -83,14 +84,18 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
                 Align(
-                  alignment: Alignment.bottomCenter,
+                  alignment: Alignment.topCenter,
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
+                        SizedBox(height: 260),
                         Container(
                           height: MediaQuery.of(context).size.height * 0.6,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15.0, horizontal: 24.0),
+                          // padding: EdgeInsets.symmetric(
+                          //     vertical: 15.0, horizontal: 24.0),
+                          padding: EdgeInsets.only(
+                              top: 100, right: 24.0, left: 24.0, bottom: 15.0),
+
                           width: double.infinity,
                           child: Column(
                             children: <Widget>[
