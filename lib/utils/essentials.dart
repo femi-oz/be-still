@@ -45,77 +45,78 @@ List<Color> dynamicGradientColor({
 
 class AppColors {
   static List<Color> get backgroundColor => dynamicGradientColor(
-      light: 0xFFEDEFF0,
-      light2: 0xFFEDEFF0,
-      dark: 0xFF01162E,
-      dark2: 0xFF043569);
+      light: 0xFFCED1D4,
+      light2: 0xFFFAFBFB,
+      dark: 0xFF021D3C,
+      dark2: prussianBlue.value);
+  static List<Color> get backgroundLogo => dynamicGradientColor(
+      light: 0xFFFFFFF,
+      light2: 0xFFC1C5C8,
+      dark: 0xFF005075,
+      dark2: 0xFF001439);
+  static List<Color> get detailBackgroundColor => dynamicGradientColor(
+      light: 0xFFF0F4Fa,
+      light2: 0xFFE6E9ED,
+      dark: 0xFF012B4C,
+      dark2: 0xFF033565);
   static List<Color> get prayerMenu => dynamicGradientColor(
       light: 0xFF00438D,
       light2: 0xFF009CCE,
       dark: 0xFF014A70,
       dark2: 0xFF013053);
   static List<Color> get appBarBackground => dynamicGradientColor(
-      light: 0xFF003B87,
-      light2: 0xFF009FD0,
+      light: 0xFF00438d,
+      light2: 0xFF0098cb,
       dark: 0xFF0D1319,
       dark2: 0xFF0D1319);
-  static List<Color> get bottomNavigationBackground => dynamicGradientColor(
-      light: 0xFF003B87,
-      light2: 0xFF009FD0,
-      dark: 0xFF0D1319,
-      dark2: 0xFF0D1319);
+
+  static List<Color> get buttonGradient => dynamicGradientColor(
+      light: 0xFF003C88,
+      light2: 0xFF009ED0,
+      dark: offWhite1.value,
+      dark2: lightBlue4.value);
+  static List<Color> get dialogGradient => dynamicGradientColor(
+      light: 0xFFEDEFF0,
+      light2: 0xFFFFFFF,
+      dark: 0xFF101820,
+      dark2: 0xFF101820);
+
+  static Color get dialogClose =>
+      dynamicColor(light: 0xFF788489, dark: 0xFFC1C5C8);
 
   static Color get inactvePrayerMenu =>
       dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
 
   static Color get textFieldBackgroundColor =>
       dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
-  static Color get appBarTextColor =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
-  static Color get appBarIconColor =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
-  static Color get logoutTextColor =>
-      dynamicColor(light: 0xFF003B87, dark: 0xFF002D4B);
+  static Color get appBarColor =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
+
   static Color get prayerPrimaryColor => dynamicColor(
         light: 0xFF5EC2E1,
         dark: 0xFF014E75,
       );
-
-  static Color get detailBackgroundColor =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF023157);
-  static Color get detailTopTextColor =>
-      dynamicColor(light: 0xFF009FD0, dark: 0xFF009FD0);
   static Color get prayerMenuColor => dynamicColor(
         light: 0xFFFFFFFF,
         dark: 0xFF005780,
       );
   static Color get prayerCardBgColor => dynamicColor(
         light: 0xFFFFFFFF,
-        dark: 0xFF009fd0,
+        dark: 0xFF012B4D,
       );
   static Color get dropShadow => dynamicColor(
         light: 0xFFBBBDBF,
         dark: 0xFF011D3D,
       );
-  static Color get activeButton => dynamicColor(
-        light: 0xFF9BD4E5,
-        dark: 0xFF005780,
-      );
+  static Color get activeButton =>
+      dynamicColor(light: 0xFF9BD4E5, dark: 0xFF025584);
   static Color get cardBorder => dynamicColor(
         light: 0xFFFFFFFF,
-        dark: 0xFF005780,
-      );
-  static Color get prayerCardTextColor => dynamicColor(
-        light: 0xFF788489,
-        dark: 0xFFC1C5C8,
-      );
-  static Color get prayerCardUserColor => dynamicColor(
-        light: 0xFF003B87,
-        dark: 0xFF00ACD8,
+        dark: 0xFF004E75,
       );
   static Color get divider => dynamicColor(
-        light: 0xFF003B87,
-        dark: 0xFF005780,
+        light: 0xFF808C90,
+        dark: 0xFF00547C,
       );
   static Color get textFieldText => dynamicColor(
         light: 0xFF79858A,
@@ -139,7 +140,7 @@ class AppColors {
       );
   static Color get bottomNavIconColor => dynamicColor(
         light: 0xFF005780,
-        dark: 0xFFFFFFFF,
+        dark: 0xFF009FD0,
       );
   static Color get drawerTopColor => dynamicColor(
         light: 0xFFFFFFFF,
@@ -151,9 +152,9 @@ class AppColors {
     const Color(0xFF001B42),
   ];
   static const Color shadowColor = const Color(0xFF001439);
-  static const Color appbarColor = const Color(0xFF0D1319);
 
-  static const Color offWhite1 = const Color(0xFF788489);
+  static const Color white = const Color(0xFFFFFFFF);
+  static const Color offWhite1 = const Color(0xFF005780);
   static const Color offWhite2 = const Color(0xFFC1C5C8);
   static const Color offWhite4 = const Color(0xFFF1F5F9);
 
@@ -168,235 +169,189 @@ class AppColors {
   static const Color grey = const Color(0xFF51575C);
   static const Color grey2 = const Color(0xFF003B87);
   static const Color grey3 = const Color(0xFF004166);
-  static const Color grey4 = const Color(0xFFC1C5C8);
+  static const Color grey4 = const Color(0xFF788489);
 
   static const Color red = const Color(0xFFbf0606);
 
   static const Color darkBlue = const Color(0xFF1B3A5E);
   static const Color darkBlue2 = const Color(0xFF015380);
   static const Color darkBlue3 = const Color(0xFF31373D);
-  static const Color darkBlue4 = const Color(0xFF043569);
 
-  static const Color menuColor = const Color(0xFF009FD0);
-  static const Color nameRecogntionColor = const Color(0xFF0D1319);
+  static const Color yaleBlue = const Color(0xFF004A98);
+  static const Color prussianBlue = const Color(0xFF002D4B);
 
-  // static const Color blueGrey = const Color(0xFF51575C);
-
-  // static const Color lightBlue = const Color(0xFF4BC2FF);
-  // static const Color blue = const Color(0xFF2088FC);
-  // static const Color blueAccent = const Color(0xFF2E84F8);
-
-  // static const Color capriBlue = const Color(0xFF4BC2FF);
-  // static const Color turquiose = const Color(0xFF50DFD7);
-
-  // static const Color purple = const Color(0xFFAC5BF7);
-
-  // static const Color yellow = const Color(0xFFFFCE0B);
+  static const Color drawerGrey = const Color(0xFF718B92);
 }
 
 class AppTextStyles {
   // new fonts region
   // medium => w400, demi => w500, bold => w700, regular=> w300
-  static TextStyle get mediumText10 => const TextStyle(
+  static TextStyle get medium10 => const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText12 => const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w300,
         letterSpacing: 0.5,
       );
 
   // end region
 
-  static TextStyle get regularText11 => const TextStyle(
-        color: AppColors.lightBlue4,
-        fontSize: 11,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText13 => const TextStyle(
-        color: AppColors.lightBlue4,
-        fontSize: 13,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText14 => const TextStyle(
-        color: AppColors.offWhite4,
-        fontSize: 14,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText15 => const TextStyle(
-        color: AppColors.lightBlue4,
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText15b => const TextStyle(
-        color: AppColors.offWhite4,
-        fontSize: 15,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText16b => const TextStyle(
-        height: 1.44,
-        color: AppColors.offWhite4,
-        fontSize: 16,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText18b => const TextStyle(
-        height: 1.44,
-        color: AppColors.offWhite4,
-        fontSize: 18,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText20 => const TextStyle(
-        height: 1.44,
-        color: AppColors.lightBlue4,
-        fontSize: 20,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText22 => const TextStyle(
-        height: 1.44,
-        color: AppColors.offWhite4,
-        fontSize: 22,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText24 => const TextStyle(
-        height: 1.44,
-        color: AppColors.offWhite4,
-        fontSize: 24,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get regularText26 => const TextStyle(
-        height: 1.44,
-        color: AppColors.offWhite4,
-        fontSize: 26,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.5,
-      );
+  static const TextStyle regularText11 = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 11,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText13 = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 13,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText14 = const TextStyle(
+    color: AppColors.offWhite4,
+    fontSize: 14,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText15 = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText15b = const TextStyle(
+    color: AppColors.offWhite4,
+    fontSize: 15,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText16b = const TextStyle(
+    height: 1.44,
+    color: AppColors.offWhite4,
+    fontSize: 16,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText18b = const TextStyle(
+    height: 1.44,
+    color: AppColors.offWhite4,
+    fontSize: 18,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText20 = const TextStyle(
+    height: 1.44,
+    color: AppColors.lightBlue4,
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle regularText22 = const TextStyle(
+    height: 1.44,
+    color: AppColors.offWhite4,
+    fontSize: 22,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText14 = const TextStyle(
+    color: AppColors.lightBlue1,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText16 = const TextStyle(
+    color: AppColors.lightBlue1,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText18 = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText20 = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText24 = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText28 = const TextStyle(
+    color: AppColors.grey3,
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle boldText30 = const TextStyle(
+    color: AppColors.grey3,
+    fontSize: 30,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle errorText = const TextStyle(
+    color: AppColors.red,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.5,
+  );
 
-  static TextStyle get demiBoldText34 => const TextStyle(
-        height: 1.44,
-        color: AppColors.grey4,
-        fontSize: 34,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 3.5,
-      );
-  static TextStyle get boldText9 => const TextStyle(
-        color: AppColors.lightBlue1,
-        fontSize: 9,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText12 => const TextStyle(
-        color: AppColors.lightBlue1,
-        fontSize: 12,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText14 => const TextStyle(
-        color: AppColors.lightBlue1,
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText16 => const TextStyle(
-        color: AppColors.lightBlue1,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText18 => const TextStyle(
-        color: AppColors.lightBlue4,
-        fontSize: 18,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText20 => const TextStyle(
-        color: AppColors.lightBlue4,
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText24 => const TextStyle(
-        color: AppColors.lightBlue4,
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText28 => const TextStyle(
-        color: AppColors.grey3,
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get boldText30 => const TextStyle(
-        color: AppColors.grey3,
-        fontSize: 30,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
-  static TextStyle get errorText => const TextStyle(
-        color: AppColors.red,
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-      );
+  static const TextStyle titleWhite = const TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
+  );
 
-  // static TextStyle get titleWhite => const TextStyle(
-  //       color: Colors.white,
-  //       fontSize: 18,
-  //       fontWeight: FontWeight.bold,
-  //       letterSpacing: 0.5,
-  //     );
+  static const TextStyle headline4White = const TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 1.5,
+  );
 
-  // static TextStyle get headline4White => const TextStyle(
-  //       color: Colors.white,
-  //       fontSize: 18,
-  //       fontWeight: FontWeight.bold,
-  //       letterSpacing: 1.5,
-  //     );
+  static const TextStyle headline6Grey = const TextStyle(
+    color: AppColors.grey,
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    letterSpacing: 1.2,
+  );
 
-  // static TextStyle get headline6Grey => const TextStyle(
-  //       color: AppColors.grey,
-  //       fontSize: 14,
-  //       fontWeight: FontWeight.normal,
-  //       letterSpacing: 1.2,
-  //     );
+  static const TextStyle modalTitle = const TextStyle(
+    color: AppColors.darkBlue,
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 1,
+  );
 
-  // static TextStyle get modalTitle => const TextStyle(
-  //       color: AppColors.darkBlue,
-  //       fontSize: 18,
-  //       fontWeight: FontWeight.w700,
-  //       letterSpacing: 1,
-  //     );
+  static const TextStyle listTitle = const TextStyle(
+    color: AppColors.grey,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 1.1,
+  );
+  static const TextStyle prayerText = const TextStyle(
+    color: AppColors.offWhite2,
+    fontSize: 15,
+    fontWeight: FontWeight.normal,
+    letterSpacing: 1.1,
+  );
 
-  // static TextStyle get listTitle => const TextStyle(
-  //       color: AppColors.grey,
-  //       fontSize: 14,
-  //       fontWeight: FontWeight.bold,
-  //       letterSpacing: 1.1,
-  //     );
-
-  // static TextStyle get normalDarkBlue => const TextStyle(
-  //       color: AppColors.darkBlue,
-  //       fontSize: 16,
-  //       fontWeight: FontWeight.normal,
-  //       letterSpacing: 1,
-  //     );
-
-  static TextStyle get drawerMenu => const TextStyle(
-        color: AppColors.menuColor,
-        fontSize: 15,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
-      );
+  static const TextStyle normalDarkBlue = const TextStyle(
+    color: AppColors.darkBlue,
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    letterSpacing: 1,
+  );
+  static const TextStyle drawerMenu = const TextStyle(
+    color: AppColors.drawerGrey,
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 1,
+  );
 }

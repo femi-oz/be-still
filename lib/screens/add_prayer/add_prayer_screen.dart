@@ -76,8 +76,8 @@ class _AddPrayerState extends State<AddPrayer> {
       );
       showModalBottomSheet(
         context: context,
-        barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
-        backgroundColor: AppColors.detailBackgroundColor.withOpacity(0.9),
+        barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+        backgroundColor: AppColors.appBarBackground[1].withOpacity(0.9),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
@@ -121,87 +121,90 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   Widget build(BuildContext context) {
     setState(() => this.bcontext = context);
-    return SafeArea(
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-        child:
-            // Scaffold(
-            //   key: _scaffoldKey,
-            //   body:
-            Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
+    return Scaffold(
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+          child:
+              // Scaffold(
+              //   key: _scaffoldKey,
+              //   body:
+              Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
             ),
-          ),
-          padding: EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    widget.showCancel
-                        ? InkWell(
-                            child: Text(
-                              'CANCEL',
-                              style: TextStyle(
-                                  color: AppColors.lightBlue5, fontSize: 16),
-                            ),
-                            onTap: () => Navigator.of(context).pop(),
-                          )
-                        : Container(),
-                    InkWell(
-                        child: Text(
-                          'SAVE',
-                          style: TextStyle(
-                              color: AppColors.lightBlue5, fontSize: 16),
-                        ),
-                        onTap: () => _save()),
-                  ],
-                ),
-                SizedBox(height: 50.0),
-                Form(
-                  autovalidate: _autoValidate,
-                  key: _formKey,
-                  child: CustomInput(
-                    label: 'Prayer description',
-                    controller: _descriptionController,
-                    maxLines: 23,
-                    isRequired: true,
-                    showSuffix: false,
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      widget.showCancel
+                          ? InkWell(
+                              child: Text(
+                                'CANCEL',
+                                style: TextStyle(
+                                    color: AppColors.lightBlue5, fontSize: 16),
+                              ),
+                              onTap: () => Navigator.of(context).pop(),
+                            )
+                          : Container(),
+                      InkWell(
+                          child: Text(
+                            'SAVE',
+                            style: TextStyle(
+                                color: AppColors.lightBlue5, fontSize: 16),
+                          ),
+                          onTap: () => _save()),
+                    ],
                   ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.more_horiz,
-                    color: AppColors.lightBlue4,
+                  SizedBox(height: 50.0),
+                  Form(
+                    autovalidate: _autoValidate,
+                    key: _formKey,
+                    child: CustomInput(
+                      label: 'Prayer description',
+                      controller: _descriptionController,
+                      maxLines: 23,
+                      isRequired: true,
+                      showSuffix: false,
+                    ),
                   ),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor.withOpacity(0.5),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor.withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return AddPrayerMenu(prayer: _descriptionController.text);
-                    },
-                  ).then((value) {
-                    setState(() {
-                      groups = value;
-                    });
-                  }),
-                ),
-              ],
+                  IconButton(
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: AppColors.lightBlue4,
+                    ),
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return AddPrayerMenu(
+                            prayer: _descriptionController.text);
+                      },
+                    ).then((value) {
+                      setState(() {
+                        groups = value;
+                      });
+                    }),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
+        // ),
       ),
-      // ),
     );
   }
 }

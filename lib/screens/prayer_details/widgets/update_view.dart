@@ -53,7 +53,7 @@ class UpdateView extends StatelessWidget {
                                   DateFormat('hh:mma | MM.dd.yyyy')
                                       .format(prayer.createdOn),
                                   style: AppTextStyles.regularText14.copyWith(
-                                    color: AppColors.detailTopTextColor,
+                                    color: AppColors.lightBlue4,
                                   ),
                                 ),
                               ],
@@ -61,7 +61,7 @@ class UpdateView extends StatelessWidget {
                           ),
                           Expanded(
                             child: Divider(
-                              color: AppColors.detailTopTextColor,
+                              color: AppColors.lightBlue4,
                               thickness: 1,
                             ),
                           ),
@@ -95,8 +95,8 @@ class UpdateView extends StatelessWidget {
                             children: [
                               Text(
                                 u.description,
-                                style: AppTextStyles.regularText26.copyWith(
-                                  color: AppColors.prayerCardTextColor,
+                                style: AppTextStyles.regularText18b.copyWith(
+                                  color: AppColors.offWhite2,
                                 ),
                                 textAlign: TextAlign.left,
                               ),
@@ -121,14 +121,14 @@ class UpdateView extends StatelessWidget {
                               Text(
                                 'Initial Prayer Request |',
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.detailTopTextColor,
+                                  color: AppColors.lightBlue4,
                                 ),
                               ),
                               Text(
                                 DateFormat(' MM.dd.yyyy')
                                     .format(prayer.createdOn),
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.detailTopTextColor,
+                                  color: AppColors.lightBlue4,
                                 ),
                               ),
                             ],
@@ -136,7 +136,7 @@ class UpdateView extends StatelessWidget {
                         ),
                         Expanded(
                           child: Divider(
-                            color: AppColors.detailTopTextColor,
+                            color: AppColors.lightBlue4,
                             thickness: 1,
                           ),
                         ),
@@ -167,8 +167,8 @@ class UpdateView extends StatelessWidget {
                         child: Center(
                           child: Text(
                             prayer.description,
-                            style: AppTextStyles.regularText26.copyWith(
-                              color: AppColors.prayerCardTextColor,
+                            style: AppTextStyles.regularText22.copyWith(
+                              color: AppColors.lightBlue4,
                             ),
                             textAlign: TextAlign.left,
                           ),

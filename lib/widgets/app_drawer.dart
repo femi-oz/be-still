@@ -56,7 +56,7 @@ class CustomDrawer extends StatelessWidget {
                         child: Text(
                           'LOGOUT',
                           style: AppTextStyles.boldText20
-                              .copyWith(color: AppColors.logoutTextColor),
+                              .copyWith(color: AppColors.bottomNavIconColor),
                         ),
                         onTap: () {
                           _authProvider.signOut();
@@ -67,7 +67,7 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Icon(
                           Icons.close,
-                          color: AppColors.logoutTextColor,
+                          color: AppColors.bottomNavIconColor,
                         ),
                         onTap: () {
                           Navigator.pop(context);
@@ -97,13 +97,13 @@ class CustomDrawer extends StatelessWidget {
                                 style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
-                            // onTap: () => Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         AddPrayer(isEdit: false, isGroup: false),
-                            //   ),
-                            // ),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EntryScreen(screenNumber: 2),
+                              ),
+                            ),
                             title: Text("ADD A PRAYER",
                                 style: AppTextStyles.drawerMenu),
                           ),

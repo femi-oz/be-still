@@ -131,9 +131,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.9),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
@@ -268,9 +268,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.9),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
@@ -336,9 +336,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.9),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return CustomPicker(
@@ -460,9 +460,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor.withOpacity(0.9),
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return DeletePrayer(widget.prayer);

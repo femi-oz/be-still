@@ -20,7 +20,7 @@ class NoUpdateView extends StatelessWidget {
                   child: Text(
                     prayer.creatorName,
                     style: AppTextStyles.boldText16.copyWith(
-                      color: AppColors.appBarTextColor,
+                      color: AppColors.lightBlue4,
                     ),
                     textAlign: TextAlign.left,
                   ),
@@ -36,8 +36,8 @@ class NoUpdateView extends StatelessWidget {
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
                           .format(prayer.createdOn),
-                      style: AppTextStyles.regularText12.copyWith(
-                        color: AppColors.detailTopTextColor,
+                      style: AppTextStyles.regularText13.copyWith(
+                        color: AppColors.lightBlue4,
                       ),
                     ),
                   ],
@@ -45,7 +45,7 @@ class NoUpdateView extends StatelessWidget {
               ),
               Expanded(
                 child: Divider(
-                  color: AppColors.detailTopTextColor,
+                  color: AppColors.lightBlue4,
                   thickness: 1,
                 ),
               ),
@@ -57,8 +57,8 @@ class NoUpdateView extends StatelessWidget {
               child: Center(
                 child: Text(
                   prayer.description,
-                  style: AppTextStyles.regularText26.copyWith(
-                    color: AppColors.prayerCardTextColor,
+                  style: AppTextStyles.regularText18b.copyWith(
+                    color: AppColors.offWhite2,
                   ),
                   textAlign: TextAlign.left,
                 ),

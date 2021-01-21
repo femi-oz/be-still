@@ -5,6 +5,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -86,7 +87,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PrayerScreen(),
+            builder: (context) => EntryScreen(),
           ));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -155,8 +156,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             color: _selectedOption == 'yes'
-                                ? AppColors.nameRecogntionColor.withOpacity(0.6)
-                                : AppColors.nameRecogntionColor
+                                ? AppColors.appBarBackground[1].withOpacity(0.6)
+                                : AppColors.appBarBackground[1]
                                     .withOpacity(0.9),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(9),
@@ -243,8 +244,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: _selectedOption == 'no'
-                              ? AppColors.nameRecogntionColor.withOpacity(0.6)
-                              : AppColors.nameRecogntionColor.withOpacity(0.9),
+                              ? AppColors.appBarBackground[1].withOpacity(0.6)
+                              : AppColors.appBarBackground[1].withOpacity(0.9),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(9),
                             topLeft: Radius.circular(9),

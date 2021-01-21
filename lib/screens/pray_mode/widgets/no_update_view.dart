@@ -47,7 +47,7 @@ class NoUpdateView extends StatelessWidget {
             ),
             Expanded(
               child: Divider(
-                color: AppColors.appBarTextColor,
+                color: AppColors.lightBlue4,
                 thickness: 1,
               ),
             ),

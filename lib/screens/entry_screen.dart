@@ -50,7 +50,7 @@ class _EntryScreenState extends State<EntryScreen> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: AppColors.bottomNavigationBackground,
+          colors: AppColors.appBarBackground,
           begin: Alignment.topLeft,
           end: Alignment.topRight,
           stops: [0.0, 0.8],
