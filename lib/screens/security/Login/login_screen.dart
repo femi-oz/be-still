@@ -1,12 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -21,93 +21,95 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   bool rememberMe = false;
   bool _autoValidate = false;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _key = GlobalKey<State>();
 
   void _login() async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    await BeStilDialog.showLoading(context, _key, 'Authenticating');
+    await BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: _usernameController.text,
         password: _passwordController.text,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id);
-      BeStilDialog.hideLoading(_key);
+      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(_key);
-      BeStillSnackbar.showInSnackBar(
-          message: 'Username or Password is incorrect.', key: _scaffoldKey);
+      BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(message: 'Username or Password is incorrect.', key: _scaffoldKey);
     } catch (e) {
-      BeStilDialog.hideLoading(_key);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(message: 'An error occured. Please try again', key: _scaffoldKey);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-        key: _scaffoldKey,
-        body: Container(
-          height: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors:
-                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          key: _scaffoldKey,
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.backgroundColor[0],
+                  ...AppColors.backgroundColor,
+                  ...AppColors.backgroundColor,
+                ],
+              ),
+              image: DecorationImage(
+                image: AssetImage(StringUtils.getBackgroundImage()),
+                alignment: Alignment.bottomCenter,
+              ),
             ),
-            image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(
-                  _themeProvider.isDarkModeEnabled)),
-              alignment: Alignment.bottomCenter,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                CustomLogoShape(),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  padding:
-                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-                  width: double.infinity,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(height: 10),
-                            _buildForm(),
-                            _buildActions(),
-                          ],
+            child: Stack(
+              children: [
+                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 24.0),
+                          width: double.infinity,
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(height: 10),
+                                    _buildForm(),
+                                    SizedBox(height: 8),
+                                    _buildActions(),
+                                  ],
+                                ),
+                              ),
+                              _buildFooter(),
+                              SizedBox(height: 10),
+                            ],
+                          ),
                         ),
-                      ),
-                      _buildFooter(),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-      ),
+          )),
     );
   }
 
@@ -153,15 +155,12 @@ class _LoginScreenState extends State<LoginScreen>
         Row(
           children: <Widget>[
             Text('Remember Me', style: AppTextStyles.regularText15),
+            SizedBox(width: 12),
             Switch.adaptive(
-              activeColor: Colors.white,
-              activeTrackColor: AppColors.lightBlue4,
-              inactiveThumbColor: Colors.white,
+              activeColor: AppColors.lightBlue4,
               value: rememberMe,
               onChanged: (value) {
-                setState(() {
-                  rememberMe = !rememberMe;
-                });
+                setState(() => rememberMe = !rememberMe);
               },
             ),
           ],
@@ -173,36 +172,14 @@ class _LoginScreenState extends State<LoginScreen>
   Widget _buildFooter() {
     return Column(
       children: <Widget>[
-        GestureDetector(
-          onTap: () => _login(),
-          child: Container(
-            height: 50.0,
-            width: double.infinity,
-            margin: EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  AppColors.lightBlue1,
-                  AppColors.lightBlue2,
-                ],
-              ),
-            ),
-            child: Icon(
-              Icons.arrow_forward,
-              color: AppColors.offWhite1,
-            ),
-          ),
-        ),
+        BsRaisedButton(onPressed: _login),
+        SizedBox(height: 24),
         GestureDetector(
           child: Text(
-            "Forget my Password",
+            "Forgot my Password",
             style: AppTextStyles.regularText13,
           ),
-          onTap: () {
-            Navigator.of(context).pushNamed(ForgetPassword.routeName);
-          },
+          onTap: () => Navigator.of(context).pushNamed(ForgetPassword.routeName),
         ),
       ],
     );

@@ -33,7 +33,7 @@ class _FindAGroupState extends State<FindAGroup> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
           image: AssetImage(
@@ -94,8 +94,7 @@ class _FindAGroupState extends State<FindAGroup> {
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(
-                            color: AppColors.getCardBorder(
-                                _themeProvider.isDarkModeEnabled),
+                            color: AppColors.cardBorder,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(5),
@@ -119,10 +118,9 @@ class _FindAGroupState extends State<FindAGroup> {
                             FocusScope.of(context).unfocus(),
                             showModalBottomSheet(
                               context: context,
-                              barrierColor: AppColors.getDetailBgColor(
-                                  _themeProvider.isDarkModeEnabled)[1],
-                              backgroundColor: AppColors.getDetailBgColor(
-                                  _themeProvider.isDarkModeEnabled)[1],
+                              barrierColor: AppColors.detailBackgroundColor[1],
+                              backgroundColor:
+                                  AppColors.detailBackgroundColor[1],
                               isScrollControlled: true,
                               builder: (BuildContext context) {
                                 return FindGroupTools();
@@ -153,8 +151,7 @@ class _FindAGroupState extends State<FindAGroup> {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(
-                          color: AppColors.getCardBorder(
-                              _themeProvider.isDarkModeEnabled),
+                          color: AppColors.cardBorder,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -181,10 +178,8 @@ class _FindAGroupState extends State<FindAGroup> {
                           FocusScope.of(context).unfocus(),
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                _themeProvider.isDarkModeEnabled)[1],
-                            backgroundColor: AppColors.getDetailBgColor(
-                                _themeProvider.isDarkModeEnabled)[1],
+                            barrierColor: AppColors.detailBackgroundColor[1],
+                            backgroundColor: AppColors.detailBackgroundColor[1],
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return FindGroupTools();

@@ -14,7 +14,6 @@ import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 import 'delete_prayer.dart';
 
 class PrayerMenu extends StatefulWidget {
@@ -77,20 +76,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -99,20 +97,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -133,15 +130,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SharePrayer();
+                        return SharePrayer(
+                          prayer: widget.prayer.description,
+                        );
                       },
                     );
                   },
@@ -270,12 +267,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
@@ -340,12 +335,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return CustomPicker(
@@ -466,12 +459,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return DeletePrayer(widget.prayer);
@@ -521,7 +512,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+            color: AppColors.textFieldText,
           ),
         ],
       ),

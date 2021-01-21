@@ -68,10 +68,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     openFilter() {
       showModalBottomSheet(
         context: context,
-        barrierColor:
-            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
-        backgroundColor:
-            AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1],
+        barrierColor: AppColors.detailBackgroundColor[1],
+        backgroundColor: AppColors.detailBackgroundColor[1],
         isScrollControlled: true,
         builder: (BuildContext context) {
           return _activeList == PrayerType.findGroup
@@ -85,7 +83,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+            color: AppColors.dropShadow,
             offset: Offset(0.0, 0.5),
             blurRadius: 5.0,
           ),
@@ -93,7 +91,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: AppColors.getPrayerMenu(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.prayerMenu,
         ),
       ),
       width: double.infinity,

@@ -1,22 +1,15 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CustomLogoShape extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return CustomPaint(
-      painter: AuthCustomPainter(
-          AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled)
-              .reversed
-              .toList(),
-          AppColors.shadowColor),
+      painter: AuthCustomPainter(AppColors.backgroundLogo, Colors.transparent),
       child: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.4,
+        height: MediaQuery.of(context).size.height * 0.33,
         child: Image.asset(StringUtils.logo),
       ),
     );

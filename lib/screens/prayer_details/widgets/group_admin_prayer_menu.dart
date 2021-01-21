@@ -2,17 +2,15 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/models/user_prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 
 class GroupAdminPrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
@@ -35,20 +33,19 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
-      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -57,21 +54,20 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
     try {
       BeStilDialog.showLoading(
         bcontext,
-        _key,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .hidePrayerFromAllMembers(
               widget.prayer.id, !widget.prayer.hideFromAllMembers);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
-      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(_key);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -106,7 +102,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     Provider.of<PrayerProvider>(context, listen: false)
                         .addPrayerToMyList(userPrayer);
                     Navigator.of(context)
-                        .pushReplacementNamed(PrayerScreen.routeName);
+                        .pushReplacementNamed(EntryScreen.routeName);
                   },
                   child: Container(
                     height: 50,
@@ -328,7 +324,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
+            color: AppColors.textFieldText,
           ),
         ],
       ),

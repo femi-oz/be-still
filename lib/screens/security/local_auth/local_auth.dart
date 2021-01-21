@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 login() {
 // Navigator.of(context).pushNamedAndRemoveUntil(
-//     PrayerScreen.routeName, (Route<dynamic> route) => false);
+//     EntryScreen.routeName, (Route<dynamic> route) => false);
 }
 
 class LocalAuth extends StatelessWidget {
@@ -22,8 +22,7 @@ class LocalAuth extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
             image: AssetImage(StringUtils.getBackgroundImage(

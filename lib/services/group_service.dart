@@ -1,10 +1,14 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
+
+import '../locator.dart';
 
 class GroupService {
   final CollectionReference _groupCollectionReference =
@@ -108,28 +112,33 @@ class GroupService {
     }
   }
 
-  addGroup(String userID, GroupModel groupData, String fullName) {
+  addGroup(String userID, GroupModel groupData, String fullName) async {
     // Generate uuid
     final _groupID = Uuid().v1();
     final _groupUserID = Uuid().v1();
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store group
-          transaction.set(
-              _groupCollectionReference.doc(_groupID), groupData.toJson());
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store group
+      batch.set(_groupCollectionReference.doc(_groupID), groupData.toJson());
 
-          //store group user
-          transaction.set(
-              _groupUserCollectionReference.doc(_groupUserID),
-              populateGroupUser(groupData, userID, fullName, _groupID)
-                  .toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      //store group user
+      batch.set(_groupUserCollectionReference.doc(_groupUserID),
+          populateGroupUser(groupData, userID, fullName, _groupID).toJson());
+      //store group settings
+
+      var user = await locator<UserService>().getCurrentUser();
+
+      await locator<SettingsService>()
+          .addGroupSettings(userID, user.email, _groupID);
+      //   },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -185,6 +194,24 @@ class GroupService {
       };
       await dio.post(
         'https://us-central1-bestill-app.cloudfunctions.net/GroupInvite',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  joinRequest(String groupId, String userId, String userName) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {
+        'groupId': groupId,
+        'userId': userId,
+        'userName': userName,
+      };
+      print(data);
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/JoinRequest',
         data: data,
       );
     } catch (e) {

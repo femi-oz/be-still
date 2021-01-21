@@ -30,8 +30,7 @@ class UpdateView extends StatelessWidget {
                       child: Text(
                         prayer.creatorName,
                         style: AppTextStyles.regularText18b.copyWith(
-                            color: AppColors.getPrayerPrimaryColor(
-                                _themeProvider.isDarkModeEnabled),
+                            color: AppColors.prayerPrimaryColor,
                             fontWeight: FontWeight.w500),
                         textAlign: TextAlign.left,
                       ),
@@ -53,9 +52,8 @@ class UpdateView extends StatelessWidget {
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
                                       .format(prayer.createdOn),
-                                  style: AppTextStyles.regularText15.copyWith(
-                                    color: AppColors.getPrayerPrimaryColor(
-                                        _themeProvider.isDarkModeEnabled),
+                                  style: AppTextStyles.regularText14.copyWith(
+                                    color: AppColors.lightBlue4,
                                   ),
                                 ),
                               ],
@@ -63,9 +61,7 @@ class UpdateView extends StatelessWidget {
                           ),
                           Expanded(
                             child: Divider(
-                              color: AppColors.getPrayerPrimaryColor(
-                                _themeProvider.isDarkModeEnabled,
-                              ),
+                              color: AppColors.lightBlue4,
                               thickness: 1,
                             ),
                           ),
@@ -99,10 +95,8 @@ class UpdateView extends StatelessWidget {
                             children: [
                               Text(
                                 u.description,
-                                style: AppTextStyles.regularText22.copyWith(
-                                  color: AppColors.getTextFieldBgColor(
-                                    !_themeProvider.isDarkModeEnabled,
-                                  ),
+                                style: AppTextStyles.regularText18b.copyWith(
+                                  color: AppColors.offWhite2,
                                 ),
                                 textAlign: TextAlign.left,
                               ),
@@ -127,16 +121,14 @@ class UpdateView extends StatelessWidget {
                               Text(
                                 'Initial Prayer Request |',
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.getPrayerPrimaryColor(
-                                      _themeProvider.isDarkModeEnabled),
+                                  color: AppColors.lightBlue4,
                                 ),
                               ),
                               Text(
                                 DateFormat(' MM.dd.yyyy')
                                     .format(prayer.createdOn),
                                 style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.getPrayerPrimaryColor(
-                                      _themeProvider.isDarkModeEnabled),
+                                  color: AppColors.lightBlue4,
                                 ),
                               ),
                             ],
@@ -144,7 +136,7 @@ class UpdateView extends StatelessWidget {
                         ),
                         Expanded(
                           child: Divider(
-                            color: AppColors.darkBlue2,
+                            color: AppColors.lightBlue4,
                             thickness: 1,
                           ),
                         ),
@@ -176,9 +168,7 @@ class UpdateView extends StatelessWidget {
                           child: Text(
                             prayer.description,
                             style: AppTextStyles.regularText22.copyWith(
-                              color: AppColors.getTextFieldBgColor(
-                                !_themeProvider.isDarkModeEnabled,
-                              ),
+                              color: AppColors.lightBlue4,
                             ),
                             textAlign: TextAlign.left,
                           ),

@@ -5,7 +5,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -37,6 +37,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   void _save() async {
     setState(() {
       _autoValidate = true;
@@ -52,6 +53,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       location: '${_cityController.text}, ${_stateController.text}',
       organization: _organizationController.text,
       description: _descriptionController.text,
+      email: _emailController.text,
       status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
@@ -75,7 +77,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
           image: AssetImage(_themeProvider.isDarkModeEnabled
@@ -100,6 +102,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           cityController: _cityController,
                           descriptionController: _descriptionController,
                           groupNameController: _groupNameController,
+                          emailController: _emailController,
                           option: _option,
                           organizationController: _organizationController,
                           stateController: _stateController,
@@ -131,11 +134,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   new MaterialPageRoute(
-                                    builder: (context) => new PrayerScreen(),
+                                    builder: (context) => new EntryScreen(),
                                   ),
                                 );
                                 // Navigator.of(context).pushReplacementNamed(
-                                //     PrayerScreen.routeName);
+                                //     EntryScreen.routeName);
                               }
                             },
                             color: Colors.transparent,

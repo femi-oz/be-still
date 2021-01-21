@@ -28,9 +28,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
     return AppBar(
       title: Text('SETTINGS',
           style: TextStyle(
-            color: _themeProvider.isDarkModeEnabled
-                ? AppColors.darkBlue3
-                : AppColors.grey2,
+            color: _themeProvider.isDarkModeEnabled ? AppColors.darkBlue3 : AppColors.grey2,
             fontSize: 28,
             fontWeight: FontWeight.w500,
           )),
@@ -41,8 +39,8 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           //     ? FlatButton(
           //         onPressed: () => showModalBottomSheet(
           //           context: context,
-          //           barrierColor: AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled),
-          //           backgroundColor: AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled),
+          //           barrierColor: AppColors.detailBackgroundColor,
+          //           backgroundColor: AppColors.detailBackgroundColor,
           //           isScrollControlled: true,
           //           builder: (BuildContext context) {
           //             return MultiProvider(providers: [

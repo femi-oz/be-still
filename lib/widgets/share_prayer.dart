@@ -9,10 +9,23 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../utils/app_theme.dart';
 
-class SharePrayer extends StatelessWidget {
+class SharePrayer extends StatefulWidget {
   // PrayerModel prayer;
+  String prayer;
+  SharePrayer({this.prayer});
+
+  _SharePrayerState createState() => _SharePrayerState();
+}
+
+class _SharePrayerState extends State<SharePrayer> {
+  List groups = [];
+
   _emailLink() async {
-    const url = 'mailto:?subject=prayer subject&body=prayer body';
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    var _prayer = widget.prayer;
+    var name = _user.firstName;
+    var url = 'mailto:?subject=$name shared prayer with you&body=$_prayer';
+    print(_prayer);
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -21,7 +34,8 @@ class SharePrayer extends StatelessWidget {
   }
 
   _textLink() async {
-    const url = 'sms:';
+    var _prayer = widget.prayer;
+    var url = 'sms:?body=$_prayer';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -40,6 +54,15 @@ class SharePrayer extends StatelessWidget {
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.close,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(groups);
+            },
+            color: AppColors.textFieldText,
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -168,17 +191,19 @@ class SharePrayer extends StatelessWidget {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayerToGroups();
                       },
-                    );
+                    ).then((value) {
+                      setState(() {
+                        groups = value;
+                      });
+                    });
                   },
                   child: Container(
                     height: 50,
@@ -259,15 +284,6 @@ class SharePrayer extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

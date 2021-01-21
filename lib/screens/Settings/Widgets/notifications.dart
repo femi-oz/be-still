@@ -26,10 +26,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     Frequency.per_instance,
   ];
   setEmailUpdateFrequency(value) {
-    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        key: SettingsKey.emailUpdateFrequency,
-        value: value,
-        settingsId: widget.settings.id);
+    Provider.of<SettingsProvider>(context, listen: false).updateSettings(key: SettingsKey.emailUpdateFrequency, value: value, settingsId: widget.settings.id);
   }
 
   @override
@@ -43,26 +40,17 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           CustomSectionHeder('Preferences'),
           CustomToggle(
             title: 'Allow push Notifications?',
-            onChange: (value) => setingProvider.updateSettings(
-                key: SettingsKey.allowPushNotification,
-                value: value,
-                settingsId: widget.settings.id),
+            onChange: (value) => setingProvider.updateSettings(key: SettingsKey.allowPushNotification, value: value, settingsId: widget.settings.id),
             value: widget.settings.allowPushNotification,
           ),
           CustomToggle(
             title: 'Allow text Notifications?',
-            onChange: (value) => setingProvider.updateSettings(
-                key: SettingsKey.allowTextNotification,
-                value: value,
-                settingsId: widget.settings.id),
+            onChange: (value) => setingProvider.updateSettings(key: SettingsKey.allowTextNotification, value: value, settingsId: widget.settings.id),
             value: widget.settings.allowTextNotification,
           ),
           CustomToggle(
             title: 'Send notification email updates?',
-            onChange: (value) => setingProvider.updateSettings(
-                key: SettingsKey.emailUpdateNotification,
-                value: value,
-                settingsId: widget.settings.id),
+            onChange: (value) => setingProvider.updateSettings(key: SettingsKey.emailUpdateNotification, value: value, settingsId: widget.settings.id),
             value: widget.settings.emailUpdateNotification,
           ),
           Column(
@@ -72,32 +60,23 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 width: double.infinity,
                 child: Text(
                   'Set email update frequency',
-                  style: AppTextStyles.regularText15.copyWith(
-                      color: AppColors.getTextFieldText(
-                          _themeProvider.isDarkModeEnabled)),
+                  style: AppTextStyles.regularText15.copyWith(color: AppColors.textFieldText),
                   textAlign: TextAlign.left,
                 ),
               ),
               Container(
-                child: CustomPicker(
-                    emailFrequency, setEmailUpdateFrequency, true, 2),
+                child: CustomPicker(emailFrequency, setEmailUpdateFrequency, true, 2),
               ),
             ],
           ),
           CustomToggle(
             title: 'Notify me when someone shares a prayer with me',
-            onChange: (value) => setingProvider.updateSettings(
-                key: SettingsKey.notifyMeSomeoneSharePrayerWithMe,
-                value: value,
-                settingsId: widget.settings.id),
+            onChange: (value) => setingProvider.updateSettings(key: SettingsKey.notifyMeSomeoneSharePrayerWithMe, value: value, settingsId: widget.settings.id),
             value: widget.settings.notifyMeSomeoneSharePrayerWithMe,
           ),
           CustomToggle(
             title: 'Notify me when someone posts to a Group I\'m in',
-            onChange: (value) => setingProvider.updateSettings(
-                key: SettingsKey.notifyMeSomeonePostOnGroup,
-                value: value,
-                settingsId: widget.settings.id),
+            onChange: (value) => setingProvider.updateSettings(key: SettingsKey.notifyMeSomeonePostOnGroup, value: value, settingsId: widget.settings.id),
             value: widget.settings.notifyMeSomeonePostOnGroup,
           ),
         ],

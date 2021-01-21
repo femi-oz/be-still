@@ -1,8 +1,6 @@
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class GroupCreated extends StatefulWidget {
   final String groupName;
@@ -15,7 +13,6 @@ class _GroupCreatedState extends State<GroupCreated> {
   var option = NotificationType.email;
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Column(
       children: [
         SizedBox(height: 10.0),
@@ -76,12 +73,10 @@ class _GroupCreatedState extends State<GroupCreated> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: option == NotificationType.email
-                    ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                        .withOpacity(0.3)
+                    ? AppColors.activeButton.withOpacity(0.3)
                     : Colors.transparent,
                 border: Border.all(
-                  color:
-                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
+                  color: AppColors.cardBorder,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -107,12 +102,10 @@ class _GroupCreatedState extends State<GroupCreated> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: option == NotificationType.text
-                    ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                        .withOpacity(0.5)
+                    ? AppColors.activeButton.withOpacity(0.5)
                     : Colors.transparent,
                 border: Border.all(
-                  color:
-                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
+                  color: AppColors.cardBorder,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -139,12 +132,10 @@ class _GroupCreatedState extends State<GroupCreated> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: option == NotificationType.qr_code
-                    ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                        .withOpacity(0.5)
+                    ? AppColors.activeButton.withOpacity(0.5)
                     : Colors.transparent,
                 border: Border.all(
-                  color:
-                      AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
+                  color: AppColors.cardBorder,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),

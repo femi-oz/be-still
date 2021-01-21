@@ -1,4 +1,6 @@
 import 'package:be_still/data/group.data.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -12,12 +14,27 @@ class SharePrayerToGroups extends StatefulWidget {
 }
 
 class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
-  String selectedGroup;
+  List selectedGroups = [];
+
+  void _getGroup() async {
+    UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<GroupProvider>(context, listen: false).setAllGroups(_user.id);
+  }
+
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _getGroup();
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
     var _themeProvider = Provider.of<ThemeProvider>(context);
-
+    final groups = Provider.of<GroupProvider>(context).allGroups;
     // final groups =
     //     groupData.where((gl) => gl.members.contains(_currentUser.id));
     return Container(
@@ -25,6 +42,15 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.close,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(selectedGroups);
+            },
+            color: AppColors.textFieldText,
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -44,59 +70,46 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                     ),
                   ),
                 ),
-                // TODO
-                // ...groups
-                //     .map((group) => GestureDetector(
-                //           onTap: () {
-                //             setState(() {
-                //               selectedGroup = group.id;
-                //             });
-                //           },
-                //           child: Container(
-                //             height: 50,
-                //             padding: EdgeInsets.symmetric(horizontal: 20),
-                //             width: double.infinity,
-                //             margin: EdgeInsets.symmetric(
-                //                 horizontal: 50, vertical: 10),
-                //             decoration: BoxDecoration(
-                //               color: selectedGroup == group.id
-                //                   ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled).withOpacity(0.2)
-                //                   : Colors.transparent,
-                //               border: Border.all(
-                //                 color: AppColors.lightBlue6,
-                //                 width: 1,
-                //               ),
-                //               borderRadius: BorderRadius.circular(10),
-                //             ),
-                //             child: Row(
-                //               children: <Widget>[
-                //                 Padding(
-                //                   padding: const EdgeInsets.only(left: 10.0),
-                //                   child: Text(
-                //                     group.name,
-                //                     style: TextStyle(
-                //                       color: AppColors.lightBlue4,
-                //                       fontSize: 14,
-                //                       fontWeight: FontWeight.w500,
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ],
-                //             ),
-                //           ),
-                //         ))
-                //     .toList(),
+                ...groups
+                    .map((group) => GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedGroups.add(group.group.id);
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            width: double.infinity,
+                            margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: selectedGroups.contains(group.group.id) ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                              border: Border.all(
+                                color: AppColors.lightBlue6,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Text(
+                                    group.group.name,
+                                    style: TextStyle(
+                                      color: AppColors.lightBlue4,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

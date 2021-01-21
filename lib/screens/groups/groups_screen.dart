@@ -51,12 +51,8 @@ class _GroupScreenState extends State<GroupScreen> {
     Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(group);
     showModalBottomSheet(
       context: context,
-      barrierColor:
-          AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
-              .withOpacity(0.5),
-      backgroundColor:
-          AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
-              .withOpacity(0.9),
+      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return GroupTools();
@@ -74,7 +70,7 @@ class _GroupScreenState extends State<GroupScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
           image: AssetImage(
@@ -95,8 +91,7 @@ class _GroupScreenState extends State<GroupScreen> {
               ),
               text: 'FIND A GROUP',
               backgroundColor: _themeProvider.isDarkModeEnabled
-                  ? AppColors.getBackgroudColor(
-                      _themeProvider.isDarkModeEnabled)[1]
+                  ? AppColors.backgroundColor[1]
                   : AppColors.lightBlue3,
               textColor: _themeProvider.isDarkModeEnabled
                   ? AppColors.lightBlue3
@@ -113,8 +108,7 @@ class _GroupScreenState extends State<GroupScreen> {
               ),
               text: 'CREATE A GROUP',
               backgroundColor: _themeProvider.isDarkModeEnabled
-                  ? AppColors.getBackgroudColor(
-                      _themeProvider.isDarkModeEnabled)[1]
+                  ? AppColors.backgroundColor[1]
                   : AppColors.lightBlue3,
               textColor: _themeProvider.isDarkModeEnabled
                   ? AppColors.lightBlue3
@@ -149,11 +143,10 @@ class _GroupScreenState extends State<GroupScreen> {
                                       );
                                     },
                                     text: e.group.name.toUpperCase(),
-                                    backgroundColor: _themeProvider
-                                            .isDarkModeEnabled
-                                        ? AppColors.getBackgroudColor(
-                                            _themeProvider.isDarkModeEnabled)[0]
-                                        : Colors.white,
+                                    backgroundColor:
+                                        _themeProvider.isDarkModeEnabled
+                                            ? AppColors.backgroundColor[0]
+                                            : Colors.white,
                                     textColor: AppColors.lightBlue3,
                                     hasIcon: false,
                                     hasMore: true,

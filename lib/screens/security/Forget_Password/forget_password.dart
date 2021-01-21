@@ -23,8 +23,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   TextEditingController _codeController = new TextEditingController();
   TextEditingController _confirmcodeController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController =
-      new TextEditingController();
+  TextEditingController _confirmPasswordController = new TextEditingController();
 
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
@@ -69,12 +68,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors:
-                  AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+              colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(
-                  _themeProvider.isDarkModeEnabled)),
+              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -189,13 +186,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 height: 30,
                 width: MediaQuery.of(context).size.width * 0.4,
                 decoration: BoxDecoration(
-                  color: notificationType == NotificationType.email
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.5)
-                      : Colors.transparent,
+                  color: notificationType == NotificationType.email ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -218,13 +211,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 height: 30,
                 width: MediaQuery.of(context).size.width * 0.42,
                 decoration: BoxDecoration(
-                  color: notificationType == NotificationType.text
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.5)
-                      : Colors.transparent,
+                  color: notificationType == NotificationType.text ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),

@@ -6,6 +6,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/settings.dart' as st;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,11 +14,12 @@ import 'app.dart';
 import 'providers/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-bool USE_FIRESTORE_EMULATOR = false;
+bool userFirestoreEmulator = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await st.Settings.init();
   await Firebase.initializeApp();
-  if (USE_FIRESTORE_EMULATOR) {
+  if (userFirestoreEmulator) {
     FirebaseFirestore.instance.settings = Settings(
         host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
   }

@@ -21,8 +21,7 @@ class CustomToggle extends StatelessWidget {
             child: Text(
               title,
               style: AppTextStyles.regularText15.copyWith(
-                color: AppColors.getTextFieldText(
-                    _themeProvider.isDarkModeEnabled),
+                color: AppColors.textFieldText,
               ),
             ),
           ),

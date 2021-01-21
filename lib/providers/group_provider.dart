@@ -69,6 +69,10 @@ class GroupProvider with ChangeNotifier {
         groupName, groupId, email, sender, senderId);
   }
 
+  Future joinRequest(String groupId, String userId, String userName) async {
+    return await _groupService.joinRequest(groupId, userId, userName);
+  }
+
   // Future updateMemberType(String userId, String groupId) async {
   //   return await _groupService.updateMemberType(userId, groupId);
   // }

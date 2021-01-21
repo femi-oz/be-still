@@ -1,5 +1,4 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
@@ -49,15 +48,10 @@ class _AddUpdateState extends State<AddUpdate> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showModalBottomSheet(
       context: context,
-      barrierColor:
-          AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
-              .withOpacity(0.5),
-      backgroundColor:
-          AppColors.getDetailBgColor(_themeProvider.isDarkModeEnabled)[1]
-              .withOpacity(0.9),
+      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return NameRecognitionMenuOne(
@@ -71,7 +65,6 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child:
           // Scaffold(
@@ -81,8 +74,7 @@ class _AddUpdateState extends State<AddUpdate> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
         ),
         padding: EdgeInsets.all(20),
@@ -204,8 +196,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                   child: Text(
                                     u.description,
                                     style: TextStyle(
-                                      color: AppColors.getTextFieldText(
-                                          _themeProvider.isDarkModeEnabled),
+                                      color: AppColors.textFieldText,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300,
                                       height: 2,
@@ -281,8 +272,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                 child: Text(
                                   widget.prayer.description,
                                   style: TextStyle(
-                                    color: AppColors.getTextFieldText(
-                                        _themeProvider.isDarkModeEnabled),
+                                    color: AppColors.textFieldText,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w300,
                                     height: 2,

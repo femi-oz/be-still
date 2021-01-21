@@ -1,3 +1,4 @@
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -18,44 +19,13 @@ class BeStilDialog {
     );
   }
 
-  static Future<void> showLoading(BuildContext context, GlobalKey key,
+  static Future<void> showLoading(BuildContext context,
       [String message = 'Loading...']) async {
-    Dialog dialog = Dialog(
-      key: key,
-      insetPadding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.35, horizontal: 50),
-      backgroundColor: Colors.blueGrey[100].withOpacity(0.5),
-      // AppColors.getBackgroudColor(isDarkMode)[0].withOpacity(0.8),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.darkBlue),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SpinKitDoubleBounce(
-            color: AppColors.lightBlue1,
-            size: 50.0,
-          ),
-          SizedBox(height: 10.0),
-          Text(
-            message,
-            style: AppTextStyles.regularText15,
-          )
-        ],
-      ),
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
+    Navigator.of(context).push(Loader(message));
   }
 
-  static hideLoading(GlobalKey key) {
-    Navigator.of(key.currentContext, rootNavigator: true).pop();
+  static hideLoading(BuildContext context) {
+    Navigator.pop(context);
   }
 
   static Future showErrorDialog(BuildContext context, String message) async {
@@ -92,10 +62,8 @@ class BeStilDialog {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-          ),
+          style:
+              AppTextStyles.medium10.copyWith(color: AppColors.splashTextColor),
         ),
         backgroundColor: type == AlertType.info
             ? AppColors.lightBlue2
@@ -112,6 +80,76 @@ class BeStilDialog {
             _scaffoldKey.currentState.hideCurrentSnackBar();
           },
         ),
+      ),
+    );
+  }
+}
+
+class Loader extends ModalRoute<void> {
+  final String message;
+  Loader(this.message);
+  @override
+  Duration get transitionDuration => Duration(milliseconds: 500);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  Color get barrierColor => Colors.black.withOpacity(0.5);
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    // This makes sure that text and other content follows the material style
+    return Material(
+      type: MaterialType.transparency,
+      // make sure that the overlay content is not cut off
+      child: SafeArea(
+        child: _buildOverlayContent(context),
+      ),
+    );
+  }
+
+  Widget _buildOverlayContent(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SpinKitDoubleBounce(
+            color: AppColors.lightBlue1,
+            size: 50.0,
+          ),
+          SizedBox(height: 10.0),
+          Text(
+            message,
+            style: AppTextStyles.regularText15,
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    // You can add your own animations for the overlay content
+    return FadeTransition(
+      opacity: animation,
+      child: ScaleTransition(
+        scale: animation,
+        child: child,
       ),
     );
   }

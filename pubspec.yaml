@@ -41,7 +41,7 @@ dependencies:
   flutter_spinkit: "^4.1.2"
   shared_preferences: ^0.5.12+2
   get_version: ^0.2.2
-  persistent_bottom_nav_bar: ^3.1.0
+  # persistent_bottom_nav_bar: ^3.1.0
   permission_handler: ^5.0.0
   contacts_service: ^0.4.6
   firebase_messaging: ^7.0.3
@@ -91,6 +91,17 @@ flutter:
   - family: AppIcons
     fonts:
       - asset: assets/fonts/AppIcons.ttf
+  - family: Avenir Next
+    fonts:
+      - asset: assets/fonts/avenir_next_medium.ttf
+        weight: 400
+      - asset: assets/fonts/avenir_next_regular.ttf
+        weight: 300
+      - asset: assets/fonts/avenir_next_bold.ttf
+        weight: 700
+      - asset: assets/fonts/avenir_next_demi.ttf
+        weight: 500
+  
   # fonts:
   #   - family: Schyler
   #     fonts:

@@ -1,18 +1,20 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AddPrayerMenu extends StatefulWidget {
+  final String prayer;
+  AddPrayerMenu({this.prayer});
+
   @override
   _AddPrayerMenuState createState() => _AddPrayerMenuState();
 }
 
 class _AddPrayerMenuState extends State<AddPrayerMenu> {
   var reminder = '';
+  List groups = [];
   var snooze = '';
   List reminderDays = [];
   initState() {
@@ -53,12 +55,20 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.close,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(groups);
+            },
+            color: AppColors.textFieldText,
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -67,12 +77,10 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
@@ -122,17 +130,21 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SharePrayer();
+                        return SharePrayer(
+                          prayer: widget.prayer,
+                        );
                       },
-                    );
+                    ).then((value) {
+                      setState(() {
+                        groups = value;
+                      });
+                    });
                   },
                   child: Container(
                     height: 50,
@@ -171,12 +183,10 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.5),
-                      backgroundColor: AppColors.getDetailBgColor(
-                              _themeProvider.isDarkModeEnabled)[1]
-                          .withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return CustomPicker(
@@ -219,15 +229,6 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            color: AppColors.getTextFieldText(_themeProvider.isDarkModeEnabled),
           ),
         ],
       ),

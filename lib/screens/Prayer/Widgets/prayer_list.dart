@@ -5,6 +5,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -67,11 +68,10 @@ class _PrayerListState extends State<PrayerList> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+          colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(
-              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(StringUtils.getBackgroundImage(true)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -81,13 +81,16 @@ class _PrayerListState extends State<PrayerList> {
             SizedBox(height: 20),
             data.length == 0
                 ? Container(
-                    padding: EdgeInsets.all(60),
-                    child: Text(
-                      'You don\'t have any prayer in your List.',
-                      style: AppTextStyles.regularText13,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
+                    padding: EdgeInsets.only(
+                        left: 60, right: 100, top: 60, bottom: 60),
+                    child: Opacity(
+                      opacity: 0.3,
+                      child: Text(
+                        'No Prayers in My List',
+                        style: AppTextStyles.boldText30,
+                        textAlign: TextAlign.center,
+                      ),
+                    ))
                 : Container(
                     child: Column(
                       children: <Widget>[
@@ -100,18 +103,21 @@ class _PrayerListState extends State<PrayerList> {
                                   await Provider.of<PrayerProvider>(context,
                                           listen: false)
                                       .setPrayerUpdates(e.prayer.id);
-                                  Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (context) => new PrayerDetails(),
-                                    ),
-                                  );
+                                  Navigator.of(context)
+                                      .pushNamed(PrayerDetails.routeName);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   new MaterialPageRoute(
+                                  //     builder: (context) => new PrayerDetails(),
+                                  //   ),
+                                  // );
                                 },
                                 child: PrayerCard(prayer: e.prayer)))
                             .toList(),
                       ],
                     ),
                   ),
+            SizedBox(height: 5),
             currentPrayerType == PrayerType.archived ||
                     currentPrayerType == PrayerType.answered
                 ? Container()
@@ -119,18 +125,12 @@ class _PrayerListState extends State<PrayerList> {
                     onPress: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            AddPrayer(isEdit: false, isGroup: false),
+                        builder: (context) => EntryScreen(screenNumber: 2),
                       ),
                     ),
                     text: 'Add New Prayer',
-                    backgroundColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.getBackgroudColor(
-                            _themeProvider.isDarkModeEnabled)[1]
-                        : AppColors.lightBlue3,
-                    textColor: _themeProvider.isDarkModeEnabled
-                        ? AppColors.lightBlue3
-                        : Colors.white,
+                    backgroundColor: AppColors.backgroundColor[1],
+                    textColor: AppColors.lightBlue3,
                     icon: Icons.add,
                   ),
             SizedBox(height: 80),

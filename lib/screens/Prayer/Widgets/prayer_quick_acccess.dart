@@ -150,11 +150,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
+                            barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
+                            backgroundColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
@@ -181,11 +179,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
+                            barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
+                            backgroundColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
@@ -218,11 +214,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
+                            barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.getDetailBgColor(
-                                    _themeProvider.isDarkModeEnabled)[1]
+                            backgroundColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {

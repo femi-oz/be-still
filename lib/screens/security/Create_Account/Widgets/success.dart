@@ -1,5 +1,6 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () =>
-            Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName),
+        () => Navigator.of(context).pushReplacementNamed(EntryScreen.routeName),
       ),
     );
   }
@@ -35,8 +35,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
             image: AssetImage(StringUtils.getBackgroundImage(
@@ -49,8 +48,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             Text(
               'Your account has been succesfully created.',
               style: TextStyle(
-                color: AppColors.getTextFieldText(
-                    _themeProvider.isDarkModeEnabled),
+                color: AppColors.textFieldText,
                 fontWeight: FontWeight.w300,
                 fontSize: 14,
               ),
@@ -58,8 +56,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             Text(
               'Login to your BeStill...',
               style: TextStyle(
-                color: AppColors.getTextFieldText(
-                    _themeProvider.isDarkModeEnabled),
+                color: AppColors.textFieldText,
                 fontWeight: FontWeight.w300,
                 fontSize: 14,
               ),

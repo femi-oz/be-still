@@ -1,9 +1,7 @@
 import 'package:be_still/enums/group_type.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:provider/provider.dart';
 
 class CreateGroupForm extends StatefulWidget {
   final groupNameController;
@@ -14,6 +12,7 @@ class CreateGroupForm extends StatefulWidget {
   GroupType option;
   final formKey;
   final autoValidate;
+  final emailController;
 
   CreateGroupForm({
     this.groupNameController,
@@ -24,6 +23,7 @@ class CreateGroupForm extends StatefulWidget {
     this.option,
     this.autoValidate,
     this.formKey,
+    this.emailController,
   });
 
   @override
@@ -33,7 +33,6 @@ class CreateGroupForm extends StatefulWidget {
 class _CreateGroupFormState extends State<CreateGroupForm> {
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Form(
       key: widget.formKey,
       autovalidate: widget.autoValidate,
@@ -43,6 +42,14 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
             controller: widget.groupNameController,
             label: 'Group Name*',
             keyboardType: TextInputType.text,
+            isRequired: true,
+            showSuffix: false,
+          ),
+          SizedBox(height: 12.0),
+          CustomInput(
+            controller: widget.emailController,
+            label: 'Email*',
+            keyboardType: TextInputType.emailAddress,
             isRequired: true,
             showSuffix: false,
           ),
@@ -87,12 +94,10 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 height: 30,
                 decoration: BoxDecoration(
                   color: widget.option == GroupType.normal
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.3)
+                      ? AppColors.activeButton.withOpacity(0.3)
                       : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -116,12 +121,10 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 height: 30,
                 decoration: BoxDecoration(
                   color: widget.option == GroupType.private
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.5)
+                      ? AppColors.activeButton.withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),
@@ -147,12 +150,10 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                 height: 30,
                 decoration: BoxDecoration(
                   color: widget.option == GroupType.feed
-                      ? AppColors.getActiveBtn(_themeProvider.isDarkModeEnabled)
-                          .withOpacity(0.5)
+                      ? AppColors.activeButton.withOpacity(0.5)
                       : Colors.transparent,
                   border: Border.all(
-                    color: AppColors.getCardBorder(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.cardBorder,
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(5),

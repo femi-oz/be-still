@@ -1,4 +1,3 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -14,28 +13,26 @@ class PrayerCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     // final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
       margin: EdgeInsets.symmetric(vertical: 7.0),
       decoration: BoxDecoration(
-        color: AppColors.getCardBorder(_themeProvider.isDarkModeEnabled),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-          topLeft: Radius.circular(10),
-        ),
-      ),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            topLeft: Radius.circular(10),
+          ),
+          border: Border.all(color: AppColors.cardBorder)),
       child: Container(
         margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         width: double.infinity,
         decoration: BoxDecoration(
-          color:
-              AppColors.getPrayerCardBgColor(_themeProvider.isDarkModeEnabled),
+          color: AppColors.prayerCardBgColor.withOpacity(0.1),
           borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(9),
-            topLeft: Radius.circular(9),
+            bottomLeft: Radius.circular(8),
+            topLeft: Radius.circular(8),
           ),
         ),
         child: Column(
@@ -52,8 +49,7 @@ class PrayerCard extends StatelessWidget {
                           prayer.userId != _user.id
                               ? Text(
                                   prayer.creatorName,
-                                  style: AppTextStyles.regularText14.copyWith(
-                                    fontWeight: FontWeight.w500,
+                                  style: AppTextStyles.boldText14.copyWith(
                                     color: AppColors.lightBlue4,
                                   ),
                                 )
@@ -109,12 +105,8 @@ class PrayerCard extends StatelessWidget {
                               Text(
                                 DateFormat('MM.dd.yyyy')
                                     .format(prayer.createdOn),
-                                style: AppTextStyles.regularText15b.copyWith(
-                                  fontSize: 14,
-                                  color: AppColors.getPrayerMenuColor(
-                                    !_themeProvider.isDarkModeEnabled,
-                                  ),
-                                ),
+                                style: AppTextStyles.regularText13
+                                    .copyWith(color: AppColors.lightBlue3),
                               ),
                             ],
                           )
@@ -126,7 +118,7 @@ class PrayerCard extends StatelessWidget {
               ],
             ),
             Divider(
-              color: AppColors.getDivider(_themeProvider.isDarkModeEnabled),
+              color: AppColors.divider,
               thickness: 0.5,
             ),
             Row(
@@ -137,11 +129,8 @@ class PrayerCard extends StatelessWidget {
                     prayer.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.regularText16b.copyWith(
-                      color: AppColors.getPrayerMenuColor(
-                        !_themeProvider.isDarkModeEnabled,
-                      ),
-                    ),
+                    style: AppTextStyles.regularText15
+                        .copyWith(color: AppColors.offWhite2),
                   ),
                 ),
               ],

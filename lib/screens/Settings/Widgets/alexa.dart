@@ -21,10 +21,7 @@ class AlexaSettings extends StatefulWidget {
 
 class _AlexaSettingsState extends State<AlexaSettings> {
   _onChangeTime(value) {
-    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        key: SettingsKey.pauseInterval,
-        value: value,
-        settingsId: widget.settings.id);
+    Provider.of<SettingsProvider>(context, listen: false).updateSettings(key: SettingsKey.pauseInterval, value: value, settingsId: widget.settings.id);
   }
 
   List<String> prayerTimeInterval = [
@@ -65,18 +62,12 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               SizedBox(height: 20),
               CustomToggle(
                 title: 'Allow Alexa to notify me of my Prayer Time?',
-                onChange: (value) => setingProvider.updateSettings(
-                    key: SettingsKey.allowPrayerTimeNotification,
-                    value: value,
-                    settingsId: widget.settings.id),
+                onChange: (value) => setingProvider.updateSettings(key: SettingsKey.allowPrayerTimeNotification, value: value, settingsId: widget.settings.id),
                 value: widget.settings.allowPrayerTimeNotification,
               ),
               CustomToggle(
                 title: 'Sync Notifications / Reminders with Alexa?',
-                onChange: (value) => setingProvider.updateSettings(
-                    key: SettingsKey.syncAlexa,
-                    value: value,
-                    settingsId: widget.settings.id),
+                onChange: (value) => setingProvider.updateSettings(key: SettingsKey.syncAlexa, value: value, settingsId: widget.settings.id),
                 value: widget.settings.syncAlexa,
               ),
             ],
@@ -87,10 +78,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               CustomSectionHeder('Prayer Time'),
               CustomToggle(
                 title: 'Enable Alexa to read prayers from My List?',
-                onChange: (value) => setingProvider.updateSettings(
-                    key: SettingsKey.allowAlexaReadPrayer,
-                    value: value,
-                    settingsId: widget.settings.id),
+                onChange: (value) => setingProvider.updateSettings(key: SettingsKey.allowAlexaReadPrayer, value: value, settingsId: widget.settings.id),
                 value: widget.settings.allowAlexaReadPrayer,
               ),
               Column(
@@ -100,20 +88,13 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                     width: double.infinity,
                     child: Text(
                       'Set pause between prayers during Prayer Time',
-                      style: AppTextStyles.regularText15.copyWith(
-                          color: AppColors.getTextFieldText(
-                              _themeProvider.isDarkModeEnabled)),
+                      style: AppTextStyles.regularText15.copyWith(color: AppColors.textFieldText),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.only(bottom: 80.0),
-                    child: CustomPicker(
-                        prayerTimeInterval,
-                        _onChangeTime,
-                        true,
-                        prayerTimeInterval
-                            .indexOf(widget.settings.pauseInterval)),
+                    child: CustomPicker(prayerTimeInterval, _onChangeTime, true, prayerTimeInterval.indexOf(widget.settings.pauseInterval)),
                   ),
                 ],
               ),

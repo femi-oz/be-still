@@ -47,9 +47,7 @@ class NoUpdateView extends StatelessWidget {
             ),
             Expanded(
               child: Divider(
-                color: AppColors.getAppBarColor(
-                  _themeProvider.isDarkModeEnabled,
-                ),
+                color: AppColors.lightBlue4,
                 thickness: 1,
               ),
             ),
@@ -62,9 +60,7 @@ class NoUpdateView extends StatelessWidget {
               child: Text(
                 data.prayer.description,
                 style: AppTextStyles.regularText22.copyWith(
-                  color: AppColors.getTextFieldBgColor(
-                    !_themeProvider.isDarkModeEnabled,
-                  ),
+                  color: AppColors.textFieldBackgroundColor,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -12,8 +12,7 @@ class CustomPicker extends StatefulWidget {
   final List<String> interval;
 
   @override
-  CustomPicker(
-      this.interval, this.onChange, this.hideActionuttons, this.selected);
+  CustomPicker(this.interval, this.onChange, this.hideActionuttons, this.selected);
   _CustomPickerState createState() => _CustomPickerState();
 }
 
@@ -24,8 +23,7 @@ class _CustomPickerState extends State<CustomPicker> {
   @override
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
-    FixedExtentScrollController scrollController =
-        FixedExtentScrollController(initialItem: widget.selected);
+    FixedExtentScrollController scrollController = FixedExtentScrollController(initialItem: widget.selected);
     return Container(
       width: double.infinity,
       child: Column(
@@ -55,12 +53,7 @@ class _CustomPickerState extends State<CustomPicker> {
                               children: <Widget>[
                                 ...widget.interval
                                     .map(
-                                      (i) => Align(
-                                          alignment: Alignment.center,
-                                          child: Text(i,
-                                              textAlign: TextAlign.center,
-                                              style:
-                                                  AppTextStyles.regularText15)),
+                                      (i) => Align(alignment: Alignment.center, child: Text(i, textAlign: TextAlign.center, style: AppTextStyles.regularText15)),
                                     )
                                     .toList(),
                               ],
@@ -92,8 +85,7 @@ class _CustomPickerState extends State<CustomPicker> {
                           width: MediaQuery.of(context).size.width * .38,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: AppColors.getCardBorder(
-                                  _themeProvider.isDarkModeEnabled),
+                              color: AppColors.cardBorder,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(5),
@@ -115,8 +107,7 @@ class _CustomPickerState extends State<CustomPicker> {
                           width: MediaQuery.of(context).size.width * .38,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: AppColors.getCardBorder(
-                                  _themeProvider.isDarkModeEnabled),
+                              color: AppColors.cardBorder,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(5),

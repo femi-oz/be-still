@@ -1,5 +1,4 @@
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +8,6 @@ class NoUpdateView extends StatelessWidget {
   @override
   NoUpdateView();
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final prayer = Provider.of<PrayerProvider>(context).currentPrayer;
     // TODO
     return Container(
@@ -21,10 +19,9 @@ class NoUpdateView extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
                     prayer.creatorName,
-                    style: AppTextStyles.regularText18b.copyWith(
-                        color: AppColors.getPrayerPrimaryColor(
-                            _themeProvider.isDarkModeEnabled),
-                        fontWeight: FontWeight.w500),
+                    style: AppTextStyles.boldText16.copyWith(
+                      color: AppColors.lightBlue4,
+                    ),
                     textAlign: TextAlign.left,
                   ),
                 )
@@ -39,9 +36,8 @@ class NoUpdateView extends StatelessWidget {
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
                           .format(prayer.createdOn),
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: AppColors.getPrayerPrimaryColor(
-                            _themeProvider.isDarkModeEnabled),
+                      style: AppTextStyles.regularText13.copyWith(
+                        color: AppColors.lightBlue4,
                       ),
                     ),
                   ],
@@ -49,9 +45,7 @@ class NoUpdateView extends StatelessWidget {
               ),
               Expanded(
                 child: Divider(
-                  color: AppColors.getPrayerPrimaryColor(
-                    _themeProvider.isDarkModeEnabled,
-                  ),
+                  color: AppColors.lightBlue4,
                   thickness: 1,
                 ),
               ),
@@ -63,10 +57,8 @@ class NoUpdateView extends StatelessWidget {
               child: Center(
                 child: Text(
                   prayer.description,
-                  style: AppTextStyles.regularText22.copyWith(
-                    color: AppColors.getTextFieldBgColor(
-                      !_themeProvider.isDarkModeEnabled,
-                    ),
+                  style: AppTextStyles.regularText18b.copyWith(
+                    color: AppColors.offWhite2,
                   ),
                   textAlign: TextAlign.left,
                 ),

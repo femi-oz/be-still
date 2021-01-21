@@ -74,20 +74,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       try {
         BeStilDialog.showLoading(
           bcontext,
-          _key,
         );
         await Provider.of<UserProvider>(context, listen: false)
             .updateEmail(_newEmail.text, user.id);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         Navigator.of(context).pop();
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
       }
     });
@@ -100,20 +99,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       try {
         BeStilDialog.showLoading(
           bcontext,
-          _key,
         );
         await Provider.of<UserProvider>(context, listen: false)
             .updatePassword(_newPassword.text);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         Navigator.of(context).pop();
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(_key);
+        BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
       }
     });
@@ -135,8 +133,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
-              color: AppColors.getBackgroudColor(
-                  _themeProvider.isDarkModeEnabled)[1],
+              color: AppColors.backgroundColor[1],
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
@@ -185,9 +182,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   List<String> _themeModes = [
-    BThemeMode.light,
-    BThemeMode.dark,
-    BThemeMode.auto,
+    BsThemeMode.light,
+    BsThemeMode.dark,
+    BsThemeMode.auto,
   ];
 
   Widget build(BuildContext context) {
@@ -214,7 +211,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       style: AppTextStyles.boldText30),
                   Text(
                       DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
-                      style: AppTextStyles.normalDarkBlue),
+                      style: AppTextStyles.regularText13),
                 ],
               ),
             ),
@@ -272,7 +269,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       for (int i = 0; i < _themeModes.length; i++)
                         CustomButtonGroup(
                           isSelected:
-                              _themeProvider.colorMode == _themeModes[i],
+                              _themeProvider.currentTheme == _themeModes[i],
                           length: _themeModes.length,
                           onSelected: (value) =>
                               _themeProvider.changeTheme(value),
@@ -305,9 +302,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text('App is running the latest version',
-                          style: AppTextStyles.regularText15.copyWith(
-                              color: AppColors.getTextFieldText(
-                                  _themeProvider.isDarkModeEnabled))),
+                          style: AppTextStyles.regularText15
+                              .copyWith(color: AppColors.textFieldText)),
                       Text(_version, style: AppTextStyles.regularText15),
                     ],
                   ),

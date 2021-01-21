@@ -1,8 +1,6 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class FindGroupTools extends StatefulWidget {
   @override
@@ -21,7 +19,6 @@ class _FindGroupToolsState extends State<FindGroupTools> {
   final TextEditingController _adminNameController = TextEditingController();
   var _option = 'normal';
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
@@ -105,13 +102,10 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       height: 30,
                       decoration: BoxDecoration(
                         color: _option == 'normal'
-                            ? AppColors.getActiveBtn(
-                                    _themeProvider.isDarkModeEnabled)
-                                .withOpacity(0.3)
+                            ? AppColors.activeButton.withOpacity(0.3)
                             : Colors.transparent,
                         border: Border.all(
-                          color: AppColors.getCardBorder(
-                              _themeProvider.isDarkModeEnabled),
+                          color: AppColors.cardBorder,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -135,13 +129,10 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       height: 30,
                       decoration: BoxDecoration(
                         color: _option == 'feed'
-                            ? AppColors.getActiveBtn(
-                                    _themeProvider.isDarkModeEnabled)
-                                .withOpacity(0.5)
+                            ? AppColors.activeButton.withOpacity(0.5)
                             : Colors.transparent,
                         border: Border.all(
-                          color: AppColors.getCardBorder(
-                              _themeProvider.isDarkModeEnabled),
+                          color: AppColors.cardBorder,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -171,8 +162,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     border: Border.all(
-                      color: AppColors.getCardBorder(
-                          _themeProvider.isDarkModeEnabled),
+                      color: AppColors.cardBorder,
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(5),

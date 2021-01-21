@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -18,6 +24,8 @@ class PrayerService {
       FirebaseFirestore.instance.collection("PrayerUpdate");
   final CollectionReference _hiddenPrayerCollectionReference =
       FirebaseFirestore.instance.collection("HiddenPrayer");
+  final CollectionReference _userCollectionReference =
+      FirebaseFirestore.instance.collection("User");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
@@ -102,6 +110,89 @@ class PrayerService {
     return userPrayer;
   }
 
+  populateGroupPrayerByGroupID(
+      PrayerModel prayerData, String prayerID, String groupID) {
+    GroupPrayerModel userPrayer = GroupPrayerModel(
+        groupId: groupID,
+        status: Status.active,
+        sequence: null,
+        prayerId: prayerID,
+        isFavorite: false,
+        createdBy: prayerData.createdBy,
+        createdOn: prayerData.createdOn,
+        modifiedBy: prayerData.modifiedBy,
+        modifiedOn: prayerData.modifiedOn);
+    return userPrayer;
+  }
+
+  // Future prayerRequestMessage(
+  //   PrayerRequestMessageModel prayerRequestData,
+  // ) async {
+  //   try {
+  //     return FirebaseFirestore.instance.runTransaction(
+  //       (transaction) async {
+  //         transaction.set(
+  //             _prayerRequestMessageCollectionReference
+  //                 .doc(prayerRequestData.senderId),
+  //             prayerRequestData.toJson());
+  //       },
+  //     ).then((value) {
+  //       return true;
+  //     }).catchError((e) {
+  //       throw HttpException(e.message);
+  //     });
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
+
+  messageRequestor(PrayerRequestMessageModel requestMessageModel) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var user = await _userCollectionReference
+          .where('Email', isEqualTo: requestMessageModel.email)
+          .limit(1)
+          .get();
+      if (user.docs.length == 0) {
+        throw HttpException(
+            'This email is not registered on BeStill! Please try with a registered email');
+      }
+      var data = {
+        'recieverId': requestMessageModel.receiverId,
+        'receiver': requestMessageModel.receiver,
+        'message': user.docs[0].id,
+        'email': requestMessageModel.email,
+        'sender': requestMessageModel.sender,
+        'senderId': user.docs[0].id,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  tagPrayer(
+      String prayerId, String userId, String tagger, String taggerId) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {
+        'prayerId': prayerId,
+        'userId': userId,
+        'tagger': tagger,
+        'taggerId': taggerId,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future addPrayer(
     PrayerModel prayerData,
     String _userID,
@@ -111,21 +202,65 @@ class PrayerService {
     final _userPrayerID = Uuid().v1();
 
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store prayer
-          transaction.set(
-              _prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      // (transaction) async {
+      // store prayer
+      batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
-          //store user prayer
-          transaction.set(_userPrayerCollectionReference.doc(_userPrayerID),
-              populateUserPrayer(prayerData, _userID, _prayerID).toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      //store user prayer
+      batch.set(_userPrayerCollectionReference.doc(_userPrayerID),
+          populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+      // }
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addPrayerWithGroup(
+    BuildContext context,
+    PrayerModel prayerData,
+    List groups,
+    String _userID,
+  ) async {
+    // Generate uuid
+    final _prayerID = Uuid().v1();
+    final _userPrayerID = Uuid().v1();
+
+    try {
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store prayer
+      batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+
+      //store user prayer
+      batch.set(_userPrayerCollectionReference.doc(_userPrayerID),
+          populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+
+      for (var groupId in groups) {
+        var groupPrayerId = Uuid().v1();
+        batch.set(
+            _groupPrayerCollectionReference.doc(groupPrayerId),
+            populateGroupPrayerByGroupID(prayerData, _prayerID, groupId)
+                .toJson());
+      }
+      //   },
+      // ).then((val) {
+      //   for (var groupId in groups) {
+      //     Provider.of<NotificationProvider>(context, listen: false)
+      //         .newPrayerGroupNotification(_prayerID, groupId);
+      //   }
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -180,27 +315,56 @@ class PrayerService {
   }
 
   Future addGroupPrayer(
+    BuildContext context,
     PrayerModel prayerData,
   ) async {
     // Generate uuid
     final _prayerID = Uuid().v1();
     final groupPrayerId = Uuid().v1();
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store prayer
-          transaction.set(
-              _prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store prayer
+      batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
-          //store group prayer
-          transaction.set(_groupPrayerCollectionReference.doc(groupPrayerId),
-              populateGroupPrayer(prayerData, _prayerID).toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      //store group prayer
+      batch.set(_groupPrayerCollectionReference.doc(groupPrayerId),
+          populateGroupPrayer(prayerData, _prayerID).toJson());
+      //   },
+      // ).then((val) {
+      //   Provider.of<NotificationProvider>(context, listen: false)
+      //       .newPrayerGroupNotification(_prayerID, prayerData.groupId);
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addPrayerToGroup(PrayerModel prayerData, List selectedGroups) async {
+    // Generate uuid
+    final _prayerID = Uuid().v1();
+    final groupPrayerId = Uuid().v1();
+    try {
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store prayer
+      batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+
+      //store group prayer
+      batch.set(_groupPrayerCollectionReference.doc(groupPrayerId),
+          populateGroupPrayer(prayerData, _prayerID).toJson());
+      //   },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -284,19 +448,16 @@ class PrayerService {
 
   Future deletePrayer(String prayerID) async {
     try {
-      return FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.delete(_prayerCollectionReference.doc(prayerID));
-        final userPrayerRes = await _userPrayerCollectionReference
-            .where("PrayerId", isEqualTo: prayerID)
-            .limit(1)
-            .get();
-        transaction.delete(
-            _userPrayerCollectionReference.doc(userPrayerRes.docs[0].id));
-      }).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction((transaction) async {
+      batch.delete(_prayerCollectionReference.doc(prayerID));
+      final userPrayerRes = await _userPrayerCollectionReference
+          .where("PrayerId", isEqualTo: prayerID)
+          .limit(1)
+          .get();
+      batch
+          .delete(_userPrayerCollectionReference.doc(userPrayerRes.docs[0].id));
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }

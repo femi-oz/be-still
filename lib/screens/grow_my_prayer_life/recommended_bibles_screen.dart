@@ -1,4 +1,3 @@
-import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -37,8 +36,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors:
-                AppColors.getBackgroudColor(_themeProvider.isDarkModeEnabled),
+            colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
             image: AssetImage(_themeProvider.isDarkModeEnabled
@@ -85,8 +83,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 child: Text(
                   'Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Donec rutrum congue leo eget malesuada. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Proin eget tortor risus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
                   style: TextStyle(
-                    color: AppColors.getTextFieldText(
-                        _themeProvider.isDarkModeEnabled),
+                    color: AppColors.textFieldText,
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
                     height: 1.2,
@@ -113,12 +110,9 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 margin: EdgeInsets.symmetric(vertical: 10.0),
                 child: custom.ExpansionTile(
                   iconColor: AppColors.lightBlue4,
-                  headerBackgroundColorStart: AppColors.getPrayerMenu(
-                      _themeProvider.isDarkModeEnabled)[0],
-                  headerBackgroundColorEnd: AppColors.getPrayerMenu(
-                      _themeProvider.isDarkModeEnabled)[1],
-                  shadowColor:
-                      AppColors.getDropShadow(_themeProvider.isDarkModeEnabled),
+                  headerBackgroundColorStart: AppColors.prayerMenu[0],
+                  headerBackgroundColorEnd: AppColors.prayerMenu[1],
+                  shadowColor: AppColors.dropShadow,
                   title: Container(
                     margin: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.1),
@@ -154,9 +148,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                             ),
                           ),
                           OutlineButton(
-                            borderSide: BorderSide(
-                                color: AppColors.getCardBorder(
-                                    _themeProvider.isDarkModeEnabled)),
+                            borderSide: BorderSide(color: AppColors.cardBorder),
                             onPressed: () => _launchURL(bibleData[i].link),
                             child: Text(
                               'READ NOW',
