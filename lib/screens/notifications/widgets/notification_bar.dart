@@ -35,7 +35,7 @@ class NotificationBarState extends State<NotificationBar> {
           child: Text(
             "CLEAR ALL",
             style: TextStyle(
-              color: AppColors.appBarTextColor,
+              color: AppColors.lightBlue4,
               fontSize: 16,
             ),
           ),
@@ -46,7 +46,7 @@ class NotificationBarState extends State<NotificationBar> {
             return IconButton(
               icon: Icon(
                 AppIcons.menu,
-                color: AppColors.appBarTextColor,
+                color: AppColors.lightBlue4,
                 // size: 24,
               ),
               onPressed: () {

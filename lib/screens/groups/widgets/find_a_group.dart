@@ -118,8 +118,9 @@ class _FindAGroupState extends State<FindAGroup> {
                             FocusScope.of(context).unfocus(),
                             showModalBottomSheet(
                               context: context,
-                              barrierColor: AppColors.detailBackgroundColor,
-                              backgroundColor: AppColors.detailBackgroundColor,
+                              barrierColor: AppColors.detailBackgroundColor[1],
+                              backgroundColor:
+                                  AppColors.detailBackgroundColor[1],
                               isScrollControlled: true,
                               builder: (BuildContext context) {
                                 return FindGroupTools();
@@ -177,8 +178,8 @@ class _FindAGroupState extends State<FindAGroup> {
                           FocusScope.of(context).unfocus(),
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor,
-                            backgroundColor: AppColors.detailBackgroundColor,
+                            barrierColor: AppColors.detailBackgroundColor[1],
+                            backgroundColor: AppColors.detailBackgroundColor[1],
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return FindGroupTools();

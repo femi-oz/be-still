@@ -176,10 +176,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   showModalBottomSheet(
                                     context: context,
                                     barrierColor: AppColors
-                                        .detailBackgroundColor
+                                        .detailBackgroundColor[1]
                                         .withOpacity(0.5),
                                     backgroundColor: AppColors
-                                        .detailBackgroundColor
+                                        .detailBackgroundColor[1]
                                         .withOpacity(0.9),
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
@@ -218,10 +218,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   showModalBottomSheet(
                                     context: context,
                                     barrierColor: AppColors
-                                        .detailBackgroundColor
+                                        .detailBackgroundColor[1]
                                         .withOpacity(0.5),
                                     backgroundColor: AppColors
-                                        .detailBackgroundColor
+                                        .detailBackgroundColor[1]
                                         .withOpacity(0.9),
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
@@ -260,10 +260,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   showModalBottomSheet(
                                     context: context,
                                     barrierColor: AppColors
-                                        .detailBackgroundColor
+                                        .detailBackgroundColor[1]
                                         .withOpacity(0.5),
                                     backgroundColor: AppColors
-                                        .detailBackgroundColor
+                                        .detailBackgroundColor[1]
                                         .withOpacity(0.9),
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {

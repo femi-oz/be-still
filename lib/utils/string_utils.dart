@@ -29,8 +29,7 @@ class StringUtils {
   static String splashLogo = 'assets/images/splash_icon.png';
   static String backText = "Go Back";
   static String copyRight1 = "©2020 All Rights Reserved";
-  static String copyRight2 =
-      "BeStill is a ministry of Second Baptist Church Houston, TX";
+  static String copyRight2 = "BeStill is a ministry of Second Baptist Church Houston, TX";
 }
 
 extension StringExtension on String {

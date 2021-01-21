@@ -34,7 +34,7 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
   Widget build(BuildContext context) {
     var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
-      padding: EdgeInsets.only(left: 20),
+      padding: EdgeInsets.only(left: 10),
       width: double.infinity,
       height: double.infinity,
       margin: EdgeInsets.symmetric(
@@ -135,7 +135,7 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             color:
-                                AppColors.nameRecogntionColor.withOpacity(0.7),
+                                AppColors.appBarBackground[1].withOpacity(0.9),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(9),
                               topLeft: Radius.circular(9),
@@ -149,8 +149,8 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                                   SizedBox(width: 10),
                                   Text(
                                     'DON\'T ASSOCIATE',
-                                    style: AppTextStyles.boldText9
-                                        .copyWith(color: AppColors.offWhite1),
+                                    style: AppTextStyles.boldText14
+                                        .copyWith(color: AppColors.offWhite2),
                                   ),
                                 ],
                               ),
@@ -217,8 +217,9 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
-                backgroundColor: AppColors.nameRecogntionColor.withOpacity(0.9),
+                barrierColor:
+                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                backgroundColor: AppColors.appBarBackground[1].withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return NameRecognitionMenuTwo(

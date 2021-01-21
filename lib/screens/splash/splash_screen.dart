@@ -152,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen>
                         Text(
                           StringUtils.copyRight1,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.mediumText10.copyWith(
+                          style: AppTextStyles.medium10.copyWith(
                             color: AppColors.splashTextColor,
                           ),
                         ),
@@ -171,7 +171,7 @@ class _SplashScreenState extends State<SplashScreen>
                         Text(
                           StringUtils.copyRight2,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.mediumText10.copyWith(
+                          style: AppTextStyles.medium10.copyWith(
                             color: AppColors.splashTextColor,
                           ),
                         ),

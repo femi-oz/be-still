@@ -156,8 +156,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             color: _selectedOption == 'yes'
-                                ? AppColors.nameRecogntionColor.withOpacity(0.6)
-                                : AppColors.nameRecogntionColor
+                                ? AppColors.appBarBackground[1].withOpacity(0.6)
+                                : AppColors.appBarBackground[1]
                                     .withOpacity(0.9),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(9),
@@ -244,8 +244,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: _selectedOption == 'no'
-                              ? AppColors.nameRecogntionColor.withOpacity(0.6)
-                              : AppColors.nameRecogntionColor.withOpacity(0.9),
+                              ? AppColors.appBarBackground[1].withOpacity(0.6)
+                              : AppColors.appBarBackground[1].withOpacity(0.9),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(9),
                             topLeft: Radius.circular(9),

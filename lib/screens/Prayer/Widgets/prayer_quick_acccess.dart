@@ -150,9 +150,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor
+                            barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor
+                            backgroundColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
@@ -179,9 +179,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor
+                            barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor
+                            backgroundColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
@@ -214,9 +214,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         onClick: () {
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor
+                            barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor
+                            backgroundColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {

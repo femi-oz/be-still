@@ -56,7 +56,7 @@ class CustomDrawer extends StatelessWidget {
                         child: Text(
                           'LOGOUT',
                           style: AppTextStyles.boldText20
-                              .copyWith(color: AppColors.logoutTextColor),
+                              .copyWith(color: AppColors.bottomNavIconColor),
                         ),
                         onTap: () {
                           _authProvider.signOut();
@@ -67,7 +67,7 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Icon(
                           Icons.close,
-                          color: AppColors.logoutTextColor,
+                          color: AppColors.bottomNavIconColor,
                         ),
                         onTap: () {
                           Navigator.pop(context);

@@ -68,8 +68,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     openFilter() {
       showModalBottomSheet(
         context: context,
-        barrierColor: AppColors.detailBackgroundColor,
-        backgroundColor: AppColors.detailBackgroundColor,
+        barrierColor: AppColors.detailBackgroundColor[1],
+        backgroundColor: AppColors.detailBackgroundColor[1],
         isScrollControlled: true,
         builder: (BuildContext context) {
           return _activeList == PrayerType.findGroup

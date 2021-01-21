@@ -51,8 +51,8 @@ class _GroupScreenState extends State<GroupScreen> {
     Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(group);
     showModalBottomSheet(
       context: context,
-      barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
-      backgroundColor: AppColors.detailBackgroundColor.withOpacity(0.9),
+      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return GroupTools();
