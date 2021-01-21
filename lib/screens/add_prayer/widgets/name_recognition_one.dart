@@ -1,6 +1,9 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'name_recognition_two.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {
@@ -29,7 +32,9 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
 
   @override
   Widget build(BuildContext context) {
+    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
+      padding: EdgeInsets.only(left: 20),
       width: double.infinity,
       height: double.infinity,
       margin: EdgeInsets.symmetric(
@@ -42,10 +47,10 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
               child: Text(
                   'We see you mentioned a friend in this prayer. Would you like to associate this prayer with a contact?',
                   style: TextStyle(
-                    color: AppColors.lightBlue3,
-                    fontWeight: FontWeight.w500,
+                    color: AppColors.lightBlue4,
+                    fontWeight: FontWeight.bold,
                     height: 1.7,
-                    fontSize: 16,
+                    fontSize: 15,
                   ),
                   textAlign: TextAlign.center),
             ),
@@ -105,50 +110,116 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 //   ),
                 // ),
                 GestureDetector(
-                  onTap: () {
-                    setState(
-                      () {
-                        selectedOption = 'dont associate';
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: selectedOption == 'dont associate'
-                          ? AppColors.offWhite1.withOpacity(0.2)
-                          : AppColors.offWhite1.withOpacity(0.1),
-                      border: Border.all(
-                        color: AppColors.offWhite1,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'DON\'T ASSOCIATE',
-                        style: TextStyle(
+                    onTap: () {
+                      setState(
+                        () {
+                          selectedOption = 'dont associate';
+                        },
+                      );
+                    },
+                    child: InkWell(
+                      child: Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
                           color: AppColors.offWhite1,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                          ),
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          margin: EdgeInsetsDirectional.only(
+                              start: 0.5, bottom: 0.5, top: 0.5),
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color:
+                                AppColors.nameRecogntionColor.withOpacity(0.7),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(9),
+                              topLeft: Radius.circular(9),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'DON\'T ASSOCIATE',
+                                    style: AppTextStyles.boldText9
+                                        .copyWith(color: AppColors.offWhite1),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          // Align(
+                          //   alignment: Alignment.centerLeft,
+                          //   child: FlatButton.icon(
+                          //     onPressed: null,
+                          //     icon: Icon(Icons.add, color: textColor),
+                          //     label: Text(
+                          //       text,
+                          //       style: AppTextStyles.boldText20.copyWith(color: textColor),
+                          //     ),
+                          //   ),
+                          // ),
                         ),
                       ),
+                    )
+                    // LongButton(
+                    //   onPress: () => Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           AddPrayer(isEdit: false, isGroup: false),
+                    //     ),
+                    //   ),
+                    //   text: 'DON\'T ASSOCIATE',
+                    //   backgroundColor: AppColors.nameRecogntionColor,
+                    //   textColor: AppColors.offWhite1,
+                    // )
+                    // Container(
+                    //   height: 50,
+                    //   padding: EdgeInsets.symmetric(horizontal: 20),
+                    //   width: double.infinity,
+                    //   margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    //   decoration: BoxDecoration(
+                    //     color: selectedOption == 'dont associate'
+                    //         ? AppColors.offWhite1.withOpacity(0.2)
+                    //         : AppColors.offWhite1.withOpacity(0.1),
+                    //     border: Border.all(
+                    //       color: AppColors.offWhite1,
+                    //       width: 1,
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                    //   child: Align(
+                    //     alignment: Alignment.centerLeft,
+                    //     child: Text(
+                    //       'DON\'T ASSOCIATE',
+                    //       style: TextStyle(
+                    //         color: AppColors.offWhite1,
+                    //         fontSize: 12,
+                    //         fontWeight: FontWeight.w400,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     ),
-                  ),
-                ),
               ],
             ),
             SizedBox(height: 40.0),
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
-                backgroundColor:
-                    AppColors.detailBackgroundColor.withOpacity(0.9),
+                barrierColor:
+                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                backgroundColor: AppColors.nameRecogntionColor.withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return NameRecognitionMenuTwo(
@@ -162,6 +233,8 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 },
               ),
               child: Container(
+                width: 200,
+                alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.cardBorder),
@@ -171,8 +244,8 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                   'SAVE',
                   style: TextStyle(
                     color: AppColors.lightBlue4,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

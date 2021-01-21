@@ -99,7 +99,7 @@ class AppColors {
       );
   static Color get activeButton => dynamicColor(
         light: 0xFF9BD4E5,
-        dark: 0xFF025584,
+        dark: 0xFF005780,
       );
   static Color get cardBorder => dynamicColor(
         light: 0xFFFFFFFF,
@@ -153,7 +153,7 @@ class AppColors {
   static const Color shadowColor = const Color(0xFF001439);
   static const Color appbarColor = const Color(0xFF0D1319);
 
-  static const Color offWhite1 = const Color(0xFF005780);
+  static const Color offWhite1 = const Color(0xFF788489);
   static const Color offWhite2 = const Color(0xFFC1C5C8);
   static const Color offWhite4 = const Color(0xFFF1F5F9);
 
@@ -178,6 +178,7 @@ class AppColors {
   static const Color darkBlue4 = const Color(0xFF043569);
 
   static const Color menuColor = const Color(0xFF009FD0);
+  static const Color nameRecogntionColor = const Color(0xFF0D1319);
 
   // static const Color blueGrey = const Color(0xFF51575C);
 
