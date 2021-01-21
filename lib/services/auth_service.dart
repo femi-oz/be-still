@@ -12,10 +12,10 @@ class AuthenticationService {
     bool rememberMe,
   }) async {
     try {
-      await _firebaseAuth
-          .setPersistence(rememberMe ? Persistence.LOCAL : Persistence.NONE);
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      // await _firebaseAuth
+      // .setPersistence(rememberMe ? Persistence.LOCAL : Persistence.NONE);
     } catch (e) {
       throw HttpException(e.message);
     }

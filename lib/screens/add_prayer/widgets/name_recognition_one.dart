@@ -76,9 +76,9 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 //       decoration: BoxDecoration(
                 //         color: selectedOption == user.id
                 //             ? AppColors.getActiveBtn(
-                // _themeProvider.isDarkModeEnabled).withOpacity(0.3)
+                // Settings.isDarkMode).withOpacity(0.3)
                 //             : AppColors.getActiveBtn(
-                // _themeProvider.isDarkModeEnabled).withOpacity(0.2),
+                // Settings.isDarkMode).withOpacity(0.2),
                 //         border: Border.all(
                 //           color: AppColors.lightBlue6,
                 //           width: 1,

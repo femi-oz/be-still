@@ -1,5 +1,4 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ class UpdateView extends StatelessWidget {
   @override
   UpdateView(this.data);
   Widget build(BuildContext context) {
-    final isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return Container(
       child: SingleChildScrollView(
@@ -25,7 +23,10 @@ class UpdateView extends StatelessWidget {
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
                         data.prayer.creatorName,
-                        style: TextStyle(color: AppColors.lightBlue3, fontSize: 18, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: AppColors.lightBlue3,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -43,8 +44,11 @@ class UpdateView extends StatelessWidget {
                             child: Row(
                               children: <Widget>[
                                 Text(
-                                  DateFormat('hh:mma | MM.dd.yyyy').format(u.createdOn),
-                                  style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
+                                  DateFormat('hh:mma | MM.dd.yyyy')
+                                      .format(u.createdOn),
+                                  style: TextStyle(
+                                      color: AppColors.dimBlue,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ],
                             ),
@@ -76,7 +80,8 @@ class UpdateView extends StatelessWidget {
                       ),
                       Container(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 100.0, horizontal: 20),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 100.0, horizontal: 20),
                           child: Center(
                             child: Text(
                               u.description,
@@ -107,11 +112,16 @@ class UpdateView extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'Initial Prayer Request |',
-                                style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                    color: AppColors.dimBlue,
+                                    fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                DateFormat(' MM.dd.yyyy').format(data.prayer.createdOn),
-                                style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
+                                DateFormat(' MM.dd.yyyy')
+                                    .format(data.prayer.createdOn),
+                                style: TextStyle(
+                                    color: AppColors.dimBlue,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
@@ -139,7 +149,8 @@ class UpdateView extends StatelessWidget {
                     ),
                     Container(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                         child: Center(
                           child: Text(
                             data.prayer.description,

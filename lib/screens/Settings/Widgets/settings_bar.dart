@@ -1,9 +1,7 @@
-import 'package:be_still/data/notification.data.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,11 +22,10 @@ class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return AppBar(
       title: Text('SETTINGS',
           style: TextStyle(
-            color: _themeProvider.isDarkModeEnabled ? AppColors.darkBlue3 : AppColors.grey2,
+            color: Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2,
             fontSize: 28,
             fontWeight: FontWeight.w500,
           )),

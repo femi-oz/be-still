@@ -2,8 +2,8 @@ import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -21,7 +21,10 @@ class AlexaSettings extends StatefulWidget {
 
 class _AlexaSettingsState extends State<AlexaSettings> {
   _onChangeTime(value) {
-    Provider.of<SettingsProvider>(context, listen: false).updateSettings(key: SettingsKey.pauseInterval, value: value, settingsId: widget.settings.id);
+    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+        key: SettingsKey.pauseInterval,
+        value: value,
+        settingsId: widget.settings.id);
   }
 
   List<String> prayerTimeInterval = [
@@ -33,7 +36,6 @@ class _AlexaSettingsState extends State<AlexaSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final setingProvider = Provider.of<SettingsProvider>(context);
     return SingleChildScrollView(
       child: Column(
@@ -55,19 +57,25 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                 actionText: 'CONNECTED',
                 value: 'LOGOUT',
                 icon: 'assets/images/amazon.png',
-                isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                isDarkModeEnabled: Settings.isDarkMode,
                 textColor: AppColors.red,
                 onPressed: () => null,
               ),
               SizedBox(height: 20),
               CustomToggle(
                 title: 'Allow Alexa to notify me of my Prayer Time?',
-                onChange: (value) => setingProvider.updateSettings(key: SettingsKey.allowPrayerTimeNotification, value: value, settingsId: widget.settings.id),
+                onChange: (value) => setingProvider.updateSettings(
+                    key: SettingsKey.allowPrayerTimeNotification,
+                    value: value,
+                    settingsId: widget.settings.id),
                 value: widget.settings.allowPrayerTimeNotification,
               ),
               CustomToggle(
                 title: 'Sync Notifications / Reminders with Alexa?',
-                onChange: (value) => setingProvider.updateSettings(key: SettingsKey.syncAlexa, value: value, settingsId: widget.settings.id),
+                onChange: (value) => setingProvider.updateSettings(
+                    key: SettingsKey.syncAlexa,
+                    value: value,
+                    settingsId: widget.settings.id),
                 value: widget.settings.syncAlexa,
               ),
             ],
@@ -78,7 +86,10 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               CustomSectionHeder('Prayer Time'),
               CustomToggle(
                 title: 'Enable Alexa to read prayers from My List?',
-                onChange: (value) => setingProvider.updateSettings(key: SettingsKey.allowAlexaReadPrayer, value: value, settingsId: widget.settings.id),
+                onChange: (value) => setingProvider.updateSettings(
+                    key: SettingsKey.allowAlexaReadPrayer,
+                    value: value,
+                    settingsId: widget.settings.id),
                 value: widget.settings.allowAlexaReadPrayer,
               ),
               Column(
@@ -88,13 +99,19 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                     width: double.infinity,
                     child: Text(
                       'Set pause between prayers during Prayer Time',
-                      style: AppTextStyles.regularText15.copyWith(color: AppColors.textFieldText),
+                      style: AppTextStyles.regularText15
+                          .copyWith(color: AppColors.textFieldText),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.only(bottom: 80.0),
-                    child: CustomPicker(prayerTimeInterval, _onChangeTime, true, prayerTimeInterval.indexOf(widget.settings.pauseInterval)),
+                    child: CustomPicker(
+                        prayerTimeInterval,
+                        _onChangeTime,
+                        true,
+                        prayerTimeInterval
+                            .indexOf(widget.settings.pauseInterval)),
                   ),
                 ],
               ),

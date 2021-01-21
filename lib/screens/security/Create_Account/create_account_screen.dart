@@ -7,6 +7,7 @@ import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -115,8 +116,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(
-                  _themeProvider.isDarkModeEnabled)),
+              image: AssetImage(
+                  StringUtils.getBackgroundImage(Settings.isDarkMode)),
               alignment: Alignment.bottomCenter,
             ),
           ),

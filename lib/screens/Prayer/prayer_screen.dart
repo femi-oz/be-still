@@ -5,6 +5,7 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -91,8 +92,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image:
+                AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -109,7 +110,7 @@ class _PrayerScreenState extends State<PrayerScreen> {
         //       colors: AppColors.appBarBackground,
         //     ),
         //   ),
-        //   // backgroundColor: AppColors.appBarBg(_themeProvider.isDarkModeEnabled),
+        //   // backgroundColor: AppColors.appBarBg(Settings.isDarkMode),
         //   handleAndroidBackButtonPress: true,
         //   resizeToAvoidBottomInset: true,
         //   stateManagement: true,

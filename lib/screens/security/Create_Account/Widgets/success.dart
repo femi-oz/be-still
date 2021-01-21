@@ -2,6 +2,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_screen.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,6 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.only(top: 100),
@@ -38,8 +38,8 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image:
+                AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
             alignment: Alignment.bottomCenter,
           ),
         ),

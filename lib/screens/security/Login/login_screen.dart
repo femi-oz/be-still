@@ -7,6 +7,7 @@ import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
@@ -74,8 +75,8 @@ class _LoginScreenState extends State<LoginScreen>
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(
-                  _themeProvider.isDarkModeEnabled)),
+              image: AssetImage(
+                  StringUtils.getBackgroundImage(Settings.isDarkMode)),
               alignment: Alignment.bottomCenter,
             ),
           ),

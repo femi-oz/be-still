@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:flutter/material.dart';
@@ -294,7 +295,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(_themeProvider.isDarkModeEnabled
+              image: AssetImage(Settings.isDarkMode
                   ? 'assets/images/background-pattern-dark.png'
                   : 'assets/images/background-pattern.png'),
               alignment: Alignment.bottomCenter,

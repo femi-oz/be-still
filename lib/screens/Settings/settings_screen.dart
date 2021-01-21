@@ -1,7 +1,4 @@
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/prayer_settings.model.dart';
-import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -12,7 +9,6 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import 'Widgets/alexa.dart';
@@ -21,8 +17,6 @@ import 'Widgets/groups.dart';
 import 'Widgets/notifications.dart';
 import 'Widgets/prayer_time.dart';
 import 'Widgets/sharing.dart';
-import 'dart:async';
-import 'package:async/async.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = 'settings';
@@ -30,7 +24,8 @@ class SettingsScreen extends StatefulWidget {
   _SettingsScreenPage createState() => _SettingsScreenPage();
 }
 
-class _SettingsScreenPage extends State<SettingsScreen> with SingleTickerProviderStateMixin {
+class _SettingsScreenPage extends State<SettingsScreen>
+    with SingleTickerProviderStateMixin {
   TabController tabController;
 
   // String title = "Home";
@@ -49,7 +44,10 @@ class _SettingsScreenPage extends State<SettingsScreen> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(appBar: SettingsAppBar(), endDrawer: CustomDrawer(), body: SettingsTab());
+    return new Scaffold(
+        appBar: SettingsAppBar(),
+        endDrawer: CustomDrawer(),
+        body: SettingsTab());
   }
 }
 
@@ -58,7 +56,8 @@ class SettingsTab extends StatefulWidget {
   SettingsTabState createState() => SettingsTabState();
 }
 
-class SettingsTabState extends State<SettingsTab> with SingleTickerProviderStateMixin {
+class SettingsTabState extends State<SettingsTab>
+    with SingleTickerProviderStateMixin {
   TabController tabController;
 
   @override
@@ -69,10 +68,14 @@ class SettingsTabState extends State<SettingsTab> with SingleTickerProviderState
 
   void _getSettings() async {
     try {
-      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<SettingsProvider>(context, listen: false).setPrayerSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false).setSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false).setSharingSettings(_user.id);
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setPrayerSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSharingSettings(_user.id);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -165,7 +168,8 @@ class SettingsTabState extends State<SettingsTab> with SingleTickerProviderState
             children: [
               GeneralSettings(_settingsProvider.settings),
               MyListSettings(_settingsProvider.settings),
-              PrayerTimeSettings(_settingsProvider.prayerSetttings, _settingsProvider.settings),
+              PrayerTimeSettings(_settingsProvider.prayerSetttings,
+                  _settingsProvider.settings),
               NotificationsSettings(_settingsProvider.settings),
               AlexaSettings(_settingsProvider.settings),
               SharingSettings(_settingsProvider.sharingSetttings),

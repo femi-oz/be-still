@@ -1,5 +1,6 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ class DevotionPlans extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     void _showAlert(dev) {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -110,12 +110,18 @@ class DevotionPlans extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         'see devotional'.toUpperCase(),
-                        style: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                       Text(
                         'you will leave the app'.toUpperCase(),
-                        style: TextStyle(color: Colors.white, fontSize: 9.0, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9.0,
+                            fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -144,7 +150,9 @@ class DevotionPlans extends StatelessWidget {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
+            image: AssetImage(Settings.isDarkMode
+                ? 'assets/images/background-pattern-dark.png'
+                : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -173,7 +181,10 @@ class DevotionPlans extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'Devotionals & Reading Plans',
-                  style: TextStyle(color: AppColors.lightBlue3, fontSize: 20, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      color: AppColors.lightBlue3,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -191,7 +202,8 @@ class DevotionPlans extends StatelessWidget {
                         onTap: () => _showAlert(dev),
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: 5.0),
-                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: AppColors.prayerCardBgColor,
@@ -205,7 +217,8 @@ class DevotionPlans extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
                                     dev.type.toUpperCase(),
@@ -224,7 +237,8 @@ class DevotionPlans extends StatelessWidget {
                                 ],
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5.0),
                                 child: Divider(
                                   color: AppColors.darkBlue,
                                   thickness: 1,
@@ -234,7 +248,9 @@ class DevotionPlans extends StatelessWidget {
                                 children: <Widget>[
                                   Text(
                                     dev.title,
-                                    style: TextStyle(color: AppColors.lightBlue4, fontSize: 14),
+                                    style: TextStyle(
+                                        color: AppColors.lightBlue4,
+                                        fontSize: 14),
                                     textAlign: TextAlign.left,
                                   ),
                                 ],

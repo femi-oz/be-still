@@ -7,6 +7,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -222,21 +223,21 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     actionColor: AppColors.lightBlue4,
                     actionText: 'UPDATE',
                     onPressed: () => _showAlert(_ModalType.email),
-                    isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                    isDarkModeEnabled: Settings.isDarkMode,
                     value: _currentUser.email),
                 SizedBox(height: 10),
                 CustomOutlineButton(
                     actionColor: AppColors.lightBlue4,
                     actionText: 'UPDATE',
                     onPressed: () => _showAlert(_ModalType.password),
-                    isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                    isDarkModeEnabled: Settings.isDarkMode,
                     value: 'password'),
                 SizedBox(height: 10),
                 CustomOutlineButton(
                     actionColor: AppColors.red,
                     actionText: 'ADD',
                     onPressed: () => null,
-                    isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                    isDarkModeEnabled: Settings.isDarkMode,
                     value: 'Two-Factor Authentication'),
                 SizedBox(height: 10),
               ],
@@ -268,8 +269,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     children: <Widget>[
                       for (int i = 0; i < _themeModes.length; i++)
                         CustomButtonGroup(
-                          isSelected:
-                              _themeProvider.currentTheme == _themeModes[i],
+                          isSelected: Settings.themeMode == _themeModes[i],
                           length: _themeModes.length,
                           onSelected: (value) =>
                               _themeProvider.changeTheme(value),

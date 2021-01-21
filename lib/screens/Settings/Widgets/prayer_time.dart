@@ -3,8 +3,8 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
@@ -89,7 +89,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   @override
   Widget build(BuildContext context) {
     final setingProvider = Provider.of<SettingsProvider>(context);
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -129,7 +128,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 actionText: 'CONNECTED',
                 textIcon: 'assets/images/spotify.png',
                 onPressed: () => null,
-                isDarkModeEnabled: _themeProvider.isDarkModeEnabled,
+                isDarkModeEnabled: Settings.isDarkMode,
                 value: 'Spotify',
               ),
               Container(
