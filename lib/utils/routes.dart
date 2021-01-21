@@ -10,7 +10,6 @@ import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/security/local_auth/local_auth.dart';
@@ -19,7 +18,7 @@ import 'package:be_still/screens/splash/splash_screen.dart';
 final routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   LoginScreen.routeName: (context) => LoginScreen(),
-  EntryScreen.routeName: (context) => PrayerScreen(),
+  // EntryScreen.routeName: (context) => PrayerScreen(),
   SettingsScreen.routeName: (context) => SettingsScreen(),
   CreateAccountScreen.routeName: (context) => CreateAccountScreen(),
   ForgetPassword.routeName: (context) => ForgetPassword(),

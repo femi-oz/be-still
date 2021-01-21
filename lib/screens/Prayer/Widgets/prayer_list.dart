@@ -104,12 +104,14 @@ class _PrayerListState extends State<PrayerList> {
                                   await Provider.of<PrayerProvider>(context,
                                           listen: false)
                                       .setPrayerUpdates(e.prayer.id);
-                                  Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (context) => new PrayerDetails(),
-                                    ),
-                                  );
+                                  Navigator.of(context)
+                                      .pushNamed(PrayerDetails.routeName);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   new MaterialPageRoute(
+                                  //     builder: (context) => new PrayerDetails(),
+                                  //   ),
+                                  // );
                                 },
                                 child: PrayerCard(prayer: e.prayer)))
                             .toList(),

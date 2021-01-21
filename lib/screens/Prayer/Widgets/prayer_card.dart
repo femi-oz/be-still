@@ -1,4 +1,3 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -14,27 +13,26 @@ class PrayerCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     // final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
       margin: EdgeInsets.symmetric(vertical: 7.0),
       decoration: BoxDecoration(
-        color: AppColors.cardBorder,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-          topLeft: Radius.circular(10),
-        ),
-      ),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            topLeft: Radius.circular(10),
+          ),
+          border: Border.all(color: AppColors.cardBorder)),
       child: Container(
         margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppColors.prayerCardBgColor,
+          color: AppColors.prayerCardBgColor.withOpacity(0.1),
           borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(9),
-            topLeft: Radius.circular(9),
+            bottomLeft: Radius.circular(8),
+            topLeft: Radius.circular(8),
           ),
         ),
         child: Column(
@@ -51,9 +49,8 @@ class PrayerCard extends StatelessWidget {
                           prayer.userId != _user.id
                               ? Text(
                                   prayer.creatorName,
-                                  style: AppTextStyles.regularText14.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.lightBlue4,
+                                  style: AppTextStyles.boldText12.copyWith(
+                                    color: AppColors.prayerCardUserColor,
                                   ),
                                 )
                               : Container(),
@@ -106,8 +103,10 @@ class PrayerCard extends StatelessWidget {
                               //       )
                               //     : Container(),
                               Text(
-                                DateFormat('MM.dd.yyyy').format(prayer.createdOn),
-                                style: AppTextStyles.regularText15b.copyWith(fontSize: 14, color: AppColors.prayerMenuColor),
+                                DateFormat('MM.dd.yyyy')
+                                    .format(prayer.createdOn),
+                                style: AppTextStyles.regularText12.copyWith(
+                                    color: AppColors.prayerCardTextColor),
                               ),
                             ],
                           )
@@ -130,7 +129,8 @@ class PrayerCard extends StatelessWidget {
                     prayer.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.regularText16b.copyWith(color: AppColors.prayerMenuColor),
+                    style: AppTextStyles.regularText22
+                        .copyWith(color: AppColors.prayerCardTextColor),
                   ),
                 ),
               ],

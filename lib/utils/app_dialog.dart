@@ -62,8 +62,8 @@ class BeStilDialog {
       SnackBar(
         content: Text(
           message,
-          style:
-              AppTextStyles.medium10.copyWith(color: AppColors.splashTextColor),
+          style: AppTextStyles.mediumText10
+              .copyWith(color: AppColors.splashTextColor),
         ),
         backgroundColor: type == AlertType.info
             ? AppColors.lightBlue2

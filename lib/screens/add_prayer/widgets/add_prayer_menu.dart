@@ -78,9 +78,9 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                          AppColors.detailBackgroundColor.withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                          AppColors.detailBackgroundColor.withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
@@ -131,9 +131,9 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                          AppColors.detailBackgroundColor.withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                          AppColors.detailBackgroundColor.withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
@@ -184,9 +184,9 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                     showModalBottomSheet(
                       context: context,
                       barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                          AppColors.detailBackgroundColor.withOpacity(0.5),
                       backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                          AppColors.detailBackgroundColor.withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return CustomPicker(

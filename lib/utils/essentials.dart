@@ -49,11 +49,6 @@ class AppColors {
       light2: 0xFFEDEFF0,
       dark: 0xFF01162E,
       dark2: 0xFF043569);
-  static List<Color> get detailBackgroundColor => dynamicGradientColor(
-      light: 0xFFF0F4Fa,
-      light2: 0xFFE6E9ED,
-      dark: 0xFF012B4C,
-      dark2: 0xFF033565);
   static List<Color> get prayerMenu => dynamicGradientColor(
       light: 0xFF00438D,
       light2: 0xFF009CCE,
@@ -76,7 +71,7 @@ class AppColors {
   static Color get textFieldBackgroundColor =>
       dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
   static Color get appBarTextColor =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF009FD0);
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
   static Color get appBarIconColor =>
       dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
   static Color get logoutTextColor =>
@@ -85,13 +80,18 @@ class AppColors {
         light: 0xFF5EC2E1,
         dark: 0xFF014E75,
       );
+
+  static Color get detailBackgroundColor =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF023157);
+  static Color get detailTopTextColor =>
+      dynamicColor(light: 0xFF009FD0, dark: 0xFF009FD0);
   static Color get prayerMenuColor => dynamicColor(
         light: 0xFFFFFFFF,
         dark: 0xFF005780,
       );
   static Color get prayerCardBgColor => dynamicColor(
         light: 0xFFFFFFFF,
-        dark: 0xFF012B4D,
+        dark: 0xFF009fd0,
       );
   static Color get dropShadow => dynamicColor(
         light: 0xFFBBBDBF,
@@ -103,11 +103,19 @@ class AppColors {
       );
   static Color get cardBorder => dynamicColor(
         light: 0xFFFFFFFF,
-        dark: 0xFF004E75,
+        dark: 0xFF005780,
+      );
+  static Color get prayerCardTextColor => dynamicColor(
+        light: 0xFF788489,
+        dark: 0xFFC1C5C8,
+      );
+  static Color get prayerCardUserColor => dynamicColor(
+        light: 0xFF003B87,
+        dark: 0xFF00ACD8,
       );
   static Color get divider => dynamicColor(
-        light: 0xFF808C90,
-        dark: 0xFF00547C,
+        light: 0xFF003B87,
+        dark: 0xFF005780,
       );
   static Color get textFieldText => dynamicColor(
         light: 0xFF79858A,
@@ -188,12 +196,12 @@ class AppColors {
 class AppTextStyles {
   // new fonts region
   // medium => w400, demi => w500, bold => w700, regular=> w300
-  static TextStyle get medium10 => const TextStyle(
+  static TextStyle get mediumText10 => const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
       );
-  static TextStyle get regular12 => const TextStyle(
+  static TextStyle get regularText12 => const TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w300,
         letterSpacing: 0.5,
@@ -259,6 +267,20 @@ class AppTextStyles {
         fontWeight: FontWeight.w300,
         letterSpacing: 0.5,
       );
+  static TextStyle get regularText24 => const TextStyle(
+        height: 1.44,
+        color: AppColors.offWhite4,
+        fontSize: 24,
+        fontWeight: FontWeight.w300,
+        letterSpacing: 0.5,
+      );
+  static TextStyle get regularText26 => const TextStyle(
+        height: 1.44,
+        color: AppColors.offWhite4,
+        fontSize: 26,
+        fontWeight: FontWeight.w300,
+        letterSpacing: 0.5,
+      );
 
   static TextStyle get demiBoldText34 => const TextStyle(
         height: 1.44,
@@ -266,6 +288,12 @@ class AppTextStyles {
         fontSize: 34,
         fontWeight: FontWeight.w500,
         letterSpacing: 3.5,
+      );
+  static TextStyle get boldText12 => const TextStyle(
+        color: AppColors.lightBlue1,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.5,
       );
   static TextStyle get boldText14 => const TextStyle(
         color: AppColors.lightBlue1,
