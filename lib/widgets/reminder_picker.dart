@@ -2,6 +2,7 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
         initialItem: hoursOfTheDay.indexOf(selectedHour));
     FixedExtentScrollController minuteController = FixedExtentScrollController(
         initialItem: minInTheHour.indexOf(selectedMinute));
-    var _isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     return Container(
       width: double.infinity,
       child: Column(
@@ -118,7 +118,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     decoration: BoxDecoration(
                                         border: Border.symmetric(
                                             horizontal: BorderSide(
-                                                color: _isDark
+                                                color: Settings.isDarkMode
                                                     ? Colors.white12
                                                     : Colors.grey[350]))),
                                   ),
@@ -148,7 +148,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             decoration: BoxDecoration(
                               border: Border.symmetric(
                                 horizontal: BorderSide(
-                                    color: _isDark
+                                    color: Settings.isDarkMode
                                         ? Colors.white12
                                         : Colors.grey[350]),
                               ),

@@ -7,6 +7,7 @@ import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +53,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Provider.of<ThemeProvider>(context).isDarkModeEnabled;
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
     List<NotificationModel> notifications =
         Provider.of<NotificationProvider>(context).notifications;
@@ -113,7 +113,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
           SizedBox(width: 10),
           InkWell(
-            onTap: () => _openFilter(isDark),
+            onTap: () => _openFilter(Settings.isDarkMode),
             child: Icon(
               Icons.filter_list_alt,
               color: AppColors.bottomNavIconColor,

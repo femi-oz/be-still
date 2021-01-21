@@ -3,12 +3,12 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -70,8 +70,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   }
 
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
-
     return Scaffold(
         body: Container(
       decoration: BoxDecoration(
@@ -81,7 +79,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(_themeProvider.isDarkModeEnabled
+          image: AssetImage(Settings.isDarkMode
               ? 'assets/images/background-pattern-dark.png'
               : 'assets/images/background-pattern.png'),
           alignment: Alignment.bottomCenter,

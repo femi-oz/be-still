@@ -4,6 +4,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -23,7 +24,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   TextEditingController _codeController = new TextEditingController();
   TextEditingController _confirmcodeController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController = new TextEditingController();
+  TextEditingController _confirmPasswordController =
+      new TextEditingController();
 
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
@@ -71,7 +73,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+              image: AssetImage(
+                  StringUtils.getBackgroundImage(Settings.isDarkMode)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -186,7 +189,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 height: 30,
                 width: MediaQuery.of(context).size.width * 0.4,
                 decoration: BoxDecoration(
-                  color: notificationType == NotificationType.email ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
+                  color: notificationType == NotificationType.email
+                      ? AppColors.activeButton.withOpacity(0.5)
+                      : Colors.transparent,
                   border: Border.all(
                     color: AppColors.cardBorder,
                     width: 1,
@@ -211,7 +216,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 height: 30,
                 width: MediaQuery.of(context).size.width * 0.42,
                 decoration: BoxDecoration(
-                  color: notificationType == NotificationType.text ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
+                  color: notificationType == NotificationType.text
+                      ? AppColors.activeButton.withOpacity(0.5)
+                      : Colors.transparent,
                   border: Border.all(
                     color: AppColors.cardBorder,
                     width: 1,

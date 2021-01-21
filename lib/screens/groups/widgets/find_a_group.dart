@@ -1,8 +1,8 @@
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,6 @@ class _FindAGroupState extends State<FindAGroup> {
   @override
   Widget build(BuildContext context) {
     var _filteredGroups = Provider.of<GroupProvider>(context).filteredAllGroups;
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -37,8 +36,8 @@ class _FindAGroupState extends State<FindAGroup> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image:
+                AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
             alignment: Alignment.bottomCenter,
           ),
         ),

@@ -1,17 +1,15 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class GrowMyPrayerLifeScreen extends StatelessWidget {
   static const routeName = 'grow-prayer';
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
@@ -24,7 +22,9 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
+            image: AssetImage(Settings.isDarkMode
+                ? 'assets/images/background-pattern-dark.png'
+                : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -36,7 +36,10 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 'Grow My Prayer Life',
-                style: TextStyle(color: AppColors.lightBlue3, fontSize: 20, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    color: AppColors.lightBlue3,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
               ),
               Column(
@@ -76,11 +79,15 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed(RecommenededBibles.routeName);
+                            Navigator.of(context)
+                                .pushNamed(RecommenededBibles.routeName);
                           },
                           child: Text(
                             'RECOMMENDED BIBLES',
-                            style: TextStyle(color: AppColors.lightBlue4, fontSize: 18, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: AppColors.lightBlue4,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -94,11 +101,15 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed(DevotionPlans.routeName);
+                            Navigator.of(context)
+                                .pushNamed(DevotionPlans.routeName);
                           },
                           child: Text(
                             'DEVOTIONAL AND READING PLANS',
-                            style: TextStyle(color: AppColors.lightBlue4, fontSize: 18, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: AppColors.lightBlue4,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -113,7 +124,10 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                           onTap: () {},
                           child: Text(
                             'MY PRAYER GOALS',
-                            style: TextStyle(color: AppColors.lightBlue4, fontSize: 18, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: AppColors.lightBlue4,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
                             textAlign: TextAlign.left,
                           ),
                         ),

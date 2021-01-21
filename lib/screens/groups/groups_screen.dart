@@ -11,6 +11,7 @@ import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
@@ -73,8 +74,8 @@ class _GroupScreenState extends State<GroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(
-              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image:
+              AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -90,12 +91,11 @@ class _GroupScreenState extends State<GroupScreen> {
                 ),
               ),
               text: 'FIND A GROUP',
-              backgroundColor: _themeProvider.isDarkModeEnabled
+              backgroundColor: Settings.isDarkMode
                   ? AppColors.backgroundColor[1]
                   : AppColors.lightBlue3,
-              textColor: _themeProvider.isDarkModeEnabled
-                  ? AppColors.lightBlue3
-                  : Colors.white,
+              textColor:
+                  Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
               hasIcon: false,
             ),
             SizedBox(height: 5),
@@ -107,12 +107,11 @@ class _GroupScreenState extends State<GroupScreen> {
                 ),
               ),
               text: 'CREATE A GROUP',
-              backgroundColor: _themeProvider.isDarkModeEnabled
+              backgroundColor: Settings.isDarkMode
                   ? AppColors.backgroundColor[1]
                   : AppColors.lightBlue3,
-              textColor: _themeProvider.isDarkModeEnabled
-                  ? AppColors.lightBlue3
-                  : Colors.white,
+              textColor:
+                  Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
               hasIcon: false,
             ),
             SizedBox(height: 30),
@@ -143,10 +142,9 @@ class _GroupScreenState extends State<GroupScreen> {
                                       );
                                     },
                                     text: e.group.name.toUpperCase(),
-                                    backgroundColor:
-                                        _themeProvider.isDarkModeEnabled
-                                            ? AppColors.backgroundColor[0]
-                                            : Colors.white,
+                                    backgroundColor: Settings.isDarkMode
+                                        ? AppColors.backgroundColor[0]
+                                        : Colors.white,
                                     textColor: AppColors.lightBlue3,
                                     hasIcon: false,
                                     hasMore: true,
