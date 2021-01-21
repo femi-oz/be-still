@@ -139,7 +139,7 @@ class AppColors {
       );
   static Color get bottomNavIconColor => dynamicColor(
         light: 0xFF005780,
-        dark: 0xFFFFFFFF,
+        dark: 0xFF009FD0,
       );
   static Color get drawerTopColor => dynamicColor(
         light: 0xFFFFFFFF,

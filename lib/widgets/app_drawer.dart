@@ -97,13 +97,13 @@ class CustomDrawer extends StatelessWidget {
                                 style: AppTextStyles.drawerMenu),
                           ),
                           ListTile(
-                            // onTap: () => Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         AddPrayer(isEdit: false, isGroup: false),
-                            //   ),
-                            // ),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EntryScreen(screenNumber: 2),
+                              ),
+                            ),
                             title: Text("ADD A PRAYER",
                                 style: AppTextStyles.drawerMenu),
                           ),
