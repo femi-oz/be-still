@@ -1,14 +1,13 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class CustomInput extends StatelessWidget {
+class CustomInput extends StatefulWidget {
   final maxLines;
   final label;
   final color;
   final isPassword;
-  final controller;
+  final TextEditingController controller;
   final showSuffix;
   final textInputAction;
   final submitForm;
@@ -41,20 +40,27 @@ class CustomInput extends StatelessWidget {
   });
 
   @override
+  _CustomInputState createState() => _CustomInputState();
+}
+
+class _CustomInputState extends State<CustomInput> {
+  bool _isTextNotEmpty = false;
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
+      controller: widget.controller,
+      keyboardType: widget.keyboardType,
       style: AppTextStyles.regularText15,
-      cursorColor: color == null ? AppColors.lightBlue4 : color,
-      maxLines: maxLines,
+      cursorColor: widget.color == null ? AppColors.lightBlue4 : widget.color,
+      maxLines: widget.maxLines,
       decoration: InputDecoration(
-        suffixText: showSuffix ? label : '',
+        suffixText: widget.showSuffix && _isTextNotEmpty ? widget.label : '',
         isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: padding),
-        suffixStyle: AppTextStyles.regularText14,
+        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
+        suffixStyle: AppTextStyles.regularText14.copyWith(color: Settings.isDarkMode ? AppColors.offWhite2 : AppColors.grey4),
         counterText: '',
-        hintText: label,
+        hintText: widget.label,
         hintStyle: AppTextStyles.regularText15,
         errorBorder: new OutlineInputBorder(
           borderSide: new BorderSide(color: Colors.redAccent),
@@ -69,49 +75,49 @@ class CustomInput extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppColors.lightBlue4,
-            width: 1.0,
-          ),
+          borderSide: BorderSide(color: AppColors.lightBlue4, width: 1.0),
         ),
         fillColor: AppColors.textFieldBackgroundColor,
         filled: true,
       ),
-      obscureText: isPassword ? true : false,
+      obscureText: widget.isPassword ? true : false,
       validator: (value) => _validatorFn(value),
-      onFieldSubmitted: (_) => {unfocus ? FocusScope.of(context).unfocus() : FocusScope.of(context).nextFocus(), unfocus ? submitForm : null},
-      textInputAction: textInputAction,
-      onChanged: onTextchanged,
+      onFieldSubmitted: (_) => {widget.unfocus ? FocusScope.of(context).unfocus() : FocusScope.of(context).nextFocus(), widget.unfocus ? widget.submitForm : null},
+      textInputAction: widget.textInputAction,
+      onChanged: (val) {
+        setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
+        if (widget.onTextchanged != null) widget.onTextchanged(val);
+      },
     );
   }
 
   String _validatorFn(String value) {
-    if (isRequired) {
+    if (widget.isRequired) {
       if (value.isEmpty) {
-        return '$label is required';
+        return '${widget.label} is required';
       }
     }
-    if (isEmail && value.isNotEmpty) {
+    if (widget.isEmail && value.isNotEmpty) {
       String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" + "\\@" + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\." + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" + ")+";
       RegExp regExp = new RegExp(p);
       if (!regExp.hasMatch(value)) {
         return 'Enter a valid email address';
       }
     }
-    if (isPhone && value.isNotEmpty) {
+    if (widget.isPhone && value.isNotEmpty) {
       String p = r'(^(?:[+234])?[0-9]{6,}$)';
       RegExp regExp = new RegExp(p);
       if (value.length < 6 || value.length > 15 || !regExp.hasMatch(value)) {
         return 'Enter a valid phone number';
       }
     }
-    if (isPassword && value.isNotEmpty) {
+    if (widget.isPassword && value.isNotEmpty) {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value)) return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
     }
-    if (validator != null) {
-      return validator(value);
+    if (widget.validator != null) {
+      return widget.validator(value);
     }
     return null;
   }

@@ -44,15 +44,22 @@ List<Color> dynamicGradientColor({
 }
 
 class AppColors {
-  static List<Color> get backgroundColor => dynamicGradientColor(light: 0xFFCED1D4, light2: 0xFFFAFBFB, dark: 0xFF021D3C, dark2: 0xFF073668);
+  static List<Color> get backgroundColor => dynamicGradientColor(light: 0xFFCED1D4, light2: 0xFFFAFBFB, dark: 0xFF021D3C, dark2: prussianBlue.value);
+  static List<Color> get backgroundLogo => dynamicGradientColor(light: 0xFFFFFFF, light2: 0xFFC1C5C8, dark: 0xFF005075, dark2: 0xFF001439);
   static List<Color> get detailBackgroundColor => dynamicGradientColor(light: 0xFFF0F4Fa, light2: 0xFFE6E9ED, dark: 0xFF012B4C, dark2: 0xFF033565);
   static List<Color> get prayerMenu => dynamicGradientColor(light: 0xFF00438D, light2: 0xFF009CCE, dark: 0xFF014A70, dark2: 0xFF013053);
   static List<Color> get appBarBackground => dynamicGradientColor(light: 0xFF00438d, light2: 0xFF0098cb, dark: 0xFF0D1319, dark2: 0xFF0D1319);
+
+  static List<Color> get buttonGradient => dynamicGradientColor(light: 0xFF003C88, light2: 0xFF009ED0, dark: offWhite1.value, dark2: lightBlue4.value);
+  static List<Color> get dialogGradient => dynamicGradientColor(light: 0xFFEDEFF0, light2: 0xFFFFFFF, dark: 0xFF101820, dark2: 0xFF101820);
+
+  static Color get dialogClose => dynamicColor(light: 0xFF788489, dark: 0xFFC1C5C8);
 
   static Color get inactvePrayerMenu => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
 
   static Color get textFieldBackgroundColor => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
   static Color get appBarColor => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
+
   static Color get prayerPrimaryColor => dynamicColor(
         light: 0xFF5EC2E1,
         dark: 0xFF014E75,
@@ -69,10 +76,7 @@ class AppColors {
         light: 0xFFBBBDBF,
         dark: 0xFF011D3D,
       );
-  static Color get activeButton => dynamicColor(
-        light: 0xFF9BD4E5,
-        dark: 0xFF025584,
-      );
+  static Color get activeButton => dynamicColor(light: 0xFF9BD4E5, dark: 0xFF025584);
   static Color get cardBorder => dynamicColor(
         light: 0xFFFFFFFF,
         dark: 0xFF004E75,
@@ -108,6 +112,7 @@ class AppColors {
   ];
   static const Color shadowColor = const Color(0xFF001439);
 
+  static const Color white = const Color(0xFFFFFFFF);
   static const Color offWhite1 = const Color(0xFF005780);
   static const Color offWhite2 = const Color(0xFFC1C5C8);
   static const Color offWhite4 = const Color(0xFFF1F5F9);
@@ -123,12 +128,16 @@ class AppColors {
   static const Color grey = const Color(0xFF51575C);
   static const Color grey2 = const Color(0xFF003B87);
   static const Color grey3 = const Color(0xFF004166);
+  static const Color grey4 = const Color(0xFF788489);
 
   static const Color red = const Color(0xFFbf0606);
 
   static const Color darkBlue = const Color(0xFF1B3A5E);
   static const Color darkBlue2 = const Color(0xFF015380);
   static const Color darkBlue3 = const Color(0xFF31373D);
+
+  static const Color yaleBlue = const Color(0xFF004A98);
+  static const Color prussianBlue = const Color(0xFF002D4B);
 }
 
 class AppTextStyles {

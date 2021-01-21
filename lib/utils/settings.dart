@@ -12,7 +12,7 @@ class Settings {
 
   static String get themeMode => sharedPrefs.getString(THEME_MODE_KEY) ?? BsThemeMode.light;
 
-  static bool isDarkMode = !(sharedPrefs.getString(THEME_MODE_KEY) == BsThemeMode.auto
+  static bool isDarkMode = (sharedPrefs.getString(THEME_MODE_KEY) == BsThemeMode.auto
       ? MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark
       : sharedPrefs.getString(THEME_MODE_KEY) == BsThemeMode.dark);
 }

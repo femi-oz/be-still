@@ -6,7 +6,9 @@ import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -109,26 +111,40 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               alignment: Alignment.bottomCenter,
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                CustomLogoShape(),
-                Container(
-                  padding: EdgeInsets.all(20),
+          child: Stack(
+            children: [
+              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
+              Align(
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
+                      SizedBox(height: 260),
+                      Text(
+                        'CREATE AN ACCOUNT',
+                        style: AppTextStyles.boldText24.copyWith(color: Settings.isDarkMode ? AppColors.lightBlue3 : AppColors.grey2),
+                      ),
+                      SizedBox(height: 6),
                       Container(
-                        child: Container(
-                          child: _buildForm(),
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              child: Container(
+                                child: _buildForm(),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            _buildFooter(),
+                            // SizedBox(height: 100),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 10),
-                      _buildFooter(),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -138,33 +154,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   _buildFooter() {
     return Column(
       children: <Widget>[
-        InkWell(
-          onTap: () => !_enableSubmit
-              ? BeStilDialog.showErrorDialog(
-                  context,
-                  'You must accept terms to proceed',
-                )
-              : _createAccount(),
-          child: Container(
-            height: 50.0,
-            width: double.infinity,
-            margin: EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  AppColors.lightBlue1,
-                  AppColors.lightBlue2,
-                ],
-              ),
-            ),
-            child: Icon(
-              _enableSubmit ? Icons.arrow_forward : Icons.do_not_disturb,
-              color: AppColors.offWhite1,
-            ),
-          ),
-        ),
+        BsRaisedButton(
+            disabled: !_enableSubmit,
+            onPressed: () => !_enableSubmit
+                ? BeStilDialog.showErrorDialog(
+                    context,
+                    'You must accept terms to proceed',
+                  )
+                : _createAccount()),
+        SizedBox(height: 16),
         InkWell(
           child: Text(
             StringUtils.backText,
@@ -252,7 +250,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: Container(
                     width: double.infinity,
                     child: Text(
-                      'Read the Terms of Use/User Agreement',
+                      'Read the Terms of Use / User Agreement',
                       style: AppTextStyles.regularText15,
                     ),
                   ),
@@ -265,19 +263,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       data: ThemeData(unselectedWidgetColor: AppColors.lightBlue3),
                       child: Switch.adaptive(
                         value: termsAccepted,
+                        activeColor: AppColors.lightBlue4,
                         onChanged: (val) {
                           setState(() {
                             _agreeTerms(val);
                             termsAccepted = val;
                           });
                         },
-                        activeColor: Colors.white,
-                        activeTrackColor: AppColors.lightBlue4,
-                        inactiveThumbColor: Colors.white,
                       ),
                     ),
+                    SizedBox(width: 12),
                     Text(
-                      'I Agree to the Terms of Use',
+                      'I agree to Terms of Use',
                       style: AppTextStyles.regularText15,
                     ),
                   ],
@@ -295,27 +292,35 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       context: context,
       builder: (context) {
         return Dialog(
-          backgroundColor: Theme.of(context).appBarTheme.color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
           child: Container(
             width: double.infinity,
             height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.dialogGradient,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6.0, right: 6.0),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: AppColors.dialogClose,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
-                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
                   ),
@@ -327,28 +332,28 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         Container(
                           child: Text(
                             "Random things here about how you use the app. What things,. app is willing to be responsible' for, and what things it spouts as being at Me users' own risk. Legal jargon and etc. such Mat it delineates and follows whatever parameters any and all lawyers are happy with to use here as a terms for service with or without a synopsis or conclusion. ",
-                            style: AppTextStyles.regularText16b,
+                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Container(
                           child: Text(
                             "SOMEWHERE IN HERE THERE WILL BE TEXT THAT IS ALL CAPS FOR NO REASON OTHER THAN LAWYER PEOPLE LOVE SHOUTING CERTAIN THINGS WHEN PUTTING THEM DOWN ON PAPER/DOCUMENT. ",
-                            style: AppTextStyles.regularText16b,
+                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Container(
                           child: Text(
                             "Also, you have. make the terms and verbiage of the terms extremely long,. who in Me legal world would ever say that something that should be legally binding could be short, concise, and easy to understand by Me regular Joe being as-that's who is normally going to be legally bound by said legal verbiage. ",
-                            style: AppTextStyles.regularText16b,
+                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Container(
                           child: Text(
                             "If you have gotten this far in reading -.i.e., I hope you've really enjoyed (or under.00d) the level of dry-sarcasm involved in the voicing these particular views. Phase, feel free to acknowledge your own opinion, however you should be fonmamed [hag it differs from my own view in anyway, I may dismiss it as irrelevant and misguided. ",
-                            style: AppTextStyles.regularText16b,
+                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
                           ),
                         ),
                       ],
