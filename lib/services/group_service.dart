@@ -112,34 +112,33 @@ class GroupService {
     }
   }
 
-  addGroup(String userID, GroupModel groupData, String fullName) {
+  addGroup(String userID, GroupModel groupData, String fullName) async {
     // Generate uuid
     final _groupID = Uuid().v1();
     final _groupUserID = Uuid().v1();
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store group
-          transaction.set(
-              _groupCollectionReference.doc(_groupID), groupData.toJson());
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store group
+      batch.set(_groupCollectionReference.doc(_groupID), groupData.toJson());
 
-          //store group user
-          transaction.set(
-              _groupUserCollectionReference.doc(_groupUserID),
-              populateGroupUser(groupData, userID, fullName, _groupID)
-                  .toJson());
-          //store group settings
+      //store group user
+      batch.set(_groupUserCollectionReference.doc(_groupUserID),
+          populateGroupUser(groupData, userID, fullName, _groupID).toJson());
+      //store group settings
 
-          var user = await locator<UserService>().getCurrentUser();
+      var user = await locator<UserService>().getCurrentUser();
 
-          await locator<SettingsService>()
-              .addGroupSettings(userID, user.email, _groupID);
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      await locator<SettingsService>()
+          .addGroupSettings(userID, user.email, _groupID);
+      //   },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }

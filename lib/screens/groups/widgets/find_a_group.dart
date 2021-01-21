@@ -18,7 +18,8 @@ class _FindAGroupState extends State<FindAGroup> {
   bool _isSearchMode = false;
 
   void _searchGroup(String val) async {
-    await Provider.of<GroupProvider>(context, listen: false).searchAllGroups(val);
+    await Provider.of<GroupProvider>(context, listen: false)
+        .searchAllGroups(val);
   }
 
   @override
@@ -35,7 +36,8 @@ class _FindAGroupState extends State<FindAGroup> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(
+              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -82,7 +84,8 @@ class _FindAGroupState extends State<FindAGroup> {
                       SizedBox(height: 2.0),
                       Text(
                         'Use Advance Search to narrow your results.',
-                        style: AppTextStyles.regularText15.copyWith(color: AppColors.offWhite4),
+                        style: AppTextStyles.regularText15
+                            .copyWith(color: AppColors.offWhite4),
                       ),
                       SizedBox(height: 30.0),
                       Container(
@@ -102,7 +105,8 @@ class _FindAGroupState extends State<FindAGroup> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.more_horiz, color: AppColors.lightBlue3),
+                                Icon(Icons.more_horiz,
+                                    color: AppColors.lightBlue3),
                                 Text(
                                   'ADVANCE SEARCH',
                                   style: AppTextStyles.boldText24,
@@ -114,8 +118,8 @@ class _FindAGroupState extends State<FindAGroup> {
                             FocusScope.of(context).unfocus(),
                             showModalBottomSheet(
                               context: context,
-                              barrierColor: AppColors.detailBackgroundColor[1],
-                              backgroundColor: AppColors.detailBackgroundColor[1],
+                              barrierColor: AppColors.detailBackgroundColor,
+                              backgroundColor: AppColors.detailBackgroundColor,
                               isScrollControlled: true,
                               builder: (BuildContext context) {
                                 return FindGroupTools();
@@ -157,10 +161,14 @@ class _FindAGroupState extends State<FindAGroup> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.more_horiz, color: AppColors.lightBlue3),
+                              Icon(Icons.more_horiz,
+                                  color: AppColors.lightBlue3),
                               Text(
                                 'ADVANCE SEARCH',
-                                style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w700),
+                                style: TextStyle(
+                                    color: AppColors.lightBlue3,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ],
                           ),
@@ -169,8 +177,8 @@ class _FindAGroupState extends State<FindAGroup> {
                           FocusScope.of(context).unfocus(),
                           showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1],
-                            backgroundColor: AppColors.detailBackgroundColor[1],
+                            barrierColor: AppColors.detailBackgroundColor,
+                            backgroundColor: AppColors.detailBackgroundColor,
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return FindGroupTools();

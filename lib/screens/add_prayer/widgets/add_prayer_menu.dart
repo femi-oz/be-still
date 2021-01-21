@@ -1,10 +1,8 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AddPrayerMenu extends StatefulWidget {
   final String prayer;
@@ -40,12 +38,23 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
     });
   }
 
-  List<String> reminderInterval = ['Hourly', 'Daily', 'Weekly', 'Monthly', 'Yearly'];
-  List<String> snoozeInterval = ['7 Days', '14 Days', '30 Days', '90 Days', '1 Year'];
+  List<String> reminderInterval = [
+    'Hourly',
+    'Daily',
+    'Weekly',
+    'Monthly',
+    'Yearly'
+  ];
+  List<String> snoozeInterval = [
+    '7 Days',
+    '14 Days',
+    '30 Days',
+    '90 Days',
+    '1 Year'
+  ];
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -68,8 +77,10 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor.withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
@@ -119,8 +130,10 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor.withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
@@ -170,11 +183,14 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
-                      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      barrierColor:
+                          AppColors.detailBackgroundColor.withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor.withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return CustomPicker(snoozeInterval, setSnooze, false, null);
+                        return CustomPicker(
+                            snoozeInterval, setSnooze, false, null);
                       },
                     );
                   },

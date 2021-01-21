@@ -1,5 +1,4 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
@@ -49,11 +48,10 @@ class _AddUpdateState extends State<AddUpdate> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showModalBottomSheet(
       context: context,
-      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+      barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
+      backgroundColor: AppColors.detailBackgroundColor.withOpacity(0.9),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return NameRecognitionMenuOne(
@@ -67,7 +65,6 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return SafeArea(
       child:
           // Scaffold(
@@ -90,14 +87,16 @@ class _AddUpdateState extends State<AddUpdate> {
                   InkWell(
                     child: Text(
                       'CANCEL',
-                      style: TextStyle(color: AppColors.lightBlue5, fontSize: 16),
+                      style:
+                          TextStyle(color: AppColors.lightBlue5, fontSize: 16),
                     ),
                     onTap: () => Navigator.of(context).pop(),
                   ),
                   InkWell(
                     child: Text(
                       'SAVE',
-                      style: TextStyle(color: AppColors.lightBlue5, fontSize: 16),
+                      style:
+                          TextStyle(color: AppColors.lightBlue5, fontSize: 16),
                     ),
                     onTap: () => _save(),
                   ),
@@ -134,7 +133,10 @@ class _AddUpdateState extends State<AddUpdate> {
                             margin: EdgeInsets.only(bottom: 20),
                             child: Text(
                               widget.prayer.createdBy,
-                              style: TextStyle(color: AppColors.lightBlue3, fontSize: 18, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  color: AppColors.lightBlue3,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500),
                               textAlign: TextAlign.center,
                             ),
                           )
@@ -152,8 +154,11 @@ class _AddUpdateState extends State<AddUpdate> {
                                   child: Row(
                                     children: <Widget>[
                                       Text(
-                                        DateFormat('hh:mma | MM.dd.yyyy').format(u.createdOn),
-                                        style: TextStyle(color: AppColors.dimBlue, fontWeight: FontWeight.w500),
+                                        DateFormat('hh:mma | MM.dd.yyyy')
+                                            .format(u.createdOn),
+                                        style: TextStyle(
+                                            color: AppColors.dimBlue,
+                                            fontWeight: FontWeight.w500),
                                       ),
                                     ],
                                   ),
@@ -217,11 +222,18 @@ class _AddUpdateState extends State<AddUpdate> {
                                   children: <Widget>[
                                     Text(
                                       'Initial Prayer Request |',
-                                      style: TextStyle(color: AppColors.dimBlue, fontSize: 12, fontWeight: FontWeight.w500),
+                                      style: TextStyle(
+                                          color: AppColors.dimBlue,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                     Text(
-                                      DateFormat(' MM.dd.yyyy').format(widget.prayer.createdOn),
-                                      style: TextStyle(fontSize: 12, color: AppColors.dimBlue, fontWeight: FontWeight.w500),
+                                      DateFormat(' MM.dd.yyyy')
+                                          .format(widget.prayer.createdOn),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.dimBlue,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ],
                                 ),
@@ -254,7 +266,8 @@ class _AddUpdateState extends State<AddUpdate> {
                               minHeight: 200,
                             ),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 20.0, horizontal: 20),
                               child: Center(
                                 child: Text(
                                   widget.prayer.description,

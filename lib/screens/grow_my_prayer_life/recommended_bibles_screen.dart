@@ -1,4 +1,3 @@
-import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -40,7 +39,9 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
+            image: AssetImage(_themeProvider.isDarkModeEnabled
+                ? 'assets/images/background-pattern-dark.png'
+                : 'assets/images/background-pattern.png'),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -69,12 +70,16 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Text(
                   'Recommeneded Bibles',
-                  style: TextStyle(color: AppColors.lightBlue3, fontSize: 20, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      color: AppColors.lightBlue3,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 40.0, horizontal: 40.0),
                 child: Text(
                   'Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Donec rutrum congue leo eget malesuada. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Proin eget tortor risus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
                   style: TextStyle(
@@ -109,8 +114,11 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   headerBackgroundColorEnd: AppColors.prayerMenu[1],
                   shadowColor: AppColors.dropShadow,
                   title: Container(
-                    margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.1),
-                    child: Text(bibleData[i].shortName, textAlign: TextAlign.center, style: AppTextStyles.boldText24),
+                    margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.1),
+                    child: Text(bibleData[i].shortName,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.boldText24),
                   ),
                   initiallyExpanded: false,
                   // onExpansionChanged: (bool isExpanded) {
@@ -123,14 +131,16 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(bibleData[i].name, style: AppTextStyles.regularText13),
+                            child: Text(bibleData[i].name,
+                                style: AppTextStyles.regularText13),
                           ),
                           Text(
                             bibleData[i].type,
                             style: AppTextStyles.regularText11,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40.0, vertical: 20.0),
                             child: Text(
                               bibleData[i].description,
                               style: AppTextStyles.regularText13,

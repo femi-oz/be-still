@@ -1,5 +1,5 @@
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName),
+        () => Navigator.of(context).pushReplacementNamed(EntryScreen.routeName),
       ),
     );
   }
@@ -37,7 +37,8 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+            image: AssetImage(StringUtils.getBackgroundImage(
+                _themeProvider.isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),

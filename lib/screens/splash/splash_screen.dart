@@ -5,6 +5,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -20,7 +21,8 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController _textAnimationController;
   AuthenticationProvider _authenticationProvider = AuthenticationProvider();
@@ -29,7 +31,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   void initState() {
-    _textAnimationController = AnimationController(vsync: this, duration: Duration(seconds: 3))..repeat();
+    _textAnimationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 3))
+          ..repeat();
     super.initState();
   }
 
@@ -59,11 +63,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (isLoggedIn) {
-        await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-        UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUser();
+        UserModel _user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
 
-        await Provider.of<NotificationProvider>(context, listen: false).setUserNotifications(_user?.id);
-        Navigator.of(context).pushNamedAndRemoveUntil(PrayerScreen.routeName, (Route<dynamic> route) => false);
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .setUserNotifications(_user?.id);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
       } else {
         Navigator.of(context).pushNamedAndRemoveUntil(
           LoginScreen.routeName,
@@ -92,12 +100,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [
-            Color(0xFF043569),
-            Color(0xFF011730),
-            Color(0xFF043467),
-            Color(0xFF01162E),
-          ]),
+          gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color(0xFF043569),
+                Color(0xFF011730),
+                Color(0xFF043467),
+                Color(0xFF01162E),
+              ]),
         ),
         padding: EdgeInsets.symmetric(horizontal: 32),
         child: Column(
@@ -141,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         Text(
                           StringUtils.copyRight1,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.medium10.copyWith(
+                          style: AppTextStyles.mediumText10.copyWith(
                             color: AppColors.splashTextColor,
                           ),
                         ),
@@ -160,7 +171,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         Text(
                           StringUtils.copyRight2,
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.medium10.copyWith(
+                          style: AppTextStyles.mediumText10.copyWith(
                             color: AppColors.splashTextColor,
                           ),
                         ),

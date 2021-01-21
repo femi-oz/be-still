@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/models/user_device.model.dart';
 
@@ -73,18 +74,18 @@ class UserService {
     // }
 
     try {
-      FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store user details
-          await _userCollectionReference.doc(userID).set(
-                _userData.toJson(),
-              );
+      // FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store user details
+      await _userCollectionReference.doc(userID).set(
+            _userData.toJson(),
+          );
 
-          // store default settings
-          await locator<SettingsService>().addSettings('', userID, email);
-          await locator<SettingsService>().addGroupPreferenceSettings(userID);
-        },
-      );
+      // store default settings
+      await locator<SettingsService>().addSettings('', userID, email);
+      await locator<SettingsService>().addGroupPreferenceSettings(userID);
+      //   },
+      // );
     } catch (e) {
       throw HttpException(e.message);
     }

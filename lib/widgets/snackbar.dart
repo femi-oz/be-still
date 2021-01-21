@@ -10,7 +10,11 @@ class BeStillSnackbar {
           children: [
             Icon(Icons.error, color: AppColors.red.withOpacity(0.8)),
             SizedBox(width: 10.0),
-            Text(message),
+            Text(
+              message,
+              style: AppTextStyles.regularText14
+                  .copyWith(color: AppColors.splashTextColor),
+            ),
           ],
         ),
       ),

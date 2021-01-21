@@ -25,12 +25,16 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   void _getPrayers(CombineGroupUserStream data) async {
     try {
-      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<GroupProvider>(context, listen: false).setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false).setAllGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setUserGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setAllGroups(_user.id);
 
-      await Provider.of<PrayerProvider>(context, listen: false).setHiddenPrayers(_user.id);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setHiddenPrayers(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false).setGroupPrayers(
         _user?.id,
         data.group.id,
@@ -47,8 +51,8 @@ class _GroupScreenState extends State<GroupScreen> {
     Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(group);
     showModalBottomSheet(
       context: context,
-      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+      barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
+      backgroundColor: AppColors.detailBackgroundColor.withOpacity(0.9),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return GroupTools();
@@ -69,7 +73,8 @@ class _GroupScreenState extends State<GroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+          image: AssetImage(
+              StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -85,8 +90,12 @@ class _GroupScreenState extends State<GroupScreen> {
                 ),
               ),
               text: 'FIND A GROUP',
-              backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[1] : AppColors.lightBlue3,
-              textColor: _themeProvider.isDarkModeEnabled ? AppColors.lightBlue3 : Colors.white,
+              backgroundColor: _themeProvider.isDarkModeEnabled
+                  ? AppColors.backgroundColor[1]
+                  : AppColors.lightBlue3,
+              textColor: _themeProvider.isDarkModeEnabled
+                  ? AppColors.lightBlue3
+                  : Colors.white,
               hasIcon: false,
             ),
             SizedBox(height: 5),
@@ -98,8 +107,12 @@ class _GroupScreenState extends State<GroupScreen> {
                 ),
               ),
               text: 'CREATE A GROUP',
-              backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[1] : AppColors.lightBlue3,
-              textColor: _themeProvider.isDarkModeEnabled ? AppColors.lightBlue3 : Colors.white,
+              backgroundColor: _themeProvider.isDarkModeEnabled
+                  ? AppColors.backgroundColor[1]
+                  : AppColors.lightBlue3,
+              textColor: _themeProvider.isDarkModeEnabled
+                  ? AppColors.lightBlue3
+                  : Colors.white,
               hasIcon: false,
             ),
             SizedBox(height: 30),
@@ -130,11 +143,15 @@ class _GroupScreenState extends State<GroupScreen> {
                                       );
                                     },
                                     text: e.group.name.toUpperCase(),
-                                    backgroundColor: _themeProvider.isDarkModeEnabled ? AppColors.backgroundColor[0] : Colors.white,
+                                    backgroundColor:
+                                        _themeProvider.isDarkModeEnabled
+                                            ? AppColors.backgroundColor[0]
+                                            : Colors.white,
                                     textColor: AppColors.lightBlue3,
                                     hasIcon: false,
                                     hasMore: true,
-                                    onPressMore: () => _onPressMore(e.group.id, _themeProvider, e),
+                                    onPressMore: () => _onPressMore(
+                                        e.group.id, _themeProvider, e),
                                   ),
                                   SizedBox(height: 10),
                                 ],

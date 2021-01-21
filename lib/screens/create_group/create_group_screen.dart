@@ -5,7 +5,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -62,7 +62,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    await Provider.of<GroupProvider>(context, listen: false).addGroup(groupData, _user.id, '${_user.firstName} ${_user.lastName}');
+    await Provider.of<GroupProvider>(context, listen: false)
+        .addGroup(groupData, _user.id, '${_user.firstName} ${_user.lastName}');
     setState(() {
       _step++;
     });
@@ -79,7 +80,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
+          image: AssetImage(_themeProvider.isDarkModeEnabled
+              ? 'assets/images/background-pattern-dark.png'
+              : 'assets/images/background-pattern.png'),
           alignment: Alignment.bottomCenter,
         ),
       ),
@@ -131,11 +134,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   new MaterialPageRoute(
-                                    builder: (context) => new PrayerScreen(),
+                                    builder: (context) => new EntryScreen(),
                                   ),
                                 );
                                 // Navigator.of(context).pushReplacementNamed(
-                                //     PrayerScreen.routeName);
+                                //     EntryScreen.routeName);
                               }
                             },
                             color: Colors.transparent,

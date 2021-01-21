@@ -1,3 +1,4 @@
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -61,10 +62,8 @@ class BeStilDialog {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-          ),
+          style: AppTextStyles.mediumText10
+              .copyWith(color: AppColors.splashTextColor),
         ),
         backgroundColor: type == AlertType.info
             ? AppColors.lightBlue2

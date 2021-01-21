@@ -6,7 +6,6 @@ import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
-import 'package:be_still/screens/Settings/Widgets/groups.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:intl/intl.dart';
@@ -115,67 +114,70 @@ class SettingsService {
     final prayerSettingsId = Uuid().v1();
 
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          // store settings
-          transaction.set(_settingsCollectionReference.doc(settingsId),
-              populateSettings(deviceId, userId, email).toJson());
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      // store settings
+      batch.set(_settingsCollectionReference.doc(settingsId),
+          populateSettings(deviceId, userId, email).toJson());
 
-          //store sharing settings
-          transaction.set(
-              _sharingSettingsCollectionReference.doc(sharingSettingsId),
-              populateSharingSettings(userId, email).toJson());
+      //store sharing settings
+      batch.set(_sharingSettingsCollectionReference.doc(sharingSettingsId),
+          populateSharingSettings(userId, email).toJson());
 
-          //store prayer settings
-          transaction.set(
-              _prayerSettingsCollectionReference.doc(prayerSettingsId),
-              populatePrayerSettings(userId, email).toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      //store prayer settings
+      batch.set(_prayerSettingsCollectionReference.doc(prayerSettingsId),
+          populatePrayerSettings(userId, email).toJson());
+      //   },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  Future addGroupSettings(String userId, String email, String groupId) {
+  Future addGroupSettings(String userId, String email, String groupId) async {
     final groupSettingsId = Uuid().v1();
 
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          transaction.set(
-              _groupSettingsCollectionReference.doc(groupSettingsId),
-              populateGroupSettings(userId, email, groupId).toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      batch.set(_groupSettingsCollectionReference.doc(groupSettingsId),
+          populateGroupSettings(userId, email, groupId).toJson());
+      //   },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  addGroupPreferenceSettings(String userId) {
+  addGroupPreferenceSettings(String userId) async {
     final groupPreferenceSettingsId = Uuid().v1();
     try {
-      return FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          transaction.set(
-              _groupPrefernceSettingsCollectionReference
-                  .doc(groupPreferenceSettingsId),
-              populateGroupPreferenceSettings(userId).toJson());
-        },
-      ).then((val) {
-        return true;
-      }).catchError((e) {
-        throw HttpException(e.message);
-      });
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction(
+      //   (transaction) async {
+      batch.set(
+          _groupPrefernceSettingsCollectionReference
+              .doc(groupPreferenceSettingsId),
+          populateGroupPreferenceSettings(userId).toJson());
+      //   },
+      // ).then((val) {
+      //   return true;
+      // }).catchError((e) {
+      //   throw HttpException(e.message);
+      // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }

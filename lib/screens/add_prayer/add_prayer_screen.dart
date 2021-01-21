@@ -1,10 +1,8 @@
-import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/add_prayer_menu.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
@@ -41,7 +39,6 @@ class _AddPrayerState extends State<AddPrayer> {
   List groups = [];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
 
   _save() async {
     setState(() {
@@ -54,7 +51,8 @@ class _AddPrayerState extends State<AddPrayer> {
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    final _groupData = Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    final _groupData =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
@@ -76,11 +74,10 @@ class _AddPrayerState extends State<AddPrayer> {
         hideFromMe: false,
         isInappropriate: false,
       );
-      var _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
       showModalBottomSheet(
         context: context,
-        barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-        backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+        barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
+        backgroundColor: AppColors.detailBackgroundColor.withOpacity(0.9),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
@@ -97,7 +94,8 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showLoading(
           bcontext,
         );
-        await Provider.of<PrayerProvider>(context, listen: false).editprayer(_descriptionController.text, widget.prayer.id);
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
@@ -115,13 +113,13 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
-    _descriptionController.text = widget.isEdit ? widget.prayer.description : '';
+    _descriptionController.text =
+        widget.isEdit ? widget.prayer.description : '';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return SafeArea(
       child: GestureDetector(
@@ -150,7 +148,8 @@ class _AddPrayerState extends State<AddPrayer> {
                         ? InkWell(
                             child: Text(
                               'CANCEL',
-                              style: TextStyle(color: AppColors.lightBlue5, fontSize: 16),
+                              style: TextStyle(
+                                  color: AppColors.lightBlue5, fontSize: 16),
                             ),
                             onTap: () => Navigator.of(context).pop(),
                           )
@@ -158,7 +157,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     InkWell(
                         child: Text(
                           'SAVE',
-                          style: TextStyle(color: AppColors.lightBlue5, fontSize: 16),
+                          style: TextStyle(
+                              color: AppColors.lightBlue5, fontSize: 16),
                         ),
                         onTap: () => _save()),
                   ],
@@ -182,8 +182,10 @@ class _AddPrayerState extends State<AddPrayer> {
                   ),
                   onPressed: () => showModalBottomSheet(
                     context: context,
-                    barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    barrierColor:
+                        AppColors.detailBackgroundColor.withOpacity(0.5),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor.withOpacity(0.9),
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return AddPrayerMenu(prayer: _descriptionController.text);
