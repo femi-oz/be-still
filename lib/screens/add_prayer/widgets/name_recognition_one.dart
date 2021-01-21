@@ -217,8 +217,7 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                barrierColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
                 backgroundColor: AppColors.nameRecogntionColor.withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {

@@ -290,6 +290,12 @@ class AppTextStyles {
         fontWeight: FontWeight.w500,
         letterSpacing: 3.5,
       );
+  static TextStyle get boldText9 => const TextStyle(
+        color: AppColors.lightBlue1,
+        fontSize: 9,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.5,
+      );
   static TextStyle get boldText12 => const TextStyle(
         color: AppColors.lightBlue1,
         fontSize: 12,
