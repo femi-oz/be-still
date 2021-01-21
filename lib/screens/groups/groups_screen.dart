@@ -103,7 +103,7 @@ class _GroupScreenState extends State<GroupScreen> {
               onPress: () => Navigator.push(
                 context,
                 new MaterialPageRoute(
-                  builder: (context) => new CreateGroupScreen(),
+                  builder: (context) => CreateGroupScreen(),
                 ),
               ),
               text: 'CREATE A GROUP',
