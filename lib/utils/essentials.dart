@@ -44,21 +44,53 @@ List<Color> dynamicGradientColor({
 }
 
 class AppColors {
-  static List<Color> get backgroundColor => dynamicGradientColor(light: 0xFFCED1D4, light2: 0xFFFAFBFB, dark: 0xFF021D3C, dark2: prussianBlue.value);
-  static List<Color> get backgroundLogo => dynamicGradientColor(light: 0xFFFFFFF, light2: 0xFFC1C5C8, dark: 0xFF005075, dark2: 0xFF001439);
-  static List<Color> get detailBackgroundColor => dynamicGradientColor(light: 0xFFF0F4Fa, light2: 0xFFE6E9ED, dark: 0xFF012B4C, dark2: 0xFF033565);
-  static List<Color> get prayerMenu => dynamicGradientColor(light: 0xFF00438D, light2: 0xFF009CCE, dark: 0xFF014A70, dark2: 0xFF013053);
-  static List<Color> get appBarBackground => dynamicGradientColor(light: 0xFF00438d, light2: 0xFF0098cb, dark: 0xFF0D1319, dark2: 0xFF0D1319);
+  static List<Color> get backgroundColor => dynamicGradientColor(
+      light: 0xFFCED1D4,
+      light2: 0xFFFAFBFB,
+      dark: 0xFF021D3C,
+      dark2: prussianBlue.value);
+  static List<Color> get backgroundLogo => dynamicGradientColor(
+      light: 0xFFFFFFF,
+      light2: 0xFFC1C5C8,
+      dark: 0xFF005075,
+      dark2: 0xFF001439);
+  static List<Color> get detailBackgroundColor => dynamicGradientColor(
+      light: 0xFFF0F4Fa,
+      light2: 0xFFE6E9ED,
+      dark: 0xFF012B4C,
+      dark2: 0xFF033565);
+  static List<Color> get prayerMenu => dynamicGradientColor(
+      light: 0xFF00438D,
+      light2: 0xFF009CCE,
+      dark: 0xFF014A70,
+      dark2: 0xFF013053);
+  static List<Color> get appBarBackground => dynamicGradientColor(
+      light: 0xFF00438d,
+      light2: 0xFF0098cb,
+      dark: 0xFF0D1319,
+      dark2: 0xFF0D1319);
 
-  static List<Color> get buttonGradient => dynamicGradientColor(light: 0xFF003C88, light2: 0xFF009ED0, dark: offWhite1.value, dark2: lightBlue4.value);
-  static List<Color> get dialogGradient => dynamicGradientColor(light: 0xFFEDEFF0, light2: 0xFFFFFFF, dark: 0xFF101820, dark2: 0xFF101820);
+  static List<Color> get buttonGradient => dynamicGradientColor(
+      light: 0xFF003C88,
+      light2: 0xFF009ED0,
+      dark: offWhite1.value,
+      dark2: lightBlue4.value);
+  static List<Color> get dialogGradient => dynamicGradientColor(
+      light: 0xFFEDEFF0,
+      light2: 0xFFFFFFF,
+      dark: 0xFF101820,
+      dark2: 0xFF101820);
 
-  static Color get dialogClose => dynamicColor(light: 0xFF788489, dark: 0xFFC1C5C8);
+  static Color get dialogClose =>
+      dynamicColor(light: 0xFF788489, dark: 0xFFC1C5C8);
 
-  static Color get inactvePrayerMenu => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
+  static Color get inactvePrayerMenu =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
 
-  static Color get textFieldBackgroundColor => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
-  static Color get appBarColor => dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
+  static Color get textFieldBackgroundColor =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
+  static Color get appBarColor =>
+      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
 
   static Color get prayerPrimaryColor => dynamicColor(
         light: 0xFF5EC2E1,
@@ -76,7 +108,8 @@ class AppColors {
         light: 0xFFBBBDBF,
         dark: 0xFF011D3D,
       );
-  static Color get activeButton => dynamicColor(light: 0xFF9BD4E5, dark: 0xFF025584);
+  static Color get activeButton =>
+      dynamicColor(light: 0xFF9BD4E5, dark: 0xFF025584);
   static Color get cardBorder => dynamicColor(
         light: 0xFFFFFFFF,
         dark: 0xFF004E75,
@@ -104,6 +137,14 @@ class AppColors {
   static Color get splashTextColor => dynamicColor(
         light: 0xFF005780,
         dark: 0xFF00ACD8,
+      );
+  static Color get bottomNavIconColor => dynamicColor(
+        light: 0xFF005780,
+        dark: 0xFF009FD0,
+      );
+  static Color get drawerTopColor => dynamicColor(
+        light: 0xFFFFFFFF,
+        dark: 0XFF0D1319,
       );
 
   static const List<Color> customLogoShaperadient = [
@@ -138,6 +179,8 @@ class AppColors {
 
   static const Color yaleBlue = const Color(0xFF004A98);
   static const Color prussianBlue = const Color(0xFF002D4B);
+
+  static const Color drawerGrey = const Color(0xFF718B92);
 }
 
 class AppTextStyles {
@@ -292,11 +335,23 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
     letterSpacing: 1.1,
   );
+  static const TextStyle prayerText = const TextStyle(
+    color: AppColors.offWhite2,
+    fontSize: 15,
+    fontWeight: FontWeight.normal,
+    letterSpacing: 1.1,
+  );
 
   static const TextStyle normalDarkBlue = const TextStyle(
     color: AppColors.darkBlue,
     fontSize: 16,
     fontWeight: FontWeight.normal,
+    letterSpacing: 1,
+  );
+  static const TextStyle drawerMenu = const TextStyle(
+    color: AppColors.drawerGrey,
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
     letterSpacing: 1,
   );
 }

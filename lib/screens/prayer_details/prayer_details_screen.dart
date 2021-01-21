@@ -74,13 +74,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     padding: EdgeInsets.all(0),
                     icon: Icon(
                       Icons.arrow_back,
-                      color: AppColors.detailTopTextColor.withOpacity(0.35),
+                      color: AppColors.lightBlue4.withOpacity(0.35),
                     ),
                     onPressed: () => Navigator.pop(context),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(
-                        color: AppColors.detailTopTextColor.withOpacity(0.35),
+                        color: AppColors.lightBlue4.withOpacity(0.35),
                       ),
                     ),
                   ),
@@ -115,7 +115,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   // gradient: LinearGradient(
                   //   begin: Alignment.topCenter,
                   //   end: Alignment.bottomCenter,
-                  color: AppColors.detailBackgroundColor,
+                  color: AppColors.detailBackgroundColor[1],
                   // ),
                   border: Border.all(
                     color: AppColors.cardBorder,
@@ -137,9 +137,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
               ),
               onPressed: () => showModalBottomSheet(
                 context: context,
-                barrierColor: AppColors.detailBackgroundColor.withOpacity(0.5),
+                barrierColor:
+                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
                 backgroundColor:
-                    AppColors.detailBackgroundColor.withOpacity(0.9),
+                    AppColors.detailBackgroundColor[1].withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return _buildMenu();

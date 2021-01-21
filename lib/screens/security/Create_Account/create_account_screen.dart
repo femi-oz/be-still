@@ -25,11 +25,13 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
+  bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController = new TextEditingController();
+  TextEditingController _confirmPasswordController =
+      new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
@@ -46,6 +48,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
+    _isUnderAge =
+        (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
+                    .isAfter(DateTime.now())
+                ? DateTime.now().year - pickedDate.year - 1
+                : DateTime.now().year - pickedDate.year) <
+            18;
 
     if (pickedDate == null) {
       return null;
@@ -69,7 +77,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     try {
       await BeStilDialog.showLoading(context, 'Registering...');
-      await Provider.of<AuthenticationProvider>(context, listen: false).registerUser(
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .registerUser(
         password: _passwordController.text,
         email: _emailController.text,
         firstName: _firstnameController.text,
@@ -77,9 +86,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         dob: _selectedDate,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await PushNotificationsManager().init(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(CreateAccountSuccess.routeName);
+      Navigator.of(context)
+          .pushReplacementNamed(CreateAccountSuccess.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
@@ -107,7 +118,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+              image: AssetImage(StringUtils.getBackgroundImage(
+                  _themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -122,7 +134,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       SizedBox(height: 260),
                       Text(
                         'CREATE AN ACCOUNT',
-                        style: AppTextStyles.boldText24.copyWith(color: Settings.isDarkMode ? AppColors.lightBlue3 : AppColors.grey2),
+                        style: AppTextStyles.boldText24.copyWith(
+                            color: Settings.isDarkMode
+                                ? AppColors.lightBlue3
+                                : AppColors.grey2),
                       ),
                       SizedBox(height: 6),
                       Container(
@@ -215,6 +230,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Birthday',
                     controller: _dobController,
                     isRequired: true,
+                    validator: (value) {
+                      if (_isUnderAge) {
+                        return 'You must be 18 or older to use this app';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ),
@@ -260,7 +281,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 Row(
                   children: <Widget>[
                     Theme(
-                      data: ThemeData(unselectedWidgetColor: AppColors.lightBlue3),
+                      data: ThemeData(
+                          unselectedWidgetColor: AppColors.lightBlue3),
                       child: Switch.adaptive(
                         value: termsAccepted,
                         activeColor: AppColors.lightBlue4,
@@ -332,28 +354,40 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         Container(
                           child: Text(
                             "Random things here about how you use the app. What things,. app is willing to be responsible' for, and what things it spouts as being at Me users' own risk. Legal jargon and etc. such Mat it delineates and follows whatever parameters any and all lawyers are happy with to use here as a terms for service with or without a synopsis or conclusion. ",
-                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
+                            style: AppTextStyles.regularText16b.copyWith(
+                                color: Settings.isDarkMode
+                                    ? AppColors.offWhite4
+                                    : AppColors.grey4),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Container(
                           child: Text(
                             "SOMEWHERE IN HERE THERE WILL BE TEXT THAT IS ALL CAPS FOR NO REASON OTHER THAN LAWYER PEOPLE LOVE SHOUTING CERTAIN THINGS WHEN PUTTING THEM DOWN ON PAPER/DOCUMENT. ",
-                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
+                            style: AppTextStyles.regularText16b.copyWith(
+                                color: Settings.isDarkMode
+                                    ? AppColors.offWhite4
+                                    : AppColors.grey4),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Container(
                           child: Text(
                             "Also, you have. make the terms and verbiage of the terms extremely long,. who in Me legal world would ever say that something that should be legally binding could be short, concise, and easy to understand by Me regular Joe being as-that's who is normally going to be legally bound by said legal verbiage. ",
-                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
+                            style: AppTextStyles.regularText16b.copyWith(
+                                color: Settings.isDarkMode
+                                    ? AppColors.offWhite4
+                                    : AppColors.grey4),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         Container(
                           child: Text(
                             "If you have gotten this far in reading -.i.e., I hope you've really enjoyed (or under.00d) the level of dry-sarcasm involved in the voicing these particular views. Phase, feel free to acknowledge your own opinion, however you should be fonmamed [hag it differs from my own view in anyway, I may dismiss it as irrelevant and misguided. ",
-                            style: AppTextStyles.regularText16b.copyWith(color: Settings.isDarkMode ? AppColors.offWhite4 : AppColors.grey4),
+                            style: AppTextStyles.regularText16b.copyWith(
+                                color: Settings.isDarkMode
+                                    ? AppColors.offWhite4
+                                    : AppColors.grey4),
                           ),
                         ),
                       ],

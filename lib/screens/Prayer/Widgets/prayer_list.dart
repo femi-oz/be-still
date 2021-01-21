@@ -87,7 +87,7 @@ class _PrayerListState extends State<PrayerList> {
                       opacity: 0.3,
                       child: Text(
                         'No Prayers in My List',
-                        style: AppTextStyles.demiBoldText34,
+                        style: AppTextStyles.boldText30,
                         textAlign: TextAlign.center,
                       ),
                     ))
