@@ -4,13 +4,12 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/Prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './../../../utils/app_theme.dart';
 
 class OtherMemberPrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
@@ -28,14 +27,16 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
 
   void _onHide() async {
     try {
-      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false).hidePrayer(widget.prayer.id, _user);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

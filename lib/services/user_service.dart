@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/models/user_device.model.dart';
 

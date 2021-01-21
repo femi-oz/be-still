@@ -2,6 +2,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -21,7 +22,8 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   bool rememberMe = false;
   bool _autoValidate = false;
   final _usernameController = TextEditingController();
@@ -41,15 +43,18 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         password: _passwordController.text,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await PushNotificationsManager().init(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: 'Username or Password is incorrect.', key: _scaffoldKey);
+      BeStillSnackbar.showInSnackBar(
+          message: 'Username or Password is incorrect.', key: _scaffoldKey);
     } catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
     }
   }
 
@@ -69,7 +74,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.getBackgroundImage(_themeProvider.isDarkModeEnabled)),
+              image: AssetImage(StringUtils.getBackgroundImage(
+                  _themeProvider.isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -79,7 +85,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 CustomLogoShape(),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.6,
-                  padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
                   width: double.infinity,
                   child: Column(
                     children: <Widget>[

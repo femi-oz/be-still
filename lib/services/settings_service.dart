@@ -134,12 +134,13 @@ class SettingsService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  Future addGroupSettings(String userId, String email, String groupId) {
+  Future addGroupSettings(String userId, String email, String groupId) async {
     final groupSettingsId = Uuid().v1();
 
     try {
@@ -154,12 +155,13 @@ class SettingsService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  addGroupPreferenceSettings(String userId) {
+  addGroupPreferenceSettings(String userId) async {
     final groupPreferenceSettingsId = Uuid().v1();
     try {
       var batch = FirebaseFirestore.instance.batch();
@@ -175,6 +177,7 @@ class SettingsService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }

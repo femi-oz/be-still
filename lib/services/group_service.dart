@@ -138,6 +138,7 @@ class GroupService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }

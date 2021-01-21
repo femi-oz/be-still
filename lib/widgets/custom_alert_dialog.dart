@@ -53,7 +53,7 @@ class CustomAlertDialog extends StatelessWidget {
           const SizedBox(height: 10.0),
           Text(
             title.isEmpty ? _getTitle(type) : title,
-            style: AppTextStyles.headline6Grey.copyWith(fontSize: 18),
+            style: AppTextStyles.regularText13.copyWith(fontSize: 18),
             textAlign: TextAlign.center,
           ),
           Divider(),

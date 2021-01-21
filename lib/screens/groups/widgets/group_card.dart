@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +29,8 @@ class _GroupCardState extends State<GroupCard> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<GroupProvider>(context, listen: false).joinRequest(groupId, userId, userName);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .joinRequest(groupId, userId, userName);
       BeStilDialog.hideLoading(context);
       BeStilDialog.showSnackBar(_key, 'Request has been sent');
     } catch (e) {
@@ -56,7 +53,6 @@ class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
     setState(() => this.bcontext = context);
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
 
     // return Container();
@@ -89,7 +85,8 @@ class _GroupCardState extends State<GroupCard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     IconButton(
-                      onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+                      onPressed: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
                       icon: Icon(Icons.close),
                     )
                   ],
@@ -238,7 +235,10 @@ class _GroupCardState extends State<GroupCard> {
                               ],
                             ),
                           ),
-                          onPressed: () => _joinGroupInvite(this.widget.groupData.group.id, _currentUser.id, _currentUser.email),
+                          onPressed: () => _joinGroupInvite(
+                              this.widget.groupData.group.id,
+                              _currentUser.id,
+                              _currentUser.email),
                         ),
                       ),
                     ],

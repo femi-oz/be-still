@@ -31,35 +31,36 @@ class PushNotificationsManager {
       final deviceId = Uuid().v1();
       final userDeviceID = Uuid().v1();
       //store device
-      return FirebaseFirestore.instance.runTransaction((transaction) async {
-        transaction.set(
-          _deviceCollectionReference.doc(deviceId),
-          DeviceModel(
-                  createdBy: 'MOBILE',
-                  createdOn: DateTime.now(),
-                  modifiedOn: DateTime.now(),
-                  modifiedBy: 'MOBILE',
-                  model: 'MOBILE',
-                  deviceId: '',
-                  name: token,
-                  status: Status.active)
-              .toJson(),
-        );
+      var batch = FirebaseFirestore.instance.batch();
+      // return FirebaseFirestore.instance.runTransaction((transaction) async {
+      batch.set(
+        _deviceCollectionReference.doc(deviceId),
+        DeviceModel(
+                createdBy: 'MOBILE',
+                createdOn: DateTime.now(),
+                modifiedOn: DateTime.now(),
+                modifiedBy: 'MOBILE',
+                model: 'MOBILE',
+                deviceId: '',
+                name: token,
+                status: Status.active)
+            .toJson(),
+      );
 
-        // store user device
-        transaction.set(
-          _userDeviceCollectionReference.doc(userDeviceID),
-          UserDeviceModel(
-            createdBy: 'MOBILE',
-            createdOn: DateTime.now(),
-            modifiedOn: DateTime.now(),
-            modifiedBy: 'MOBILE',
-            deviceId: deviceId,
-            userId: userId,
-            status: Status.active,
-          ).toJson(),
-        );
-      });
+      // store user device
+      batch.set(
+        _userDeviceCollectionReference.doc(userDeviceID),
+        UserDeviceModel(
+          createdBy: 'MOBILE',
+          createdOn: DateTime.now(),
+          modifiedOn: DateTime.now(),
+          modifiedBy: 'MOBILE',
+          deviceId: deviceId,
+          userId: userId,
+          status: Status.active,
+        ).toJson(),
+      );
+      // });
     }
 
     _initialized = true;

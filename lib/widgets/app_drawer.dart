@@ -1,6 +1,7 @@
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
@@ -40,15 +41,14 @@ class CustomDrawer extends StatelessWidget {
                 colors: AppColors.backgroundColor,
               ),
               image: DecorationImage(
-                image: AssetImage(StringUtils.getBackgroundImage(
-                    _themeProvider.isDarkModeEnabled)),
+                image: AssetImage(StringUtils.getBackgroundImage()),
                 alignment: Alignment.bottomCenter,
               ),
             ),
             child: Column(
               children: <Widget>[
                 Container(
-                  color: AppColors.appbarColor,
+                  color: AppColors.drawerTopColor,
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: Row(
@@ -58,7 +58,7 @@ class CustomDrawer extends StatelessWidget {
                         child: Text(
                           'LOGOUT',
                           style: AppTextStyles.boldText20
-                              .copyWith(color: AppColors.appBarColor),
+                              .copyWith(color: AppColors.logoutTextColor),
                         ),
                         onTap: () {
                           _authProvider.signOut();
@@ -69,7 +69,7 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Icon(
                           Icons.close,
-                          color: AppColors.appBarColor,
+                          color: AppColors.logoutTextColor,
                         ),
                         onTap: () {
                           Navigator.pop(context);
@@ -93,7 +93,7 @@ class CustomDrawer extends StatelessWidget {
                           ListTile(
                             onTap: () {
                               Navigator.of(context)
-                                  .pushReplacementNamed(PrayerScreen.routeName);
+                                  .pushReplacementNamed(EntryScreen.routeName);
                             },
                             title: Text("MY LIST",
                                 style: AppTextStyles.drawerMenu),

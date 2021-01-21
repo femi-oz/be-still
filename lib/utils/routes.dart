@@ -1,5 +1,6 @@
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Create_Account/create_account_screen.dart';
@@ -18,7 +19,7 @@ import 'package:be_still/screens/splash/splash_screen.dart';
 final routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   LoginScreen.routeName: (context) => LoginScreen(),
-  PrayerScreen.routeName: (context) => PrayerScreen(),
+  EntryScreen.routeName: (context) => PrayerScreen(),
   SettingsScreen.routeName: (context) => SettingsScreen(),
   CreateAccountScreen.routeName: (context) => CreateAccountScreen(),
   ForgetPassword.routeName: (context) => ForgetPassword(),
@@ -32,4 +33,5 @@ final routes = {
   LocalAuth.routeName: (context) => LocalAuth(),
   CreateAccountSuccess.routeName: (context) => CreateAccountSuccess(),
   NotificationsScreen.routeName: (context) => NotificationsScreen(),
+  EntryScreen.routeName: (ctx) => EntryScreen(),
 };

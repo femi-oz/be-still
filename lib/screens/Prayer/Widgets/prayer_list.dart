@@ -5,6 +5,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -122,8 +123,7 @@ class _PrayerListState extends State<PrayerList> {
                     onPress: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            AddPrayer(isEdit: false, isGroup: false),
+                        builder: (context) => EntryScreen(screenNumber: 2),
                       ),
                     ),
                     text: 'Add New Prayer',

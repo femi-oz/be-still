@@ -217,6 +217,7 @@ class PrayerService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -259,6 +260,7 @@ class PrayerService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -336,6 +338,7 @@ class PrayerService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -361,6 +364,7 @@ class PrayerService {
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -453,6 +457,7 @@ class PrayerService {
           .get();
       batch
           .delete(_userPrayerCollectionReference.doc(userPrayerRes.docs[0].id));
+      await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }

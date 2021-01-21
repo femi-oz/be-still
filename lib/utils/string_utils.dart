@@ -1,3 +1,5 @@
+import 'package:be_still/utils/settings.dart';
+
 class StringUtils {
   static String enumName(String enumToString) {
     List<String> paths = enumToString.split(".");
@@ -6,9 +8,9 @@ class StringUtils {
 
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured = 'An error occured. lease re-login';
-  static String getBackgroundImage(bool isDarkMode) {
+  static String getBackgroundImage([bool isDarkMode]) {
     String retVal;
-    switch (isDarkMode) {
+    switch (Settings.isDarkMode) {
       case true:
         retVal = 'assets/images/background-pattern-dark.png';
         break;

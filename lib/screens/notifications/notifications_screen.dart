@@ -1,7 +1,6 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -44,13 +43,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     // Overlay.of(context).insert(this._overlayEntry);
   }
 
-  _acceptInvite(String groupId, String userId, String name, String email) async {
+  _acceptInvite(
+      String groupId, String userId, String name, String email) async {
     try {
       // _closeOverlay();
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<NotificationProvider>(context, listen: false).acceptGroupInvite(groupId, userId, name, email);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .acceptGroupInvite(groupId, userId, name, email);
       BeStilDialog.hideLoading(context);
       BeStilDialog.showSnackBar(_key, 'Request has been accepted');
     } catch (e) {
@@ -62,9 +63,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   void _getNotifications() async {
     try {
-      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<NotificationProvider>(context, listen: false).setUserNotifications(_user?.id);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setUserNotifications(_user?.id);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -86,7 +89,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void _showAlert(String groupId, String message) {
     final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final data = Provider.of<NotificationProvider>(context, listen: false).notifications;
+    final data =
+        Provider.of<NotificationProvider>(context, listen: false).notifications;
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
@@ -116,7 +120,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   IconButton(
-                    onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+                    onPressed: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
                     icon: Icon(Icons.close),
                   )
                 ],
@@ -173,7 +178,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               ],
                             ),
                           ),
-                          onPressed: () => _acceptInvite(groupId, _user.id, _user.firstName, _user.email)),
+                          onPressed: () => _acceptInvite(
+                              groupId, _user.id, _user.firstName, _user.email)),
                     ),
 
                     Container(
@@ -197,7 +203,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Container(
                           child: Text(
                             'DENY',
-                            style: TextStyle(color: AppColors.red, fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: AppColors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                         onPressed: () {
@@ -285,7 +294,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(_themeProvider.isDarkModeEnabled ? 'assets/images/background-pattern-dark.png' : 'assets/images/background-pattern.png'),
+              image: AssetImage(_themeProvider.isDarkModeEnabled
+                  ? 'assets/images/background-pattern-dark.png'
+                  : 'assets/images/background-pattern.png'),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -313,17 +324,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     headerBackgroundColorEnd: AppColors.prayerMenu[1],
                     shadowColor: AppColors.dropShadow,
                     title: Container(
-                      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.1),
+                      margin: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.1),
                       child: Text(
                         NotificationType.request,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.textFieldText, fontSize: 22, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: AppColors.textFieldText,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     initiallyExpanded: false,
                     children: <Widget>[
                       ...data
-                          .where((e) => e.messageType == NotificationType.request)
+                          .where(
+                              (e) => e.messageType == NotificationType.request)
                           .map((notifiaction) => Column(
                                 children: [
                                   SizedBox(height: 10),
@@ -343,8 +359,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         ),
                                       ),
                                       child: Container(
-                                        margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
-                                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                        margin: EdgeInsetsDirectional.only(
+                                            start: 1, bottom: 1, top: 1),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 20),
                                         width: double.infinity,
                                         decoration: BoxDecoration(
                                           color: AppColors.prayerCardBgColor,
@@ -361,38 +379,66 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   child: Column(
                                                     children: <Widget>[
                                                       Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                         children: <Widget>[
-                                                          notifiaction.sender != ''
+                                                          notifiaction.sender !=
+                                                                  ''
                                                               ? Text(
-                                                                  notifiaction.extra3.toUpperCase(),
-                                                                  style: AppTextStyles.regularText15b.copyWith(
-                                                                    fontSize: 14,
-                                                                    color: AppColors.lightBlue4,
+                                                                  notifiaction
+                                                                      .extra3
+                                                                      .toUpperCase(),
+                                                                  style: AppTextStyles
+                                                                      .regularText15b
+                                                                      .copyWith(
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: AppColors
+                                                                        .lightBlue4,
                                                                   ),
                                                                 )
                                                               : Container(),
                                                           Row(
                                                             children: <Widget>[
                                                               Text(
-                                                                notifiaction.extra1.toUpperCase(),
-                                                                style: AppTextStyles.regularText15b.copyWith(
+                                                                notifiaction
+                                                                    .extra1
+                                                                    .toUpperCase(),
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
                                                                   fontSize: 14,
-                                                                  color: AppColors.red,
+                                                                  color:
+                                                                      AppColors
+                                                                          .red,
                                                                 ),
                                                               ),
                                                               Container(
-                                                                margin: EdgeInsets.symmetric(
-                                                                  horizontal: 10,
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      10,
                                                                 ),
                                                                 child: Text(
                                                                   '|',
-                                                                  style: TextStyle(color: AppColors.cardBorder),
+                                                                  style: TextStyle(
+                                                                      color: AppColors
+                                                                          .cardBorder),
                                                                 ),
                                                               ),
                                                               Text(
-                                                                DateFormat('MM.dd.yyyy').format(notifiaction.createdOn),
-                                                                style: AppTextStyles.regularText15b.copyWith(fontSize: 14, color: AppColors.prayerMenuColor),
+                                                                DateFormat(
+                                                                        'MM.dd.yyyy')
+                                                                    .format(notifiaction
+                                                                        .createdOn),
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: AppColors
+                                                                            .prayerMenuColor),
                                                               ),
                                                             ],
                                                           )
@@ -410,11 +456,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             Row(
                                               children: <Widget>[
                                                 Container(
-                                                  width: MediaQuery.of(context).size.width * 0.8,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.8,
                                                   child: Text(
-                                                    notifiaction.message.substring(0, 100),
-                                                    style: AppTextStyles.regularText16b.copyWith(
-                                                      color: AppColors.prayerMenuColor,
+                                                    notifiaction.message
+                                                        .substring(0, 100),
+                                                    style: AppTextStyles
+                                                        .regularText16b
+                                                        .copyWith(
+                                                      color: AppColors
+                                                          .prayerMenuColor,
                                                     ),
                                                   ),
                                                 ),
@@ -442,17 +495,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     headerBackgroundColorEnd: AppColors.prayerMenu[1],
                     shadowColor: AppColors.dropShadow,
                     title: Container(
-                      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.1),
+                      margin: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.1),
                       child: Text(
                         NotificationType.prayer,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.textFieldText, fontSize: 22, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: AppColors.textFieldText,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     initiallyExpanded: false,
                     children: <Widget>[
                       ...data
-                          .where((e) => e.messageType == NotificationType.prayer)
+                          .where(
+                              (e) => e.messageType == NotificationType.prayer)
                           .map((notifiaction) => Column(
                                 children: [
                                   SizedBox(height: 10),
@@ -469,8 +527,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         ),
                                       ),
                                       child: Container(
-                                        margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
-                                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                        margin: EdgeInsetsDirectional.only(
+                                            start: 1, bottom: 1, top: 1),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 20),
                                         width: double.infinity,
                                         decoration: BoxDecoration(
                                           color: AppColors.prayerCardBgColor,
@@ -487,40 +547,63 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   child: Column(
                                                     children: <Widget>[
                                                       Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                         children: <Widget>[
-                                                          notifiaction.sender != ''
+                                                          notifiaction.sender !=
+                                                                  ''
                                                               ? Text(
-                                                                  notifiaction.extra1,
-                                                                  style: AppTextStyles.regularText15b.copyWith(
-                                                                    fontSize: 14,
-                                                                    color: AppColors.lightBlue4,
+                                                                  notifiaction
+                                                                      .extra1,
+                                                                  style: AppTextStyles
+                                                                      .regularText15b
+                                                                      .copyWith(
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: AppColors
+                                                                        .lightBlue4,
                                                                   ),
                                                                 )
                                                               : Container(),
                                                           Row(
                                                             children: <Widget>[
                                                               Text(
-                                                                notifiaction.extra2,
-                                                                style: AppTextStyles.regularText15b.copyWith(
+                                                                notifiaction
+                                                                    .extra2,
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
                                                                   fontSize: 14,
-                                                                  color: AppColors.red,
+                                                                  color:
+                                                                      AppColors
+                                                                          .red,
                                                                 ),
                                                               ),
                                                               Container(
-                                                                margin: EdgeInsets.symmetric(
-                                                                  horizontal: 10,
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      10,
                                                                 ),
                                                                 child: Text(
                                                                   '|',
-                                                                  style: TextStyle(color: AppColors.cardBorder),
+                                                                  style: TextStyle(
+                                                                      color: AppColors
+                                                                          .cardBorder),
                                                                 ),
                                                               ),
                                                               Text(
-                                                                DateFormat('MM.dd.yyyy').format(notifiaction.createdOn),
-                                                                style: AppTextStyles.regularText15b.copyWith(
+                                                                DateFormat(
+                                                                        'MM.dd.yyyy')
+                                                                    .format(notifiaction
+                                                                        .createdOn),
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
                                                                   fontSize: 14,
-                                                                  color: AppColors.prayerMenuColor,
+                                                                  color: AppColors
+                                                                      .prayerMenuColor,
                                                                 ),
                                                               ),
                                                             ],
@@ -539,11 +622,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             Row(
                                               children: <Widget>[
                                                 Container(
-                                                  width: MediaQuery.of(context).size.width * 0.8,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.8,
                                                   child: Text(
-                                                    notifiaction.message.substring(0, 100),
-                                                    style: AppTextStyles.regularText16b.copyWith(
-                                                      color: AppColors.prayerMenuColor,
+                                                    notifiaction.message
+                                                        .substring(0, 100),
+                                                    style: AppTextStyles
+                                                        .regularText16b
+                                                        .copyWith(
+                                                      color: AppColors
+                                                          .prayerMenuColor,
                                                     ),
                                                   ),
                                                 ),

@@ -1,8 +1,6 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class FindGroupTools extends StatefulWidget {
   @override
@@ -21,7 +19,6 @@ class _FindGroupToolsState extends State<FindGroupTools> {
   final TextEditingController _adminNameController = TextEditingController();
   var _option = 'normal';
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       child: Column(
@@ -48,7 +45,10 @@ class _FindGroupToolsState extends State<FindGroupTools> {
               children: <Widget>[
                 Text(
                   'ADVANCE SEARCH',
-                  style: TextStyle(color: AppColors.lightBlue3, fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      color: AppColors.lightBlue3,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700),
                 ),
                 SizedBox(
                   height: 20.0,
@@ -101,7 +101,9 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                     Container(
                       height: 30,
                       decoration: BoxDecoration(
-                        color: _option == 'normal' ? AppColors.activeButton.withOpacity(0.3) : Colors.transparent,
+                        color: _option == 'normal'
+                            ? AppColors.activeButton.withOpacity(0.3)
+                            : Colors.transparent,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -113,7 +115,10 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                         child: Container(
                           child: Text(
                             'NORMAL',
-                            style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: AppColors.lightBlue3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                         onPressed: () => setState(() => _option = 'normal'),
@@ -123,7 +128,9 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                     Container(
                       height: 30,
                       decoration: BoxDecoration(
-                        color: _option == 'feed' ? AppColors.activeButton.withOpacity(0.5) : Colors.transparent,
+                        color: _option == 'feed'
+                            ? AppColors.activeButton.withOpacity(0.5)
+                            : Colors.transparent,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -133,10 +140,14 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       child: OutlineButton(
                         borderSide: BorderSide(color: Colors.transparent),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 5.0, vertical: 5),
                           child: Text(
                             'FEED',
-                            style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: AppColors.lightBlue3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                         onPressed: () => setState(() => _option = 'feed'),
@@ -161,7 +172,10 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                     child: Container(
                       child: Text(
                         'SEARCH',
-                        style: TextStyle(color: AppColors.lightBlue3, fontSize: 14, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: AppColors.lightBlue3,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     onPressed: () => Navigator.of(context).pop(),

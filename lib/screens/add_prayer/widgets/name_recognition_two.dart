@@ -1,11 +1,9 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -39,7 +37,6 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
   String _selectedOption;
   bool _showCommentField = false;
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
 
   void showInSnackBar(String value) {
     widget.scafoldKey.currentState.showSnackBar(
@@ -55,31 +52,38 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       if (widget.isUpdate) {
-        await Provider.of<PrayerProvider>(context, listen: false).addPrayerUpdate(widget.prayerUpdate);
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .addPrayerUpdate(widget.prayerUpdate);
         Navigator.of(context).pushReplacementNamed(
           PrayerDetails.routeName,
-          arguments: PrayerDetailsRouteArguments(id: widget.prayerUpdate.prayerId, isGroup: widget.isGroup),
+          arguments: PrayerDetailsRouteArguments(
+              id: widget.prayerUpdate.prayerId, isGroup: widget.isGroup),
         );
       } else {
         if (widget.isGroup) {
-          await Provider.of<PrayerProvider>(context, listen: false).addGroupPrayer(context, widget.prayer);
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addGroupPrayer(context, widget.prayer);
         } else {
           if (widget.selectedGroups.length > 0) {
-            await Provider.of<PrayerProvider>(context, listen: false).addPrayerWithGroups(context, widget.prayer, widget.selectedGroups, _user.id);
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayerWithGroups(
+                    context, widget.prayer, widget.selectedGroups, _user.id);
           } else {
-            await Provider.of<PrayerProvider>(context, listen: false).addPrayer(widget.prayer, _user.id);
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayer(widget.prayer, _user.id);
           }
         }
       }
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      // Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PrayerScreen(),
+            builder: (context) => EntryScreen(),
           ));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -94,12 +98,12 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
-      margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.1),
+      margin: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.1),
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -134,7 +138,9 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     width: double.infinity,
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
-                      color: _selectedOption == 'yes' ? AppColors.activeButton.withOpacity(0.2) : AppColors.activeButton.withOpacity(0.1),
+                      color: _selectedOption == 'yes'
+                          ? AppColors.activeButton.withOpacity(0.2)
+                          : AppColors.activeButton.withOpacity(0.1),
                       border: Border.all(
                         color: AppColors.lightBlue6,
                         width: 1,
@@ -169,7 +175,9 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     width: double.infinity,
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     decoration: BoxDecoration(
-                      color: _selectedOption == 'no' ? AppColors.activeButton.withOpacity(0.2) : AppColors.activeButton.withOpacity(0.1),
+                      color: _selectedOption == 'no'
+                          ? AppColors.activeButton.withOpacity(0.2)
+                          : AppColors.activeButton.withOpacity(0.1),
                       border: Border.all(
                         color: AppColors.lightBlue6,
                         width: 1,
@@ -193,14 +201,20 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                 _showCommentField
                     ? Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: CustomInput(label: 'Add additional comments', controller: null, maxLines: 8, color: AppColors.offWhite1, showSuffix: false),
+                        child: CustomInput(
+                            label: 'Add additional comments',
+                            controller: null,
+                            maxLines: 8,
+                            color: AppColors.offWhite1,
+                            showSuffix: false),
                       )
                     : Container(),
                 SizedBox(height: 40.0),
                 InkWell(
                   onTap: _onSave,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.cardBorder),
                       borderRadius: BorderRadius.circular(5.0),
