@@ -27,8 +27,8 @@ class GroupPrayers extends StatelessWidget {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(
-                _themeProvider.isDarkModeEnabled)),
+            image:
+                AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -82,10 +82,10 @@ class GroupPrayers extends StatelessWidget {
                         ),
                       ),
                       text: 'Add New Prayer',
-                      backgroundColor: _themeProvider.isDarkModeEnabled
+                      backgroundColor: Settings.isDarkMode
                           ? AppColors.backgroundColor[1]
                           : AppColors.lightBlue3,
-                      textColor: _themeProvider.isDarkModeEnabled
+                      textColor: Settings.isDarkMode
                           ? AppColors.lightBlue3
                           : Colors.white,
                       icon: Icons.add,
