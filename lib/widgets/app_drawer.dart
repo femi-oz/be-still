@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../utils/app_theme.dart';
 
 class CustomDrawer extends StatelessWidget {
   _launchURL() async {
@@ -26,7 +25,6 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final _authProvider = Provider.of<AuthenticationProvider>(context);
     return SafeArea(
       child: Container(

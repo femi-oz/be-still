@@ -24,13 +24,12 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
-  bool rememberMe = false;
+  bool _rememberMe = false;
   bool _autoValidate = false;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _key = GlobalKey<State>();
 
   void _login() async {
     setState(() => _autoValidate = true);
@@ -41,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen>
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: _usernameController.text,
         password: _passwordController.text,
+        rememberMe: _rememberMe,
       );
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       await PushNotificationsManager().init(
@@ -157,11 +157,9 @@ class _LoginScreenState extends State<LoginScreen>
               activeColor: Colors.white,
               activeTrackColor: AppColors.lightBlue4,
               inactiveThumbColor: Colors.white,
-              value: rememberMe,
+              value: _rememberMe,
               onChanged: (value) {
-                setState(() {
-                  rememberMe = !rememberMe;
-                });
+                setState(() => _rememberMe = !_rememberMe);
               },
             ),
           ],
