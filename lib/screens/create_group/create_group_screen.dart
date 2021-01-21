@@ -72,7 +72,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
 
-    return Container(
+    return Scaffold(
+        body: Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -158,6 +159,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
