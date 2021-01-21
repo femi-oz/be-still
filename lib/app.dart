@@ -15,7 +15,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
+    });
     // darkThemePref.loadPrefs();
     super.initState();
   }
@@ -27,17 +29,17 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    return MaterialApp(
-      title: 'Be Still',
-      debugShowCheckedModeBanner: false,
-      theme: Settings.isDarkMode
-          ? appThemeData[AppTheme.DarkTheme]
-          : appThemeData[AppTheme.LightTheme],
-      initialRoute: '/',
-      routes: rt.routes,
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (ctx) => SplashScreen());
-      },
+    return Consumer<ThemeProvider>(
+      builder: (ctx, theme, _) => MaterialApp(
+        title: 'Be Still',
+        debugShowCheckedModeBanner: false,
+        theme: theme.isDarkModeEnabled ? appThemeData[AppTheme.DarkTheme] : appThemeData[AppTheme.LightTheme],
+        initialRoute: '/',
+        routes: rt.routes,
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(builder: (ctx) => SplashScreen());
+        },
+      ),
     );
   }
 }

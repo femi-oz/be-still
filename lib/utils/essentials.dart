@@ -1,156 +1,45 @@
-import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
-Color dynamicColor({
-  @required int light,
-  @required int dark,
-}) {
-  Color retVal;
-  switch (Settings.isDarkMode) {
-    case true:
-      retVal = Color(dark);
-      break;
-    case false:
-      retVal = Color(light);
-      break;
-    default:
-      retVal = Color(light);
+Color getColor(bool isDarkMode, {@required int light, @required int dark}) => Color(isDarkMode ? dark : light);
 
-      break;
-  }
-  return retVal;
-}
-
-List<Color> dynamicGradientColor({
-  @required int light,
-  @required int dark,
-  @required int light2,
-  @required int dark2,
-}) {
-  List<Color> retVal;
-  switch (Settings.isDarkMode) {
-    case true:
-      retVal = [Color(dark), Color(dark2)];
-      break;
-    case false:
-      retVal = [Color(light), Color(light2)];
-      break;
-    default:
-      retVal = [Color(light), Color(light2)];
-
-      break;
-  }
-  return retVal;
-}
+List<Color> getGradientColor(bool isDarkMode, {@required int lightStart, @required int lightEnd, @required int darkStart, @required int darkEnd}) =>
+    isDarkMode ? [Color(darkStart), Color(darkEnd)] : [Color(lightStart), Color(lightEnd)];
 
 class AppColors {
-  static List<Color> get backgroundColor => dynamicGradientColor(
-      light: 0xFFCED1D4,
-      light2: 0xFFFAFBFB,
-      dark: 0xFF021D3C,
-      dark2: prussianBlue.value);
-  static List<Color> get backgroundLogo => dynamicGradientColor(
-      light: 0xFFFFFFF,
-      light2: 0xFFC1C5C8,
-      dark: 0xFF005075,
-      dark2: 0xFF001439);
-  static List<Color> get detailBackgroundColor => dynamicGradientColor(
-      light: 0xFFF0F4Fa,
-      light2: 0xFFE6E9ED,
-      dark: 0xFF012B4C,
-      dark2: 0xFF033565);
-  static List<Color> get prayerMenu => dynamicGradientColor(
-      light: 0xFF00438D,
-      light2: 0xFF009CCE,
-      dark: 0xFF014A70,
-      dark2: 0xFF013053);
-  static List<Color> get appBarBackground => dynamicGradientColor(
-      light: 0xFF00438d,
-      light2: 0xFF0098cb,
-      dark: 0xFF0D1319,
-      dark2: 0xFF0D1319);
+  static bool darkMode = false;
 
-  static List<Color> get buttonGradient => dynamicGradientColor(
-      light: 0xFF003C88,
-      light2: 0xFF009ED0,
-      dark: offWhite1.value,
-      dark2: lightBlue4.value);
-  static List<Color> get dialogGradient => dynamicGradientColor(
-      light: 0xFFEDEFF0,
-      light2: 0xFFFFFFF,
-      dark: 0xFF101820,
-      dark2: 0xFF101820);
+  static List<Color> get backgroundColor => getGradientColor(darkMode, lightStart: 0xFFCED1D4, lightEnd: 0xFFFAFBFB, darkStart: 0xFF021D3C, darkEnd: prussianBlue.value);
+  static List<Color> get backgroundLogo => getGradientColor(darkMode, lightStart: 0xFFFFFFF, lightEnd: 0xFFC1C5C8, darkStart: 0xFF005075, darkEnd: 0xFF001439);
+  static List<Color> get detailBackgroundColor => getGradientColor(darkMode, lightStart: 0xFFF0F4Fa, lightEnd: 0xFFE6E9ED, darkStart: 0xFF012B4C, darkEnd: 0xFF033565);
+  static List<Color> get prayerMenu => getGradientColor(darkMode, lightStart: 0xFF00438D, lightEnd: 0xFF009CCE, darkStart: 0xFF014A70, darkEnd: 0xFF013053);
+  static List<Color> get appBarBackground => getGradientColor(darkMode, lightStart: 0xFF00438d, lightEnd: 0xFF0098cb, darkStart: 0xFF0D1319, darkEnd: 0xFF0D1319);
 
-  static Color get dialogClose =>
-      dynamicColor(light: 0xFF788489, dark: 0xFFC1C5C8);
+  static List<Color> get buttonGradient => getGradientColor(darkMode, lightStart: 0xFF003C88, lightEnd: 0xFF009ED0, darkStart: offWhite1.value, darkEnd: lightBlue4.value);
+  static List<Color> get dialogGradient => getGradientColor(darkMode, lightStart: 0xFFEDEFF0, lightEnd: 0xFFFFFFF, darkStart: 0xFF101820, darkEnd: 0xFF101820);
 
-  static Color get inactvePrayerMenu =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF005780);
+  static Color get dialogClose => getColor(darkMode, light: 0xFF788489, dark: 0xFFC1C5C8);
 
-  static Color get textFieldBackgroundColor =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF022F52);
-  static Color get appBarColor =>
-      dynamicColor(light: 0xFFFFFFFF, dark: 0xFF002D4B);
+  static Color get inactvePrayerMenu => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
 
-  static Color get prayerPrimaryColor => dynamicColor(
-        light: 0xFF5EC2E1,
-        dark: 0xFF014E75,
-      );
-  static Color get prayerMenuColor => dynamicColor(
-        light: 0xFFFFFFFF,
-        dark: 0xFF005780,
-      );
-  static Color get prayerCardBgColor => dynamicColor(
-        light: 0xFFFFFFFF,
-        dark: 0xFF012B4D,
-      );
-  static Color get dropShadow => dynamicColor(
-        light: 0xFFBBBDBF,
-        dark: 0xFF011D3D,
-      );
-  static Color get activeButton =>
-      dynamicColor(light: 0xFF9BD4E5, dark: 0xFF025584);
-  static Color get cardBorder => dynamicColor(
-        light: 0xFFFFFFFF,
-        dark: 0xFF004E75,
-      );
-  static Color get divider => dynamicColor(
-        light: 0xFF808C90,
-        dark: 0xFF00547C,
-      );
-  static Color get textFieldText => dynamicColor(
-        light: 0xFF79858A,
-        dark: 0xFFC1C5C8,
-      );
-  static Color get textFieldBorder => dynamicColor(
-        light: 0xFFB4E3F1,
-        dark: 0xFF014C73,
-      );
-  static Color get prayeModeBg => dynamicColor(
-        light: 0xFFE6E9ED,
-        dark: 0xFF101820,
-      );
-  static Color get prayeModeBorder => dynamicColor(
-        light: 0xFF0C3A4C,
-        dark: 0xFF0C3A4C,
-      );
-  static Color get splashTextColor => dynamicColor(
-        light: 0xFF005780,
-        dark: 0xFF00ACD8,
-      );
-  static Color get bottomNavIconColor => dynamicColor(
-        light: 0xFF005780,
-        dark: 0xFF009FD0,
-      );
-  static Color get drawerTopColor => dynamicColor(
-        light: 0xFFFFFFFF,
-        dark: 0XFF0D1319,
-      );
+  static Color get textFieldBackgroundColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF022F52);
+  static Color get appBarColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF002D4B);
 
-  static const List<Color> customLogoShaperadient = [
-    const Color(0xFF005177),
-    const Color(0xFF001B42),
-  ];
+  static Color get prayerPrimaryColor => getColor(darkMode, light: 0xFF5EC2E1, dark: 0xFF014E75);
+  static Color get prayerMenuColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
+  static Color get prayerCardBgColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF012B4D);
+  static Color get dropShadow => getColor(darkMode, light: 0xFFBBBDBF, dark: 0xFF011D3D);
+  static Color get activeButton => getColor(darkMode, light: 0xFF9BD4E5, dark: 0xFF025584);
+  static Color get cardBorder => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF004E75);
+  static Color get divider => getColor(darkMode, light: 0xFF808C90, dark: 0xFF00547C);
+  static Color get textFieldText => getColor(darkMode, light: 0xFF79858A, dark: 0xFFC1C5C8);
+  static Color get textFieldBorder => getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
+  static Color get prayeModeBg => getColor(darkMode, light: 0xFFE6E9ED, dark: 0xFF101820);
+  static Color get prayeModeBorder => getColor(darkMode, light: 0xFF0C3A4C, dark: 0xFF0C3A4C);
+  static Color get splashTextColor => getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
+  static Color get bottomNavIconColor => getColor(darkMode, light: 0xFF005780, dark: 0xFF009FD0);
+  static Color get drawerTopColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF0D1319);
+
+  static const List<Color> customLogoShaperadient = [const Color(0xFF005177), const Color(0xFF001B42)];
   static const Color shadowColor = const Color(0xFF001439);
 
   static const Color white = const Color(0xFFFFFFFF);
