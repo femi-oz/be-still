@@ -12,7 +12,7 @@ class BsRaisedButton extends StatelessWidget {
   final bool hasCorners;
   final bool hasShader;
   final bool disabled;
-  final bool isDarkMode;
+  // final bool isDarkMode;
   final void Function() onPressed;
 
   const BsRaisedButton({
@@ -27,7 +27,7 @@ class BsRaisedButton extends StatelessWidget {
     this.hasShader = false,
     this.applyBold = false,
     this.disabled = false,
-    @required this.isDarkMode,
+    // @required this.isDarkMode,
     this.onPressed,
   }) : super(key: key);
 

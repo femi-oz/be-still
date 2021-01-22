@@ -202,22 +202,26 @@ class PrayerService {
     final _userPrayerID = Uuid().v1();
 
     try {
-      var batch = FirebaseFirestore.instance.batch();
+      // var batch = FirebaseFirestore.instance.batch();
       // return FirebaseFirestore.instance.runTransaction(
       // (transaction) async {
       // store prayer
-      batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+      // batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
+      _prayerCollectionReference.doc(_prayerID).set(prayerData.toJson());
 
       //store user prayer
-      batch.set(_userPrayerCollectionReference.doc(_userPrayerID),
-          populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+      // batch.set(_userPrayerCollectionReference.doc(_userPrayerID),
+      //     populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+      _userPrayerCollectionReference
+          .doc(_userPrayerID)
+          .set(populateUserPrayer(prayerData, _userID, _prayerID).toJson());
       // }
       // ).then((val) {
       //   return true;
       // }).catchError((e) {
       //   throw HttpException(e.message);
       // });
-      await batch.commit();
+      // await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
     }
