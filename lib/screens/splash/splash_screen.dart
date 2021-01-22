@@ -10,6 +10,7 @@ import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -95,20 +96,21 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   initScreen(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     double targetValue = MediaQuery.of(context).size.height * 0.3;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Color(0xFF043569),
-                Color(0xFF011730),
-                Color(0xFF043467),
-                Color(0xFF01162E),
-              ]),
+          gradient: Settings.isDarkMode
+              ? LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                      Color(0xFF043569),
+                      Color(0xFF011730),
+                      Color(0xFF043467),
+                      Color(0xFF01162E),
+                    ])
+              : RadialGradient(colors: [Color(0XFFFFFFFF), Color(0XFFC1C5C8)]),
         ),
         padding: EdgeInsets.symmetric(horizontal: 32),
         child: Column(
