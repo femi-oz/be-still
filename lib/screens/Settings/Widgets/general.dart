@@ -267,16 +267,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      // for (int i = 0; i < _themeModes.length; i++)
-                      //   CustomButtonGroup(
-                      //     isSelected:
-                      //         _themeProvider.currentTheme == _themeModes[i],
-                      //     length: _themeModes.length,
-                      //     onSelected: (value) =>
-                      //         _themeProvider.changeTheme(value),
-                      //     title: _themeModes[i],
-                      //     index: i,
-                      //   ),
+                      for (int i = 0; i < _themeModes.length; i++)
+                        CustomButtonGroup(
+                          isSelected:
+                              _themeProvider.currentTheme == _themeModes[i],
+                          length: _themeModes.length,
+                          onSelected: (value) =>
+                              _themeProvider.changeTheme(value),
+                          title: _themeModes[i],
+                          index: i,
+                        ),
                     ],
                   ),
                 ),
