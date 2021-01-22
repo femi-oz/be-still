@@ -74,13 +74,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     padding: EdgeInsets.all(0),
                     icon: Icon(
                       Icons.arrow_back,
-                      color: AppColors.lightBlue4.withOpacity(0.35),
+                      color: AppColors.lightBlue3,
                     ),
                     onPressed: () => Navigator.pop(context),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(
-                        color: AppColors.lightBlue4.withOpacity(0.35),
+                        color: AppColors.lightBlue3,
                       ),
                     ),
                   ),
@@ -115,7 +115,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   // gradient: LinearGradient(
                   //   begin: Alignment.topCenter,
                   //   end: Alignment.bottomCenter,
-                  color: AppColors.detailBackgroundColor[1],
+                  color: AppColors.prayerDetailsBgColor,
                   // ),
                   border: Border.all(
                     color: AppColors.cardBorder,

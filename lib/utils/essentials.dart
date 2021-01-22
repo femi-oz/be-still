@@ -1,50 +1,119 @@
 import 'package:flutter/material.dart';
 
-Color getColor(bool isDarkMode, {@required int light, @required int dark}) => Color(isDarkMode ? dark : light);
+Color getColor(bool isDarkMode, {@required int light, @required int dark}) =>
+    Color(isDarkMode ? dark : light);
 
-List<Color> getGradientColor(bool isDarkMode, {@required int lightStart, @required int lightEnd, @required int darkStart, @required int darkEnd}) =>
-    isDarkMode ? [Color(darkStart), Color(darkEnd)] : [Color(lightStart), Color(lightEnd)];
+List<Color> getGradientColor(bool isDarkMode,
+        {@required int lightStart,
+        @required int lightEnd,
+        @required int darkStart,
+        @required int darkEnd}) =>
+    isDarkMode
+        ? [Color(darkStart), Color(darkEnd)]
+        : [Color(lightStart), Color(lightEnd)];
 
 class AppColors {
   static bool darkMode = false;
 
-  static List<Color> get backgroundColor => getGradientColor(darkMode, lightStart: 0xFFCED1D4, lightEnd: 0xFFFAFBFB, darkStart: 0xFF021D3C, darkEnd: prussianBlue.value);
-  static List<Color> get backgroundLogo => getGradientColor(darkMode, lightStart: 0xFFFFFFF, lightEnd: 0xFFC1C5C8, darkStart: 0xFF005075, darkEnd: 0xFF001439);
-  static List<Color> get detailBackgroundColor => getGradientColor(darkMode, lightStart: 0xFFF0F4Fa, lightEnd: 0xFFE6E9ED, darkStart: 0xFF012B4C, darkEnd: 0xFF033565);
-  static List<Color> get prayerMenu => getGradientColor(darkMode, lightStart: 0xFF00438D, lightEnd: 0xFF009CCE, darkStart: 0xFF014A70, darkEnd: 0xFF013053);
-  static List<Color> get appBarBackground => getGradientColor(darkMode, lightStart: 0xFF00438d, lightEnd: 0xFF0098cb, darkStart: 0xFF0D1319, darkEnd: 0xFF0D1319);
+  static List<Color> get backgroundColor => getGradientColor(darkMode,
+      lightStart: 0xFFEDEFF0,
+      lightEnd: 0xFFFAFBFB,
+      darkStart: 0xFF021D3C,
+      darkEnd: prussianBlue.value);
+  static List<Color> get backgroundLogo => getGradientColor(darkMode,
+      lightStart: 0xFFFFFFF,
+      lightEnd: 0xFFC1C5C8,
+      darkStart: 0xFF005075,
+      darkEnd: 0xFF001439);
+  static List<Color> get detailBackgroundColor => getGradientColor(darkMode,
+      lightStart: 0xFFF0F4Fa,
+      lightEnd: 0xFFE6E9ED,
+      darkStart: 0xFF012B4C,
+      darkEnd: 0xFF033565);
 
-  static List<Color> get buttonGradient => getGradientColor(darkMode, lightStart: 0xFF003C88, lightEnd: 0xFF009ED0, darkStart: offWhite1.value, darkEnd: lightBlue4.value);
-  static List<Color> get dialogGradient => getGradientColor(darkMode, lightStart: 0xFFEDEFF0, lightEnd: 0xFFFFFFF, darkStart: 0xFF101820, darkEnd: 0xFF101820);
+  static List<Color> get prayerMenu => getGradientColor(darkMode,
+      lightStart: 0xFF00438D,
+      lightEnd: 0xFF009CCE,
+      darkStart: 0xFF014A70,
+      darkEnd: 0xFF013053);
+  static List<Color> get appBarBackground => getGradientColor(darkMode,
+      lightStart: 0xFF00438d,
+      lightEnd: 0xFF0098cb,
+      darkStart: 0xFF0D1319,
+      darkEnd: 0xFF0D1319);
 
-  static Color get dialogClose => getColor(darkMode, light: 0xFF788489, dark: 0xFFC1C5C8);
+  static List<Color> get buttonGradient => getGradientColor(darkMode,
+      lightStart: 0xFF003C88,
+      lightEnd: 0xFF009ED0,
+      darkStart: offWhite1.value,
+      darkEnd: lightBlue4.value);
+  static List<Color> get dialogGradient => getGradientColor(darkMode,
+      lightStart: 0xFFEDEFF0,
+      lightEnd: 0xFFFFFFF,
+      darkStart: 0xFF101820,
+      darkEnd: 0xFF101820);
 
-  static Color get inactvePrayerMenu => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
+  static Color get dialogClose =>
+      getColor(darkMode, light: 0xFF788489, dark: 0xFFC1C5C8);
 
-  static Color get textFieldBackgroundColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF022F52);
-  static Color get appBarColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF002D4B);
+  static Color get inactvePrayerMenu =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
 
-  static Color get prayerPrimaryColor => getColor(darkMode, light: 0xFF5EC2E1, dark: 0xFF014E75);
-  static Color get prayerMenuColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
-  static Color get prayerCardBgColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF012B4D);
-  static Color get dropShadow => getColor(darkMode, light: 0xFFBBBDBF, dark: 0xFF011D3D);
-  static Color get activeButton => getColor(darkMode, light: 0xFF9BD4E5, dark: 0xFF025584);
-  static Color get cardBorder => getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF004E75);
-  static Color get divider => getColor(darkMode, light: 0xFF808C90, dark: 0xFF00547C);
-  static Color get textFieldText => getColor(darkMode, light: 0xFF79858A, dark: 0xFFC1C5C8);
-  static Color get textFieldBorder => getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
-  static Color get prayeModeBg => getColor(darkMode, light: 0xFFE6E9ED, dark: 0xFF101820);
-  static Color get prayeModeBorder => getColor(darkMode, light: 0xFF0C3A4C, dark: 0xFF0C3A4C);
-  static Color get splashTextColor => getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
-  static Color get bottomNavIconColor => getColor(darkMode, light: 0xFF005780, dark: 0xFF009FD0);
-  static Color get drawerTopColor => getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF0D1319);
+  static Color get textFieldBackgroundColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF022F52);
+  static Color get appBarColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF002D4B);
 
-  static const List<Color> customLogoShaperadient = [const Color(0xFF005177), const Color(0xFF001B42)];
+  static Color get prayerPrimaryColor =>
+      getColor(darkMode, light: 0xFF5EC2E1, dark: 0xFF014E75);
+  static Color get prayerMenuColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
+  static Color get prayerCardBgColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF012B4D);
+  static Color get dropShadow =>
+      getColor(darkMode, light: 0xFFBBBDBF, dark: 0xFF011D3D);
+  static Color get activeButton =>
+      getColor(darkMode, light: 0xFF9BD4E5, dark: 0xFF025584);
+  static Color get cardBorder =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF004E75);
+  static Color get divider =>
+      getColor(darkMode, light: 0xFF0D1319, dark: 0xFF005780);
+  static Color get textFieldText =>
+      getColor(darkMode, light: 0xFF79858A, dark: 0xFFC1C5C8);
+  static Color get textFieldBorder =>
+      getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
+  static Color get prayeModeBg =>
+      getColor(darkMode, light: 0xFFE6E9ED, dark: 0xFF101820);
+  static Color get prayeModeBorder =>
+      getColor(darkMode, light: 0xFF0C3A4C, dark: 0xFF0C3A4C);
+  static Color get splashTextColor =>
+      getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
+  static Color get bottomNavIconColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF009FD0);
+  static Color get drawerTopColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF0D1319);
+  static Color get prayerTextColor =>
+      getColor(darkMode, light: 0xFF788489, dark: 0XFFC1C5C8);
+  static Color get addprayerTextColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF009FD0);
+  static Color get addprayerBgColor =>
+      getColor(darkMode, light: 0xFF009FD0, dark: 0XFF021D3C);
+  static Color get prayerDetailsBgColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF03274F);
+  static Color get groupCardBgColor =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF021D3C);
+  static Color get groupActionBgColor =>
+      getColor(darkMode, light: 0xFF009FD0, dark: 0xFF012B4D);
+
+  static const List<Color> customLogoShaperadient = [
+    const Color(0xFF005177),
+    const Color(0xFF001B42)
+  ];
   static const Color shadowColor = const Color(0xFF001439);
 
   static const Color white = const Color(0xFFFFFFFF);
   static const Color offWhite1 = const Color(0xFF005780);
-  static const Color offWhite2 = const Color(0xFFC1C5C8);
+  static const Color offWhite2 = const Color(0xFFAFBAC4);
   static const Color offWhite4 = const Color(0xFFF1F5F9);
 
   static const Color dimBlue = const Color(0xFF01537B);
@@ -181,6 +250,12 @@ class AppTextStyles {
     color: AppColors.grey3,
     fontSize: 30,
     fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
+  static const TextStyle demiboldText34 = const TextStyle(
+    color: AppColors.offWhite2,
+    fontSize: 34,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.5,
   );
   static const TextStyle errorText = const TextStyle(

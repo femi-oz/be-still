@@ -18,7 +18,7 @@ class PrayerCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 7.0),
       decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: AppColors.prayerCardBgColor,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -29,7 +29,7 @@ class PrayerCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppColors.prayerCardBgColor.withOpacity(0.1),
+          color: AppColors.prayerCardBgColor,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(8),
             topLeft: Radius.circular(8),
@@ -106,7 +106,7 @@ class PrayerCard extends StatelessWidget {
                                 DateFormat('MM.dd.yyyy')
                                     .format(prayer.createdOn),
                                 style: AppTextStyles.regularText13
-                                    .copyWith(color: AppColors.lightBlue3),
+                                    .copyWith(color: AppColors.prayerTextColor),
                               ),
                             ],
                           )
@@ -130,7 +130,7 @@ class PrayerCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.regularText15
-                        .copyWith(color: AppColors.offWhite2),
+                        .copyWith(color: AppColors.prayerTextColor),
                   ),
                 ),
               ],

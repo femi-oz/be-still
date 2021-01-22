@@ -87,7 +87,7 @@ class _PrayerListState extends State<PrayerList> {
                       opacity: 0.3,
                       child: Text(
                         'No Prayers in My List',
-                        style: AppTextStyles.boldText30,
+                        style: AppTextStyles.demiboldText34,
                         textAlign: TextAlign.center,
                       ),
                     ))
@@ -129,8 +129,9 @@ class _PrayerListState extends State<PrayerList> {
                       ),
                     ),
                     text: 'Add New Prayer',
-                    backgroundColor: AppColors.backgroundColor[1],
-                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        AppColors.addprayerBgColor.withOpacity(0.9),
+                    textColor: AppColors.addprayerTextColor,
                     icon: Icons.add,
                   ),
             SizedBox(height: 80),

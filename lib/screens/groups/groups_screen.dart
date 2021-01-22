@@ -66,7 +66,7 @@ class _GroupScreenState extends State<GroupScreen> {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final data = Provider.of<GroupProvider>(context).userGroups;
     return Container(
-      padding: EdgeInsets.only(left: 40),
+      // padding: EdgeInsets.only(left: 40),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -83,44 +83,44 @@ class _GroupScreenState extends State<GroupScreen> {
         child: Column(
           children: <Widget>[
             SizedBox(height: 20),
-            LongButton(
-              onPress: () => Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (context) => new FindAGroup(),
+            Container(
+              padding: EdgeInsets.only(left: 50),
+              child: LongButton(
+                onPress: () => Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => new FindAGroup(),
+                  ),
                 ),
+                text: 'FIND A GROUP',
+                backgroundColor: AppColors.groupActionBgColor.withOpacity(0.9),
+                textColor: AppColors.addprayerTextColor,
+                hasIcon: false,
               ),
-              text: 'FIND A GROUP',
-              backgroundColor: Settings.isDarkMode
-                  ? AppColors.backgroundColor[1]
-                  : AppColors.lightBlue3,
-              textColor:
-                  Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
-              hasIcon: false,
             ),
             SizedBox(height: 5),
-            LongButton(
-              onPress: () => Navigator.push(
-                context,
-                new MaterialPageRoute(
-                  builder: (context) => CreateGroupScreen(),
+            Container(
+              padding: EdgeInsets.only(left: 50),
+              child: LongButton(
+                onPress: () => Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => CreateGroupScreen(),
+                  ),
                 ),
+                text: 'CREATE A GROUP',
+                backgroundColor: AppColors.groupActionBgColor.withOpacity(0.9),
+                textColor: AppColors.addprayerTextColor,
+                hasIcon: false,
               ),
-              text: 'CREATE A GROUP',
-              backgroundColor: Settings.isDarkMode
-                  ? AppColors.backgroundColor[1]
-                  : AppColors.lightBlue3,
-              textColor:
-                  Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
-              hasIcon: false,
             ),
             SizedBox(height: 30),
             data.length == 0
                 ? Container(
-                    padding: EdgeInsets.all(60),
+                    padding: EdgeInsets.only(right: 20, left: 20),
                     child: Text(
                       'You are currently not in any groups',
-                      style: AppTextStyles.regularText13,
+                      style: AppTextStyles.demiboldText34,
                       textAlign: TextAlign.center,
                     ),
                   )
@@ -142,9 +142,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                       );
                                     },
                                     text: e.group.name.toUpperCase(),
-                                    backgroundColor: Settings.isDarkMode
-                                        ? AppColors.backgroundColor[0]
-                                        : Colors.white,
+                                    backgroundColor: AppColors.groupCardBgColor,
                                     textColor: AppColors.lightBlue3,
                                     hasIcon: false,
                                     hasMore: true,
