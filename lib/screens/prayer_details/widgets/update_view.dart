@@ -96,7 +96,7 @@ class UpdateView extends StatelessWidget {
                               Text(
                                 u.description,
                                 style: AppTextStyles.regularText18b.copyWith(
-                                  color: AppColors.offWhite2,
+                                  color: AppColors.prayerTextColor,
                                 ),
                                 textAlign: TextAlign.left,
                               ),

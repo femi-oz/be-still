@@ -32,7 +32,7 @@ class LongButton extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          color: AppColors.lightBlue4,
+          color: AppColors.cardBorder,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -40,6 +40,7 @@ class LongButton extends StatelessWidget {
         ),
         child: Container(
           width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.065,
           margin: EdgeInsetsDirectional.only(start: 0.5, bottom: 0.5, top: 0.5),
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
