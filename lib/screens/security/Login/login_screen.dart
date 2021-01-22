@@ -1,10 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
@@ -21,7 +23,8 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   bool rememberMe = false;
   bool _autoValidate = false;
   final _usernameController = TextEditingController();
@@ -41,15 +44,18 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       );
       print(_usernameController.text + _passwordController.text);
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      await PushNotificationsManager().init(Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await PushNotificationsManager().init(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: 'Username or Password is incorrect.', key: _scaffoldKey);
+      BeStillSnackbar.showInSnackBar(
+          message: 'Username or Password is incorrect.', key: _scaffoldKey);
     } catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
     }
   }
 
@@ -150,6 +156,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   Widget _buildActions() {
+    var _remeberMe = Settings.rememberMe;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -165,10 +172,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             SizedBox(width: 12),
             Switch.adaptive(
               activeColor: AppColors.lightBlue4,
-              value: rememberMe,
-              onChanged: (value) {
-                setState(() => rememberMe = !rememberMe);
-              },
+              value: _remeberMe,
+              onChanged: (value) => setState(() => Settings.rememberMe = value),
             ),
           ],
         ),
@@ -186,7 +191,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             "Forgot my Password",
             style: AppTextStyles.regularText13,
           ),
-          onTap: () => Navigator.of(context).pushNamed(ForgetPassword.routeName),
+          onTap: () =>
+              Navigator.of(context).pushNamed(ForgetPassword.routeName),
         ),
       ],
     );
