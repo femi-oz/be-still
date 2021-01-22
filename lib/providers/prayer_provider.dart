@@ -113,7 +113,7 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future addPrayer(PrayerModel prayerData, String _userID) async {
-    return await _prayerService.addPrayer(prayerData, _userID);
+    await _prayerService.addPrayer(prayerData, _userID);
   }
 
   Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
