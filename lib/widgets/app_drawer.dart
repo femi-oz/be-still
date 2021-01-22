@@ -83,7 +83,7 @@ class CustomDrawer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'Logout',
+                            'LOGOUT',
                             style: TextStyle(
                               color: AppColors.lightBlue4,
                               fontSize: 14,
@@ -166,7 +166,7 @@ class CustomDrawer extends StatelessWidget {
                         child: Text(
                           'LOGOUT',
                           style: AppTextStyles.boldText20
-                              .copyWith(color: AppColors.bottomNavIconColor),
+                              .copyWith(color: AppColors.topNavTextColor),
                         ),
                         onTap: () {
                           // _authProvider.signOut();
@@ -178,7 +178,7 @@ class CustomDrawer extends StatelessWidget {
                       InkWell(
                         child: Icon(
                           Icons.close,
-                          color: AppColors.bottomNavIconColor,
+                          color: AppColors.topNavTextColor,
                         ),
                         onTap: () {
                           Navigator.pop(context);
@@ -205,7 +205,8 @@ class CustomDrawer extends StatelessWidget {
                                   .pushReplacementNamed(EntryScreen.routeName);
                             },
                             title: Text("MY LIST",
-                                style: AppTextStyles.drawerMenu),
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
                             onTap: () => Navigator.push(
@@ -216,18 +217,21 @@ class CustomDrawer extends StatelessWidget {
                               ),
                             ),
                             title: Text("ADD A PRAYER",
-                                style: AppTextStyles.drawerMenu),
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushReplacementNamed(PrayerMode.routeName),
-                            title:
-                                Text("PRAY", style: AppTextStyles.drawerMenu),
+                            title: Text("PRAY",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
                             onTap: _launchURL,
-                            title:
-                                Text("BIBLE", style: AppTextStyles.drawerMenu),
+                            title: Text("BIBLE",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
                             onTap: () {
@@ -235,7 +239,8 @@ class CustomDrawer extends StatelessWidget {
                                   GrowMyPrayerLifeScreen.routeName);
                             },
                             title: Text("GROW MY PRAYER LIFE",
-                                style: AppTextStyles.drawerMenu),
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
                             onTap: () {
@@ -243,7 +248,8 @@ class CustomDrawer extends StatelessWidget {
                                   SettingsScreen.routeName);
                             },
                             title: Text("SETTINGS",
-                                style: AppTextStyles.drawerMenu),
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
                         ],
                       ),

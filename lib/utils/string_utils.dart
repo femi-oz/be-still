@@ -7,7 +7,8 @@ class StringUtils {
   }
 
   static const String errorOccured = 'An error occured.';
-  static const String reloginErrorOccured = 'An error occured. lease re-login';
+  static const String reloginErrorOccured =
+      'An error occured. Please login again';
   static String getBackgroundImage([bool isDarkMode]) {
     String retVal;
     switch (Settings.isDarkMode) {
@@ -25,11 +26,12 @@ class StringUtils {
     return retVal;
   }
 
-  static String logo = 'assets/images/logo.png';
+  static String logo = 'assets/images/logo1.png';
   static String splashLogo = 'assets/images/splash_icon.png';
   static String backText = "Go Back";
   static String copyRight1 = "©2020 All Rights Reserved";
-  static String copyRight2 = "BeStill is a ministry of Second Baptist Church Houston, TX";
+  static String copyRight2 =
+      "BeStill is a ministry of Second Baptist Church Houston, TX";
 }
 
 extension StringExtension on String {

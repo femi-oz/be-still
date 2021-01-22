@@ -90,6 +90,8 @@ class AppColors {
       getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
   static Color get bottomNavIconColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF009FD0);
+  static Color get topNavTextColor =>
+      getColor(darkMode, light: 0xFF003B87, dark: 0xFF009FD0);
   static Color get drawerTopColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF0D1319);
   static Color get prayerTextColor =>
@@ -104,6 +106,8 @@ class AppColors {
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF021D3C);
   static Color get groupActionBgColor =>
       getColor(darkMode, light: 0xFF009FD0, dark: 0xFF012B4D);
+  static Color get drawerMenuColor =>
+      getColor(darkMode, light: 0xFF009FD0, dark: 0xFF718B92);
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),
@@ -313,7 +317,6 @@ class AppTextStyles {
     letterSpacing: 1,
   );
   static const TextStyle drawerMenu = const TextStyle(
-    color: AppColors.drawerGrey,
     fontSize: 15,
     fontWeight: FontWeight.bold,
     letterSpacing: 1,
