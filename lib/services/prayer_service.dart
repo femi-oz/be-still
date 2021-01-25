@@ -443,7 +443,7 @@ class PrayerService {
   ) async {
     try {
       _prayerCollectionReference.doc(prayerID).update(
-        {'IsArchived': true},
+        {'IsArchived': true, 'Status': Status.inactive},
       );
     } catch (e) {
       throw HttpException(e.message);

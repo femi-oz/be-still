@@ -118,6 +118,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           setState(
                             () async {
                               isSnoozed = !isSnoozed;
+                              status = Status.inactive;
                               await Provider.of<PrayerProvider>(context,
                                       listen: false)
                                   .filterPrayers(
@@ -163,6 +164,8 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           setState(
                             () async {
                               isArchived = !isArchived;
+                              // print(isArchived);
+
                               await Provider.of<PrayerProvider>(context,
                                       listen: false)
                                   .filterPrayers(

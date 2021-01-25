@@ -108,6 +108,10 @@ class AppColors {
       getColor(darkMode, light: 0xFF009FD0, dark: 0xFF012B4D);
   static Color get drawerMenuColor =>
       getColor(darkMode, light: 0xFF009FD0, dark: 0xFF718B92);
+  static Color get addPrayerBg =>
+      getColor(darkMode, light: 0xFF0D1319, dark: 0xFF0D1319);
+  static Color get saveBtnBorder =>
+      getColor(darkMode, light: 0xFF004E75, dark: 0xFF004E75);
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),

@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../entry_screen.dart';
+
 class CreateAccountScreen extends StatefulWidget {
   static const routeName = '/create-account';
 
@@ -89,8 +91,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context)
-          .pushReplacementNamed(CreateAccountSuccess.routeName);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
