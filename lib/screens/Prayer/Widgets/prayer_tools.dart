@@ -70,8 +70,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                         onTap: () {
                           setState(
                             () async {
-                              status = status == Status.active ? Status.inactive : Status.active;
-                              await Provider.of<PrayerProvider>(context, listen: false).filterPrayers(
+                              status = status == Status.active
+                                  ? Status.inactive
+                                  : Status.active;
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
                                 isAnswered: isAnswered,
                                 isArchived: isArchived,
                                 isSnoozed: isSnoozed,
@@ -84,9 +88,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
-                          margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: filterOptions.status == Status.active ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                            color: filterOptions.status == Status.active
+                                ? AppColors.activeButton.withOpacity(0.2)
+                                : Colors.transparent,
                             border: Border.all(
                               color: AppColors.lightBlue6,
                               width: 1,
@@ -111,7 +118,10 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           setState(
                             () async {
                               isSnoozed = !isSnoozed;
-                              await Provider.of<PrayerProvider>(context, listen: false).filterPrayers(
+                              status = Status.inactive;
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
                                 isAnswered: isAnswered,
                                 isArchived: isArchived,
                                 isSnoozed: isSnoozed,
@@ -124,9 +134,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
-                          margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: filterOptions.isSnoozed == true ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                            color: filterOptions.isSnoozed == true
+                                ? AppColors.activeButton.withOpacity(0.2)
+                                : Colors.transparent,
                             border: Border.all(
                               color: AppColors.lightBlue6,
                               width: 1,
@@ -151,7 +164,11 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           setState(
                             () async {
                               isArchived = !isArchived;
-                              await Provider.of<PrayerProvider>(context, listen: false).filterPrayers(
+                              // print(isArchived);
+
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
                                 isAnswered: isAnswered,
                                 isArchived: isArchived,
                                 isSnoozed: isSnoozed,
@@ -164,9 +181,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
-                          margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: filterOptions.isArchived == true ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                            color: filterOptions.isArchived == true
+                                ? AppColors.activeButton.withOpacity(0.2)
+                                : Colors.transparent,
                             border: Border.all(
                               color: AppColors.lightBlue6,
                               width: 1,
@@ -191,7 +211,9 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           setState(
                             () async {
                               isAnswered = !isAnswered;
-                              await Provider.of<PrayerProvider>(context, listen: false).filterPrayers(
+                              await Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .filterPrayers(
                                 isAnswered: isAnswered,
                                 isArchived: isArchived,
                                 isSnoozed: isSnoozed,
@@ -204,9 +226,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           width: double.infinity,
-                          margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
                           decoration: BoxDecoration(
-                            color: filterOptions.isAnswered == true ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                            color: filterOptions.isAnswered == true
+                                ? AppColors.activeButton.withOpacity(0.2)
+                                : Colors.transparent,
                             border: Border.all(
                               color: AppColors.lightBlue6,
                               width: 1,
@@ -226,16 +251,20 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           ),
                         ),
                       ),
-                      Provider.of<PrayerProvider>(context).currentPrayerType == PrayerType.group
+                      Provider.of<PrayerProvider>(context).currentPrayerType ==
+                              PrayerType.group
                           ? GestureDetector(
                               onTap: () => null,
                               child: Container(
                                 height: 50,
                                 padding: EdgeInsets.symmetric(horizontal: 20),
                                 width: double.infinity,
-                                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: filterOptions.isAnswered == true ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                                  color: filterOptions.isAnswered == true
+                                      ? AppColors.activeButton.withOpacity(0.2)
+                                      : Colors.transparent,
                                   border: Border.all(
                                     color: AppColors.lightBlue6,
                                     width: 1,

@@ -100,7 +100,9 @@ class PrayerProvider with ChangeNotifier {
     }
     if (isArchived == true) {
       filteredPrayers = filteredPrayers
-          .where((CombinePrayerStream data) => data.prayer.isArchived == true)
+          .where((CombinePrayerStream data) =>
+              data.prayer.isArchived == true &&
+              data.prayer.status == Status.inactive)
           .toList();
     }
     if (isSnoozed == true) {

@@ -14,6 +14,8 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../entry_screen.dart';
+
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
@@ -76,8 +78,8 @@ class _AddPrayerState extends State<AddPrayer> {
       );
       showModalBottomSheet(
         context: context,
-        barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-        backgroundColor: AppColors.appBarBackground[1].withOpacity(0.9),
+        barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
+        backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return NameRecognitionMenuOne(
@@ -145,22 +147,20 @@ class _AddPrayerState extends State<AddPrayer> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      widget.showCancel
-                          ? InkWell(
-                              child: Text(
-                                'CANCEL',
-                                style: TextStyle(
-                                    color: AppColors.lightBlue5, fontSize: 16),
-                              ),
-                              onTap: () => Navigator.of(context).pop(),
-                            )
-                          : Container(),
                       InkWell(
-                          child: Text(
-                            'SAVE',
-                            style: TextStyle(
-                                color: AppColors.lightBlue5, fontSize: 16),
-                          ),
+                        child: Text('CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.lightBlue5)),
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EntryScreen(),
+                            )),
+                      ),
+                      InkWell(
+                          child: Text('SAVE',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.lightBlue5)),
                           onTap: () => _save()),
                     ],
                   ),

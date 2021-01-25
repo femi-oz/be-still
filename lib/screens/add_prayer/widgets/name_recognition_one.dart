@@ -134,8 +134,7 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                               start: 0.5, bottom: 0.5, top: 0.5),
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            color:
-                                AppColors.appBarBackground[1].withOpacity(0.9),
+                            color: AppColors.addPrayerBg.withOpacity(0.9),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(9),
                               topLeft: Radius.circular(9),
@@ -217,9 +216,8 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
             InkWell(
               onTap: () => showModalBottomSheet(
                 context: context,
-                barrierColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                backgroundColor: AppColors.appBarBackground[1].withOpacity(0.9),
+                barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
+                backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return NameRecognitionMenuTwo(
@@ -237,7 +235,7 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.cardBorder),
+                  border: Border.all(color: AppColors.saveBtnBorder),
                   borderRadius: BorderRadius.circular(5.0),
                 ),
                 child: Text(

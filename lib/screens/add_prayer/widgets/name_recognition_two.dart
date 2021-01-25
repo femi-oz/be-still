@@ -156,9 +156,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             color: _selectedOption == 'yes'
-                                ? AppColors.appBarBackground[1].withOpacity(0.6)
-                                : AppColors.appBarBackground[1]
-                                    .withOpacity(0.9),
+                                ? AppColors.addPrayerBg.withOpacity(0.6)
+                                : AppColors.addPrayerBg.withOpacity(0.9),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(9),
                               topLeft: Radius.circular(9),
@@ -244,8 +243,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: _selectedOption == 'no'
-                              ? AppColors.appBarBackground[1].withOpacity(0.6)
-                              : AppColors.appBarBackground[1].withOpacity(0.9),
+                              ? AppColors.addPrayerBg.withOpacity(0.6)
+                              : AppColors.addPrayerBg.withOpacity(0.9),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(9),
                             topLeft: Radius.circular(9),
@@ -291,7 +290,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.cardBorder),
+                      border: Border.all(color: AppColors.saveBtnBorder),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: Text(
