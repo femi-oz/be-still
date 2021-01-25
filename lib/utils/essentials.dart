@@ -147,6 +147,7 @@ class AppColors {
   static const Color prussianBlue = const Color(0xFF002D4B);
 
   static const Color drawerGrey = const Color(0xFF718B92);
+  static const Color splashLogo = const Color(0xFF005780);
 }
 
 class AppTextStyles {
