@@ -116,7 +116,7 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
             Container(
               padding: EdgeInsets.only(right: 20.0),
               child: Text(
-                  'Is this request for someone that is currently in the hospital? If so, would you like to share with the prayer and pastoral staff at Second Baptist Church?',
+                  'Is this request for someone that is currently in the hospital? If so, would you like to share this with the prayer and pastoral staff at Second Baptist Church?',
                   style: TextStyle(
                     color: AppColors.lightBlue3,
                     fontWeight: FontWeight.bold,
