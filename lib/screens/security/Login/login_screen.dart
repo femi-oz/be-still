@@ -42,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen>
         email: _usernameController.text,
         password: _passwordController.text,
       );
-      print(_usernameController.text + _passwordController.text);
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
@@ -50,8 +49,8 @@ class _LoginScreenState extends State<LoginScreen>
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: 'Username or Password is incorrect.', key: _scaffoldKey);
+      print(e);
+      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
