@@ -209,6 +209,9 @@ class SettingsService {
 
   Stream<SharingSettingsModel> getSharingSettings(String userId) {
     try {
+      print('----------------');
+      print(userId);
+      print('----------------');
       return _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()

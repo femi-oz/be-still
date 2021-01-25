@@ -297,6 +297,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 //     ],
                 //   ),
                 // ),
+                SizedBox(height: 40),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -309,19 +310,20 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      CustomButtonGroup(
-                        onSelected: () => null,
-                        title: 'DELETE ACCOUNT & ALL DATA',
-                        color: AppColors.red,
-                      ),
-                    ],
-                  ),
-                ),
+                SizedBox(height: 40),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //       vertical: 40.0, horizontal: 20.0),
+                //   child: Row(
+                //     children: [
+                //       CustomButtonGroup(
+                //         onSelected: () => null,
+                //         title: 'DELETE ACCOUNT & ALL DATA',
+                //         color: AppColors.red,
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ],

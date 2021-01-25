@@ -9,7 +9,6 @@ class AuthenticationService {
   Future signIn({
     String email,
     String password,
-    bool rememberMe,
   }) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(

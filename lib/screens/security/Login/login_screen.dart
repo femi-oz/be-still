@@ -32,6 +32,12 @@ class _LoginScreenState extends State<LoginScreen>
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  @override
+  void initState() {
+    _usernameController.text = Settings.lastUser;
+    super.initState();
+  }
+
   void _login() async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
@@ -45,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen>
       await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      Settings.lastUser = Settings.rememberMe ? _usernameController.text : '';
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
@@ -89,9 +96,9 @@ class _LoginScreenState extends State<LoginScreen>
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-                        SizedBox(height: 260),
+                        SizedBox(height: 220),
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.6,
+                          height: MediaQuery.of(context).size.height * 0.7,
                           // padding: EdgeInsets.symmetric(
                           //     vertical: 15.0, horizontal: 24.0),
                           padding: EdgeInsets.only(

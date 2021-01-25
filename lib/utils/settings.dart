@@ -9,6 +9,7 @@ class Settings {
 
   static const String THEME_MODE_KEY = 'theme_mode';
   static const String REMEMBER_ME_KEY = 'remember_me';
+  static const String LAST_USER = 'last_user';
 
   static set themeMode(String mode) =>
       sharedPrefs.setString(THEME_MODE_KEY, mode);
@@ -32,4 +33,9 @@ class Settings {
       sharedPrefs.setBool(REMEMBER_ME_KEY, value);
 
   static bool get rememberMe => sharedPrefs.getBool(REMEMBER_ME_KEY) ?? false;
+
+  static set lastUser(String username) =>
+      sharedPrefs.setString(LAST_USER, username);
+
+  static String get lastUser => sharedPrefs.getString(LAST_USER) ?? '';
 }

@@ -1,9 +1,7 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
   SettingsAppBar({Key key})
@@ -24,11 +22,9 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text('SETTINGS',
-          style: TextStyle(
-            color: Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2,
-            fontSize: 28,
-            fontWeight: FontWeight.w500,
-          )),
+          style: AppTextStyles.boldText28.copyWith(
+              color:
+                  Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2)),
       centerTitle: true,
       leading:
           // TODO

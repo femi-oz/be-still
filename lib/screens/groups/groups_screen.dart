@@ -6,6 +6,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/find_a_group.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
@@ -61,104 +62,120 @@ class _GroupScreenState extends State<GroupScreen> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    return (Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EntryScreen(screenNumber: 0),
+            ))) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _themeProvider = Provider.of<ThemeProvider>(context);
     final data = Provider.of<GroupProvider>(context).userGroups;
-    return Container(
-      // padding: EdgeInsets.only(left: 40),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: AppColors.backgroundColor,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Container(
+        // padding: EdgeInsets.only(left: 40),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+          image: DecorationImage(
+            image:
+                AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
+            alignment: Alignment.bottomCenter,
+          ),
         ),
-        image: DecorationImage(
-          image:
-              AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
-          alignment: Alignment.bottomCenter,
-        ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 20),
-            Container(
-              padding: EdgeInsets.only(left: 50),
-              child: LongButton(
-                onPress: () => Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (context) => new FindAGroup(),
-                  ),
-                ),
-                text: 'FIND A GROUP',
-                backgroundColor: AppColors.groupActionBgColor.withOpacity(0.9),
-                textColor: AppColors.addprayerTextColor,
-                hasIcon: false,
-              ),
-            ),
-            SizedBox(height: 5),
-            Container(
-              padding: EdgeInsets.only(left: 50),
-              child: LongButton(
-                onPress: () => Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (context) => CreateGroupScreen(),
-                  ),
-                ),
-                text: 'CREATE A GROUP',
-                backgroundColor: AppColors.groupActionBgColor.withOpacity(0.9),
-                textColor: AppColors.addprayerTextColor,
-                hasIcon: false,
-              ),
-            ),
-            SizedBox(height: 30),
-            data.length == 0
-                ? Container(
-                    padding: EdgeInsets.only(right: 20, left: 20),
-                    child: Text(
-                      'You are currently not in any groups',
-                      style: AppTextStyles.demiboldText34,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : Container(
-                    child: Column(
-                      children: <Widget>[
-                        ...data
-                            .map(
-                              (e) => Column(
-                                children: [
-                                  LongButton(
-                                    onPress: () {
-                                      _getPrayers(e);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => GroupPrayers(),
-                                        ),
-                                      );
-                                    },
-                                    text: e.group.name.toUpperCase(),
-                                    backgroundColor: AppColors.groupCardBgColor,
-                                    textColor: AppColors.lightBlue3,
-                                    hasIcon: false,
-                                    hasMore: true,
-                                    onPressMore: () => _onPressMore(
-                                        e.group.id, _themeProvider, e),
-                                  ),
-                                  SizedBox(height: 10),
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 20),
+              Container(
+                padding: EdgeInsets.only(left: 50),
+                child: LongButton(
+                  onPress: () => Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) => new FindAGroup(),
                     ),
                   ),
-            SizedBox(height: 80),
-          ],
+                  text: 'FIND A GROUP',
+                  backgroundColor:
+                      AppColors.groupActionBgColor.withOpacity(0.9),
+                  textColor: AppColors.addprayerTextColor,
+                  hasIcon: false,
+                ),
+              ),
+              SizedBox(height: 5),
+              Container(
+                padding: EdgeInsets.only(left: 50),
+                child: LongButton(
+                  onPress: () => Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) => CreateGroupScreen(),
+                    ),
+                  ),
+                  text: 'CREATE A GROUP',
+                  backgroundColor:
+                      AppColors.groupActionBgColor.withOpacity(0.9),
+                  textColor: AppColors.addprayerTextColor,
+                  hasIcon: false,
+                ),
+              ),
+              SizedBox(height: 30),
+              data.length == 0
+                  ? Container(
+                      padding: EdgeInsets.only(right: 20, left: 20),
+                      child: Text(
+                        'You are currently not in any groups',
+                        style: AppTextStyles.demiboldText34,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : Container(
+                      child: Column(
+                        children: <Widget>[
+                          ...data
+                              .map(
+                                (e) => Column(
+                                  children: [
+                                    LongButton(
+                                      onPress: () {
+                                        _getPrayers(e);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                GroupPrayers(),
+                                          ),
+                                        );
+                                      },
+                                      text: e.group.name.toUpperCase(),
+                                      backgroundColor:
+                                          AppColors.groupCardBgColor,
+                                      textColor: AppColors.lightBlue3,
+                                      hasIcon: false,
+                                      hasMore: true,
+                                      onPressMore: () => _onPressMore(
+                                          e.group.id, _themeProvider, e),
+                                    ),
+                                    SizedBox(height: 10),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ],
+                      ),
+                    ),
+              SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
     );

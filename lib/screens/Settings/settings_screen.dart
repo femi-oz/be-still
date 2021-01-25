@@ -4,6 +4,7 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -99,82 +100,93 @@ class SettingsTabState extends State<SettingsTab>
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    return (Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EntryScreen(screenNumber: 0),
+            ))) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final _settingsProvider = Provider.of<SettingsProvider>(context);
-    return DefaultTabController(
-      length: 7,
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.dropShadow,
-                  offset: Offset(0.0, 0.5),
-                  blurRadius: 5.0,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: DefaultTabController(
+        length: 7,
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.dropShadow,
+                    offset: Offset(0.0, 0.5),
+                    blurRadius: 5.0,
+                  ),
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: AppColors.prayerMenu,
                 ),
-              ],
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: AppColors.prayerMenu,
+              ),
+              height: 50.0,
+              child: new TabBar(
+                indicatorColor: Colors.transparent,
+                unselectedLabelColor: AppColors.inactvePrayerMenu,
+                labelColor: AppColors.lightBlue4,
+                labelStyle: AppTextStyles.boldText20,
+                isScrollable: true,
+                tabs: [
+                  Tab(
+                    text: "General",
+                  ),
+                  Tab(
+                    text: "My List",
+                  ),
+                  Tab(
+                    text: "Prayer Time",
+                  ),
+                  Tab(
+                    text: "Notifications",
+                  ),
+                  Tab(
+                    text: "Alexa",
+                  ),
+                  Tab(
+                    text: "Sharing",
+                  ),
+                  Tab(
+                    text: "Groups",
+                  ),
+                ],
               ),
             ),
-            height: 50.0,
-            child: new TabBar(
-              indicatorColor: Colors.transparent,
-              unselectedLabelColor: AppColors.inactvePrayerMenu,
-              labelColor: AppColors.lightBlue4,
-              labelStyle: AppTextStyles.boldText20,
-              isScrollable: true,
-              tabs: [
-                Tab(
-                  text: "General",
-                ),
-                Tab(
-                  text: "My List",
-                ),
-                Tab(
-                  text: "Prayer Time",
-                ),
-                Tab(
-                  text: "Notifications",
-                ),
-                Tab(
-                  text: "Alexa",
-                ),
-                Tab(
-                  text: "Sharing",
-                ),
-                Tab(
-                  text: "Groups",
-                ),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+            ),
+            child: TabBarView(
+              children: [
+                GeneralSettings(_settingsProvider.settings),
+                MyListSettings(_settingsProvider.settings),
+                PrayerTimeSettings(_settingsProvider.prayerSetttings,
+                    _settingsProvider.settings),
+                NotificationsSettings(_settingsProvider.settings),
+                AlexaSettings(_settingsProvider.settings),
+                SharingSettings(_settingsProvider.sharingSetttings),
+                GroupsSettings(),
               ],
             ),
-          ),
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
-            ),
-          ),
-          child: TabBarView(
-            children: [
-              GeneralSettings(_settingsProvider.settings),
-              MyListSettings(_settingsProvider.settings),
-              PrayerTimeSettings(_settingsProvider.prayerSetttings,
-                  _settingsProvider.settings),
-              NotificationsSettings(_settingsProvider.settings),
-              AlexaSettings(_settingsProvider.settings),
-              SharingSettings(_settingsProvider.sharingSetttings),
-              GroupsSettings(),
-            ],
           ),
         ),
       ),
