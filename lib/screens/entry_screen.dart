@@ -31,9 +31,11 @@ class _EntryScreenState extends State<EntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: CustomAppBar(
-        formKey: _formKey,
-      ),
+      appBar: _currentIndex == 2
+          ? null
+          : CustomAppBar(
+              formKey: _formKey,
+            ),
       body: IndexedStack(
         index: _currentIndex,
         children: [
