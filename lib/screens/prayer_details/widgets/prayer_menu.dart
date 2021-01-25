@@ -103,6 +103,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

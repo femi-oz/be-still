@@ -83,6 +83,7 @@ class PrayerProvider with ChangeNotifier {
     bool isArchived,
     bool isAnswered,
   }) async {
+    print(isAnswered);
     _filterOptions = FilterType(
       isAnswered: isAnswered,
       isArchived: isArchived,
