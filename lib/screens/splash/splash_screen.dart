@@ -176,7 +176,7 @@ class _SplashScreenState extends State<SplashScreen>
                         Icon(
                           AppIcons.second_logo,
                           size: 16,
-                          color: AppColors.lightBlue3,
+                          color: AppColors.splashLogo,
                         ),
                         SizedBox(width: 10.0),
                         Text(
