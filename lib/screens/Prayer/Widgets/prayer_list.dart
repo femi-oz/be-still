@@ -23,6 +23,7 @@ class PrayerList extends StatefulWidget {
 
 class _PrayerListState extends State<PrayerList> {
   void _getPrayers() async {
+    await BeStilDialog.showLoading(context, '');
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -36,6 +37,9 @@ class _PrayerListState extends State<PrayerList> {
           .setHiddenPrayers(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        BeStilDialog.hideLoading(context);
+      });
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -48,13 +52,13 @@ class _PrayerListState extends State<PrayerList> {
   BuildContext selectedContext;
 
   @override
-  void didChangeDependencies() async {
+  void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle('MY LIST');
+        _getPrayers();
       });
-      _getPrayers();
       _isInit = false;
     }
     super.didChangeDependencies();

@@ -4,7 +4,6 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
@@ -28,6 +27,7 @@ class GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<GroupScreen> {
   void _getPrayers(CombineGroupUserStream data) async {
+    await BeStilDialog.showLoading(context, '');
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -43,6 +43,14 @@ class _GroupScreenState extends State<GroupScreen> {
         _user?.id,
         data.group.id,
         data.groupUsers.firstWhere((e) => e.userId == _user.id).isAdmin,
+      );
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GroupPrayers(),
+        ),
       );
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
@@ -162,7 +170,8 @@ class _GroupScreenState extends State<GroupScreen> {
                                 (e) => Column(
                                   children: [
                                     LongButton(
-                                      onPress: () async {
+                                      onPress: () {
+                                        _getPrayers(e);
                                         WidgetsBinding.instance
                                             .addPostFrameCallback((_) async {
                                           await Provider.of<MiscProvider>(
@@ -172,14 +181,6 @@ class _GroupScreenState extends State<GroupScreen> {
                                                   '${e.group.name} List'
                                                       .toUpperCase());
                                         });
-                                        _getPrayers(e);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                GroupPrayers(),
-                                          ),
-                                        );
                                       },
                                       text: e.group.name.toUpperCase(),
                                       backgroundColor:

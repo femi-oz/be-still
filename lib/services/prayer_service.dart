@@ -31,7 +31,7 @@ class PrayerService {
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
     try {
       _combineStream = _userPrayerCollectionReference
-          .orderBy('CreatedOn', descending: true)
+          // .orderBy('CreatedOn', descending: true)
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((convert) {
@@ -276,7 +276,7 @@ class PrayerService {
     print(groupId);
     try {
       _combineGroupStream = _groupPrayerCollectionReference
-          .orderBy('CreatedOn', descending: true)
+          // .orderBy('CreatedOn', descending: true)
           .where('GroupId', isEqualTo: groupId)
           .snapshots()
           .map((convert) {
