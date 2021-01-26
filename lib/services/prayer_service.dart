@@ -32,6 +32,7 @@ class PrayerService {
     try {
       _combineStream = _userPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
+          .orderBy('CreatedOn', descending: true)
           .snapshots()
           .map((convert) {
         return convert.docs.map((f) {
@@ -276,6 +277,7 @@ class PrayerService {
     try {
       _combineGroupStream = _groupPrayerCollectionReference
           .where('GroupId', isEqualTo: groupId)
+          .orderBy('CreatedOn', descending: true)
           .snapshots()
           .map((convert) {
         return convert.docs.map((f) {
