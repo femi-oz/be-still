@@ -1,6 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/groups/widgets/group_quick_access.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -83,6 +84,22 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                           builder: (context) =>
                                               new PrayerDetails(),
                                         ),
+                                      );
+                                    },
+                                    onLongPressEnd:
+                                        (LongPressEndDetails details) {
+                                      var y = details.globalPosition.dy;
+                                      showModalBottomSheet(
+                                        context: context,
+                                        barrierColor: AppColors.addPrayerBg
+                                            .withOpacity(0.5),
+                                        backgroundColor: AppColors.addPrayerBg
+                                            .withOpacity(0.9),
+                                        isScrollControlled: true,
+                                        builder: (BuildContext context) {
+                                          return GroupPrayerQuickAccess(
+                                              y: y, prayer: e.prayer);
+                                        },
                                       );
                                     },
                                     child: PrayerCard(prayer: e.prayer)))

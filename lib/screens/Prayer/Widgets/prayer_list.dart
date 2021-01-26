@@ -6,6 +6,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -111,6 +112,21 @@ class _PrayerListState extends State<PrayerList> {
                                   //     builder: (context) => new PrayerDetails(),
                                   //   ),
                                   // );
+                                },
+                                onLongPressEnd: (LongPressEndDetails details) {
+                                  var y = details.globalPosition.dy;
+                                  showModalBottomSheet(
+                                    context: context,
+                                    barrierColor:
+                                        AppColors.addPrayerBg.withOpacity(0.5),
+                                    backgroundColor:
+                                        AppColors.addPrayerBg.withOpacity(0.9),
+                                    isScrollControlled: true,
+                                    builder: (BuildContext context) {
+                                      return PrayerQuickAccess(
+                                          y: y, prayer: e.prayer);
+                                    },
+                                  );
                                 },
                                 child: PrayerCard(prayer: e.prayer)))
                             .toList(),
