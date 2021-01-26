@@ -10,6 +10,8 @@ import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/app_bar.dart';
+import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -57,6 +59,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

@@ -14,7 +14,6 @@ class UpdateView extends StatelessWidget {
   @override
   UpdateView();
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final prayer = Provider.of<PrayerProvider>(context).currentPrayer;
     final prayerUpdates = Provider.of<PrayerProvider>(context).prayerUpdates;
     return Container(
@@ -158,20 +157,19 @@ class UpdateView extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Container(
-                      constraints: BoxConstraints(
-                        minHeight: 200,
-                      ),
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-                        child: Center(
-                          child: Text(
-                            prayer.description,
-                            style: AppTextStyles.regularText22.copyWith(
-                              color: AppColors.lightBlue4,
+                        child: Row(
+                          children: [
+                            Text(
+                              prayer.description,
+                              style: AppTextStyles.regularText18b.copyWith(
+                                color: AppColors.prayerTextColor,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
+                          ],
                         ),
                       ),
                     ),
