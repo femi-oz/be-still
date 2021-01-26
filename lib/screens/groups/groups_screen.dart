@@ -36,6 +36,8 @@ class _GroupScreenState extends State<GroupScreen> {
           .setUserGroups(_user.id);
       await Provider.of<GroupProvider>(context, listen: false)
           .setAllGroups(_user.id);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setCurrentGroup(data);
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .setHiddenPrayers(_user.id);

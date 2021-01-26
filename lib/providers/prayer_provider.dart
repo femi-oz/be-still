@@ -34,6 +34,8 @@ class PrayerProvider with ChangeNotifier {
       (data) {
         _prayers = data.where((p) => p.prayer.status == Status.active).toList();
         _filteredPrayers = _prayers;
+        _filteredPrayers
+            .sort((a, b) => b.prayer.createdOn.compareTo(a.prayer.createdOn));
         _filterOptions = FilterType(
           isAnswered: false,
           isArchived: false,
@@ -56,7 +58,8 @@ class PrayerProvider with ChangeNotifier {
         _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
       }
       _filteredPrayers = _prayers;
-
+      _filteredPrayers
+          .sort((a, b) => b.prayer.createdOn.compareTo(a.prayer.createdOn));
       _filterOptions = FilterType(
         isAnswered: false,
         isArchived: false,
