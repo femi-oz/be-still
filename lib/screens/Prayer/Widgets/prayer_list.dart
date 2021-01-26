@@ -37,7 +37,7 @@ class _PrayerListState extends State<PrayerList> {
           .setHiddenPrayers(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
-      Future.delayed(const Duration(milliseconds: 2000), () {
+      Future.delayed(const Duration(milliseconds: 1000), () {
         BeStilDialog.hideLoading(context);
       });
     } on HttpException catch (e) {
@@ -50,7 +50,6 @@ class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
 
   BuildContext selectedContext;
-
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -66,7 +65,7 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<PrayerProvider>(context).filteredPrayers;
+    var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return Container(
@@ -86,7 +85,7 @@ class _PrayerListState extends State<PrayerList> {
         child: Column(
           children: <Widget>[
             SizedBox(height: 20),
-            data.length == 0
+            prayers.length == 0
                 ? Container(
                     padding: EdgeInsets.only(
                         left: 60, right: 100, top: 60, bottom: 60),
@@ -101,7 +100,7 @@ class _PrayerListState extends State<PrayerList> {
                 : Container(
                     child: Column(
                       children: <Widget>[
-                        ...data
+                        ...prayers
                             .map((e) => GestureDetector(
                                 onTap: () async {
                                   await Provider.of<PrayerProvider>(context,
