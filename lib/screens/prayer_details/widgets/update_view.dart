@@ -92,12 +92,14 @@ class UpdateView extends StatelessWidget {
                               vertical: 8.0, horizontal: 20),
                           child: Row(
                             children: [
-                              Text(
-                                u.description,
-                                style: AppTextStyles.regularText18b.copyWith(
-                                  color: AppColors.prayerTextColor,
+                              Flexible(
+                                child: Text(
+                                  u.description,
+                                  style: AppTextStyles.regularText18b.copyWith(
+                                    color: AppColors.prayerTextColor,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
                               ),
                             ],
                           ),
@@ -162,12 +164,14 @@ class UpdateView extends StatelessWidget {
                             EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                         child: Row(
                           children: [
-                            Text(
-                              prayer.description,
-                              style: AppTextStyles.regularText18b.copyWith(
-                                color: AppColors.prayerTextColor,
+                            Flexible(
+                              child: Text(
+                                prayer.description,
+                                style: AppTextStyles.regularText18b.copyWith(
+                                  color: AppColors.prayerTextColor,
+                                ),
+                                textAlign: TextAlign.left,
                               ),
-                              textAlign: TextAlign.left,
                             ),
                           ],
                         ),

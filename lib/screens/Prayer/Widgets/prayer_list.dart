@@ -50,8 +50,10 @@ class _PrayerListState extends State<PrayerList> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setPageTitle('MY LIST');
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('MY LIST');
+      });
       _getPrayers();
       _isInit = false;
     }

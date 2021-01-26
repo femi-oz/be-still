@@ -77,8 +77,10 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setPageTitle('MY GROUPS');
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('MY GROUPS');
+      });
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -161,10 +163,15 @@ class _GroupScreenState extends State<GroupScreen> {
                                   children: [
                                     LongButton(
                                       onPress: () async {
-                                        await Provider.of<MiscProvider>(context,
-                                                listen: false)
-                                            .setPageTitle('${e.group.name} List'
-                                                .toUpperCase());
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) async {
+                                          await Provider.of<MiscProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .setPageTitle(
+                                                  '${e.group.name} List'
+                                                      .toUpperCase());
+                                        });
                                         _getPrayers(e);
                                         Navigator.push(
                                           context,
