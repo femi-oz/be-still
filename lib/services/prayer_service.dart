@@ -305,21 +305,12 @@ class PrayerService {
     final groupPrayerId = Uuid().v1();
     try {
       var batch = FirebaseFirestore.instance.batch();
-      // return FirebaseFirestore.instance.runTransaction(
-      //   (transaction) async {
       // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
       //store group prayer
       batch.set(_groupPrayerCollectionReference.doc(groupPrayerId),
           populateGroupPrayer(prayerData, _prayerID).toJson());
-      //   },
-      // ).then((val) {
-      //   Provider.of<NotificationProvider>(context, listen: false)
-      //       .newPrayerGroupNotification(_prayerID, prayerData.groupId);
-      // }).catchError((e) {
-      //   throw HttpException(e.message);
-      // });
       await batch.commit();
     } catch (e) {
       throw HttpException(e.message);
