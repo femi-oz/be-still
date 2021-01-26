@@ -1,7 +1,5 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LongButton extends StatelessWidget {
   final String text;
@@ -25,7 +23,6 @@ class LongButton extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return InkWell(
       onTap: () => onPress(),
       child: Container(
@@ -40,7 +37,7 @@ class LongButton extends StatelessWidget {
         ),
         child: Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.065,
+          // height: MediaQuery.of(context).size.height * 0.065,
           margin: EdgeInsetsDirectional.only(start: 0.5, bottom: 0.5, top: 0.5),
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
