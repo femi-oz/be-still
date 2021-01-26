@@ -2,7 +2,9 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
@@ -69,6 +71,17 @@ class _GroupScreenState extends State<GroupScreen> {
               builder: (context) => EntryScreen(screenNumber: 0),
             ))) ??
         false;
+  }
+
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() async {
+    if (_isInit) {
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setPageTitle('MY GROUPS');
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -147,7 +160,11 @@ class _GroupScreenState extends State<GroupScreen> {
                                 (e) => Column(
                                   children: [
                                     LongButton(
-                                      onPress: () {
+                                      onPress: () async {
+                                        await Provider.of<MiscProvider>(context,
+                                                listen: false)
+                                            .setPageTitle('${e.group.name} List'
+                                                .toUpperCase());
                                         _getPrayers(e);
                                         Navigator.push(
                                           context,
