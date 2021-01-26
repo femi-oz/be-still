@@ -25,7 +25,7 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
-      "program": "lib/main_test.dart",
+      "program": "lib/main_staging.dart",
       "args": ["--flavor", "staging"]
     },
     {
