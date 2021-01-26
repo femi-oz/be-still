@@ -139,6 +139,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       ),
                     )
                   : Container(
+                      padding: EdgeInsets.only(left: 50),
                       child: Column(
                         children: <Widget>[
                           ...data

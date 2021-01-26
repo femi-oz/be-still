@@ -39,32 +39,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
         .setCurrentGroup(groupData);
     await Provider.of<PrayerProvider>(context, listen: false)
         .setCurrentPrayerType(activeList);
-    _setPrayers(groupData, activeList);
-  }
-
-  void _setPrayers(
-      CombineGroupUserStream groupData, PrayerType activeList) async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    var isGroupAdmin;
-    if (groupData != null) {
-      isGroupAdmin = groupData.groupUsers
-          .firstWhere((user) => user.userId == _user.id, orElse: () => null)
-          ?.isAdmin;
-    }
-    // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-    //   _user.id,
-    //   activeList,
-    //   activeList == PrayerType.group ? groupData.group?.id : '0',
-    //   isGroupAdmin,
-    // );
   }
 
   @override
   Widget build(BuildContext context) {
     final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     openFilter() {
       showModalBottomSheet(
         context: context,

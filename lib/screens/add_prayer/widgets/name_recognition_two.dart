@@ -6,6 +6,8 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/groups/groups_screen.dart';
+import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -70,6 +72,11 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
         if (widget.isGroup) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .addGroupPrayer(context, widget.prayer);
+          await Future.delayed(Duration(milliseconds: 300));
+          BeStilDialog.hideLoading(context);
+
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => GroupPrayers()));
         } else {
           if (widget.selectedGroups.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
@@ -79,13 +86,12 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayer(widget.prayer, _user.id);
           }
+          await Future.delayed(Duration(milliseconds: 300));
+          BeStilDialog.hideLoading(context);
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => EntryScreen()));
         }
       }
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pushReplacementNamed(PrayerScreen.routeName);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => EntryScreen()));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

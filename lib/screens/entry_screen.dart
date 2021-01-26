@@ -36,13 +36,9 @@ class _EntryScreenState extends State<EntryScreen> {
           : CustomAppBar(
               formKey: _formKey,
             ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          for (final tabItem in TabNavigationItem.items)
-            Container(height: double.infinity, child: tabItem.page),
-        ],
-      ),
+      body: Container(
+          height: double.infinity,
+          child: TabNavigationItem.items[_currentIndex].page),
       bottomNavigationBar: _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );
