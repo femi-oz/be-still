@@ -159,15 +159,14 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Text('CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.lightBlue5)),
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EntryScreen(),
-                              )),
-                        ),
+                            child: Text('CANCEL',
+                                style: AppTextStyles.boldText18
+                                    .copyWith(color: AppColors.lightBlue5)),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        EntryScreen(screenNumber: 0)))),
                         InkWell(
                             child: Text('SAVE',
                                 style: AppTextStyles.boldText18
