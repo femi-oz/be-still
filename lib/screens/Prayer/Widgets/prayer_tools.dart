@@ -2,6 +2,7 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -164,8 +165,6 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                           setState(
                             () async {
                               isArchived = !isArchived;
-                              // print(isArchived);
-
                               await Provider.of<PrayerProvider>(context,
                                       listen: false)
                                   .filterPrayers(
