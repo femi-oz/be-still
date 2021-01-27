@@ -50,7 +50,7 @@ class UpdateView extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(prayer.createdOn),
+                                      .format(u.modifiedOn),
                                   style: AppTextStyles.regularText14.copyWith(
                                     color: AppColors.lightBlue4,
                                   ),
@@ -127,7 +127,7 @@ class UpdateView extends StatelessWidget {
                               ),
                               Text(
                                 DateFormat(' MM.dd.yyyy')
-                                    .format(prayer.createdOn),
+                                    .format(prayer.modifiedOn),
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.lightBlue4,
                                 ),

@@ -22,7 +22,7 @@ class GroupPrayers extends StatefulWidget {
 
 class _GroupPrayersState extends State<GroupPrayers> {
   Future<bool> _onWillPop() async {
-    return (Navigator.push(
+    return (Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => EntryScreen(screenNumber: 1),

@@ -68,95 +68,99 @@ class _PrayerListState extends State<PrayerList> {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
-    return Container(
-      padding: EdgeInsets.only(left: 20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: AppColors.backgroundColor,
+    return WillPopScope(
+      onWillPop: () => null,
+      child: Container(
+        padding: EdgeInsets.only(left: 20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+          image: DecorationImage(
+            image: AssetImage(StringUtils.getBackgroundImage(true)),
+            alignment: Alignment.bottomCenter,
+          ),
         ),
-        image: DecorationImage(
-          image: AssetImage(StringUtils.getBackgroundImage(true)),
-          alignment: Alignment.bottomCenter,
-        ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 20),
-            prayers.length == 0
-                ? Container(
-                    padding: EdgeInsets.only(
-                        left: 60, right: 100, top: 60, bottom: 60),
-                    child: Opacity(
-                      opacity: 0.3,
-                      child: Text(
-                        'No Prayers in My List',
-                        style: AppTextStyles.demiboldText34,
-                        textAlign: TextAlign.center,
-                      ),
-                    ))
-                : Container(
-                    child: Column(
-                      children: <Widget>[
-                        ...prayers
-                            .map((e) => GestureDetector(
-                                onTap: () async {
-                                  await Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .setPrayer(e.prayer.id);
-                                  await Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .setPrayerUpdates(e.prayer.id);
-                                  Navigator.of(context)
-                                      .pushNamed(PrayerDetails.routeName);
-                                  // Navigator.push(
-                                  //   context,
-                                  //   new MaterialPageRoute(
-                                  //     builder: (context) => new PrayerDetails(),
-                                  //   ),
-                                  // );
-                                },
-                                onLongPressEnd: (LongPressEndDetails details) {
-                                  var y = details.globalPosition.dy;
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor:
-                                        AppColors.addPrayerBg.withOpacity(0.5),
-                                    backgroundColor:
-                                        AppColors.addPrayerBg.withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return PrayerQuickAccess(
-                                          y: y, prayer: e.prayer);
-                                    },
-                                  );
-                                },
-                                child: PrayerCard(prayer: e.prayer)))
-                            .toList(),
-                      ],
-                    ),
-                  ),
-            SizedBox(height: 5),
-            currentPrayerType == PrayerType.archived ||
-                    currentPrayerType == PrayerType.answered
-                ? Container()
-                : LongButton(
-                    onPress: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EntryScreen(screenNumber: 2),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 20),
+              prayers.length == 0
+                  ? Container(
+                      padding: EdgeInsets.only(
+                          left: 60, right: 100, top: 60, bottom: 60),
+                      child: Opacity(
+                        opacity: 0.3,
+                        child: Text(
+                          'No Prayers in My List',
+                          style: AppTextStyles.demiboldText34,
+                          textAlign: TextAlign.center,
+                        ),
+                      ))
+                  : Container(
+                      child: Column(
+                        children: <Widget>[
+                          ...prayers
+                              .map((e) => GestureDetector(
+                                  onTap: () async {
+                                    await Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .setPrayer(e.prayer.id);
+                                    await Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .setPrayerUpdates(e.prayer.id);
+                                    Navigator.of(context)
+                                        .pushNamed(PrayerDetails.routeName);
+                                    // Navigator.push(
+                                    //   context,
+                                    //   new MaterialPageRoute(
+                                    //     builder: (context) => new PrayerDetails(),
+                                    //   ),
+                                    // );
+                                  },
+                                  onLongPressEnd:
+                                      (LongPressEndDetails details) {
+                                    var y = details.globalPosition.dy;
+                                    showModalBottomSheet(
+                                      context: context,
+                                      barrierColor: AppColors.addPrayerBg
+                                          .withOpacity(0.5),
+                                      backgroundColor: AppColors.addPrayerBg
+                                          .withOpacity(0.9),
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return PrayerQuickAccess(
+                                            y: y, prayer: e.prayer);
+                                      },
+                                    );
+                                  },
+                                  child: PrayerCard(prayer: e.prayer)))
+                              .toList(),
+                        ],
                       ),
                     ),
-                    text: 'Add New Prayer',
-                    backgroundColor:
-                        AppColors.addprayerBgColor.withOpacity(0.9),
-                    textColor: AppColors.addprayerTextColor,
-                    icon: Icons.add,
-                  ),
-            SizedBox(height: 80),
-          ],
+              SizedBox(height: 5),
+              currentPrayerType == PrayerType.archived ||
+                      currentPrayerType == PrayerType.answered
+                  ? Container()
+                  : LongButton(
+                      onPress: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EntryScreen(screenNumber: 2),
+                        ),
+                      ),
+                      text: 'Add New Prayer',
+                      backgroundColor:
+                          AppColors.addprayerBgColor.withOpacity(0.9),
+                      textColor: AppColors.addprayerTextColor,
+                      icon: Icons.add,
+                    ),
+              SizedBox(height: 80),
+            ],
+          ),
         ),
       ),
     );

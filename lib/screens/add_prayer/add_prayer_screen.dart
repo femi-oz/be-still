@@ -121,7 +121,7 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.push(
+    return (Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => EntryScreen(screenNumber: 0),

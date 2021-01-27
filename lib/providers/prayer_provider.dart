@@ -35,7 +35,7 @@ class PrayerProvider with ChangeNotifier {
         _prayers = data.where((p) => p.prayer.status == Status.active).toList();
         _filteredPrayers = _prayers;
         _filteredPrayers
-            .sort((a, b) => b.prayer.createdOn.compareTo(a.prayer.createdOn));
+            .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
         _filterOptions = FilterType(
           isAnswered: false,
           isArchived: false,
@@ -59,7 +59,7 @@ class PrayerProvider with ChangeNotifier {
       }
       _filteredPrayers = _prayers;
       _filteredPrayers
-          .sort((a, b) => b.prayer.createdOn.compareTo(a.prayer.createdOn));
+          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
       _filterOptions = FilterType(
         isAnswered: false,
         isArchived: false,
@@ -77,6 +77,8 @@ class PrayerProvider with ChangeNotifier {
             .contains(searchQuery.toLowerCase()))
         .toList();
     _filteredPrayers = filteredPrayers;
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     notifyListeners();
   }
 
@@ -114,6 +116,8 @@ class PrayerProvider with ChangeNotifier {
           .toList();
     }
     _filteredPrayers = filteredPrayers;
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     notifyListeners();
   }
 

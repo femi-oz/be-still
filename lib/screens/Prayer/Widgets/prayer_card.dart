@@ -104,7 +104,7 @@ class PrayerCard extends StatelessWidget {
                               //     : Container(),
                               Text(
                                 DateFormat('MM.dd.yyyy')
-                                    .format(prayer.createdOn),
+                                    .format(prayer.modifiedOn),
                                 style: AppTextStyles.regularText13
                                     .copyWith(color: AppColors.prayerTextColor),
                               ),

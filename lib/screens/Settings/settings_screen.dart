@@ -101,7 +101,7 @@ class SettingsTabState extends State<SettingsTab>
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.push(
+    return (Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => EntryScreen(screenNumber: 0),

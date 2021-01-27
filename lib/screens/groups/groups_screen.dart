@@ -75,7 +75,7 @@ class _GroupScreenState extends State<GroupScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.push(
+    return (Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => EntryScreen(screenNumber: 0),
