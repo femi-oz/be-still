@@ -1,7 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,6 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   bool isAnswered;
   bool isArchived;
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
     status = filterOptions.status;
     isSnoozed = filterOptions.isSnoozed;
