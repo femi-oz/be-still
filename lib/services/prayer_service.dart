@@ -419,6 +419,18 @@ class PrayerService {
     }
   }
 
+  Future unArchivePrayer(
+    String prayerID,
+  ) async {
+    try {
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsArchived': false, 'Status': Status.active},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future deletePrayer(String prayerID) async {
     try {
       var batch = FirebaseFirestore.instance.batch();

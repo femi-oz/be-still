@@ -111,8 +111,6 @@ class PrayerProvider with ChangeNotifier {
           .toList();
     }
     if (isArchived == true) {
-      print(filteredPrayers);
-
       filteredPrayers = filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.isArchived == true)
           .toList();
@@ -161,6 +159,10 @@ class PrayerProvider with ChangeNotifier {
 
   Future archivePrayer(String prayerID) async {
     return await _prayerService.archivePrayer(prayerID);
+  }
+
+  Future unArchivePrayer(String prayerID) async {
+    return await _prayerService.unArchivePrayer(prayerID);
   }
 
   Future markPrayerAsAnswered(String prayerID) async {
