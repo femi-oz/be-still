@@ -39,11 +39,13 @@ class PrayerProvider with ChangeNotifier {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.toList();
-        _filteredPrayers = _prayers.where((p) =>
-            p.prayer.status == Status.active &&
-            !p.prayer.isArchived &&
-            !p.prayer.isAnswer &&
-            !p.prayer.isSnoozed);
+        _filteredPrayers = _prayers
+            .where((p) =>
+                p.prayer.status == Status.active &&
+                !p.prayer.isArchived &&
+                !p.prayer.isAnswer &&
+                !p.prayer.isSnoozed)
+            .toList();
         _filteredPrayers
             .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
 
@@ -104,23 +106,30 @@ class PrayerProvider with ChangeNotifier {
         .where((CombinePrayerStream data) =>
             data.prayer.status.toLowerCase() == status.toLowerCase())
         .toList();
-
+    var answeredPrayers = [];
+    var snoozedPrayers = [];
+    var archivedPrayers = [];
     if (isAnswered == true) {
-      filteredPrayers = filteredPrayers
+      answeredPrayers = filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
           .toList();
     }
     if (isArchived == true) {
-      filteredPrayers = filteredPrayers
+      archivedPrayers = filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.isArchived == true)
           .toList();
     }
     if (isSnoozed == true) {
-      filteredPrayers = filteredPrayers
+      snoozedPrayers = filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.isSnoozed == true)
           .toList();
     }
-    _filteredPrayers = filteredPrayers;
+    _filteredPrayers = [
+      ...filteredPrayers,
+      ...archivedPrayers,
+      ...snoozedPrayers,
+      ...answeredPrayers
+    ];
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     notifyListeners();

@@ -1,10 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/groups/widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/prayer/Widgets/menu_items.dart';

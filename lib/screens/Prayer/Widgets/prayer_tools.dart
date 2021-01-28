@@ -1,8 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +16,6 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   bool isAnswered;
   bool isArchived;
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
     status = filterOptions.status;
     isSnoozed = filterOptions.isSnoozed;
@@ -31,15 +28,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
           Align(
             alignment: Alignment.centerLeft,
             child: FlatButton.icon(
-              onPressed: () async {
-                // await Provider.of<PrayerProvider>(context).filterPrayers(
-                //   isAnswered: isAnswered,
-                //   isArchived: isArchived,
-                //   isSnoozed: isSnoozed,
-                //   status: status,
-                // );
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
               label: Text(
                 'BACK',
@@ -70,11 +59,11 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       GestureDetector(
                         onTap: () {
                           setState(
-                            () async {
+                            () {
                               status = status == Status.active
                                   ? Status.inactive
                                   : Status.active;
-                              await Provider.of<PrayerProvider>(context,
+                              Provider.of<PrayerProvider>(context,
                                       listen: false)
                                   .filterPrayers(
                                 isAnswered: isAnswered,
