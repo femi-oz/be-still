@@ -4,25 +4,22 @@ import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final _auth = LocalAuthentication();
-  // bool _isProtectionEnabled = true;
-  bool isAuthenticated = false;
-
-  // bool get isProtectionEnabled => _isProtectionEnabled;
-  // set isProtectionEnabled(bool enabled) => _isProtectionEnabled = enabled;
-
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool canCheckBiometrics = false;
   Future<void> biometricAuthentication() async {
     if (Settings.enableLocalAuth) {
       try {
-        isAuthenticated = await _auth.authenticateWithBiometrics(
-          localizedReason: 'authenticate to access',
-          useErrorDialogs: true,
-          stickyAuth: true,
-        );
+        await _localAuth.authenticateWithBiometrics(
+            localizedReason: 'Touch your finger on the sensor to login',
+            useErrorDialogs: true,
+            stickyAuth: false,
+            androidAuthStrings:
+                AndroidAuthMessages(signInTitle: "Login to HomePage"));
       } on PlatformException catch (e) {
         throw HttpException(e.message);
       }

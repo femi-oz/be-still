@@ -39,11 +39,13 @@ class PrayerProvider with ChangeNotifier {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.toList();
-        _filteredPrayers = _prayers.where((p) =>
-            p.prayer.status == Status.active &&
-            !p.prayer.isArchived &&
-            !p.prayer.isAnswer &&
-            !p.prayer.isSnoozed);
+        _filteredPrayers = _prayers
+            .where((p) =>
+                p.prayer.status == Status.active &&
+                !p.prayer.isArchived &&
+                !p.prayer.isAnswer &&
+                !p.prayer.isSnoozed)
+            .toList();
         _filteredPrayers
             .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
 
