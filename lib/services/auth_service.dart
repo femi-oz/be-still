@@ -4,7 +4,6 @@ import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 
 class AuthenticationService {
@@ -21,6 +20,7 @@ class AuthenticationService {
           stickyAuth: true,
         );
         if (!isAuthenticated) {
+          _localAuth.stopAuthentication();
           throw HttpException('Authentication Cancelled');
         }
       } on PlatformException catch (e) {

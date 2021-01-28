@@ -25,24 +25,24 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   BuildContext bcontext;
   var _key = GlobalKey<State>();
-  OverlayEntry _overlayEntry;
+  // OverlayEntry _overlayEntry;
 
   @override
   void initState() {
     super.initState();
   }
 
-  _closeOverlay() {
-    if (this._overlayEntry != null) {
-      this._overlayEntry.remove();
-      this._overlayEntry = null;
-    }
-  }
+  // _closeOverlay() {
+  //   if (this._overlayEntry != null) {
+  //     this._overlayEntry.remove();
+  //     this._overlayEntry = null;
+  //   }
+  // }
 
-  _callRequestAction() {
-    // this._overlayEntry = _createOverlayEntry();
-    // Overlay.of(context).insert(this._overlayEntry);
-  }
+  // _callRequestAction() {
+  //   // this._overlayEntry = _createOverlayEntry();
+  //   // Overlay.of(context).insert(this._overlayEntry);
+  // }
 
   _acceptInvite(
       String groupId, String userId, String name, String email) async {
@@ -88,10 +88,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   void _showAlert(String groupId, String message) {
-    final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final data =
-        Provider.of<NotificationProvider>(context, listen: false).notifications;
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(

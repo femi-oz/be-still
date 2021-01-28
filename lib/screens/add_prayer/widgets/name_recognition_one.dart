@@ -1,9 +1,6 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'name_recognition_two.dart';
 
 class NameRecognitionMenuOne extends StatefulWidget {
@@ -32,7 +29,6 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.only(left: 10),
       width: double.infinity,

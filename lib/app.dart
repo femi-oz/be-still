@@ -1,6 +1,5 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +32,9 @@ class _MyAppState extends State<MyApp> {
       builder: (ctx, theme, _) => MaterialApp(
         title: 'Be Still',
         debugShowCheckedModeBanner: false,
-        theme: theme.isDarkModeEnabled ? appThemeData[AppTheme.DarkTheme] : appThemeData[AppTheme.LightTheme],
+        theme: theme.isDarkModeEnabled
+            ? appThemeData[AppTheme.DarkTheme]
+            : appThemeData[AppTheme.LightTheme],
         initialRoute: '/',
         routes: rt.routes,
         onUnknownRoute: (settings) {

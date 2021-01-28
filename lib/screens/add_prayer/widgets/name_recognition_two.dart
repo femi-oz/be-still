@@ -1,14 +1,10 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -42,7 +38,6 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
   String _selectedOption;
   bool _showCommentField = false;
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
 
   void showInSnackBar(String value) {
     widget.scafoldKey.currentState.showSnackBar(
@@ -105,7 +100,6 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       padding: EdgeInsets.only(left: 20),
