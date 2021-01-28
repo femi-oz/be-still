@@ -8,6 +8,8 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../entry_screen.dart';
+
 class PrayerQuickAccess extends StatefulWidget {
   final y;
 
@@ -125,11 +127,12 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddPrayer(
-                                    isEdit: true,
-                                    prayer: widget.prayer,
-                                    isGroup: false),
-                              ),
+                                  builder: (context) => AddPrayer(
+                                      isEdit: true,
+                                      prayer: widget.prayer,
+                                      isGroup: false)),
+                              // builder: (context) =>
+                              //     EntryScreen(screenNumber: 2)),
                             );
                           }),
                     ),
