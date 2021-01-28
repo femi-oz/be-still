@@ -18,7 +18,13 @@ class PrayerProvider with ChangeNotifier {
   List<PrayerUpdateModel> _prayerUpdates = [];
   List<CombinePrayerStream> _filteredPrayers = [];
   PrayerModel _currentPrayer;
-  FilterType _filterOptions;
+  FilterType _filterOptions = FilterType(
+    isAnswered: false,
+    isArchived: false,
+    isSnoozed: false,
+    status: Status.active,
+  );
+
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
   List<PrayerUpdateModel> get prayerUpdates => _prayerUpdates;
@@ -32,16 +38,15 @@ class PrayerProvider with ChangeNotifier {
   ) async {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
-        _prayers = data.where((p) => p.prayer.status == Status.active).toList();
-        _filteredPrayers = _prayers;
+        _prayers = data.toList();
+        _filteredPrayers = _prayers.where((p) =>
+            p.prayer.status == Status.active &&
+            !p.prayer.isArchived &&
+            !p.prayer.isAnswer &&
+            !p.prayer.isSnoozed);
         _filteredPrayers
             .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-        _filterOptions = FilterType(
-          isAnswered: false,
-          isArchived: false,
-          isSnoozed: false,
-          status: Status.active,
-        );
+
         notifyListeners();
       },
     );
@@ -94,10 +99,12 @@ class PrayerProvider with ChangeNotifier {
       isSnoozed: isSnoozed,
       status: status,
     );
+
     List<CombinePrayerStream> filteredPrayers = _prayers
         .where((CombinePrayerStream data) =>
             data.prayer.status.toLowerCase() == status.toLowerCase())
         .toList();
+
     if (isAnswered == true) {
       filteredPrayers = filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
@@ -105,9 +112,7 @@ class PrayerProvider with ChangeNotifier {
     }
     if (isArchived == true) {
       filteredPrayers = filteredPrayers
-          .where((CombinePrayerStream data) =>
-              data.prayer.isArchived == true &&
-              data.prayer.status == Status.inactive)
+          .where((CombinePrayerStream data) => data.prayer.isArchived == true)
           .toList();
     }
     if (isSnoozed == true) {
@@ -154,6 +159,10 @@ class PrayerProvider with ChangeNotifier {
 
   Future archivePrayer(String prayerID) async {
     return await _prayerService.archivePrayer(prayerID);
+  }
+
+  Future unArchivePrayer(String prayerID) async {
+    return await _prayerService.unArchivePrayer(prayerID);
   }
 
   Future markPrayerAsAnswered(String prayerID) async {

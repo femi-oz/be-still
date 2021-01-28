@@ -3,8 +3,10 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -93,6 +95,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
+  void _unArchive() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unArchivePrayer(widget.prayer.id);
+
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      // Navigator.of(context).pop();
+      // Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   void _onArchive() async {
     try {
       BeStilDialog.showLoading(
@@ -100,10 +122,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayer.id);
+
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
+      // Navigator.of(context).pop();
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => PrayerList()));
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -418,7 +444,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                       )
                     : Container(),
-                widget.prayer.status == Status.active
+                widget.prayer.status == Status.active &&
+                        !widget.prayer.isArchived
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(
@@ -455,7 +482,42 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           ),
                         ),
                       )
-                    : Container(),
+                    : GestureDetector(
+                        onTap: _unArchive,
+                        child: Container(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.lightBlue6,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.archive,
+                                color: AppColors.lightBlue4,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  'Unarchive',
+                                  style: TextStyle(
+                                    color: AppColors.lightBlue4,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                 GestureDetector(
                   onTap: () {
                     showModalBottomSheet(
