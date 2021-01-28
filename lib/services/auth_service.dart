@@ -2,9 +2,31 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final _auth = LocalAuthentication();
+  bool _isProtectionEnabled = true;
+  bool isAuthenticated = false;
+
+  bool get isProtectionEnabled => _isProtectionEnabled;
+  set isProtectionEnabled(bool enabled) => _isProtectionEnabled = enabled;
+
+  Future<void> biometricAuthentication() async {
+    if (_isProtectionEnabled) {
+      try {
+        isAuthenticated = await _auth.authenticateWithBiometrics(
+          localizedReason: 'authenticate to access',
+          useErrorDialogs: true,
+          stickyAuth: true,
+        );
+      } on PlatformException catch (e) {
+        print(e);
+      }
+    }
+  }
 
   Future signIn({
     String email,

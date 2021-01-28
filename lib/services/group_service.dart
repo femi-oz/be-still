@@ -112,7 +112,8 @@ class GroupService {
     }
   }
 
-  addGroup(String userID, GroupModel groupData, String fullName) async {
+  addGroup(String userID, GroupModel groupData, String fullName,
+      String email) async {
     // Generate uuid
     final _groupID = Uuid().v1();
     final _groupUserID = Uuid().v1();
@@ -128,10 +129,8 @@ class GroupService {
           populateGroupUser(groupData, userID, fullName, _groupID).toJson());
       //store group settings
 
-      var user = await locator<UserService>().getCurrentUser();
-
       await locator<SettingsService>()
-          .addGroupSettings(userID, user.email, _groupID);
+          .addGroupSettings(userID, email, _groupID);
       //   },
       // ).then((val) {
       //   return true;
