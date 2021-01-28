@@ -8,22 +8,22 @@ import 'package:local_auth/local_auth.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final _auth = LocalAuthentication();
-  // bool _isProtectionEnabled = true;
+  final _localAuth = LocalAuthentication();
   bool isAuthenticated = false;
-
-  // bool get isProtectionEnabled => _isProtectionEnabled;
-  // set isProtectionEnabled(bool enabled) => _isProtectionEnabled = enabled;
 
   Future<void> biometricAuthentication() async {
     if (Settings.enableLocalAuth) {
       try {
-        isAuthenticated = await _auth.authenticateWithBiometrics(
+        isAuthenticated = await _localAuth.authenticateWithBiometrics(
           localizedReason: 'authenticate to access',
           useErrorDialogs: true,
           stickyAuth: true,
         );
+        if (!isAuthenticated) {
+          throw HttpException('Authentication Cancelled');
+        }
       } on PlatformException catch (e) {
+        _localAuth.stopAuthentication();
         throw HttpException(e.message);
       }
     }
