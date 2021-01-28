@@ -40,9 +40,9 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _login() async {
     setState(() => _autoValidate = true);
-    // if (!_formKey.currentState.validate()) return;
+    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    // await BeStilDialog.showLoading(context, 'Authenticating');
+    await BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: _usernameController.text,
