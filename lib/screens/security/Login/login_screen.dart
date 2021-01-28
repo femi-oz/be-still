@@ -81,11 +81,8 @@ class _LoginScreenState extends State<LoginScreen>
 
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(context);
-      print(e);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
@@ -141,7 +138,9 @@ class _LoginScreenState extends State<LoginScreen>
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 40),
-                                    _bioButton()
+                                    Settings.enableLocalAuth
+                                        ? _bioButton()
+                                        : Container(),
                                   ],
                                 ),
                               ),
