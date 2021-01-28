@@ -1,21 +1,15 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-login() {
-// Navigator.of(context).pushNamedAndRemoveUntil(
-//     EntryScreen.routeName, (Route<dynamic> route) => false);
-}
+login() {}
 
 class LocalAuth extends StatelessWidget {
   static const routeName = 'local-auth';
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: Container(
         height: double.infinity,
