@@ -48,10 +48,16 @@ class _LoginScreenState extends State<LoginScreen>
         email: _usernameController.text,
         password: _passwordController.text,
       );
-      await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
+      await Provider.of<UserProvider>(context, listen: false)
+          .setCurrentUser(false);
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
       Settings.lastUser = Settings.rememberMe ? _usernameController.text : '';
+      Settings.userKeyRefernce =
+          Provider.of<UserProvider>(context, listen: false)
+              .currentUser
+              .keyReference;
+
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
@@ -60,6 +66,23 @@ class _LoginScreenState extends State<LoginScreen>
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
       BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
+    }
+  }
+
+  void _biologin() async {
+    try {
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .biometricSignin();
+
+      await Provider.of<UserProvider>(context, listen: false)
+          .setCurrentUser(true);
+
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+    } on HttpException catch (e) {
+      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+    } catch (e) {
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
@@ -114,6 +137,10 @@ class _LoginScreenState extends State<LoginScreen>
                                     _buildForm(),
                                     SizedBox(height: 8),
                                     _buildActions(),
+                                    SizedBox(height: 40),
+                                    Settings.enableLocalAuth
+                                        ? _bioButton()
+                                        : Container(),
                                   ],
                                 ),
                               ),
@@ -129,6 +156,17 @@ class _LoginScreenState extends State<LoginScreen>
               ],
             ),
           )),
+    );
+  }
+
+  Widget _bioButton() {
+    return Container(
+      padding: EdgeInsets.only(left: 40, right: 60),
+      child: IconButton(
+        icon: Icon(Icons.fingerprint, color: AppColors.lightBlue4),
+        onPressed: () => _biologin(),
+        iconSize: 50,
+      ),
     );
   }
 
@@ -191,6 +229,11 @@ class _LoginScreenState extends State<LoginScreen>
     return Column(
       children: <Widget>[
         BsRaisedButton(onPressed: _login),
+        // Settings.enableLocalAuth
+        //     ? BsRaisedButton(
+        //         onPressed: _biologin,
+        //       )
+        //     : Container(),
         SizedBox(height: 24),
         GestureDetector(
           child: Text(
