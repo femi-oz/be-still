@@ -63,30 +63,37 @@ class _SplashScreenState extends State<SplashScreen>
   route() async {
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
-      if (Settings.rememberMe) {
-        if (isLoggedIn) {
-          await Provider.of<UserProvider>(context, listen: false)
-              .setCurrentUser();
-          UserModel _user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+      if (Settings.enableLocalAuth) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginScreen.routeName,
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        if (Settings.rememberMe) {
+          if (isLoggedIn) {
+            await Provider.of<UserProvider>(context, listen: false)
+                .setCurrentUser(false);
+            UserModel _user =
+                Provider.of<UserProvider>(context, listen: false).currentUser;
 
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .setUserNotifications(_user?.id);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
+            await Provider.of<NotificationProvider>(context, listen: false)
+                .setUserNotifications(_user?.id);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+          } else {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              LoginScreen.routeName,
+              (Route<dynamic> route) => false,
+            );
+          }
         } else {
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
             LoginScreen.routeName,
             (Route<dynamic> route) => false,
           );
         }
-      } else {
-        await Provider.of<AuthenticationProvider>(context, listen: false)
-            .signOut();
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          LoginScreen.routeName,
-          (Route<dynamic> route) => false,
-        );
       }
     } catch (e) {
       Navigator.of(context).pushNamedAndRemoveUntil(

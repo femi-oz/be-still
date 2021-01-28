@@ -1,11 +1,6 @@
 import 'dart:io';
-import 'package:be_still/enums/status.dart';
-import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/settings_service.dart';
-import 'package:be_still/models/user_device.model.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -91,11 +86,11 @@ class UserService {
     }
   }
 
-  Future getCurrentUser() async {
+  Future getCurrentUser(String keyReference) async {
     User user = _firebaseAuth.currentUser;
     try {
       final userRes = await _userCollectionReference
-          .where('KeyReference', isEqualTo: user.uid)
+          .where('KeyReference', isEqualTo: keyReference)
           .limit(1)
           .get();
       return UserModel.fromData(userRes.docs[0]);

@@ -9,6 +9,10 @@ class AuthenticationProvider with ChangeNotifier {
     await _authService.signIn(email: email, password: password);
   }
 
+  Future<void> biometricSignin() async {
+    await _authService.biometricAuthentication();
+  }
+
   Future<void> registerUser({
     String email,
     String password,

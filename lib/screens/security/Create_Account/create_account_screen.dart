@@ -87,7 +87,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         lastName: _lastnameController.text,
         dob: _selectedDate,
       );
-      await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
+      await Provider.of<UserProvider>(context, listen: false)
+          .setCurrentUser(false);
       await PushNotificationsManager().init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
