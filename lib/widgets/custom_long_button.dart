@@ -37,7 +37,7 @@ class LongButton extends StatelessWidget {
         ),
         child: Container(
           width: double.infinity,
-          // height: MediaQuery.of(context).size.height * 0.065,
+          // height: MediaQuery.of(context).size.height * 0.1,
           margin: EdgeInsetsDirectional.only(start: 0.5, bottom: 0.5, top: 0.5),
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(

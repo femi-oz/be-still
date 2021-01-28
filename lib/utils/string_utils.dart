@@ -26,10 +26,11 @@ class StringUtils {
     return retVal;
   }
 
+  static String year = DateTime.now().year.toString();
   static String logo = 'assets/images/logo1.png';
   static String splashLogo = 'assets/images/splash_logo2.png';
   static String backText = "Go Back";
-  static String copyRight1 = "2020 All Rights Reserved";
+  static String copyRight1 = '$year All Rights Reserved';
   static String copyRight2 =
       "BeStill is a ministry of Second Baptist Church Houston, TX";
 }
