@@ -149,7 +149,7 @@ class _PrayerListState extends State<PrayerList> {
                       onPress: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EntryScreen(screenNumber: 2),
+                          builder: (context) => EntryScreen(screenNumber: 1),
                         ),
                       ),
                       text: 'Add New Prayer',
