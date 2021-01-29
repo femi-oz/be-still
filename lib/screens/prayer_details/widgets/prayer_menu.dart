@@ -2,8 +2,6 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -73,7 +71,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   BuildContext bcontext;
 
-  var _key = GlobalKey<State>();
   void _onMarkAsAnswered() async {
     try {
       BeStilDialog.showLoading(
@@ -142,7 +139,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,

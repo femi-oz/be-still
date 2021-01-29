@@ -1,8 +1,5 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/app_theme.dart';
-import 'package:provider/provider.dart';
 
 class NotificationCard extends StatelessWidget {
   // final NotificationModel notification;
@@ -10,7 +7,6 @@ class NotificationCard extends StatelessWidget {
   // NotificationCard(this.notification);
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onLongPressEnd: null,
       onTap: null,

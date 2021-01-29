@@ -1,15 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/app_theme.dart';
 
 class DeletePrayer extends StatefulWidget {
   final PrayerModel prayer;
@@ -22,14 +19,14 @@ class DeletePrayer extends StatefulWidget {
 
 class _DeletePrayerState extends State<DeletePrayer> {
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
 
   void _onArchive() async {
     try {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false).archivePrayer(widget.prayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .archivePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
@@ -49,7 +46,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false).deletePrayer(widget.prayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .deletePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       // Navigator.push(
@@ -69,7 +67,6 @@ class _DeletePrayerState extends State<DeletePrayer> {
   }
 
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,

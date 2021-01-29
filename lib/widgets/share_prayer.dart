@@ -1,17 +1,12 @@
-import 'package:be_still/data/group.data.dart';
-import 'package:be_still/providers/theme_provider.dart';
-
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../utils/app_theme.dart';
 
 class SharePrayer extends StatefulWidget {
-  // PrayerModel prayer;
-  String prayer;
+  final String prayer;
   SharePrayer({this.prayer});
 
   _SharePrayerState createState() => _SharePrayerState();
@@ -45,7 +40,6 @@ class _SharePrayerState extends State<SharePrayer> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     // TODO
     // final groupsCount =
     //     groupData.where((gl) => gl.members.contains(_currentUser.id)).length;

@@ -1,10 +1,6 @@
 import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../utils/app_theme.dart';
 
 class GroupPrivilegeSettings extends StatelessWidget {
   final String status;
@@ -14,7 +10,6 @@ class GroupPrivilegeSettings extends StatelessWidget {
   @override
   GroupPrivilegeSettings(this.status, this.user);
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -39,7 +34,8 @@ class GroupPrivilegeSettings extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 100.0, vertical: 20.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 100.0, vertical: 20.0),
                   child: Text(
                     user.userId.toUpperCase(), //TODO
                     textAlign: TextAlign.center,

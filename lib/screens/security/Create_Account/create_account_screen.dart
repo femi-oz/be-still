@@ -1,8 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
@@ -11,6 +10,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +38,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
   bool _enableSubmit = false;
-  final _key = GlobalKey<State>();
 
   var termsAccepted = false;
 
@@ -95,18 +94,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      BeStillSnackbar.showInSnackBar(
+          message: StringUtils.errorOccured, key: _scaffoldKey);
     }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(

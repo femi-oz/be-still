@@ -4,6 +4,7 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -37,7 +38,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
   TextEditingController _newPassword = TextEditingController();
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
   var _version = '';
 
   _getVersion() async {
@@ -119,7 +119,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _showAlert(_ModalType type) {
-    final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
@@ -190,8 +189,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Widget build(BuildContext context) {
     _getVersion();
-    final _themeProvider = Provider.of<ThemeProvider>(context);
+
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Padding(

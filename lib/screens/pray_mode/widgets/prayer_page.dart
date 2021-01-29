@@ -1,10 +1,9 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/screens/pray_mode/Widgets/no_update_view.dart';
 import 'package:be_still/screens/pray_mode/Widgets/update_view.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class PrayerView extends StatelessWidget {
   final CombinePrayerStream data;
@@ -12,7 +11,6 @@ class PrayerView extends StatelessWidget {
   PrayerView(this.data);
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 20),

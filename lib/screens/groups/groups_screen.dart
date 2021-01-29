@@ -4,7 +4,7 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -61,7 +61,7 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
-  _onPressMore(String id, _themeProvider, CombineGroupUserStream group) {
+  _onPressMore(String id, CombineGroupUserStream group) {
     Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(group);
     showModalBottomSheet(
       context: context,
@@ -98,7 +98,6 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final data = Provider.of<GroupProvider>(context).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -190,8 +189,8 @@ class _GroupScreenState extends State<GroupScreen> {
                                       textColor: AppColors.lightBlue3,
                                       hasIcon: false,
                                       hasMore: true,
-                                      onPressMore: () => _onPressMore(
-                                          e.group.id, _themeProvider, e),
+                                      onPressMore: () =>
+                                          _onPressMore(e.group.id, e),
                                     ),
                                     SizedBox(height: 10),
                                   ],

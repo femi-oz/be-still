@@ -1,8 +1,6 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CustomPicker extends StatefulWidget {
   final Function onChange;
@@ -12,7 +10,8 @@ class CustomPicker extends StatefulWidget {
   final List<String> interval;
 
   @override
-  CustomPicker(this.interval, this.onChange, this.hideActionuttons, this.selected);
+  CustomPicker(
+      this.interval, this.onChange, this.hideActionuttons, this.selected);
   _CustomPickerState createState() => _CustomPickerState();
 }
 
@@ -22,8 +21,8 @@ class _CustomPickerState extends State<CustomPicker> {
   var selectedInterval;
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
-    FixedExtentScrollController scrollController = FixedExtentScrollController(initialItem: widget.selected);
+    FixedExtentScrollController scrollController =
+        FixedExtentScrollController(initialItem: widget.selected);
     return Container(
       width: double.infinity,
       child: Column(
@@ -53,7 +52,12 @@ class _CustomPickerState extends State<CustomPicker> {
                               children: <Widget>[
                                 ...widget.interval
                                     .map(
-                                      (i) => Align(alignment: Alignment.center, child: Text(i, textAlign: TextAlign.center, style: AppTextStyles.regularText15)),
+                                      (i) => Align(
+                                          alignment: Alignment.center,
+                                          child: Text(i,
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  AppTextStyles.regularText15)),
                                     )
                                     .toList(),
                               ],

@@ -1,5 +1,5 @@
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

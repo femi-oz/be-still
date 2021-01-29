@@ -2,7 +2,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -22,8 +22,6 @@ class OtherMemberPrayerMenu extends StatefulWidget {
 
 class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
   BuildContext bcontext;
-
-  var _key = GlobalKey<State>();
 
   void _onHide() async {
     try {
@@ -49,7 +47,6 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,

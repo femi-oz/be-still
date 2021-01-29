@@ -1,12 +1,9 @@
-import 'package:be_still/data/group.data.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../utils/app_theme.dart';
 
 class SharePrayerToGroups extends StatefulWidget {
   @override
@@ -17,8 +14,10 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   List selectedGroups = [];
 
   void _getGroup() async {
-    UserModel _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    await Provider.of<GroupProvider>(context, listen: false).setAllGroups(_user.id);
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<GroupProvider>(context, listen: false)
+        .setAllGroups(_user.id);
   }
 
   bool _isInit = true;
@@ -33,7 +32,6 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     final groups = Provider.of<GroupProvider>(context).allGroups;
     // final groups =
     //     groupData.where((gl) => gl.members.contains(_currentUser.id));
@@ -81,9 +79,12 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                             height: 50,
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             width: double.infinity,
-                            margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 10),
                             decoration: BoxDecoration(
-                              color: selectedGroups.contains(group.group.id) ? AppColors.activeButton.withOpacity(0.2) : Colors.transparent,
+                              color: selectedGroups.contains(group.group.id)
+                                  ? AppColors.activeButton.withOpacity(0.2)
+                                  : Colors.transparent,
                               border: Border.all(
                                 color: AppColors.lightBlue6,
                                 width: 1,

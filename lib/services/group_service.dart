@@ -2,7 +2,6 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/settings_service.dart';
-import 'package:be_still/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
@@ -17,11 +16,6 @@ class GroupService {
       FirebaseFirestore.instance.collection("GroupUser");
   final CollectionReference _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
-  // final CollectionReference _groupPrayerCollectionReference =
-  //     Firestore.instance.collection("GroupPrayer");
-
-  // final CollectionReference _groupInviteCollectionRefernce =
-  //     Firestore.instance.collection("GroupInvite");
 
   populateGroupUser(
     GroupModel groupData,

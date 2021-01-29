@@ -1,7 +1,4 @@
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -9,7 +6,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ForgetPassword extends StatefulWidget {
   static const routeName = '/forget-password';
@@ -61,7 +57,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -158,7 +153,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   }
 
   _buildEmailForm(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Form(
       key: _formKey1,
       autovalidate: _autoValidate1,
