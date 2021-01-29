@@ -150,19 +150,20 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           Icons.share,
                           color: AppColors.lightBlue4,
                         ),
-                        onClick: () {
-                          showModalBottomSheet(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return SharePrayer();
-                            },
-                          );
-                        },
+                        onClick: () {},
+                        // {
+                        //   showModalBottomSheet(
+                        //     context: context,
+                        //     barrierColor: AppColors.detailBackgroundColor[1]
+                        //         .withOpacity(0.5),
+                        //     backgroundColor: AppColors.detailBackgroundColor[1]
+                        //         .withOpacity(0.9),
+                        //     isScrollControlled: true,
+                        //     builder: (BuildContext context) {
+                        //       return SharePrayer();
+                        //     },
+                        //   );
+                        // },
                       ),
                     ),
                   ),
@@ -179,25 +180,26 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           Icons.calendar_today,
                           color: AppColors.lightBlue4,
                         ),
-                        onClick: () {
-                          showModalBottomSheet(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return ReminderPicker(
-                                hideActionuttons: false,
-                                frequency: reminderInterval,
-                                reminderDays: reminderDays,
-                                onCancel: null,
-                                onSave: null,
-                              );
-                            },
-                          );
-                        },
+                        onClick: () {},
+                        // {
+                        //   showModalBottomSheet(
+                        //     context: context,
+                        //     barrierColor: AppColors.detailBackgroundColor[1]
+                        //         .withOpacity(0.5),
+                        //     backgroundColor: AppColors.detailBackgroundColor[1]
+                        //         .withOpacity(0.9),
+                        //     isScrollControlled: true,
+                        //     builder: (BuildContext context) {
+                        //       return ReminderPicker(
+                        //         hideActionuttons: false,
+                        //         frequency: reminderInterval,
+                        //         reminderDays: reminderDays,
+                        //         onCancel: null,
+                        //         onSave: null,
+                        //       );
+                        //     },
+                        //   );
+                        // },
                       ),
                     ),
                   ),

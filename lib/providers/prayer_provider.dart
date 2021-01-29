@@ -126,9 +126,9 @@ class PrayerProvider with ChangeNotifier {
     }
     _filteredPrayers = [
       ...filteredPrayers,
-      ...archivedPrayers,
-      ...snoozedPrayers,
-      ...answeredPrayers
+      // ...archivedPrayers,
+      // ...snoozedPrayers,
+      // ...answeredPrayers
     ];
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));

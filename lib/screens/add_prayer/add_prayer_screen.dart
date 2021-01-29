@@ -6,6 +6,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/add_prayer_menu.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
+import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -56,6 +57,7 @@ class _AddPrayerState extends State<AddPrayer> {
     final _groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
+    PrayerUpdateModel prayerUpdate;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
         title: '',
@@ -76,21 +78,74 @@ class _AddPrayerState extends State<AddPrayer> {
         hideFromMe: false,
         isInappropriate: false,
       );
-      showModalBottomSheet(
-        context: context,
-        barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
-        backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return NameRecognitionMenuOne(
-            isUpdate: false,
-            prayer: prayerData,
-            selectedGroups: groups,
-            scafoldKey: _scaffoldKey,
-            isGroup: widget.isGroup,
+      prayerUpdate = PrayerUpdateModel(
+          prayerId: prayerData.id,
+          userId: _user.id,
+          title: prayerData.title,
+          description: prayerData.description,
+          createdBy: prayerData.createdBy,
+          createdOn: prayerData.createdOn,
+          modifiedBy: prayerData.modifiedBy,
+          modifiedOn: prayerData.modifiedOn);
+      final isUpdate = false;
+      // showModalBottomSheet(
+      //   context: context,
+      //   barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
+      //   backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
+      //   isScrollControlled: true,
+      //   builder: (BuildContext context) {
+      //     return NameRecognitionMenuOne(
+      //       isUpdate: false,
+      //       prayer: prayerData,
+      //       selectedGroups: groups,
+      //       scafoldKey: _scaffoldKey,
+      //       isGroup: widget.isGroup,
+      //     );
+      //   },
+      // );
+      try {
+        if (isUpdate) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayerUpdate(prayerUpdate);
+          Navigator.of(context).pushReplacementNamed(
+            PrayerDetails.routeName,
+            arguments: PrayerDetailsRouteArguments(
+                id: prayerUpdate.prayerId, isGroup: widget.isGroup),
           );
-        },
-      );
+        } else {
+          if (widget.isGroup) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addGroupPrayer(context, widget.prayer);
+            await Future.delayed(Duration(milliseconds: 300));
+            BeStilDialog.hideLoading(context);
+
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => GroupPrayers()));
+          } else {
+            if (groups.length > 0) {
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .addPrayerWithGroups(
+                      context, widget.prayer, groups, _user.id);
+            } else {
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .addPrayer(prayerData, _user.id);
+            }
+
+            await Future.delayed(Duration(milliseconds: 300));
+            BeStilDialog.hideLoading(context);
+
+            _onWillPop();
+          }
+        }
+      } on HttpException catch (e) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(context);
+        BeStilDialog.showErrorDialog(context, e.message);
+      } catch (e) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(context);
+        BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      }
     } else {
       try {
         BeStilDialog.showLoading(
@@ -100,7 +155,7 @@ class _AddPrayerState extends State<AddPrayer> {
             .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamed(PrayerDetails.routeName);
+        _onWillPop();
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
@@ -186,28 +241,28 @@ class _AddPrayerState extends State<AddPrayer> {
                         showSuffix: false,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.more_horiz,
-                        color: AppColors.lightBlue4,
-                      ),
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        barrierColor:
-                            AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                        backgroundColor:
-                            AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                        isScrollControlled: true,
-                        builder: (BuildContext context) {
-                          return AddPrayerMenu(
-                              prayer: _descriptionController.text);
-                        },
-                      ).then((value) {
-                        setState(() {
-                          groups = value;
-                        });
-                      }),
-                    ),
+                    // IconButton(
+                    //   icon: Icon(
+                    //     Icons.more_horiz,
+                    //     color: AppColors.lightBlue4,
+                    //   ),
+                    //   onPressed: () => showModalBottomSheet(
+                    //     context: context,
+                    //     barrierColor:
+                    //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    //     backgroundColor:
+                    //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    //     isScrollControlled: true,
+                    //     builder: (BuildContext context) {
+                    //       return AddPrayerMenu(
+                    //           prayer: _descriptionController.text);
+                    //     },
+                    //   ).then((value) {
+                    //     setState(() {
+                    //       groups = value;
+                    //     });
+                    //   }),
+                    // ),
                   ],
                 ),
               ),
