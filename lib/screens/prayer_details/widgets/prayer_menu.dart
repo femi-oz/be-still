@@ -13,6 +13,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
+import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +74,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   BuildContext bcontext;
 
-  var _key = GlobalKey<State>();
+  var _key = GlobalKey<ScaffoldState>();
   void _onMarkAsAnswered() async {
     try {
       BeStilDialog.showLoading(
@@ -105,9 +106,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pop();
-      // Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      _onWillPop();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -125,11 +124,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pop();
-      // Navigator.of(context).pop();
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => PrayerList()));
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      _onWillPop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -139,6 +134,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
+  }
+
+  Future<bool> _onWillPop() async {
+    return (Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EntryScreen(screenNumber: 0),
+            ))) ??
+        false;
   }
 
   Widget build(BuildContext context) {
@@ -154,21 +158,22 @@ class _PrayerMenuState extends State<PrayerMenu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return SharePrayer(
-                          prayer: widget.prayer.description,
-                        );
-                      },
-                    );
-                  },
+                  onTap: () {},
+                  // {
+                  //   showModalBottomSheet(
+                  //     context: context,
+                  //     barrierColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //     backgroundColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //     isScrollControlled: true,
+                  //     builder: (BuildContext context) {
+                  //       return SharePrayer(
+                  //         prayer: widget.prayer.description,
+                  //       );
+                  //     },
+                  //   );
+                  // },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -291,25 +296,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return ReminderPicker(
-                          hideActionuttons: false,
-                          frequency: reminderInterval,
-                          reminderDays: reminderDays,
-                          onCancel: null,
-                          onSave: null,
-                        );
-                      },
-                    );
-                  },
+                  onTap: () {},
+                  // {
+                  //   showModalBottomSheet(
+                  //     context: context,
+                  //     barrierColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //     backgroundColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //     isScrollControlled: true,
+                  //     builder: (BuildContext context) {
+                  //       return ReminderPicker(
+                  //         hideActionuttons: false,
+                  //         frequency: reminderInterval,
+                  //         reminderDays: reminderDays,
+                  //         onCancel: null,
+                  //         onSave: null,
+                  //       );
+                  //     },
+                  //   );
+                  // },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -359,20 +365,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return CustomPicker(
-                            snoozeInterval, setSnooze, false, null);
-                      },
-                    );
-                  },
+                  onTap: () {},
+                  // {
+                  //   showModalBottomSheet(
+                  //     context: context,
+                  //     barrierColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //     backgroundColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //     isScrollControlled: true,
+                  //     builder: (BuildContext context) {
+                  //       return CustomPicker(
+                  //           snoozeInterval, setSnooze, false, null);
+                  //     },
+                  //   );
+                  // },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -408,7 +415,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 widget.prayer.isAnswer == false
                     ? GestureDetector(
-                        onTap: _onMarkAsAnswered,
+                        onTap: null,
+                        // _onMarkAsAnswered,
                         child: Container(
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),

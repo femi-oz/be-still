@@ -99,11 +99,11 @@ class TabNavigationItem {
           ),
           title: "test",
         ),
-        // TabNavigationItem(
-        //   page: GroupScreen(),
-        //   icon: Icon(Icons.settings, color: AppColors.bottomNavIconColor),
-        //   title: "test",
-        // ),
+        TabNavigationItem(
+          page: GroupScreen(),
+          icon: Icon(Icons.settings, color: AppColors.bottomNavIconColor),
+          title: "test",
+        ),
         TabNavigationItem(
           page: AddPrayer(
             isEdit: false,
