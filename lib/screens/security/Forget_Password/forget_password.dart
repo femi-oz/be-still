@@ -45,31 +45,28 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     setState(() => _autoValidate1 = true);
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
-    // ForgetPasswordSucess();
-    // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-    await Provider.of<AuthenticationProvider>(context, listen: false)
-        .sendPasswordResetEmail(_emailController.text);
-    // }
-    // } else if (step == 2) {
-    //   setState(() => _autoValidate2 = true);
-    //   if (!_formKey2.currentState.validate()) return;
-    //   _formKey2.currentState.save();
-    //   await Provider.of<AuthenticationProvider>(context, listen: false)
-    //       .confirmToken(_codeController.text);
-    // } else if (step == 3) {
-    //   setState(() => _autoValidate3 = true);
-    //   if (!_formKey3.currentState.validate()) return;
-    //   _formKey3.currentState.save();
-    //   await Provider.of<AuthenticationProvider>(context, listen: false)
-    //       .changePassword(_codeController.text, _passwordController.text);
-    //   await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-    // }
-    // setState(() => step += 1);
     try {
       await BeStilDialog.showLoading(context, 'Sending Mail');
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .sendPasswordResetEmail(_emailController.text);
+      // }
+      // } else if (step == 2) {
+      //   setState(() => _autoValidate2 = true);
+      //   if (!_formKey2.currentState.validate()) return;
+      //   _formKey2.currentState.save();
+      //   await Provider.of<AuthenticationProvider>(context, listen: false)
+      //       .confirmToken(_codeController.text);
+      // } else if (step == 3) {
+      //   setState(() => _autoValidate3 = true);
+      //   if (!_formKey3.currentState.validate()) return;
+      //   _formKey3.currentState.save();
+      //   await Provider.of<AuthenticationProvider>(context, listen: false)
+      //       .changePassword(_codeController.text, _passwordController.text);
+      //   await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
+      // }
+      // setState(() => step += 1);
+
       setState(() => step += 1);
-      // await Provider.of<AuthenticationProvider>(context, listen: false)
-      //     .sendPasswordResetEmail(_emailController.text);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
@@ -123,33 +120,35 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           ? Container()
                           : Column(
                               children: <Widget>[
-                                GestureDetector(
-                                  onTap: () => {
-                                    setState(() {
-                                      _forgotPassword();
-                                    })
-                                  },
-                                  child: Container(
-                                    height: 50.0,
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColors.lightBlue1,
-                                          AppColors.lightBlue2,
-                                        ],
+                                step > 1
+                                    ? Container()
+                                    : GestureDetector(
+                                        onTap: () => {
+                                          setState(() {
+                                            _forgotPassword();
+                                          })
+                                        },
+                                        child: Container(
+                                          height: 50.0,
+                                          width: double.infinity,
+                                          margin: EdgeInsets.only(bottom: 20),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                              colors: [
+                                                AppColors.lightBlue1,
+                                                AppColors.lightBlue2,
+                                              ],
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.arrow_forward,
+                                            color: AppColors.offWhite1,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      color: AppColors.offWhite1,
-                                    ),
-                                  ),
-                                ),
-                                step > 2
+                                step > 3
                                     ? Container()
                                     : GestureDetector(
                                         child: Text(
@@ -157,13 +156,17 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                           style: AppTextStyles.regularText13,
                                         ),
                                         onTap: () {
-                                          if (step == 1) {
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            setState(() {
-                                              step -= 1;
-                                            });
-                                          }
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  LoginScreen.routeName);
+
+                                          // if (step == 1) {
+                                          //   Navigator.of(context).pop();
+                                          // } else {
+                                          //   setState(() {
+                                          //     step -= 1;
+                                          //   });
+                                          // }
                                         },
                                       )
                               ],
