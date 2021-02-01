@@ -45,6 +45,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     setState(() => _autoValidate1 = true);
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
+    // ForgetPasswordSucess();
+    // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     await Provider.of<AuthenticationProvider>(context, listen: false)
         .sendPasswordResetEmail(_emailController.text);
     // }
@@ -65,16 +67,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     // setState(() => step += 1);
     try {
       await BeStilDialog.showLoading(context, 'Sending Mail');
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .sendPasswordResetEmail(_emailController.text);
+      setState(() => step += 1);
+      // await Provider.of<AuthenticationProvider>(context, listen: false)
+      //     .sendPasswordResetEmail(_emailController.text);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      print(e);
-
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     }
@@ -108,65 +108,66 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   height: MediaQuery.of(context).size.height * 0.67,
                   child: Column(
                     children: <Widget>[
-                      Expanded(child: _buildEmailForm(context)
-                          // step == 1
-                          //     ? _buildEmailForm(context)
-                          //     : step == 2
-                          //         ? _buildTokenForm()
-                          //         : step == 3
-                          //             ? _buildPasswordForm()
-                          //             : ForgetPasswordSucess(),
-                          ),
-                      // step > 3
-                      //     ? Container()
-                      //     :
-                      Column(
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () => {
-                              setState(() {
-                                _forgotPassword();
-                              })
-                            },
-                            child: Container(
-                              height: 50.0,
-                              width: double.infinity,
-                              margin: EdgeInsets.only(bottom: 20),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    AppColors.lightBlue1,
-                                    AppColors.lightBlue2,
-                                  ],
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: AppColors.offWhite1,
-                              ),
-                            ),
-                          ),
-                          step > 2
-                              ? Container()
-                              : GestureDetector(
-                                  child: Text(
-                                    "Go Back",
-                                    style: AppTextStyles.regularText13,
-                                  ),
-                                  onTap: () {
-                                    if (step == 1) {
-                                      Navigator.of(context).pop();
-                                    } else {
-                                      setState(() {
-                                        step -= 1;
-                                      });
-                                    }
-                                  },
-                                )
-                        ],
+                      Expanded(
+                        child:
+                            // _buildEmailForm(context)
+                            step == 1
+                                ? _buildEmailForm(context)
+                                // : step == 2
+                                //     ? _buildTokenForm()
+                                //     : step == 3
+                                //         ? _buildPasswordForm()
+                                : ForgetPasswordSucess(),
                       ),
+                      step > 3
+                          ? Container()
+                          : Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () => {
+                                    setState(() {
+                                      _forgotPassword();
+                                    })
+                                  },
+                                  child: Container(
+                                    height: 50.0,
+                                    width: double.infinity,
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          AppColors.lightBlue1,
+                                          AppColors.lightBlue2,
+                                        ],
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      color: AppColors.offWhite1,
+                                    ),
+                                  ),
+                                ),
+                                step > 2
+                                    ? Container()
+                                    : GestureDetector(
+                                        child: Text(
+                                          "Go Back",
+                                          style: AppTextStyles.regularText13,
+                                        ),
+                                        onTap: () {
+                                          if (step == 1) {
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            setState(() {
+                                              step -= 1;
+                                            });
+                                          }
+                                        },
+                                      )
+                              ],
+                            ),
                     ],
                   ),
                 ),
