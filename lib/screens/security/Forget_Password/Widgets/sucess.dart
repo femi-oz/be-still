@@ -43,14 +43,14 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
         child: Column(
           children: <Widget>[
             Text(
-              'Your password has been succesfully reset.',
+              'Password reset email has been sent to your email address.',
               style: AppTextStyles.regularText15,
             ),
-            SizedBox(height: 20),
-            Text(
-              'Login to your BesStill...',
-              style: AppTextStyles.regularText15,
-            ),
+            // SizedBox(height: 20),
+            // Text(
+            //   'Login to your BesStill...',
+            //   style: AppTextStyles.regularText15,
+            // ),
           ],
         ),
       ),

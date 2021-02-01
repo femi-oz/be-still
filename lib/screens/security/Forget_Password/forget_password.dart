@@ -175,65 +175,65 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           ),
           SizedBox(height: 55.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                height: 30,
-                width: MediaQuery.of(context).size.width * 0.4,
-                decoration: BoxDecoration(
-                  color: notificationType == NotificationType.email
-                      ? AppColors.activeButton.withOpacity(0.5)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: FlatButton(
-                  child: Text(
-                    NotificationType.email.toUpperCase(),
-                    style: AppTextStyles.regularText15,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        notificationType = NotificationType.email;
-                      },
-                    );
-                  },
-                ),
-              ),
-              Container(
-                height: 30,
-                width: MediaQuery.of(context).size.width * 0.42,
-                decoration: BoxDecoration(
-                  color: notificationType == NotificationType.text
-                      ? AppColors.activeButton.withOpacity(0.5)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: FlatButton(
-                  child: Text(
-                    NotificationType.text.toLowerCase(),
-                    style: AppTextStyles.regularText15,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        notificationType = NotificationType.text;
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          )
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: <Widget>[
+          //     Container(
+          //       height: 30,
+          //       width: MediaQuery.of(context).size.width * 0.4,
+          //       decoration: BoxDecoration(
+          //         color: notificationType == NotificationType.email
+          //             ? AppColors.activeButton.withOpacity(0.5)
+          //             : Colors.transparent,
+          //         border: Border.all(
+          //           color: AppColors.cardBorder,
+          //           width: 1,
+          //         ),
+          //         borderRadius: BorderRadius.circular(5),
+          //       ),
+          //       child: FlatButton(
+          //         child: Text(
+          //           NotificationType.email.toUpperCase(),
+          //           style: AppTextStyles.regularText15,
+          //         ),
+          //         onPressed: () {
+          //           setState(
+          //             () {
+          //               notificationType = NotificationType.email;
+          //             },
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //     Container(
+          //       height: 30,
+          //       width: MediaQuery.of(context).size.width * 0.42,
+          //       decoration: BoxDecoration(
+          //         color: notificationType == NotificationType.text
+          //             ? AppColors.activeButton.withOpacity(0.5)
+          //             : Colors.transparent,
+          //         border: Border.all(
+          //           color: AppColors.cardBorder,
+          //           width: 1,
+          //         ),
+          //         borderRadius: BorderRadius.circular(5),
+          //       ),
+          //       child: FlatButton(
+          //         child: Text(
+          //           NotificationType.text.toLowerCase(),
+          //           style: AppTextStyles.regularText15,
+          //         ),
+          //         onPressed: () {
+          //           setState(
+          //             () {
+          //               notificationType = NotificationType.text;
+          //             },
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // )
         ],
       ),
     );
