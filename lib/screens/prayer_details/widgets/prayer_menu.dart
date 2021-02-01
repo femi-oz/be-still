@@ -8,6 +8,7 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -150,22 +151,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () {},
-                  // {
-                  //   showModalBottomSheet(
-                  //     context: context,
-                  //     barrierColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //     backgroundColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //     isScrollControlled: true,
-                  //     builder: (BuildContext context) {
-                  //       return SharePrayer(
-                  //         prayer: widget.prayer.description,
-                  //       );
-                  //     },
-                  //   );
-                  // },
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return SharePrayer(
+                          prayer: widget.prayer.description,
+                        );
+                      },
+                    );
+                  },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
