@@ -1,8 +1,6 @@
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -21,7 +19,6 @@ class GroupsSettings extends StatefulWidget {
 
 class _GroupsSettingsState extends State<GroupsSettings> {
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
   void _getGroups() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<GroupProvider>(context, listen: false)
@@ -38,7 +35,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   void _showAlert(GroupUserModel user) {
-    final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -360,7 +356,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    final _themeProvider = Provider.of<ThemeProvider>(context);
+
     final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _groupSettings = Provider.of<SettingsProvider>(context).groupSettings;
     final _groupPreferenceSettings =

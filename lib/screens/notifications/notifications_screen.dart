@@ -2,7 +2,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -278,7 +278,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return SafeArea(
       child: Scaffold(
@@ -299,7 +298,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
           ),
           child: SingleChildScrollView(
-            child: _buildPanel(_themeProvider),
+            child: _buildPanel(),
           ),
         ),
         endDrawer: CustomDrawer(),
@@ -307,7 +306,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildPanel(_themeProvider) {
+  Widget _buildPanel() {
     final data = Provider.of<NotificationProvider>(context).notifications;
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),

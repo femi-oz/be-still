@@ -47,30 +47,8 @@ class UserService {
     );
 
     // Generate uuid
-    // final deviceIdGuid = Uuid().v1();
     final userID = Uuid().v1();
-    // final userDeviceID = Uuid().v1();
-
-    // // get device infomation
-    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    // String deviceModel;
-    // String deviceName;
-    // String deviceID;
-    // if (Platform.isAndroid) {
-    //   AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    //   deviceModel = androidInfo.model;
-    //   deviceName = androidInfo.brand;
-    //   deviceID = androidInfo.androidId;
-    // } else if (Platform.isIOS) {
-    //   IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    //   deviceModel = iosInfo.utsname.machine;
-    //   deviceName = iosInfo.name;
-    //   deviceID = iosInfo.identifierForVendor;
-    // }
-
     try {
-      // FirebaseFirestore.instance.runTransaction(
-      //   (transaction) async {
       // store user details
       await _userCollectionReference.doc(userID).set(
             _userData.toJson(),
@@ -79,15 +57,12 @@ class UserService {
       // store default settings
       await locator<SettingsService>().addSettings('', userID, email);
       await locator<SettingsService>().addGroupPreferenceSettings(userID);
-      //   },
-      // );
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
   Future getCurrentUser(String keyReference) async {
-    User user = _firebaseAuth.currentUser;
     try {
       final userRes = await _userCollectionReference
           .where('KeyReference', isEqualTo: keyReference)

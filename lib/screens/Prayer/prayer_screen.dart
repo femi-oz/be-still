@@ -1,5 +1,5 @@
 // import 'package:be_still/providers/prayer_provider.dart';
-// import 'package:be_still/providers/theme_provider.dart';
+//
 // import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
 // import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 // import 'package:be_still/screens/groups/groups_screen.dart';
@@ -78,7 +78,7 @@
 //   // }
 
 //   Widget build(BuildContext context) {
-//     final _themeProvider = Provider.of<ThemeProvider>(context);
+//
 //     return Scaffold(
 //       key: _scaffoldKey,
 //       appBar: CustomAppBar(

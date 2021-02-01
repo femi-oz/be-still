@@ -1,15 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/Prayer/Widgets/prayer_list.dart';
-import 'package:be_still/screens/prayer/prayer_screen.dart';
+
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/app_theme.dart';
 import '../../entry_screen.dart';
 
 class DeletePrayer extends StatefulWidget {
@@ -23,7 +20,6 @@ class DeletePrayer extends StatefulWidget {
 
 class _DeletePrayerState extends State<DeletePrayer> {
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
 
   void _onArchive() async {
     try {
@@ -77,7 +73,6 @@ class _DeletePrayerState extends State<DeletePrayer> {
   }
 
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,

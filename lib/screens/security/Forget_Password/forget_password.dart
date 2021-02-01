@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -42,13 +40,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool emailSent = false;
 
-  _next() async {
+  _forgotPassword() async {
     // if (step == 1) {
-    //   setState(() => _autoValidate1 = true);
-    //   if (!_formKey1.currentState.validate()) return;
-    //   _formKey1.currentState.save();
-    //   await Provider.of<AuthenticationProvider>(context, listen: false)
-    //       .sendVerificationEmail(_emailController.text);
+    setState(() => _autoValidate1 = true);
+    if (!_formKey1.currentState.validate()) return;
+    _formKey1.currentState.save();
+    await Provider.of<AuthenticationProvider>(context, listen: false)
+        .sendPasswordResetEmail(_emailController.text);
+    // }
     // } else if (step == 2) {
     //   setState(() => _autoValidate2 = true);
     //   if (!_formKey2.currentState.validate()) return;
@@ -67,7 +66,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     try {
       await BeStilDialog.showLoading(context, 'Sending Mail');
       await Provider.of<AuthenticationProvider>(context, listen: false)
-          .forgotPassword(_emailController.text);
+          .sendPasswordResetEmail(_emailController.text);
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     } on HttpException catch (e) {
@@ -83,7 +82,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -127,7 +125,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           GestureDetector(
                             onTap: () => {
                               setState(() {
-                                _next();
+                                _forgotPassword();
                               })
                             },
                             child: Container(
@@ -181,7 +179,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   }
 
   _buildEmailForm(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Form(
       key: _formKey1,
       autovalidate: _autoValidate1,

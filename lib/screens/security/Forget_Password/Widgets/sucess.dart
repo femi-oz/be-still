@@ -1,10 +1,8 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ForgetPasswordSucess extends StatefulWidget {
   static const routeName = 'forgot-password-success';
@@ -26,7 +24,6 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.only(top: 100),

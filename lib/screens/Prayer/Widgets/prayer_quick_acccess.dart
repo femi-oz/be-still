@@ -1,14 +1,9 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../entry_screen.dart';
 
 class PrayerQuickAccess extends StatefulWidget {
   final y;
@@ -88,7 +83,6 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
 
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),

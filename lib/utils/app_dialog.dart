@@ -1,4 +1,3 @@
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

@@ -1,11 +1,9 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RecommenededBibles extends StatefulWidget {
@@ -27,7 +25,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   var bibleData = [];
   @override
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
@@ -92,7 +89,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              _buildPanel(_themeProvider),
+              _buildPanel(),
             ],
           ),
         ),
@@ -100,7 +97,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     );
   }
 
-  Widget _buildPanel(_themeProvider) {
+  Widget _buildPanel() {
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(

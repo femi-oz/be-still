@@ -1,7 +1,5 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CustomButtonGroup extends StatelessWidget {
   final bool isSelected;
@@ -22,11 +20,15 @@ class CustomButtonGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: index < length - 1 ? const EdgeInsets.only(right: 20.0) : const EdgeInsets.only(right: 0.0),
+        padding: index < length - 1
+            ? const EdgeInsets.only(right: 20.0)
+            : const EdgeInsets.only(right: 0.0),
         child: Container(
           height: 35.0,
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.activeButton.withOpacity(0.3) : Colors.transparent,
+            color: isSelected
+                ? AppColors.activeButton.withOpacity(0.3)
+                : Colors.transparent,
             border: Border.all(
               color: color,
               width: 1,

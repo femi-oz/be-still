@@ -1,7 +1,5 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CustomSectionHeder extends StatelessWidget {
   final String title;
@@ -9,7 +7,6 @@ class CustomSectionHeder extends StatelessWidget {
   CustomSectionHeder(this.title);
   @override
   Widget build(BuildContext context) {
-    var _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(

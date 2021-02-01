@@ -2,7 +2,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/screens/Prayer/Widgets/prayer_tools.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/app_icons.dart';

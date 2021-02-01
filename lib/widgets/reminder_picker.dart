@@ -1,12 +1,11 @@
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/providers/theme_provider.dart';
+
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ReminderPicker extends StatefulWidget {
   final Function onSave;

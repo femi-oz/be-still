@@ -1,5 +1,4 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ class NoUpdateView extends StatelessWidget {
   @override
   NoUpdateView(this.data);
   Widget build(BuildContext context) {
-    final _themeProvider = Provider.of<ThemeProvider>(context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return Column(
       children: <Widget>[
