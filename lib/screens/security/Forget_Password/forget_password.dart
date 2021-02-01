@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +39,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   bool _autoValidate2 = false;
   bool _autoValidate3 = false;
   var notificationType = NotificationType.email;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool emailSent = false;
 
   _next() async {
     // if (step == 1) {
@@ -56,7 +63,22 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     //       .changePassword(_codeController.text, _passwordController.text);
     //   await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
     // }
-    setState(() => step += 1);
+    // setState(() => step += 1);
+    try {
+      await BeStilDialog.showLoading(context, 'Sending Mail');
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .forgotPassword(_emailController.text);
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      print(e);
+
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    }
   }
 
   @override
@@ -85,67 +107,68 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 Container(
                   padding: EdgeInsets.all(20),
                   width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.6,
+                  height: MediaQuery.of(context).size.height * 0.67,
                   child: Column(
                     children: <Widget>[
-                      Expanded(
-                        child: step == 1
-                            ? _buildEmailForm(context)
-                            : step == 2
-                                ? _buildTokenForm()
-                                : step == 3
-                                    ? _buildPasswordForm()
-                                    : ForgetPasswordSucess(),
-                      ),
-                      step > 3
-                          ? Container()
-                          : Column(
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: () => {
-                                    setState(() {
-                                      _next();
-                                    })
-                                  },
-                                  child: Container(
-                                    height: 50.0,
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColors.lightBlue1,
-                                          AppColors.lightBlue2,
-                                        ],
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      color: AppColors.offWhite1,
-                                    ),
-                                  ),
+                      Expanded(child: _buildEmailForm(context)
+                          // step == 1
+                          //     ? _buildEmailForm(context)
+                          //     : step == 2
+                          //         ? _buildTokenForm()
+                          //         : step == 3
+                          //             ? _buildPasswordForm()
+                          //             : ForgetPasswordSucess(),
+                          ),
+                      // step > 3
+                      //     ? Container()
+                      //     :
+                      Column(
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () => {
+                              setState(() {
+                                _next();
+                              })
+                            },
+                            child: Container(
+                              height: 50.0,
+                              width: double.infinity,
+                              margin: EdgeInsets.only(bottom: 20),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    AppColors.lightBlue1,
+                                    AppColors.lightBlue2,
+                                  ],
                                 ),
-                                step > 2
-                                    ? Container()
-                                    : GestureDetector(
-                                        child: Text(
-                                          "Go Back",
-                                          style: AppTextStyles.regularText13,
-                                        ),
-                                        onTap: () {
-                                          if (step == 1) {
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            setState(() {
-                                              step -= 1;
-                                            });
-                                          }
-                                        },
-                                      )
-                              ],
+                              ),
+                              child: Icon(
+                                Icons.arrow_forward,
+                                color: AppColors.offWhite1,
+                              ),
                             ),
+                          ),
+                          step > 2
+                              ? Container()
+                              : GestureDetector(
+                                  child: Text(
+                                    "Go Back",
+                                    style: AppTextStyles.regularText13,
+                                  ),
+                                  onTap: () {
+                                    if (step == 1) {
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      setState(() {
+                                        step -= 1;
+                                      });
+                                    }
+                                  },
+                                )
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -167,7 +190,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           CustomInput(
             label: 'Email Address',
             controller: _emailController,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.emailAddress,
             isRequired: true,
             textInputAction: TextInputAction.done,
             unfocus: true,
@@ -176,71 +199,71 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 40.0),
             child: Text(
-              'How would you like to recieve your password reset code?',
+              'An email will be sent to you. Please click on the link to reset your password',
               textAlign: TextAlign.center,
               style: AppTextStyles.regularText16b,
             ),
           ),
           SizedBox(height: 55.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                height: 30,
-                width: MediaQuery.of(context).size.width * 0.4,
-                decoration: BoxDecoration(
-                  color: notificationType == NotificationType.email
-                      ? AppColors.activeButton.withOpacity(0.5)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: FlatButton(
-                  child: Text(
-                    NotificationType.email.toUpperCase(),
-                    style: AppTextStyles.regularText15,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        notificationType = NotificationType.email;
-                      },
-                    );
-                  },
-                ),
-              ),
-              Container(
-                height: 30,
-                width: MediaQuery.of(context).size.width * 0.42,
-                decoration: BoxDecoration(
-                  color: notificationType == NotificationType.text
-                      ? AppColors.activeButton.withOpacity(0.5)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: FlatButton(
-                  child: Text(
-                    NotificationType.text.toLowerCase(),
-                    style: AppTextStyles.regularText15,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        notificationType = NotificationType.text;
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          )
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: <Widget>[
+          //     Container(
+          //       height: 30,
+          //       width: MediaQuery.of(context).size.width * 0.4,
+          //       decoration: BoxDecoration(
+          //         color: notificationType == NotificationType.email
+          //             ? AppColors.activeButton.withOpacity(0.5)
+          //             : Colors.transparent,
+          //         border: Border.all(
+          //           color: AppColors.cardBorder,
+          //           width: 1,
+          //         ),
+          //         borderRadius: BorderRadius.circular(5),
+          //       ),
+          //       child: FlatButton(
+          //         child: Text(
+          //           NotificationType.email.toUpperCase(),
+          //           style: AppTextStyles.regularText15,
+          //         ),
+          //         onPressed: () {
+          //           setState(
+          //             () {
+          //               notificationType = NotificationType.email;
+          //             },
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //     Container(
+          //       height: 30,
+          //       width: MediaQuery.of(context).size.width * 0.42,
+          //       decoration: BoxDecoration(
+          //         color: notificationType == NotificationType.text
+          //             ? AppColors.activeButton.withOpacity(0.5)
+          //             : Colors.transparent,
+          //         border: Border.all(
+          //           color: AppColors.cardBorder,
+          //           width: 1,
+          //         ),
+          //         borderRadius: BorderRadius.circular(5),
+          //       ),
+          //       child: FlatButton(
+          //         child: Text(
+          //           NotificationType.text.toLowerCase(),
+          //           style: AppTextStyles.regularText15,
+          //         ),
+          //         onPressed: () {
+          //           setState(
+          //             () {
+          //               notificationType = NotificationType.text;
+          //             },
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // )
         ],
       ),
     );

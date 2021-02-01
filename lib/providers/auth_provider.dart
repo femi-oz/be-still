@@ -29,6 +29,10 @@ class AuthenticationProvider with ChangeNotifier {
     );
   }
 
+  Future forgotPassword(String email) async {
+    return await _authService.forgotPassword(email);
+  }
+
   // sendVerificationEmail(String email) async {
   //   return await _authService.sendVerificationEmail(email);
   // }

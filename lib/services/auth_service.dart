@@ -30,6 +30,14 @@ class AuthenticationService {
     }
   }
 
+  Future forgotPassword(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future signIn({
     String email,
     String password,

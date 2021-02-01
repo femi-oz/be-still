@@ -105,20 +105,20 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          setState(
-                            () async {
-                              isSnoozed = !isSnoozed;
-                              status = Status.inactive;
-                              await Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .filterPrayers(
-                                isAnswered: isAnswered,
-                                isArchived: isArchived,
-                                isSnoozed: isSnoozed,
-                                status: status,
-                              );
-                            },
-                          );
+                          // setState(
+                          //   () async {
+                          //     isSnoozed = !isSnoozed;
+                          //     status = Status.inactive;
+                          //     await Provider.of<PrayerProvider>(context,
+                          //             listen: false)
+                          //         .filterPrayers(
+                          //       isAnswered: isAnswered,
+                          //       isArchived: isArchived,
+                          //       isSnoozed: isSnoozed,
+                          //       status: status,
+                          //     );
+                          //   },
+                          // );
                         },
                         child: Container(
                           height: 50,
@@ -196,19 +196,19 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          setState(
-                            () async {
-                              isAnswered = !isAnswered;
-                              await Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .filterPrayers(
-                                isAnswered: isAnswered,
-                                isArchived: isArchived,
-                                isSnoozed: isSnoozed,
-                                status: status,
-                              );
-                            },
-                          );
+                          // setState(
+                          //   () async {
+                          //     isAnswered = !isAnswered;
+                          //     await Provider.of<PrayerProvider>(context,
+                          //             listen: false)
+                          //         .filterPrayers(
+                          //       isAnswered: isAnswered,
+                          //       isArchived: isArchived,
+                          //       isSnoozed: isSnoozed,
+                          //       status: status,
+                          //     );
+                          //   },
+                          // );
                         },
                         child: Container(
                           height: 50,
