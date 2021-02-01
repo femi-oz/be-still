@@ -122,12 +122,14 @@ class _GroupScreenState extends State<GroupScreen> {
               Container(
                 padding: EdgeInsets.only(left: 50),
                 child: LongButton(
-                  onPress: () => Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (context) => new FindAGroup(),
-                    ),
-                  ),
+                  onPress: () => null,
+                  // Navigator.push(
+                  //   context,
+                  //   new MaterialPageRoute(
+                  //     builder: (context) =>
+                  //     new FindAGroup(),
+                  //   ),
+                  // ),
                   text: 'FIND A GROUP',
                   backgroundColor:
                       AppColors.groupActionBgColor.withOpacity(0.9),
@@ -139,12 +141,14 @@ class _GroupScreenState extends State<GroupScreen> {
               Container(
                 padding: EdgeInsets.only(left: 50),
                 child: LongButton(
-                  onPress: () => Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (context) => CreateGroupScreen(),
-                    ),
-                  ),
+                  onPress: () => null,
+                  // Navigator.push(
+                  //   context,
+                  //   new MaterialPageRoute(
+                  //     builder: (context) =>
+                  //     CreateGroupScreen(),
+                  //   ),
+                  // ),
                   text: 'CREATE A GROUP',
                   backgroundColor:
                       AppColors.groupActionBgColor.withOpacity(0.9),
@@ -171,26 +175,28 @@ class _GroupScreenState extends State<GroupScreen> {
                                 (e) => Column(
                                   children: [
                                     LongButton(
-                                      onPress: () {
-                                        _getPrayers(e);
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) async {
-                                          await Provider.of<MiscProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .setPageTitle(
-                                                  '${e.group.name} List'
-                                                      .toUpperCase());
-                                        });
-                                      },
+                                      onPress: () {},
+                                      // {
+                                      //   _getPrayers(e);
+                                      //   WidgetsBinding.instance
+                                      //       .addPostFrameCallback((_) async {
+                                      //     await Provider.of<MiscProvider>(
+                                      //             context,
+                                      //             listen: false)
+                                      //         .setPageTitle(
+                                      //             '${e.group.name} List'
+                                      //                 .toUpperCase());
+                                      //   });
+                                      // },
                                       text: e.group.name.toUpperCase(),
                                       backgroundColor:
                                           AppColors.groupCardBgColor,
                                       textColor: AppColors.lightBlue3,
                                       hasIcon: false,
                                       hasMore: true,
-                                      onPressMore: () =>
-                                          _onPressMore(e.group.id, e),
+                                      onPressMore: () => null,
+                                      // _onPressMore(
+                                      //     e.group.id, _themeProvider, e),
                                     ),
                                     SizedBox(height: 10),
                                   ],

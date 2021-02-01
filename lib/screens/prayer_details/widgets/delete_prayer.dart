@@ -7,6 +7,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../entry_screen.dart';
 
 class DeletePrayer extends StatefulWidget {
   final PrayerModel prayer;
@@ -29,7 +30,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
           .archivePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
+      _onWillPop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -41,6 +42,15 @@ class _DeletePrayerState extends State<DeletePrayer> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    return (Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EntryScreen(screenNumber: 0),
+            ))) ??
+        false;
+  }
+
   _onDelete() async {
     try {
       BeStilDialog.showLoading(
@@ -50,11 +60,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
           .deletePrayer(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => PrayerList()));
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+      _onWillPop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
