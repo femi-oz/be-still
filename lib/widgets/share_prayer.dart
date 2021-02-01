@@ -8,7 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SharePrayer extends StatefulWidget {
   final String prayer;
-  SharePrayer({this.prayer});
+  final updates;
+  SharePrayer({this.prayer, this.updates});
 
   _SharePrayerState createState() => _SharePrayerState();
 }
@@ -20,10 +21,13 @@ class _SharePrayerState extends State<SharePrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     var _prayer = widget.prayer;
     var name = _user.firstName;
+    var updates = widget.updates;
 
     var _footerText =
         ' $name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends.';
     var url = 'mailto:?subject=$name shared a prayer with you&body=$_prayer'
+        "</br></br>"
+        '$updates'
         "</br></br></br></br></br>"
         '$_footerText';
     if (await canLaunch(url)) {

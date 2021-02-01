@@ -50,6 +50,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         (!isGroup && !isGroupAdmin && prayer.groupId != '0')) {
       return OtherMemberPrayerMenu(prayer);
     } else if ((!isGroup && prayer.groupId == '0')) {
+      updates =
+          Provider.of<PrayerProvider>(context, listen: false).prayerUpdates;
       return PrayerMenu(prayer, updates, context);
     } else {
       return PrayerMenu(prayer, updates, context);
