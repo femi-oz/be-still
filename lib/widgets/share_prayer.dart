@@ -2,6 +2,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,8 +20,12 @@ class _SharePrayerState extends State<SharePrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     var _prayer = widget.prayer;
     var name = _user.firstName;
-    var url = 'mailto:?subject=$name shared prayer with you&body=$_prayer';
-    print(_prayer);
+
+    var _footerText =
+        ' $name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends.';
+    var url = 'mailto:?subject=$name shared a prayer with you&body=$_prayer'
+        "</br></br></br></br></br>"
+        '$_footerText';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -242,7 +247,7 @@ class _SharePrayerState extends State<SharePrayer> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: _emailLink,
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),
