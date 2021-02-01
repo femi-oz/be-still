@@ -1,4 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -6,6 +7,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ForgetPassword extends StatefulWidget {
   static const routeName = '/forget-password';
@@ -31,13 +33,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   bool _autoValidate3 = false;
   var notificationType = NotificationType.email;
 
-  _next() async {
+  _forgotPassword() async {
     // if (step == 1) {
-    //   setState(() => _autoValidate1 = true);
-    //   if (!_formKey1.currentState.validate()) return;
-    //   _formKey1.currentState.save();
-    //   await Provider.of<AuthenticationProvider>(context, listen: false)
-    //       .sendVerificationEmail(_emailController.text);
+    setState(() => _autoValidate1 = true);
+    if (!_formKey1.currentState.validate()) return;
+    _formKey1.currentState.save();
+    await Provider.of<AuthenticationProvider>(context, listen: false)
+        .sendPasswordResetEmail(_emailController.text);
+    // }
     // } else if (step == 2) {
     //   setState(() => _autoValidate2 = true);
     //   if (!_formKey2.currentState.validate()) return;
@@ -86,22 +89,18 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       Expanded(
                         child: step == 1
                             ? _buildEmailForm(context)
-                            : step == 2
-                                ? _buildTokenForm()
-                                : step == 3
-                                    ? _buildPasswordForm()
-                                    : ForgetPasswordSucess(),
+                            // : step == 2
+                            //     ? _buildTokenForm()
+                            //     : step == 3
+                            //         ? _buildPasswordForm()
+                            : ForgetPasswordSucess(),
                       ),
                       step > 3
                           ? Container()
                           : Column(
                               children: <Widget>[
                                 GestureDetector(
-                                  onTap: () => {
-                                    setState(() {
-                                      _next();
-                                    })
-                                  },
+                                  onTap: () => _forgotPassword(),
                                   child: Container(
                                     height: 50.0,
                                     width: double.infinity,

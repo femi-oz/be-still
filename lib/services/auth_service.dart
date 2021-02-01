@@ -68,23 +68,13 @@ class AuthenticationService {
     }
   }
 
-  // Future<void> sendVerificationEmail(String email) async {
-  //   try {
-  //     await _firebaseAuth.sendPasswordResetEmail(
-  //       email: email,
-  //       actionCodeSettings: ActionCodeSettings(
-  //         url: "https://example.web.app",
-  //         androidPackageName: "org.second.bestill.dev",
-  //         androidInstallApp: true,
-  //         androidMinimumVersion: '12',
-  //         iOSBundleId: "org.second.bestill.dev",
-  //         handleCodeInApp: true,
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     throw HttpException(e.message);
-  //   }
-  // }
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 
   // Future<void> confirmToken(String code) async {
   //   try {
