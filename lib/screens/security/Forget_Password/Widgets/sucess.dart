@@ -1,4 +1,4 @@
-import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -17,7 +17,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushReplacementNamed(EntryScreen.routeName),
+        () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
       ),
     );
   }
