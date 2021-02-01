@@ -1,17 +1,6 @@
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/groups/widgets/find_a_group.dart';
-import 'package:be_still/screens/groups/widgets/group_prayers.dart';
-import 'package:be_still/screens/groups/widgets/group_tools.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -26,53 +15,53 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  void _getPrayers(CombineGroupUserStream data) async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+  // void _getPrayers(CombineGroupUserStream data) async {
+  //   await BeStilDialog.showLoading(context, '');
+  //   try {
+  //     UserModel _user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroup(data);
+  //     await Provider.of<GroupProvider>(context, listen: false)
+  //         .setUserGroups(_user.id);
+  //     await Provider.of<GroupProvider>(context, listen: false)
+  //         .setAllGroups(_user.id);
+  //     await Provider.of<GroupProvider>(context, listen: false)
+  //         .setCurrentGroup(data);
 
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
-      await Provider.of<PrayerProvider>(context, listen: false).setGroupPrayers(
-        _user?.id,
-        data.group.id,
-        data.groupUsers.firstWhere((e) => e.userId == _user.id).isAdmin,
-      );
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GroupPrayers(),
-        ),
-      );
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
-  }
+  //     await Provider.of<PrayerProvider>(context, listen: false)
+  //         .setHiddenPrayers(_user.id);
+  //     await Provider.of<PrayerProvider>(context, listen: false).setGroupPrayers(
+  //       _user?.id,
+  //       data.group.id,
+  //       data.groupUsers.firstWhere((e) => e.userId == _user.id).isAdmin,
+  //     );
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => GroupPrayers(),
+  //       ),
+  //     );
+  //   } on HttpException catch (e) {
+  //     BeStilDialog.showErrorDialog(context, e.message);
+  //   } catch (e) {
+  //     BeStilDialog.showErrorDialog(context, e.toString());
+  //   }
+  // }
 
-  _onPressMore(String id, CombineGroupUserStream group) {
-    Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(group);
-    showModalBottomSheet(
-      context: context,
-      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return GroupTools();
-      },
-    );
-  }
+  // _onPressMore(String id, CombineGroupUserStream group) {
+  //   Provider.of<GroupProvider>(context, listen: false).setCurrentGroup(group);
+  //   showModalBottomSheet(
+  //     context: context,
+  //     barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+  //     backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       return GroupTools();
+  //     },
+  //   );
+  // }
 
   Future<bool> _onWillPop() async {
     return (Navigator.pushReplacement(

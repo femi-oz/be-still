@@ -1,10 +1,7 @@
 import 'package:be_still/models/prayer.model.dart';
-
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
 
 class PrayerQuickAccess extends StatefulWidget {

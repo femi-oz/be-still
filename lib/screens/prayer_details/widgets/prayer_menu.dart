@@ -8,10 +8,6 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/share_prayer.dart';
-import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:be_still/widgets/custom_picker.dart';
-import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -72,26 +68,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   BuildContext bcontext;
 
-  void _onMarkAsAnswered() async {
-    try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(widget.prayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
-    } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-    }
-  }
+  // void _onMarkAsAnswered() async {
+  //   try {
+  //     BeStilDialog.showLoading(
+  //       bcontext,
+  //     );
+  //     await Provider.of<PrayerProvider>(context, listen: false)
+  //         .markPrayerAsAnswered(widget.prayer.id);
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //     Navigator.of(context).pop();
+  //   } on HttpException catch (e) {
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //     BeStilDialog.showErrorDialog(context, e.message);
+  //   } catch (e) {
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+  //   }
+  // }
 
   void _unArchive() async {
     try {
