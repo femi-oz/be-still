@@ -144,7 +144,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                           ),
                                           child: Icon(
                                             Icons.arrow_forward,
-                                            color: AppColors.offWhite1,
+                                            color: AppColors.offWhite4,
                                           ),
                                         ),
                                       ),
@@ -202,7 +202,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             child: Text(
               'An email will be sent to you. Please click on the link to reset your password',
               textAlign: TextAlign.center,
-              style: AppTextStyles.regularText16b,
+              style: AppTextStyles.regularText16b.copyWith(
+                color: AppColors.prayerTextColor,
+              ),
             ),
           ),
           SizedBox(height: 55.0),
