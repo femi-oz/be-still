@@ -29,11 +29,11 @@ class _PrayerFiltersState extends State<PrayerFilters> {
             alignment: Alignment.centerLeft,
             child: FlatButton.icon(
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
+              icon: Icon(Icons.arrow_back, color: AppColors.lightBlue3),
               label: Text(
                 'BACK',
                 style: TextStyle(
-                  color: AppColors.lightBlue5,
+                  color: AppColors.lightBlue3,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
