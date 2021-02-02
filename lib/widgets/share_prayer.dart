@@ -26,16 +26,20 @@ class _SharePrayerState extends State<SharePrayer> {
     var updates = widget.updates;
     var link =
         '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
-
     var _footerText =
         ' $name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. $link';
-    var url = 'mailto:?subject=$name shared a prayer with you&body=$_prayer.'
-        '</br></br>'
-        'Comments:'
-        '</br>'
-        '$updates'
-        '</br></br></br></br></br>'
-        '$_footerText';
+    final Uri params = Uri(
+        scheme: 'mailto',
+        // path: _user.email,
+        query: 'subject=$name shared a prayer with you&body=$_prayer.'
+            '</br></br>'
+            'Comments:'
+            '</br>'
+            '$updates'
+            '</br></br></br></br></br>'
+            '$_footerText');
+
+    var url = params.toString();
     if (await canLaunch(url)) {
       await launch(url);
     } else {

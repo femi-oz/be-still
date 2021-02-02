@@ -1,5 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -121,7 +122,13 @@ class _PrayerListState extends State<PrayerList> {
                                     // );
                                   },
                                   onLongPressEnd:
-                                      (LongPressEndDetails details) {
+                                      (LongPressEndDetails details) async {
+                                    await Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .setPrayer(e.prayer.id);
+                                    await Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .setPrayerUpdates(e.prayer.id);
                                     var y = details.globalPosition.dy;
                                     showModalBottomSheet(
                                       context: context,
@@ -132,7 +139,9 @@ class _PrayerListState extends State<PrayerList> {
                                       isScrollControlled: true,
                                       builder: (BuildContext context) {
                                         return PrayerQuickAccess(
-                                            y: y, prayer: e.prayer);
+                                          y: y,
+                                          prayer: e.prayer,
+                                        );
                                       },
                                     );
                                   },
