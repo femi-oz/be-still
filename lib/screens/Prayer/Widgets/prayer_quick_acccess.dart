@@ -1,15 +1,16 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PrayerQuickAccess extends StatefulWidget {
   final y;
 
   final PrayerModel prayer;
-
   PrayerQuickAccess({this.y, this.prayer});
   @override
   _PrayerQuickAccessState createState() => _PrayerQuickAccessState();
@@ -17,6 +18,8 @@ class PrayerQuickAccess extends StatefulWidget {
 
 class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     with TickerProviderStateMixin {
+  List<PrayerUpdateModel> updates = [];
+
   AnimationController animationController;
 
   Animation degOneTranslationAnimation;
@@ -83,7 +86,14 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
 
   @override
   Widget build(BuildContext context) {
+    updates = Provider.of<PrayerProvider>(context, listen: false).prayerUpdates;
     Size size = MediaQuery.of(context).size;
+    List<String> prayerUpdates = [];
+    updates.forEach((data) => {
+          prayerUpdates = [...prayerUpdates, data.description].toList()
+        });
+    print(prayerUpdates);
+    var newUpdates = prayerUpdates.join("<br>");
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Container(
@@ -153,7 +163,10 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
-                              return SharePrayer();
+                              return SharePrayer(
+                                  prayer: widget.prayer.description,
+                                  updates:
+                                      updates.length > 0 ? newUpdates : '');
                             },
                           );
                         },
