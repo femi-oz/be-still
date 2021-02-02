@@ -20,7 +20,7 @@ class _SharePrayerState extends State<SharePrayer> {
 
   _emailLink() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    var _prayer = widget.prayer;
+    var _prayer = toBeginningOfSentenceCase(widget.prayer);
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
     var updates = widget.updates;
