@@ -232,8 +232,8 @@ class CustomDrawer extends StatelessWidget {
                           ),
                           ListTile(
                             onTap: () {
-                              Navigator.of(context).pushReplacementNamed(
-                                  GrowMyPrayerLifeScreen.routeName);
+                              // Navigator.of(context).pushReplacementNamed(
+                              //     GrowMyPrayerLifeScreen.routeName);
                             },
                             title: Text("GROW MY PRAYER LIFE",
                                 style: AppTextStyles.drawerMenu.copyWith(

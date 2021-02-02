@@ -14,12 +14,12 @@ class ForgetPasswordSucess extends StatefulWidget {
 class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => Future.delayed(
-        Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
-      ),
-    );
+    // WidgetsBinding.instance.addPostFrameCallback(
+    //   (_) => Future.delayed(
+    //     Duration(milliseconds: 10000),
+    //     () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
+    //   ),
+    // );
   }
 
   @override
@@ -44,6 +44,11 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
           children: <Widget>[
             Text(
               'Password reset email has been sent to your email address.',
+              style: AppTextStyles.regularText15,
+            ),
+            SizedBox(height: 80),
+            Text(
+              'NEW PASSWORD MUST BE AT LEAST 6 CHARACTERS LONG AND CONTAIN AT LEAST 1 LOWERCASE, 1 UPPERCASE AND 1 NUMBER.',
               style: AppTextStyles.regularText15,
             ),
             // SizedBox(height: 20),

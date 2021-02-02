@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     _buildForm(),
                                     SizedBox(height: 8),
                                     _buildActions(),
-                                    SizedBox(height: 40),
+                                    SizedBox(height: 10),
                                     Settings.enableLocalAuth
                                         ? _bioButton()
                                         : Container(),
