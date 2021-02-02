@@ -140,6 +140,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    var updates = widget.updates.map((value) {
+      return value.description;
+    });
     setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
@@ -161,8 +164,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
-                          prayer: widget.prayer.description,
-                        );
+                            prayer: widget.prayer.description,
+                            updates: widget.updates.length > 0 ? updates : '');
                       },
                     );
                   },
