@@ -70,26 +70,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   BuildContext bcontext;
 
-  // void _onMarkAsAnswered() async {
-  //   try {
-  //     BeStilDialog.showLoading(
-  //       bcontext,
-  //     );
-  //     await Provider.of<PrayerProvider>(context, listen: false)
-  //         .markPrayerAsAnswered(widget.prayer.id);
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     BeStilDialog.hideLoading(context);
-  //     Navigator.of(context).pop();
-  //   } on HttpException catch (e) {
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     BeStilDialog.hideLoading(context);
-  //     BeStilDialog.showErrorDialog(context, e.message);
-  //   } catch (e) {
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     BeStilDialog.hideLoading(context);
-  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-  //   }
-  // }
+  void _onMarkAsAnswered() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(widget.prayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
 
   void _unArchive() async {
     try {
@@ -420,8 +420,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 widget.prayer.isAnswer == false
                     ? GestureDetector(
-                        onTap: null,
-                        // _onMarkAsAnswered,
+                        onTap: () => _onMarkAsAnswered(),
                         child: Container(
                           height: 50,
                           padding: EdgeInsets.symmetric(horizontal: 20),

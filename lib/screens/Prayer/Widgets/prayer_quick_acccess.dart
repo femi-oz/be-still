@@ -1,8 +1,11 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -84,8 +87,32 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     animationController.forward();
   }
 
+  BuildContext bcontext;
+
+  void _onMarkAsAnswered() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(widget.prayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    setState(() => this.bcontext = context);
     updates = Provider.of<PrayerProvider>(context, listen: false).prayerUpdates;
     Size size = MediaQuery.of(context).size;
     List<String> prayerUpdates = [];
@@ -250,9 +277,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           Icons.check_box,
                           color: AppColors.lightBlue4,
                         ),
-                        onClick: () {
-                          print('Fourth Button');
-                        },
+                        onClick: () => _onMarkAsAnswered(),
                       ),
                     ),
                   ),
