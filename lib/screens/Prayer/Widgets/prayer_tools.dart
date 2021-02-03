@@ -15,6 +15,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   bool isSnoozed;
   bool isAnswered;
   bool isArchived;
+
   Widget build(BuildContext context) {
     var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
     status = filterOptions.status;

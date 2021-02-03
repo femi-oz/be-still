@@ -107,8 +107,6 @@ class PrayerProvider with ChangeNotifier {
     var answeredPrayers = [];
     var snoozedPrayers = [];
     var archivedPrayers = [];
-    print(isArchived);
-    print(status);
 
     if (status == Status.active) {
       activePrayers = filteredPrayers
@@ -138,6 +136,7 @@ class PrayerProvider with ChangeNotifier {
       ...snoozedPrayers,
       ...answeredPrayers
     ];
+
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     notifyListeners();

@@ -398,7 +398,7 @@ class PrayerService {
   Future markPrayerAsAnswered(String prayerID) async {
     try {
       _prayerCollectionReference.doc(prayerID).update(
-        {'IsAnswer': true},
+        {'IsAnswer': true, 'Status': Status.inactive},
       );
     } catch (e) {
       throw HttpException(e.message);
