@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
@@ -10,7 +9,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +35,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   bool _autoValidate2 = false;
   bool _autoValidate3 = false;
   var notificationType = NotificationType.email;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool emailSent = false;
 
   _forgotPassword() async {

@@ -4,8 +4,6 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/add_prayer/widgets/add_prayer_menu.dart';
-import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -40,7 +38,6 @@ class _AddPrayerState extends State<AddPrayer> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   List groups = [];
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   BuildContext bcontext;
 
   _save() async {
