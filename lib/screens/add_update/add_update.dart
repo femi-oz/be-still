@@ -1,12 +1,20 @@
+import 'dart:io';
+
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../entry_screen.dart';
 
 class AddUpdate extends StatefulWidget {
   final PrayerModel prayer;
@@ -26,6 +34,7 @@ class _AddUpdateState extends State<AddUpdate> {
   final _formKey = GlobalKey<FormState>();
 
   bool _autoValidate = false;
+  BuildContext bcontext;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   _save() async {
@@ -48,19 +57,46 @@ class _AddUpdateState extends State<AddUpdate> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    showModalBottomSheet(
-      context: context,
-      barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-      backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return NameRecognitionMenuOne(
-          isUpdate: true,
-          prayerUpdate: prayerUpdateData,
-          scafoldKey: _scaffoldKey,
-        );
-      },
-    );
+    // showModalBottomSheet(
+    //   context: context,
+    //   barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+    //   backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
+    //   isScrollControlled: true,
+    //   builder: (BuildContext context) {
+    //     return NameRecognitionMenuOne(
+    //       isUpdate: true,
+    //       prayerUpdate: prayerUpdateData,
+    //       scafoldKey: _scaffoldKey,
+    //     );
+    //   },
+    // );
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .addPrayerUpdate(prayerUpdateData);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      _onWillPop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    return (Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EntryScreen(screenNumber: 0),
+            ))) ??
+        false;
   }
 
   Widget build(BuildContext context) {
