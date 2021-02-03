@@ -456,7 +456,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       )
                     : Container(),
                 widget.prayer.status == Status.active &&
-                        !widget.prayer.isArchived
+                            !widget.prayer.isArchived ||
+                        widget.prayer.isAnswer
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(

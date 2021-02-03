@@ -84,11 +84,12 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       Icons.arrow_back,
                       color: AppColors.lightBlue3,
                     ),
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                EntryScreen(screenNumber: 0))),
+                    onPressed: () => Navigator.of(context).pop(),
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) =>
+                    //             EntryScreen(screenNumber: 0))),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(
