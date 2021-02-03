@@ -92,7 +92,6 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     updates.forEach((data) => {
           prayerUpdates = [...prayerUpdates, data.description].toList()
         });
-    print(prayerUpdates);
     var newUpdates = prayerUpdates.join("<br>");
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),

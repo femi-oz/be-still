@@ -48,7 +48,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
             ),
             SizedBox(height: 80),
             Text(
-              'New password must be at Least 6 characters long and contain at least 1 lowercase, 1 uppercase and 1 number.',
+              'New password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase and 1 number.',
               style: AppTextStyles.errorText,
             ),
             // SizedBox(height: 20),
