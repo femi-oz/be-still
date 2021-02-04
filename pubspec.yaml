@@ -50,7 +50,12 @@ dependencies:
   # alice: ^0.1.9
   dio: ^3.0.10
   local_auth: ^0.6.3+4
-  flutter_html: ^0.8.2 
+  flutter_html: ^0.8.2
+  flutter_typeahead: ^2.0.0
+
+
+
+ 
 
 
 

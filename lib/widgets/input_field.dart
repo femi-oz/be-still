@@ -19,75 +19,93 @@ class CustomInput extends StatefulWidget {
   final padding;
   final isPhone;
   final unfocus;
+  final focusNode;
 
-  CustomInput({
-    this.maxLines = 1,
-    @required this.label,
-    this.color,
-    this.isPassword = false,
-    @required this.controller,
-    this.showSuffix = true,
-    this.textInputAction = TextInputAction.next,
-    this.submitForm,
-    this.onTextchanged,
-    this.keyboardType,
-    this.isRequired = false,
-    this.validator,
-    this.padding = 20.0,
-    this.isPhone = false,
-    this.isEmail = false,
-    this.unfocus = false,
-  });
+  CustomInput(
+      {this.maxLines = 1,
+      @required this.label,
+      this.color,
+      this.isPassword = false,
+      @required this.controller,
+      this.showSuffix = true,
+      this.textInputAction = TextInputAction.next,
+      this.submitForm,
+      this.onTextchanged,
+      this.keyboardType,
+      this.isRequired = false,
+      this.validator,
+      this.padding = 20.0,
+      this.isPhone = false,
+      this.isEmail = false,
+      this.unfocus = false,
+      this.focusNode});
 
   @override
   _CustomInputState createState() => _CustomInputState();
 }
 
 class _CustomInputState extends State<CustomInput> {
+  // getContactDetails() {}
+
   bool _isTextNotEmpty = false;
+
+  // List<String> users = ['Naveen', 'Ram', 'Satish', 'Some Other'];
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      keyboardType: widget.keyboardType,
-      style: AppTextStyles.regularText15,
-      cursorColor: widget.color == null ? AppColors.lightBlue4 : widget.color,
-      maxLines: widget.maxLines,
-      decoration: InputDecoration(
-        suffixText: widget.showSuffix && _isTextNotEmpty ? widget.label : '',
-        isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
-        suffixStyle: AppTextStyles.regularText14.copyWith(color: Settings.isDarkMode ? AppColors.offWhite2 : AppColors.grey4),
-        counterText: '',
-        hintText: widget.label,
-        hintStyle: AppTextStyles.regularText15,
-        errorBorder: new OutlineInputBorder(
-          borderSide: new BorderSide(color: Colors.redAccent),
-        ),
-        errorMaxLines: 5,
-        errorStyle: AppTextStyles.errorText,
-        border: OutlineInputBorder(),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppColors.lightBlue4.withOpacity(0.5),
-            width: 1.0,
+    return Container(
+      child: TextFormField(
+          controller: widget.controller,
+          keyboardType: widget.keyboardType,
+          style: AppTextStyles.regularText15,
+          focusNode: widget.focusNode,
+          cursorColor:
+              widget.color == null ? AppColors.lightBlue4 : widget.color,
+          maxLines: widget.maxLines,
+          decoration: InputDecoration(
+            suffixText:
+                widget.showSuffix && _isTextNotEmpty ? widget.label : '',
+            isDense: true,
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
+            suffixStyle: AppTextStyles.regularText14.copyWith(
+                color: Settings.isDarkMode
+                    ? AppColors.offWhite2
+                    : AppColors.grey4),
+            counterText: '',
+            hintText: widget.label,
+            hintStyle: AppTextStyles.regularText15,
+            errorBorder: new OutlineInputBorder(
+              borderSide: new BorderSide(color: Colors.redAccent),
+            ),
+            errorMaxLines: 5,
+            errorStyle: AppTextStyles.errorText,
+            border: OutlineInputBorder(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: AppColors.lightBlue4.withOpacity(0.5),
+                width: 1.0,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.lightBlue4, width: 1.0),
+            ),
+            fillColor: AppColors.textFieldBackgroundColor,
+            filled: true,
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.lightBlue4, width: 1.0),
-        ),
-        fillColor: AppColors.textFieldBackgroundColor,
-        filled: true,
-      ),
-      obscureText: widget.isPassword ? true : false,
-      validator: (value) => _validatorFn(value),
-      onFieldSubmitted: (_) => {widget.unfocus ? FocusScope.of(context).unfocus() : FocusScope.of(context).nextFocus(), widget.unfocus ? widget.submitForm : null},
-      textInputAction: widget.textInputAction,
-      onChanged: (val) {
-        setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
-        if (widget.onTextchanged != null) widget.onTextchanged(val);
-      },
+          obscureText: widget.isPassword ? true : false,
+          validator: (value) => _validatorFn(value),
+          onFieldSubmitted: (_) => {
+                widget.unfocus
+                    ? FocusScope.of(context).unfocus()
+                    : FocusScope.of(context).nextFocus(),
+                widget.unfocus ? widget.submitForm : null
+              },
+          textInputAction: widget.textInputAction,
+          onChanged: (val) {
+            setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
+            if (widget.onTextchanged != null) widget.onTextchanged(val);
+          }),
     );
   }
 
@@ -98,7 +116,13 @@ class _CustomInputState extends State<CustomInput> {
       }
     }
     if (widget.isEmail && value.isNotEmpty) {
-      String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" + "\\@" + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\." + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" + ")+";
+      String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
+          "\\@" +
+          "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+          "(" +
+          "\\." +
+          "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+          ")+";
       RegExp regExp = new RegExp(p);
       if (!regExp.hasMatch(value)) {
         return 'Enter a valid email address';
@@ -114,7 +138,8 @@ class _CustomInputState extends State<CustomInput> {
     if (widget.isPassword && value.isNotEmpty) {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(value)) return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
+      if (!regex.hasMatch(value))
+        return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
     }
     if (widget.validator != null) {
       return widget.validator(value);
