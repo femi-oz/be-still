@@ -135,7 +135,7 @@ class _AddPrayerState extends State<AddPrayer> {
             await Future.delayed(Duration(milliseconds: 300));
             BeStilDialog.hideLoading(context);
 
-            _onWillPop();
+          
           }
         }
       } on HttpException catch (e) {
