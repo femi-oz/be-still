@@ -156,7 +156,7 @@ class _AddPrayerState extends State<AddPrayer> {
             .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
-        _onWillPop();
+      
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
