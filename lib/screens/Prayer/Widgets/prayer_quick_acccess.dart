@@ -264,23 +264,25 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       ),
                     ),
                   ),
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(90),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: CircularButton(
-                        icon: Icon(
-                          Icons.check_box,
-                          color: AppColors.lightBlue4,
-                        ),
-                        onClick: () => _onMarkAsAnswered(),
-                      ),
-                    ),
-                  ),
+                  !widget.prayer.isAnswer
+                      ? Transform.translate(
+                          offset: Offset.fromDirection(getRadiansFromDegree(90),
+                              degOneTranslationAnimation.value * 60),
+                          child: Transform(
+                            transform: Matrix4.rotationZ(
+                                getRadiansFromDegree(rotationAnimation.value))
+                              ..scale(degOneTranslationAnimation.value),
+                            alignment: Alignment.center,
+                            child: CircularButton(
+                              icon: Icon(
+                                Icons.check_box,
+                                color: AppColors.lightBlue4,
+                              ),
+                              onClick: () => _onMarkAsAnswered(),
+                            ),
+                          ),
+                        )
+                      : Container(),
                   Container(
                     height: 25,
                     width: 25,

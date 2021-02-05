@@ -21,6 +21,24 @@ class DeletePrayer extends StatefulWidget {
 class _DeletePrayerState extends State<DeletePrayer> {
   BuildContext bcontext;
 
+  void _onUnArchive() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unArchivePrayer(widget.prayer.id);
+
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      _onWillPop();
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   void _onArchive() async {
     try {
       BeStilDialog.showLoading(
@@ -127,33 +145,61 @@ class _DeletePrayerState extends State<DeletePrayer> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                GestureDetector(
-                  onTap: _onArchive,
-                  child: Container(
-                    height: 30,
-                    width: MediaQuery.of(context).size.width * .38,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.cardBorder,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'ARCHIVE',
-                          style: TextStyle(
-                            color: AppColors.lightBlue4,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                !widget.prayer.isAnswer && !widget.prayer.isArchived
+                    ? GestureDetector(
+                        onTap: _onArchive,
+                        child: Container(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width * .38,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.cardBorder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'ARCHIVE',
+                                style: TextStyle(
+                                  color: AppColors.lightBlue4,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                      )
+                    : GestureDetector(
+                        onTap: _onUnArchive,
+                        child: Container(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width * .38,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.cardBorder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'UNARCHIVE',
+                                style: TextStyle(
+                                  color: AppColors.lightBlue4,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop();
