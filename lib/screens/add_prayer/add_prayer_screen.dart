@@ -11,7 +11,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
