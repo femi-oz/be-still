@@ -12,6 +12,7 @@ class Settings {
   static const String LAST_USER = 'last_user';
   static const String USER_KEY_REFERENCE = 'user_key_reference';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
+  static const String APP_INIT = 'app_init';
 
   static set themeMode(String mode) =>
       sharedPrefs.setString(THEME_MODE_KEY, mode);
@@ -52,4 +53,9 @@ class Settings {
 
   static bool get enableLocalAuth =>
       sharedPrefs.getBool(ENABLE_LOCAL_AUTH) ?? false;
+
+  static set isAppInit(bool isAppInit) =>
+      sharedPrefs.setBool(APP_INIT, isAppInit);
+
+  static bool get isAppInit => sharedPrefs.getBool(APP_INIT) ?? true;
 }

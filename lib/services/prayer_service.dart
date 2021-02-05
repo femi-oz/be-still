@@ -347,7 +347,7 @@ class PrayerService {
   ) async {
     try {
       _prayerCollectionReference.doc(prayerID).update(
-        {"Description": description},
+        {"Description": description, "ModifiedOn": DateTime.now()},
       );
     } catch (e) {
       throw HttpException(e.message);

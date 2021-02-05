@@ -1,7 +1,9 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
 import './utils/routes.dart' as rt;
@@ -18,7 +20,18 @@ class _MyAppState extends State<MyApp> {
       Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
     });
     // darkThemePref.loadPrefs();
+    getPermissions();
     super.initState();
+  }
+
+  getPermissions() async {
+    if (Settings.isAppInit) {
+      var status = await Permission.contacts.status;
+      if (status.isUndetermined) {
+        await Permission.contacts.request();
+      }
+      Settings.isAppInit = false;
+    }
   }
 
   @override
