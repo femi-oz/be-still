@@ -49,16 +49,22 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   PermissionStatus permission;
-  Future<PermissionStatus> _setPermission() async {
+  Future<void> _setPermission() async {
     // if true enble permission else disable permission
     permission = await Permission.contacts.status;
     if (permission == PermissionStatus.denied) {
       final Map<Permission, PermissionStatus> permissionStatus =
           await [Permission.contacts].request();
-      permission = permissionStatus[Permission.contacts] ??
-          PermissionStatus.undetermined;
+      setState(() => permission =
+          permissionStatus[Permission.contacts] ?? PermissionStatus.denied);
     } else if (permission == PermissionStatus.granted) {
       // await [Permission.contacts]
+      await openAppSettings();
+      if (permission == PermissionStatus.denied) {
+        setState(() => permission = PermissionStatus.denied);
+      } else if (permission == PermissionStatus.granted) {
+        setState(() => permission = PermissionStatus.granted);
+      }
     }
 
     // if (permission != PermissionStatus.granted &&
