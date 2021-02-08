@@ -78,7 +78,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .markPrayerAsAnswered(widget.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      Navigator.of(context).pop();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -456,7 +456,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       )
                     : Container(),
                 widget.prayer.status == Status.active &&
-                        !widget.prayer.isArchived
+                            !widget.prayer.isArchived ||
+                        widget.prayer.isAnswer
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(
