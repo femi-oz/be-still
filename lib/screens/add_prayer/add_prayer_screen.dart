@@ -131,11 +131,11 @@ class _AddPrayerState extends State<AddPrayer> {
               await Provider.of<PrayerProvider>(context, listen: false)
                   .addPrayer(prayerData, _user.id);
             }
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EntryScreen(screenNumber: 0),
-                ));
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => EntryScreen(screenNumber: 0),
+            //     ));
             await Future.delayed(Duration(milliseconds: 300));
             BeStilDialog.hideLoading(context);
           }
@@ -158,11 +158,11 @@ class _AddPrayerState extends State<AddPrayer> {
             .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ));
+        // Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => EntryScreen(screenNumber: 0),
+        //     ));
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
