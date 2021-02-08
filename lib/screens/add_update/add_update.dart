@@ -36,7 +36,6 @@ class _AddUpdateState extends State<AddUpdate> {
   bool _autoValidate = false;
   BuildContext bcontext;
 
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   _save() async {
     setState(() {
       _autoValidate = true;
@@ -57,28 +56,16 @@ class _AddUpdateState extends State<AddUpdate> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    // showModalBottomSheet(
-    //   context: context,
-    //   barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
-    //   backgroundColor: AppColors.detailBackgroundColor[1].withOpacity(0.9),
-    //   isScrollControlled: true,
-    //   builder: (BuildContext context) {
-    //     return NameRecognitionMenuOne(
-    //       isUpdate: true,
-    //       prayerUpdate: prayerUpdateData,
-    //       scafoldKey: _scaffoldKey,
-    //     );
-    //   },
-    // );
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
           .addPrayerUpdate(prayerUpdateData);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EntryScreen(screenNumber: 0)));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -94,94 +81,163 @@ class _AddUpdateState extends State<AddUpdate> {
     return (Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
+                builder: (context) => EntryScreen(screenNumber: 0)))) ??
         false;
   }
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    return Scaffold(
-      body: SafeArea(
-        child:
-            // Scaffold(
-            //   body:
-            Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: SafeArea(
+          child:
+              // Scaffold(
+              //   body:
+              Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
             ),
-          ),
-          padding: EdgeInsets.all(20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    InkWell(
-                      child: Text(
-                        'CANCEL',
-                        style: TextStyle(
-                            color: AppColors.lightBlue5, fontSize: 16),
-                      ),
-                      onTap: () => Navigator.of(context).pop(),
-                    ),
-                    InkWell(
-                      child: Text(
-                        'SAVE',
-                        style: TextStyle(
-                            color: AppColors.lightBlue5, fontSize: 16),
-                      ),
-                      onTap: () => _save(),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 30.0),
-                Form(
-                  autovalidate: _autoValidate,
-                  key: _formKey,
-                  child: CustomInput(
-                    label: "Enter your text here",
-                    controller: _descriptionController,
-                    maxLines: 23,
-                    isRequired: true,
-                    showSuffix: false,
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.darkBlue2,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  margin: EdgeInsets.only(top: 20),
-                  width: double.infinity,
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      widget.prayer.userId != _currentUser.id
-                          ? Container(
-                              margin: EdgeInsets.only(bottom: 20),
-                              child: Text(
-                                widget.prayer.createdBy,
-                                style: TextStyle(
-                                    color: AppColors.lightBlue3,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500),
-                                textAlign: TextAlign.center,
-                              ),
-                            )
-                          : Container(),
-                      ...widget.updates.map(
-                        (u) => Container(
+                      InkWell(
+                        child: Text(
+                          'CANCEL',
+                          style: TextStyle(
+                              color: AppColors.lightBlue5, fontSize: 16),
+                        ),
+                        onTap: () => Navigator.of(context).pop(),
+                      ),
+                      InkWell(
+                        child: Text(
+                          'SAVE',
+                          style: TextStyle(
+                              color: AppColors.lightBlue5, fontSize: 16),
+                        ),
+                        onTap: () => _save(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30.0),
+                  Form(
+                    autovalidate: _autoValidate,
+                    key: _formKey,
+                    child: CustomInput(
+                      label: "Enter your text here",
+                      controller: _descriptionController,
+                      maxLines: 23,
+                      isRequired: true,
+                      showSuffix: false,
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColors.darkBlue2,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    margin: EdgeInsets.only(top: 20),
+                    width: double.infinity,
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        widget.prayer.userId != _currentUser.id
+                            ? Container(
+                                margin: EdgeInsets.only(bottom: 20),
+                                child: Text(
+                                  widget.prayer.createdBy,
+                                  style: TextStyle(
+                                      color: AppColors.lightBlue3,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            : Container(),
+                        ...widget.updates.map(
+                          (u) => Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(right: 30),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            DateFormat('hh:mma | MM.dd.yyyy')
+                                                .format(u.createdOn),
+                                            style: TextStyle(
+                                                color: AppColors.dimBlue,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: AppColors.darkBlue2,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    // TODO
+                                    // ...u.tags
+                                    //     .map(
+                                    //       (t) => Container(
+                                    //         margin: EdgeInsets.only(left: 10),
+                                    //         child: Row(
+                                    //           children: <Widget>[
+                                    //             Text(
+                                    //               t.toUpperCase(),
+                                    //               style: TextStyle(
+                                    //                 color: AppColors.red,
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ),
+                                    //     )
+                                    //     .toList()
+                                  ],
+                                ),
+                                Container(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: Center(
+                                      child: Text(
+                                        u.description,
+                                        style: TextStyle(
+                                          color: AppColors.textFieldText,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300,
+                                          height: 2,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Row(
                                 mainAxisAlignment:
@@ -192,9 +248,17 @@ class _AddUpdateState extends State<AddUpdate> {
                                     child: Row(
                                       children: <Widget>[
                                         Text(
-                                          DateFormat('hh:mma | MM.dd.yyyy')
-                                              .format(u.createdOn),
+                                          'Initial Prayer Request |',
                                           style: TextStyle(
+                                              color: AppColors.dimBlue,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Text(
+                                          DateFormat(' MM.dd.yyyy')
+                                              .format(widget.prayer.createdOn),
+                                          style: TextStyle(
+                                              fontSize: 12,
                                               color: AppColors.dimBlue,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -208,31 +272,32 @@ class _AddUpdateState extends State<AddUpdate> {
                                     ),
                                   ),
                                   // TODO
-                                  // ...u.tags
+                                  // ...prayer.tags
                                   //     .map(
                                   //       (t) => Container(
                                   //         margin: EdgeInsets.only(left: 10),
-                                  //         child: Row(
-                                  //           children: <Widget>[
-                                  //             Text(
-                                  //               t.toUpperCase(),
-                                  //               style: TextStyle(
-                                  //                 color: AppColors.red,
-                                  //               ),
-                                  //             ),
-                                  //           ],
+                                  //         child: Text(
+                                  //           t.toUpperCase(),
+                                  //           style: TextStyle(
+                                  //             fontSize: 12,
+                                  //             color: AppColors.red,
+                                  //           ),
                                   //         ),
                                   //       ),
                                   //     )
-                                  //     .toList()
+                                  //     .toList(),
                                 ],
                               ),
                               Container(
+                                constraints: BoxConstraints(
+                                  minHeight: 200,
+                                ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 20.0, horizontal: 20),
                                   child: Center(
                                     child: Text(
-                                      u.description,
+                                      widget.prayer.description,
                                       style: TextStyle(
                                         color: AppColors.textFieldText,
                                         fontSize: 14,
@@ -247,90 +312,15 @@ class _AddUpdateState extends State<AddUpdate> {
                             ],
                           ),
                         ),
-                      ),
-                      Container(
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(right: 30),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        'Initial Prayer Request |',
-                                        style: TextStyle(
-                                            color: AppColors.dimBlue,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        DateFormat(' MM.dd.yyyy')
-                                            .format(widget.prayer.createdOn),
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.dimBlue,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: AppColors.darkBlue2,
-                                    thickness: 1,
-                                  ),
-                                ),
-                                // TODO
-                                // ...prayer.tags
-                                //     .map(
-                                //       (t) => Container(
-                                //         margin: EdgeInsets.only(left: 10),
-                                //         child: Text(
-                                //           t.toUpperCase(),
-                                //           style: TextStyle(
-                                //             fontSize: 12,
-                                //             color: AppColors.red,
-                                //           ),
-                                //         ),
-                                //       ),
-                                //     )
-                                //     .toList(),
-                              ],
-                            ),
-                            Container(
-                              constraints: BoxConstraints(
-                                minHeight: 200,
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 20.0, horizontal: 20),
-                                child: Center(
-                                  child: Text(
-                                    widget.prayer.description,
-                                    style: TextStyle(
-                                      color: AppColors.textFieldText,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                      height: 2,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+          // ),
         ),
-        // ),
       ),
     );
   }

@@ -80,35 +80,17 @@ class _AddPrayerState extends State<AddPrayer> {
         isInappropriate: false,
       );
       try {
-        BeStilDialog.showLoading(
-          bcontext,
-        );
+        BeStilDialog.showLoading(bcontext);
         UserModel _user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
-
-        if (widget.isGroup) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addGroupPrayer(context, prayerData);
-          await Future.delayed(Duration(milliseconds: 300));
-          BeStilDialog.hideLoading(context);
-
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => GroupPrayers()));
-        } else {
-          if (groups.length > 0) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerWithGroups(context, prayerData, groups, _user.id);
-          } else {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayer(prayerData, _user.id);
-          }
-          await Future.delayed(Duration(milliseconds: 300));
-          BeStilDialog.hideLoading(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EntryScreen(screenNumber: 0)));
-        }
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .addPrayer(prayerData, _user.id);
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(context);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EntryScreen(screenNumber: 0)));
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
@@ -176,8 +158,7 @@ class _AddPrayerState extends State<AddPrayer> {
     return (Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
+                builder: (context) => EntryScreen(screenNumber: 0)))) ??
         false;
   }
 
@@ -190,11 +171,7 @@ class _AddPrayerState extends State<AddPrayer> {
         body: SafeArea(
           child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-            child:
-                // Scaffold(
-                //   key: _scaffoldKey,
-                //   body:
-                Container(
+            child: Container(
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
