@@ -57,14 +57,22 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           await [Permission.contacts].request();
       setState(() => permission =
           permissionStatus[Permission.contacts] ?? PermissionStatus.denied);
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(false);
     } else if (permission == PermissionStatus.granted) {
       // await [Permission.contacts]
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(true);
+
       await openAppSettings();
       if (permission == PermissionStatus.denied) {
         setState(() => permission = PermissionStatus.denied);
       } else if (permission == PermissionStatus.granted) {
         setState(() => permission = PermissionStatus.granted);
       }
+    } else {
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(false);
     }
 
     // if (permission != PermissionStatus.granted &&
