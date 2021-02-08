@@ -86,38 +86,36 @@ class _AddPrayerState extends State<AddPrayer> {
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayer(prayerData, _user.id);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
+        BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)));
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
+        BeStilDialog.hideLoading(bcontext);
+        BeStilDialog.showErrorDialog(bcontext, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+        BeStilDialog.hideLoading(bcontext);
+        BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
     } else {
       try {
-        BeStilDialog.showLoading(
-          bcontext,
-        );
+        BeStilDialog.showLoading(bcontext);
         await Provider.of<PrayerProvider>(context, listen: false)
             .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
+        BeStilDialog.hideLoading(bcontext);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
+        BeStilDialog.hideLoading(bcontext);
+        BeStilDialog.showErrorDialog(bcontext, e.message);
       } catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+        BeStilDialog.hideLoading(bcontext);
+        BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
     }
   }

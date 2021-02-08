@@ -61,19 +61,19 @@ class _AddUpdateState extends State<AddUpdate> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .addPrayerUpdate(prayerUpdateData);
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      BeStilDialog.hideLoading(bcontext);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => EntryScreen(screenNumber: 0)));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      BeStilDialog.hideLoading(bcontext);
+      BeStilDialog.showErrorDialog(bcontext, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      BeStilDialog.hideLoading(bcontext);
+      BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
     }
   }
 
