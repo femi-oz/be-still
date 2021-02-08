@@ -1,6 +1,7 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -58,7 +59,6 @@ class _AddPrayerState extends State<AddPrayer> {
     final _groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
     PrayerModel prayerData;
-    PrayerUpdateModel prayerUpdate;
     if (!widget.isEdit) {
       prayerData = PrayerModel(
         title: '',
@@ -79,62 +79,35 @@ class _AddPrayerState extends State<AddPrayer> {
         hideFromMe: false,
         isInappropriate: false,
       );
-      prayerUpdate = PrayerUpdateModel(
-          prayerId: prayerData.id,
-          userId: _user.id,
-          title: prayerData.title,
-          description: prayerData.description,
-          createdBy: prayerData.createdBy,
-          createdOn: prayerData.createdOn,
-          modifiedBy: prayerData.modifiedBy,
-          modifiedOn: prayerData.modifiedOn);
-      final isUpdate = false;
-      // showModalBottomSheet(
-      //   context: context,
-      //   barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
-      //   backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
-      //   isScrollControlled: true,
-      //   builder: (BuildContext context) {
-      //     return NameRecognitionMenuOne(
-      //       isUpdate: false,
-      //       prayer: prayerData,
-      //       selectedGroups: groups,
-      //       scafoldKey: _scaffoldKey,
-      //       isGroup: widget.isGroup,
-      //     );
-      //   },
-      // );
       try {
-        if (isUpdate) {
+        BeStilDialog.showLoading(
+          bcontext,
+        );
+        UserModel _user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+
+        if (widget.isGroup) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerUpdate(prayerUpdate);
-          Navigator.of(context).pushReplacementNamed(
-            PrayerDetails.routeName,
-            arguments: PrayerDetailsRouteArguments(
-                id: prayerUpdate.prayerId, isGroup: widget.isGroup),
-          );
+              .addGroupPrayer(context, prayerData);
+          await Future.delayed(Duration(milliseconds: 300));
+          BeStilDialog.hideLoading(context);
+
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => GroupPrayers()));
         } else {
-          if (widget.isGroup) {
+          if (groups.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addGroupPrayer(context, widget.prayer);
-            await Future.delayed(Duration(milliseconds: 300));
-            BeStilDialog.hideLoading(context);
-
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => GroupPrayers()));
+                .addPrayerWithGroups(context, prayerData, groups, _user.id);
           } else {
-            if (groups.length > 0) {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .addPrayerWithGroups(
-                      context, widget.prayer, groups, _user.id);
-            } else {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .addPrayer(prayerData, _user.id);
-            }
-
-            await Future.delayed(Duration(milliseconds: 300));
-            BeStilDialog.hideLoading(context);
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayer(prayerData, _user.id);
           }
+          await Future.delayed(Duration(milliseconds: 300));
+          BeStilDialog.hideLoading(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EntryScreen(screenNumber: 0)));
         }
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
@@ -154,6 +127,7 @@ class _AddPrayerState extends State<AddPrayer> {
             .editprayer(_descriptionController.text, widget.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
+        Navigator.of(context).pushNamed(PrayerDetails.routeName);
       } on HttpException catch (e) {
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
