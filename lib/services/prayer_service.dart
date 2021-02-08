@@ -422,7 +422,7 @@ class PrayerService {
   ) async {
     try {
       _prayerCollectionReference.doc(prayerID).update(
-        {'IsArchived': false, 'Status': Status.active},
+        {'IsArchived': false, 'IsAnswer': false, 'Status': Status.active},
       );
     } catch (e) {
       throw HttpException(e.message);

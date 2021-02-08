@@ -10,6 +10,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'Widgets/alexa.dart';
@@ -63,6 +64,8 @@ class SettingsTabState extends State<SettingsTab>
 
   @override
   void initState() {
+    getContactsPermission();
+
     super.initState();
     tabController = new TabController(length: 5, vsync: this);
   }
@@ -81,6 +84,20 @@ class SettingsTabState extends State<SettingsTab>
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
+  getContactsPermission() async {
+    var status = await Permission.contacts.status;
+    if (status.isUndetermined) {
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(false);
+    } else if (status.isDenied) {
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(false);
+    } else {
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(true);
     }
   }
 

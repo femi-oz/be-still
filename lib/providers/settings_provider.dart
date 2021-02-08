@@ -66,6 +66,10 @@ class SettingsProvider with ChangeNotifier {
     });
   }
 
+  Future setContactAcessStatus(contactSettings) async {
+    _hasAccessToContact = contactSettings;
+  }
+
   Future setGroupPreferenceSettings(String userId) async {
     _settingsService
         .getGroupPreferenceSettings(userId)

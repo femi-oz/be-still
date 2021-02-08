@@ -229,6 +229,8 @@ class PrayerProvider with ChangeNotifier {
         .asBroadcastStream()
         .listen((prayerUpdates) {
       _prayerUpdates = prayerUpdates;
+      _prayerUpdates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+
       notifyListeners();
     });
   }
