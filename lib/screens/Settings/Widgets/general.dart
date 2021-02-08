@@ -48,24 +48,42 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
-  Future<PermissionStatus> _getPermission() async {
-    final PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.denied) {
+  PermissionStatus permission;
+  Future<void> _setPermission() async {
+    // if true enble permission else disable permission
+    permission = await Permission.contacts.status;
+    if (permission == PermissionStatus.denied) {
       final Map<Permission, PermissionStatus> permissionStatus =
           await [Permission.contacts].request();
-      return permissionStatus[Permission.contacts] ??
-          PermissionStatus.undetermined;
-    } else {
-      return permission;
-    }
-  }
+      setState(() => permission =
+          permissionStatus[Permission.contacts] ?? PermissionStatus.denied);
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(false);
+    } else if (permission == PermissionStatus.granted) {
+      // await [Permission.contacts]
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(true);
 
-  _initiatePermission() async {
-    final PermissionStatus permissionStatus = await _getPermission();
-    if (permissionStatus == PermissionStatus.granted) {
-      //We can now access our contacts here
+      await openAppSettings();
+      if (permission == PermissionStatus.denied) {
+        setState(() => permission = PermissionStatus.denied);
+      } else if (permission == PermissionStatus.granted) {
+        setState(() => permission = PermissionStatus.granted);
+      }
+    } else {
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setContactAcessStatus(false);
     }
+
+    // if (permission != PermissionStatus.granted &&
+    //     permission != PermissionStatus.denied) {
+    //   final Map<Permission, PermissionStatus> permissionStatus =
+    //       await [Permission.contacts].request();
+    //   return permissionStatus[Permission.contacts] ??
+    //       PermissionStatus.undetermined;
+    // } else {
+    //   return permission;
+    // }
   }
 
   void _updateEmail(UserModel user) async {
@@ -251,7 +269,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   value: Settings.enableLocalAuth,
                 ),
                 CustomToggle(
-                  onChange: (value) => _initiatePermission(),
+                  onChange: (value) => _setPermission(),
                   title: 'Allow BeStill to access Contacts?',
                   value:
                       Provider.of<SettingsProvider>(context).hasAccessToContact,
