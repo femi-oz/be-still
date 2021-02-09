@@ -301,37 +301,37 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     );
   }
 
-  _buildPasswordForm() {
-    return Form(
-      key: _formKey3,
-      autovalidate: _autoValidate3,
-      child: Column(
-        children: <Widget>[
-          CustomInput(
-            isPassword: true,
-            label: 'New Password',
-            controller: _passwordController,
-            keyboardType: TextInputType.visiblePassword,
-            isRequired: true,
-          ),
-          SizedBox(height: 10.0),
-          CustomInput(
-            isPassword: true,
-            controller: _confirmPasswordController,
-            keyboardType: TextInputType.visiblePassword,
-            isRequired: true,
-            label: 'Confirm Password',
-            textInputAction: TextInputAction.done,
-            unfocus: true,
-            validator: (value) {
-              if (_passwordController.text != value) {
-                return 'Password fields do not match';
-              }
-              return null;
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  // _buildPasswordForm() {
+  //   return Form(
+  //     key: _formKey3,
+  //     autovalidate: _autoValidate3,
+  //     child: Column(
+  //       children: <Widget>[
+  //         CustomInput(
+  //           isPassword: true,
+  //           label: 'New Password',
+  //           controller: _passwordController,
+  //           keyboardType: TextInputType.visiblePassword,
+  //           isRequired: true,
+  //         ),
+  //         SizedBox(height: 10.0),
+  //         CustomInput(
+  //           isPassword: true,
+  //           controller: _confirmPasswordController,
+  //           keyboardType: TextInputType.visiblePassword,
+  //           isRequired: true,
+  //           label: 'Confirm Password',
+  //           textInputAction: TextInputAction.done,
+  //           unfocus: true,
+  //           validator: (value) {
+  //             if (_passwordController.text != value) {
+  //               return 'Password fields do not match';
+  //             }
+  //             return null;
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

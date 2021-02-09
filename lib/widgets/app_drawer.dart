@@ -1,6 +1,5 @@
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';

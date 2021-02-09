@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/add_prayer/widgets/name_recognition_one.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';

@@ -32,7 +32,7 @@ class GeneralSettings extends StatefulWidget {
   _GeneralSettingsState createState() => _GeneralSettingsState();
 }
 
-enum _ModalType { email, password, auth }
+enum _ModalType { email, password }
 
 class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
