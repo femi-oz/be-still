@@ -8,8 +8,10 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../entry_screen.dart';
@@ -33,6 +35,8 @@ class _AddUpdateState extends State<AddUpdate> {
 
   bool _autoValidate = false;
   BuildContext bcontext;
+  Iterable<Contact> localContacts = [];
+  FocusNode _focusNode = FocusNode();
 
   _save() async {
     setState(() {
@@ -73,6 +77,36 @@ class _AddUpdateState extends State<AddUpdate> {
       BeStilDialog.hideLoading(bcontext);
       BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
     }
+  }
+
+  @override
+  void initState() {
+    getContacts();
+    super.initState();
+  }
+
+  getContacts() async {
+    var status = await Permission.contacts.status;
+    if (status.isUndetermined) {
+      await Permission.contacts.request();
+    }
+    if (await Permission.contacts.request().isGranted) {
+      localContacts = await ContactsService.getContacts(withThumbnails: false);
+    }
+  }
+
+  var words = [];
+  String str = '';
+  var phoneNumbers = [];
+
+  onTextChange(val) {
+    setState(() {
+      words = val.split(' ');
+
+      str = words.length > 0 && words[words.length - 1].startsWith('@')
+          ? words[words.length - 1]
+          : '';
+    });
   }
 
   Future<bool> _onWillPop() async {
@@ -133,6 +167,8 @@ class _AddUpdateState extends State<AddUpdate> {
                       maxLines: 23,
                       isRequired: true,
                       showSuffix: false,
+                      onTextchanged: onTextChange,
+                      focusNode: _focusNode,
                     ),
                   ),
                   Container(

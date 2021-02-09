@@ -45,11 +45,7 @@ class CustomInput extends StatefulWidget {
 }
 
 class _CustomInputState extends State<CustomInput> {
-  // getContactDetails() {}
-
   bool _isTextNotEmpty = false;
-
-  // List<String> users = ['Naveen', 'Ram', 'Satish', 'Some Other'];
 
   @override
   Widget build(BuildContext context) {

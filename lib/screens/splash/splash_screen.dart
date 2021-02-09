@@ -11,6 +11,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -58,9 +59,20 @@ class _SplashScreenState extends State<SplashScreen>
     return new Timer(duration, () => route());
   }
 
+  getPermissions() async {
+    if (Settings.isAppInit) {
+      var status = await Permission.contacts.status;
+      if (status.isUndetermined) {
+        await Permission.contacts.request();
+      }
+      Settings.isAppInit = false;
+    }
+  }
+
   route() async {
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
+      await getPermissions();
       if (Settings.enableLocalAuth) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           LoginScreen.routeName,

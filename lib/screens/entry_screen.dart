@@ -97,12 +97,12 @@ class TabNavigationItem {
             Icons.menu,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "test",
+          title: "prayer",
         ),
         TabNavigationItem(
           page: GroupScreen(),
           icon: Icon(Icons.settings, color: AppColors.bottomNavIconColor),
-          title: "test",
+          title: "group",
         ),
         TabNavigationItem(
           page: AddPrayer(
@@ -111,12 +111,12 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(Icons.add, color: AppColors.bottomNavIconColor),
-          title: "test",
+          title: "add prayer",
         ),
         TabNavigationItem(
           page: null,
           icon: Icon(AppIcons.second_logo, color: AppColors.bottomNavIconColor),
-          title: "test",
+          title: "",
         ),
       ];
 }

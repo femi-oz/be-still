@@ -123,15 +123,11 @@ class _AddPrayerState extends State<AddPrayer> {
   void initState() {
     _descriptionController.text =
         widget.isEdit ? widget.prayer.description : '';
-    // getContacts();
+    getContacts();
     super.initState();
   }
 
   getContacts() async {
-    var status = await Permission.contacts.status;
-    if (status.isUndetermined) {
-      await Permission.contacts.request();
-    }
     if (await Permission.contacts.request().isGranted) {
       localContacts = await ContactsService.getContacts(withThumbnails: false);
     }
@@ -207,14 +203,14 @@ class _AddPrayerState extends State<AddPrayer> {
                           autovalidate: _autoValidate,
                           key: _formKey,
                           child: CustomInput(
-                              label: 'Prayer description',
-                              controller: _descriptionController,
-                              maxLines: 23,
-                              isRequired: true,
-                              showSuffix: false,
-                              onTextchanged: onTextChange,
-                              // textInputAction: TextInputAction.newline,
-                              focusNode: _focusNode),
+                            label: 'Prayer description',
+                            controller: _descriptionController,
+                            maxLines: 23,
+                            isRequired: true,
+                            showSuffix: false,
+                            onTextchanged: onTextChange,
+                            focusNode: _focusNode,
+                          ),
                         ),
                         // Text(
                         //     '$str focus node ${_focusNode.offset.dy}${_focusNode.offset.dx}'),
@@ -231,7 +227,9 @@ class _AddPrayerState extends State<AddPrayer> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       ...localContacts.map((s) {
-                                        if (('@' + s.displayName).contains(str))
+                                        if (('@' + s.displayName)
+                                            .toLowerCase()
+                                            .contains(str.toLowerCase()))
                                           return InkWell(
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
