@@ -86,15 +86,13 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   Widget build(BuildContext context) {
+    setState(() => this.bcontext = context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         body: SafeArea(
-          child:
-              // Scaffold(
-              //   body:
-              Container(
+          child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
