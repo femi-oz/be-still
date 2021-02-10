@@ -1,3 +1,4 @@
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
@@ -48,7 +49,7 @@ class BsRaisedButton extends StatelessWidget {
           horizontal: size.horizontal,
         ),
         child: Icon(
-          disabled ? Icons.do_not_disturb : Icons.arrow_forward,
+          disabled ? AppIcons.bestill_delete : AppIcons.bestill_next_arrow,
           color: AppColors.white,
           size: 26,
         ),

@@ -2,6 +2,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -173,7 +174,7 @@ class CustomDrawer extends StatelessWidget {
                       ),
                       InkWell(
                         child: Icon(
-                          Icons.close,
+                          AppIcons.bestill_close,
                           color: AppColors.topNavTextColor,
                         ),
                         onTap: () {

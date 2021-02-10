@@ -1,6 +1,7 @@
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
         children: <Widget>[
           IconButton(
             icon: Icon(
-              Icons.close,
+              AppIcons.bestill_close,
             ),
             onPressed: () {
               Navigator.of(context).pop(selectedGroups);

@@ -7,6 +7,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.add,
+                          AppIcons.bestill_add,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -151,7 +152,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -186,7 +187,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.calendar_today,
+                          AppIcons.bestill_reminder,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -221,7 +222,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.remove_red_eye,
+                          AppIcons.bestill_hide,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -256,7 +257,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.remove_red_eye,
+                          AppIcons.bestill_hide,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -293,7 +294,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.message,
+                          AppIcons.bestill_message,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -316,7 +317,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
           ),
           IconButton(
             icon: Icon(
-              Icons.close,
+              AppIcons.bestill_close,
             ),
             onPressed: () {
               Navigator.of(context).pop();

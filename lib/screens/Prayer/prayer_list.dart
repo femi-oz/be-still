@@ -9,12 +9,13 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'prayer_card.dart';
+import 'widgets/prayer_card.dart';
 
 class PrayerList extends StatefulWidget {
   @override
@@ -164,7 +165,7 @@ class _PrayerListState extends State<PrayerList> {
                       backgroundColor:
                           AppColors.addprayerBgColor.withOpacity(0.9),
                       textColor: AppColors.addprayerTextColor,
-                      icon: Icons.add,
+                      icon: AppIcons.bestill_add_btn,
                     ),
               SizedBox(height: 80),
             ],

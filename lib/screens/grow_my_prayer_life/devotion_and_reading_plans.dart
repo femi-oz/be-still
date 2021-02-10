@@ -1,3 +1,4 @@
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -35,7 +36,7 @@ class DevotionPlans extends StatelessWidget {
                   children: <Widget>[
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close),
+                      icon: Icon(AppIcons.bestill_close),
                     )
                   ],
                 ),

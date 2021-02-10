@@ -27,8 +27,7 @@ class StringUtils {
   }
 
   static String year = DateTime.now().year.toString();
-  static String logo = 'assets/images/logo1.png';
-  static String splashLogo = 'assets/images/splash_logo2.png';
+  static String logo = 'assets/images/bestil_main_logo.png';
   static String backText = "Go Back";
   static String copyRight1 = '$year All Rights Reserved';
   static String copyRight2 =

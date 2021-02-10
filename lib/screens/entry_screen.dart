@@ -1,6 +1,6 @@
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
-import 'package:be_still/screens/prayer/widgets/prayer_list.dart';
+import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -94,14 +94,16 @@ class TabNavigationItem {
         TabNavigationItem(
           page: PrayerList(),
           icon: Icon(
-            Icons.menu,
+            AppIcons.bestill_my_list,
+            size: 16,
             color: AppColors.bottomNavIconColor,
           ),
           title: "prayer",
         ),
         TabNavigationItem(
           page: GroupScreen(),
-          icon: Icon(Icons.settings, color: AppColors.bottomNavIconColor),
+          icon: Icon(AppIcons.bestill_groups,
+              size: 18, color: AppColors.bottomNavIconColor),
           title: "group",
         ),
         TabNavigationItem(
@@ -110,12 +112,14 @@ class TabNavigationItem {
             isGroup: false,
             showCancel: false,
           ),
-          icon: Icon(Icons.add, color: AppColors.bottomNavIconColor),
+          icon: Icon(AppIcons.bestill_add,
+              size: 18, color: AppColors.bottomNavIconColor),
           title: "add prayer",
         ),
         TabNavigationItem(
           page: null,
-          icon: Icon(AppIcons.second_logo, color: AppColors.bottomNavIconColor),
+          icon: Icon(AppIcons.bestill_menu_logo_lt,
+              size: 18, color: AppColors.bottomNavIconColor),
           title: "",
         ),
       ];

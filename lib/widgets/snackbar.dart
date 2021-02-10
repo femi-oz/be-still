@@ -1,3 +1,4 @@
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,8 @@ class BeStillSnackbar {
         backgroundColor: AppColors.prayerMenu[1],
         content: Row(
           children: [
-            Icon(Icons.error, color: AppColors.red.withOpacity(0.8)),
+            Icon(AppIcons.bestill_inappropriate,
+                color: AppColors.red.withOpacity(0.8)),
             SizedBox(width: 10.0),
             Flexible(
               child: Text(

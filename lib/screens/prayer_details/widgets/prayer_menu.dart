@@ -6,6 +6,7 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -193,7 +194,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -236,7 +237,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.edit,
+                          AppIcons.bestill_edit,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -281,7 +282,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.add_circle_outline,
+                          AppIcons.bestill_update,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -335,7 +336,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.calendar_today,
+                          AppIcons.bestill_reminder,
                           color: AppColors.lightBlue4,
                         ),
                         Expanded(
@@ -399,7 +400,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.brightness_3,
+                          AppIcons.bestill_snooze,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -436,7 +437,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           child: Row(
                             children: <Widget>[
                               Icon(
-                                Icons.check_box,
+                                AppIcons.bestill_answered,
                                 color: AppColors.lightBlue4,
                               ),
                               Padding(
@@ -475,7 +476,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           child: Row(
                             children: <Widget>[
                               Icon(
-                                Icons.archive,
+                                AppIcons.bestill_archive,
                                 color: AppColors.lightBlue4,
                               ),
                               Padding(
@@ -511,7 +512,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           child: Row(
                             children: <Widget>[
                               Icon(
-                                Icons.archive,
+                                AppIcons.bestill_archive,
                                 color: AppColors.lightBlue4,
                               ),
                               Padding(
@@ -558,7 +559,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.delete,
+                          AppIcons.bestill_delete,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -581,7 +582,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           ),
           IconButton(
             icon: Icon(
-              Icons.close,
+              AppIcons.bestill_close,
             ),
             onPressed: () {
               Navigator.of(context).pop();

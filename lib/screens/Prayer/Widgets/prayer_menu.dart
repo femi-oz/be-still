@@ -81,7 +81,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             width: 50,
             child: IconButton(
               icon: Icon(
-                AppIcons.search,
+                AppIcons.bestill_search,
                 color: AppColors.lightBlue3,
                 size: 25,
               ),
@@ -107,7 +107,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.close,
+                        AppIcons.bestill_close,
                         color: AppColors.lightBlue3,
                         size: 25,
                       ),

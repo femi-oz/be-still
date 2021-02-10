@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -69,7 +70,7 @@ class _GroupToolsState extends State<GroupTools> {
               FlatButton.icon(
                 padding: EdgeInsets.all(0),
                 icon: Icon(
-                  Icons.arrow_back,
+                  AppIcons.bestill_back_arrow,
                   color: AppColors.lightBlue4,
                 ),
                 onPressed: () => Navigator.pop(context),

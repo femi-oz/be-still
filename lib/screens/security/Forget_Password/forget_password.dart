@@ -4,6 +4,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -140,7 +141,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                             ),
                                           ),
                                           child: Icon(
-                                            Icons.arrow_forward,
+                                            AppIcons.bestill_next_arrow,
                                             color: AppColors.offWhite4,
                                           ),
                                         ),

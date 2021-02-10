@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -142,7 +143,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             },
                             color: Colors.transparent,
                             child: Icon(
-                              Icons.arrow_forward,
+                              AppIcons.bestill_next_arrow,
                               color: AppColors.offWhite1,
                             ),
                           ),

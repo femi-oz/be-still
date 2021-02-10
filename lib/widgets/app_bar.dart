@@ -79,17 +79,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 Navigator.of(context).pushNamed(NotificationsScreen.routeName),
             child: notifications.length == 0
                 ? Icon(
-                    Icons.notifications_none,
+                    AppIcons.bestill_notifications,
                     color: AppColors.bottomNavIconColor,
-                    size: 24,
+                    size: 18,
                   )
                 : Stack(
                     alignment: Alignment.center,
                     children: [
                       Icon(
-                        Icons.notifications,
+                        AppIcons.bestill_notifications,
                         color: AppColors.red,
-                        size: 24,
+                        size: 18,
                       ),
                       Text(
                         notifications.length.toString(),
@@ -102,22 +102,22 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ],
                   ),
           ),
-          SizedBox(width: 10),
+          SizedBox(width: 15),
           InkWell(
             onTap: () => setState(() => searchMode = !searchMode),
             child: Icon(
-              AppIcons.search,
+              AppIcons.bestill_search,
               color: AppColors.bottomNavIconColor,
-              size: 24,
+              size: 18,
             ),
           ),
-          SizedBox(width: 10),
+          SizedBox(width: 15),
           InkWell(
             onTap: () => _openFilter(Settings.isDarkMode),
             child: Icon(
-              Icons.filter_list_alt,
+              AppIcons.bestill_tools,
               color: AppColors.bottomNavIconColor,
-              size: 24,
+              size: 18,
             ),
           ),
         ],
@@ -141,9 +141,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 IconButton(
                   icon: Icon(
-                    Icons.close,
-                    color: AppColors.lightBlue3,
-                    size: 25,
+                    AppIcons.bestill_close,
+                    color: AppColors.bottomNavIconColor,
+                    size: 18,
                   ),
                   onPressed: () => setState(
                     () {
@@ -167,7 +167,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           builder: (BuildContext context) {
             return InkWell(
               child: Icon(
-                AppIcons.menu,
+                AppIcons.bestill_main_menu,
+                size: 18,
                 color: AppColors.bottomNavIconColor,
               ),
               onTap: () {

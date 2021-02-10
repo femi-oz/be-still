@@ -49,7 +49,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
                 builder: (BuildContext context) {
                   return IconButton(
                     icon: Icon(
-                      AppIcons.menu,
+                      AppIcons.bestill_main_menu,
                       color: AppColors.lightBlue4,
                       size: 24,
                     ),

@@ -9,6 +9,7 @@ import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -81,7 +82,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   FlatButton.icon(
                     padding: EdgeInsets.all(0),
                     icon: Icon(
-                      Icons.arrow_back,
+                      AppIcons.bestill_back_arrow,
                       color: AppColors.lightBlue3,
                     ),
                     onPressed: () => Navigator.push(
@@ -100,7 +101,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   //     ? Row(
                   //         children: <Widget>[
                   //           Icon(
-                  //             Icons.calendar_today,
+                  // AppIcons.bestill_reminder,
                   //             size: 14,
                   //             color: AppColors.lightBlue5,
                   //           ),

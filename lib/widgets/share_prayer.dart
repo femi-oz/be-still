@@ -1,4 +1,5 @@
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,7 @@ class _SharePrayerState extends State<SharePrayer> {
         children: <Widget>[
           IconButton(
             icon: Icon(
-              Icons.close,
+              AppIcons.bestill_close,
             ),
             onPressed: () {
               Navigator.of(context).pop(groups);
@@ -83,7 +84,8 @@ class _SharePrayerState extends State<SharePrayer> {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
+                    icon: Icon(AppIcons.bestill_back_arrow,
+                        color: AppColors.lightBlue5),
                     label: Text(
                       'BACK',
                       style: TextStyle(
@@ -111,7 +113,7 @@ class _SharePrayerState extends State<SharePrayer> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -146,7 +148,7 @@ class _SharePrayerState extends State<SharePrayer> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -181,7 +183,7 @@ class _SharePrayerState extends State<SharePrayer> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(
@@ -232,7 +234,7 @@ class _SharePrayerState extends State<SharePrayer> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Expanded(
@@ -276,7 +278,7 @@ class _SharePrayerState extends State<SharePrayer> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(

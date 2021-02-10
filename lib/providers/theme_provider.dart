@@ -6,24 +6,6 @@ import 'package:flutter/material.dart';
 class ThemeProvider with ChangeNotifier {
   Settings darkThemePref = Settings();
 
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundLogo => AppColors.getBackgroundLogo(_isDarkMode);
-  // List<Color> get detailBackground => AppColors.getDetailBackground(_isDarkMode);
-  // List<Color> get prayerMenu => AppColors.getPrayerMenu(_isDarkMode);
-  // List<Color> get appBarBackground => AppColors.getAppBarBackground(_isDarkMode);
-  // List<Color> get buttonGradient => AppColors.getButtonGradient(_isDarkMode);
-  // List<Color> get dialogGradient => AppColors.getDialogGradient(_isDarkMode);
-
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-  // List<Color> get backgroundColor => AppColors.getBackground(_isDarkMode);
-
   bool _isDarkMode = false;
   bool get isDarkModeEnabled => _isDarkMode;
 
@@ -35,7 +17,11 @@ class ThemeProvider with ChangeNotifier {
 
   Future changeTheme(String theme) async {
     _currentTheme = theme;
-    _isDarkMode = theme == BsThemeMode.auto ? MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark : theme == BsThemeMode.dark;
+    _isDarkMode = theme == BsThemeMode.auto
+        ? MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+                .platformBrightness ==
+            Brightness.dark
+        : theme == BsThemeMode.dark;
 
     AppColors.darkMode = _isDarkMode;
     Settings.themeMode = theme;
@@ -43,14 +29,18 @@ class ThemeProvider with ChangeNotifier {
   }
 
   toggle() async {
-    var theme = _currentTheme == BsThemeMode.dark ? BsThemeMode.light : BsThemeMode.dark;
+    var theme = _currentTheme == BsThemeMode.dark
+        ? BsThemeMode.light
+        : BsThemeMode.dark;
     changeTheme(theme);
   }
 
   Future setDefaultTheme() async {
     _currentTheme = Settings.themeMode ?? BsThemeMode.auto;
     _isDarkMode = _currentTheme == BsThemeMode.auto
-        ? MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark
+        ? MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+                .platformBrightness ==
+            Brightness.dark
         : _currentTheme == BsThemeMode.dark;
 
     AppColors.darkMode = _isDarkMode;

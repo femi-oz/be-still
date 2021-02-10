@@ -53,7 +53,9 @@ class LongButton extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  hasIcon ? Icon(icon, color: textColor) : Container(),
+                  hasIcon
+                      ? Icon(icon, color: textColor, size: 18)
+                      : Container(),
                   SizedBox(width: 10),
                   Text(
                     text,

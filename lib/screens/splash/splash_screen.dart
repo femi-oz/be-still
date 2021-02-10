@@ -155,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
                       return Container(
                         height: size,
                         child: Image.asset(
-                          StringUtils.splashLogo,
+                          StringUtils.logo,
                           fit: BoxFit.cover,
                         ),
                       );
@@ -191,7 +191,7 @@ class _SplashScreenState extends State<SplashScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          AppIcons.second_logo,
+                          AppIcons.bestill_copyright,
                           size: 16,
                           color: AppColors.splashLogo,
                         ),
