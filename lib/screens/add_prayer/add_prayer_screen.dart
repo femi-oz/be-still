@@ -212,8 +212,6 @@ class _AddPrayerState extends State<AddPrayer> {
                             focusNode: _focusNode,
                           ),
                         ),
-                        // Text(
-                        //     '$str focus node ${_focusNode.offset.dy}${_focusNode.offset.dx}'),
                         str.length > 1
                             ? Container(
                                 padding: EdgeInsets.only(
@@ -263,6 +261,12 @@ class _AddPrayerState extends State<AddPrayer> {
                                                                   _descriptionController
                                                                       .text
                                                                       .length));
+                                                  _descriptionController
+                                                          .selection =
+                                                      TextSelection.collapsed(
+                                                          offset:
+                                                              _descriptionController
+                                                                  .text.length);
                                                 });
                                                 phoneNumbers = [
                                                   ...phoneNumbers,

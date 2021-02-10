@@ -15,6 +15,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'widgets/prayer_card.dart';
 
@@ -49,12 +50,23 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
+  _getPermissions() async {
+    if (Settings.isAppInit) {
+      var status = await Permission.contacts.status;
+      if (status.isUndetermined) {
+        await Permission.contacts.request();
+      }
+      Settings.isAppInit = false;
+    }
+  }
+
   bool _isInit = true;
 
   BuildContext selectedContext;
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      _getPermissions();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle('MY LIST');

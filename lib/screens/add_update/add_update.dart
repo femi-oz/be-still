@@ -158,18 +158,90 @@ class _AddUpdateState extends State<AddUpdate> {
                     ],
                   ),
                   SizedBox(height: 30.0),
-                  Form(
-                    autovalidate: _autoValidate,
-                    key: _formKey,
-                    child: CustomInput(
-                      label: "Enter your text here",
-                      controller: _descriptionController,
-                      maxLines: 23,
-                      isRequired: true,
-                      showSuffix: false,
-                      onTextchanged: onTextChange,
-                      focusNode: _focusNode,
-                    ),
+                  Stack(
+                    children: [
+                      Form(
+                        autovalidate: _autoValidate,
+                        key: _formKey,
+                        child: CustomInput(
+                          label: "Enter your text here",
+                          controller: _descriptionController,
+                          maxLines: 23,
+                          isRequired: true,
+                          showSuffix: false,
+                          onTextchanged: onTextChange,
+                          focusNode: _focusNode,
+                        ),
+                      ),
+                      str.length > 1
+                          ? Container(
+                              padding: EdgeInsets.only(
+                                  top: _focusNode.offset.dy * 0.45,
+                                  left: _focusNode.offset.dx),
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ...localContacts.map((s) {
+                                      if (('@' + s.displayName)
+                                          .toLowerCase()
+                                          .contains(str.toLowerCase()))
+                                        return InkWell(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 10.0),
+                                              child: Text(
+                                                s.displayName,
+                                                style: AppTextStyles
+                                                    .regularText14
+                                                    .copyWith(
+                                                  color: AppColors.lightBlue4,
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              String tmp =
+                                                  str.substring(1, str.length);
+                                              var i = s.displayName
+                                                  .toLowerCase()
+                                                  .indexOf(tmp.toLowerCase());
+                                              setState(() {
+                                                str = '';
+                                                _descriptionController.text +=
+                                                    s.displayName.substring(
+                                                        i + tmp.length,
+                                                        s.displayName.length);
+                                                _descriptionController
+                                                        .selection =
+                                                    TextSelection.fromPosition(
+                                                        TextPosition(
+                                                            offset:
+                                                                _descriptionController
+                                                                    .text
+                                                                    .length));
+                                                _descriptionController
+                                                        .selection =
+                                                    TextSelection.collapsed(
+                                                        offset:
+                                                            _descriptionController
+                                                                .text.length);
+                                              });
+                                              phoneNumbers = [
+                                                ...phoneNumbers,
+                                                s.phones.toList()[0].value
+                                              ];
+                                              print(phoneNumbers);
+                                            });
+                                      else
+                                        return SizedBox();
+                                    }).toList()
+                                  ],
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
+                    ],
                   ),
                   Container(
                     decoration: BoxDecoration(
