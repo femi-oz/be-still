@@ -146,7 +146,7 @@ class CustomDrawer extends StatelessWidget {
                 colors: AppColors.backgroundColor,
               ),
               image: DecorationImage(
-                image: AssetImage(StringUtils.getBackgroundImage()),
+                image: AssetImage(StringUtils.getDrawerBackgroundImage()),
                 alignment: Alignment.bottomCenter,
               ),
             ),

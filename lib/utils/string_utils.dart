@@ -13,13 +13,30 @@ class StringUtils {
     String retVal;
     switch (Settings.isDarkMode) {
       case true:
-        retVal = 'assets/images/background-pattern-dark.png';
+        retVal = 'assets/images/bestill_arrows-bg-drk.png';
         break;
       case false:
-        retVal = 'assets/images/background-pattern.png';
+        retVal = 'assets/images/bestill_arrows-bg-lt.png';
         break;
       default:
-        retVal = 'assets/images/background-pattern.png';
+        retVal = 'assets/images/bestill_arrows-bg-lt.png';
+
+        break;
+    }
+    return retVal;
+  }
+
+  static String getDrawerBackgroundImage([bool isDarkMode]) {
+    String retVal;
+    switch (Settings.isDarkMode) {
+      case true:
+        retVal = 'assets/images/bestill_menu-logo-drk.png';
+        break;
+      case false:
+        retVal = 'assets/images/bestill_menu-logo-lt.png';
+        break;
+      default:
+        retVal = 'assets/images/bestill_menu-logo-lt.png';
 
         break;
     }
