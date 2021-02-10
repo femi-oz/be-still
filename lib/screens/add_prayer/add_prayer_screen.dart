@@ -52,6 +52,7 @@ class _AddPrayerState extends State<AddPrayer> {
       // showInSnackBar('Please, enter your prayer');
       return;
     }
+    PrayerTagModel prayerTagData;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
@@ -78,12 +79,28 @@ class _AddPrayerState extends State<AddPrayer> {
         hideFromMe: false,
         isInappropriate: false,
       );
+      if (contactData.length < 1) {
+        return null;
+      } else {
+        contactData.forEach((e) => {
+              prayerTagData = PrayerTagModel(
+                userId: _user.id,
+                createdBy: _user.email,
+                createdOn: DateTime.now(),
+                displayName: e['displayName'],
+                modifiedBy: _user.email,
+                modifiedOn: DateTime.now(),
+                phoneNumber: e['phone'],
+                prayerId: null,
+              )
+            });
+      }
       try {
         BeStilDialog.showLoading(bcontext);
         UserModel _user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayer(prayerData, _user.id);
+            .addPrayer(prayerData, _user.id, prayerTagData);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
@@ -136,6 +153,7 @@ class _AddPrayerState extends State<AddPrayer> {
   var words = [];
   String str = '';
   var phoneNumbers = [];
+  var contactData = [];
 
   onTextChange(val) {
     setState(() {
@@ -248,7 +266,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                     1, str.length);
                                                 setState(() {
                                                   str = '';
-                                                  _descriptionController.text +=
+                                                  _descriptionController.text =
                                                       s.displayName
                                                           .substring(
                                                               s.displayName
@@ -259,11 +277,20 @@ class _AddPrayerState extends State<AddPrayer> {
                                                                   .length)
                                                           .replaceAll(' ', '_');
                                                 });
+                                                contactData = [
+                                                  ...contactData,
+                                                  {
+                                                    'phone': s.phones
+                                                        .toList()[0]
+                                                        .value,
+                                                    'displayName': s.displayName
+                                                  }
+                                                ];
                                                 phoneNumbers = [
                                                   ...phoneNumbers,
                                                   s.phones.toList()[0].value
                                                 ];
-                                                print(phoneNumbers);
+                                                print(contactData);
                                               });
                                         else
                                           return SizedBox();

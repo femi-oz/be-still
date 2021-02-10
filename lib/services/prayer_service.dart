@@ -24,6 +24,8 @@ class PrayerService {
       FirebaseFirestore.instance.collection("HiddenPrayer");
   final CollectionReference _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
+  final CollectionReference _prayerTagCollectionReference =
+      FirebaseFirestore.instance.collection("PrayerTag");
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
@@ -51,16 +53,27 @@ class PrayerService {
                       .map((e) => PrayerUpdateModel.fromData(e))
                       .toList());
 
-          return Rx.combineLatest3(
+          Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
+              // .doc(f.data()['PrayerId'])
+              .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+              .snapshots()
+              .map<List<PrayerTagModel>>((list) =>
+                  list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
+
+          return Rx.combineLatest4(
               userPrayer,
               prayer,
               updates,
-              (UserPrayerModel userPrayer, PrayerModel prayer,
-                      List<PrayerUpdateModel> updates) =>
+              tags,
+              (UserPrayerModel userPrayer,
+                      PrayerModel prayer,
+                      List<PrayerUpdateModel> updates,
+                      List<PrayerTagModel> tags) =>
                   CombinePrayerStream(
                     prayer: prayer,
                     updates: updates,
                     userPrayer: userPrayer,
+                    tags: tags,
                   ));
         });
       }).switchMap((observables) {
@@ -90,6 +103,22 @@ class PrayerService {
         modifiedBy: prayerData.modifiedBy,
         modifiedOn: prayerData.modifiedOn);
     return userPrayer;
+  }
+
+  populatePrayerTag(
+    PrayerTagModel prayerTagData,
+    String prayerID,
+  ) {
+    PrayerTagModel prayerTag = PrayerTagModel(
+        userId: prayerTagData.userId,
+        prayerId: prayerID,
+        displayName: prayerTagData.displayName,
+        phoneNumber: prayerTagData.phoneNumber,
+        createdBy: prayerTagData.createdBy,
+        createdOn: prayerTagData.createdOn,
+        modifiedBy: prayerTagData.modifiedBy,
+        modifiedOn: prayerTagData.modifiedOn);
+    return prayerTag;
   }
 
   populateGroupPrayer(
@@ -192,17 +221,23 @@ class PrayerService {
     }
   }
 
-  Future addPrayer(
-    PrayerModel prayerData,
-    String _userID,
-  ) async {
+  Future addPrayer(PrayerModel prayerData, String _userID,
+      PrayerTagModel prayerTagData) async {
     // Generate uuid
     final _prayerID = Uuid().v1();
     final _userPrayerID = Uuid().v1();
+    final _prayerTagID = Uuid().v1();
 
     try {
       // store prayer
       _prayerCollectionReference.doc(_prayerID).set(prayerData.toJson());
+
+      //store prayer Tag
+      if (prayerTagData != null) {
+        _prayerTagCollectionReference
+            .doc(_prayerTagID)
+            .set(populatePrayerTag(prayerTagData, _prayerID).toJson());
+      }
 
       //store user prayer
       _userPrayerCollectionReference
@@ -314,6 +349,18 @@ class PrayerService {
       throw HttpException(e.message);
     }
   }
+
+  // Future addPrayerTags(PrayerTagModel prayerTagData) async {
+  //   // final _prayerTagID = Uuid().v1();
+  //   // try {
+  //   //   var batch = FirebaseFirestore.instance.batch();
+  //   //   batch.set(_prayerTagCollectionReference.doc(_prayerTagID),
+  //   //       prayerTagData.toJson());
+  //   //   await batch.commit();
+  //   // } catch (e) {
+  //   //   throw HttpException(e.message);
+  //   // }
+  // }
 
   Future addPrayerToGroup(PrayerModel prayerData, List selectedGroups) async {
     // Generate uuid

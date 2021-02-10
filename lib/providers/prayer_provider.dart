@@ -142,8 +142,9 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addPrayer(PrayerModel prayerData, String _userID) async {
-    await _prayerService.addPrayer(prayerData, _userID);
+  Future addPrayer(PrayerModel prayerData, String _userID,
+      PrayerTagModel prayerTagData) async {
+    await _prayerService.addPrayer(prayerData, _userID, prayerTagData);
   }
 
   Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
@@ -154,6 +155,10 @@ class PrayerProvider with ChangeNotifier {
       String userId, String prayerId, String tagger, String taggerId) async {
     return await _prayerService.tagPrayer(prayerId, userId, tagger, taggerId);
   }
+
+  // Future addPrayerTags(BuildContext context, PrayerTagModel prayerData) async {
+  //   return await _prayerService.addPrayerTags(prayerData);
+  // }
 
   Future addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
       List groups, String _userID) async {

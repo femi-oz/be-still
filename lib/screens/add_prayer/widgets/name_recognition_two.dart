@@ -78,8 +78,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
                 .addPrayerWithGroups(
                     context, widget.prayer, widget.selectedGroups, _user.id);
           } else {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayer(widget.prayer, _user.id);
+            // await Provider.of<PrayerProvider>(context, listen: false)
+            //     .addPrayer(widget.prayer, _user.id);
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
