@@ -11,6 +11,7 @@ import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ class _PrayerListState extends State<PrayerList> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.getBackgroundImage(true)),
+            image: AssetImage(StringUtils.backgroundImage(true)),
             alignment: Alignment.bottomCenter,
           ),
         ),

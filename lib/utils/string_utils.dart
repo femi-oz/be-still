@@ -9,11 +9,11 @@ class StringUtils {
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
       'An error occured. Please login again';
-  static String getBackgroundImage([bool isDarkMode]) {
+  static String backgroundImage([bool isDarkMode]) {
     String retVal;
     switch (Settings.isDarkMode) {
       case true:
-        retVal = 'assets/images/bestill_arrows-bg-drk.png';
+        retVal = 'assets/images/background-pattern-dark.png';
         break;
       case false:
         retVal = 'assets/images/bestill_arrows-bg-lt.png';
@@ -26,7 +26,7 @@ class StringUtils {
     return retVal;
   }
 
-  static String getDrawerBackgroundImage([bool isDarkMode]) {
+  static String drawerBackgroundImage([bool isDarkMode]) {
     String retVal;
     switch (Settings.isDarkMode) {
       case true:

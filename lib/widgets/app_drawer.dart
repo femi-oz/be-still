@@ -4,6 +4,7 @@ import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
@@ -146,8 +147,8 @@ class CustomDrawer extends StatelessWidget {
                 colors: AppColors.backgroundColor,
               ),
               image: DecorationImage(
-                image: AssetImage(StringUtils.getDrawerBackgroundImage()),
-                alignment: Alignment.bottomCenter,
+                image: AssetImage(StringUtils.drawerBackgroundImage()),
+                alignment: Alignment.bottomRight,
               ),
             ),
             child: Column(

@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen>
                 ],
               ),
               image: DecorationImage(
-                image: AssetImage(StringUtils.getBackgroundImage()),
+                image: AssetImage(StringUtils.backgroundImage()),
                 alignment: Alignment.bottomCenter,
               ),
             ),

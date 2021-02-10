@@ -30,7 +30,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
         icon: Icon(
           AppIcons.bestill_notifications,
           color: AppColors.grey,
-          size: 24,
+          size: 18,
         ),
         onPressed: null,
       ),
@@ -41,7 +41,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
               icon: Icon(
                 AppIcons.bestill_main_menu,
                 color: AppColors.grey,
-                size: 24,
+                size: 18,
               ),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
