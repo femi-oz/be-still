@@ -1,4 +1,5 @@
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -9,11 +10,16 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'delete_prayer.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 class PrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
@@ -27,32 +33,89 @@ class PrayerMenu extends StatefulWidget {
   _PrayerMenuState createState() => _PrayerMenuState();
 }
 
-List<String> reminderInterval = [
-  'Hourly',
-  'Daily',
-  'Weekly',
-  'Monthly',
-  'Yearly'
-];
-List<String> snoozeInterval = [
-  '7 Days',
-  '14 Days',
-  '30 Days',
-  '90 Days',
-  '1 Year'
-];
-List reminderDays = [];
-
 class _PrayerMenuState extends State<PrayerMenu> {
-  var reminder = '';
-  initState() {
+  List<String> reminderInterval = [
+    'Hourly',
+    'Daily',
+    'Weekly',
+    'Monthly',
+    'Yearly'
+  ];
+  List<String> snoozeInterval = [
+    '7 Days',
+    '14 Days',
+    '30 Days',
+    '90 Days',
+    '1 Year'
+  ];
+  List<String> reminderDays = [];
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  Future onSelectNotification(String payload) {
+    // goto prayer
+  }
+
+  @override
+  void initState() {
+    _configureLocalTimeZone();
     for (var i = 1; i <= 31; i++) {
       setState(() {
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: onSelectNotification);
     super.initState();
   }
+
+  String currentTimeZone;
+  Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+
+    currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+  }
+
+  tz.TZDateTime _scheduleDate(selectedHour, selectedMinute) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+        tz.local, now.year, now.month, now.day, selectedHour, selectedMinute);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  showNotification(selectedHour, selectedFrequency, selectedMinute) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'scheduledd title',
+        'scheduled body',
+        _scheduleDate(selectedHour, selectedMinute),
+        const NotificationDetails(
+            android: AndroidNotificationDetails('your channel id',
+                'your channel name', 'your channel description'),
+            iOS: IOSNotificationDetails()),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: selectedFrequency.toString().toLowerCase() ==
+                Frequency.daily.toLowerCase()
+            ? DateTimeComponents.time
+            : DateTimeComponents
+                .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
+    Navigator.of(context).pop();
+  }
+
+  var reminder = '';
 
   var snooze = '';
 
@@ -301,26 +364,28 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
-                  // {
-                  //   showModalBottomSheet(
-                  //     context: context,
-                  //     barrierColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //     backgroundColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //     isScrollControlled: true,
-                  //     builder: (BuildContext context) {
-                  //       return ReminderPicker(
-                  //         hideActionuttons: false,
-                  //         frequency: reminderInterval,
-                  //         reminderDays: reminderDays,
-                  //         onCancel: null,
-                  //         onSave: null,
-                  //       );
-                  //     },
-                  //   );
-                  // },
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return ReminderPicker(
+                          hideActionuttons: false,
+                          frequency: reminderInterval,
+                          reminderDays: reminderDays,
+                          onCancel: () => Navigator.of(context).pop(),
+                          onSave: (selectedFrequency, selectedHour,
+                                  selectedMinute, _) =>
+                              showNotification(selectedHour, selectedFrequency,
+                                  selectedMinute),
+                        );
+                      },
+                    );
+                  },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),

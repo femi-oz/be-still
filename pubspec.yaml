@@ -52,6 +52,8 @@ dependencies:
   local_auth: ^0.6.3+4
   flutter_html: ^0.8.2
   flutter_typeahead: ^2.0.0
+  flutter_local_notifications: ^4.0.1
+  flutter_native_timezone: ^1.0.4
 
 
 
