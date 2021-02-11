@@ -29,7 +29,6 @@ class PrayerService {
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
     try {
       _combineStream = _userPrayerCollectionReference
-          // .orderBy('CreatedOn', descending: true)
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((convert) {
@@ -44,7 +43,6 @@ class PrayerService {
 
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  // .doc(f.data()['PrayerId'])
                   .where('PrayerId', isEqualTo: f.data()['PrayerId'])
                   .snapshots()
                   .map<List<PrayerUpdateModel>>((list) => list.docs
@@ -321,20 +319,11 @@ class PrayerService {
     final groupPrayerId = Uuid().v1();
     try {
       var batch = FirebaseFirestore.instance.batch();
-      // return FirebaseFirestore.instance.runTransaction(
-      //   (transaction) async {
-      // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
       //store group prayer
       batch.set(_groupPrayerCollectionReference.doc(groupPrayerId),
           populateGroupPrayer(prayerData, _prayerID).toJson());
-      //   },
-      // ).then((val) {
-      //   return true;
-      // }).catchError((e) {
-      //   throw HttpException(e.message);
-      // });
       await batch.commit();
     } catch (e) {
       throw HttpException(e.message);

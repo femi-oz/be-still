@@ -39,16 +39,11 @@ class PrayerProvider with ChangeNotifier {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.toList();
-        _filteredPrayers = _prayers
-            .where((p) =>
-                p.prayer.status == Status.active &&
-                !p.prayer.isArchived &&
-                !p.prayer.isAnswer &&
-                !p.prayer.isSnoozed)
-            .toList();
-        _filteredPrayers
-            .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-
+        filterPrayers(
+            isAnswered: _filterOptions.isAnswered,
+            isArchived: _filterOptions.isArchived,
+            isSnoozed: _filterOptions.isSnoozed,
+            status: _filterOptions.status);
         notifyListeners();
       },
     );
@@ -101,7 +96,7 @@ class PrayerProvider with ChangeNotifier {
       isSnoozed: isSnoozed,
       status: status,
     );
-    List<CombinePrayerStream> filteredPrayers = _prayers.toList();
+    List<CombinePrayerStream> prayers = _prayers.toList();
 
     var activePrayers = [];
     var answeredPrayers = [];
@@ -109,33 +104,33 @@ class PrayerProvider with ChangeNotifier {
     var archivedPrayers = [];
 
     if (status == Status.active) {
-      activePrayers = filteredPrayers
+      activePrayers = prayers
           .where((CombinePrayerStream data) =>
               data.prayer.status.toLowerCase() == status.toLowerCase())
           .toList();
     }
     if (isAnswered == true) {
-      answeredPrayers = filteredPrayers
+      answeredPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
           .toList();
     }
     if (isArchived == true) {
-      archivedPrayers = filteredPrayers
+      archivedPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isArchived == true)
           .toList();
     }
     if (isSnoozed == true) {
-      snoozedPrayers = filteredPrayers
+      snoozedPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isSnoozed == true)
           .toList();
     }
     _filteredPrayers = [
-      // ...filteredPrayers,
       ...activePrayers,
       ...archivedPrayers,
       ...snoozedPrayers,
       ...answeredPrayers
     ];
+    _filteredPrayers.toSet().toList();
 
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
