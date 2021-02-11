@@ -3,6 +3,7 @@ import 'package:be_still/providers/auth_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/push_notification.dart';
 import 'package:be_still/utils/settings.dart';
@@ -118,8 +119,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(
-                  StringUtils.getBackgroundImage(Settings.isDarkMode)),
+              image:
+                  AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -338,7 +339,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         padding: const EdgeInsets.only(top: 6.0, right: 6.0),
                         child: IconButton(
                           icon: Icon(
-                            Icons.close,
+                            AppIcons.bestill_close,
                             color: AppColors.dialogClose,
                           ),
                           onPressed: () => Navigator.of(context).pop(),

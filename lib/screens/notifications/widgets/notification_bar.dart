@@ -23,7 +23,7 @@ class NotificationBarState extends State<NotificationBar> {
       title: Text(''),
       leading: IconButton(
         icon: Icon(
-          Icons.close,
+          AppIcons.bestill_close,
           color: AppColors.textFieldText,
           size: 24,
         ),
@@ -45,7 +45,7 @@ class NotificationBarState extends State<NotificationBar> {
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                AppIcons.menu,
+                AppIcons.bestill_main_menu,
                 color: AppColors.lightBlue4,
                 // size: 24,
               ),

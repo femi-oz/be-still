@@ -4,6 +4,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -150,7 +151,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       alignment: Alignment.center,
                       child: CircularButton(
                           icon: Icon(
-                            Icons.edit,
+                            AppIcons.bestill_edit,
                             color: AppColors.lightBlue4,
                           ),
                           onClick: () {
@@ -177,7 +178,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
-                          Icons.share,
+                          AppIcons.bestill_share,
                           color: AppColors.lightBlue4,
                         ),
                         onClick: () {
@@ -209,7 +210,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
-                          Icons.calendar_today,
+                          AppIcons.bestill_reminder,
                           color: AppColors.lightBlue4,
                         ),
                         onClick: () {},
@@ -245,7 +246,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
-                          Icons.delete,
+                          AppIcons.bestill_archive,
                           color: AppColors.lightBlue4,
                         ),
                         onClick: () {
@@ -275,7 +276,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                             alignment: Alignment.center,
                             child: CircularButton(
                               icon: Icon(
-                                Icons.check_box,
+                                AppIcons.bestill_answered,
                                 color: AppColors.lightBlue4,
                               ),
                               onClick: () => _onMarkAsAnswered(),

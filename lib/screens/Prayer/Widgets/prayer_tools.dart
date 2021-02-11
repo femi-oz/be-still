@@ -1,6 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,8 @@ class _PrayerFiltersState extends State<PrayerFilters> {
             alignment: Alignment.centerLeft,
             child: FlatButton.icon(
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back, color: AppColors.lightBlue3),
+              icon: Icon(AppIcons.bestill_back_arrow,
+                  color: AppColors.lightBlue3),
               label: Text(
                 'BACK',
                 style: TextStyle(

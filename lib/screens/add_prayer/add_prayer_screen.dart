@@ -230,8 +230,6 @@ class _AddPrayerState extends State<AddPrayer> {
                             focusNode: _focusNode,
                           ),
                         ),
-                        // Text(
-                        //     '$str focus node ${_focusNode.offset.dy}${_focusNode.offset.dx}'),
                         str.length > 1
                             ? Container(
                                 padding: EdgeInsets.only(
@@ -264,18 +262,29 @@ class _AddPrayerState extends State<AddPrayer> {
                                               onTap: () {
                                                 String tmp = str.substring(
                                                     1, str.length);
+                                                var i = s.displayName
+                                                    .toLowerCase()
+                                                    .indexOf(tmp.toLowerCase());
                                                 setState(() {
                                                   str = '';
                                                   _descriptionController.text +=
-                                                      s.displayName
-                                                          .substring(
-                                                              s.displayName
-                                                                      .indexOf(
-                                                                          tmp) +
-                                                                  tmp.length,
-                                                              s.displayName
-                                                                  .length)
-                                                          .replaceAll(' ', '_');
+                                                      s.displayName.substring(
+                                                          i + tmp.length,
+                                                          s.displayName.length);
+                                                  _descriptionController
+                                                          .selection =
+                                                      TextSelection.fromPosition(
+                                                          TextPosition(
+                                                              offset:
+                                                                  _descriptionController
+                                                                      .text
+                                                                      .length));
+                                                  _descriptionController
+                                                          .selection =
+                                                      TextSelection.collapsed(
+                                                          offset:
+                                                              _descriptionController
+                                                                  .text.length);
                                                 });
                                                 contactData = [
                                                   ...contactData,

@@ -1,3 +1,4 @@
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,8 @@ class _FindGroupToolsState extends State<FindGroupTools> {
             child: FlatButton.icon(
               padding: EdgeInsets.zero,
               onPressed: () => Navigator.of(context).pop(),
-              icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
+              icon: Icon(AppIcons.bestill_back_arrow,
+                  color: AppColors.lightBlue5),
               label: Text(
                 'BACK',
                 style: TextStyle(

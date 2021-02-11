@@ -59,20 +59,9 @@ class _SplashScreenState extends State<SplashScreen>
     return new Timer(duration, () => route());
   }
 
-  getPermissions() async {
-    if (Settings.isAppInit) {
-      var status = await Permission.contacts.status;
-      if (status.isUndetermined) {
-        await Permission.contacts.request();
-      }
-      Settings.isAppInit = false;
-    }
-  }
-
   route() async {
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
-      await getPermissions();
       if (Settings.enableLocalAuth) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           LoginScreen.routeName,
@@ -155,7 +144,7 @@ class _SplashScreenState extends State<SplashScreen>
                       return Container(
                         height: size,
                         child: Image.asset(
-                          StringUtils.splashLogo,
+                          StringUtils.logo,
                           fit: BoxFit.cover,
                         ),
                       );
@@ -191,7 +180,7 @@ class _SplashScreenState extends State<SplashScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          AppIcons.second_logo,
+                          AppIcons.bestill_copyright,
                           size: 16,
                           color: AppColors.splashLogo,
                         ),

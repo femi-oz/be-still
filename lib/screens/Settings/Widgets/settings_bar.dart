@@ -26,43 +26,11 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
               color:
                   Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2)),
       centerTitle: true,
-      leading:
-          // TODO
-          //notificationData.length > 0
-          //     ? FlatButton(
-          //         onPressed: () => showModalBottomSheet(
-          //           context: context,
-          //           barrierColor: AppColors.detailBackgroundColor,
-          //           backgroundColor: AppColors.detailBackgroundColor,
-          //           isScrollControlled: true,
-          //           builder: (BuildContext context) {
-          //             return MultiProvider(providers: [
-          //               ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
-          //             ], child: NotificationsScreen());
-          //           },
-          //         ),
-          //         child: Stack(
-          //           alignment: Alignment.center,
-          //           children: <Widget>[
-          //             Icon(
-          //               Icons.notifications,
-          //               color: AppColors.red,
-          //             ),
-          //             Container(
-          //               child: Text(
-          //                 notificationData.length.toString(),
-          //                 style: TextStyle(fontSize: 5, color: Colors.white),
-          //               ),
-          //             )
-          //           ],
-          //         ),
-          //       )
-          // :
-          IconButton(
+      leading: IconButton(
         icon: Icon(
-          Icons.notifications_none,
+          AppIcons.bestill_notifications,
           color: AppColors.grey,
-          size: 24,
+          size: 18,
         ),
         onPressed: null,
       ),
@@ -71,9 +39,9 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                AppIcons.menu,
+                AppIcons.bestill_main_menu,
                 color: AppColors.grey,
-                size: 24,
+                size: 18,
               ),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();

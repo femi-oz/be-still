@@ -36,8 +36,7 @@ class _FindAGroupState extends State<FindAGroup> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image:
-                AssetImage(StringUtils.getBackgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
             alignment: Alignment.bottomCenter,
           ),
         ),

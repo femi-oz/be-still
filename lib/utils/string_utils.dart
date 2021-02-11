@@ -9,17 +9,34 @@ class StringUtils {
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
       'An error occured. Please login again';
-  static String getBackgroundImage([bool isDarkMode]) {
+  static String backgroundImage([bool isDarkMode]) {
     String retVal;
     switch (Settings.isDarkMode) {
       case true:
         retVal = 'assets/images/background-pattern-dark.png';
         break;
       case false:
-        retVal = 'assets/images/background-pattern.png';
+        retVal = 'assets/images/bestill_arrows-bg-lt.png';
         break;
       default:
-        retVal = 'assets/images/background-pattern.png';
+        retVal = 'assets/images/bestill_arrows-bg-lt.png';
+
+        break;
+    }
+    return retVal;
+  }
+
+  static String drawerBackgroundImage([bool isDarkMode]) {
+    String retVal;
+    switch (Settings.isDarkMode) {
+      case true:
+        retVal = 'assets/images/bestill_menu-logo-drk.png';
+        break;
+      case false:
+        retVal = 'assets/images/bestill_menu-logo-lt.png';
+        break;
+      default:
+        retVal = 'assets/images/bestill_menu-logo-lt.png';
 
         break;
     }
@@ -27,8 +44,7 @@ class StringUtils {
   }
 
   static String year = DateTime.now().year.toString();
-  static String logo = 'assets/images/logo1.png';
-  static String splashLogo = 'assets/images/splash_logo2.png';
+  static String logo = 'assets/images/bestil_main_logo.png';
   static String backText = "Go Back";
   static String copyRight1 = '$year All Rights Reserved';
   static String copyRight2 =
