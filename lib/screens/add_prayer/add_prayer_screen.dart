@@ -266,7 +266,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                     1, str.length);
                                                 setState(() {
                                                   str = '';
-                                                  _descriptionController.text =
+                                                  _descriptionController.text +=
                                                       s.displayName
                                                           .substring(
                                                               s.displayName
