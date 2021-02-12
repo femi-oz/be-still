@@ -27,6 +27,8 @@ class PrayerService {
   final CollectionReference _prayerTagCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTag");
 
+  var prayerId;
+
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
     try {
@@ -105,11 +107,10 @@ class PrayerService {
 
   populatePrayerTag(
     PrayerTagModel prayerTagData,
-    String prayerID,
   ) {
     PrayerTagModel prayerTag = PrayerTagModel(
         userId: prayerTagData.userId,
-        prayerId: prayerID,
+        prayerId: prayerId,
         displayName: prayerTagData.displayName,
         phoneNumber: prayerTagData.phoneNumber,
         createdBy: prayerTagData.createdBy,
@@ -219,23 +220,18 @@ class PrayerService {
     }
   }
 
-  Future addPrayer(PrayerModel prayerData, String _userID,
-      PrayerTagModel prayerTagData) async {
+  Future addPrayer(
+    PrayerModel prayerData,
+    String _userID,
+  ) async {
     // Generate uuid
     final _prayerID = Uuid().v1();
     final _userPrayerID = Uuid().v1();
-    final _prayerTagID = Uuid().v1();
+    prayerId = _prayerID;
 
     try {
       // store prayer
       _prayerCollectionReference.doc(_prayerID).set(prayerData.toJson());
-
-      //store prayer Tag
-      if (prayerTagData != null) {
-        _prayerTagCollectionReference
-            .doc(_prayerTagID)
-            .set(populatePrayerTag(prayerTagData, _prayerID).toJson());
-      }
 
       //store user prayer
       _userPrayerCollectionReference
@@ -348,17 +344,19 @@ class PrayerService {
     }
   }
 
-  // Future addPrayerTags(PrayerTagModel prayerTagData) async {
-  //   // final _prayerTagID = Uuid().v1();
-  //   // try {
-  //   //   var batch = FirebaseFirestore.instance.batch();
-  //   //   batch.set(_prayerTagCollectionReference.doc(_prayerTagID),
-  //   //       prayerTagData.toJson());
-  //   //   await batch.commit();
-  //   // } catch (e) {
-  //   //   throw HttpException(e.message);
-  //   // }
-  // }
+  Future addPrayerTag(PrayerTagModel prayerTagData) async {
+    final _prayerTagID = Uuid().v1();
+    try {
+      //store prayer Tag
+      if (prayerTagData != null) {
+        _prayerTagCollectionReference
+            .doc(_prayerTagID)
+            .set(populatePrayerTag(prayerTagData).toJson());
+      }
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
 
   Future addPrayerToGroup(PrayerModel prayerData, List selectedGroups) async {
     // Generate uuid
@@ -416,6 +414,20 @@ class PrayerService {
       throw HttpException(e.message);
     }
   }
+
+  // Stream<List<PrayerTagModel>> getPrayerTags(
+  //   String prayerId,
+  // ) {
+  //   try {
+  //     return _prayerTagCollectionReference
+  //         .where('PrayerId', isEqualTo: prayerId)
+  //         .snapshots()
+  //         .asyncMap((event) =>
+  //             event.docs.map((e) => PrayerTagModel.fromData(e)).toList());
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
   Stream<List<HiddenPrayerModel>> getHiddenPrayers(
     String userId,

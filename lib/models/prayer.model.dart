@@ -300,7 +300,7 @@ class HiddenPrayerModel {
 
 class PrayerTagModel {
   final String id;
-  String prayerId;
+  final String prayerId;
   final String userId;
   final String displayName;
   final String phoneNumber;
@@ -309,7 +309,7 @@ class PrayerTagModel {
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  PrayerTagModel({
+  const PrayerTagModel({
     this.id,
     @required this.prayerId,
     @required this.userId,

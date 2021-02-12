@@ -7,10 +7,9 @@ import 'package:provider/provider.dart';
 
 class PrayerCard extends StatelessWidget {
   final PrayerModel prayer;
+  final List<PrayerTagModel> tags;
 
-  PrayerCard({
-    this.prayer,
-  });
+  PrayerCard({this.prayer, this.tags});
   @override
   Widget build(BuildContext context) {
     // final _activeList = Provider.of<PrayerProvider>(context).currentPrayerType;
@@ -39,7 +38,7 @@ class PrayerCard extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Expanded(
+                Flexible(
                   child: Column(
                     children: <Widget>[
                       // TODO
@@ -79,29 +78,30 @@ class PrayerCard extends StatelessWidget {
                               //         ],
                               //       )
                               //     : Container(),
-                              // Row(
-                              //   children: prayer.tags.map((tag) {
-                              //     return Text(
-                              //       tag.toUpperCase(),
-                              //       style: TextStyle(
-                              //         color: AppColors.red,
-                              //         fontSize: 10,
-                              //       ),
-                              //     );
-                              //   }).toList(),
-                              // ),
-                              // prayer.tags.length > 0
-                              //     ? Container(
-                              //         margin: EdgeInsets.symmetric(
-                              //           horizontal: 10,
-                              //         ),
-                              //         child: Text(
-                              //           '|',
-                              //           style: TextStyle(
-                              //               color: context.prayerCardBorder),
-                              //         ),
-                              //       )
-                              //     : Container(),
+
+                              Row(
+                                children: tags.map((tag) {
+                                  return Text(
+                                    '${tag.displayName.toUpperCase()}, ',
+                                    style: TextStyle(
+                                      color: AppColors.red,
+                                      fontSize: 10,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                              tags.length > 0
+                                  ? Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                      ),
+                                      child: Text(
+                                        '|',
+                                        style: TextStyle(
+                                            color: AppColors.prayerTextColor),
+                                      ),
+                                    )
+                                  : Container(),
                               Text(
                                 DateFormat('MM.dd.yyyy')
                                     .format(prayer.modifiedOn),

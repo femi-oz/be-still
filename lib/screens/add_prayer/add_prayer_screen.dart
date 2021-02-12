@@ -79,28 +79,30 @@ class _AddPrayerState extends State<AddPrayer> {
         hideFromMe: false,
         isInappropriate: false,
       );
-      if (contactData.length < 1) {
-        return null;
-      } else {
-        contactData.forEach((e) => {
-              prayerTagData = PrayerTagModel(
-                userId: _user.id,
-                createdBy: _user.email,
-                createdOn: DateTime.now(),
-                displayName: e['displayName'],
-                modifiedBy: _user.email,
-                modifiedOn: DateTime.now(),
-                phoneNumber: e['phone'],
-                prayerId: null,
-              )
-            });
-      }
+
       try {
         BeStilDialog.showLoading(bcontext);
         UserModel _user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayer(prayerData, _user.id, prayerTagData);
+            .addPrayer(prayerData, _user.id);
+
+        if (contactData.length > 0) {
+          contactData.forEach((e) async => {
+                prayerTagData = PrayerTagModel(
+                  userId: _user.id,
+                  createdBy: _user.email,
+                  createdOn: DateTime.now(),
+                  displayName: e['displayName'],
+                  modifiedBy: _user.email,
+                  modifiedOn: DateTime.now(),
+                  phoneNumber: e['phone'],
+                  prayerId: null,
+                ),
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .addPrayerTag(context, prayerTagData)
+              });
+        }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
