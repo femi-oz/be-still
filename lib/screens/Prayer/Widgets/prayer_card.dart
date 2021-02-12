@@ -79,17 +79,27 @@ class PrayerCard extends StatelessWidget {
                               //       )
                               //     : Container(),
 
-                              Row(
-                                children: tags.map((tag) {
-                                  return Text(
-                                    '${tag.displayName.toUpperCase()}, ',
-                                    style: TextStyle(
-                                      color: AppColors.red,
-                                      fontSize: 10,
-                                    ),
-                                  );
-                                }).toList(),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: tags.map((tag) {
+                                      return Text(
+                                        '${tag.displayName.toUpperCase()}, ',
+                                        style: TextStyle(
+                                          color: AppColors.red,
+                                          fontSize: 10,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
                               ),
+
                               tags.length > 0
                                   ? Container(
                                       margin: EdgeInsets.symmetric(
