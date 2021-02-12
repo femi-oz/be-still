@@ -1,11 +1,16 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -35,11 +40,11 @@ class PrayerMenu extends StatefulWidget {
 
 class _PrayerMenuState extends State<PrayerMenu> {
   List<String> reminderInterval = [
-    'Hourly',
+    // 'Hourly',
     'Daily',
     'Weekly',
-    'Monthly',
-    'Yearly'
+    // 'Monthly',
+    // 'Yearly'
   ];
   List<String> snoozeInterval = [
     '7 Days',
@@ -53,8 +58,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future onSelectNotification(String payload) {
-    // goto prayer
+  Future onSelectNotification(String payload) async {
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .setPrayer(widget.prayer.id);
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .setPrayerUpdates(widget.prayer.id);
+    Navigator.of(context).pushNamed(PrayerDetails.routeName);
   }
 
   @override
@@ -95,10 +104,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   showNotification(selectedHour, selectedFrequency, selectedMinute) async {
+    int localId = Provider.of<NotificationProvider>(context, listen: false)
+            .localNotifications
+            .reduce((a, b) => a.localId > b.localId ? a : b)
+            .localId +
+        1;
+    await storeNotification(localId);
     await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'scheduledd title',
-        'scheduled body',
+        localId,
+        'Reminder to Pray',
+        widget.prayer.description,
         _scheduleDate(selectedHour, selectedMinute),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
@@ -113,6 +128,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
             : DateTimeComponents
                 .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
     Navigator.of(context).pop();
+  }
+
+  storeNotification(localId) async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .addLocalNotification(userId, localId);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      _onWillPop();
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
   }
 
   var reminder = '';
