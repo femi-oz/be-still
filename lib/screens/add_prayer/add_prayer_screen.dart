@@ -52,6 +52,7 @@ class _AddPrayerState extends State<AddPrayer> {
       // showInSnackBar('Please, enter your prayer');
       return;
     }
+    PrayerTagModel prayerTagData;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
@@ -78,12 +79,30 @@ class _AddPrayerState extends State<AddPrayer> {
         hideFromMe: false,
         isInappropriate: false,
       );
+
       try {
         BeStilDialog.showLoading(bcontext);
         UserModel _user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayer(prayerData, _user.id);
+
+        if (contactData.length > 0) {
+          contactData.forEach((e) async => {
+                prayerTagData = PrayerTagModel(
+                  userId: _user.id,
+                  createdBy: _user.email,
+                  createdOn: DateTime.now(),
+                  displayName: e['displayName'],
+                  modifiedBy: _user.email,
+                  modifiedOn: DateTime.now(),
+                  phoneNumber: e['phone'],
+                  prayerId: null,
+                ),
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .addPrayerTag(context, prayerTagData)
+              });
+        }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
@@ -136,6 +155,7 @@ class _AddPrayerState extends State<AddPrayer> {
   var words = [];
   String str = '';
   var phoneNumbers = [];
+  var contactData = [];
 
   onTextChange(val) {
     setState(() {
@@ -268,11 +288,20 @@ class _AddPrayerState extends State<AddPrayer> {
                                                               _descriptionController
                                                                   .text.length);
                                                 });
+                                                contactData = [
+                                                  ...contactData,
+                                                  {
+                                                    'phone': s.phones
+                                                        .toList()[0]
+                                                        .value,
+                                                    'displayName': s.displayName
+                                                  }
+                                                ];
                                                 phoneNumbers = [
                                                   ...phoneNumbers,
                                                   s.phones.toList()[0].value
                                                 ];
-                                                print(phoneNumbers);
+                                                print(contactData);
                                               });
                                         else
                                           return SizedBox();

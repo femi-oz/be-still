@@ -16,6 +16,7 @@ class PrayerProvider with ChangeNotifier {
   List<HiddenPrayerModel> _hiddenPrayers = [];
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   List<PrayerUpdateModel> _prayerUpdates = [];
+  // List<PrayerTagModel> _prayerTags = [];
   List<CombinePrayerStream> _filteredPrayers = [];
   PrayerModel _currentPrayer;
   FilterType _filterOptions = FilterType(
@@ -28,6 +29,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
   List<PrayerUpdateModel> get prayerUpdates => _prayerUpdates;
+  // List<PrayerTagModel> get prayerTags => _prayerTags;
   PrayerType get currentPrayerType => _currentPrayerType;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   PrayerModel get currentPrayer => _currentPrayer;
@@ -137,7 +139,10 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addPrayer(PrayerModel prayerData, String _userID) async {
+  Future addPrayer(
+    PrayerModel prayerData,
+    String _userID,
+  ) async {
     await _prayerService.addPrayer(prayerData, _userID);
   }
 
@@ -148,6 +153,10 @@ class PrayerProvider with ChangeNotifier {
   Future tagPrayer(
       String userId, String prayerId, String tagger, String taggerId) async {
     return await _prayerService.tagPrayer(prayerId, userId, tagger, taggerId);
+  }
+
+  Future addPrayerTag(BuildContext context, PrayerTagModel prayerData) async {
+    return await _prayerService.addPrayerTag(prayerData);
   }
 
   Future addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
@@ -229,4 +238,16 @@ class PrayerProvider with ChangeNotifier {
       notifyListeners();
     });
   }
+
+  // Future setPrayerTags(String prayerId) async {
+  //   _prayerService
+  //       .getPrayerTags(prayerId)
+  //       .asBroadcastStream()
+  //       .listen((prayerTags) {
+  //     _prayerTags = prayerTags;
+  //     _prayerTags.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+
+  //     notifyListeners();
+  //   });
+  // }
 }

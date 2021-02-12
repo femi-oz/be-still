@@ -38,6 +38,8 @@ class _PrayerListState extends State<PrayerList> {
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .setHiddenPrayers(_user.id);
+      // await Provider.of<PrayerProvider>(context, listen: false)
+      //     .setPrayerTags(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
       Future.delayed(const Duration(milliseconds: 1000), () {
@@ -80,6 +82,7 @@ class _PrayerListState extends State<PrayerList> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    // var tags = Provider.of<PrayerProvider>(context).prayerTags;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
@@ -125,6 +128,7 @@ class _PrayerListState extends State<PrayerList> {
                                     await Provider.of<PrayerProvider>(context,
                                             listen: false)
                                         .setPrayerUpdates(e.prayer.id);
+
                                     Navigator.of(context)
                                         .pushNamed(PrayerDetails.routeName);
                                   },
@@ -152,7 +156,10 @@ class _PrayerListState extends State<PrayerList> {
                                       },
                                     );
                                   },
-                                  child: PrayerCard(prayer: e.prayer)))
+                                  child: PrayerCard(
+                                    prayer: e.prayer,
+                                    tags: e.tags,
+                                  )))
                               .toList(),
                         ],
                       ),

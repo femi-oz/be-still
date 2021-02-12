@@ -298,11 +298,59 @@ class HiddenPrayerModel {
   }
 }
 
+class PrayerTagModel {
+  final String id;
+  final String prayerId;
+  final String userId;
+  final String displayName;
+  final String phoneNumber;
+  final String createdBy;
+  final DateTime createdOn;
+  final String modifiedBy;
+  final DateTime modifiedOn;
+
+  const PrayerTagModel({
+    this.id,
+    @required this.prayerId,
+    @required this.userId,
+    @required this.displayName,
+    @required this.phoneNumber,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+  PrayerTagModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
+        userId = snapshot.data()['UserId'],
+        displayName = snapshot.data()['DisplayName'],
+        phoneNumber = snapshot.data()['PhoneNumber'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'UserId': userId,
+      'DisplayName': displayName,
+      'PhoneNumber': phoneNumber,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
 class CombinePrayerStream {
   final UserPrayerModel userPrayer;
   final GroupPrayerModel groupPrayer;
   @required
   final PrayerModel prayer;
+  @required
+  final List<PrayerTagModel> tags;
   @required
   final List<PrayerUpdateModel> updates;
 
@@ -310,6 +358,7 @@ class CombinePrayerStream {
     this.userPrayer,
     this.groupPrayer,
     this.prayer,
+    this.tags,
     this.updates,
   });
 }
