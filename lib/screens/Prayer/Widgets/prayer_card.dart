@@ -80,30 +80,25 @@ class PrayerCard extends StatelessWidget {
                               //     : Container(),
 
                               SizedBox(
-                                width: MediaQuery.of(context).size.width *
-                                    tags.length /
-                                    9,
-                                child: SingleChildScrollView(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: tags.map((tag) {
-                                          return Text(
-                                            '${tag.displayName.toUpperCase()}, ',
-                                            style: TextStyle(
-                                              color: AppColors.red,
-                                              fontSize: 10,
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )),
-                              ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: tags.map((tag) {
+                                        return Text(
+                                          '${tag.displayName.toUpperCase()}, ',
+                                          style: TextStyle(
+                                            color: AppColors.red,
+                                            fontSize: 10,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  )),
 
                               tags.length > 0
                                   ? Container(
