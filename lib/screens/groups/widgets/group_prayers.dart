@@ -98,7 +98,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                         isScrollControlled: true,
                                         builder: (BuildContext context) {
                                           return GroupPrayerQuickAccess(
-                                              y: y, prayer: e.prayer);
+                                              y: y, prayer: e);
                                         },
                                       );
                                     },
