@@ -254,16 +254,16 @@ class PrayerService {
           .doc(_userPrayerID)
           .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
 
-      var data = {
-        'prayerid': prayerId,
-        'userid': _userID,
-        'tagger': creator,
-        'taggerid': creatorId,
-      };
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
-        data: data,
-      );
+      // var data = {
+      //   'prayerid': prayerId,
+      //   'userid': _userID,
+      //   'tagger': creator,
+      //   'taggerid': creatorId,
+      // };
+      // await dio.post(
+      //   'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
+      //   data: data,
+      // );
     } catch (e) {
       throw HttpException(e.message);
     }
