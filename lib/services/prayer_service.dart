@@ -243,15 +243,27 @@ class PrayerService {
   }
 
   Future addUserPrayer(
-      String prayerId, String _userID, String creatorId) async {
+      String prayerId, String _userID, String creatorId, String creator) async {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
+    var dio = Dio(BaseOptions(followRedirects: false));
 
     try {
       //store user prayer
       _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
+
+      var data = {
+        'prayerid': prayerId,
+        'userid': _userID,
+        'tagger': creator,
+        'taggerid': creatorId,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
+        data: data,
+      );
     } catch (e) {
       throw HttpException(e.message);
     }
