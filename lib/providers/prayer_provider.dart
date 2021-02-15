@@ -131,7 +131,7 @@ class PrayerProvider with ChangeNotifier {
     List<CombinePrayerStream> _distinct = [];
     var idSet = <String>{};
     for (var e in _filteredPrayers) {
-      if (idSet.add(e.id)) {
+      if (idSet.add(e.prayer.id)) {
         _distinct.add(e);
       }
     }
