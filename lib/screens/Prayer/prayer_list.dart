@@ -131,12 +131,6 @@ class _PrayerListState extends State<PrayerList> {
 
                                     Navigator.of(context)
                                         .pushNamed(PrayerDetails.routeName);
-                                    // Navigator.push(
-                                    //   context,
-                                    //   new MaterialPageRoute(
-                                    //     builder: (context) => new PrayerDetails(),
-                                    //   ),
-                                    // );
                                   },
                                   onLongPressEnd:
                                       (LongPressEndDetails details) async {

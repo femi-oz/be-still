@@ -1,6 +1,4 @@
 import 'package:be_still/enums/time_range.dart';
-
-import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
@@ -28,11 +26,11 @@ class ReminderPicker extends StatefulWidget {
 class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
-  var selectedFrequency = Frequency.daily;
-  var selectedDay = DaysOfWeek.wed;
-  var selectedPeriod = PeriodOfDay.pm;
-  var selectedHour = 3;
-  var selectedMinute = 30;
+  String selectedFrequency = Frequency.daily;
+  String selectedDay = DaysOfWeek.wed;
+  String selectedPeriod = PeriodOfDay.pm;
+  int selectedHour = 3;
+  int selectedMinute = 30;
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
@@ -99,8 +97,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ? CupertinoPicker(
                                     scrollController: daysController,
                                     itemExtent: itemExtent,
-                                    onSelectedItemChanged: (i) => setState(
-                                        () => selectedDay = reminderDays[i]),
+                                    onSelectedItemChanged: (i) => setState(() =>
+                                        selectedDay = widget.reminderDays[i]),
                                     children: <Widget>[
                                       ...widget.reminderDays.map(
                                         (r) => Align(
@@ -225,9 +223,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
                       CustomButtonGroup(
                         title: 'SAVE',
                         onSelected: (_) {
-                          var date =
-                              '$selectedHour:$selectedMinute $selectedPeriod';
-                          widget.onSave(selectedDay, selectedFrequency, date);
+                          // var date =
+                          //     '$selectedHour:$selectedMinute $selectedPeriod';
+                          widget.onSave(selectedFrequency, selectedHour,
+                              selectedMinute, selectedDay);
                         },
                         length: 2,
                         index: 0,

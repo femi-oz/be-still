@@ -10,6 +10,9 @@ class NotificationProvider with ChangeNotifier {
   List<NotificationModel> _notifications = [];
   List<NotificationModel> get notifications => _notifications;
 
+  List<LocalNotificationModel> _localNotifications = [];
+  List<LocalNotificationModel> get localNotifications => _localNotifications;
+
   Future setUserNotifications(String userId) async {
     _notificationService
         .getUserNotifications(userId)
@@ -29,5 +32,23 @@ class NotificationProvider with ChangeNotifier {
   Future newPrayerGroupNotification(String prayerId, String groupId) async {
     return await _notificationService.newPrayerGroupNotification(
         prayerId, groupId);
+  }
+
+  Future setLocalNotifications(String userId) async {
+    _notificationService
+        .getLocalNotifications(userId)
+        .asBroadcastStream()
+        .listen((notifications) {
+      _localNotifications = notifications;
+      notifyListeners();
+    });
+  }
+
+  Future addLocalNotification(String userId, int localId) async {
+    await _notificationService.addLocalNotification(userId, localId);
+  }
+
+  Future deleteLocalNotification(String notificationId) async {
+    await _notificationService.removeLocalNotification(notificationId);
   }
 }
