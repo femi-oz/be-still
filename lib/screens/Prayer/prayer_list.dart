@@ -35,11 +35,10 @@ class _PrayerListState extends State<PrayerList> {
           .setUserGroups(_user.id);
       await Provider.of<GroupProvider>(context, listen: false)
           .setAllGroups(_user.id);
+      await Provider.of<UserProvider>(context, listen: false).setAllUsers();
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .setHiddenPrayers(_user.id);
-      // await Provider.of<PrayerProvider>(context, listen: false)
-      //     .setPrayerTags(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
       Future.delayed(const Duration(milliseconds: 1000), () {
@@ -82,7 +81,6 @@ class _PrayerListState extends State<PrayerList> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
-    // var tags = Provider.of<PrayerProvider>(context).prayerTags;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
@@ -124,10 +122,7 @@ class _PrayerListState extends State<PrayerList> {
                                   onTap: () async {
                                     await Provider.of<PrayerProvider>(context,
                                             listen: false)
-                                        .setPrayer(e.prayer.id);
-                                    await Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .setPrayerUpdates(e.prayer.id);
+                                        .setPrayer(e.userPrayer.id);
 
                                     Navigator.of(context)
                                         .pushNamed(PrayerDetails.routeName);
@@ -136,10 +131,7 @@ class _PrayerListState extends State<PrayerList> {
                                       (LongPressEndDetails details) async {
                                     await Provider.of<PrayerProvider>(context,
                                             listen: false)
-                                        .setPrayer(e.prayer.id);
-                                    await Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .setPrayerUpdates(e.prayer.id);
+                                        .setPrayer(e.userPrayer.id);
                                     var y = details.globalPosition.dy;
                                     showModalBottomSheet(
                                       context: context,
@@ -151,7 +143,7 @@ class _PrayerListState extends State<PrayerList> {
                                       builder: (BuildContext context) {
                                         return PrayerQuickAccess(
                                           y: y,
-                                          prayer: e.prayer,
+                                          prayerData: e,
                                         );
                                       },
                                     );

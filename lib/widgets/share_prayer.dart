@@ -1,6 +1,7 @@
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/share-in-app.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -59,9 +60,6 @@ class _SharePrayerState extends State<SharePrayer> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO
-    // final groupsCount =
-    //     groupData.where((gl) => gl.members.contains(_currentUser.id)).length;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -167,7 +165,19 @@ class _SharePrayerState extends State<SharePrayer> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.7),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return ShareInApp();
+                      },
+                    );
+                  },
                   child: Container(
                     height: 50,
                     padding: EdgeInsets.symmetric(horizontal: 20),

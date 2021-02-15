@@ -14,8 +14,7 @@ class UpdateView extends StatelessWidget {
   @override
   UpdateView();
   Widget build(BuildContext context) {
-    final prayer = Provider.of<PrayerProvider>(context).currentPrayer;
-    final prayerUpdates = Provider.of<PrayerProvider>(context).prayerUpdates;
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     return Container(
       child: SingleChildScrollView(
         child: Container(
@@ -23,11 +22,11 @@ class UpdateView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              prayer.groupId != '0'
+              prayerData.prayer.groupId != '0'
                   ? Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        prayer.creatorName,
+                        prayerData.prayer.creatorName,
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.prayerPrimaryColor,
                             fontWeight: FontWeight.w500),
@@ -35,7 +34,7 @@ class UpdateView extends StatelessWidget {
                       ),
                     )
                   : Container(),
-              ...prayerUpdates.map(
+              ...prayerData.updates.map(
                 (u) => Container(
                   margin: EdgeInsets.only(bottom: 30),
                   child: Column(
@@ -127,7 +126,7 @@ class UpdateView extends StatelessWidget {
                               ),
                               Text(
                                 DateFormat(' MM.dd.yyyy')
-                                    .format(prayer.modifiedOn),
+                                    .format(prayerData.prayer.modifiedOn),
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.lightBlue4,
                                 ),
@@ -166,7 +165,7 @@ class UpdateView extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                prayer.description,
+                                prayerData.prayer.description,
                                 style: AppTextStyles.regularText18b.copyWith(
                                   color: AppColors.prayerTextColor,
                                 ),

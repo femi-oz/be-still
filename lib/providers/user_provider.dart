@@ -7,10 +7,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider with ChangeNotifier {
   UserService _userService = locator<UserService>();
-  UserModel _currentUser;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  UserModel _currentUser;
   UserModel get currentUser => _currentUser;
+
+  List<UserModel> _allUsers;
+  List<UserModel> get allUsers => _allUsers;
 
   Future setCurrentUser(bool isLocalAuth) async {
     var keyRefernence =
@@ -19,8 +22,12 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  UserModel get user {
-    return _currentUser;
+  Future setAllUsers() async {
+    _userService
+        .getAllUsers()
+        .asBroadcastStream()
+        .listen((docs) => _allUsers = docs);
+    notifyListeners();
   }
 
   updateEmail(String newEmail, String userId) async {

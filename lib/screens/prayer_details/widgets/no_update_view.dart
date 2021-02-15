@@ -8,17 +8,17 @@ class NoUpdateView extends StatelessWidget {
   @override
   NoUpdateView();
   Widget build(BuildContext context) {
-    final prayer = Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     // TODO
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
         children: <Widget>[
-          prayer.groupId != '0'
+          prayerData.prayer.groupId != '0'
               ? Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
-                    prayer.creatorName,
+                    prayerData.prayer.creatorName,
                     style: AppTextStyles.boldText16.copyWith(
                       color: AppColors.lightBlue4,
                     ),
@@ -35,7 +35,7 @@ class NoUpdateView extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(prayer.createdOn),
+                          .format(prayerData.prayer.createdOn),
                       style: AppTextStyles.regularText13.copyWith(
                         color: AppColors.lightBlue4,
                       ),
@@ -56,7 +56,7 @@ class NoUpdateView extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
               child: Center(
                 child: Text(
-                  prayer.description,
+                  prayerData.prayer.description,
                   style: AppTextStyles.regularText18b.copyWith(
                     color: AppColors.prayerTextColor,
                   ),

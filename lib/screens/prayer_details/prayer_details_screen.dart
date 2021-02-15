@@ -33,7 +33,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Widget _buildMenu() {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    PrayerModel prayer = Provider.of<PrayerProvider>(context).currentPrayer;
+    CombinePrayerStream prayerData =
+        Provider.of<PrayerProvider>(context).currentPrayer;
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
     var isGroupAdmin = false;
     if (group != null) {
@@ -45,17 +46,18 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType !=
         PrayerType.userPrayers;
     if ((isGroup && isGroupAdmin) ||
-        (!isGroup && isGroupAdmin && prayer.groupId != '0')) {
-      return GroupAdminPrayerMenu(prayer);
+        (!isGroup && isGroupAdmin && prayerData.prayer.groupId != '0')) {
+      return GroupAdminPrayerMenu(prayerData.prayer);
     } else if ((isGroup && !isGroupAdmin) ||
-        (!isGroup && !isGroupAdmin && prayer.groupId != '0')) {
-      return OtherMemberPrayerMenu(prayer);
-    } else if ((!isGroup && prayer.groupId == '0')) {
-      updates =
-          Provider.of<PrayerProvider>(context, listen: false).prayerUpdates;
-      return PrayerMenu(prayer, updates, context);
+        (!isGroup && !isGroupAdmin && prayerData.prayer.groupId != '0')) {
+      return OtherMemberPrayerMenu(prayerData.prayer);
+    } else if ((!isGroup && prayerData.prayer.groupId == '0')) {
+      updates = Provider.of<PrayerProvider>(context, listen: false)
+          .currentPrayer
+          .updates;
+      return PrayerMenu(prayerData, updates, context);
     } else {
-      return PrayerMenu(prayer, updates, context);
+      return PrayerMenu(prayerData, updates, context);
     }
   }
 
@@ -136,11 +138,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   ),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child:
-                    Provider.of<PrayerProvider>(context).prayerUpdates.length >
-                            0
-                        ? UpdateView()
-                        : NoUpdateView(),
+                child: Provider.of<PrayerProvider>(context)
+                            .currentPrayer
+                            .updates
+                            .length >
+                        0
+                    ? UpdateView()
+                    : NoUpdateView(),
               ),
             ),
             IconButton(

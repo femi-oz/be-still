@@ -15,10 +15,8 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _prayers = [];
   List<HiddenPrayerModel> _hiddenPrayers = [];
   PrayerType _currentPrayerType = PrayerType.userPrayers;
-  List<PrayerUpdateModel> _prayerUpdates = [];
-  // List<PrayerTagModel> _prayerTags = [];
   List<CombinePrayerStream> _filteredPrayers = [];
-  PrayerModel _currentPrayer;
+  CombinePrayerStream _currentPrayer;
   FilterType _filterOptions = FilterType(
     isAnswered: false,
     isArchived: false,
@@ -28,11 +26,9 @@ class PrayerProvider with ChangeNotifier {
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
-  List<PrayerUpdateModel> get prayerUpdates => _prayerUpdates;
-  // List<PrayerTagModel> get prayerTags => _prayerTags;
   PrayerType get currentPrayerType => _currentPrayerType;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
-  PrayerModel get currentPrayer => _currentPrayer;
+  CombinePrayerStream get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
 
   Future setPrayers(
@@ -132,8 +128,14 @@ class PrayerProvider with ChangeNotifier {
       ...snoozedPrayers,
       ...answeredPrayers
     ];
-    _filteredPrayers.toSet().toList();
-
+    List<CombinePrayerStream> _distinct = [];
+    var idSet = <String>{};
+    for (var e in _filteredPrayers) {
+      if (idSet.add(e.id)) {
+        _distinct.add(e);
+      }
+    }
+    _filteredPrayers = _distinct;
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     notifyListeners();
@@ -144,6 +146,10 @@ class PrayerProvider with ChangeNotifier {
     String _userID,
   ) async {
     await _prayerService.addPrayer(prayerData, _userID);
+  }
+
+  Future addUserPrayer(String prayerId, String userId, String creatorId) async {
+    await _prayerService.addUserPrayer(prayerId, userId, creatorId);
   }
 
   Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
@@ -222,32 +228,8 @@ class PrayerProvider with ChangeNotifier {
 
   Future setPrayer(String id) async {
     _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-      _currentPrayer = PrayerModel.fromData(prayer);
+      _currentPrayer = prayer;
       notifyListeners();
     });
   }
-
-  Future setPrayerUpdates(String prayerId) async {
-    _prayerService
-        .getPrayerUpdates(prayerId)
-        .asBroadcastStream()
-        .listen((prayerUpdates) {
-      _prayerUpdates = prayerUpdates;
-      _prayerUpdates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
-
-      notifyListeners();
-    });
-  }
-
-  // Future setPrayerTags(String prayerId) async {
-  //   _prayerService
-  //       .getPrayerTags(prayerId)
-  //       .asBroadcastStream()
-  //       .listen((prayerTags) {
-  //     _prayerTags = prayerTags;
-  //     _prayerTags.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
-
-  //     notifyListeners();
-  //   });
-  // }
 }

@@ -2,7 +2,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/prayer_details/Widgets/delete_prayer.dart';
+import 'package:be_still/screens/prayer_details/widgets/delete_prayer.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -14,8 +14,8 @@ import 'package:provider/provider.dart';
 class PrayerQuickAccess extends StatefulWidget {
   final y;
 
-  final PrayerModel prayer;
-  PrayerQuickAccess({this.y, this.prayer});
+  final CombinePrayerStream prayerData;
+  PrayerQuickAccess({this.y, this.prayerData});
   @override
   _PrayerQuickAccessState createState() => _PrayerQuickAccessState();
 }
@@ -68,8 +68,6 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
         reminderDays.add(i < 10 ? '0$i' : '$i');
       });
     }
-    //TODO
-    // setReminder(widget.prayer.reminder);
     animationController =
         AnimationController(duration: Duration(milliseconds: 250), vsync: this);
     degOneTranslationAnimation = TweenSequence([
@@ -96,7 +94,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(widget.prayer.id);
+          .markPrayerAsAnswered(widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
@@ -114,7 +112,9 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
   @override
   Widget build(BuildContext context) {
     setState(() => this.bcontext = context);
-    updates = Provider.of<PrayerProvider>(context, listen: false).prayerUpdates;
+    updates = Provider.of<PrayerProvider>(context, listen: false)
+        .currentPrayer
+        .updates;
     Size size = MediaQuery.of(context).size;
     List<String> prayerUpdates = [];
     updates.forEach((data) => {
@@ -160,10 +160,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                               MaterialPageRoute(
                                   builder: (context) => AddPrayer(
                                       isEdit: true,
-                                      prayer: widget.prayer,
+                                      prayer: widget.prayerData.prayer,
                                       isGroup: false)),
-                              // builder: (context) =>
-                              //     EntryScreen(screenNumber: 2)),
                             );
                           }),
                     ),
@@ -191,7 +189,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return SharePrayer(
-                                  prayer: widget.prayer.description,
+                                  prayer: widget.prayerData.prayer.description,
                                   updates:
                                       updates.length > 0 ? newUpdates : '');
                             },
@@ -258,14 +256,14 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                                 .withOpacity(0.9),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
-                              return DeletePrayer(widget.prayer);
+                              return DeletePrayer(widget.prayerData);
                             },
                           );
                         },
                       ),
                     ),
                   ),
-                  !widget.prayer.isAnswer
+                  !widget.prayerData.prayer.isAnswer
                       ? Transform.translate(
                           offset: Offset.fromDirection(getRadiansFromDegree(90),
                               degOneTranslationAnimation.value * 60),

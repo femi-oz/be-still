@@ -88,20 +88,20 @@ class PrayerService {
   }
 
   populateUserPrayer(
-    PrayerModel prayerData,
-    String userID,
+    String userId,
     String prayerID,
+    String creatorId,
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
-        userId: userID,
+        userId: userId,
         status: Status.active,
         sequence: null,
         prayerId: prayerID,
         isFavorite: false,
-        createdBy: prayerData.createdBy,
-        createdOn: prayerData.createdOn,
-        modifiedBy: prayerData.modifiedBy,
-        modifiedOn: prayerData.modifiedOn);
+        createdBy: creatorId,
+        createdOn: DateTime.now(),
+        modifiedBy: creatorId,
+        modifiedOn: DateTime.now());
     return userPrayer;
   }
 
@@ -236,7 +236,22 @@ class PrayerService {
       //store user prayer
       _userPrayerCollectionReference
           .doc(_userPrayerID)
-          .set(populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+          .set(populateUserPrayer(_userID, _prayerID, _userID).toJson());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addUserPrayer(
+      String prayerId, String _userID, String creatorId) async {
+    // Generate uuid
+    final _userPrayerID = Uuid().v1();
+
+    try {
+      //store user prayer
+      _userPrayerCollectionReference
+          .doc(_userPrayerID)
+          .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -259,7 +274,7 @@ class PrayerService {
 
       //store user prayer
       batch.set(_userPrayerCollectionReference.doc(_userPrayerID),
-          populateUserPrayer(prayerData, _userID, _prayerID).toJson());
+          populateUserPrayer(_userID, _prayerID, _userID).toJson());
 
       for (var groupId in groups) {
         var groupPrayerId = Uuid().v1();
@@ -477,18 +492,9 @@ class PrayerService {
     }
   }
 
-  Future deletePrayer(String prayerID) async {
+  Future deletePrayer(String id) async {
     try {
-      var batch = FirebaseFirestore.instance.batch();
-      // return FirebaseFirestore.instance.runTransaction((transaction) async {
-      batch.delete(_prayerCollectionReference.doc(prayerID));
-      final userPrayerRes = await _userPrayerCollectionReference
-          .where("PrayerId", isEqualTo: prayerID)
-          .limit(1)
-          .get();
-      batch
-          .delete(_userPrayerCollectionReference.doc(userPrayerRes.docs[0].id));
-      await batch.commit();
+      _userPrayerCollectionReference.doc(id).delete();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -528,9 +534,52 @@ class PrayerService {
     }
   }
 
-  Stream<DocumentSnapshot> getPrayer(String prayerID) {
+  Stream<CombinePrayerStream> getPrayer(String prayerID) {
     try {
-      return _prayerCollectionReference.doc(prayerID).snapshots();
+      var data = _userPrayerCollectionReference.doc(prayerID).snapshots();
+
+      var _combineStream = data.map((doc) {
+        Stream<UserPrayerModel> userPrayer = Stream.value(doc)
+            .map<UserPrayerModel>((doc) => UserPrayerModel.fromData(doc));
+
+        Stream<PrayerModel> prayer = _prayerCollectionReference
+            .doc(doc.data()['PrayerId'])
+            .snapshots()
+            .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
+
+        Stream<List<PrayerUpdateModel>> updates =
+            _prayerUpdateCollectionReference
+                .where('PrayerId', isEqualTo: doc.data()['PrayerId'])
+                .snapshots()
+                .map<List<PrayerUpdateModel>>((list) => list.docs
+                    .map((e) => PrayerUpdateModel.fromData(e))
+                    .toList());
+
+        Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
+            // .doc(doc.data()['PrayerId'])
+            .where('PrayerId', isEqualTo: doc.data()['PrayerId'])
+            .snapshots()
+            .map<List<PrayerTagModel>>((list) =>
+                list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
+        return Rx.combineLatest4(
+            userPrayer,
+            prayer,
+            updates,
+            tags,
+            (UserPrayerModel userPrayer,
+                    PrayerModel prayer,
+                    List<PrayerUpdateModel> updates,
+                    List<PrayerTagModel> tags) =>
+                CombinePrayerStream(
+                  prayer: prayer,
+                  updates: updates,
+                  userPrayer: userPrayer,
+                  tags: tags,
+                ));
+      }).switchMap((observables) {
+        return observables;
+      });
+      return _combineStream;
     } catch (e) {
       throw HttpException(e.message);
     }

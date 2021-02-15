@@ -27,12 +27,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 class PrayerMenu extends StatefulWidget {
-  final PrayerModel prayer;
+  final CombinePrayerStream prayerData;
   final List<PrayerUpdateModel> updates;
 
   final BuildContext parentcontext;
   @override
-  PrayerMenu(this.prayer, this.updates, this.parentcontext);
+  PrayerMenu(this.prayerData, this.updates, this.parentcontext);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -60,9 +60,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   Future onSelectNotification(String payload) async {
     await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayer(widget.prayer.id);
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayerUpdates(widget.prayer.id);
+        .setPrayer(widget.prayerData.userPrayer.id);
     Navigator.of(context).pushNamed(PrayerDetails.routeName);
   }
 
@@ -113,7 +111,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         localId,
         'Reminder to Pray',
-        widget.prayer.description,
+        widget.prayerData.prayer.description,
         _scheduleDate(selectedHour, selectedMinute),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
@@ -174,7 +172,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(widget.prayer.id);
+          .markPrayerAsAnswered(widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _onWillPop();
@@ -195,7 +193,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayer.id);
+          .unArchivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -213,7 +211,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayer.id);
+          .archivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -239,10 +237,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    // var updates = widget.updates.map((value) {
-    //   return value.description;
-    // });
-
     List<String> updates = [];
     widget.updates.forEach((data) => {
           updates = [...updates, data.description].toList()
@@ -271,7 +265,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
-                            prayer: widget.prayer.description,
+                            prayer: widget.prayerData.prayer.description,
                             updates:
                                 widget.updates.length > 0 ? newUpdates : '');
                       },
@@ -316,7 +310,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     MaterialPageRoute(
                       builder: (context) => AddPrayer(
                         isEdit: true,
-                        prayer: widget.prayer,
+                        prayer: widget.prayerData.prayer,
                       ),
                     ),
                   ),
@@ -359,7 +353,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddUpdate(
-                          prayer: widget.prayer,
+                          prayer: widget.prayerData.prayer,
                           updates: widget.updates,
                         ),
                       ),
@@ -518,7 +512,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     ),
                   ),
                 ),
-                widget.prayer.isAnswer == false
+                widget.prayerData.prayer.isAnswer == false
                     ? GestureDetector(
                         onTap: () => _onMarkAsAnswered(),
                         child: Container(
@@ -556,8 +550,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                       )
                     : Container(),
-                widget.prayer.status == Status.active &&
-                        !widget.prayer.isArchived
+                widget.prayerData.prayer.status == Status.active &&
+                        !widget.prayerData.prayer.isArchived
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(
@@ -640,7 +634,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return DeletePrayer(widget.prayer);
+                        return DeletePrayer(widget.prayerData);
                       },
                     );
                   },
