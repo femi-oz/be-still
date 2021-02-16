@@ -61,6 +61,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void initState() {
+    _getExactDy();
     _configureLocalTimeZone();
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -71,6 +72,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     flutterLocalNotificationsPlugin.initialize(initSetttings,
         onSelectNotification: onSelectNotification);
     super.initState();
+  }
+
+  _getExactDy() {
+    var now = new DateTime.now();
+
+    while (now.weekday != DateTime.sunday) {
+      now = now.subtract(new Duration(days: 1));
+    }
+
+    print('Recent monday ${now.day}');
   }
 
   String currentTimeZone;
@@ -103,7 +114,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         : 0;
     await flutterLocalNotificationsPlugin.zonedSchedule(
         localId,
-        'Reminder to Pray',
+        '$selectedFrequency reminder to pray',
         widget.prayerData.prayer.description,
         _scheduleDate(selectedHour, selectedMinute),
         const NotificationDetails(
@@ -118,6 +129,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             ? DateTimeComponents.time
             : DateTimeComponents
                 .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
+    var notificationText = '$selectedFrequency, $selectedHour:$selectedMinute';
     await storeNotification(localId);
   }
 

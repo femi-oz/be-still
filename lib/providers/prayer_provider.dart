@@ -216,5 +216,6 @@ class PrayerProvider with ChangeNotifier {
       _currentPrayer = prayer;
       notifyListeners();
     });
+    return;
   }
 }

@@ -14,21 +14,6 @@ class NoUpdateView extends StatefulWidget {
 }
 
 class _NoUpdateViewState extends State<NoUpdateView> {
-  bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    final prayerData =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    var reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.prayer.id,
-        orElse: () => null);
-
-    if (reminder == null)
-      return false;
-    else
-      return true;
-  }
-
   Widget build(BuildContext context) {
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     return Container(
@@ -61,15 +46,6 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                   ),
                 ],
               ),
-              SizedBox(width: 10),
-              hasReminder
-                  ? Icon(
-                      Icons.calendar_today,
-                      size: 12,
-                      color: AppColors.lightBlue3,
-                    )
-                  : Container(),
-              SizedBox(width: 10),
               Expanded(
                 child: Divider(
                   color: AppColors.lightBlue4,

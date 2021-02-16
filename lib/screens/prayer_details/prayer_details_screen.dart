@@ -2,6 +2,7 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
@@ -61,6 +62,23 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     }
   }
 
+  String reminderString;
+  bool get hasReminder {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    var reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.prayer.id,
+        orElse: () => null);
+    reminderString = 'Daily, 2:00pm Weekly, Mon, 4:00pm';
+
+    if (reminder == null)
+      return false;
+    else
+      return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,6 +104,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     icon: Icon(
                       AppIcons.bestill_back_arrow,
                       color: AppColors.lightBlue3,
+                      size: 20,
                     ),
                     onPressed: () => Navigator.push(
                         context,
@@ -99,26 +118,26 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       ),
                     ),
                   ),
-                  // prayer.hasReminder
-                  //     ? Row(
-                  //         children: <Widget>[
-                  //           Icon(
-                  // AppIcons.bestill_reminder,
-                  //             size: 14,
-                  //             color: AppColors.lightBlue5,
-                  //           ),
-                  //           Container(
-                  //             margin: EdgeInsets.only(left: 10),
-                  //             child: Text(
-                  //               prayer.reminder,
-                  //               style: TextStyle(
-                  //                 color: AppColors.lightBlue5,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       )
-                  //     : Container(),
+                  hasReminder
+                      ? Row(
+                          children: <Widget>[
+                            Icon(
+                              AppIcons.bestill_reminder,
+                              size: 14,
+                              color: AppColors.lightBlue5,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Text(
+                                reminderString,
+                                style: TextStyle(
+                                  color: AppColors.lightBlue5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),
