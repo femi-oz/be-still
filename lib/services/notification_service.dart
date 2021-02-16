@@ -61,7 +61,7 @@ class NotificationService {
     }
   }
 
-  addLocalNotification(int localId) async {
+  addLocalNotification(int localId, String entityId) async {
     final _notificationId = Uuid().v1();
     String deviceId;
     final DeviceInfoPlugin info = new DeviceInfoPlugin();
@@ -70,12 +70,14 @@ class NotificationService {
         var build = await info.androidInfo;
         deviceId = build.androidId;
       } else if (Platform.isIOS) {
-        var build = await info.iosInfo; //c3c394658218ab5b
+        var build = await info.iosInfo;
         deviceId = build.identifierForVendor;
       }
       _prayerNotificationCollectionReference.doc(_notificationId).set(
           LocalNotificationModel(
-                  deviceId: deviceId, localNotificationId: localId)
+                  deviceId: deviceId,
+                  localNotificationId: localId,
+                  entityId: entityId)
               .toJson());
     } catch (e) {
       throw HttpException(e.message);

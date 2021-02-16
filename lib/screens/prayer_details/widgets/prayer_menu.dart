@@ -1,20 +1,16 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/add_update/add_update.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,7 +49,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     '90 Days',
     '1 Year'
   ];
-  // List<String> reminderDays = [];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -67,11 +62,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
   @override
   void initState() {
     _configureLocalTimeZone();
-    // for (var i = 1; i <= 31; i++) {
-    //   setState(() {
-    //     reminderDays.add(i < 10 ? '0$i' : '$i');
-    //   });
-    // }
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOs = IOSInitializationSettings();
@@ -101,7 +91,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     return scheduledDate;
   }
 
-  showNotification(selectedHour, selectedFrequency, selectedMinute) async {
+  setNotification(selectedHour, selectedFrequency, selectedMinute) async {
     var localNots = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
     var localId = localNots.length > 0
@@ -137,7 +127,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         bcontext,
       );
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(localId);
+          .addLocalNotification(localId, widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _onWillPop();
@@ -146,22 +136,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
-  }
-
-  var reminder = '';
-
-  var snooze = '';
-
-  setReminder(value) {
-    setState(() {
-      reminder = value;
-    });
-  }
-
-  setSnooze(value) {
-    setState(() {
-      snooze = value;
-    });
   }
 
   BuildContext bcontext;
@@ -231,6 +205,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
     Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
   }
 
+  bool get hasReminder {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    var reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.prayer.id,
+        orElse: () => null);
+
+    if (reminder == null)
+      return false;
+    else
+      return true;
+  }
+
   Widget build(BuildContext context) {
     List<String> updates = [];
     widget.updates.forEach((data) => {
@@ -249,9 +238,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
+                MenuButton(
+                  icon: Icon(
+                    AppIcons.bestill_share,
+                    color: AppColors.lightBlue4,
+                  ),
+                  text: 'Share',
+                  onPressed: () => showModalBottomSheet(
                       context: context,
                       barrierColor:
                           AppColors.detailBackgroundColor[1].withOpacity(0.5),
@@ -263,44 +256,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             prayer: widget.prayerData.prayer.description,
                             updates:
                                 widget.updates.length > 0 ? newUpdates : '');
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Share',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      }),
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.push(
+                MenuButton(
+                  icon: Icon(
+                    AppIcons.bestill_edit,
+                    color: AppColors.lightBlue4,
+                  ),
+                  onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPrayer(
@@ -309,370 +272,108 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       ),
                     ),
                   ),
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_edit,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  text: 'Edit',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddUpdate(
-                          prayer: widget.prayerData.prayer,
-                          updates: widget.updates,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_update,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Add an Update',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                MenuButton(
+                  icon: Icon(
+                    AppIcons.bestill_reminder,
+                    color: AppColors.lightBlue4,
                   ),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return ReminderPicker(
+                        hideActionuttons: false,
+                        frequency: reminderInterval,
+                        reminderDays: [
+                          DaysOfWeek.sun,
+                          DaysOfWeek.mon,
+                          DaysOfWeek.tue,
+                          DaysOfWeek.wed,
+                          DaysOfWeek.thu,
+                          DaysOfWeek.fri,
+                          DaysOfWeek.sat,
+                        ],
+                        onCancel: () => Navigator.of(context).pop(),
+                        onSave: (selectedFrequency, selectedHour,
+                                selectedMinute, _) =>
+                            setNotification(selectedHour, selectedFrequency,
+                                selectedMinute),
+                      );
+                    },
+                  ),
+                  text: 'Reminder',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return ReminderPicker(
-                          hideActionuttons: false,
-                          frequency: reminderInterval,
-                          reminderDays: [
-                            DaysOfWeek.sun,
-                            DaysOfWeek.mon,
-                            DaysOfWeek.tue,
-                            DaysOfWeek.wed,
-                            DaysOfWeek.thu,
-                            DaysOfWeek.fri,
-                            DaysOfWeek.sat,
-                          ],
-                          onCancel: () => Navigator.of(context).pop(),
-                          onSave: (selectedFrequency, selectedHour,
-                                  selectedMinute, _) =>
-                              showNotification(selectedHour, selectedFrequency,
-                                  selectedMinute),
-                        );
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_reminder,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Reminder',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                reminder,
-                                style: TextStyle(
-                                  color: AppColors.lightBlue4,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                MenuButton(
+                  icon: Icon(
+                    AppIcons.bestill_snooze,
+                    color: AppColors.lightBlue4,
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  // {
-                  //   showModalBottomSheet(
-                  //     context: context,
-                  //     barrierColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //     backgroundColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //     isScrollControlled: true,
-                  //     builder: (BuildContext context) {
-                  //       return CustomPicker(
-                  //           snoozeInterval, setSnooze, false, null);
-                  //     },
-                  //   );
-                  // },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_snooze,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Snooze',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  onPressed: () => null,
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return CustomPicker(
+                  //         snoozeInterval, setSnooze, false, null);
+                  //   },
+                  // ),
+                  text: 'Snooze',
                 ),
                 widget.prayerData.prayer.isAnswer == false
-                    ? GestureDetector(
-                        onTap: () => _onMarkAsAnswered(),
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_answered,
-                                color: AppColors.lightBlue4,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Mark as Answered',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                    ? MenuButton(
+                        icon: Icon(
+                          AppIcons.bestill_answered,
+                          color: AppColors.lightBlue4,
                         ),
+                        onPressed: () => _onMarkAsAnswered(),
+                        text: 'Mark as Answered',
                       )
                     : Container(),
                 widget.prayerData.prayer.status == Status.active &&
                         !widget.prayerData.prayer.isArchived
-                    ? GestureDetector(
-                        onTap: _onArchive,
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_archive,
-                                color: AppColors.lightBlue4,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Archive',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: _unArchive,
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_archive,
-                                color: AppColors.lightBlue4,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Unarchive',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return DeletePrayer(widget.prayerData);
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_delete,
+                    ? MenuButton(
+                        icon: Icon(
+                          AppIcons.bestill_archive,
                           color: AppColors.lightBlue4,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                        onPressed: () => _onArchive(),
+                        text: 'Archive',
+                      )
+                    : MenuButton(
+                        icon: Icon(
+                          AppIcons.bestill_archive,
+                          color: AppColors.lightBlue4,
                         ),
-                      ],
-                    ),
+                        onPressed: () => _unArchive(),
+                        text: 'Unarchive',
+                      ),
+                MenuButton(
+                  icon: Icon(
+                    AppIcons.bestill_delete,
+                    color: AppColors.lightBlue4,
                   ),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return DeletePrayer(widget.prayerData);
+                    },
+                  ),
+                  text: 'Delete',
                 ),
               ],
             ),

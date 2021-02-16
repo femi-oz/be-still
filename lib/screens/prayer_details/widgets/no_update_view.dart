@@ -1,15 +1,36 @@
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class NoUpdateView extends StatelessWidget {
+class NoUpdateView extends StatefulWidget {
   @override
   NoUpdateView();
+
+  @override
+  _NoUpdateViewState createState() => _NoUpdateViewState();
+}
+
+class _NoUpdateViewState extends State<NoUpdateView> {
+  bool get hasReminder {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    var reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.prayer.id,
+        orElse: () => null);
+
+    if (reminder == null)
+      return false;
+    else
+      return true;
+  }
+
   Widget build(BuildContext context) {
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    // TODO
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -29,20 +50,26 @@ class NoUpdateView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(right: 30),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(prayerData.prayer.createdOn),
-                      style: AppTextStyles.regularText13.copyWith(
-                        color: AppColors.lightBlue4,
-                      ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    DateFormat('hh:mma | MM.dd.yyyy')
+                        .format(prayerData.prayer.createdOn),
+                    style: AppTextStyles.regularText13.copyWith(
+                      color: AppColors.lightBlue4,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              SizedBox(width: 10),
+              hasReminder
+                  ? Icon(
+                      Icons.calendar_today,
+                      size: 12,
+                      color: AppColors.lightBlue3,
+                    )
+                  : Container(),
+              SizedBox(width: 10),
               Expanded(
                 child: Divider(
                   color: AppColors.lightBlue4,
