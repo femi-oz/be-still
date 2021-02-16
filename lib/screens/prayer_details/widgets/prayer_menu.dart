@@ -37,8 +37,8 @@ class PrayerMenu extends StatefulWidget {
 class _PrayerMenuState extends State<PrayerMenu> {
   List<String> reminderInterval = [
     // 'Hourly',
-    'Daily',
-    'Weekly',
+    Frequency.daily,
+    Frequency.weekly,
     // 'Monthly',
     // 'Yearly'
   ];
@@ -48,6 +48,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
     '30 Days',
     '90 Days',
     '1 Year'
+  ];
+  List<String> reminderDays = [
+    DaysOfWeek.mon,
+    DaysOfWeek.tue,
+    DaysOfWeek.wed,
+    DaysOfWeek.thu,
+    DaysOfWeek.fri,
+    DaysOfWeek.sat,
+    DaysOfWeek.sun,
   ];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -61,7 +70,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void initState() {
-    _getExactDy();
     _configureLocalTimeZone();
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -74,14 +82,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
     super.initState();
   }
 
-  _getExactDy() {
+  int _getExactDy(day) {
     var now = new DateTime.now();
 
-    while (now.weekday != DateTime.sunday) {
+    while (now.weekday != day) {
       now = now.subtract(new Duration(days: 1));
     }
-
-    print('Recent monday ${now.day}');
+    return now.day;
   }
 
   String currentTimeZone;
@@ -92,17 +99,46 @@ class _PrayerMenuState extends State<PrayerMenu> {
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
   }
 
-  tz.TZDateTime _scheduleDate(selectedHour, selectedMinute) {
+  tz.TZDateTime _scheduleDate(
+      selectedHour, selectedMinute, selectedDay, period) {
+    var day = reminderDays.indexOf(selectedDay) + 1;
+    var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
+    hour = hour == 24 ? 00 : hour;
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, selectedHour, selectedMinute);
+        tz.local, now.year, now.month, _getExactDy(day), hour, selectedMinute);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
   }
 
-  setNotification(selectedHour, selectedFrequency, selectedMinute) async {
+  String reminderId;
+  int localNotificationId;
+  bool get hasReminder {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    var reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.prayer.id,
+        orElse: () => null);
+    reminderId = reminder?.id ?? '';
+    localNotificationId = reminder?.localNotificationId ?? 0;
+
+    if (reminder == null)
+      return false;
+    else
+      return true;
+  }
+
+  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
+      period) async {
+    if (hasReminder) {
+      Provider.of<NotificationProvider>(context, listen: false)
+          .deleteLocalNotification(reminderId);
+      flutterLocalNotificationsPlugin.cancel(localNotificationId);
+    }
     var localNots = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
     var localId = localNots.length > 0
@@ -116,7 +152,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         localId,
         '$selectedFrequency reminder to pray',
         widget.prayerData.prayer.description,
-        _scheduleDate(selectedHour, selectedMinute),
+        _scheduleDate(selectedHour, selectedMinute, selectedDay, period),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description'),
@@ -129,15 +165,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
             ? DateTimeComponents.time
             : DateTimeComponents
                 .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
-    var notificationText = '$selectedFrequency, $selectedHour:$selectedMinute';
-    await storeNotification(localId);
+    var notificationText = selectedFrequency == Frequency.weekly
+        ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
+        : '$selectedFrequency, $selectedHour:$selectedMinute $period';
+    await storeNotification(localId, notificationText);
   }
 
-  storeNotification(localId) async {
+  storeNotification(localId, notificationText) async {
     try {
       BeStilDialog.showLoading(bcontext);
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(localId, widget.prayerData.prayer.id);
+          .addLocalNotification(
+              localId, widget.prayerData.prayer.id, notificationText);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _goToDetails();
@@ -209,21 +248,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
   }
 
-  bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    final prayerData =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    var reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.prayer.id,
-        orElse: () => null);
-
-    if (reminder == null)
-      return false;
-    else
-      return true;
-  }
-
   Widget build(BuildContext context) {
     List<String> updates = [];
     widget.updates.forEach((data) => {
@@ -285,20 +309,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       return ReminderPicker(
                         hideActionuttons: false,
                         frequency: reminderInterval,
-                        reminderDays: [
-                          DaysOfWeek.sun,
-                          DaysOfWeek.mon,
-                          DaysOfWeek.tue,
-                          DaysOfWeek.wed,
-                          DaysOfWeek.thu,
-                          DaysOfWeek.fri,
-                          DaysOfWeek.sat,
-                        ],
+                        reminderDays: reminderDays,
                         onCancel: () => Navigator.of(context).pop(),
                         onSave: (selectedFrequency, selectedHour,
-                                selectedMinute, _) =>
+                                selectedMinute, selectedDay, period) =>
                             setNotification(selectedHour, selectedFrequency,
-                                selectedMinute),
+                                selectedMinute, selectedDay, period),
                       );
                     },
                   ),

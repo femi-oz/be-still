@@ -57,24 +57,28 @@ class LocalNotificationModel {
   final String id;
   final String deviceId;
   final String entityId;
+  final String notificationText;
   final int localNotificationId;
 
   const LocalNotificationModel({
     this.id,
     @required this.deviceId,
     @required this.entityId,
+    @required this.notificationText,
     @required this.localNotificationId,
   });
   LocalNotificationModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
         deviceId = snapshot.data()['DeviceId'],
         entityId = snapshot.data()['EntityId'],
+        notificationText = snapshot.data()['NotificationText'],
         localNotificationId = snapshot.data()['LocalNotificationId'];
 
   Map<String, dynamic> toJson() {
     return {
       'DeviceId': deviceId,
       'EntityId': entityId,
+      'NotificationText': notificationText,
       'LocalNotificationId': localNotificationId,
     };
   }

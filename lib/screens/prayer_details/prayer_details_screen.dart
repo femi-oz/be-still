@@ -71,7 +71,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     var reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.prayer.id,
         orElse: () => null);
-    reminderString = 'Daily, 2:00pm Weekly, Mon, 4:00pm';
+    reminderString = reminder?.notificationText ?? '';
 
     if (reminder == null)
       return false;

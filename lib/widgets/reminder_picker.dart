@@ -27,7 +27,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
   String selectedFrequency = Frequency.daily;
-  String selectedDay = DaysOfWeek.wed;
+  String selectedDay;
   String selectedPeriod = PeriodOfDay.pm;
   int selectedHour = 3;
   int selectedMinute = 30;
@@ -35,6 +35,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
   var minInTheHour = new List<int>.generate(60, (i) => i + 1);
+
+  @override
+  void initState() {
+    selectedDay = widget.reminderDays[DateTime.now().weekday - 1];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +232,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           // var date =
                           //     '$selectedHour:$selectedMinute $selectedPeriod';
                           widget.onSave(selectedFrequency, selectedHour,
-                              selectedMinute, selectedDay);
+                              selectedMinute, selectedDay, selectedPeriod);
                         },
                         length: 2,
                         index: 0,

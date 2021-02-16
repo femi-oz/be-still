@@ -61,8 +61,10 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future addLocalNotification(int localId, String entityId) async {
-    await _notificationService.addLocalNotification(localId, entityId);
+  Future addLocalNotification(
+      int localId, String entityId, String notificationText) async {
+    await _notificationService.addLocalNotification(
+        localId, entityId, notificationText);
   }
 
   Future deleteLocalNotification(String notificationId) async {

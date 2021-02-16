@@ -10,8 +10,8 @@ import 'package:uuid/uuid.dart';
 class NotificationService {
   final CollectionReference _notificationCollectionReference =
       FirebaseFirestore.instance.collection("MobileNotification");
-  final CollectionReference _prayerNotificationCollectionReference =
-      FirebaseFirestore.instance.collection("PrayerNotification");
+  final CollectionReference _localNotificationCollectionReference =
+      FirebaseFirestore.instance.collection("LocalNotification");
 
   Stream<List<NotificationModel>> getUserNotifications(String userId) {
     try {
@@ -61,7 +61,8 @@ class NotificationService {
     }
   }
 
-  addLocalNotification(int localId, String entityId) async {
+  addLocalNotification(
+      int localId, String entityId, String notificationText) async {
     final _notificationId = Uuid().v1();
     String deviceId;
     final DeviceInfoPlugin info = new DeviceInfoPlugin();
@@ -73,11 +74,12 @@ class NotificationService {
         var build = await info.iosInfo;
         deviceId = build.identifierForVendor;
       }
-      _prayerNotificationCollectionReference.doc(_notificationId).set(
+      _localNotificationCollectionReference.doc(_notificationId).set(
           LocalNotificationModel(
                   deviceId: deviceId,
                   localNotificationId: localId,
-                  entityId: entityId)
+                  entityId: entityId,
+                  notificationText: notificationText)
               .toJson());
     } catch (e) {
       throw HttpException(e.message);
@@ -86,7 +88,7 @@ class NotificationService {
 
   removeLocalNotification(String notificationId) async {
     try {
-      _prayerNotificationCollectionReference.doc(notificationId).delete();
+      _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -94,7 +96,7 @@ class NotificationService {
 
   Stream<List<LocalNotificationModel>> getLocalNotifications(String deviceId) {
     try {
-      return _prayerNotificationCollectionReference
+      return _localNotificationCollectionReference
           .where('DeviceId', isEqualTo: deviceId)
           .snapshots()
           .map((e) => e.docs
