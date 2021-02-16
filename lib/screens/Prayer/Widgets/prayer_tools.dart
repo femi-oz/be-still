@@ -3,6 +3,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/menu-button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,226 +54,86 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                     children: <Widget>[
                       Text(
                         'VIEW',
-                        style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTextStyles.boldText18
+                            .copyWith(color: AppColors.lightBlue3),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(
-                            () {
-                              status = status == Status.active
-                                  ? Status.inactive
-                                  : Status.active;
-                              Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .filterPrayers(
-                                isAnswered: isAnswered,
-                                isArchived: isArchived,
-                                isSnoozed: isSnoozed,
-                                status: status,
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: filterOptions.status == Status.active
-                                ? AppColors.activeButton.withOpacity(0.2)
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              Status.active,
-                              style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
+                      SizedBox(height: 15),
+                      MenuButton(
+                        isActive: filterOptions.status == Status.active,
+                        onPressed: () => setState(
+                          () {
+                            status = status == Status.active
+                                ? Status.inactive
+                                : Status.active;
+                            Provider.of<PrayerProvider>(context, listen: false)
+                                .filterPrayers(
+                              isAnswered: isAnswered,
+                              isArchived: isArchived,
+                              isSnoozed: isSnoozed,
+                              status: status,
+                            );
+                          },
                         ),
+                        text: Status.active.toUpperCase(),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          // setState(
-                          //   () async {
-                          //     isSnoozed = !isSnoozed;
-                          //     status = Status.inactive;
-                          //     await Provider.of<PrayerProvider>(context,
-                          //             listen: false)
-                          //         .filterPrayers(
-                          //       isAnswered: isAnswered,
-                          //       isArchived: isArchived,
-                          //       isSnoozed: isSnoozed,
-                          //       status: status,
-                          //     );
-                          //   },
-                          // );
-                        },
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: filterOptions.isSnoozed == true
-                                ? AppColors.activeButton.withOpacity(0.2)
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'SNOOZED',
-                              style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
+                      MenuButton(
+                        isActive: filterOptions.isSnoozed == true,
+                        onPressed: () => null,
+                        // setState(
+                        //   () async {
+                        //     isSnoozed = !isSnoozed;
+                        //     status = Status.inactive;
+                        //     await Provider.of<PrayerProvider>(context,
+                        //             listen: false)
+                        //         .filterPrayers(
+                        //       isAnswered: isAnswered,
+                        //       isArchived: isArchived,
+                        //       isSnoozed: isSnoozed,
+                        //       status: status,
+                        //     );
+                        //   },
+                        // );
+                        text: 'SNOOZED',
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(
-                            () async {
-                              isArchived = !isArchived;
-                              await Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .filterPrayers(
-                                isAnswered: isAnswered,
-                                isArchived: isArchived,
-                                isSnoozed: isSnoozed,
-                                status: status,
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: filterOptions.isArchived == true
-                                ? AppColors.activeButton.withOpacity(0.2)
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'ARCHIVED',
-                              style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
+                      MenuButton(
+                        isActive: filterOptions.isArchived == true,
+                        onPressed: () => setState(
+                          () async {
+                            isArchived = !isArchived;
+                            await Provider.of<PrayerProvider>(context,
+                                    listen: false)
+                                .filterPrayers(
+                              isAnswered: isAnswered,
+                              isArchived: isArchived,
+                              isSnoozed: isSnoozed,
+                              status: status,
+                            );
+                          },
                         ),
+                        text: 'ARCHIVED',
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(
-                            () async {
-                              isAnswered = !isAnswered;
-                              await Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .filterPrayers(
-                                      isAnswered: isAnswered,
-                                      isArchived: isArchived,
-                                      isSnoozed: isSnoozed,
-                                      status: status);
-                            },
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: filterOptions.isAnswered == true
-                                ? AppColors.activeButton.withOpacity(0.2)
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'ANSWERED',
-                              style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
+                      MenuButton(
+                        isActive: filterOptions.isAnswered == true,
+                        onPressed: () => setState(
+                          () async {
+                            isAnswered = !isAnswered;
+                            await Provider.of<PrayerProvider>(context,
+                                    listen: false)
+                                .filterPrayers(
+                                    isAnswered: isAnswered,
+                                    isArchived: isArchived,
+                                    isSnoozed: isSnoozed,
+                                    status: status);
+                          },
                         ),
+                        text: 'ANSWERED',
                       ),
                       Provider.of<PrayerProvider>(context).currentPrayerType ==
                               PrayerType.group
-                          ? GestureDetector(
-                              onTap: () => null,
-                              child: Container(
-                                height: 50,
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                width: double.infinity,
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 50, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: filterOptions.isAnswered == true
-                                      ? AppColors.activeButton.withOpacity(0.2)
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                    color: AppColors.lightBlue6,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'GROUP SETTINGS',
-                                    style: TextStyle(
-                                      color: AppColors.lightBlue4,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                          ? MenuButton(
+                              isActive: false,
+                              onPressed: () => null,
+                              text: 'GROUP SETTINGS',
                             )
                           : Container(),
                     ],

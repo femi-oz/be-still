@@ -123,14 +123,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   storeNotification(localId) async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<NotificationProvider>(context, listen: false)
           .addLocalNotification(localId, widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -142,14 +140,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _onMarkAsAnswered() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -163,15 +159,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _unArchive() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
           .unArchivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -181,15 +175,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _onArchive() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -201,7 +193,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  _onWillPop() {
+  _goToDetails() {
     Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
   }
 
@@ -239,10 +231,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 MenuButton(
-                  icon: Icon(
-                    AppIcons.bestill_share,
-                    color: AppColors.lightBlue4,
-                  ),
+                  icon: AppIcons.bestill_share,
                   text: 'Share',
                   onPressed: () => showModalBottomSheet(
                       context: context,
@@ -259,10 +248,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       }),
                 ),
                 MenuButton(
-                  icon: Icon(
-                    AppIcons.bestill_edit,
-                    color: AppColors.lightBlue4,
-                  ),
+                  icon: AppIcons.bestill_edit,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -275,10 +261,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   text: 'Edit',
                 ),
                 MenuButton(
-                  icon: Icon(
-                    AppIcons.bestill_reminder,
-                    color: AppColors.lightBlue4,
-                  ),
+                  icon: AppIcons.bestill_reminder,
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     barrierColor:
@@ -310,10 +293,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   text: 'Reminder',
                 ),
                 MenuButton(
-                  icon: Icon(
-                    AppIcons.bestill_snooze,
-                    color: AppColors.lightBlue4,
-                  ),
+                  icon: AppIcons.bestill_snooze,
                   onPressed: () => null,
                   // showModalBottomSheet(
                   //   context: context,
@@ -331,10 +311,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 widget.prayerData.prayer.isAnswer == false
                     ? MenuButton(
-                        icon: Icon(
-                          AppIcons.bestill_answered,
-                          color: AppColors.lightBlue4,
-                        ),
+                        icon: AppIcons.bestill_answered,
                         onPressed: () => _onMarkAsAnswered(),
                         text: 'Mark as Answered',
                       )
@@ -342,26 +319,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 widget.prayerData.prayer.status == Status.active &&
                         !widget.prayerData.prayer.isArchived
                     ? MenuButton(
-                        icon: Icon(
-                          AppIcons.bestill_archive,
-                          color: AppColors.lightBlue4,
-                        ),
+                        icon: AppIcons.bestill_archive,
                         onPressed: () => _onArchive(),
                         text: 'Archive',
                       )
                     : MenuButton(
-                        icon: Icon(
-                          AppIcons.bestill_archive,
-                          color: AppColors.lightBlue4,
-                        ),
+                        icon: AppIcons.bestill_archive,
                         onPressed: () => _unArchive(),
                         text: 'Unarchive',
                       ),
                 MenuButton(
-                  icon: Icon(
-                    AppIcons.bestill_delete,
-                    color: AppColors.lightBlue4,
-                  ),
+                  icon: AppIcons.bestill_delete,
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     barrierColor:

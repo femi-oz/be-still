@@ -1,6 +1,7 @@
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/share-in-app.dart';
 import 'package:be_still/widgets/share_prayer_to_group.dart';
 import 'package:flutter/material.dart';
@@ -94,217 +95,55 @@ class _SharePrayerState extends State<SharePrayer> {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: _textLink,
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Text Message',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => _textLink(),
+                  text: 'Text Message',
                 ),
-                GestureDetector(
-                  onTap: _emailLink,
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Email',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => _emailLink(),
+                  text: 'Email',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.7),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return ShareInApp();
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Direct Message',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.7),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return ShareInApp();
+                    },
                   ),
+                  text: 'Direct Message',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return SharePrayerToGroups();
-                      },
-                    ).then((value) {
-                      setState(() {
-                        groups = value;
-                      });
-                    });
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Post to Group(s)',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                // TODO
-                                // Text('$groupsCount / $groupsCount')
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => null,
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return SharePrayerToGroups();
+                  //   },
+                  // ).then((value) {
+                  //   setState(() {
+                  //     groups = value;
+                  //   });
+                  // }),
+                  text: 'Post to Group(s)',
                 ),
-                GestureDetector(
-                  onTap: _emailLink,
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'To my Church',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => _emailLink(),
+                  text: 'To my Church',
                 ),
               ],
             ),
