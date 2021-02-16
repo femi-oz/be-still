@@ -4,6 +4,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -64,10 +65,7 @@ class _AddUpdateState extends State<AddUpdate> {
           .addPrayerUpdate(prayerUpdateData);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(bcontext);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0)));
+      Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(bcontext);

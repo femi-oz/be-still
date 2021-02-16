@@ -39,7 +39,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                 children: <Widget>[
                   Text(
                     DateFormat('hh:mma | MM.dd.yyyy')
-                        .format(prayerData.prayer.createdOn),
+                        .format(prayerData.prayer.createdOn)
+                        .toLowerCase(),
                     style: AppTextStyles.regularText13.copyWith(
                       color: AppColors.lightBlue4,
                     ),

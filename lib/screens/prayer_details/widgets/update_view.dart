@@ -15,6 +15,8 @@ class UpdateView extends StatelessWidget {
   UpdateView();
   Widget build(BuildContext context) {
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final updates = prayerData.updates;
+    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
     return Container(
       child: SingleChildScrollView(
         child: Container(
@@ -34,8 +36,8 @@ class UpdateView extends StatelessWidget {
                       ),
                     )
                   : Container(),
-              ...prayerData.updates.map(
-                (u) => Container(
+              for (int i = 0; i < updates.length; i++)
+                Container(
                   margin: EdgeInsets.only(bottom: 30),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -49,7 +51,8 @@ class UpdateView extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(u.modifiedOn),
+                                      .format(updates[i].modifiedOn)
+                                      .toLowerCase(),
                                   style: AppTextStyles.regularText14.copyWith(
                                     color: AppColors.lightBlue4,
                                   ),
@@ -85,29 +88,67 @@ class UpdateView extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 20),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  u.description,
-                                  style: AppTextStyles.regularText18b.copyWith(
-                                    color: AppColors.prayerTextColor,
-                                  ),
-                                  textAlign: TextAlign.left,
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 30.0, horizontal: 20),
+                        child: i == 0
+                            ? new ConstrainedBox(
+                                constraints: new BoxConstraints(
+                                  minHeight: 200,
                                 ),
+                                child: new DecoratedBox(
+                                  child: Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          updates[i].description,
+                                          style: AppTextStyles.regularText18b
+                                              .copyWith(
+                                            color: AppColors.prayerTextColor,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  decoration: new BoxDecoration(),
+                                ),
+                              )
+                            : Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      updates[i].description,
+                                      style:
+                                          AppTextStyles.regularText18b.copyWith(
+                                        color: AppColors.prayerTextColor,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
                       ),
+                      // Padding(
+                      //   padding:
+                      //       EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                      //   child: Row(
+                      //     children: [
+                      //       Flexible(
+                      //         child: Text(
+                      //           u.description,
+                      //           style: AppTextStyles.regularText18b.copyWith(
+                      //             color: AppColors.prayerTextColor,
+                      //           ),
+                      //           textAlign: TextAlign.left,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
-              ),
               Container(
                 child: Column(
                   children: <Widget>[

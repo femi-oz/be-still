@@ -21,48 +21,48 @@ class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _PrayModeAppBarState extends State<PrayModeAppBar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).appBarTheme.color,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: Container(
-          child: Row(
-            children: <Widget>[
-              Text(
-                DateFormat('hh:mm').format(DateTime.now()),
-                style: TextStyle(color: AppColors.lightBlue4, fontSize: 12),
-              ),
-            ],
-          ),
+    return AppBar(
+      elevation: 0,
+      centerTitle: true,
+      automaticallyImplyLeading: false,
+      leading: Container(
+        child: Row(
+          children: <Widget>[
+            SizedBox(width: 20),
+            Text(
+              DateFormat('hh:mm').format(DateTime.now()),
+              style: AppTextStyles.regularText13
+                  .copyWith(color: AppColors.lightBlue1),
+            ),
+          ],
         ),
-        title: Text(
-          '${widget.current} OF ${widget.totalPrayers}',
-          style: TextStyle(color: AppColors.lightBlue4, fontSize: 12),
-        ),
-        actions: <Widget>[
-          Row(
-            children: <Widget>[
-              Builder(
-                builder: (BuildContext context) {
-                  return IconButton(
-                    icon: Icon(
-                      AppIcons.bestill_main_menu,
-                      color: AppColors.lightBlue4,
-                      size: 24,
-                    ),
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
       ),
+      title: Text(
+        '${widget.current} OF ${widget.totalPrayers}',
+        style:
+            AppTextStyles.regularText13.copyWith(color: AppColors.lightBlue1),
+      ),
+      actions: <Widget>[
+        Row(
+          children: <Widget>[
+            Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  icon: Icon(
+                    AppIcons.bestill_main_menu,
+                    color: AppColors.lightBlue1,
+                    size: 18,
+                  ),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                );
+              },
+            ),
+            SizedBox(width: 15),
+          ],
+        ),
+      ],
     );
   }
 }

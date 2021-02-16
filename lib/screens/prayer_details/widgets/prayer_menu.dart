@@ -5,6 +5,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -295,6 +296,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     ),
                   ),
                   text: 'Edit',
+                ),
+                MenuButton(
+                  icon: AppIcons.bestill_update,
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddUpdate(
+                        updates: widget.prayerData.updates,
+                        prayer: widget.prayerData.prayer,
+                      ),
+                    ),
+                  ),
+                  text: 'Add an Update',
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_reminder,
