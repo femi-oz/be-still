@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
@@ -58,11 +61,22 @@ class NotificationService {
     }
   }
 
-  addLocalNotification(String userId, int localId) async {
+  addLocalNotification(int localId) async {
     final _notificationId = Uuid().v1();
+    String deviceId;
+    final DeviceInfoPlugin info = new DeviceInfoPlugin();
     try {
+      if (Platform.isAndroid) {
+        var build = await info.androidInfo;
+        deviceId = build.androidId;
+      } else if (Platform.isIOS) {
+        var build = await info.iosInfo; //c3c394658218ab5b
+        deviceId = build.identifierForVendor;
+      }
       _prayerNotificationCollectionReference.doc(_notificationId).set(
-          LocalNotificationModel(userId: userId, localId: localId).toJson());
+          LocalNotificationModel(
+                  deviceId: deviceId, localNotificationId: localId)
+              .toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -76,10 +90,10 @@ class NotificationService {
     }
   }
 
-  Stream<List<LocalNotificationModel>> getLocalNotifications(String userId) {
+  Stream<List<LocalNotificationModel>> getLocalNotifications(String deviceId) {
     try {
       return _prayerNotificationCollectionReference
-          .where('UserId', isEqualTo: userId)
+          .where('DeviceId', isEqualTo: deviceId)
           .snapshots()
           .map((e) => e.docs
               .map((doc) => LocalNotificationModel.fromData(doc))

@@ -30,9 +30,6 @@ class _GroupToolsState extends State<GroupTools> {
           .setUserGroups(_user.id);
       await Provider.of<GroupProvider>(context, listen: false)
           .setAllGroups(_user.id);
-
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false).setGroupPrayers(
         _user?.id,
         data.group.id,

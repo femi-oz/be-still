@@ -13,7 +13,6 @@ class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
 
   List<CombinePrayerStream> _prayers = [];
-  List<HiddenPrayerModel> _hiddenPrayers = [];
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   List<CombinePrayerStream> _filteredPrayers = [];
   CombinePrayerStream _currentPrayer;
@@ -27,7 +26,6 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
   PrayerType get currentPrayerType => _currentPrayerType;
-  List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   CombinePrayerStream get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
 
@@ -50,10 +48,6 @@ class PrayerProvider with ChangeNotifier {
   Future setGroupPrayers(
       String userId, String groupId, bool isGroupAdmin) async {
     _prayerService.getGroupPrayers(groupId).asBroadcastStream().listen((data) {
-      var hiddenPrayersId =
-          _hiddenPrayers.map((prayer) => prayer.prayerId).toList();
-      _prayers =
-          data.where((e) => !hiddenPrayersId.contains(e.prayer.id)).toList();
       if (!isGroupAdmin) {
         _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
       }
@@ -202,16 +196,6 @@ class PrayerProvider with ChangeNotifier {
 
   Future hidePrayer(String prayerId, UserModel user) async {
     return await _prayerService.hidePrayer(prayerId, user);
-  }
-
-  Future setHiddenPrayers(String userId) async {
-    _prayerService
-        .getHiddenPrayers(userId)
-        .asBroadcastStream()
-        .listen((prayers) {
-      _hiddenPrayers = prayers;
-      notifyListeners();
-    });
   }
 
   Future hidePrayerFromAllMembers(String prayerId, bool value) async {

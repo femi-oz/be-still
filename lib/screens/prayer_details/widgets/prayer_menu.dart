@@ -53,7 +53,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     '90 Days',
     '1 Year'
   ];
-  List<String> reminderDays = [];
+  // List<String> reminderDays = [];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -67,11 +67,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
   @override
   void initState() {
     _configureLocalTimeZone();
-    for (var i = 1; i <= 31; i++) {
-      setState(() {
-        reminderDays.add(i < 10 ? '0$i' : '$i');
-      });
-    }
+    // for (var i = 1; i <= 31; i++) {
+    //   setState(() {
+    //     reminderDays.add(i < 10 ? '0$i' : '$i');
+    //   });
+    // }
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOs = IOSInitializationSettings();
@@ -102,12 +102,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   showNotification(selectedHour, selectedFrequency, selectedMinute) async {
-    int localId = Provider.of<NotificationProvider>(context, listen: false)
-            .localNotifications
-            .reduce((a, b) => a.localId > b.localId ? a : b)
-            .localId +
-        1;
-    await storeNotification(localId);
+    var localNots = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    var localId = localNots.length > 0
+        ? localNots
+                .reduce((a, b) =>
+                    a.localNotificationId > b.localNotificationId ? a : b)
+                .localNotificationId +
+            1
+        : 0;
     await flutterLocalNotificationsPlugin.zonedSchedule(
         localId,
         'Reminder to Pray',
@@ -125,7 +128,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             ? DateTimeComponents.time
             : DateTimeComponents
                 .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
-    Navigator.of(context).pop();
+    await storeNotification(localId);
   }
 
   storeNotification(localId) async {
@@ -133,11 +136,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(userId, localId);
+          .addLocalNotification(localId);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _onWillPop();
@@ -227,13 +227,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
-        false;
+  _onWillPop() {
+    Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
   }
 
   Widget build(BuildContext context) {
@@ -405,7 +400,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         return ReminderPicker(
                           hideActionuttons: false,
                           frequency: reminderInterval,
-                          reminderDays: reminderDays,
+                          reminderDays: [
+                            DaysOfWeek.sun,
+                            DaysOfWeek.mon,
+                            DaysOfWeek.tue,
+                            DaysOfWeek.wed,
+                            DaysOfWeek.thu,
+                            DaysOfWeek.fri,
+                            DaysOfWeek.sat,
+                          ],
                           onCancel: () => Navigator.of(context).pop(),
                           onSave: (selectedFrequency, selectedHour,
                                   selectedMinute, _) =>

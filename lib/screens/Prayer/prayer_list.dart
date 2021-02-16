@@ -3,6 +3,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -36,9 +37,8 @@ class _PrayerListState extends State<PrayerList> {
       await Provider.of<GroupProvider>(context, listen: false)
           .setAllGroups(_user.id);
       await Provider.of<UserProvider>(context, listen: false).setAllUsers();
-
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications();
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
       Future.delayed(const Duration(milliseconds: 1000), () {
