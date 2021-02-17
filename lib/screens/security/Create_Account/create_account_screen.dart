@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -89,7 +90,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       );
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(false);
-      await PushNotificationsManager().init(
+      await Provider.of<NotificationProvider>(context, listen: false).init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
