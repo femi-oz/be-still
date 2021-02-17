@@ -56,6 +56,7 @@ class PrayerService {
           Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
               // .doc(f.data()['PrayerId'])
               .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+              .orderBy('ModifiedOn')
               .snapshots()
               .map<List<PrayerTagModel>>((list) =>
                   list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
