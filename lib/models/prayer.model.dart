@@ -345,6 +345,7 @@ class PrayerTagModel {
 }
 
 class CombinePrayerStream {
+  final String id;
   final UserPrayerModel userPrayer;
   final GroupPrayerModel groupPrayer;
   @required
@@ -355,6 +356,7 @@ class CombinePrayerStream {
   final List<PrayerUpdateModel> updates;
 
   CombinePrayerStream({
+    this.id,
     this.userPrayer,
     this.groupPrayer,
     this.prayer,

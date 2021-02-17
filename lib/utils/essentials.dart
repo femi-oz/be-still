@@ -83,9 +83,9 @@ class AppColors {
   static Color get textFieldBorder =>
       getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
   static Color get prayeModeBg =>
-      getColor(darkMode, light: 0xFFE6E9ED, dark: 0xFF101820);
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF0D1319);
   static Color get prayeModeBorder =>
-      getColor(darkMode, light: 0xFF0C3A4C, dark: 0xFF0C3A4C);
+      getColor(darkMode, light: 0xFF009FD0, dark: 0xFF005882);
   static Color get splashTextColor =>
       getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
   static Color get bottomNavIconColor =>

@@ -10,9 +10,9 @@ import 'package:provider/provider.dart';
 import '../../entry_screen.dart';
 
 class DeletePrayer extends StatefulWidget {
-  final PrayerModel prayer;
+  final CombinePrayerStream prayerData;
   @override
-  DeletePrayer(this.prayer);
+  DeletePrayer(this.prayerData);
 
   @override
   _DeletePrayerState createState() => _DeletePrayerState();
@@ -27,11 +27,11 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayer.id);
+          .unArchivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goHome();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -45,10 +45,10 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayer.id);
+          .archivePrayer(widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -60,13 +60,12 @@ class _DeletePrayerState extends State<DeletePrayer> {
     }
   }
 
-  Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
-        false;
+  _goHome() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EntryScreen(screenNumber: 0),
+        ));
   }
 
   _onDelete() async {
@@ -75,10 +74,10 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .deletePrayer(widget.prayer.id);
+          .deletePrayer(widget.prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -145,7 +144,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                !widget.prayer.isAnswer && !widget.prayer.isArchived
+                !widget.prayerData.prayer.isAnswer &&
+                        !widget.prayerData.prayer.isArchived
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(

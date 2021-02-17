@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class GroupPrayerQuickAccess extends StatefulWidget {
   final y;
 
-  final PrayerModel prayer;
+  final CombinePrayerStream prayer;
 
   GroupPrayerQuickAccess({this.y, this.prayer});
   @override

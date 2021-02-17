@@ -3,6 +3,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -30,24 +31,65 @@ class _PrayerListState extends State<PrayerList> {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
-
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setHiddenPrayers(_user.id);
-      // await Provider.of<PrayerProvider>(context, listen: false)
-      //     .setPrayerTags(_user.id);
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
-      Future.delayed(const Duration(milliseconds: 1000), () {
-        BeStilDialog.hideLoading(context);
-      });
+      await Provider.of<UserProvider>(context, listen: false).setAllUsers();
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications();
+      await Future.delayed(const Duration(milliseconds: 1000),
+          () => BeStilDialog.hideLoading(context));
     } on HttpException catch (e) {
+      await Future.delayed(const Duration(milliseconds: 1000),
+          () => BeStilDialog.hideLoading(context));
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
+      await Future.delayed(const Duration(milliseconds: 1000),
+          () => BeStilDialog.hideLoading(context));
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
+  void onTapCard(prayerData) async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(prayerData.userPrayer.id);
+      await Future.delayed(const Duration(milliseconds: 300),
+          () => BeStilDialog.hideLoading(context));
+      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
+  void onLongPressCard(prayerData, details) async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(prayerData.userPrayer.id);
+      var y = details.globalPosition.dy;
+      showModalBottomSheet(
+          context: context,
+          barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
+          backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return PrayerQuickAccess(
+              y: y,
+              prayerData: prayerData,
+            );
+          });
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
@@ -82,7 +124,6 @@ class _PrayerListState extends State<PrayerList> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
-    // var tags = Provider.of<PrayerProvider>(context).prayerTags;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
@@ -121,41 +162,10 @@ class _PrayerListState extends State<PrayerList> {
                         children: <Widget>[
                           ...prayers
                               .map((e) => GestureDetector(
-                                  onTap: () async {
-                                    await Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .setPrayer(e.prayer.id);
-                                    await Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .setPrayerUpdates(e.prayer.id);
-
-                                    Navigator.of(context)
-                                        .pushNamed(PrayerDetails.routeName);
-                                  },
+                                  onTap: () => onTapCard(e),
                                   onLongPressEnd:
-                                      (LongPressEndDetails details) async {
-                                    await Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .setPrayer(e.prayer.id);
-                                    await Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .setPrayerUpdates(e.prayer.id);
-                                    var y = details.globalPosition.dy;
-                                    showModalBottomSheet(
-                                      context: context,
-                                      barrierColor: AppColors.addPrayerBg
-                                          .withOpacity(0.5),
-                                      backgroundColor: AppColors.addPrayerBg
-                                          .withOpacity(0.9),
-                                      isScrollControlled: true,
-                                      builder: (BuildContext context) {
-                                        return PrayerQuickAccess(
-                                          y: y,
-                                          prayer: e.prayer,
-                                        );
-                                      },
-                                    );
-                                  },
+                                      (LongPressEndDetails details) =>
+                                          onLongPressCard(e, details),
                                   child: PrayerCard(
                                     prayer: e.prayer,
                                     tags: e.tags,

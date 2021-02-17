@@ -1,6 +1,7 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -12,27 +13,30 @@ class UpdateView extends StatelessWidget {
   UpdateView(this.data);
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final updates = data.updates;
+    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
     return Container(
       child: SingleChildScrollView(
         child: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               data.prayer.userId != _currentUser.id
                   ? Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
                         data.prayer.creatorName,
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500),
+                        style: AppTextStyles.boldText20.copyWith(
+                            color: Settings.isDarkMode
+                                ? Color(0xFF009FD0)
+                                : Color(0xFF003B87)),
                         textAlign: TextAlign.center,
                       ),
                     )
                   : Container(),
-              ...data.updates.map(
-                (u) => Container(
+              for (int i = 0; i < updates.length; i++)
+                Container(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -45,10 +49,10 @@ class UpdateView extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(u.createdOn),
-                                  style: TextStyle(
-                                      color: AppColors.dimBlue,
-                                      fontWeight: FontWeight.w500),
+                                      .format(updates[i].createdOn)
+                                      .toLowerCase(),
+                                  style: AppTextStyles.boldText16.copyWith(
+                                      color: AppColors.prayeModeBorder),
                                 ),
                               ],
                             ),
@@ -59,47 +63,54 @@ class UpdateView extends StatelessWidget {
                               thickness: 1,
                             ),
                           ),
-                          // ...u.tags
-                          //     .map(
-                          //       (t) => Container(
-                          //         margin: EdgeInsets.only(left: 10),
-                          //         child: Row(
-                          //           children: <Widget>[
-                          //             Text(
-                          //               t.toUpperCase(),
-                          //               style: TextStyle(
-                          //                 color: AppColors.red,
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ),
-                          //     )
-                          //     .toList()
                         ],
                       ),
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 100.0, horizontal: 20),
-                          child: Center(
-                            child: Text(
-                              u.description,
-                              style: TextStyle(
-                                color: AppColors.textFieldText,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w300,
-                                height: 2,
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 30.0, horizontal: 20),
+                        child: i == 0
+                            ? new ConstrainedBox(
+                                constraints: new BoxConstraints(
+                                  minHeight: 300,
+                                ),
+                                child: new DecoratedBox(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          updates[i].description,
+                                          style: AppTextStyles.regularText18b
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .prayerTextColor),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  decoration: new BoxDecoration(),
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      updates[i].description,
+                                      style: AppTextStyles.regularText18b
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
               Container(
                 child: Column(
                   children: <Widget>[
@@ -112,16 +123,14 @@ class UpdateView extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'Initial Prayer Request |',
-                                style: TextStyle(
-                                    color: AppColors.dimBlue,
-                                    fontWeight: FontWeight.w500),
+                                style: AppTextStyles.boldText16
+                                    .copyWith(color: AppColors.prayeModeBorder),
                               ),
                               Text(
-                                DateFormat(' MM.dd.yyyy')
+                                DateFormat('MM.dd.yyyy')
                                     .format(data.prayer.createdOn),
-                                style: TextStyle(
-                                    color: AppColors.dimBlue,
-                                    fontWeight: FontWeight.w500),
+                                style: AppTextStyles.boldText16
+                                    .copyWith(color: AppColors.prayeModeBorder),
                               ),
                             ],
                           ),
@@ -132,37 +141,24 @@ class UpdateView extends StatelessWidget {
                             thickness: 1,
                           ),
                         ),
-                        // ...prayer.tags
-                        //     .map(
-                        //       (t) => Container(
-                        //         margin: EdgeInsets.only(left: 10),
-                        //         child: Text(
-                        //           t.toUpperCase(),
-                        //           style: TextStyle(
-                        //             color: AppColors.red,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     )
-                        //     .toList(),
                       ],
                     ),
-                    Container(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-                        child: Center(
-                          child: Text(
-                            data.prayer.description,
-                            style: TextStyle(
-                              color: AppColors.textFieldText,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                              height: 2,
+                    SizedBox(height: 10),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              data.prayer.description,
+                              style: AppTextStyles.regularText18b
+                                  .copyWith(color: AppColors.prayerTextColor),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ],

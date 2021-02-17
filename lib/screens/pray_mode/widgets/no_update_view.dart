@@ -35,10 +35,10 @@ class NoUpdateView extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     DateFormat('hh:mma | MM.dd.yyyy')
-                        .format(data.prayer.createdOn),
-                    style: AppTextStyles.regularText15.copyWith(
-                      color: AppColors.lightBlue4,
-                    ),
+                        .format(data.prayer.modifiedOn)
+                        .toLowerCase(),
+                    style: AppTextStyles.regularText18b
+                        .copyWith(color: AppColors.prayeModeBorder),
                   ),
                 ],
               ),
@@ -57,9 +57,8 @@ class NoUpdateView extends StatelessWidget {
             child: Center(
               child: Text(
                 data.prayer.description,
-                style: AppTextStyles.regularText22.copyWith(
-                  color: AppColors.textFieldBackgroundColor,
-                ),
+                style: AppTextStyles.regularText18b
+                    .copyWith(color: AppColors.prayerTextColor),
                 textAlign: TextAlign.center,
               ),
             ),

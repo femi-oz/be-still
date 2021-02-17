@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/notification_service.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../locator.dart';
 
@@ -34,9 +38,22 @@ class NotificationProvider with ChangeNotifier {
         prayerId, groupId);
   }
 
-  Future setLocalNotifications(String userId) async {
+  Future setLocalNotifications() async {
+    final DeviceInfoPlugin info = new DeviceInfoPlugin();
+    String deviceId;
+    try {
+      if (Platform.isAndroid) {
+        var build = await info.androidInfo;
+        deviceId = build.androidId;
+      } else if (Platform.isIOS) {
+        var build = await info.iosInfo;
+        deviceId = build.identifierForVendor;
+      }
+    } on PlatformException {
+      print("couldn't fetch platform");
+    }
     _notificationService
-        .getLocalNotifications(userId)
+        .getLocalNotifications(deviceId)
         .asBroadcastStream()
         .listen((notifications) {
       _localNotifications = notifications;
@@ -44,8 +61,10 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future addLocalNotification(String userId, int localId) async {
-    await _notificationService.addLocalNotification(userId, localId);
+  Future addLocalNotification(
+      int localId, String entityId, String notificationText) async {
+    await _notificationService.addLocalNotification(
+        localId, entityId, notificationText);
   }
 
   Future deleteLocalNotification(String notificationId) async {

@@ -1,20 +1,17 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,12 +24,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 class PrayerMenu extends StatefulWidget {
-  final PrayerModel prayer;
+  final CombinePrayerStream prayerData;
   final List<PrayerUpdateModel> updates;
 
   final BuildContext parentcontext;
   @override
-  PrayerMenu(this.prayer, this.updates, this.parentcontext);
+  PrayerMenu(this.prayerData, this.updates, this.parentcontext);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -41,8 +38,8 @@ class PrayerMenu extends StatefulWidget {
 class _PrayerMenuState extends State<PrayerMenu> {
   List<String> reminderInterval = [
     // 'Hourly',
-    'Daily',
-    'Weekly',
+    Frequency.daily,
+    Frequency.weekly,
     // 'Monthly',
     // 'Yearly'
   ];
@@ -53,27 +50,28 @@ class _PrayerMenuState extends State<PrayerMenu> {
     '90 Days',
     '1 Year'
   ];
-  List<String> reminderDays = [];
+  List<String> reminderDays = [
+    DaysOfWeek.mon,
+    DaysOfWeek.tue,
+    DaysOfWeek.wed,
+    DaysOfWeek.thu,
+    DaysOfWeek.fri,
+    DaysOfWeek.sat,
+    DaysOfWeek.sun,
+  ];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   Future onSelectNotification(String payload) async {
     await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayer(widget.prayer.id);
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayerUpdates(widget.prayer.id);
+        .setPrayer(widget.prayerData.userPrayer.id);
     Navigator.of(context).pushNamed(PrayerDetails.routeName);
   }
 
   @override
   void initState() {
     _configureLocalTimeZone();
-    for (var i = 1; i <= 31; i++) {
-      setState(() {
-        reminderDays.add(i < 10 ? '0$i' : '$i');
-      });
-    }
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOs = IOSInitializationSettings();
@@ -85,6 +83,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
     super.initState();
   }
 
+  int _getExactDy(day) {
+    var now = new DateTime.now();
+
+    while (now.weekday != day) {
+      now = now.subtract(new Duration(days: 1));
+    }
+    return now.day;
+  }
+
   String currentTimeZone;
   Future<void> _configureLocalTimeZone() async {
     tz.initializeTimeZones();
@@ -93,28 +100,60 @@ class _PrayerMenuState extends State<PrayerMenu> {
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
   }
 
-  tz.TZDateTime _scheduleDate(selectedHour, selectedMinute) {
+  tz.TZDateTime _scheduleDate(
+      selectedHour, selectedMinute, selectedDay, period) {
+    var day = reminderDays.indexOf(selectedDay) + 1;
+    var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
+    hour = hour == 24 ? 00 : hour;
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, selectedHour, selectedMinute);
+        tz.local, now.year, now.month, _getExactDy(day), hour, selectedMinute);
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
   }
 
-  showNotification(selectedHour, selectedFrequency, selectedMinute) async {
-    int localId = Provider.of<NotificationProvider>(context, listen: false)
-            .localNotifications
-            .reduce((a, b) => a.localId > b.localId ? a : b)
-            .localId +
-        1;
-    await storeNotification(localId);
+  String reminderId;
+  int localNotificationId;
+  bool get hasReminder {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    var reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.prayer.id,
+        orElse: () => null);
+    reminderId = reminder?.id ?? '';
+    localNotificationId = reminder?.localNotificationId ?? 0;
+
+    if (reminder == null)
+      return false;
+    else
+      return true;
+  }
+
+  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
+      period) async {
+    if (hasReminder) {
+      Provider.of<NotificationProvider>(context, listen: false)
+          .deleteLocalNotification(reminderId);
+      flutterLocalNotificationsPlugin.cancel(localNotificationId);
+    }
+    var localNots = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    var localId = localNots.length > 0
+        ? localNots
+                .reduce((a, b) =>
+                    a.localNotificationId > b.localNotificationId ? a : b)
+                .localNotificationId +
+            1
+        : 0;
     await flutterLocalNotificationsPlugin.zonedSchedule(
         localId,
-        'Reminder to Pray',
-        widget.prayer.description,
-        _scheduleDate(selectedHour, selectedMinute),
+        '$selectedFrequency reminder to pray',
+        widget.prayerData.prayer.description,
+        _scheduleDate(selectedHour, selectedMinute, selectedDay, period),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description'),
@@ -127,22 +166,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
             ? DateTimeComponents.time
             : DateTimeComponents
                 .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
-    Navigator.of(context).pop();
+    var notificationText = selectedFrequency == Frequency.weekly
+        ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
+        : '$selectedFrequency, $selectedHour:$selectedMinute $period';
+    await storeNotification(localId, notificationText);
   }
 
-  storeNotification(localId) async {
+  storeNotification(localId, notificationText) async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(userId, localId);
+          .addLocalNotification(
+              localId, widget.prayerData.prayer.id, notificationText);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -150,34 +188,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  var reminder = '';
-
-  var snooze = '';
-
-  setReminder(value) {
-    setState(() {
-      reminder = value;
-    });
-  }
-
-  setSnooze(value) {
-    setState(() {
-      snooze = value;
-    });
-  }
-
   BuildContext bcontext;
 
   void _onMarkAsAnswered() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(widget.prayer.id);
+          .markPrayerAsAnswered(widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -191,15 +211,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _unArchive() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayer.id);
+          .unArchivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -209,15 +227,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _onArchive() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayer.id);
+          .archivePrayer(widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _onWillPop();
+      _goToDetails();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -229,20 +245,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
-        false;
+  _goToDetails() {
+    Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
   }
 
   Widget build(BuildContext context) {
-    // var updates = widget.updates.map((value) {
-    //   return value.description;
-    // });
-
     List<String> updates = [];
     widget.updates.forEach((data) => {
           updates = [...updates, data.description].toList()
@@ -260,9 +267,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  text: 'Share',
+                  onPressed: () => showModalBottomSheet(
                       context: context,
                       barrierColor:
                           AppColors.detailBackgroundColor[1].withOpacity(0.5),
@@ -271,411 +279,111 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
-                            prayer: widget.prayer.description,
+                            prayer: widget.prayerData.prayer.description,
                             updates:
                                 widget.updates.length > 0 ? newUpdates : '');
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Share',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      }),
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.push(
+                MenuButton(
+                  icon: AppIcons.bestill_edit,
+                  onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPrayer(
                         isEdit: true,
-                        prayer: widget.prayer,
+                        prayer: widget.prayerData.prayer,
                       ),
                     ),
                   ),
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_edit,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  text: 'Edit',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddUpdate(
-                          prayer: widget.prayer,
-                          updates: widget.updates,
-                        ),
+                MenuButton(
+                  icon: AppIcons.bestill_update,
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddUpdate(
+                        updates: widget.prayerData.updates,
+                        prayer: widget.prayerData.prayer,
                       ),
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_update,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Add an Update',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ),
+                  text: 'Add an Update',
                 ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return ReminderPicker(
-                          hideActionuttons: false,
-                          frequency: reminderInterval,
-                          reminderDays: reminderDays,
-                          onCancel: () => Navigator.of(context).pop(),
-                          onSave: (selectedFrequency, selectedHour,
-                                  selectedMinute, _) =>
-                              showNotification(selectedHour, selectedFrequency,
-                                  selectedMinute),
-                        );
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_reminder,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Reminder',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                reminder,
-                                style: TextStyle(
-                                  color: AppColors.lightBlue4,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                MenuButton(
+                  icon: AppIcons.bestill_reminder,
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return ReminderPicker(
+                        hideActionuttons: false,
+                        frequency: reminderInterval,
+                        reminderDays: reminderDays,
+                        onCancel: () => Navigator.of(context).pop(),
+                        onSave: (selectedFrequency, selectedHour,
+                                selectedMinute, selectedDay, period) =>
+                            setNotification(selectedHour, selectedFrequency,
+                                selectedMinute, selectedDay, period),
+                      );
+                    },
                   ),
+                  text: 'Reminder',
                 ),
-                GestureDetector(
-                  onTap: () {},
-                  // {
-                  //   showModalBottomSheet(
-                  //     context: context,
-                  //     barrierColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //     backgroundColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //     isScrollControlled: true,
-                  //     builder: (BuildContext context) {
-                  //       return CustomPicker(
-                  //           snoozeInterval, setSnooze, false, null);
-                  //     },
-                  //   );
-                  // },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_snooze,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Snooze',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                MenuButton(
+                  icon: AppIcons.bestill_snooze,
+                  onPressed: () => null,
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return CustomPicker(
+                  //         snoozeInterval, setSnooze, false, null);
+                  //   },
+                  // ),
+                  text: 'Snooze',
                 ),
-                widget.prayer.isAnswer == false
-                    ? GestureDetector(
-                        onTap: () => _onMarkAsAnswered(),
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_answered,
-                                color: AppColors.lightBlue4,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Mark as Answered',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                widget.prayerData.prayer.isAnswer == false
+                    ? MenuButton(
+                        icon: AppIcons.bestill_answered,
+                        onPressed: () => _onMarkAsAnswered(),
+                        text: 'Mark as Answered',
                       )
                     : Container(),
-                widget.prayer.status == Status.active &&
-                        !widget.prayer.isArchived
-                    ? GestureDetector(
-                        onTap: _onArchive,
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_archive,
-                                color: AppColors.lightBlue4,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Archive',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                widget.prayerData.prayer.status == Status.active &&
+                        !widget.prayerData.prayer.isArchived
+                    ? MenuButton(
+                        icon: AppIcons.bestill_archive,
+                        onPressed: () => _onArchive(),
+                        text: 'Archive',
                       )
-                    : GestureDetector(
-                        onTap: _unArchive,
-                        child: Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.lightBlue6,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_archive,
-                                color: AppColors.lightBlue4,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(
-                                  'Unarchive',
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue4,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    : MenuButton(
+                        icon: AppIcons.bestill_archive,
+                        onPressed: () => _unArchive(),
+                        text: 'Unarchive',
                       ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return DeletePrayer(widget.prayer);
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightBlue6,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.bestill_delete,
-                          color: AppColors.lightBlue4,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                MenuButton(
+                  icon: AppIcons.bestill_delete,
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    backgroundColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return DeletePrayer(widget.prayerData);
+                    },
                   ),
+                  text: 'Delete',
                 ),
               ],
             ),
