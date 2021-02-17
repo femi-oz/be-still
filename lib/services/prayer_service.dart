@@ -177,6 +177,7 @@ class PrayerService {
         'prayerid': prayerId,
         'userid': _userID,
         'tagger': creator,
+        'taggerId': creatorId,
       };
       await dio.post(
         'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
@@ -202,20 +203,20 @@ class PrayerService {
             oldTags
                 .map((e) => e?.phoneNumber)
                 .contains(prayerTagData.phoneNumber)) return;
-        if (prayerTagData.email != null || prayerTagData.email != '') {
-          var data = {
-            'message': prayerTagData.message,
-            'receiver': prayerTagData.displayName,
-            'email': prayerTagData.email,
-            'sender': prayerTagData.tagger,
-            'template': MessageTemplayeType.tagPrayer,
-          };
-          await dio.post(
-            'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
-            data: data,
-          );
-          return;
-        }
+        // if (prayerTagData.email != null || prayerTagData.email != '') {
+        //   var data = {
+        //     'message': prayerTagData.message,
+        //     'receiver': prayerTagData.displayName,
+        //     'email': prayerTagData.email,
+        //     'sender': prayerTagData.tagger,
+        //     'template': MessageTemplayeType.tagPrayer,
+        //   };
+        //   await dio.post(
+        //     'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+        //     data: data,
+        //   );
+        //   return;
+        // }
         if (prayerTagData.phoneNumber != null ||
             prayerTagData.phoneNumber != '') {
           var data = {
