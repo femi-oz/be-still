@@ -169,6 +169,22 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                   ),
                   Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(270),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: CircularButton(
+                          icon: Icon(
+                            Icons.favorite,
+                            color: AppColors.lightBlue4,
+                          ),
+                          onClick: () {}),
+                    ),
+                  ),
+                  Transform.translate(
                     offset: Offset.fromDirection(getRadiansFromDegree(315),
                         degOneTranslationAnimation.value * 60),
                     child: Transform(

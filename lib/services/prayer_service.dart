@@ -478,6 +478,30 @@ class PrayerService {
     }
   }
 
+  Future favoritePrayer(
+    String prayerID,
+  ) async {
+    try {
+      _userPrayerCollectionReference.doc(prayerID).update(
+        {'IsFavourite': true},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future unFavoritePrayer(
+    String prayerID,
+  ) async {
+    try {
+      _userPrayerCollectionReference.doc(prayerID).update(
+        {'IsFavourite': false},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future deletePrayer(String prayerID) async {
     try {
       var batch = FirebaseFirestore.instance.batch();

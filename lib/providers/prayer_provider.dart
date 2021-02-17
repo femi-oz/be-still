@@ -185,6 +185,14 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.unArchivePrayer(prayerID);
   }
 
+  Future favoritePrayer(String prayerID) async {
+    return await _prayerService.favoritePrayer(prayerID);
+  }
+
+  Future unfavoritePrayer(String prayerID) async {
+    return await _prayerService.unFavoritePrayer(prayerID);
+  }
+
   Future markPrayerAsAnswered(String prayerID) async {
     return await _prayerService.markPrayerAsAnswered(prayerID);
   }
