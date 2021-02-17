@@ -5,6 +5,8 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/settings/Widgets/general.dart';
+import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -12,13 +14,6 @@ import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
-import 'Widgets/alexa.dart';
-import 'Widgets/general.dart';
-import 'Widgets/groups.dart';
-import 'Widgets/notifications.dart';
-import 'Widgets/prayer_time.dart';
-import 'Widgets/sharing.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = 'settings';

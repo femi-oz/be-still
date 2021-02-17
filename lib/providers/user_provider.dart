@@ -22,11 +22,12 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setAllUsers() async {
-    _userService
-        .getAllUsers()
-        .asBroadcastStream()
-        .listen((docs) => _allUsers = docs);
+  Future setAllUsers(String userId) async {
+    var users = await _userService.getAllUsers();
+
+    _allUsers =
+        users.where((e) => e.firstName != null || e.lastName != null).toList();
+    _allUsers = _allUsers.where((e) => e.id != userId).toList();
     notifyListeners();
   }
 

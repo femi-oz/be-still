@@ -9,7 +9,8 @@ class CreateGroupForm extends StatefulWidget {
   final stateController;
   final organizationController;
   final descriptionController;
-  GroupType option;
+  final Function setOption;
+  final option;
   final formKey;
   final autoValidate;
   final emailController;
@@ -20,6 +21,7 @@ class CreateGroupForm extends StatefulWidget {
     this.stateController,
     this.organizationController,
     this.descriptionController,
+    this.setOption,
     this.option,
     this.autoValidate,
     this.formKey,
@@ -103,19 +105,17 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: OutlineButton(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  child: Container(
-                    child: Text(
-                      'NORMAL',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                    borderSide: BorderSide(color: Colors.transparent),
+                    child: Container(
+                      child: Text(
+                        'NORMAL',
+                        style: TextStyle(
+                            color: AppColors.lightBlue3,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  onPressed: () =>
-                      setState(() => widget.option = GroupType.normal),
-                ),
+                    onPressed: () => null),
               ),
               Container(
                 height: 30,
@@ -130,21 +130,19 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: OutlineButton(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5.0, vertical: 5),
-                    child: Text(
-                      'PRIVATE',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                    borderSide: BorderSide(color: Colors.transparent),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5.0, vertical: 5),
+                      child: Text(
+                        'PRIVATE',
+                        style: TextStyle(
+                            color: AppColors.lightBlue3,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  onPressed: () =>
-                      setState(() => widget.option = GroupType.private),
-                ),
+                    onPressed: () => null),
               ),
               Container(
                 height: 30,
@@ -159,21 +157,19 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: OutlineButton(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5.0, vertical: 5),
-                    child: Text(
-                      'FEED',
-                      style: TextStyle(
-                          color: AppColors.lightBlue3,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                    borderSide: BorderSide(color: Colors.transparent),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5.0, vertical: 5),
+                      child: Text(
+                        'FEED',
+                        style: TextStyle(
+                            color: AppColors.lightBlue3,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  onPressed: () =>
-                      setState(() => widget.option = GroupType.feed),
-                ),
+                    onPressed: () => null),
               ),
             ],
           ),

@@ -74,11 +74,10 @@ class UserService {
     }
   }
 
-  Stream<List<UserModel>> getAllUsers() {
+  Future<List<UserModel>> getAllUsers() async {
     try {
-      return _userCollectionReference
-          .snapshots()
-          .map((e) => e.docs.map((e) => UserModel.fromData(e)).toList());
+      var users = await _userCollectionReference.get();
+      return users.docs.map((e) => UserModel.fromData(e)).toList();
     } catch (e) {
       throw HttpException(e.message);
     }

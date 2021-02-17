@@ -291,7 +291,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     MaterialPageRoute(
                       builder: (context) => AddPrayer(
                         isEdit: true,
-                        prayer: widget.prayerData.prayer,
+                        prayerData: widget.prayerData,
                       ),
                     ),
                   ),
@@ -304,7 +304,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     MaterialPageRoute(
                       builder: (context) => AddUpdate(
                         updates: widget.prayerData.updates,
-                        prayer: widget.prayerData.prayer,
+                        prayerData: widget.prayerData,
                       ),
                     ),
                   ),

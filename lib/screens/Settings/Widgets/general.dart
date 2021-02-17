@@ -2,7 +2,6 @@ import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -56,30 +55,30 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
-  Future<void> _setPermission() async {
-    // if true enable permission else disable permission
-    permission = await Permission.contacts.status;
-    if (permission == PermissionStatus.denied) {
-      final Map<Permission, PermissionStatus> permissionStatus =
-          await [Permission.contacts].request();
-      setState(() => permission =
-          permissionStatus[Permission.contacts] ?? PermissionStatus.denied);
-      Provider.of<SettingsProvider>(context, listen: false)
-          .setContactAcessStatus(false);
-    } else if (permission == PermissionStatus.granted) {
-      Provider.of<SettingsProvider>(context, listen: false)
-          .setContactAcessStatus(true);
-      await openAppSettings();
-      if (permission == PermissionStatus.denied) {
-        setState(() => permission = PermissionStatus.denied);
-      } else if (permission == PermissionStatus.granted) {
-        setState(() => permission = PermissionStatus.granted);
-      }
-    } else {
-      Provider.of<SettingsProvider>(context, listen: false)
-          .setContactAcessStatus(false);
-    }
-  }
+  // Future<void> _setPermission() async {
+  //   // if true enable permission else disable permission
+  //   permission = await Permission.contacts.status;
+  //   if (permission == PermissionStatus.denied) {
+  //     final Map<Permission, PermissionStatus> permissionStatus =
+  //         await [Permission.contacts].request();
+  //     setState(() => permission =
+  //         permissionStatus[Permission.contacts] ?? PermissionStatus.denied);
+  //     Provider.of<SettingsProvider>(context, listen: false)
+  //         .setContactAcessStatus(false);
+  //   } else if (permission == PermissionStatus.granted) {
+  //     Provider.of<SettingsProvider>(context, listen: false)
+  //         .setContactAcessStatus(true);
+  //     await openAppSettings();
+  //     if (permission == PermissionStatus.denied) {
+  //       setState(() => permission = PermissionStatus.denied);
+  //     } else if (permission == PermissionStatus.granted) {
+  //       setState(() => permission = PermissionStatus.granted);
+  //     }
+  //   } else {
+  //     Provider.of<SettingsProvider>(context, listen: false)
+  //         .setContactAcessStatus(false);
+  //   }
+  // }
 
   void _updateEmail(UserModel user) async {
     BeStilDialog.showConfirmDialog(context,

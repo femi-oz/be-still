@@ -160,7 +160,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                               MaterialPageRoute(
                                   builder: (context) => AddPrayer(
                                       isEdit: true,
-                                      prayer: widget.prayerData.prayer,
+                                      prayerData: widget.prayerData,
                                       isGroup: false)),
                             );
                           }),
