@@ -25,34 +25,32 @@ class NotificationService {
     //store device
     var batch = FirebaseFirestore.instance.batch();
     // return FirebaseFirestore.instance.runTransaction((transaction) async {
-    batch.set(
-      _deviceCollectionReference.doc(deviceId),
-      DeviceModel(
-              createdBy: 'MOBILE',
-              createdOn: DateTime.now(),
-              modifiedOn: DateTime.now(),
-              modifiedBy: 'MOBILE',
-              model: 'MOBILE',
-              deviceId: '',
-              name: token,
-              status: Status.active)
-          .toJson(),
-    );
+
+    await _deviceCollectionReference.doc(deviceId).set(
+          DeviceModel(
+                  createdBy: 'MOBILE',
+                  createdOn: DateTime.now(),
+                  modifiedOn: DateTime.now(),
+                  modifiedBy: 'MOBILE',
+                  model: 'MOBILE',
+                  deviceId: '',
+                  name: token,
+                  status: Status.active)
+              .toJson(),
+        );
 
     // store user device
-    batch.set(
-      _userDeviceCollectionReference.doc(userDeviceID),
-      UserDeviceModel(
-        createdBy: 'MOBILE',
-        createdOn: DateTime.now(),
-        modifiedOn: DateTime.now(),
-        modifiedBy: 'MOBILE',
-        deviceId: deviceId,
-        userId: userId,
-        status: Status.active,
-      ).toJson(),
-    );
-    batch.commit();
+    await _userDeviceCollectionReference.doc(userDeviceID).set(
+          UserDeviceModel(
+            createdBy: 'MOBILE',
+            createdOn: DateTime.now(),
+            modifiedOn: DateTime.now(),
+            modifiedBy: 'MOBILE',
+            deviceId: deviceId,
+            userId: userId,
+            status: Status.active,
+          ).toJson(),
+        );
   }
 
   Stream<List<NotificationModel>> getUserNotifications(String userId) {
