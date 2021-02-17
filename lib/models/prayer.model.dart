@@ -302,8 +302,11 @@ class PrayerTagModel {
   final String id;
   final String prayerId;
   final String userId;
+  final String tagger;
   final String displayName;
   final String phoneNumber;
+  final String email;
+  final String message;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -313,8 +316,11 @@ class PrayerTagModel {
     this.id,
     @required this.prayerId,
     @required this.userId,
+    @required this.tagger,
     @required this.displayName,
     @required this.phoneNumber,
+    @required this.email,
+    @required this.message,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -324,8 +330,11 @@ class PrayerTagModel {
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
+        tagger = snapshot.data()['Tagger'],
         displayName = snapshot.data()['DisplayName'],
         phoneNumber = snapshot.data()['PhoneNumber'],
+        message = snapshot.data()['Message'],
+        email = snapshot.data()['Email'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -334,8 +343,11 @@ class PrayerTagModel {
     return {
       'PrayerId': prayerId,
       'UserId': userId,
+      'Tagger': tagger,
       'DisplayName': displayName,
       'PhoneNumber': phoneNumber,
+      'Message': message,
+      'Email': email,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

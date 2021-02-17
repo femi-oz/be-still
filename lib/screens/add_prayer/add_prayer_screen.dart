@@ -3,19 +3,20 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
-
-import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -23,12 +24,12 @@ class AddPrayer extends StatefulWidget {
   final bool showCancel;
   final bool isEdit;
   final bool isGroup;
-  final PrayerModel prayer;
+  final CombinePrayerStream prayerData;
 
   @override
   AddPrayer({
     this.isEdit,
-    this.prayer,
+    this.prayerData,
     this.isGroup,
     this.showCancel = true,
   });
@@ -43,16 +44,15 @@ class _AddPrayerState extends State<AddPrayer> {
   BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
+  List<String> words = [];
+  String str = '';
+  List<Contact> contactData = [];
 
   _save() async {
     setState(() {
       _autoValidate = true;
     });
-    if (!_formKey.currentState.validate()) {
-      // showInSnackBar('Please, enter your prayer');
-      return;
-    }
-    PrayerTagModel prayerTagData;
+    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
@@ -86,23 +86,7 @@ class _AddPrayerState extends State<AddPrayer> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayer(prayerData, _user.id);
-
-        if (contactData.length > 0) {
-          contactData.forEach((e) async => {
-                prayerTagData = PrayerTagModel(
-                  userId: _user.id,
-                  createdBy: _user.email,
-                  createdOn: DateTime.now(),
-                  displayName: e['displayName'],
-                  modifiedBy: _user.email,
-                  modifiedOn: DateTime.now(),
-                  phoneNumber: e['phone'],
-                  prayerId: null,
-                ),
-                await Provider.of<PrayerProvider>(context, listen: false)
-                    .addPrayerTag(context, prayerTagData)
-              });
-        }
+        if (contactData.length > 0) createTag(_user, []);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
@@ -122,7 +106,11 @@ class _AddPrayerState extends State<AddPrayer> {
       try {
         BeStilDialog.showLoading(bcontext);
         await Provider.of<PrayerProvider>(context, listen: false)
-            .editprayer(_descriptionController.text, widget.prayer.id);
+            .editprayer(_descriptionController.text, widget.prayerData.id);
+        for (int i = 0; i < widget.prayerData.tags.length; i++)
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .removePrayerTag(widget.prayerData.tags[i].id);
+        if (contactData.length > 0) createTag(_user, widget.prayerData.tags);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
@@ -138,10 +126,32 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
+  createTag(UserModel _user, List<PrayerTagModel> oldTags) async {
+    for (int i = 0; i < contactData.length; i++) {
+      var prayerTagData = PrayerTagModel(
+        message: _descriptionController.text,
+        tagger: _user.firstName,
+        userId: _user.id,
+        createdBy: _user.email,
+        createdOn: DateTime.now(),
+        displayName: contactData[i].displayName,
+        modifiedBy: _user.email,
+        modifiedOn: DateTime.now(),
+        phoneNumber: contactData[i].phones.toList()[0].value,
+        email: contactData[i].emails.toList()[0].value,
+        prayerId: null,
+      );
+      String countryCode =
+          Provider.of<MiscProvider>(context, listen: false).countryCode;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .addPrayerTag(prayerTagData, countryCode, oldTags);
+    }
+  }
+
   @override
   void initState() {
     _descriptionController.text =
-        widget.isEdit ? widget.prayer.description : '';
+        widget.isEdit ? widget.prayerData.prayer.description : '';
     getContacts();
     super.initState();
   }
@@ -151,11 +161,6 @@ class _AddPrayerState extends State<AddPrayer> {
       localContacts = await ContactsService.getContacts(withThumbnails: false);
     }
   }
-
-  var words = [];
-  String str = '';
-  var phoneNumbers = [];
-  var contactData = [];
 
   onTextChange(val) {
     setState(() {
@@ -290,19 +295,15 @@ class _AddPrayerState extends State<AddPrayer> {
                                                               _descriptionController
                                                                   .text.length);
                                                 });
-                                                contactData = [
-                                                  ...contactData,
-                                                  {
-                                                    'phone': s.phones
-                                                        .toList()[0]
-                                                        .value,
-                                                    'displayName': s.displayName
-                                                  }
-                                                ];
-                                                phoneNumbers = [
-                                                  ...phoneNumbers,
-                                                  s.phones.toList()[0].value
-                                                ];
+                                                if (!contactData
+                                                    .map((e) => e.identifier)
+                                                    .contains(s.identifier)) {
+                                                  contactData = [
+                                                    ...contactData,
+                                                    s
+                                                  ];
+                                                }
+
                                                 print(contactData);
                                               });
                                         else

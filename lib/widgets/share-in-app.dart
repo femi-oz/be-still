@@ -21,13 +21,7 @@ class _ShareInAppState extends State<ShareInApp> {
   var userInput = TextEditingController();
   List<UserModel> _getSuggestions(String query) {
     List<UserModel> matches = List();
-
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    matches.addAll(Provider.of<UserProvider>(context, listen: false)
-        .allUsers
-        .where((e) => e.createdBy.toLowerCase() != 'alexa' || e.id != userId));
-
+    matches.addAll(Provider.of<UserProvider>(context, listen: false).allUsers);
     matches.retainWhere((s) => '${s.firstName} ${s.lastName}'
         .toLowerCase()
         .contains(query.toLowerCase()));

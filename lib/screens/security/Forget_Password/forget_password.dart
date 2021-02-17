@@ -25,16 +25,16 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _codeController = new TextEditingController();
   TextEditingController _confirmcodeController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _confirmPasswordController =
-      new TextEditingController();
+  // TextEditingController _passwordController = new TextEditingController();
+  // TextEditingController _confirmPasswordController =
+  //     new TextEditingController();
 
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
-  final _formKey3 = GlobalKey<FormState>();
+  // final _formKey3 = GlobalKey<FormState>();
   bool _autoValidate1 = false;
   bool _autoValidate2 = false;
-  bool _autoValidate3 = false;
+  // bool _autoValidate3 = false;
   var notificationType = NotificationType.email;
   bool emailSent = false;
 

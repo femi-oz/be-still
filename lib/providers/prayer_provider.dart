@@ -45,25 +45,6 @@ class PrayerProvider with ChangeNotifier {
     );
   }
 
-  Future setGroupPrayers(
-      String userId, String groupId, bool isGroupAdmin) async {
-    _prayerService.getGroupPrayers(groupId).asBroadcastStream().listen((data) {
-      if (!isGroupAdmin) {
-        _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
-      }
-      _filteredPrayers = _prayers;
-      _filteredPrayers
-          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-      _filterOptions = FilterType(
-        isAnswered: false,
-        isArchived: false,
-        isSnoozed: false,
-        status: Status.active,
-      );
-      notifyListeners();
-    });
-  }
-
   Future searchPrayers(String searchQuery) async {
     List<CombinePrayerStream> filteredPrayers = _prayers
         .where((CombinePrayerStream data) => data.prayer.description
@@ -147,43 +128,29 @@ class PrayerProvider with ChangeNotifier {
     await _prayerService.addUserPrayer(prayerId, userId, creatorId, creator);
   }
 
-  Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
-    return await _prayerService.messageRequestor(prayerRequestData);
+  Future addPrayerTag(PrayerTagModel prayerData, String countryCode,
+      List<PrayerTagModel> oldTags) async {
+    await _prayerService.addPrayerTag(prayerData, countryCode, oldTags);
   }
 
-  Future tagPrayer(
-      String userId, String prayerId, String tagger, String taggerId) async {
-    return await _prayerService.tagPrayer(prayerId, userId, tagger, taggerId);
-  }
-
-  Future addPrayerTag(BuildContext context, PrayerTagModel prayerData) async {
-    return await _prayerService.addPrayerTag(prayerData);
-  }
-
-  Future addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
-      List groups, String _userID) async {
-    return await _prayerService.addPrayerWithGroup(
-        context, prayerData, groups, _userID);
+  Future removePrayerTag(String tagId) async {
+    await _prayerService.removePrayerTag(tagId);
   }
 
   Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
-    return await _prayerService.addPrayerUpdate(prayerUpdateData);
-  }
-
-  Future addGroupPrayer(BuildContext context, PrayerModel prayerData) async {
-    return await _prayerService.addGroupPrayer(context, prayerData);
+    await _prayerService.addPrayerUpdate(prayerUpdateData);
   }
 
   Future editprayer(String description, String prayerID) async {
-    return await _prayerService.editPrayer(description, prayerID);
+    await _prayerService.editPrayer(description, prayerID);
   }
 
   Future archivePrayer(String prayerID) async {
-    return await _prayerService.archivePrayer(prayerID);
+    await _prayerService.archivePrayer(prayerID);
   }
 
   Future unArchivePrayer(String prayerID) async {
-    return await _prayerService.unArchivePrayer(prayerID);
+    await _prayerService.unArchivePrayer(prayerID);
   }
 
   Future favoritePrayer(String prayerID) async {
@@ -195,11 +162,58 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future markPrayerAsAnswered(String prayerID) async {
-    return await _prayerService.markPrayerAsAnswered(prayerID);
+    await _prayerService.markPrayerAsAnswered(prayerID);
   }
 
   Future deletePrayer(String prayerID) async {
-    return await _prayerService.deletePrayer(prayerID);
+    await _prayerService.deletePrayer(prayerID);
+  }
+
+  Future setCurrentPrayerType(PrayerType type) async {
+    _currentPrayerType = type;
+    notifyListeners();
+  }
+
+  Future setPrayer(String id) async {
+    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
+      _currentPrayer = prayer;
+      notifyListeners();
+    });
+    return;
+  }
+
+//Group Prayers
+  Future setGroupPrayers(
+      String userId, String groupId, bool isGroupAdmin) async {
+    _prayerService.getGroupPrayers(groupId).asBroadcastStream().listen((data) {
+      if (!isGroupAdmin) {
+        _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
+      }
+      _filteredPrayers = _prayers;
+      _filteredPrayers
+          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+      _filterOptions = FilterType(
+        isAnswered: false,
+        isArchived: false,
+        isSnoozed: false,
+        status: Status.active,
+      );
+      notifyListeners();
+    });
+  }
+
+  Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
+    return await _prayerService.messageRequestor(prayerRequestData);
+  }
+
+  Future addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
+      List groups, String _userID) async {
+    return await _prayerService.addPrayerWithGroup(
+        context, prayerData, groups, _userID);
+  }
+
+  Future addGroupPrayer(BuildContext context, PrayerModel prayerData) async {
+    return await _prayerService.addGroupPrayer(context, prayerData);
   }
 
   Future hidePrayer(String prayerId, UserModel user) async {
@@ -210,20 +224,7 @@ class PrayerProvider with ChangeNotifier {
     return await _prayerService.hideFromAllMembers(prayerId, value);
   }
 
-  Future setCurrentPrayerType(PrayerType type) async {
-    _currentPrayerType = type;
-    notifyListeners();
-  }
-
   Future addPrayerToMyList(UserPrayerModel userPrayer) async {
     return await _prayerService.addPrayerToMyList(userPrayer);
-  }
-
-  Future setPrayer(String id) async {
-    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-      _currentPrayer = prayer;
-      notifyListeners();
-    });
-    return;
   }
 }

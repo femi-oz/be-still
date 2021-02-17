@@ -1,7 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -33,9 +32,11 @@ class _PrayerListState extends State<PrayerList> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
-      await Provider.of<UserProvider>(context, listen: false).setAllUsers();
+      await Provider.of<UserProvider>(context, listen: false)
+          .setAllUsers(_user.id);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications();
+      await Provider.of<MiscProvider>(context, listen: false).setCountryName();
       await Future.delayed(const Duration(milliseconds: 1000),
           () => BeStilDialog.hideLoading(context));
     } on HttpException catch (e) {
@@ -67,29 +68,26 @@ class _PrayerListState extends State<PrayerList> {
   }
 
   void onLongPressCard(prayerData, details) async {
-    await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(prayerData.userPrayer.id);
       var y = details.globalPosition.dy;
-      showModalBottomSheet(
-          context: context,
-          barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
-          backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return PrayerQuickAccess(
-              y: y,
-              prayerData: prayerData,
-            );
-          });
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+      await Future.delayed(
+          const Duration(milliseconds: 300),
+          () => showModalBottomSheet(
+              context: context,
+              barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
+              backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return PrayerQuickAccess(
+                  y: y,
+                  prayerData: prayerData,
+                );
+              }));
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
