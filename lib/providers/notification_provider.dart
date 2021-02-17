@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/notification_service.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,12 +11,32 @@ import '../locator.dart';
 
 class NotificationProvider with ChangeNotifier {
   NotificationService _notificationService = locator<NotificationService>();
+  NotificationProvider._();
+  factory NotificationProvider() => _instance;
+
+  static final NotificationProvider _instance = NotificationProvider._();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  bool _initialized = false;
 
   List<NotificationModel> _notifications = [];
   List<NotificationModel> get notifications => _notifications;
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;
+  Future<void> init(String userId) async {
+    if (!_initialized) {
+      // For iOS request permission first.
+      _firebaseMessaging.requestNotificationPermissions();
+      _firebaseMessaging.configure();
+
+      // For testing purposes print the Firebase Messaging token
+      String token = await _firebaseMessaging.getToken();
+      await _notificationService.init(token, userId);
+      // });
+    }
+
+    _initialized = true;
+  }
 
   Future setUserNotifications(String userId) async {
     _notificationService

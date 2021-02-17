@@ -6,6 +6,7 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/user_device.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,6 +28,10 @@ class PrayerService {
       FirebaseFirestore.instance.collection("User");
   final CollectionReference _prayerTagCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTag");
+  final CollectionReference _userDeviceCollectionReference =
+      FirebaseFirestore.instance.collection("UserDevice");
+  final CollectionReference _deviceCollectionReference =
+      FirebaseFirestore.instance.collection("Device");
 
   var prayerId;
 
@@ -172,17 +177,22 @@ class PrayerService {
       _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
-
-      var data = {
-        'prayerid': prayerId,
-        'userid': _userID,
-        'tagger': creator,
-        'taggerId': creatorId,
-      };
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
-        data: data,
-      );
+      var userDev = await _userDeviceCollectionReference
+          .where('UserId', isEqualTo: _userID)
+          .get();
+      var x = userDev.docs.map((e) => UserDeviceModel.fromData(e)).toList()[0];
+      if (x != null) {
+        var data = {
+          'prayerid': prayerId,
+          'userid': _userID,
+          'tagger': creator,
+          'taggerId': creatorId,
+        };
+        await dio.post(
+          'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
+          data: data,
+        );
+      }
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -203,20 +213,20 @@ class PrayerService {
             oldTags
                 .map((e) => e?.phoneNumber)
                 .contains(prayerTagData.phoneNumber)) return;
-        // if (prayerTagData.email != null || prayerTagData.email != '') {
-        //   var data = {
-        //     'message': prayerTagData.message,
-        //     'receiver': prayerTagData.displayName,
-        //     'email': prayerTagData.email,
-        //     'sender': prayerTagData.tagger,
-        //     'template': MessageTemplayeType.tagPrayer,
-        //   };
-        //   await dio.post(
-        //     'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
-        //     data: data,
-        //   );
-        //   return;
-        // }
+        if (prayerTagData.email != null || prayerTagData.email != '') {
+          var data = {
+            'message': prayerTagData.message,
+            'receiver': prayerTagData.displayName,
+            'email': prayerTagData.email,
+            'sender': prayerTagData.tagger,
+            'template': MessageTemplayeType.tagPrayer,
+          };
+          await dio.post(
+            'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+            data: data,
+          );
+          return;
+        }
         if (prayerTagData.phoneNumber != null ||
             prayerTagData.phoneNumber != '') {
           var data = {

@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/user_device.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
@@ -12,6 +15,45 @@ class NotificationService {
       FirebaseFirestore.instance.collection("MobileNotification");
   final CollectionReference _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("LocalNotification");
+  final CollectionReference _userDeviceCollectionReference =
+      FirebaseFirestore.instance.collection("UserDevice");
+  final CollectionReference _deviceCollectionReference =
+      FirebaseFirestore.instance.collection("Device");
+  init(String token, String userId) async {
+    final deviceId = Uuid().v1();
+    final userDeviceID = Uuid().v1();
+    //store device
+    var batch = FirebaseFirestore.instance.batch();
+    // return FirebaseFirestore.instance.runTransaction((transaction) async {
+    batch.set(
+      _deviceCollectionReference.doc(deviceId),
+      DeviceModel(
+              createdBy: 'MOBILE',
+              createdOn: DateTime.now(),
+              modifiedOn: DateTime.now(),
+              modifiedBy: 'MOBILE',
+              model: 'MOBILE',
+              deviceId: '',
+              name: token,
+              status: Status.active)
+          .toJson(),
+    );
+
+    // store user device
+    batch.set(
+      _userDeviceCollectionReference.doc(userDeviceID),
+      UserDeviceModel(
+        createdBy: 'MOBILE',
+        createdOn: DateTime.now(),
+        modifiedOn: DateTime.now(),
+        modifiedBy: 'MOBILE',
+        deviceId: deviceId,
+        userId: userId,
+        status: Status.active,
+      ).toJson(),
+    );
+    batch.commit();
+  }
 
   Stream<List<NotificationModel>> getUserNotifications(String userId) {
     try {
