@@ -185,8 +185,8 @@ class PrayerService {
       for (int i = 0; i < devices.length; i++) {
         var data = {
           'title': "You have been tagged in a prayer",
-          'token': devices[i].name,
-          'prayer': prayerDesc,
+          'tokens': devices.map((e) => e.name),
+          'message': prayerDesc,
           'sender': creator,
         };
         await dio.post(
