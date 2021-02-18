@@ -19,13 +19,11 @@ class NotificationService {
       FirebaseFirestore.instance.collection("UserDevice");
   final CollectionReference _deviceCollectionReference =
       FirebaseFirestore.instance.collection("Device");
+
   init(String token, String userId) async {
     final deviceId = Uuid().v1();
     final userDeviceID = Uuid().v1();
     //store device
-    var batch = FirebaseFirestore.instance.batch();
-    // return FirebaseFirestore.instance.runTransaction((transaction) async {
-
     await _deviceCollectionReference.doc(deviceId).set(
           DeviceModel(
                   createdBy: 'MOBILE',
@@ -53,49 +51,38 @@ class NotificationService {
         );
   }
 
-  Stream<List<NotificationModel>> getUserNotifications(String userId) {
-    try {
-      return _notificationCollectionReference
-          .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .map((e) =>
-              e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
-    } catch (e) {
-      throw HttpException(e.message);
+  Future<List<DeviceModel>> getNotificationToken(_userID) async {
+    //get user devices
+    var userDevices = await _userDeviceCollectionReference
+        .where('UserId', isEqualTo: _userID)
+        .get();
+    var userDevicesDocs =
+        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
+    List<DeviceModel> devices = [];
+    for (int i = 0; i < userDevicesDocs.length; i++) {
+      var dev =
+          await _deviceCollectionReference.doc(userDevicesDocs[i].id).get();
+      devices.add(DeviceModel.fromData(dev));
     }
+    return devices;
   }
 
-  acceptGroupInvite(
-      String groupId, String userId, String name, String email) async {
+  addMobileNotification(String message, String messageType, String sender,
+      String senderId, String userId) async {
+    final _notificationId = Uuid().v1();
     try {
-      var dio = Dio(BaseOptions(followRedirects: false));
-      var data = {
-        'groupId': groupId,
-        'userId': userId,
-        'name': name,
-        'email': email
-      };
-      print(data);
-
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
-        data: data,
-      );
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
-
-  newPrayerGroupNotification(String prayerId, String groupId) async {
-    try {
-      var dio = Dio(BaseOptions(followRedirects: false));
-      var data = {'groupId': groupId, 'prayerId': prayerId};
-      print(data);
-
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/NewPrayer',
-        data: data,
-      );
+      _notificationCollectionReference.doc(_notificationId).set(
+          NotificationModel(
+                  message: message,
+                  messageType: messageType,
+                  sender: senderId,
+                  userId: userId,
+                  createdBy: 'SYSTEM',
+                  createdOn: DateTime.now(),
+                  extra1: '',
+                  extra2: '',
+                  extra3: sender)
+              .toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -142,6 +129,54 @@ class NotificationService {
           .map((e) => e.docs
               .map((doc) => LocalNotificationModel.fromData(doc))
               .toList());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<List<NotificationModel>> getUserNotifications(String userId) {
+    try {
+      return _notificationCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .snapshots()
+          .map((e) =>
+              e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  acceptGroupInvite(
+      String groupId, String userId, String name, String email) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {
+        'groupId': groupId,
+        'userId': userId,
+        'name': name,
+        'email': email
+      };
+      print(data);
+
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
+        data: data,
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  newPrayerGroupNotification(String prayerId, String groupId) async {
+    try {
+      var dio = Dio(BaseOptions(followRedirects: false));
+      var data = {'groupId': groupId, 'prayerId': prayerId};
+      print(data);
+
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/NewPrayer',
+        data: data,
+      );
     } catch (e) {
       throw HttpException(e.message);
     }

@@ -1,12 +1,16 @@
 import 'dart:io';
 
 import 'package:be_still/enums/message-template.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/locator.dart';
+import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_device.model.dart';
+import 'package:be_still/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -166,8 +170,8 @@ class PrayerService {
     }
   }
 
-  Future addUserPrayer(
-      String prayerId, String _userID, String creatorId, String creator) async {
+  Future addUserPrayer(String prayerId, String prayerDesc, String _userID,
+      String creatorId, String creator) async {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
     var dio = Dio(BaseOptions(followRedirects: false));
@@ -177,16 +181,15 @@ class PrayerService {
       _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
-      var userDev = await _userDeviceCollectionReference
-          .where('UserId', isEqualTo: _userID)
-          .get();
-      var x = userDev.docs.map((e) => UserDeviceModel.fromData(e)).toList()[0];
-      if (x != null) {
+      await locator<NotificationService>().addMobileNotification(prayerDesc,
+          NotificationType.prayer_updates, creator, creatorId, _userID);
+      var devices =
+          await locator<NotificationService>().getNotificationToken(_userID);
+      for (int i = 0; i < devices.length; i++) {
         var data = {
-          'prayerid': prayerId,
-          'userid': _userID,
-          'tagger': creator,
-          'taggerId': creatorId,
+          'token': devices[i].name,
+          'prayer': prayerDesc,
+          'sender': creator,
         };
         await dio.post(
           'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
