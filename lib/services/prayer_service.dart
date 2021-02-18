@@ -181,8 +181,8 @@ class PrayerService {
       _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
-      await locator<NotificationService>().addMobileNotification(prayerDesc,
-          NotificationType.prayer_updates, creator, creatorId, _userID);
+      await locator<NotificationService>().addMobileNotification(
+          prayerDesc, NotificationType.prayer, creator, creatorId, _userID);
       var devices =
           await locator<NotificationService>().getNotificationToken(_userID);
       for (int i = 0; i < devices.length; i++) {
