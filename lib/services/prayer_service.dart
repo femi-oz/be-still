@@ -242,9 +242,11 @@ class PrayerService {
         if (prayerTagData.phoneNumber != null ||
             prayerTagData.phoneNumber != '') {
           var _templateBody = MessageTemplate.fromData(template).templateBody;
-          _templateBody.replaceAll('{Receiver}', prayerTagData.displayName);
-          _templateBody.replaceAll('{message}', prayerTagData.message);
-          _templateBody.replaceAll('{<br/>}', "\n");
+          _templateBody =
+              _templateBody.replaceAll('{Receiver}', prayerTagData.displayName);
+          _templateBody =
+              _templateBody.replaceAll('{message}', prayerTagData.message);
+          _templateBody = _templateBody.replaceAll('<br/>', "\n");
           var data = {
             'phoneNumber': prayerTagData.phoneNumber,
             'template': _templateBody,

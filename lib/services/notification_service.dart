@@ -60,8 +60,9 @@ class NotificationService {
         userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
     List<DeviceModel> devices = [];
     for (int i = 0; i < userDevicesDocs.length; i++) {
-      var dev =
-          await _deviceCollectionReference.doc(userDevicesDocs[i].id).get();
+      var dev = await _deviceCollectionReference
+          .doc(userDevicesDocs[i].deviceId)
+          .get();
       devices.add(DeviceModel.fromData(dev));
     }
     return devices;
