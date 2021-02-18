@@ -123,9 +123,10 @@ class PrayerProvider with ChangeNotifier {
     await _prayerService.addPrayer(prayerData, _userID);
   }
 
-  Future addUserPrayer(
-      String prayerId, String userId, String creatorId, String creator) async {
-    await _prayerService.addUserPrayer(prayerId, userId, creatorId, creator);
+  Future addUserPrayer(String prayerId, String prayerDesc, String userId,
+      String creatorId, String creator) async {
+    await _prayerService.addUserPrayer(
+        prayerId, prayerDesc, userId, creatorId, creator);
   }
 
   Future addPrayerTag(PrayerTagModel prayerData, String countryCode,

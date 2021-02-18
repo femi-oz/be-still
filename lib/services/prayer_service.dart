@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:be_still/enums/message-template.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/models/user_device.model.dart';
+import 'package:be_still/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,10 +31,8 @@ class PrayerService {
       FirebaseFirestore.instance.collection("User");
   final CollectionReference _prayerTagCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTag");
-  final CollectionReference _userDeviceCollectionReference =
-      FirebaseFirestore.instance.collection("UserDevice");
-  final CollectionReference _deviceCollectionReference =
-      FirebaseFirestore.instance.collection("Device");
+  final CollectionReference _messageTemplateCollectionReference =
+      FirebaseFirestore.instance.collection("MessageTemplate");
 
   var prayerId;
 
@@ -167,8 +168,8 @@ class PrayerService {
     }
   }
 
-  Future addUserPrayer(
-      String prayerId, String _userID, String creatorId, String creator) async {
+  Future addUserPrayer(String prayerId, String prayerDesc, String _userID,
+      String creatorId, String creator) async {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
     var dio = Dio(BaseOptions(followRedirects: false));
@@ -178,19 +179,19 @@ class PrayerService {
       _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
-      var userDev = await _userDeviceCollectionReference
-          .where('UserId', isEqualTo: _userID)
-          .get();
-      var x = userDev.docs.map((e) => UserDeviceModel.fromData(e)).toList()[0];
-      if (x != null) {
+      await locator<NotificationService>().addMobileNotification(
+          prayerDesc, NotificationType.prayer, creator, creatorId, _userID);
+      var devices =
+          await locator<NotificationService>().getNotificationToken(_userID);
+      for (int i = 0; i < devices.length; i++) {
         var data = {
-          'prayerid': prayerId,
-          'userid': _userID,
-          'tagger': creator,
-          'taggerId': creatorId,
+          'title': "You have been tagged in a prayer",
+          'token': devices[i].name,
+          'prayer': prayerDesc,
+          'sender': creator,
         };
         await dio.post(
-          'https://us-central1-bestill-app.cloudfunctions.net/PrayerTag',
+          'https://us-central1-bestill-app.cloudfunctions.net/SendNotification',
           data: data,
         );
       }
@@ -209,18 +210,29 @@ class PrayerService {
         await _prayerTagCollectionReference
             .doc(_prayerTagID)
             .set(populatePrayerTag(prayerTagData).toJson());
+        var template = await _messageTemplateCollectionReference
+            .doc(MessageTemplateType.tagPrayer)
+            .get();
         // compare old tags vs new tag to know if person has already received email/text
         if (oldTags.map((e) => e?.email).contains(prayerTagData.email) ||
             oldTags
                 .map((e) => e?.phoneNumber)
                 .contains(prayerTagData.phoneNumber)) return;
         if (prayerTagData.email != null || prayerTagData.email != '') {
+          var _template = MessageTemplate.fromData(template);
+          var templateSubject = _template.templateSubject;
+          var templateBody = _template.templateBody;
+          templateSubject =
+              templateSubject.replaceAll("{Sender}", prayerTagData.tagger);
+          templateBody =
+              templateBody.replaceAll("{Receiver}", prayerTagData.displayName);
+          templateBody =
+              templateBody.replaceAll("{message}", prayerTagData.message);
           var data = {
-            'message': prayerTagData.message,
-            'receiver': prayerTagData.displayName,
+            'templateSubject': templateSubject,
+            'templateBody': templateBody,
             'email': prayerTagData.email,
             'sender': prayerTagData.tagger,
-            'template': MessageTemplayeType.tagPrayer,
           };
           await dio.post(
             'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
@@ -230,11 +242,15 @@ class PrayerService {
         }
         if (prayerTagData.phoneNumber != null ||
             prayerTagData.phoneNumber != '') {
+          var _templateBody = MessageTemplate.fromData(template).templateBody;
+          _templateBody =
+              _templateBody.replaceAll('{Receiver}', prayerTagData.displayName);
+          _templateBody =
+              _templateBody.replaceAll('{message}', prayerTagData.message);
+          _templateBody = _templateBody.replaceAll('<br/>', "\n");
           var data = {
-            'message': prayerTagData.message,
-            'receiver': prayerTagData.displayName,
             'phoneNumber': prayerTagData.phoneNumber,
-            'template': MessageTemplayeType.tagPrayer,
+            'template': _templateBody,
             'country': countryCode
           };
           await dio.post(

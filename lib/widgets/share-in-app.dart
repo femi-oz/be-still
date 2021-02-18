@@ -33,14 +33,14 @@ class _ShareInAppState extends State<ShareInApp> {
 
     final creator =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    final _prayerId = Provider.of<PrayerProvider>(context, listen: false)
+    final _prayer = Provider.of<PrayerProvider>(context, listen: false)
         .currentPrayer
-        .prayer
-        .id;
+        .prayer;
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false).addUserPrayer(
-          _prayerId,
+          _prayer.id,
+          _prayer.description,
           userId,
           creator.id,
           '${creator.firstName} ${creator.lastName}');
