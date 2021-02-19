@@ -76,7 +76,8 @@ class _ShareInAppState extends State<ShareInApp> {
                       textFieldConfiguration: TextFieldConfiguration(
                         controller: userInput,
                         autofocus: true,
-                        style: AppTextStyles.regularText14,
+                        style: AppTextStyles.regularText14
+                            .copyWith(color: AppColors.lightBlue3),
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderSide:

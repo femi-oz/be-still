@@ -137,8 +137,12 @@ class _AddPrayerState extends State<AddPrayer> {
         displayName: contactData[i].displayName,
         modifiedBy: _user.email,
         modifiedOn: DateTime.now(),
-        phoneNumber: contactData[i].phones.toList()[0].value,
-        email: contactData[i].emails.toList()[0].value,
+        phoneNumber: contactData[i].phones.length > 0
+            ? contactData[i].phones.toList()[0].value
+            : null,
+        email: contactData[i].emails.length > 0
+            ? contactData[i].emails.toList()[0]?.value
+            : null,
         prayerId: null,
       );
       String countryCode =
@@ -178,6 +182,25 @@ class _AddPrayerState extends State<AddPrayer> {
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)))) ??
         false;
+  }
+
+  _onTagSelected(s) {
+    String tmp = str.substring(1, str.length);
+    var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
+    setState(() {
+      str = '';
+      _descriptionController.text +=
+          s.displayName.substring(i + tmp.length, s.displayName.length);
+      _descriptionController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _descriptionController.text.length));
+      _descriptionController.selection =
+          TextSelection.collapsed(offset: _descriptionController.text.length);
+    });
+    if (!contactData.map((e) => e.identifier).contains(s.identifier)) {
+      contactData = [...contactData, s];
+    }
+
+    print(contactData);
   }
 
   @override
@@ -268,44 +291,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                   ),
                                                 ),
                                               ),
-                                              onTap: () {
-                                                String tmp = str.substring(
-                                                    1, str.length);
-                                                var i = s.displayName
-                                                    .toLowerCase()
-                                                    .indexOf(tmp.toLowerCase());
-                                                setState(() {
-                                                  str = '';
-                                                  _descriptionController.text +=
-                                                      s.displayName.substring(
-                                                          i + tmp.length,
-                                                          s.displayName.length);
-                                                  _descriptionController
-                                                          .selection =
-                                                      TextSelection.fromPosition(
-                                                          TextPosition(
-                                                              offset:
-                                                                  _descriptionController
-                                                                      .text
-                                                                      .length));
-                                                  _descriptionController
-                                                          .selection =
-                                                      TextSelection.collapsed(
-                                                          offset:
-                                                              _descriptionController
-                                                                  .text.length);
-                                                });
-                                                if (!contactData
-                                                    .map((e) => e.identifier)
-                                                    .contains(s.identifier)) {
-                                                  contactData = [
-                                                    ...contactData,
-                                                    s
-                                                  ];
-                                                }
-
-                                                print(contactData);
-                                              });
+                                              onTap: () => _onTagSelected(s));
                                         else
                                           return SizedBox();
                                       }).toList()

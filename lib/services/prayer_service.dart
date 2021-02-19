@@ -186,8 +186,8 @@ class PrayerService {
       for (int i = 0; i < devices.length; i++) {
         var data = {
           'title': "You have been tagged in a prayer",
-          'token': devices[i].name,
-          'prayer': prayerDesc,
+          'tokens': devices.map((e) => e.name).toList(),
+          'message': prayerDesc,
           'sender': creator,
         };
         await dio.post(
@@ -218,7 +218,7 @@ class PrayerService {
             oldTags
                 .map((e) => e?.phoneNumber)
                 .contains(prayerTagData.phoneNumber)) return;
-        if (prayerTagData.email != null || prayerTagData.email != '') {
+        if (prayerTagData.email != null) {
           var _template = MessageTemplate.fromData(template);
           var templateSubject = _template.templateSubject;
           var templateBody = _template.templateBody;
@@ -240,8 +240,7 @@ class PrayerService {
           );
           return;
         }
-        if (prayerTagData.phoneNumber != null ||
-            prayerTagData.phoneNumber != '') {
+        if (prayerTagData.phoneNumber != null) {
           var _templateBody = MessageTemplate.fromData(template).templateBody;
           _templateBody =
               _templateBody.replaceAll('{Receiver}', prayerTagData.displayName);
