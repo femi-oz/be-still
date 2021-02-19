@@ -75,6 +75,7 @@ class _AddPrayerState extends State<AddPrayer> {
         creatorName: '${_user.firstName} ${_user.lastName}',
         createdBy: _user.id,
         createdOn: DateTime.now(),
+        snoozeEndDate: DateTime.now(),
         hideFromAllMembers: false,
         hideFromMe: false,
         isInappropriate: false,

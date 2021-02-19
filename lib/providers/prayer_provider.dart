@@ -76,7 +76,8 @@ class PrayerProvider with ChangeNotifier {
     var answeredPrayers = [];
     var snoozedPrayers = [];
     var archivedPrayers = [];
-
+    var newPrayers = [];
+    // newPrayers = prayers.sort((a, b) => b.userPrayer.isFavorite ? 1 : -1);
     if (status == Status.active) {
       activePrayers = prayers
           .where((CombinePrayerStream data) =>
@@ -95,7 +96,9 @@ class PrayerProvider with ChangeNotifier {
     }
     if (isSnoozed == true) {
       snoozedPrayers = prayers
-          .where((CombinePrayerStream data) => data.prayer.isSnoozed == true)
+          .where((CombinePrayerStream data) =>
+              data.prayer.isSnoozed == true &&
+              data.prayer.snoozeEndDate.isAfter(DateTime.now()))
           .toList();
     }
     _filteredPrayers = [
@@ -114,6 +117,10 @@ class PrayerProvider with ChangeNotifier {
     _filteredPrayers = _distinct;
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    _filteredPrayers.sort((a, b) => b.userPrayer.isFavorite
+        .toString()
+        .compareTo(a.userPrayer.isFavorite.toString()));
+
     notifyListeners();
   }
 
@@ -156,6 +163,14 @@ class PrayerProvider with ChangeNotifier {
     await _prayerService.unArchivePrayer(prayerID);
   }
 
+  Future favoritePrayer(String prayerID) async {
+    return await _prayerService.favoritePrayer(prayerID);
+  }
+
+  Future unfavoritePrayer(String prayerID) async {
+    return await _prayerService.unFavoritePrayer(prayerID);
+  }
+
   Future markPrayerAsAnswered(String prayerID) async {
     await _prayerService.markPrayerAsAnswered(prayerID);
   }
@@ -185,6 +200,7 @@ class PrayerProvider with ChangeNotifier {
         _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
       }
       _filteredPrayers = _prayers;
+
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
       _filterOptions = FilterType(

@@ -65,6 +65,7 @@ class PrayerService {
           Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
               // .doc(f.data()['PrayerId'])
               .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+              // .orderBy('ModifiedOn')
               .snapshots()
               .map<List<PrayerTagModel>>((list) =>
                   list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
@@ -318,9 +319,33 @@ class PrayerService {
     }
   }
 
-  Future deletePrayer(String id) async {
+  Future favoritePrayer(
+    String prayerID,
+  ) async {
     try {
-      _userPrayerCollectionReference.doc(id).delete();
+      _userPrayerCollectionReference.doc(prayerID).update(
+        {'IsFavourite': true},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future unFavoritePrayer(
+    String prayerID,
+  ) async {
+    try {
+      _userPrayerCollectionReference.doc(prayerID).update(
+        {'IsFavourite': false},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future deletePrayer(String prayerID) async {
+    try {
+      _userPrayerCollectionReference.doc(prayerID).delete();
     } catch (e) {
       throw HttpException(e.message);
     }

@@ -63,6 +63,48 @@ class _PrayerMenuState extends State<PrayerMenu> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  _markPrayerAsFavorite() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .favoritePrayer(widget.prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      _goToDetails();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
+  _unMarkPrayerAsFavorite() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unfavoritePrayer(widget.prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      _goToDetails();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   Future onSelectNotification(String payload) async {
     await Provider.of<PrayerProvider>(context, listen: false)
         .setPrayer(widget.prayerData.userPrayer.id);
@@ -358,6 +400,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         text: 'Mark as Answered',
                       )
                     : Container(),
+                widget.prayerData.userPrayer.isFavorite
+                    ? MenuButton(
+                        icon: Icons.favorite_border_outlined,
+                        onPressed: () => _unMarkPrayerAsFavorite(),
+                        text: 'Unfavorite ',
+                      )
+                    : MenuButton(
+                        icon: Icons.favorite,
+                        onPressed: () => _markPrayerAsFavorite(),
+                        text: 'Favorite ',
+                      ),
                 widget.prayerData.prayer.status == Status.active &&
                         !widget.prayerData.prayer.isArchived
                     ? MenuButton(

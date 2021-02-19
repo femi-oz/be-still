@@ -13,13 +13,7 @@ class MiscProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setCountryName() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    debugPrint('location: ${position.latitude}');
-    final coordinates = new Coordinates(position.latitude, position.longitude);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+  setCountryName(addresses) async {
     var first = addresses.first;
     _countryCode = first.countryCode;
     notifyListeners();
