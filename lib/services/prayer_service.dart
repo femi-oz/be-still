@@ -7,10 +7,12 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
@@ -183,12 +185,12 @@ class PrayerService {
       var devices =
           await locator<NotificationService>().getNotificationToken(_userID);
       for (int i = 0; i < devices.length; i++) {
-        var data = {
-          'title': "You have been tagged in a prayer",
-          'tokens': devices.map((e) => e.name).toList(),
-          'message': prayerDesc,
-          'sender': creator,
-        };
+        var data = PushNotificationModel(
+          message: prayerDesc,
+          sender: creator,
+          title: "You have been tagged in a prayer",
+          tokens: devices.map((e) => e.name).toList(),
+        );
         await dio.post(
           'https://us-central1-bestill-app.cloudfunctions.net/SendNotification',
           data: data,
@@ -199,63 +201,34 @@ class PrayerService {
     }
   }
 
-  Future addPrayerTag(PrayerTagModel prayerTagData, String countryCode,
+  Future addPrayerTag(List<Contact> contactData, String countryCode,
+      UserModel user, String message,
       [List<PrayerTagModel> oldTags]) async {
     final _prayerTagID = Uuid().v1();
-    var dio = Dio(BaseOptions(followRedirects: false));
     try {
       //store prayer Tag
-      if (prayerTagData != null) {
-        await _prayerTagCollectionReference
-            .doc(_prayerTagID)
-            .set(populatePrayerTag(prayerTagData).toJson());
-        var template = await _messageTemplateCollectionReference
-            .doc(MessageTemplateType.tagPrayer)
-            .get();
-        // compare old tags vs new tag to know if person has already received email/text
-        if (oldTags.map((e) => e?.email).contains(prayerTagData.email) ||
-            oldTags
-                .map((e) => e?.phoneNumber)
-                .contains(prayerTagData.phoneNumber)) return;
-        if (prayerTagData.email != null) {
-          var _template = MessageTemplate.fromData(template);
-          var templateSubject = _template.templateSubject;
-          var templateBody = _template.templateBody;
-          templateSubject =
-              templateSubject.replaceAll("{Sender}", prayerTagData.tagger);
-          templateBody =
-              templateBody.replaceAll("{Receiver}", prayerTagData.displayName);
-          templateBody =
-              templateBody.replaceAll("{message}", prayerTagData.message);
-          var data = {
-            'templateSubject': templateSubject,
-            'templateBody': templateBody,
-            'email': prayerTagData.email,
-            'sender': prayerTagData.tagger,
-          };
-          await dio.post(
-            'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
-            data: data,
-          );
-          return;
-        }
-        if (prayerTagData.phoneNumber != null) {
-          var _templateBody = MessageTemplate.fromData(template).templateBody;
-          _templateBody =
-              _templateBody.replaceAll('{Receiver}', prayerTagData.displayName);
-          _templateBody =
-              _templateBody.replaceAll('{message}', prayerTagData.message);
-          _templateBody = _templateBody.replaceAll('<br/>', "\n");
-          var data = {
-            'phoneNumber': prayerTagData.phoneNumber,
-            'template': _templateBody,
-            'country': countryCode
-          };
-          await dio.post(
-            'https://us-central1-bestill-app.cloudfunctions.net/SendTextMessage',
-            data: data,
-          );
-          return;
+      for (var i = 0; i < contactData.length; i++) {
+        if (contactData[i] != null) {
+          await _prayerTagCollectionReference.doc(_prayerTagID).set(
+              populatePrayerTag(
+                      contactData[i], user.id, user.firstName, message)
+                  .toJson());
+          var template = await _messageTemplateCollectionReference
+              .doc(MessageTemplateType.tagPrayer)
+              .get();
+          var phoneNumber = contactData[i].phones.length > 0
+              ? contactData[i].phones.toList()[0].value
+              : null;
+          var email = contactData[i].emails.length > 0
+              ? contactData[i].emails.toList()[0]?.value
+              : null;
+          // compare old tags vs new tag to know if person has already received email/text
+          if (oldTags.map((e) => e?.email).contains(email) ||
+              oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) return;
+          await locator<NotificationService>().sendEmail(email, template,
+              user.firstName, contactData[i].displayName, message);
+          await locator<NotificationService>().sendSMS(phoneNumber, template,
+              user.firstName, contactData[i].displayName, message, countryCode);
         }
       }
     } catch (e) {
@@ -588,21 +561,22 @@ class PrayerService {
     return userPrayer;
   }
 
-  populatePrayerTag(
-    PrayerTagModel prayerTagData,
-  ) {
+  PrayerTagModel populatePrayerTag(
+      Contact contact, String userId, String sender, String message) {
     PrayerTagModel prayerTag = PrayerTagModel(
-      userId: prayerTagData.userId,
+      userId: userId,
       prayerId: prayerId,
-      displayName: prayerTagData.displayName,
-      phoneNumber: prayerTagData.phoneNumber,
-      email: prayerTagData.email,
-      message: prayerTagData.message,
-      tagger: prayerTagData.tagger,
-      createdBy: prayerTagData.createdBy,
-      createdOn: prayerTagData.createdOn,
-      modifiedBy: prayerTagData.modifiedBy,
-      modifiedOn: prayerTagData.modifiedOn,
+      displayName: contact.displayName,
+      phoneNumber:
+          contact.phones.length > 0 ? contact.phones.toList()[0].value : null,
+      email:
+          contact.emails.length > 0 ? contact.emails.toList()[0]?.value : null,
+      message: message,
+      tagger: sender,
+      createdBy: sender,
+      createdOn: DateTime.now(),
+      modifiedBy: sender,
+      modifiedOn: DateTime.now(),
     );
     return prayerTag;
   }

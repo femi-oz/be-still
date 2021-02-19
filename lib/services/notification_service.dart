@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user_device.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -86,6 +87,51 @@ class NotificationService {
               .toJson());
     } catch (e) {
       throw HttpException(e.message);
+    }
+  }
+
+  sendEmail(String email, DocumentSnapshot template, String sender,
+      String receiver, String message) async {
+    var dio = Dio(BaseOptions(followRedirects: false));
+    if (email != null) {
+      var _template = MessageTemplate.fromData(template);
+      var templateSubject = _template.templateSubject;
+      var templateBody = _template.templateBody;
+      templateSubject = templateSubject.replaceAll("{Sender}", sender);
+      templateBody = templateBody.replaceAll("{Receiver}", receiver);
+      templateBody = templateBody.replaceAll("{message}", message);
+      var data = {
+        'templateSubject': templateSubject,
+        'templateBody': templateBody,
+        'email': email,
+        'sender': sender,
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+        data: data,
+      );
+      return;
+    }
+  }
+
+  sendSMS(String phoneNumber, DocumentSnapshot template, String sender,
+      String receiver, String message, String countryCode) async {
+    var dio = Dio(BaseOptions(followRedirects: false));
+    if (phoneNumber != null) {
+      var _templateBody = MessageTemplate.fromData(template).templateBody;
+      _templateBody = _templateBody.replaceAll('{Receiver}', receiver);
+      _templateBody = _templateBody.replaceAll('{message}', message);
+      _templateBody = _templateBody.replaceAll('<br/>', "\n");
+      var data = {
+        'phoneNumber': phoneNumber,
+        'template': _templateBody,
+        'country': countryCode
+      };
+      await dio.post(
+        'https://us-central1-bestill-app.cloudfunctions.net/SendTextMessage',
+        data: data,
+      );
+      return;
     }
   }
 

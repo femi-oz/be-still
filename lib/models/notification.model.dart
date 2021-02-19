@@ -53,6 +53,37 @@ class NotificationModel {
   }
 }
 
+class PushNotificationModel {
+  final String id;
+  final String title;
+  final List<String> tokens;
+  final String message;
+  final String sender;
+
+  const PushNotificationModel({
+    this.id,
+    @required this.title,
+    @required this.tokens,
+    @required this.message,
+    @required this.sender,
+  });
+  PushNotificationModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        title = snapshot.data()['title'],
+        tokens = snapshot.data()['tokens'],
+        message = snapshot.data()['message'],
+        sender = snapshot.data()['sender'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'message': message,
+      'tokens': tokens,
+      'sender': sender,
+    };
+  }
+}
+
 class LocalNotificationModel {
   final String id;
   final String deviceId;

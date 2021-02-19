@@ -86,7 +86,13 @@ class _AddPrayerState extends State<AddPrayer> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayer(prayerData, _user.id);
-        if (contactData.length > 0) createTag(_user, []);
+        String countryCode =
+            Provider.of<MiscProvider>(context, listen: false).countryCode;
+        if (contactData.length > 0) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayerTag(contactData, countryCode, _user,
+                  _descriptionController.text, []);
+        }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
@@ -94,11 +100,9 @@ class _AddPrayerState extends State<AddPrayer> {
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)));
       } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, e.message);
       } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
@@ -110,45 +114,23 @@ class _AddPrayerState extends State<AddPrayer> {
         for (int i = 0; i < widget.prayerData.tags.length; i++)
           await Provider.of<PrayerProvider>(context, listen: false)
               .removePrayerTag(widget.prayerData.tags[i].id);
-        if (contactData.length > 0) createTag(_user, widget.prayerData.tags);
+        String countryCode =
+            Provider.of<MiscProvider>(context, listen: false).countryCode;
+        if (contactData.length > 0) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayerTag(contactData, countryCode, _user,
+                  _descriptionController.text, widget.prayerData.tags);
+        }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
       } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, e.message);
       } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
-    }
-  }
-
-  createTag(UserModel _user, List<PrayerTagModel> oldTags) async {
-    for (int i = 0; i < contactData.length; i++) {
-      var prayerTagData = PrayerTagModel(
-        message: _descriptionController.text,
-        tagger: _user.firstName,
-        userId: _user.id,
-        createdBy: _user.email,
-        createdOn: DateTime.now(),
-        displayName: contactData[i].displayName,
-        modifiedBy: _user.email,
-        modifiedOn: DateTime.now(),
-        phoneNumber: contactData[i].phones.length > 0
-            ? contactData[i].phones.toList()[0].value
-            : null,
-        email: contactData[i].emails.length > 0
-            ? contactData[i].emails.toList()[0]?.value
-            : null,
-        prayerId: null,
-      );
-      String countryCode =
-          Provider.of<MiscProvider>(context, listen: false).countryCode;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .addPrayerTag(prayerTagData, countryCode, oldTags);
     }
   }
 
@@ -258,7 +240,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             maxLines: 23,
                             isRequired: true,
                             showSuffix: false,
-                            onTextchanged: onTextChange,
+                            onTextchanged: (val) => onTextChange(val),
                             focusNode: _focusNode,
                           ),
                         ),

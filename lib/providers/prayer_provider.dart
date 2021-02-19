@@ -7,6 +7,7 @@ import 'package:be_still/models/filter.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/prayer_service.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class PrayerProvider with ChangeNotifier {
@@ -129,9 +130,10 @@ class PrayerProvider with ChangeNotifier {
         prayerId, prayerDesc, userId, creatorId, creator);
   }
 
-  Future addPrayerTag(PrayerTagModel prayerData, String countryCode,
-      List<PrayerTagModel> oldTags) async {
-    await _prayerService.addPrayerTag(prayerData, countryCode, oldTags);
+  Future addPrayerTag(List<Contact> contactData, String countryCode,
+      UserModel user, String message, List<PrayerTagModel> oldTags) async {
+    await _prayerService.addPrayerTag(
+        contactData, countryCode, user, message, oldTags);
   }
 
   Future removePrayerTag(String tagId) async {

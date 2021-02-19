@@ -37,15 +37,12 @@ class _PrayerListState extends State<PrayerList> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications();
       await Provider.of<MiscProvider>(context, listen: false).setCountryName();
-      await Future.delayed(const Duration(milliseconds: 500),
-          () => BeStilDialog.hideLoading(context));
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
-      await Future.delayed(const Duration(milliseconds: 500),
-          () => BeStilDialog.hideLoading(context));
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(const Duration(milliseconds: 500),
-          () => BeStilDialog.hideLoading(context));
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
