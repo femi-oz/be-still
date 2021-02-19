@@ -1,5 +1,6 @@
 import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -166,14 +167,22 @@ class DevotionPlans extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
+                    padding: EdgeInsets.all(0),
+                    icon: Icon(
+                      AppIcons.bestill_back_arrow,
+                      color: AppColors.lightBlue3,
+                      size: 20,
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EntryScreen(screenNumber: 3),
+                      ),
+                    ),
                     label: Text(
                       'BACK',
-                      style: TextStyle(
-                        color: AppColors.lightBlue5,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                      style: AppTextStyles.boldText20.copyWith(
+                        color: AppColors.lightBlue3,
                       ),
                     ),
                   ),

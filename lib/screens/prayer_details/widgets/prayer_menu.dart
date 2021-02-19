@@ -345,7 +345,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddUpdate(
-                        updates: widget.prayerData.updates,
                         prayerData: widget.prayerData,
                       ),
                     ),
