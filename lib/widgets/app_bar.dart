@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
-  CustomAppBar({Key key, this.formKey})
+  final bool showPrayerctions;
+  CustomAppBar({Key key, this.formKey, this.showPrayerctions = true})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -67,7 +68,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       centerTitle: true,
-      leadingWidth: 120,
+      leadingWidth: widget.showPrayerctions ? 120 : 60,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,24 +102,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ],
                   ),
           ),
-          SizedBox(width: 15),
-          InkWell(
-            onTap: () => setState(() => searchMode = !searchMode),
-            child: Icon(
-              AppIcons.bestill_search,
-              color: AppColors.bottomNavIconColor,
-              size: 18,
-            ),
-          ),
-          SizedBox(width: 15),
-          InkWell(
-            onTap: () => _openFilter(Settings.isDarkMode),
-            child: Icon(
-              AppIcons.bestill_tools,
-              color: AppColors.bottomNavIconColor,
-              size: 18,
-            ),
-          ),
+          SizedBox(width: widget.showPrayerctions ? 15 : 0),
+          widget.showPrayerctions
+              ? InkWell(
+                  onTap: () => setState(() => searchMode = !searchMode),
+                  child: Icon(
+                    AppIcons.bestill_search,
+                    color: AppColors.bottomNavIconColor,
+                    size: 18,
+                  ),
+                )
+              : Container(),
+          SizedBox(width: widget.showPrayerctions ? 15 : 0),
+          widget.showPrayerctions
+              ? InkWell(
+                  onTap: () => _openFilter(Settings.isDarkMode),
+                  child: Icon(
+                    AppIcons.bestill_tools,
+                    color: AppColors.bottomNavIconColor,
+                    size: 18,
+                  ),
+                )
+              : Container(),
         ],
       ),
       title: searchMode
@@ -153,12 +158,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 )
               ],
             )
-          : Text(
-              pageTitle,
-              style: TextStyle(
-                color: AppColors.bottomNavIconColor,
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
+          : FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                pageTitle,
+                style: TextStyle(
+                  color: AppColors.bottomNavIconColor,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
       actions: <Widget>[

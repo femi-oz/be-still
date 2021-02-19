@@ -32,8 +32,9 @@ class NotificationModel {
         sender = snapshot.data()['Sender'],
         userId = snapshot.data()['UserId'],
         createdBy = snapshot.data()['CreatedBy'],
-        createdOn = DateTime.fromMillisecondsSinceEpoch(
-            snapshot.data()['CreatedOn'] * 1000),
+        // createdOn = DateTime.fromMillisecondsSinceEpoch(
+        //     snapshot.data()['CreatedOn'] * 1000),
+        createdOn = snapshot.data()['CreatedOn'],
         extra1 = snapshot.data()['Extra1'],
         extra2 = snapshot.data()['Extra2'],
         extra3 = snapshot.data()['Extra3'];

@@ -1,18 +1,54 @@
+import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/widgets/app_bar.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class GrowMyPrayerLifeScreen extends StatelessWidget {
+class GrowMyPrayerLifeScreen extends StatefulWidget {
   static const routeName = 'grow-prayer';
+
+  @override
+  _GrowMyPrayerLifeScreenState createState() => _GrowMyPrayerLifeScreenState();
+}
+
+class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setPageTitle('GROW MY PRAYER LIFE');
+      _getDevotionals();
+    });
+    super.didChangeDependencies();
+  }
+
+  _getDevotionals() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+      await Provider.of<DevotionalProvider>(context, listen: false)
+          .getDevotionals();
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
@@ -47,19 +83,7 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 20),
                     child: Text(
-                      'Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Donec sollicitudin molestie malesuada. Proin eget tortor risus. Vestibulum ante ipsum primis in faucibus',
-                      style: TextStyle(
-                        color: AppColors.textFieldText,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w300,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Quisque velit nisi, pretium ut lacinia in, elementum id enim. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Sed porttitor lectus nibh. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;',
+                      'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
                       style: TextStyle(
                         color: AppColors.textFieldText,
                         fontSize: 14,
@@ -116,24 +140,24 @@ class GrowMyPrayerLifeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 20, right: 20, left: 20),
-                    child: Column(
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'MY PRAYER GOALS',
-                            style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   margin: EdgeInsets.only(top: 20, right: 20, left: 20),
+                  //   child: Column(
+                  //     children: <Widget>[
+                  //       GestureDetector(
+                  //         onTap: () {},
+                  //         child: Text(
+                  //           'MY PRAYER GOALS',
+                  //           style: TextStyle(
+                  //               color: AppColors.lightBlue4,
+                  //               fontSize: 18,
+                  //               fontWeight: FontWeight.w500),
+                  //           textAlign: TextAlign.left,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               )
             ],

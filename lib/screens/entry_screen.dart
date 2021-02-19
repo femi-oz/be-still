@@ -36,6 +36,7 @@ class _EntryScreenState extends State<EntryScreen> {
           ? null
           : CustomAppBar(
               formKey: _formKey,
+              showPrayerctions: _currentIndex == 3 ? false : true,
             ),
       body: Container(
           height: double.infinity,
@@ -59,7 +60,7 @@ class _EntryScreenState extends State<EntryScreen> {
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 3) {
+          if (index == 1) {
             return;
           }
           setState(() => _currentIndex = index);

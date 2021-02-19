@@ -1,16 +1,19 @@
+import 'package:be_still/models/devotionals.model.dart';
+import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DevotionPlans extends StatelessWidget {
   static const routeName = 'devotion-plan';
 
   @override
   Widget build(BuildContext context) {
-    void _showAlert(dev) {
+    void _showAlert(DevotionalModel dev) {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -65,7 +68,7 @@ class DevotionPlans extends StatelessWidget {
                         ),
                         width: double.infinity,
                         child: Text(
-                          'Length: ${dev.length}',
+                          'Length: ${dev.period}',
                           style: TextStyle(
                             color: AppColors.textFieldText,
                             fontSize: 14.0,
@@ -135,7 +138,7 @@ class DevotionPlans extends StatelessWidget {
       showDialog(context: context, child: dialog);
     }
 
-    var devotionalData = [];
+    var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
@@ -219,15 +222,15 @@ class DevotionPlans extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
+                                  // Text(
+                                  //   dev.type.toUpperCase(),
+                                  //   style: TextStyle(
+                                  //     color: AppColors.grey,
+                                  //     fontSize: 10,
+                                  //   ),
+                                  // ),
                                   Text(
-                                    dev.type.toUpperCase(),
-                                    style: TextStyle(
-                                      color: AppColors.grey,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                  Text(
-                                    'LENGTH: ${dev.length}'.toUpperCase(),
+                                    'LENGTH: ${dev.period}'.toUpperCase(),
                                     style: TextStyle(
                                       color: AppColors.grey,
                                       fontSize: 10,
