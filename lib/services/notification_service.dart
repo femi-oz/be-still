@@ -60,11 +60,15 @@ class NotificationService {
     var userDevicesDocs =
         userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
     List<DeviceModel> devices = [];
-    for (int i = 0; i < userDevicesDocs.length; i++) {
-      var dev = await _deviceCollectionReference
-          .doc(userDevicesDocs[i].deviceId)
-          .get();
-      devices.add(DeviceModel.fromData(dev));
+    try {
+      for (int i = 0; i < userDevicesDocs.length; i++) {
+        var dev = await _deviceCollectionReference
+            .doc(userDevicesDocs[i].deviceId)
+            .get();
+        devices.add(DeviceModel.fromData(dev));
+      }
+    } catch (e) {
+      throw HttpException(e.message);
     }
     return devices;
   }
@@ -106,10 +110,14 @@ class NotificationService {
         'email': email,
         'sender': sender,
       };
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
-        data: data,
-      );
+      try {
+        await dio.post(
+          'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
+          data: data,
+        );
+      } catch (e) {
+        throw HttpException(e.message);
+      }
       return;
     }
   }
@@ -127,10 +135,14 @@ class NotificationService {
         'template': _templateBody,
         'country': countryCode
       };
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/SendTextMessage',
-        data: data,
-      );
+      try {
+        await dio.post(
+          'https://us-central1-bestill-app.cloudfunctions.net/SendTextMessage',
+          data: data,
+        );
+      } catch (e) {
+        throw HttpException(e.message);
+      }
       return;
     }
   }

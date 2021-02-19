@@ -50,11 +50,14 @@ class _PrayerListState extends State<PrayerList> {
           .setAllUsers(_user.id);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications();
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
@@ -175,8 +178,7 @@ class _PrayerListState extends State<PrayerList> {
                                       (LongPressEndDetails details) =>
                                           onLongPressCard(e, details),
                                   child: PrayerCard(
-                                    prayer: e.prayer,
-                                    tags: e.tags,
+                                    prayerData: e,
                                   )))
                               .toList(),
                         ],

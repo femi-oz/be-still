@@ -7,10 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PrayerCard extends StatefulWidget {
-  final PrayerModel prayer;
-  final List<PrayerTagModel> tags;
+  final CombinePrayerStream prayerData;
 
-  PrayerCard({this.prayer, this.tags});
+  PrayerCard({this.prayerData});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
@@ -21,7 +20,7 @@ class _PrayerCardState extends State<PrayerCard> {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
     var reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == widget.prayer.id,
+        (reminder) => reminder.entityId == widget.prayerData.prayer.id,
         orElse: () => null);
 
     if (reminder == null)
@@ -63,14 +62,28 @@ class _PrayerCardState extends State<PrayerCard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          widget.prayer.userId != _user.id
-                              ? Text(
-                                  widget.prayer.creatorName,
-                                  style: AppTextStyles.boldText14.copyWith(
-                                    color: AppColors.lightBlue4,
-                                  ),
-                                )
-                              : Container(),
+                          Row(
+                            children: [
+                              widget.prayerData.prayer.userId != _user.id
+                                  ? Text(
+                                      widget.prayerData.prayer.creatorName,
+                                      style: AppTextStyles.boldText14.copyWith(
+                                        color: AppColors.lightBlue4,
+                                      ),
+                                    )
+                                  : Container(),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              widget.prayerData.userPrayer.isFavorite
+                                  ? Icon(
+                                      Icons.star,
+                                      color: AppColors.lightBlue3,
+                                      size: 10,
+                                    )
+                                  : Container()
+                            ],
+                          ),
                           Row(
                             children: <Widget>[
                               hasReminder
@@ -102,7 +115,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: widget.tags.map((tag) {
+                                    children: widget.prayerData.tags.map((tag) {
                                       return Text(
                                         '${tag.displayName.toUpperCase()}, ',
                                         style: TextStyle(
@@ -114,7 +127,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                   ),
                                 ),
                               ),
-                              widget.tags.length > 0
+                              widget.prayerData.tags.length > 0
                                   ? Container(
                                       margin: EdgeInsets.symmetric(
                                         horizontal: 10,
@@ -127,8 +140,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                     )
                                   : Container(),
                               Text(
-                                DateFormat('MM.dd.yyyy')
-                                    .format(widget.prayer.modifiedOn),
+                                DateFormat('MM.dd.yyyy').format(
+                                    widget.prayerData.prayer.modifiedOn),
                                 style: AppTextStyles.regularText13
                                     .copyWith(color: AppColors.prayerTextColor),
                               ),
@@ -150,7 +163,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Text(
-                    widget.prayer.description,
+                    widget.prayerData.prayer.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.regularText15

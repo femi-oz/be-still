@@ -59,12 +59,12 @@ class PrayerModel {
         isInappropriate = snapshot.data()['IsInappropriate'],
         hideFromMe = snapshot.data()['HideFromMe'],
         hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
-        snoozeEndDate = snapshot.data()['SnoozeEndDate'],
+        snoozeEndDate = snapshot.data()['SnoozeEndDate']?.toDate(),
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        createdOn = snapshot.data()['CreatedOn']?.toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        modifiedOn = snapshot.data()['ModifiedOn']?.toDate();
 
   Map<String, dynamic> toJson() {
     return {

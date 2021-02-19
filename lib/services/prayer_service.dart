@@ -205,10 +205,10 @@ class PrayerService {
   Future addPrayerTag(List<Contact> contactData, String countryCode,
       UserModel user, String message,
       [List<PrayerTagModel> oldTags]) async {
-    final _prayerTagID = Uuid().v1();
     try {
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
+        final _prayerTagID = Uuid().v1();
         if (contactData[i] != null) {
           await _prayerTagCollectionReference.doc(_prayerTagID).set(
               populatePrayerTag(

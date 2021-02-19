@@ -76,8 +76,6 @@ class PrayerProvider with ChangeNotifier {
     var answeredPrayers = [];
     var snoozedPrayers = [];
     var archivedPrayers = [];
-    var newPrayers = [];
-    // newPrayers = prayers.sort((a, b) => b.userPrayer.isFavorite ? 1 : -1);
     if (status == Status.active) {
       activePrayers = prayers
           .where((CombinePrayerStream data) =>
@@ -107,6 +105,12 @@ class PrayerProvider with ChangeNotifier {
       ...snoozedPrayers,
       ...answeredPrayers
     ];
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    var favoritePrayers = prayers
+        .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
+        .toList();
+    _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
     List<CombinePrayerStream> _distinct = [];
     var idSet = <String>{};
     for (var e in _filteredPrayers) {
@@ -115,12 +119,6 @@ class PrayerProvider with ChangeNotifier {
       }
     }
     _filteredPrayers = _distinct;
-    _filteredPrayers
-        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    _filteredPrayers.sort((a, b) => b.userPrayer.isFavorite
-        .toString()
-        .compareTo(a.userPrayer.isFavorite.toString()));
-
     notifyListeners();
   }
 
