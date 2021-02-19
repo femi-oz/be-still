@@ -11,6 +11,8 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../entry_screen.dart';
+
 class PrayerQuickAccess extends StatefulWidget {
   final y;
 
@@ -109,6 +111,50 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     }
   }
 
+  _markPrayerAsFavorite() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .favoritePrayer(widget.prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+      // _goHome();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
+  _unMarkPrayerAsFavorite() async {
+    try {
+      BeStilDialog.showLoading(
+        bcontext,
+      );
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unfavoritePrayer(widget.prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+      // _goHome();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     setState(() => this.bcontext = context);
@@ -167,7 +213,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(270),
+                    offset: Offset.fromDirection(getRadiansFromDegree(315),
                         degOneTranslationAnimation.value * 60),
                     child: Transform(
                       transform: Matrix4.rotationZ(
@@ -176,14 +222,20 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       alignment: Alignment.center,
                       child: CircularButton(
                           icon: Icon(
-                            Icons.favorite,
+                            widget.prayerData.userPrayer.isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border_outlined,
                             color: AppColors.lightBlue4,
                           ),
-                          onClick: () {}),
+                          onClick: () {
+                            widget.prayerData.userPrayer.isFavorite
+                                ? _unMarkPrayerAsFavorite()
+                                : _markPrayerAsFavorite();
+                          }),
                     ),
                   ),
                   Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(315),
+                    offset: Offset.fromDirection(getRadiansFromDegree(360),
                         degOneTranslationAnimation.value * 60),
                     child: Transform(
                       transform: Matrix4.rotationZ(
@@ -214,42 +266,42 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       ),
                     ),
                   ),
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(360),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: CircularButton(
-                        icon: Icon(
-                          AppIcons.bestill_reminder,
-                          color: AppColors.lightBlue4,
-                        ),
-                        onClick: () {},
-                        // {
-                        //   showModalBottomSheet(
-                        //     context: context,
-                        //     barrierColor: AppColors.detailBackgroundColor[1]
-                        //         .withOpacity(0.5),
-                        //     backgroundColor: AppColors.detailBackgroundColor[1]
-                        //         .withOpacity(0.9),
-                        //     isScrollControlled: true,
-                        //     builder: (BuildContext context) {
-                        //       return ReminderPicker(
-                        //         hideActionuttons: false,
-                        //         frequency: reminderInterval,
-                        //         reminderDays: reminderDays,
-                        //         onCancel: null,
-                        //         onSave: null,
-                        //       );
-                        //     },
-                        //   );
-                        // },
-                      ),
-                    ),
-                  ),
+                  // Transform.translate(
+                  //   offset: Offset.fromDirection(getRadiansFromDegree(360),
+                  //       degOneTranslationAnimation.value * 60),
+                  //   child: Transform(
+                  //     transform: Matrix4.rotationZ(
+                  //         getRadiansFromDegree(rotationAnimation.value))
+                  //       ..scale(degOneTranslationAnimation.value),
+                  //     alignment: Alignment.center,
+                  //     child: CircularButton(
+                  //       icon: Icon(
+                  //         AppIcons.bestill_reminder,
+                  //         color: AppColors.lightBlue4,
+                  //       ),
+                  //       onClick: () {},
+                  //       // {
+                  //       //   showModalBottomSheet(
+                  //       //     context: context,
+                  //       //     barrierColor: AppColors.detailBackgroundColor[1]
+                  //       //         .withOpacity(0.5),
+                  //       //     backgroundColor: AppColors.detailBackgroundColor[1]
+                  //       //         .withOpacity(0.9),
+                  //       //     isScrollControlled: true,
+                  //       //     builder: (BuildContext context) {
+                  //       //       return ReminderPicker(
+                  //       //         hideActionuttons: false,
+                  //       //         frequency: reminderInterval,
+                  //       //         reminderDays: reminderDays,
+                  //       //         onCancel: null,
+                  //       //         onSave: null,
+                  //       //       );
+                  //       //     },
+                  //       //   );
+                  //       // },
+                  //     ),
+                  //   ),
+                  // ),
                   Transform.translate(
                     offset: Offset.fromDirection(getRadiansFromDegree(45),
                         degOneTranslationAnimation.value * 60),
