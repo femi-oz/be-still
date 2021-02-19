@@ -2,6 +2,7 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
@@ -33,7 +34,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Widget _buildMenu() {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    PrayerModel prayer = Provider.of<PrayerProvider>(context).currentPrayer;
+    CombinePrayerStream prayerData =
+        Provider.of<PrayerProvider>(context).currentPrayer;
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
     var isGroupAdmin = false;
     if (group != null) {
@@ -45,18 +47,36 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType !=
         PrayerType.userPrayers;
     if ((isGroup && isGroupAdmin) ||
-        (!isGroup && isGroupAdmin && prayer.groupId != '0')) {
-      return GroupAdminPrayerMenu(prayer);
+        (!isGroup && isGroupAdmin && prayerData.prayer.groupId != '0')) {
+      return GroupAdminPrayerMenu(prayerData.prayer);
     } else if ((isGroup && !isGroupAdmin) ||
-        (!isGroup && !isGroupAdmin && prayer.groupId != '0')) {
-      return OtherMemberPrayerMenu(prayer);
-    } else if ((!isGroup && prayer.groupId == '0')) {
-      updates =
-          Provider.of<PrayerProvider>(context, listen: false).prayerUpdates;
-      return PrayerMenu(prayer, updates, context);
+        (!isGroup && !isGroupAdmin && prayerData.prayer.groupId != '0')) {
+      return OtherMemberPrayerMenu(prayerData.prayer);
+    } else if ((!isGroup && prayerData.prayer.groupId == '0')) {
+      updates = Provider.of<PrayerProvider>(context, listen: false)
+          .currentPrayer
+          .updates;
+      return PrayerMenu(prayerData, updates, context);
     } else {
-      return PrayerMenu(prayer, updates, context);
+      return PrayerMenu(prayerData, updates, context);
     }
+  }
+
+  String reminderString;
+  bool get hasReminder {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    var reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.prayer.id,
+        orElse: () => null);
+    reminderString = reminder?.notificationText ?? '';
+
+    if (reminder == null)
+      return false;
+    else
+      return true;
   }
 
   @override
@@ -84,6 +104,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     icon: Icon(
                       AppIcons.bestill_back_arrow,
                       color: AppColors.lightBlue3,
+                      size: 20,
                     ),
                     onPressed: () => Navigator.push(
                         context,
@@ -97,26 +118,26 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       ),
                     ),
                   ),
-                  // prayer.hasReminder
-                  //     ? Row(
-                  //         children: <Widget>[
-                  //           Icon(
-                  // AppIcons.bestill_reminder,
-                  //             size: 14,
-                  //             color: AppColors.lightBlue5,
-                  //           ),
-                  //           Container(
-                  //             margin: EdgeInsets.only(left: 10),
-                  //             child: Text(
-                  //               prayer.reminder,
-                  //               style: TextStyle(
-                  //                 color: AppColors.lightBlue5,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       )
-                  //     : Container(),
+                  hasReminder
+                      ? Row(
+                          children: <Widget>[
+                            Icon(
+                              AppIcons.bestill_reminder,
+                              size: 14,
+                              color: AppColors.lightBlue5,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Text(
+                                reminderString,
+                                style: TextStyle(
+                                  color: AppColors.lightBlue5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -136,11 +157,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   ),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child:
-                    Provider.of<PrayerProvider>(context).prayerUpdates.length >
-                            0
-                        ? UpdateView()
-                        : NoUpdateView(),
+                child: Provider.of<PrayerProvider>(context)
+                            .currentPrayer
+                            .updates
+                            .length >
+                        0
+                    ? UpdateView()
+                    : NoUpdateView(),
               ),
             ),
             IconButton(

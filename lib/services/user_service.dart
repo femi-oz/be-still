@@ -74,6 +74,15 @@ class UserService {
     }
   }
 
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      var users = await _userCollectionReference.get();
+      return users.docs.map((e) => UserModel.fromData(e)).toList();
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future updateEmail(String newEmail, String userId) async {
     User user = _firebaseAuth.currentUser;
     try {

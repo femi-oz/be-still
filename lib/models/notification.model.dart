@@ -32,8 +32,9 @@ class NotificationModel {
         sender = snapshot.data()['Sender'],
         userId = snapshot.data()['UserId'],
         createdBy = snapshot.data()['CreatedBy'],
-        createdOn = DateTime.fromMillisecondsSinceEpoch(
-            snapshot.data()['CreatedOn'] * 1000),
+        // createdOn = DateTime.fromMillisecondsSinceEpoch(
+        //     snapshot.data()['CreatedOn'] * 1000),
+        createdOn = snapshot.data()['CreatedOn'],
         extra1 = snapshot.data()['Extra1'],
         extra2 = snapshot.data()['Extra2'],
         extra3 = snapshot.data()['Extra3'];
@@ -49,6 +50,68 @@ class NotificationModel {
       'Extra1': extra1,
       'Extra2': extra2,
       'Extra3': extra3,
+    };
+  }
+}
+
+class PushNotificationModel {
+  final String id;
+  final String title;
+  final List<String> tokens;
+  final String message;
+  final String sender;
+
+  const PushNotificationModel({
+    this.id,
+    @required this.title,
+    @required this.tokens,
+    @required this.message,
+    @required this.sender,
+  });
+  PushNotificationModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        title = snapshot.data()['title'],
+        tokens = snapshot.data()['tokens'],
+        message = snapshot.data()['message'],
+        sender = snapshot.data()['sender'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'message': message,
+      'tokens': tokens,
+      'sender': sender,
+    };
+  }
+}
+
+class LocalNotificationModel {
+  final String id;
+  final String deviceId;
+  final String entityId;
+  final String notificationText;
+  final int localNotificationId;
+
+  const LocalNotificationModel({
+    this.id,
+    @required this.deviceId,
+    @required this.entityId,
+    @required this.notificationText,
+    @required this.localNotificationId,
+  });
+  LocalNotificationModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        deviceId = snapshot.data()['DeviceId'],
+        entityId = snapshot.data()['EntityId'],
+        notificationText = snapshot.data()['NotificationText'],
+        localNotificationId = snapshot.data()['LocalNotificationId'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'DeviceId': deviceId,
+      'EntityId': entityId,
+      'NotificationText': notificationText,
+      'LocalNotificationId': localNotificationId,
     };
   }
 }

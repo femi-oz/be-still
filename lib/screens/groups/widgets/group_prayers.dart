@@ -77,10 +77,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                     onTap: () async {
                                       await Provider.of<PrayerProvider>(context,
                                               listen: false)
-                                          .setPrayer(e.prayer.id);
-                                      await Provider.of<PrayerProvider>(context,
-                                              listen: false)
-                                          .setPrayerUpdates(e.prayer.id);
+                                          .setPrayer(e.userPrayer.id);
                                       Navigator.push(
                                         context,
                                         new MaterialPageRoute(
@@ -101,11 +98,11 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                         isScrollControlled: true,
                                         builder: (BuildContext context) {
                                           return GroupPrayerQuickAccess(
-                                              y: y, prayer: e.prayer);
+                                              y: y, prayer: e);
                                         },
                                       );
                                     },
-                                    child: PrayerCard(prayer: e.prayer)))
+                                    child: PrayerCard(prayerData: e)))
                                 .toList(),
                           ],
                         ),

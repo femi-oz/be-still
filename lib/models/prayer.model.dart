@@ -16,6 +16,7 @@ class PrayerModel {
   final bool isInappropriate;
   final bool hideFromMe;
   final bool hideFromAllMembers;
+  final DateTime snoozeEndDate;
   final String creatorName;
   final String createdBy;
   final DateTime createdOn;
@@ -36,6 +37,7 @@ class PrayerModel {
     @required this.isInappropriate,
     @required this.hideFromMe,
     @required this.hideFromAllMembers,
+    @required this.snoozeEndDate,
     @required this.creatorName,
     @required this.createdBy,
     @required this.createdOn,
@@ -57,11 +59,12 @@ class PrayerModel {
         isInappropriate = snapshot.data()['IsInappropriate'],
         hideFromMe = snapshot.data()['HideFromMe'],
         hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
+        snoozeEndDate = snapshot.data()['SnoozeEndDate']?.toDate(),
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        createdOn = snapshot.data()['CreatedOn']?.toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        modifiedOn = snapshot.data()['ModifiedOn']?.toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -77,6 +80,7 @@ class PrayerModel {
       'IsInappropriate': isInappropriate,
       'HideFromMe': hideFromMe,
       'HideFromAllMembers': hideFromAllMembers,
+      'SnoozeEndDate': snoozeEndDate,
       'CreatorName': creatorName,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
@@ -298,18 +302,81 @@ class HiddenPrayerModel {
   }
 }
 
+class PrayerTagModel {
+  final String id;
+  final String prayerId;
+  final String userId;
+  final String tagger;
+  final String displayName;
+  final String phoneNumber;
+  final String email;
+  final String message;
+  final String createdBy;
+  final DateTime createdOn;
+  final String modifiedBy;
+  final DateTime modifiedOn;
+
+  const PrayerTagModel({
+    this.id,
+    @required this.prayerId,
+    @required this.userId,
+    @required this.tagger,
+    @required this.displayName,
+    @required this.phoneNumber,
+    @required this.email,
+    @required this.message,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+  PrayerTagModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
+        userId = snapshot.data()['UserId'],
+        tagger = snapshot.data()['Tagger'],
+        displayName = snapshot.data()['DisplayName'],
+        phoneNumber = snapshot.data()['PhoneNumber'],
+        message = snapshot.data()['Message'],
+        email = snapshot.data()['Email'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'UserId': userId,
+      'Tagger': tagger,
+      'DisplayName': displayName,
+      'PhoneNumber': phoneNumber,
+      'Message': message,
+      'Email': email,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
 class CombinePrayerStream {
+  final String id;
   final UserPrayerModel userPrayer;
   final GroupPrayerModel groupPrayer;
   @required
   final PrayerModel prayer;
   @required
+  final List<PrayerTagModel> tags;
+  @required
   final List<PrayerUpdateModel> updates;
 
   CombinePrayerStream({
+    this.id,
     this.userPrayer,
     this.groupPrayer,
     this.prayer,
+    this.tags,
     this.updates,
   });
 }

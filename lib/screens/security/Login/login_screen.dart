@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -11,6 +12,7 @@ import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
@@ -49,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen>
       );
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(false);
-      await PushNotificationsManager().init(
+      await Provider.of<NotificationProvider>(context, listen: false).init(
           Provider.of<UserProvider>(context, listen: false).currentUser.id);
       Settings.lastUser = Settings.rememberMe ? _usernameController.text : '';
       Settings.userKeyRefernce =
@@ -168,29 +170,52 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  bool _isFocused = false;
   Widget _buildForm() {
     return Form(
       autovalidate: _autoValidate,
       key: _formKey,
       child: Column(
         children: <Widget>[
-          CustomInput(
-            label: 'Username',
-            controller: _usernameController,
-            keyboardType: TextInputType.emailAddress,
-            isRequired: true,
-            isEmail: true,
+          FocusScope(
+            onFocusChange: (focus) => !_isFocused
+                ? setState(() {
+                    _isFocused = true;
+                    Settings.rememberMe = false;
+                    Settings.enableLocalAuth = false;
+                  })
+                : null,
+            child: Focus(
+              child: CustomInput(
+                label: 'Username',
+                controller: _usernameController,
+                keyboardType: TextInputType.emailAddress,
+                isRequired: true,
+                isEmail: true,
+              ),
+            ),
           ),
           SizedBox(height: 15.0),
-          CustomInput(
-            isPassword: true,
-            label: 'Password',
-            controller: _passwordController,
-            keyboardType: TextInputType.visiblePassword,
-            isRequired: true,
-            textInputAction: TextInputAction.done,
-            unfocus: true,
-            submitForm: () => _login(),
+          FocusScope(
+            onFocusChange: (focus) => !_isFocused
+                ? setState(() {
+                    _isFocused = true;
+                    Settings.rememberMe = false;
+                    Settings.enableLocalAuth = false;
+                  })
+                : null,
+            child: Focus(
+              child: CustomInput(
+                isPassword: true,
+                label: 'Password',
+                controller: _passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                isRequired: true,
+                textInputAction: TextInputAction.done,
+                unfocus: true,
+                submitForm: () => _login(),
+              ),
+            ),
           ),
         ],
       ),

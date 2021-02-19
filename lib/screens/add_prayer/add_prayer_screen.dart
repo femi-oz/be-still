@@ -3,19 +3,20 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
-
-import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -23,12 +24,12 @@ class AddPrayer extends StatefulWidget {
   final bool showCancel;
   final bool isEdit;
   final bool isGroup;
-  final PrayerModel prayer;
+  final CombinePrayerStream prayerData;
 
   @override
   AddPrayer({
     this.isEdit,
-    this.prayer,
+    this.prayerData,
     this.isGroup,
     this.showCancel = true,
   });
@@ -43,15 +44,15 @@ class _AddPrayerState extends State<AddPrayer> {
   BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
+  List<String> words = [];
+  String str = '';
+  List<Contact> contactData = [];
 
   _save() async {
     setState(() {
       _autoValidate = true;
     });
-    if (!_formKey.currentState.validate()) {
-      // showInSnackBar('Please, enter your prayer');
-      return;
-    }
+    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
@@ -74,16 +75,25 @@ class _AddPrayerState extends State<AddPrayer> {
         creatorName: '${_user.firstName} ${_user.lastName}',
         createdBy: _user.id,
         createdOn: DateTime.now(),
+        snoozeEndDate: DateTime.now(),
         hideFromAllMembers: false,
         hideFromMe: false,
         isInappropriate: false,
       );
+
       try {
         BeStilDialog.showLoading(bcontext);
         UserModel _user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayer(prayerData, _user.id);
+        String countryCode =
+            Provider.of<MiscProvider>(context, listen: false).countryCode;
+        if (contactData.length > 0) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayerTag(contactData, countryCode, _user,
+                  _descriptionController.text, []);
+        }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.pushReplacement(
@@ -91,28 +101,34 @@ class _AddPrayerState extends State<AddPrayer> {
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)));
       } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, e.message);
       } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
     } else {
       try {
         BeStilDialog.showLoading(bcontext);
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .editprayer(_descriptionController.text, widget.prayer.id);
+        await Provider.of<PrayerProvider>(context, listen: false).editprayer(
+            _descriptionController.text, widget.prayerData.prayer.id);
+        for (int i = 0; i < widget.prayerData.tags.length; i++)
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .removePrayerTag(widget.prayerData.tags[i].id);
+        String countryCode =
+            Provider.of<MiscProvider>(context, listen: false).countryCode;
+        if (contactData.length > 0) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayerTag(contactData, countryCode, _user,
+                  _descriptionController.text, widget.prayerData.tags);
+        }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
       } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, e.message);
       } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
         BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
@@ -122,7 +138,7 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   void initState() {
     _descriptionController.text =
-        widget.isEdit ? widget.prayer.description : '';
+        widget.isEdit ? widget.prayerData.prayer.description : '';
     getContacts();
     super.initState();
   }
@@ -132,10 +148,6 @@ class _AddPrayerState extends State<AddPrayer> {
       localContacts = await ContactsService.getContacts(withThumbnails: false);
     }
   }
-
-  var words = [];
-  String str = '';
-  var phoneNumbers = [];
 
   onTextChange(val) {
     setState(() {
@@ -153,6 +165,25 @@ class _AddPrayerState extends State<AddPrayer> {
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)))) ??
         false;
+  }
+
+  _onTagSelected(s) {
+    String tmp = str.substring(1, str.length);
+    var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
+    setState(() {
+      str = '';
+      _descriptionController.text +=
+          s.displayName.substring(i + tmp.length, s.displayName.length);
+      _descriptionController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _descriptionController.text.length));
+      _descriptionController.selection =
+          TextSelection.collapsed(offset: _descriptionController.text.length);
+    });
+    if (!contactData.map((e) => e.identifier).contains(s.identifier)) {
+      contactData = [...contactData, s];
+    }
+
+    print(contactData);
   }
 
   @override
@@ -184,11 +215,13 @@ class _AddPrayerState extends State<AddPrayer> {
                             child: Text('CANCEL',
                                 style: AppTextStyles.boldText18
                                     .copyWith(color: AppColors.lightBlue5)),
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EntryScreen(screenNumber: 0)))),
+                            onTap: () => widget.isEdit
+                                ? Navigator.of(context).pop()
+                                : Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            EntryScreen(screenNumber: 0)))),
                         InkWell(
                             child: Text('SAVE',
                                 style: AppTextStyles.boldText18
@@ -208,7 +241,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             maxLines: 23,
                             isRequired: true,
                             showSuffix: false,
-                            onTextchanged: onTextChange,
+                            onTextchanged: (val) => onTextChange(val),
                             focusNode: _focusNode,
                           ),
                         ),
@@ -241,39 +274,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                   ),
                                                 ),
                                               ),
-                                              onTap: () {
-                                                String tmp = str.substring(
-                                                    1, str.length);
-                                                var i = s.displayName
-                                                    .toLowerCase()
-                                                    .indexOf(tmp.toLowerCase());
-                                                setState(() {
-                                                  str = '';
-                                                  _descriptionController.text +=
-                                                      s.displayName.substring(
-                                                          i + tmp.length,
-                                                          s.displayName.length);
-                                                  _descriptionController
-                                                          .selection =
-                                                      TextSelection.fromPosition(
-                                                          TextPosition(
-                                                              offset:
-                                                                  _descriptionController
-                                                                      .text
-                                                                      .length));
-                                                  _descriptionController
-                                                          .selection =
-                                                      TextSelection.collapsed(
-                                                          offset:
-                                                              _descriptionController
-                                                                  .text.length);
-                                                });
-                                                phoneNumbers = [
-                                                  ...phoneNumbers,
-                                                  s.phones.toList()[0].value
-                                                ];
-                                                print(phoneNumbers);
-                                              });
+                                              onTap: () => _onTagSelected(s));
                                         else
                                           return SizedBox();
                                       }).toList()

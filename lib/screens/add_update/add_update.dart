@@ -4,6 +4,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -11,18 +12,16 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../entry_screen.dart';
 
 class AddUpdate extends StatefulWidget {
-  final PrayerModel prayer;
-  final List<PrayerUpdateModel> updates;
+  final CombinePrayerStream prayerData;
   static const routeName = 'update-prayer';
 
   @override
-  AddUpdate({this.prayer, this.updates});
+  AddUpdate({this.prayerData});
 
   @override
   _AddUpdateState createState() => _AddUpdateState();
@@ -49,7 +48,7 @@ class _AddUpdateState extends State<AddUpdate> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     PrayerUpdateModel prayerUpdateData;
     prayerUpdateData = PrayerUpdateModel(
-      prayerId: widget.prayer.id,
+      prayerId: widget.prayerData.prayer.id,
       userId: _user.id,
       title: '',
       description: _descriptionController.text,
@@ -64,10 +63,7 @@ class _AddUpdateState extends State<AddUpdate> {
           .addPrayerUpdate(prayerUpdateData);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(bcontext);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0)));
+      Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(bcontext);
@@ -81,33 +77,33 @@ class _AddUpdateState extends State<AddUpdate> {
 
   @override
   void initState() {
-    getContacts();
+    // getContacts();
     super.initState();
   }
 
-  getContacts() async {
-    var status = await Permission.contacts.status;
-    if (status.isUndetermined) {
-      await Permission.contacts.request();
-    }
-    if (await Permission.contacts.request().isGranted) {
-      localContacts = await ContactsService.getContacts(withThumbnails: false);
-    }
-  }
+  // getContacts() async {
+  //   var status = await Permission.contacts.status;
+  //   if (status.isUndetermined) {
+  //     await Permission.contacts.request();
+  //   }
+  //   if (await Permission.contacts.request().isGranted) {
+  //     localContacts = await ContactsService.getContacts(withThumbnails: false);
+  //   }
+  // }
 
-  var words = [];
-  String str = '';
-  var phoneNumbers = [];
+  // var words = [];
+  // String str = '';
+  // var phoneNumbers = [];
 
-  onTextChange(val) {
-    setState(() {
-      words = val.split(' ');
+  // onTextChange(val) {
+  //   setState(() {
+  //     words = val.split(' ');
 
-      str = words.length > 0 && words[words.length - 1].startsWith('@')
-          ? words[words.length - 1]
-          : '';
-    });
-  }
+  //     str = words.length > 0 && words[words.length - 1].startsWith('@')
+  //         ? words[words.length - 1]
+  //         : '';
+  //   });
+  // }
 
   Future<bool> _onWillPop() async {
     return (Navigator.pushReplacement(
@@ -158,90 +154,18 @@ class _AddUpdateState extends State<AddUpdate> {
                     ],
                   ),
                   SizedBox(height: 30.0),
-                  Stack(
-                    children: [
-                      Form(
-                        autovalidate: _autoValidate,
-                        key: _formKey,
-                        child: CustomInput(
-                          label: "Enter your text here",
-                          controller: _descriptionController,
-                          maxLines: 23,
-                          isRequired: true,
-                          showSuffix: false,
-                          onTextchanged: onTextChange,
-                          focusNode: _focusNode,
-                        ),
-                      ),
-                      str.length > 1
-                          ? Container(
-                              padding: EdgeInsets.only(
-                                  top: _focusNode.offset.dy * 0.45,
-                                  left: _focusNode.offset.dx),
-                              height: MediaQuery.of(context).size.height * 0.6,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ...localContacts.map((s) {
-                                      if (('@' + s.displayName)
-                                          .toLowerCase()
-                                          .contains(str.toLowerCase()))
-                                        return InkWell(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 10.0),
-                                              child: Text(
-                                                s.displayName,
-                                                style: AppTextStyles
-                                                    .regularText14
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                            onTap: () {
-                                              String tmp =
-                                                  str.substring(1, str.length);
-                                              var i = s.displayName
-                                                  .toLowerCase()
-                                                  .indexOf(tmp.toLowerCase());
-                                              setState(() {
-                                                str = '';
-                                                _descriptionController.text +=
-                                                    s.displayName.substring(
-                                                        i + tmp.length,
-                                                        s.displayName.length);
-                                                _descriptionController
-                                                        .selection =
-                                                    TextSelection.fromPosition(
-                                                        TextPosition(
-                                                            offset:
-                                                                _descriptionController
-                                                                    .text
-                                                                    .length));
-                                                _descriptionController
-                                                        .selection =
-                                                    TextSelection.collapsed(
-                                                        offset:
-                                                            _descriptionController
-                                                                .text.length);
-                                              });
-                                              phoneNumbers = [
-                                                ...phoneNumbers,
-                                                s.phones.toList()[0].value
-                                              ];
-                                              print(phoneNumbers);
-                                            });
-                                      else
-                                        return SizedBox();
-                                    }).toList()
-                                  ],
-                                ),
-                              ),
-                            )
-                          : SizedBox(),
-                    ],
+                  Form(
+                    autovalidate: _autoValidate,
+                    key: _formKey,
+                    child: CustomInput(
+                      label: "Enter your text here",
+                      controller: _descriptionController,
+                      maxLines: 23,
+                      isRequired: true,
+                      showSuffix: false,
+                      // onTextchanged: onTextChange,
+                      focusNode: _focusNode,
+                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -257,11 +181,11 @@ class _AddUpdateState extends State<AddUpdate> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        widget.prayer.userId != _currentUser.id
+                        widget.prayerData.prayer.userId != _currentUser.id
                             ? Container(
                                 margin: EdgeInsets.only(bottom: 20),
                                 child: Text(
-                                  widget.prayer.createdBy,
+                                  widget.prayerData.prayer.createdBy,
                                   style: TextStyle(
                                       color: AppColors.lightBlue3,
                                       fontSize: 18,
@@ -270,7 +194,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                 ),
                               )
                             : Container(),
-                        ...widget.updates.map(
+                        ...widget.prayerData.updates.map(
                           (u) => Container(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -285,7 +209,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                         children: <Widget>[
                                           Text(
                                             DateFormat('hh:mma | MM.dd.yyyy')
-                                                .format(u.createdOn),
+                                                .format(u.modifiedOn),
                                             style: TextStyle(
                                                 color: AppColors.dimBlue,
                                                 fontWeight: FontWeight.w500),
@@ -359,8 +283,9 @@ class _AddUpdateState extends State<AddUpdate> {
                                               fontWeight: FontWeight.w500),
                                         ),
                                         Text(
-                                          DateFormat(' MM.dd.yyyy')
-                                              .format(widget.prayer.createdOn),
+                                          DateFormat(' MM.dd.yyyy').format(
+                                              widget.prayerData.prayer
+                                                  .modifiedOn),
                                           style: TextStyle(
                                               fontSize: 12,
                                               color: AppColors.dimBlue,
@@ -401,7 +326,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                       vertical: 20.0, horizontal: 20),
                                   child: Center(
                                     child: Text(
-                                      widget.prayer.description,
+                                      widget.prayerData.prayer.description,
                                       style: TextStyle(
                                         color: AppColors.textFieldText,
                                         fontSize: 14,
