@@ -16,6 +16,7 @@ class PrayerModel {
   final bool isInappropriate;
   final bool hideFromMe;
   final bool hideFromAllMembers;
+  final DateTime snoozeEndDate;
   final String creatorName;
   final String createdBy;
   final DateTime createdOn;
@@ -36,6 +37,7 @@ class PrayerModel {
     @required this.isInappropriate,
     @required this.hideFromMe,
     @required this.hideFromAllMembers,
+    @required this.snoozeEndDate,
     @required this.creatorName,
     @required this.createdBy,
     @required this.createdOn,
@@ -57,6 +59,7 @@ class PrayerModel {
         isInappropriate = snapshot.data()['IsInappropriate'],
         hideFromMe = snapshot.data()['HideFromMe'],
         hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
+        snoozeEndDate = snapshot.data()['SnoozeEndDate'],
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
@@ -77,6 +80,7 @@ class PrayerModel {
       'IsInappropriate': isInappropriate,
       'HideFromMe': hideFromMe,
       'HideFromAllMembers': hideFromAllMembers,
+      'SnoozeEndDate': snoozeEndDate,
       'CreatorName': creatorName,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,

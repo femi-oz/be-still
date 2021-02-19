@@ -95,7 +95,9 @@ class PrayerProvider with ChangeNotifier {
     }
     if (isSnoozed == true) {
       snoozedPrayers = prayers
-          .where((CombinePrayerStream data) => data.prayer.isSnoozed == true)
+          .where((CombinePrayerStream data) =>
+              data.prayer.isSnoozed == true &&
+              data.prayer.snoozeEndDate.isAfter(DateTime.now()))
           .toList();
     }
     _filteredPrayers = [
