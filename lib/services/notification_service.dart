@@ -77,18 +77,20 @@ class NotificationService {
       String senderId, String userId) async {
     final _notificationId = Uuid().v1();
     try {
-      _notificationCollectionReference.doc(_notificationId).set(
-          NotificationModel(
-                  message: message,
-                  messageType: messageType,
-                  sender: senderId,
-                  userId: userId,
-                  createdBy: 'SYSTEM',
-                  createdOn: DateTime.now(),
-                  extra1: '',
-                  extra2: '',
-                  extra3: sender)
-              .toJson());
+      _notificationCollectionReference
+          .doc(_notificationId)
+          .set(NotificationModel(
+            message: message,
+            messageType: messageType,
+            sender: senderId,
+            userId: userId,
+            createdBy: 'SYSTEM',
+            createdOn: DateTime.now(),
+            extra1: '',
+            extra2: '',
+            extra3: sender,
+            status: Status.active,
+          ).toJson());
     } catch (e) {
       throw HttpException(e.message);
     }

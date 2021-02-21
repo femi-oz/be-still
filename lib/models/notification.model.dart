@@ -6,6 +6,7 @@ class NotificationModel {
   final String message;
   final String messageType;
   final String sender;
+  final String status;
   final String userId;
   final String createdBy;
   final DateTime createdOn;
@@ -18,6 +19,7 @@ class NotificationModel {
     @required this.message,
     @required this.messageType,
     @required this.sender,
+    @required this.status,
     @required this.userId,
     @required this.createdBy,
     @required this.createdOn,
@@ -31,10 +33,11 @@ class NotificationModel {
         messageType = snapshot.data()['MessageType'],
         sender = snapshot.data()['Sender'],
         userId = snapshot.data()['UserId'],
+        status = snapshot.data()['Status'],
         createdBy = snapshot.data()['CreatedBy'],
         // createdOn = DateTime.fromMillisecondsSinceEpoch(
         //     snapshot.data()['CreatedOn'] * 1000),
-        createdOn = snapshot.data()['CreatedOn'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
         extra1 = snapshot.data()['Extra1'],
         extra2 = snapshot.data()['Extra2'],
         extra3 = snapshot.data()['Extra3'];
@@ -44,6 +47,7 @@ class NotificationModel {
       'Message': message,
       'MessageType': messageType,
       'Sender': sender,
+      'Status': status,
       'UserId': userId,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
