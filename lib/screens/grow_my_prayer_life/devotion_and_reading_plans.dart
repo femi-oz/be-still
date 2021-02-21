@@ -243,13 +243,13 @@ class DevotionPlans extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  // Text(
-                                  //   dev.type.toUpperCase(),
-                                  //   style: TextStyle(
-                                  //     color: AppColors.grey,
-                                  //     fontSize: 10,
-                                  //   ),
-                                  // ),
+                                  Text(
+                                    dev.type.toUpperCase(),
+                                    style: TextStyle(
+                                      color: AppColors.grey,
+                                      fontSize: 10,
+                                    ),
+                                  ),
                                   Text(
                                     'LENGTH: ${dev.period}'.toUpperCase(),
                                     style: TextStyle(
