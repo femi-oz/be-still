@@ -8,9 +8,18 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DevotionPlans extends StatelessWidget {
   static const routeName = 'devotion-plan';
+
+  _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,37 +106,40 @@ class DevotionPlans extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        AppColors.lightBlue1,
-                        AppColors.lightBlue2,
+                InkWell(
+                  onTap: () => _launchURL(dev.link),
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          AppColors.lightBlue1,
+                          AppColors.lightBlue2,
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'see devotional'.toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          'you will leave the app'.toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9.0,
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'see devotional'.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'you will leave the app'.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
                   ),
                 ),
               ],
