@@ -1,9 +1,13 @@
+import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RecommenededBibles extends StatefulWidget {
@@ -22,7 +26,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     }
   }
 
-  var bibleData = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,14 +54,21 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
+                    padding: EdgeInsets.all(0),
+                    icon: Icon(
+                      AppIcons.bestill_back_arrow,
+                      color: AppColors.lightBlue3,
+                      size: 20,
+                    ),
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                EntryScreen(screenNumber: 3))),
                     label: Text(
                       'BACK',
-                      style: TextStyle(
-                        color: AppColors.lightBlue5,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                      style: AppTextStyles.boldText20.copyWith(
+                        color: AppColors.lightBlue3,
                       ),
                     ),
                   ),
@@ -79,7 +89,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 40.0, horizontal: 40.0),
                 child: Text(
-                  'Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Donec rutrum congue leo eget malesuada. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Proin eget tortor risus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
+                  'Consider the following reading plans available in the Bible app to supplement your prayer time.',
                   style: TextStyle(
                     color: AppColors.textFieldText,
                     fontSize: 14,
@@ -98,12 +108,13 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   }
 
   Widget _buildPanel() {
+    var bibleData = Provider.of<DevotionalProvider>(context).bibles;
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
         child: Column(
           children: <Widget>[
-            for (int i = 0; 1 < bibleData.length; i++)
+            for (int i = 0; i < bibleData.length; i++)
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10.0),
                 child: custom.ExpansionTile(
@@ -133,14 +144,14 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                                 style: AppTextStyles.regularText13),
                           ),
                           Text(
-                            bibleData[i].type,
+                            bibleData[i].shortName,
                             style: AppTextStyles.regularText11,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 40.0, vertical: 20.0),
                             child: Text(
-                              bibleData[i].description,
+                              bibleData[i].recommendedFor,
                               style: AppTextStyles.regularText13,
                               textAlign: TextAlign.center,
                             ),

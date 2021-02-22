@@ -1,5 +1,6 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -36,6 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (ctx) => GroupProvider()),
         ChangeNotifierProvider(create: (ctx) => MiscProvider()),
         ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
+        ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
       ],
       child: MyApp(),
     ),

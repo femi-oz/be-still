@@ -1,5 +1,6 @@
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -35,6 +36,7 @@ class _EntryScreenState extends State<EntryScreen> {
           ? null
           : CustomAppBar(
               formKey: _formKey,
+              showPrayerctions: _currentIndex == 3 ? false : true,
             ),
       body: Container(
           height: double.infinity,
@@ -58,7 +60,7 @@ class _EntryScreenState extends State<EntryScreen> {
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 3) {
+          if (index == 1) {
             return;
           }
           setState(() => _currentIndex = index);
@@ -117,10 +119,10 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: null,
+          page: GrowMyPrayerLifeScreen(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
-          title: "",
+          title: "grow my prayer life",
         ),
       ];
 }

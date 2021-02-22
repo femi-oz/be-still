@@ -110,8 +110,8 @@ class _AddPrayerState extends State<AddPrayer> {
     } else {
       try {
         BeStilDialog.showLoading(bcontext);
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .editprayer(_descriptionController.text, widget.prayerData.id);
+        await Provider.of<PrayerProvider>(context, listen: false).editprayer(
+            _descriptionController.text, widget.prayerData.prayer.id);
         for (int i = 0; i < widget.prayerData.tags.length; i++)
           await Provider.of<PrayerProvider>(context, listen: false)
               .removePrayerTag(widget.prayerData.tags[i].id);

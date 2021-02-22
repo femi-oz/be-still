@@ -18,11 +18,10 @@ import '../entry_screen.dart';
 
 class AddUpdate extends StatefulWidget {
   final CombinePrayerStream prayerData;
-  final List<PrayerUpdateModel> updates;
   static const routeName = 'update-prayer';
 
   @override
-  AddUpdate({this.prayerData, this.updates});
+  AddUpdate({this.prayerData});
 
   @override
   _AddUpdateState createState() => _AddUpdateState();
@@ -49,7 +48,7 @@ class _AddUpdateState extends State<AddUpdate> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     PrayerUpdateModel prayerUpdateData;
     prayerUpdateData = PrayerUpdateModel(
-      prayerId: widget.prayerData.id,
+      prayerId: widget.prayerData.prayer.id,
       userId: _user.id,
       title: '',
       description: _descriptionController.text,
@@ -195,7 +194,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                 ),
                               )
                             : Container(),
-                        ...widget.updates.map(
+                        ...widget.prayerData.updates.map(
                           (u) => Container(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,

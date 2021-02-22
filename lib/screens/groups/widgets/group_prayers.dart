@@ -102,7 +102,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                         },
                                       );
                                     },
-                                    child: PrayerCard(prayer: e.prayer)))
+                                    child: PrayerCard(prayerData: e)))
                                 .toList(),
                           ],
                         ),
