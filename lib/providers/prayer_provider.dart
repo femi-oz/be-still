@@ -66,6 +66,14 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future setPrayer(String id) async {
+    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
+      _currentPrayer = prayer;
+      notifyListeners();
+    });
+    return;
+  }
+
   Future filterPrayers({
     String status,
     bool isSnoozed,
@@ -188,14 +196,6 @@ class PrayerProvider with ChangeNotifier {
   Future setCurrentPrayerType(PrayerType type) async {
     _currentPrayerType = type;
     notifyListeners();
-  }
-
-  Future setPrayer(String id) async {
-    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-      _currentPrayer = prayer;
-      notifyListeners();
-    });
-    return;
   }
 
 //Group Prayers
