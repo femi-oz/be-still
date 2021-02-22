@@ -105,7 +105,10 @@ class NotificationService {
       var templateBody = _template.templateBody;
       templateSubject = templateSubject.replaceAll("{Sender}", sender);
       templateBody = templateBody.replaceAll("{Receiver}", receiver);
+      templateBody = templateBody.replaceAll("{Sender}", sender);
       templateBody = templateBody.replaceAll("{message}", message);
+      templateBody = templateBody.replaceAll(
+          "{Link}", "<a href='https://www.bestillapp.com/'>Learn more.</a>");
       var data = {
         'templateSubject': templateSubject,
         'templateBody': templateBody,
@@ -129,14 +132,16 @@ class NotificationService {
     var dio = Dio(BaseOptions(followRedirects: false));
     if (phoneNumber != null) {
       var _templateBody = MessageTemplate.fromData(template).templateBody;
-      _templateBody = _templateBody.replaceAll('{Receiver}', receiver);
+      _templateBody = _templateBody.replaceAll('{Sender}', sender);
+      _templateBody = _templateBody.replaceAll("{Receiver}", receiver);
       _templateBody = _templateBody.replaceAll('{message}', message);
       _templateBody = _templateBody.replaceAll('<br/>', "\n");
+      _templateBody =
+          _templateBody.replaceAll("{Link}", 'https://www.bestillapp.com/');
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
         'country': countryCode,
-        'sender': sender,
       };
       try {
         await dio.post(
