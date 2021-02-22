@@ -295,6 +295,26 @@ class PrayerService {
     }
   }
 
+  Future snoozePrayer(String prayerID, DateTime endDate) async {
+    try {
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsSnoozed': true, 'EndDate': endDate},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future unSnoozePrayer(String prayerID, DateTime endDate) async {
+    try {
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsSnoozed': false, 'EndDate': endDate},
+      );
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   Future archivePrayer(
     String prayerID,
   ) async {
