@@ -1,9 +1,10 @@
+import 'dart:ui';
+
 import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -28,7 +29,7 @@ class DevotionPlans extends StatelessWidget {
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
-        backgroundColor: AppColors.prayerCardBgColor,
+        backgroundColor: AppColors.backgroundColor[0],
         shape: RoundedRectangleBorder(
           side: BorderSide(color: AppColors.darkBlue),
           borderRadius: BorderRadius.all(
@@ -62,48 +63,34 @@ class DevotionPlans extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         width: double.infinity,
                         child: Text(
-                          dev.title,
-                          style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 18.0,
-                          ),
+                          dev.title.toUpperCase(),
+                          style: AppTextStyles.boldText20
+                              .copyWith(color: AppColors.lightBlue4),
                           textAlign: TextAlign.center,
                         ),
                       ),
+                      SizedBox(height: 10),
                       Container(
-                        padding: EdgeInsets.only(
-                          top: 4,
-                          bottom: 20,
-                          right: 20,
-                          left: 20,
-                        ),
                         width: double.infinity,
                         child: Text(
                           'Length: ${dev.period}',
-                          style: TextStyle(
-                            color: AppColors.textFieldText,
-                            fontSize: 14.0,
-                          ),
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.grey4),
                           textAlign: TextAlign.center,
                         ),
                       ),
+                      SizedBox(height: 10),
                       Container(
-                        padding: EdgeInsets.only(
-                          top: 0,
-                          bottom: 20,
-                          right: 20,
-                          left: 20,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
                         width: double.infinity,
                         child: Text(
                           dev.description,
-                          style: TextStyle(
-                            color: AppColors.textFieldText,
-                            fontSize: 14.0,
-                          ),
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.blueTitle),
                           textAlign: TextAlign.left,
                         ),
                       ),
+                      SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -125,18 +112,14 @@ class DevotionPlans extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           'see devotional'.toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500),
+                          style: AppTextStyles.boldText24
+                              .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
                         Text(
                           'you will leave the app'.toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 9.0,
-                              fontWeight: FontWeight.w500),
+                          style: AppTextStyles.regularText13
+                              .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -149,7 +132,13 @@ class DevotionPlans extends StatelessWidget {
         ),
       );
 
-      showDialog(context: context, child: dialog);
+      showDialog(
+        context: context,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: dialog,
+        ),
+      );
     }
 
     var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
@@ -200,13 +189,11 @@ class DevotionPlans extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Text(
                   'Devotionals & Reading Plans',
-                  style: TextStyle(
-                      color: AppColors.lightBlue3,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500),
+                  style: AppTextStyles.boldText24
+                      .copyWith(color: AppColors.blueTitle),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -214,7 +201,6 @@ class DevotionPlans extends StatelessWidget {
                 padding: const EdgeInsets.only(
                   top: 40.0,
                   left: 20,
-                  right: 20,
                   bottom: 20,
                 ),
                 child: Column(
@@ -223,61 +209,65 @@ class DevotionPlans extends StatelessWidget {
                       (dev) => GestureDetector(
                         onTap: () => _showAlert(dev),
                         child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(vertical: 7.0),
                           decoration: BoxDecoration(
-                            color: AppColors.prayerCardBgColor,
-                            border: Border.all(
-                              color: AppColors.darkBlue,
-                              width: 1,
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                              ),
+                              border: Border.all(color: AppColors.cardBorder)),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 5.0),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    dev.type.toUpperCase(),
-                                    style: TextStyle(
-                                      color: AppColors.grey,
-                                      fontSize: 10,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      dev.type.toUpperCase(),
+                                      style: AppTextStyles.regularText14
+                                          .copyWith(
+                                              color: AppColors.grey4,
+                                              fontWeight: FontWeight.w500),
                                     ),
-                                  ),
-                                  Text(
-                                    'LENGTH: ${dev.period}'.toUpperCase(),
-                                    style: TextStyle(
-                                      color: AppColors.grey,
-                                      fontSize: 10,
+                                    Text(
+                                      'LENGTH: ${dev.period}'.toUpperCase(),
+                                      style: AppTextStyles.regularText13
+                                          .copyWith(color: AppColors.grey4),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 5.0),
-                                child: Divider(
-                                  color: AppColors.darkBlue,
-                                  thickness: 1,
+                                  ],
                                 ),
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    dev.title,
-                                    style: TextStyle(
-                                        color: AppColors.lightBlue4,
-                                        fontSize: 14),
-                                    textAlign: TextAlign.left,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5.0),
+                                  child: Divider(
+                                    color: AppColors.darkBlue,
+                                    thickness: 1,
                                   ),
-                                ],
-                              )
-                            ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      dev.title,
+                                      style: AppTextStyles.regularText16b
+                                          .copyWith(
+                                              color: AppColors.lightBlue4),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),

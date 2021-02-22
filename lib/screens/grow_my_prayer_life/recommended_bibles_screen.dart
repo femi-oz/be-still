@@ -77,10 +77,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Text(
                   'Recommeneded Bibles',
-                  style: TextStyle(
-                      color: AppColors.lightBlue3,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500),
+                  style: AppTextStyles.boldText24
+                      .copyWith(color: AppColors.blueTitle),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -89,12 +87,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     vertical: 40.0, horizontal: 40.0),
                 child: Text(
                   'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                  style: TextStyle(
-                    color: AppColors.textFieldText,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
-                    height: 1.2,
-                  ),
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.growMyPrayerText),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -124,48 +118,54 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   title: Container(
                     margin: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.1),
-                    child: Text(bibleData[i].shortName,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.boldText24),
+                    child: Text(
+                      bibleData[i].shortName,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.boldText24.copyWith(
+                        color: Color(0xFFffffff),
+                      ),
+                    ),
                   ),
                   initiallyExpanded: false,
                   // onExpansionChanged: (bool isExpanded) {
                   // },
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                       width: double.infinity,
                       child: Column(
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Text(bibleData[i].name,
-                                style: AppTextStyles.regularText13),
-                          ),
                           Text(
-                            bibleData[i].shortName,
-                            style: AppTextStyles.regularText11,
+                            bibleData[i].name,
+                            style: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.growMyPrayerText),
+                            textAlign: TextAlign.center,
                           ),
+                          SizedBox(height: 10),
+                          // Text(
+                          //   'Transaltion type',
+                          //   style: AppTextStyles.regularText14
+                          //       .copyWith(color: AppColors.blueTitle),
+                          // ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 40.0, vertical: 20.0),
                             child: Text(
-                              bibleData[i].recommendedFor,
-                              style: AppTextStyles.regularText13,
+                              'Recommeded For ${bibleData[i].recommendedFor}',
+                              style: AppTextStyles.regularText16b
+                                  .copyWith(color: AppColors.growMyPrayerText),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           OutlineButton(
-                            borderSide: BorderSide(color: AppColors.cardBorder),
+                            borderSide: BorderSide(color: AppColors.lightBlue4),
                             onPressed: () => _launchURL(bibleData[i].link),
                             child: Text(
                               'READ NOW',
-                              style: TextStyle(
-                                color: AppColors.lightBlue4,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                height: 1.3,
-                              ),
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.lightBlue4),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ],
