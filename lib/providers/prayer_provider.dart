@@ -47,14 +47,22 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future searchPrayers(String searchQuery) async {
-    List<CombinePrayerStream> filteredPrayers = _prayers
-        .where((CombinePrayerStream data) => data.prayer.description
-            .toLowerCase()
-            .contains(searchQuery.toLowerCase()))
-        .toList();
-    _filteredPrayers = filteredPrayers;
-    _filteredPrayers
-        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    if (searchQuery == '') {
+      filterPrayers(
+          isAnswered: _filterOptions.isAnswered,
+          isArchived: _filterOptions.isArchived,
+          isSnoozed: _filterOptions.isSnoozed,
+          status: _filterOptions.status);
+    } else {
+      List<CombinePrayerStream> filteredPrayers = _prayers
+          .where((CombinePrayerStream data) => data.prayer.description
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()))
+          .toList();
+      _filteredPrayers = filteredPrayers;
+      _filteredPrayers
+          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    }
     notifyListeners();
   }
 
