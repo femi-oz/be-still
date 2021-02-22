@@ -135,7 +135,8 @@ class NotificationService {
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
-        'country': countryCode
+        'country': countryCode,
+        'sender': sender,
       };
       try {
         await dio.post(
