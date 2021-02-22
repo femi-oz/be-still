@@ -4,6 +4,7 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -165,9 +166,7 @@ class DevotionPlans extends StatelessWidget {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(Settings.isDarkMode
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
+            image: AssetImage(StringUtils.backgroundImage()),
             alignment: Alignment.bottomCenter,
           ),
         ),

@@ -6,6 +6,7 @@ import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.d
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,9 +59,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(Settings.isDarkMode
-                ? 'assets/images/background-pattern-dark.png'
-                : 'assets/images/background-pattern.png'),
+            image: AssetImage(StringUtils.backgroundImage()),
             alignment: Alignment.bottomCenter,
           ),
         ),

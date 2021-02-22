@@ -10,6 +10,7 @@ import 'package:be_still/screens/create_group/widgets/create_group_succesful.dar
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -80,9 +81,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(Settings.isDarkMode
-              ? 'assets/images/background-pattern-dark.png'
-              : 'assets/images/background-pattern.png'),
+          image: AssetImage(StringUtils.backgroundImage()),
           alignment: Alignment.bottomCenter,
         ),
       ),
