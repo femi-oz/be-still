@@ -115,7 +115,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                           child: Text(
                             'RECOMMENDED BIBLES',
                             style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.blueTitle),
+                                .copyWith(color: AppColors.lightBlue4),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -128,9 +128,9 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                                 .pushNamed(DevotionPlans.routeName);
                           },
                           child: Text(
-                            'DEVOTIONAL AND READING PLANS',
+                            'DEVOTIONALS & READING PLANS',
                             style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.blueTitle),
+                                .copyWith(color: AppColors.lightBlue4),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -142,7 +142,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                           child: Text(
                             'MY PRAYER GOALS',
                             style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.blueTitle),
+                                .copyWith(color: AppColors.lightBlue4),
                             textAlign: TextAlign.left,
                           ),
                         ),

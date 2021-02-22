@@ -51,7 +51,10 @@ class DevotionPlans extends StatelessWidget {
                   children: <Widget>[
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(AppIcons.bestill_close),
+                      icon: Icon(
+                        AppIcons.bestill_close,
+                        color: AppColors.grey4,
+                      ),
                     )
                   ],
                 ),

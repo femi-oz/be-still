@@ -32,12 +32,7 @@ class _EntryScreenState extends State<EntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: _currentIndex == 2
-          ? null
-          : CustomAppBar(
-              formKey: _formKey,
-              showPrayerctions: _currentIndex == 3 ? false : true,
-            ),
+      appBar: _currentIndex == 2 ? null : CustomAppBar(formKey: _formKey),
       body: Container(
           height: double.infinity,
           child: TabNavigationItem.items[_currentIndex].page),
