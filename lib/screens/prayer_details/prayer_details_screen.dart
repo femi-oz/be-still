@@ -1,9 +1,11 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
@@ -36,6 +38,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         Provider.of<UserProvider>(context, listen: false).currentUser;
     CombinePrayerStream prayerData =
         Provider.of<PrayerProvider>(context).currentPrayer;
+    SettingsModel _settings =
+        Provider.of<SettingsProvider>(context, listen: false).settings;
+    int snoozeDuration = int.parse(
+        _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
+
+    print(snoozeDuration);
+
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
     var isGroupAdmin = false;
     if (group != null) {
