@@ -76,7 +76,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
                 child: Text(
-                  'Recommeneded Bibles',
+                  'Recommended Bibles',
                   style: AppTextStyles.boldText24
                       .copyWith(color: AppColors.blueTitle),
                   textAlign: TextAlign.center,
