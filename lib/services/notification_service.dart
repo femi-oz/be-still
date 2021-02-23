@@ -77,18 +77,20 @@ class NotificationService {
       String senderId, String userId) async {
     final _notificationId = Uuid().v1();
     try {
-      _notificationCollectionReference.doc(_notificationId).set(
-          NotificationModel(
-                  message: message,
-                  messageType: messageType,
-                  sender: senderId,
-                  userId: userId,
-                  createdBy: 'SYSTEM',
-                  createdOn: DateTime.now(),
-                  extra1: '',
-                  extra2: '',
-                  extra3: sender)
-              .toJson());
+      _notificationCollectionReference
+          .doc(_notificationId)
+          .set(NotificationModel(
+            message: message,
+            messageType: messageType,
+            sender: senderId,
+            userId: userId,
+            createdBy: 'SYSTEM',
+            createdOn: DateTime.now(),
+            extra1: '',
+            extra2: '',
+            extra3: sender,
+            status: Status.active,
+          ).toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
@@ -103,7 +105,10 @@ class NotificationService {
       var templateBody = _template.templateBody;
       templateSubject = templateSubject.replaceAll("{Sender}", sender);
       templateBody = templateBody.replaceAll("{Receiver}", receiver);
+      templateBody = templateBody.replaceAll("{Sender}", sender);
       templateBody = templateBody.replaceAll("{message}", message);
+      templateBody = templateBody.replaceAll(
+          "{Link}", "<a href='https://www.bestillapp.com/'>Learn more.</a>");
       var data = {
         'templateSubject': templateSubject,
         'templateBody': templateBody,
@@ -127,13 +132,16 @@ class NotificationService {
     var dio = Dio(BaseOptions(followRedirects: false));
     if (phoneNumber != null) {
       var _templateBody = MessageTemplate.fromData(template).templateBody;
-      _templateBody = _templateBody.replaceAll('{Receiver}', receiver);
+      _templateBody = _templateBody.replaceAll('{Sender}', sender);
+      _templateBody = _templateBody.replaceAll("{Receiver}", receiver);
       _templateBody = _templateBody.replaceAll('{message}', message);
       _templateBody = _templateBody.replaceAll('<br/>', "\n");
+      _templateBody =
+          _templateBody.replaceAll("{Link}", 'https://www.bestillapp.com/');
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
-        'country': countryCode
+        'country': countryCode,
       };
       try {
         await dio.post(

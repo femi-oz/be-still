@@ -108,12 +108,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  Future onSelectNotification(String payload) async {
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayer(widget.prayerData.userPrayer.id);
-    Navigator.of(context).pushNamed(PrayerDetails.routeName);
-  }
-
   @override
   void initState() {
     _configureLocalTimeZone();
@@ -203,6 +197,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description'),
             iOS: IOSNotificationDetails()),
+        payload: widget.prayerData.userPrayer.id,
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
@@ -215,6 +210,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
         ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
         : '$selectedFrequency, $selectedHour:$selectedMinute $period';
     await storeNotification(localId, notificationText);
+  }
+
+  Future onSelectNotification(String payload) async {
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .setPrayer(payload);
+    Navigator.of(context).pushNamed(PrayerDetails.routeName);
   }
 
   storeNotification(localId, notificationText) async {

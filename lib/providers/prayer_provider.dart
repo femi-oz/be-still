@@ -47,15 +47,31 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future searchPrayers(String searchQuery) async {
-    List<CombinePrayerStream> filteredPrayers = _prayers
-        .where((CombinePrayerStream data) => data.prayer.description
-            .toLowerCase()
-            .contains(searchQuery.toLowerCase()))
-        .toList();
-    _filteredPrayers = filteredPrayers;
-    _filteredPrayers
-        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    if (searchQuery == '') {
+      filterPrayers(
+          isAnswered: _filterOptions.isAnswered,
+          isArchived: _filterOptions.isArchived,
+          isSnoozed: _filterOptions.isSnoozed,
+          status: _filterOptions.status);
+    } else {
+      List<CombinePrayerStream> filteredPrayers = _prayers
+          .where((CombinePrayerStream data) => data.prayer.description
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()))
+          .toList();
+      _filteredPrayers = filteredPrayers;
+      _filteredPrayers
+          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    }
     notifyListeners();
+  }
+
+  Future setPrayer(String id) async {
+    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
+      _currentPrayer = prayer;
+      notifyListeners();
+    });
+    return;
   }
 
   Future filterPrayers({
@@ -195,14 +211,6 @@ class PrayerProvider with ChangeNotifier {
   Future setCurrentPrayerType(PrayerType type) async {
     _currentPrayerType = type;
     notifyListeners();
-  }
-
-  Future setPrayer(String id) async {
-    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-      _currentPrayer = prayer;
-      notifyListeners();
-    });
-    return;
   }
 
 //Group Prayers

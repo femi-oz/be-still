@@ -112,6 +112,10 @@ class AppColors {
       getColor(darkMode, light: 0xFF0D1319, dark: 0xFF0D1319);
   static Color get saveBtnBorder =>
       getColor(darkMode, light: 0xFF004E75, dark: 0xFF004E75);
+  static Color get blueTitle =>
+      getColor(darkMode, light: 0xFF003B87, dark: 0xFF00ACD8);
+  static Color get growMyPrayerText =>
+      getColor(darkMode, light: 0xFF002D4B, dark: 0xFFC1C5C8);
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),

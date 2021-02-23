@@ -158,15 +158,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 )
               ],
             )
-          : FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text(
-                pageTitle,
-                style: TextStyle(
-                  color: AppColors.bottomNavIconColor,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                ),
+          : Text(
+              pageTitle,
+              style: TextStyle(
+                color: AppColors.bottomNavIconColor,
+                fontSize: 32,
+                fontWeight: FontWeight.w700,
               ),
             ),
       actions: <Widget>[
