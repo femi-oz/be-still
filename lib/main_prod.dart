@@ -8,7 +8,7 @@ Future<void> main() async {
   FlavorConfig(
     flavor: Flavor.PROD,
     color: Colors.green,
-    values: FlavorValues(),
+    values: FlavorValues(country: 'US'),
   );
   common.main();
 }

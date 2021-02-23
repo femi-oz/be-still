@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
@@ -141,7 +142,7 @@ class NotificationService {
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
-        'country': 'US',
+        'country': FlavorConfig.instance.values.country,
       };
       try {
         await dio.post(
