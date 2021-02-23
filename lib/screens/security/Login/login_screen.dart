@@ -211,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen>
                 textInputAction: TextInputAction.done,
                 unfocus: true,
                 submitForm: () => _login(),
-                validator: null,
+                validator: 'null',
               ),
             ),
           ),
