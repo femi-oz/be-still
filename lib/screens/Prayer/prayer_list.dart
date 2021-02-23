@@ -15,8 +15,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'widgets/prayer_card.dart';
@@ -27,21 +25,9 @@ class PrayerList extends StatefulWidget {
 }
 
 class _PrayerListState extends State<PrayerList> {
-  void _getLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    final coordinates = new Coordinates(position.latitude, position.longitude);
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-
-    await Provider.of<MiscProvider>(context, listen: false)
-        .setCountryName(addresses);
-  }
-
   void _getPrayers() async {
     await BeStilDialog.showLoading(context, '');
     try {
-      _getLocation();
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
@@ -50,14 +36,14 @@ class _PrayerListState extends State<PrayerList> {
           .setAllUsers(_user.id);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications();
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }

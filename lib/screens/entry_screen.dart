@@ -17,22 +17,41 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
+bool searchEnabled = false;
+
 class _EntryScreenState extends State<EntryScreen> {
   int _currentIndex = 0;
 
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _searchMode = false;
+  final TextEditingController _searchController = TextEditingController();
   @override
   void initState() {
     _currentIndex = widget.screenNumber ?? 0;
     super.initState();
   }
 
+  _onSearchChange(String value) {
+    setState(() => searchEnabled = value != '');
+  }
+
+  _switchSearchMode(bool value) {
+    setState(() => _searchMode = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: _currentIndex == 2 ? null : CustomAppBar(formKey: _formKey),
+      appBar: _currentIndex == 2
+          ? null
+          : CustomAppBar(
+              searchMode: _searchMode,
+              searchController: _searchController,
+              switchSearchMode: (bool val) => _switchSearchMode(val),
+              formKey: _formKey,
+              onSearchChange: (String value) => _onSearchChange(value)),
       body: Container(
           height: double.infinity,
           child: TabNavigationItem.items[_currentIndex].page),
@@ -58,6 +77,9 @@ class _EntryScreenState extends State<EntryScreen> {
           if (index == 1) {
             return;
           }
+          _onSearchChange('');
+          _switchSearchMode(false);
+          _searchController.text = '';
           setState(() => _currentIndex = index);
         },
         showSelectedLabels: false,
@@ -114,7 +136,7 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: GrowMyPrayerLifeScreen(),
+          page: searchEnabled ? PrayerList() : GrowMyPrayerLifeScreen(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",

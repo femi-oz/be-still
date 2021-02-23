@@ -128,7 +128,7 @@ class NotificationService {
   }
 
   sendSMS(String phoneNumber, DocumentSnapshot template, String sender,
-      String receiver, String message, String countryCode) async {
+      String receiver, String message) async {
     var dio = Dio(BaseOptions(followRedirects: false));
     if (phoneNumber != null) {
       var _templateBody = MessageTemplate.fromData(template).templateBody;
@@ -141,7 +141,7 @@ class NotificationService {
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
-        'country': countryCode,
+        'country': 'US',
       };
       try {
         await dio.post(

@@ -14,7 +14,18 @@ import 'package:provider/provider.dart';
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
   final bool showPrayerctions;
-  CustomAppBar({Key key, this.formKey, this.showPrayerctions = true})
+  final bool searchMode;
+  final Function onSearchChange;
+  final Function switchSearchMode;
+  final TextEditingController searchController;
+  CustomAppBar(
+      {Key key,
+      this.formKey,
+      this.showPrayerctions = true,
+      this.onSearchChange,
+      this.switchSearchMode,
+      this.searchMode,
+      this.searchController})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -26,16 +37,15 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  bool searchMode = false;
-  final TextEditingController _searchController = TextEditingController();
-
   void _searchPrayer(String value) async {
+    widget.onSearchChange(value);
     await Provider.of<PrayerProvider>(context, listen: false)
         .searchPrayers(value);
   }
 
   void _clearSearchField() async {
-    _searchController.text = '';
+    widget.onSearchChange('');
+    widget.searchController.text = '';
     await Provider.of<PrayerProvider>(context, listen: false).searchPrayers('');
   }
 
@@ -105,7 +115,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           SizedBox(width: widget.showPrayerctions ? 15 : 0),
           widget.showPrayerctions
               ? InkWell(
-                  onTap: () => setState(() => searchMode = !searchMode),
+                  onTap: () => setState(
+                      () => widget.switchSearchMode(!widget.searchMode)),
                   child: Icon(
                     AppIcons.bestill_search,
                     color: AppColors.bottomNavIconColor,
@@ -126,7 +137,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               : Container(),
         ],
       ),
-      title: searchMode
+      title: widget.searchMode
           ? Row(
               children: [
                 Expanded(
@@ -134,7 +145,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     key: widget.formKey,
                     autovalidateMode: AutovalidateMode.disabled,
                     child: CustomInput(
-                      controller: _searchController,
+                      controller: widget.searchController,
                       label: 'Search',
                       padding: 5.0,
                       showSuffix: false,
@@ -152,7 +163,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onPressed: () => setState(
                     () {
                       _clearSearchField();
-                      searchMode = !searchMode;
+                      widget.switchSearchMode(!widget.searchMode);
                     },
                   ),
                 )
