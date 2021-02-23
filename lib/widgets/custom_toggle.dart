@@ -1,4 +1,6 @@
+import 'dart:io' show Platform;
 import 'package:be_still/utils/essentials.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomToggle extends StatelessWidget {
@@ -22,13 +24,20 @@ class CustomToggle extends StatelessWidget {
               ),
             ),
           ),
-          Switch.adaptive(
-            value: value,
-            activeColor: Colors.white,
-            activeTrackColor: AppColors.lightBlue4,
-            inactiveThumbColor: Colors.white,
-            onChanged: (value) => onChange(value),
-          ),
+          Platform.isIOS
+              ? CupertinoSwitch(
+                  value: value,
+                  activeColor: AppColors.lightBlue4,
+                  trackColor: Colors.white,
+                  onChanged: (value) => onChange(value),
+                )
+              : Switch.adaptive(
+                  value: value,
+                  activeColor: Colors.white,
+                  activeTrackColor: AppColors.lightBlue4,
+                  inactiveThumbColor: Colors.white,
+                  onChanged: (value) => onChange(value),
+                ),
         ],
       ),
     );
