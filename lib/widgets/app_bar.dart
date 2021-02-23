@@ -24,7 +24,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
       this.showPrayerctions = true,
       this.onSearchChange,
       this.switchSearchMode,
-      this.searchMode,
+      this.searchMode = false,
       this.searchController})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
