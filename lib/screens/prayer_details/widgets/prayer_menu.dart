@@ -272,8 +272,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _snoozePrayer() async {
+    BeStilDialog.showLoading(bcontext);
+
     try {
-      BeStilDialog.showLoading(bcontext);
       await Provider.of<PrayerProvider>(context, listen: false)
           .snoozePrayer(widget.prayerData.prayer.id, widget.snoozeEndDate);
 
@@ -288,8 +289,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _unSnoozePrayer() async {
+    BeStilDialog.showLoading(context);
+
     try {
-      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .unSnoozePrayer(widget.prayerData.prayer.id, DateTime.now());
 
