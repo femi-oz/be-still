@@ -80,6 +80,7 @@ class PrayerProvider with ChangeNotifier {
     bool isArchived,
     bool isAnswered,
   }) async {
+    var favoritePrayers = [];
     _filterOptions = FilterType(
       isAnswered: isAnswered,
       isArchived: isArchived,
@@ -93,22 +94,30 @@ class PrayerProvider with ChangeNotifier {
     var snoozedPrayers = [];
     var archivedPrayers = [];
     if (status == Status.active) {
+      favoritePrayers = prayers
+          .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
+          .toList();
       activePrayers = prayers
           .where((CombinePrayerStream data) =>
               data.prayer.status.toLowerCase() == status.toLowerCase())
           .toList();
     }
     if (isAnswered == true) {
+      favoritePrayers = [];
+
       answeredPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
           .toList();
     }
     if (isArchived == true) {
+      favoritePrayers = [];
       archivedPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isArchived == true)
           .toList();
     }
     if (isSnoozed == true) {
+      favoritePrayers = [];
+
       snoozedPrayers = prayers
           .where((CombinePrayerStream data) =>
               data.prayer.isSnoozed == true &&
@@ -123,9 +132,7 @@ class PrayerProvider with ChangeNotifier {
     ];
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    var favoritePrayers = prayers
-        .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
-        .toList();
+
     _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
     List<CombinePrayerStream> _distinct = [];
     var idSet = <String>{};
@@ -175,6 +182,14 @@ class PrayerProvider with ChangeNotifier {
 
   Future unArchivePrayer(String prayerID) async {
     await _prayerService.unArchivePrayer(prayerID);
+  }
+
+  Future snoozePrayer(String prayerID, DateTime snoozeEndDate) async {
+    await _prayerService.snoozePrayer(prayerID, snoozeEndDate);
+  }
+
+  Future unSnoozePrayer(String prayerID, DateTime snoozeEndDate) async {
+    await _prayerService.unSnoozePrayer(prayerID, snoozeEndDate);
   }
 
   Future favoritePrayer(String prayerID) async {

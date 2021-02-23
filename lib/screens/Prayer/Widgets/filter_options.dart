@@ -78,21 +78,19 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       ),
                       MenuButton(
                         isActive: filterOptions.isSnoozed == true,
-                        onPressed: () => null,
-                        // setState(
-                        //   () async {
-                        //     isSnoozed = !isSnoozed;
-                        //     status = Status.inactive;
-                        //     await Provider.of<PrayerProvider>(context,
-                        //             listen: false)
-                        //         .filterPrayers(
-                        //       isAnswered: isAnswered,
-                        //       isArchived: isArchived,
-                        //       isSnoozed: isSnoozed,
-                        //       status: status,
-                        //     );
-                        //   },
-                        // );
+                        onPressed: () => setState(
+                          () async {
+                            isSnoozed = !isSnoozed;
+                            await Provider.of<PrayerProvider>(context,
+                                    listen: false)
+                                .filterPrayers(
+                              isAnswered: isAnswered,
+                              isArchived: isArchived,
+                              isSnoozed: isSnoozed,
+                              status: status,
+                            );
+                          },
+                        ),
                         text: 'SNOOZED',
                       ),
                       MenuButton(

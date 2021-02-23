@@ -6,6 +6,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -26,10 +27,12 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 class PrayerMenu extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final List<PrayerUpdateModel> updates;
+  final DateTime snoozeEndDate;
 
   final BuildContext parentcontext;
   @override
-  PrayerMenu(this.prayerData, this.updates, this.parentcontext);
+  PrayerMenu(
+      this.prayerData, this.updates, this.parentcontext, this.snoozeEndDate);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -268,6 +271,40 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
+  void _snoozePrayer() async {
+    BeStilDialog.showLoading(bcontext);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .snoozePrayer(widget.prayerData.prayer.id, widget.snoozeEndDate);
+
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(bcontext);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
+  void _unSnoozePrayer() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unSnoozePrayer(widget.prayerData.prayer.id, DateTime.now());
+
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   void _onArchive() async {
     try {
       BeStilDialog.showLoading(bcontext);
@@ -376,23 +413,41 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                   text: 'Reminder',
                 ),
-                MenuButton(
-                  icon: AppIcons.bestill_snooze,
-                  onPressed: () => null,
-                  // showModalBottomSheet(
-                  //   context: context,
-                  //   barrierColor:
-                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //   backgroundColor:
-                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //   isScrollControlled: true,
-                  //   builder: (BuildContext context) {
-                  //     return CustomPicker(
-                  //         snoozeInterval, setSnooze, false, null);
-                  //   },
-                  // ),
-                  text: 'Snooze',
-                ),
+                widget.prayerData.prayer.isSnoozed == false
+                    ? MenuButton(
+                        icon: AppIcons.bestill_snooze,
+                        onPressed: () => _snoozePrayer(),
+                        // showModalBottomSheet(
+                        //   context: context,
+                        //   barrierColor:
+                        //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                        //   backgroundColor:
+                        //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                        //   isScrollControlled: true,
+                        //   builder: (BuildContext context) {
+                        //     return CustomPicker(
+                        //         snoozeInterval, setSnooze, false, null);
+                        //   },
+                        // ),
+                        text: 'Snooze',
+                      )
+                    : MenuButton(
+                        icon: AppIcons.bestill_snooze,
+                        onPressed: () => _unSnoozePrayer(),
+                        // showModalBottomSheet(
+                        //   context: context,
+                        //   barrierColor:
+                        //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                        //   backgroundColor:
+                        //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                        //   isScrollControlled: true,
+                        //   builder: (BuildContext context) {
+                        //     return CustomPicker(
+                        //         snoozeInterval, setSnooze, false, null);
+                        //   },
+                        // ),
+                        text: 'Unsnooze',
+                      ),
                 widget.prayerData.prayer.isAnswer == false
                     ? MenuButton(
                         icon: AppIcons.bestill_answered,

@@ -1,9 +1,11 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
@@ -31,11 +33,30 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   List<PrayerUpdateModel> updates = [];
 
+  void getSettings() async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSettings(_user.id);
+  }
+
+  Duration snoozeDurationinDays;
+
   Widget _buildMenu() {
+    SettingsModel _settings =
+        Provider.of<SettingsProvider>(context, listen: false).settings;
+    int snoozeDuration = int.parse(
+        _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
+    if (snoozeDuration == 1) {
+      snoozeDurationinDays = new Duration(days: 360);
+    } else {
+      snoozeDurationinDays = new Duration(days: snoozeDuration);
+    }
+    DateTime snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     CombinePrayerStream prayerData =
         Provider.of<PrayerProvider>(context).currentPrayer;
+
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
     var isGroupAdmin = false;
     if (group != null) {
@@ -56,9 +77,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       updates = Provider.of<PrayerProvider>(context, listen: false)
           .currentPrayer
           .updates;
-      return PrayerMenu(prayerData, updates, context);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
     } else {
-      return PrayerMenu(prayerData, updates, context);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
     }
   }
 
@@ -77,6 +98,18 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       return false;
     else
       return true;
+  }
+
+  bool _isInit = true;
+
+  BuildContext selectedContext;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      getSettings();
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   @override
