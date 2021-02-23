@@ -60,7 +60,9 @@ class _LoginScreenState extends State<LoginScreen>
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      print(e.message);
+      BeStillSnackbar.showInSnackBar(
+          message: 'Username / Password is incorrect', key: _scaffoldKey);
     } catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(

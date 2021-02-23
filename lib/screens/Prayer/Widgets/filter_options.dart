@@ -79,10 +79,9 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       MenuButton(
                         isActive: filterOptions.isSnoozed == true,
                         onPressed: () => setState(
-                          () async {
+                          () {
                             isSnoozed = !isSnoozed;
-                            await Provider.of<PrayerProvider>(context,
-                                    listen: false)
+                            Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                               isAnswered: isAnswered,
                               isArchived: isArchived,
@@ -96,10 +95,9 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       MenuButton(
                         isActive: filterOptions.isArchived == true,
                         onPressed: () => setState(
-                          () async {
+                          () {
                             isArchived = !isArchived;
-                            await Provider.of<PrayerProvider>(context,
-                                    listen: false)
+                            Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                               isAnswered: isAnswered,
                               isArchived: isArchived,
@@ -113,10 +111,9 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       MenuButton(
                         isActive: filterOptions.isAnswered == true,
                         onPressed: () => setState(
-                          () async {
+                          () {
                             isAnswered = !isAnswered;
-                            await Provider.of<PrayerProvider>(context,
-                                    listen: false)
+                            Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                                     isAnswered: isAnswered,
                                     isArchived: isArchived,
