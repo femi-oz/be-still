@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,7 @@ class NotificationModel {
         messageType = snapshot.data()['MessageType'],
         sender = snapshot.data()['Sender'],
         userId = snapshot.data()['UserId'],
-        status = snapshot.data()['Status'],
+        status = snapshot.data()['Status'] ?? Status.active,
         createdBy = snapshot.data()['CreatedBy'],
         // createdOn = DateTime.fromMillisecondsSinceEpoch(
         //     snapshot.data()['CreatedOn'] * 1000),

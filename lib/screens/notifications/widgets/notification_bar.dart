@@ -1,6 +1,8 @@
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
   final context;
@@ -20,6 +22,15 @@ class NotificationBarState extends State<NotificationBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.topRight,
+            colors: AppColors.appBarBackground,
+          ),
+        ),
+      ),
       title: Text(''),
       leading: IconButton(
         icon: Icon(
@@ -31,13 +42,13 @@ class NotificationBarState extends State<NotificationBar> {
       ),
       actions: <Widget>[
         FlatButton(
-          onPressed: () => null,
+          onPressed: () =>
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .clearNotification(),
           child: Text(
             "CLEAR ALL",
-            style: TextStyle(
-              color: AppColors.lightBlue4,
-              fontSize: 16,
-            ),
+            style: AppTextStyles.boldText16
+                .copyWith(color: AppColors.bottomNavIconColor),
           ),
         ),
         SizedBox(width: MediaQuery.of(context).size.width * 0.24),
@@ -46,8 +57,8 @@ class NotificationBarState extends State<NotificationBar> {
             return IconButton(
               icon: Icon(
                 AppIcons.bestill_main_menu,
-                color: AppColors.lightBlue4,
-                // size: 24,
+                color: AppColors.bottomNavIconColor,
+                size: 18,
               ),
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();

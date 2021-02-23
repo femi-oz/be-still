@@ -213,6 +213,18 @@ class NotificationService {
     }
   }
 
+  Future clearNotification(List<String> ids) async {
+    try {
+      for (int i = 0; i < ids.length; i++) {
+        await _notificationCollectionReference
+            .doc(ids[i])
+            .update({'Status': Status.inactive});
+      }
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
   acceptGroupInvite(
       String groupId, String userId, String name, String email) async {
     try {
