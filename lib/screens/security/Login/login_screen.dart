@@ -40,9 +40,6 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _login() async {
-    setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return;
-    _formKey.currentState.save();
     await BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
@@ -214,6 +211,7 @@ class _LoginScreenState extends State<LoginScreen>
                 textInputAction: TextInputAction.done,
                 unfocus: true,
                 submitForm: () => _login(),
+                validator: null,
               ),
             ),
           ),
