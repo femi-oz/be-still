@@ -142,7 +142,7 @@ class NotificationService {
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
-        'country': FlavorConfig.instance.values.country,
+        'country': "US",
       };
       try {
         await dio.post(
