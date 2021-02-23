@@ -77,7 +77,7 @@ class _PrayerCardState extends State<PrayerCard> {
                               ),
                               widget.prayerData.userPrayer.isFavorite
                                   ? Icon(
-                                      Icons.star,
+                                      Icons.favorite,
                                       color: AppColors.lightBlue3,
                                       size: 10,
                                     )

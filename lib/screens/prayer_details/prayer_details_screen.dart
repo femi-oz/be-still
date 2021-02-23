@@ -33,17 +33,29 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   List<PrayerUpdateModel> updates = [];
 
+  void getSettings() async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSettings(_user.id);
+  }
+
+  Duration snoozeDurationinDays;
+
   Widget _buildMenu() {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    CombinePrayerStream prayerData =
-        Provider.of<PrayerProvider>(context).currentPrayer;
     SettingsModel _settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
     int snoozeDuration = int.parse(
         _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
-
-    print(snoozeDuration);
+    if (snoozeDuration == 1) {
+      snoozeDurationinDays = new Duration(days: 360);
+    } else {
+      snoozeDurationinDays = new Duration(days: snoozeDuration);
+    }
+    DateTime snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    CombinePrayerStream prayerData =
+        Provider.of<PrayerProvider>(context).currentPrayer;
 
     var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
     var isGroupAdmin = false;
@@ -65,9 +77,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       updates = Provider.of<PrayerProvider>(context, listen: false)
           .currentPrayer
           .updates;
-      return PrayerMenu(prayerData, updates, context);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
     } else {
-      return PrayerMenu(prayerData, updates, context);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
     }
   }
 
@@ -86,6 +98,18 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       return false;
     else
       return true;
+  }
+
+  bool _isInit = true;
+
+  BuildContext selectedContext;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      getSettings();
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   @override

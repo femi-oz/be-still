@@ -59,7 +59,8 @@ class PrayerModel {
         isInappropriate = snapshot.data()['IsInappropriate'],
         hideFromMe = snapshot.data()['HideFromMe'],
         hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
-        snoozeEndDate = snapshot.data()['SnoozeEndDate']?.toDate(),
+        snoozeEndDate =
+            snapshot.data()['SnoozeEndDate']?.toDate() ?? DateTime.now(),
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn']?.toDate(),

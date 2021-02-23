@@ -298,7 +298,14 @@ class PrayerService {
   Future snoozePrayer(String prayerID, DateTime endDate) async {
     try {
       _prayerCollectionReference.doc(prayerID).update(
-        {'IsSnoozed': true, 'EndDate': endDate},
+        {
+          'IsSnoozed': true,
+          'SnoozeEndDate': endDate,
+          'Status': Status.inactive
+        },
+      );
+      _userPrayerCollectionReference.doc(prayerID).update(
+        {'IsFavourite': false},
       );
     } catch (e) {
       throw HttpException(e.message);
@@ -308,7 +315,7 @@ class PrayerService {
   Future unSnoozePrayer(String prayerID, DateTime endDate) async {
     try {
       _prayerCollectionReference.doc(prayerID).update(
-        {'IsSnoozed': false, 'EndDate': endDate},
+        {'IsSnoozed': false, 'SnoozeEndDate': endDate, 'Status': Status.active},
       );
     } catch (e) {
       throw HttpException(e.message);
