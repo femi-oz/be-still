@@ -7,7 +7,9 @@
          FlutterApplication and put your custom class here. -->
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
     <uses-permission android:name="android.permission.READ_CONTACTS" />  
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" /> 
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+ 
 
     <application
         android:name="io.flutter.app.FlutterApplication"

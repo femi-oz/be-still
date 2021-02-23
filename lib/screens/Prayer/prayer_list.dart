@@ -19,6 +19,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:vibrate/vibrate.dart';
 import 'widgets/prayer_card.dart';
 
 class PrayerList extends StatefulWidget {
@@ -80,7 +81,32 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
+  bool _canVibrate = true;
+  final Iterable<Duration> pauses = [
+    const Duration(milliseconds: 500),
+    const Duration(milliseconds: 1000),
+    const Duration(milliseconds: 500),
+  ];
+
+  init() async {
+    bool canVibrate = await Vibrate.canVibrate;
+    setState(() {
+      _canVibrate = canVibrate;
+      _canVibrate
+          ? print("This device can vibrate")
+          : print("This device cannot vibrate");
+    });
+  }
+
+  void vibrate() async {
+    // bool canVibrate = await Vibrate.canVibrate;
+    // canVibrate ? Vibrate.feedback(FeedbackType.medium) : null;
+
+    !_canVibrate ? null : Vibrate.vibrate();
+  }
+
   void onLongPressCard(prayerData, details) async {
+    vibrate();
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(prayerData.userPrayer.id);
@@ -121,6 +147,7 @@ class _PrayerListState extends State<PrayerList> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      init();
       _getPermissions();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await Provider.of<MiscProvider>(context, listen: false)
