@@ -157,21 +157,8 @@ class CustomDrawer extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      InkWell(
-                        child: Text(
-                          'LOGOUT',
-                          style: AppTextStyles.boldText20
-                              .copyWith(color: AppColors.topNavTextColor),
-                        ),
-                        onTap: () {
-                          // _authProvider.signOut();
-                          // Navigator.of(context)
-                          //     .pushReplacementNamed(LoginScreen.routeName);
-                          _openLogoutConfirmation(context);
-                        },
-                      ),
                       InkWell(
                         child: Icon(
                           AppIcons.bestill_close,
@@ -197,10 +184,8 @@ class CustomDrawer extends StatelessWidget {
                       child: Column(
                         children: <Widget>[
                           ListTile(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .pushReplacementNamed(EntryScreen.routeName);
-                            },
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed(EntryScreen.routeName),
                             title: Text("MY LIST",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
@@ -243,11 +228,15 @@ class CustomDrawer extends StatelessWidget {
                                     color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
-                            onTap: () {
-                              Navigator.of(context).pushReplacementNamed(
-                                  SettingsScreen.routeName);
-                            },
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed(SettingsScreen.routeName),
                             title: Text("SETTINGS",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
+                          ),
+                          ListTile(
+                            onTap: () => _openLogoutConfirmation(context),
+                            title: Text("LOGOUT",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),

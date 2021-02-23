@@ -38,9 +38,11 @@ class CustomButtonGroup extends StatelessWidget {
           child: OutlineButton(
             borderSide: BorderSide(color: Colors.transparent),
             child: Container(
-              child: Text(
-                title.toUpperCase(),
-                style: AppTextStyles.boldText20.copyWith(color: color),
+              child: FittedBox(
+                child: Text(
+                  title.toUpperCase(),
+                  style: AppTextStyles.boldText20.copyWith(color: color),
+                ),
               ),
             ),
             onPressed: () => onSelected(title),

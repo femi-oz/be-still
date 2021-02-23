@@ -202,8 +202,7 @@ class PrayerService {
     }
   }
 
-  Future addPrayerTag(List<Contact> contactData, String countryCode,
-      UserModel user, String message,
+  Future addPrayerTag(List<Contact> contactData, UserModel user, String message,
       [List<PrayerTagModel> oldTags]) async {
     try {
       //store prayer Tag
@@ -229,7 +228,7 @@ class PrayerService {
           await locator<NotificationService>().sendEmail(email, template,
               user.firstName, contactData[i].displayName, message);
           await locator<NotificationService>().sendSMS(phoneNumber, template,
-              user.firstName, contactData[i].displayName, message, countryCode);
+              user.firstName, contactData[i].displayName, message);
         }
       }
     } catch (e) {

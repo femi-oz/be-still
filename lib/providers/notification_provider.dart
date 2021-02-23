@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/notification_service.dart';
 import 'package:device_info/device_info.dart';
@@ -43,9 +44,15 @@ class NotificationProvider with ChangeNotifier {
         .getUserNotifications(userId)
         .asBroadcastStream()
         .listen((notifications) {
-      _notifications = notifications;
+      _notifications =
+          notifications.where((e) => e.status == Status.active).toList();
       notifyListeners();
     });
+  }
+
+  Future clearNotification() async {
+    await _notificationService
+        .clearNotification(_notifications.map((e) => e.id).toList());
   }
 
   Future acceptGroupInvite(

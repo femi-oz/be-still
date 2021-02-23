@@ -37,6 +37,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
           ],
         ),
       ),
+      leadingWidth: 80,
       title: Text(
         '${widget.current} OF ${widget.totalPrayers}',
         style:

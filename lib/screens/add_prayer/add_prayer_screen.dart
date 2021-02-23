@@ -87,12 +87,10 @@ class _AddPrayerState extends State<AddPrayer> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayer(prayerData, _user.id);
-        String countryCode =
-            Provider.of<MiscProvider>(context, listen: false).countryCode;
         if (contactData.length > 0) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(contactData, countryCode, _user,
-                  _descriptionController.text, []);
+              .addPrayerTag(
+                  contactData, _user, _descriptionController.text, []);
         }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
@@ -115,12 +113,10 @@ class _AddPrayerState extends State<AddPrayer> {
         for (int i = 0; i < widget.prayerData.tags.length; i++)
           await Provider.of<PrayerProvider>(context, listen: false)
               .removePrayerTag(widget.prayerData.tags[i].id);
-        String countryCode =
-            Provider.of<MiscProvider>(context, listen: false).countryCode;
         if (contactData.length > 0) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(contactData, countryCode, _user,
-                  _descriptionController.text, widget.prayerData.tags);
+              .addPrayerTag(contactData, _user, _descriptionController.text,
+                  widget.prayerData.tags);
         }
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);

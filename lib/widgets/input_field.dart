@@ -106,6 +106,9 @@ class _CustomInputState extends State<CustomInput> {
   }
 
   String _validatorFn(String value) {
+    if (widget.validator == 'null') {
+      return '';
+    }
     if (widget.isRequired) {
       if (value.isEmpty) {
         return '${widget.label} is required';

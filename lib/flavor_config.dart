@@ -10,11 +10,11 @@ enum Flavor {
 }
 
 class FlavorValues {
-  // final String baseUrl;
+  final String country;
   //Add other flavor specific values, e.g database name
 
   // FlavorValues({@required this.baseUrl});
-  FlavorValues();
+  FlavorValues({@required this.country});
 }
 
 class FlavorConfig {

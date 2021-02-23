@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
@@ -128,7 +129,7 @@ class NotificationService {
   }
 
   sendSMS(String phoneNumber, DocumentSnapshot template, String sender,
-      String receiver, String message, String countryCode) async {
+      String receiver, String message) async {
     var dio = Dio(BaseOptions(followRedirects: false));
     if (phoneNumber != null) {
       var _templateBody = MessageTemplate.fromData(template).templateBody;
@@ -141,7 +142,7 @@ class NotificationService {
       var data = {
         'phoneNumber': phoneNumber,
         'template': _templateBody,
-        'country': countryCode,
+        'country': FlavorConfig.instance.values.country,
       };
       try {
         await dio.post(
@@ -208,6 +209,18 @@ class NotificationService {
           .snapshots()
           .map((e) =>
               e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
+    } catch (e) {
+      throw HttpException(e.message);
+    }
+  }
+
+  Future clearNotification(List<String> ids) async {
+    try {
+      for (int i = 0; i < ids.length; i++) {
+        await _notificationCollectionReference
+            .doc(ids[i])
+            .update({'Status': Status.inactive});
+      }
     } catch (e) {
       throw HttpException(e.message);
     }
