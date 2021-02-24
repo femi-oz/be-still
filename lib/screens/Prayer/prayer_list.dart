@@ -78,17 +78,13 @@ class _PrayerListState extends State<PrayerList> {
     bool canVibrate = await Vibrate.canVibrate;
     setState(() {
       _canVibrate = canVibrate;
-      _canVibrate
-          ? print("This device can vibrate")
-          : print("This device cannot vibrate");
     });
   }
 
   void vibrate() async {
-    // bool canVibrate = await Vibrate.canVibrate;
-    // canVibrate ? Vibrate.feedback(FeedbackType.medium) : null;
-
-    !_canVibrate ? null : Vibrate.vibrate();
+    if (_canVibrate) {
+      Vibrate.vibrate();
+    }
   }
 
   void onLongPressCard(prayerData, details) async {
