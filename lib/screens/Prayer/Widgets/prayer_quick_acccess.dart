@@ -170,7 +170,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Container(
-        color: Colors.transparent,
+        color: AppColors.addPrayerBg.withOpacity(0.1),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -187,84 +187,146 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       width: 100.0,
                     ),
                   ),
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(270),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: CircularButton(
-                          icon: Icon(
-                            AppIcons.bestill_edit,
-                            color: AppColors.lightBlue4,
-                          ),
-                          onClick: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddPrayer(
-                                      isEdit: true,
-                                      prayerData: widget.prayerData,
-                                      isGroup: false)),
-                            );
-                          }),
-                    ),
-                  ),
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(315),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: CircularButton(
-                          icon: Icon(
-                            widget.prayerData.userPrayer.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border_outlined,
-                            color: AppColors.lightBlue4,
-                          ),
-                          onClick: () {
-                            widget.prayerData.userPrayer.isFavorite
-                                ? _unMarkPrayerAsFavorite()
-                                : _markPrayerAsFavorite();
-                          }),
-                    ),
-                  ),
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(360),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: CircularButton(
-                        icon: Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
+                  Row(
+                    children: [
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(270),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: CircularButton(
+                              icon: Icon(
+                                AppIcons.bestill_edit,
+                                color: AppColors.lightBlue4,
+                              ),
+                              onClick: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddPrayer(
+                                          isEdit: true,
+                                          prayerData: widget.prayerData,
+                                          isGroup: false)),
+                                );
+                              }),
                         ),
-                        onClick: () {
-                          showModalBottomSheet(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return SharePrayer(
-                                  prayer: widget.prayerData.prayer.description,
-                                  updates:
-                                      updates.length > 0 ? newUpdates : '');
-                            },
-                          );
-                        },
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: Transform.translate(
+                          offset: Offset.fromDirection(
+                              getRadiansFromDegree(270),
+                              degOneTranslationAnimation.value * 60),
+                          child: Transform(
+                            transform: Matrix4.rotationZ(
+                                getRadiansFromDegree(rotationAnimation.value))
+                              ..scale(degOneTranslationAnimation.value),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Edit',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(315),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: CircularButton(
+                              icon: Icon(
+                                widget.prayerData.userPrayer.isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border_outlined,
+                                color: AppColors.lightBlue4,
+                              ),
+                              onClick: () {
+                                widget.prayerData.userPrayer.isFavorite
+                                    ? _unMarkPrayerAsFavorite()
+                                    : _markPrayerAsFavorite();
+                              }),
+                        ),
+                      ),
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(315),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: Text(
+                            widget.prayerData.userPrayer.isFavorite
+                                ? 'Favourite'
+                                : 'Unfavourite',
+                            style: TextStyle(color: AppColors.lightBlue4),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(360),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: CircularButton(
+                            icon: Icon(
+                              AppIcons.bestill_share,
+                              color: AppColors.lightBlue4,
+                            ),
+                            onClick: () {
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: AppColors.detailBackgroundColor[1]
+                                    .withOpacity(0.5),
+                                backgroundColor: AppColors
+                                    .detailBackgroundColor[1]
+                                    .withOpacity(0.9),
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return SharePrayer(
+                                      prayer:
+                                          widget.prayerData.prayer.description,
+                                      updates:
+                                          updates.length > 0 ? newUpdates : '');
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(360),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Share',
+                            style: TextStyle(color: AppColors.lightBlue4),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   // Transform.translate(
                   //   offset: Offset.fromDirection(getRadiansFromDegree(360),
@@ -302,52 +364,97 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                   //     ),
                   //   ),
                   // ),
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(45),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: CircularButton(
-                        icon: Icon(
-                          AppIcons.bestill_archive,
-                          color: AppColors.lightBlue4,
-                        ),
-                        onClick: () {
-                          showModalBottomSheet(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return DeletePrayer(widget.prayerData);
+                  Row(
+                    children: [
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(45),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: CircularButton(
+                            icon: Icon(
+                              AppIcons.bestill_archive,
+                              color: AppColors.lightBlue4,
+                            ),
+                            onClick: () {
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: AppColors.detailBackgroundColor[1]
+                                    .withOpacity(0.5),
+                                backgroundColor: AppColors
+                                    .detailBackgroundColor[1]
+                                    .withOpacity(0.9),
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return DeletePrayer(widget.prayerData);
+                                },
+                              );
                             },
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                    ),
+                      Transform.translate(
+                        offset: Offset.fromDirection(getRadiansFromDegree(45),
+                            degOneTranslationAnimation.value * 60),
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              getRadiansFromDegree(rotationAnimation.value))
+                            ..scale(degOneTranslationAnimation.value),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(color: AppColors.lightBlue4),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   !widget.prayerData.prayer.isAnswer
-                      ? Transform.translate(
-                          offset: Offset.fromDirection(getRadiansFromDegree(90),
-                              degOneTranslationAnimation.value * 60),
-                          child: Transform(
-                            transform: Matrix4.rotationZ(
-                                getRadiansFromDegree(rotationAnimation.value))
-                              ..scale(degOneTranslationAnimation.value),
-                            alignment: Alignment.center,
-                            child: CircularButton(
-                              icon: Icon(
-                                AppIcons.bestill_answered,
-                                color: AppColors.lightBlue4,
+                      ? Row(
+                          children: [
+                            Transform.translate(
+                              offset: Offset.fromDirection(
+                                  getRadiansFromDegree(90),
+                                  degOneTranslationAnimation.value * 60),
+                              child: Transform(
+                                transform: Matrix4.rotationZ(
+                                    getRadiansFromDegree(
+                                        rotationAnimation.value))
+                                  ..scale(degOneTranslationAnimation.value),
+                                alignment: Alignment.center,
+                                child: CircularButton(
+                                  icon: Icon(
+                                    AppIcons.bestill_answered,
+                                    color: AppColors.lightBlue4,
+                                  ),
+                                  onClick: () => _onMarkAsAnswered(),
+                                ),
                               ),
-                              onClick: () => _onMarkAsAnswered(),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30.0),
+                              child: Transform.translate(
+                                offset: Offset.fromDirection(
+                                    getRadiansFromDegree(90),
+                                    degOneTranslationAnimation.value * 60),
+                                child: Transform(
+                                  transform: Matrix4.rotationZ(
+                                      getRadiansFromDegree(
+                                          rotationAnimation.value))
+                                    ..scale(degOneTranslationAnimation.value),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Mark as answered',
+                                    style:
+                                        TextStyle(color: AppColors.lightBlue4),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         )
                       : Container(),
                   Container(
