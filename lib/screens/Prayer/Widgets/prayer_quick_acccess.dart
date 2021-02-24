@@ -187,17 +187,18 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       width: 100.0,
                     ),
                   ),
-                  Row(
-                    children: [
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(270),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: CircularButton(
+
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(270),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          CircularButton(
                               icon: Icon(
                                 AppIcons.bestill_edit,
                                 color: AppColors.lightBlue4,
@@ -212,39 +213,29 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                                           isGroup: false)),
                                 );
                               }),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: Transform.translate(
-                          offset: Offset.fromDirection(
-                              getRadiansFromDegree(270),
-                              degOneTranslationAnimation.value * 60),
-                          child: Transform(
-                            transform: Matrix4.rotationZ(
-                                getRadiansFromDegree(rotationAnimation.value))
-                              ..scale(degOneTranslationAnimation.value),
-                            alignment: Alignment.center,
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 30.0),
                             child: Text(
                               'Edit',
                               style: TextStyle(color: AppColors.lightBlue4),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(315),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: CircularButton(
+
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(315),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          CircularButton(
                               icon: Icon(
                                 widget.prayerData.userPrayer.isFavorite
                                     ? Icons.favorite
@@ -256,37 +247,31 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                                     ? _unMarkPrayerAsFavorite()
                                     : _markPrayerAsFavorite();
                               }),
-                        ),
-                      ),
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(315),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: Text(
-                            widget.prayerData.userPrayer.isFavorite
-                                ? 'Favourite'
-                                : 'Unfavourite',
-                            style: TextStyle(color: AppColors.lightBlue4),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: Text(
+                              widget.prayerData.userPrayer.isFavorite
+                                  ? 'Favourite'
+                                  : 'Unfavourite',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(360),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: CircularButton(
+
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(360),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          CircularButton(
                             icon: Icon(
                               AppIcons.bestill_share,
                               color: AppColors.lightBlue4,
@@ -310,24 +295,18 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                               );
                             },
                           ),
-                        ),
-                      ),
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(360),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Share',
-                            style: TextStyle(color: AppColors.lightBlue4),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: Text(
+                              'Share',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
+
                   // Transform.translate(
                   //   offset: Offset.fromDirection(getRadiansFromDegree(360),
                   //       degOneTranslationAnimation.value * 60),
@@ -364,17 +343,18 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                   //     ),
                   //   ),
                   // ),
-                  Row(
-                    children: [
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(45),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: CircularButton(
+
+                  Transform.translate(
+                    offset: Offset.fromDirection(getRadiansFromDegree(45),
+                        degOneTranslationAnimation.value * 60),
+                    child: Transform(
+                      transform: Matrix4.rotationZ(
+                          getRadiansFromDegree(rotationAnimation.value))
+                        ..scale(degOneTranslationAnimation.value),
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          CircularButton(
                             icon: Icon(
                               AppIcons.bestill_archive,
                               color: AppColors.lightBlue4,
@@ -394,67 +374,47 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                               );
                             },
                           ),
-                        ),
-                      ),
-                      Transform.translate(
-                        offset: Offset.fromDirection(getRadiansFromDegree(45),
-                            degOneTranslationAnimation.value * 60),
-                        child: Transform(
-                          transform: Matrix4.rotationZ(
-                              getRadiansFromDegree(rotationAnimation.value))
-                            ..scale(degOneTranslationAnimation.value),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(color: AppColors.lightBlue4),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
+
                   !widget.prayerData.prayer.isAnswer
-                      ? Row(
-                          children: [
-                            Transform.translate(
-                              offset: Offset.fromDirection(
-                                  getRadiansFromDegree(90),
-                                  degOneTranslationAnimation.value * 60),
-                              child: Transform(
-                                transform: Matrix4.rotationZ(
-                                    getRadiansFromDegree(
-                                        rotationAnimation.value))
-                                  ..scale(degOneTranslationAnimation.value),
-                                alignment: Alignment.center,
-                                child: CircularButton(
+                      ? Transform.translate(
+                          offset: Offset.fromDirection(getRadiansFromDegree(90),
+                              degOneTranslationAnimation.value * 60),
+                          child: Transform(
+                            transform: Matrix4.rotationZ(
+                                getRadiansFromDegree(rotationAnimation.value))
+                              ..scale(degOneTranslationAnimation.value),
+                            alignment: Alignment.center,
+                            child: Row(
+                              children: [
+                                CircularButton(
                                   icon: Icon(
                                     AppIcons.bestill_answered,
                                     color: AppColors.lightBlue4,
                                   ),
                                   onClick: () => _onMarkAsAnswered(),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30.0),
-                              child: Transform.translate(
-                                offset: Offset.fromDirection(
-                                    getRadiansFromDegree(90),
-                                    degOneTranslationAnimation.value * 60),
-                                child: Transform(
-                                  transform: Matrix4.rotationZ(
-                                      getRadiansFromDegree(
-                                          rotationAnimation.value))
-                                    ..scale(degOneTranslationAnimation.value),
-                                  alignment: Alignment.center,
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0),
                                   child: Text(
                                     'Mark as answered',
                                     style:
                                         TextStyle(color: AppColors.lightBlue4),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         )
                       : Container(),
                   Container(
