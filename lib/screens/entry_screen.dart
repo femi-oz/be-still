@@ -17,14 +17,14 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-bool searchEnabled = false;
+// bool searchEnabled = false;
+bool _searchMode = false;
 
 class _EntryScreenState extends State<EntryScreen> {
   int _currentIndex = 0;
 
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool _searchMode = false;
   final TextEditingController _searchController = TextEditingController();
   @override
   void initState() {
@@ -32,9 +32,9 @@ class _EntryScreenState extends State<EntryScreen> {
     super.initState();
   }
 
-  _onSearchChange(String value) {
-    setState(() => searchEnabled = value != '');
-  }
+  // _onSearchChange(String value) {
+  //   setState(() => searchEnabled = value != '');
+  // }
 
   _switchSearchMode(bool value) {
     setState(() => _searchMode = value);
@@ -51,7 +51,8 @@ class _EntryScreenState extends State<EntryScreen> {
               searchController: _searchController,
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
-              onSearchChange: (String value) => _onSearchChange(value)),
+            ),
+      // onSearchChange: (String value) => _onSearchChange(value)),
       body: Container(
           height: double.infinity,
           child: TabNavigationItem.items[_currentIndex].page),
@@ -77,7 +78,6 @@ class _EntryScreenState extends State<EntryScreen> {
           if (index == 1) {
             return;
           }
-          _onSearchChange('');
           _switchSearchMode(false);
           _searchController.text = '';
           setState(() => _currentIndex = index);
@@ -136,7 +136,7 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: searchEnabled ? PrayerList() : GrowMyPrayerLifeScreen(),
+          page: _searchMode ? PrayerList() : GrowMyPrayerLifeScreen(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",

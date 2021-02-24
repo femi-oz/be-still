@@ -15,14 +15,14 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
   final bool showPrayerctions;
   final bool searchMode;
-  final Function onSearchChange;
+  // final Function onSearchChange;
   final Function switchSearchMode;
   final TextEditingController searchController;
   CustomAppBar(
       {Key key,
       this.formKey,
       this.showPrayerctions = true,
-      this.onSearchChange,
+      // this.onSearchChange,
       this.switchSearchMode,
       this.searchMode = false,
       this.searchController})
@@ -38,13 +38,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   void _searchPrayer(String value) async {
-    widget.onSearchChange(value);
+    // widget.onSearchChange(value);
     await Provider.of<PrayerProvider>(context, listen: false)
         .searchPrayers(value);
   }
 
   void _clearSearchField() async {
-    widget.onSearchChange('');
+    // widget.onSearchChange('');
     widget.searchController.text = '';
     await Provider.of<PrayerProvider>(context, listen: false).searchPrayers('');
   }
