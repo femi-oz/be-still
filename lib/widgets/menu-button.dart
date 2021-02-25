@@ -21,7 +21,7 @@ class MenuButton extends StatelessWidget {
             width: 1,
           ),
           color: isActive
-              ? AppColors.activeButton.withOpacity(0.2)
+              ? AppColors.activeButton.withOpacity(0.8)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
