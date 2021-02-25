@@ -13,6 +13,7 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
@@ -32,6 +33,38 @@ class _LoginScreenState extends State<LoginScreen>
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final LocalAuthentication _localAuthentication = LocalAuthentication();
+  bool isBioMetricAvailable = false;
+  List<BiometricType> listOfBiometrics;
+
+  Future<bool> _isBiometricAvailable() async {
+    try {
+      isBioMetricAvailable = await _localAuthentication.canCheckBiometrics;
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return isBioMetricAvailable;
+
+    isBioMetricAvailable
+        ? _getListOfBiometricTypes()
+        : print('No biometrics available');
+
+    return isBioMetricAvailable;
+  }
+
+  // To retrieve the list of biometric types
+  // (if available).
+  Future<void> _getListOfBiometricTypes() async {
+    try {
+      listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
+      print(listOfBiometrics);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return;
+  }
 
   @override
   void initState() {
