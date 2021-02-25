@@ -32,7 +32,7 @@ class _SharePrayerState extends State<SharePrayer> {
     final Uri params = Uri(
         scheme: 'mailto',
         // path: _user.email,
-        query: 'subject=$name shared a prayer with you&body=$_prayer.'
+        query: 'subject=$name shared a prayer with you&body=$_prayer'
             '</br></br>'
             'Comments:'
             '</br>'

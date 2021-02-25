@@ -170,7 +170,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Container(
-        color: Colors.transparent,
+        color: AppColors.addPrayerBg.withOpacity(0.1),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -187,6 +187,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       width: 100.0,
                     ),
                   ),
+
                   Transform.translate(
                     offset: Offset.fromDirection(getRadiansFromDegree(270),
                         degOneTranslationAnimation.value * 60),
@@ -195,23 +196,35 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           getRadiansFromDegree(rotationAnimation.value))
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
-                      child: CircularButton(
-                          icon: Icon(
-                            AppIcons.bestill_edit,
-                            color: AppColors.lightBlue4,
+                      child: Row(
+                        children: [
+                          CircularButton(
+                              icon: Icon(
+                                AppIcons.bestill_edit,
+                                color: AppColors.lightBlue4,
+                              ),
+                              onClick: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddPrayer(
+                                          isEdit: true,
+                                          prayerData: widget.prayerData,
+                                          isGroup: false)),
+                                );
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 30.0),
+                            child: Text(
+                              'Edit',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
                           ),
-                          onClick: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddPrayer(
-                                      isEdit: true,
-                                      prayerData: widget.prayerData,
-                                      isGroup: false)),
-                            );
-                          }),
+                        ],
+                      ),
                     ),
                   ),
+
                   Transform.translate(
                     offset: Offset.fromDirection(getRadiansFromDegree(315),
                         degOneTranslationAnimation.value * 60),
@@ -220,20 +233,34 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           getRadiansFromDegree(rotationAnimation.value))
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
-                      child: CircularButton(
-                          icon: Icon(
-                            widget.prayerData.userPrayer.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border_outlined,
-                            color: AppColors.lightBlue4,
+                      child: Row(
+                        children: [
+                          CircularButton(
+                              icon: Icon(
+                                widget.prayerData.userPrayer.isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border_outlined,
+                                color: AppColors.lightBlue4,
+                              ),
+                              onClick: () {
+                                widget.prayerData.userPrayer.isFavorite
+                                    ? _unMarkPrayerAsFavorite()
+                                    : _markPrayerAsFavorite();
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: Text(
+                              widget.prayerData.userPrayer.isFavorite
+                                  ? 'Favourite'
+                                  : 'Unfavourite',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
                           ),
-                          onClick: () {
-                            widget.prayerData.userPrayer.isFavorite
-                                ? _unMarkPrayerAsFavorite()
-                                : _markPrayerAsFavorite();
-                          }),
+                        ],
+                      ),
                     ),
                   ),
+
                   Transform.translate(
                     offset: Offset.fromDirection(getRadiansFromDegree(360),
                         degOneTranslationAnimation.value * 60),
@@ -242,30 +269,44 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           getRadiansFromDegree(rotationAnimation.value))
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
-                      child: CircularButton(
-                        icon: Icon(
-                          AppIcons.bestill_share,
-                          color: AppColors.lightBlue4,
-                        ),
-                        onClick: () {
-                          showModalBottomSheet(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return SharePrayer(
-                                  prayer: widget.prayerData.prayer.description,
-                                  updates:
-                                      updates.length > 0 ? newUpdates : '');
+                      child: Row(
+                        children: [
+                          CircularButton(
+                            icon: Icon(
+                              AppIcons.bestill_share,
+                              color: AppColors.lightBlue4,
+                            ),
+                            onClick: () {
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: AppColors.detailBackgroundColor[1]
+                                    .withOpacity(0.5),
+                                backgroundColor: AppColors
+                                    .detailBackgroundColor[1]
+                                    .withOpacity(0.9),
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return SharePrayer(
+                                      prayer:
+                                          widget.prayerData.prayer.description,
+                                      updates:
+                                          updates.length > 0 ? newUpdates : '');
+                                },
+                              );
                             },
-                          );
-                        },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: Text(
+                              'Share',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+
                   // Transform.translate(
                   //   offset: Offset.fromDirection(getRadiansFromDegree(360),
                   //       degOneTranslationAnimation.value * 60),
@@ -302,6 +343,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                   //     ),
                   //   ),
                   // ),
+
                   Transform.translate(
                     offset: Offset.fromDirection(getRadiansFromDegree(45),
                         degOneTranslationAnimation.value * 60),
@@ -310,27 +352,40 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           getRadiansFromDegree(rotationAnimation.value))
                         ..scale(degOneTranslationAnimation.value),
                       alignment: Alignment.center,
-                      child: CircularButton(
-                        icon: Icon(
-                          AppIcons.bestill_archive,
-                          color: AppColors.lightBlue4,
-                        ),
-                        onClick: () {
-                          showModalBottomSheet(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return DeletePrayer(widget.prayerData);
+                      child: Row(
+                        children: [
+                          CircularButton(
+                            icon: Icon(
+                              AppIcons.bestill_archive,
+                              color: AppColors.lightBlue4,
+                            ),
+                            onClick: () {
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: AppColors.detailBackgroundColor[1]
+                                    .withOpacity(0.5),
+                                backgroundColor: AppColors
+                                    .detailBackgroundColor[1]
+                                    .withOpacity(0.9),
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return DeletePrayer(widget.prayerData);
+                                },
+                              );
                             },
-                          );
-                        },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(color: AppColors.lightBlue4),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+
                   !widget.prayerData.prayer.isAnswer
                       ? Transform.translate(
                           offset: Offset.fromDirection(getRadiansFromDegree(90),
@@ -340,12 +395,24 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                                 getRadiansFromDegree(rotationAnimation.value))
                               ..scale(degOneTranslationAnimation.value),
                             alignment: Alignment.center,
-                            child: CircularButton(
-                              icon: Icon(
-                                AppIcons.bestill_answered,
-                                color: AppColors.lightBlue4,
-                              ),
-                              onClick: () => _onMarkAsAnswered(),
+                            child: Row(
+                              children: [
+                                CircularButton(
+                                  icon: Icon(
+                                    AppIcons.bestill_answered,
+                                    color: AppColors.lightBlue4,
+                                  ),
+                                  onClick: () => _onMarkAsAnswered(),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0),
+                                  child: Text(
+                                    'Mark as answered',
+                                    style:
+                                        TextStyle(color: AppColors.lightBlue4),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         )
