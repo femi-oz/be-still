@@ -2,10 +2,12 @@ import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/sharing_settings.model.dart';
+import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:intl/intl.dart';
@@ -129,6 +131,7 @@ class SettingsService {
           .doc(prayerSettingsId)
           .set(populatePrayerSettings(userId, email).toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -141,6 +144,7 @@ class SettingsService {
           .doc(groupSettingsId)
           .set(populateGroupSettings(userId, email, groupId).toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -152,6 +156,7 @@ class SettingsService {
           .doc(groupPreferenceSettingsId)
           .set(populateGroupPreferenceSettings(userId).toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -164,6 +169,7 @@ class SettingsService {
           .map((doc) =>
               doc.docs.map((e) => SettingsModel.fromData(e)).toList()[0]);
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -176,15 +182,13 @@ class SettingsService {
           .map((doc) =>
               doc.docs.map((e) => PrayerSettingsModel.fromData(e)).toList()[0]);
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
 
   Stream<SharingSettingsModel> getSharingSettings(String userId) {
     try {
-      print('----------------');
-      print(userId);
-      print('----------------');
       return _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
@@ -192,6 +196,7 @@ class SettingsService {
               .map((e) => SharingSettingsModel.fromData(e))
               .toList()[0]);
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -204,6 +209,7 @@ class SettingsService {
           .asyncMap(
               (e) => e.docs.map((doc) => GroupSettings.fromData(doc)).toList());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -217,6 +223,7 @@ class SettingsService {
               .map((doc) => GroupPreferenceSettings.fromData(doc))
               .toList()[0]);
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -227,6 +234,7 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, settingsId);
       throw HttpException(e.message);
     }
   }
@@ -238,6 +246,7 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, settingsId);
       throw HttpException(e.message);
     }
   }
@@ -249,6 +258,7 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, settingsId);
       throw HttpException(e.message);
     }
   }
@@ -260,6 +270,7 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, groupSettingsId);
       throw HttpException(e.message);
     }
   }
@@ -273,6 +284,8 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, groupPreferenceSettingsId);
       throw HttpException(e.message);
     }
   }
