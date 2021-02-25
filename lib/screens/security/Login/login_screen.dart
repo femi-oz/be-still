@@ -36,6 +36,8 @@ class _LoginScreenState extends State<LoginScreen>
   final LocalAuthentication _localAuthentication = LocalAuthentication();
   bool isBioMetricAvailable = false;
   List<BiometricType> listOfBiometrics;
+  bool showFingerPrint = false;
+  bool showFaceId = false;
 
   Future<bool> _isBiometricAvailable() async {
     try {
@@ -57,8 +59,20 @@ class _LoginScreenState extends State<LoginScreen>
   // (if available).
   Future<void> _getListOfBiometricTypes() async {
     try {
-      listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
-      print(listOfBiometrics);
+      if (Settings.enableLocalAuth) {
+        listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
+        if (listOfBiometrics[0].toString() == 'BiometricType.fingerprint') {
+          showFingerPrint = true;
+        } else if (listOfBiometrics[0].toString() == 'BiometricType.face') {
+          showFaceId = true;
+        } else {
+          showFaceId = false;
+          showFingerPrint = false;
+        }
+      }
+
+      print(showFaceId);
+      print(showFingerPrint);
     } on PlatformException catch (e) {
       print(e);
     }
@@ -68,6 +82,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void initState() {
+    _isBiometricAvailable();
+
     _usernameController.text = Settings.lastUser;
     super.initState();
   }
@@ -170,9 +186,11 @@ class _LoginScreenState extends State<LoginScreen>
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 10),
-                                    Settings.enableLocalAuth
-                                        ? _bioButton()
-                                        : Container(),
+                                    showFingerPrint
+                                        ? _bioFingerButton()
+                                        : showFaceId
+                                            ? _bioFaceButton()
+                                            : Container(),
                                   ],
                                 ),
                               ),
@@ -191,11 +209,22 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _bioButton() {
+  Widget _bioFingerButton() {
     return Container(
       padding: EdgeInsets.only(left: 40, right: 60),
       child: IconButton(
         icon: Icon(Icons.fingerprint, color: AppColors.lightBlue4),
+        onPressed: () => _biologin(),
+        iconSize: 50,
+      ),
+    );
+  }
+
+  Widget _bioFaceButton() {
+    return Container(
+      padding: EdgeInsets.only(left: 40, right: 60),
+      child: IconButton(
+        icon: Icon(Icons.face_outlined, color: AppColors.lightBlue4),
         onPressed: () => _biologin(),
         iconSize: 50,
       ),
