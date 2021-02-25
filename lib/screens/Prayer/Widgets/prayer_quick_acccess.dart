@@ -11,8 +11,6 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../entry_screen.dart';
-
 class PrayerQuickAccess extends StatefulWidget {
   final y;
 
@@ -121,7 +119,6 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-      // _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -143,7 +140,6 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-      // _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -187,236 +183,76 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       width: 100.0,
                     ),
                   ),
-
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(270),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: Row(
-                        children: [
-                          CircularButton(
-                              icon: Icon(
-                                AppIcons.bestill_edit,
-                                color: AppColors.lightBlue4,
-                              ),
-                              onClick: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddPrayer(
-                                          isEdit: true,
-                                          prayerData: widget.prayerData,
-                                          isGroup: false)),
-                                );
-                              }),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 30.0),
-                            child: Text(
-                              'Edit',
-                              style: TextStyle(color: AppColors.lightBlue4),
-                            ),
+                  _buildAction(
+                      270,
+                      AppIcons.bestill_edit,
+                      () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddPrayer(
+                                    isEdit: true,
+                                    prayerData: widget.prayerData,
+                                    isGroup: false)),
                           ),
-                        ],
-                      ),
-                    ),
+                      'Edit'),
+                  _buildAction(
+                    315,
+                    widget.prayerData.userPrayer.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border_outlined,
+                    () => widget.prayerData.userPrayer.isFavorite
+                        ? _unMarkPrayerAsFavorite()
+                        : _markPrayerAsFavorite(),
+                    widget.prayerData.userPrayer.isFavorite
+                        ? 'Unfavourite'
+                        : 'Favourite',
                   ),
-
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(315),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: Row(
-                        children: [
-                          CircularButton(
-                              icon: Icon(
-                                widget.prayerData.userPrayer.isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border_outlined,
-                                color: AppColors.lightBlue4,
-                              ),
-                              onClick: () {
-                                widget.prayerData.userPrayer.isFavorite
-                                    ? _unMarkPrayerAsFavorite()
-                                    : _markPrayerAsFavorite();
-                              }),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 0.0),
-                            child: Text(
-                              widget.prayerData.userPrayer.isFavorite
-                                  ? 'Favourite'
-                                  : 'Unfavourite',
-                              style: TextStyle(color: AppColors.lightBlue4),
-                            ),
-                          ),
-                        ],
-                      ),
+                  _buildAction(
+                    360,
+                    AppIcons.bestill_share,
+                    () => showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return SharePrayer(
+                            prayer: widget.prayerData.prayer.description,
+                            updates: updates.length > 0 ? newUpdates : '');
+                      },
                     ),
+                    'Share',
                   ),
-
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(360),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: Row(
-                        children: [
-                          CircularButton(
-                            icon: Icon(
-                              AppIcons.bestill_share,
-                              color: AppColors.lightBlue4,
-                            ),
-                            onClick: () {
-                              showModalBottomSheet(
-                                context: context,
-                                barrierColor: AppColors.detailBackgroundColor[1]
-                                    .withOpacity(0.5),
-                                backgroundColor: AppColors
-                                    .detailBackgroundColor[1]
-                                    .withOpacity(0.9),
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return SharePrayer(
-                                      prayer:
-                                          widget.prayerData.prayer.description,
-                                      updates:
-                                          updates.length > 0 ? newUpdates : '');
-                                },
-                              );
-                            },
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 0.0),
-                            child: Text(
-                              'Share',
-                              style: TextStyle(color: AppColors.lightBlue4),
-                            ),
-                          ),
-                        ],
-                      ),
+                  _buildAction(
+                    45,
+                    AppIcons.bestill_archive,
+                    () => showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return DeletePrayer(widget.prayerData);
+                      },
                     ),
+                    'Delete',
                   ),
-
-                  // Transform.translate(
-                  //   offset: Offset.fromDirection(getRadiansFromDegree(360),
-                  //       degOneTranslationAnimation.value * 60),
-                  //   child: Transform(
-                  //     transform: Matrix4.rotationZ(
-                  //         getRadiansFromDegree(rotationAnimation.value))
-                  //       ..scale(degOneTranslationAnimation.value),
-                  //     alignment: Alignment.center,
-                  //     child: CircularButton(
-                  //       icon: Icon(
-                  //         AppIcons.bestill_reminder,
-                  //         color: AppColors.lightBlue4,
-                  //       ),
-                  //       onClick: () {},
-                  //       // {
-                  //       //   showModalBottomSheet(
-                  //       //     context: context,
-                  //       //     barrierColor: AppColors.detailBackgroundColor[1]
-                  //       //         .withOpacity(0.5),
-                  //       //     backgroundColor: AppColors.detailBackgroundColor[1]
-                  //       //         .withOpacity(0.9),
-                  //       //     isScrollControlled: true,
-                  //       //     builder: (BuildContext context) {
-                  //       //       return ReminderPicker(
-                  //       //         hideActionuttons: false,
-                  //       //         frequency: reminderInterval,
-                  //       //         reminderDays: reminderDays,
-                  //       //         onCancel: null,
-                  //       //         onSave: null,
-                  //       //       );
-                  //       //     },
-                  //       //   );
-                  //       // },
-                  //     ),
-                  //   ),
-                  // ),
-
-                  Transform.translate(
-                    offset: Offset.fromDirection(getRadiansFromDegree(45),
-                        degOneTranslationAnimation.value * 60),
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                          getRadiansFromDegree(rotationAnimation.value))
-                        ..scale(degOneTranslationAnimation.value),
-                      alignment: Alignment.center,
-                      child: Row(
-                        children: [
-                          CircularButton(
-                            icon: Icon(
-                              AppIcons.bestill_archive,
-                              color: AppColors.lightBlue4,
-                            ),
-                            onClick: () {
-                              showModalBottomSheet(
-                                context: context,
-                                barrierColor: AppColors.detailBackgroundColor[1]
-                                    .withOpacity(0.5),
-                                backgroundColor: AppColors
-                                    .detailBackgroundColor[1]
-                                    .withOpacity(0.9),
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return DeletePrayer(widget.prayerData);
-                                },
-                              );
-                            },
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 0.0),
-                            child: Text(
-                              'Delete',
-                              style: TextStyle(color: AppColors.lightBlue4),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  _buildAction(
+                    90,
+                    widget.prayerData.prayer.isAnswer
+                        ? AppIcons.bestill_answered
+                        : AppIcons.bestill_answered,
+                    () => widget.prayerData.prayer.isAnswer
+                        ? null
+                        : _onMarkAsAnswered(),
+                    widget.prayerData.prayer.isAnswer
+                        ? 'Mark As Unanswered'
+                        : 'Mark As Answered',
                   ),
-
-                  !widget.prayerData.prayer.isAnswer
-                      ? Transform.translate(
-                          offset: Offset.fromDirection(getRadiansFromDegree(90),
-                              degOneTranslationAnimation.value * 60),
-                          child: Transform(
-                            transform: Matrix4.rotationZ(
-                                getRadiansFromDegree(rotationAnimation.value))
-                              ..scale(degOneTranslationAnimation.value),
-                            alignment: Alignment.center,
-                            child: Row(
-                              children: [
-                                CircularButton(
-                                  icon: Icon(
-                                    AppIcons.bestill_answered,
-                                    color: AppColors.lightBlue4,
-                                  ),
-                                  onClick: () => _onMarkAsAnswered(),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 30.0),
-                                  child: Text(
-                                    'Mark as answered',
-                                    style:
-                                        TextStyle(color: AppColors.lightBlue4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Container(),
                   Container(
                     height: 25,
                     width: 25,
@@ -432,6 +268,41 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  _buildAction(double degree, IconData icon, Function onClick, String text) {
+    return Transform.translate(
+      offset: Offset.fromDirection(
+          getRadiansFromDegree(degree), degOneTranslationAnimation.value * 60),
+      child: Transform(
+        transform:
+            Matrix4.rotationZ(getRadiansFromDegree(rotationAnimation.value))
+              ..scale(degOneTranslationAnimation.value),
+        alignment: Alignment.center,
+        child: InkWell(
+          onTap: onClick,
+          child: Row(
+            children: [
+              CircularButton(
+                icon: Icon(
+                  icon,
+                  color: AppColors.lightBlue4,
+                  size: 18,
+                ),
+                onClick: null,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 0.0),
+                child: Text(
+                  text,
+                  style: TextStyle(color: AppColors.lightBlue4),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
