@@ -46,23 +46,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   //   // Overlay.of(context).insert(this._overlayEntry);
   // }
 
-  _acceptInvite(
-      String groupId, String userId, String name, String email) async {
-    try {
-      // _closeOverlay();
-      BeStilDialog.showLoading(
-        bcontext,
-      );
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .acceptGroupInvite(groupId, userId, name, email);
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showSnackBar(_key, 'Request has been accepted');
-    } catch (e) {
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message.toString());
-      // _closeOverlay();
-    }
-  }
+  // _acceptInvite(
+  //     String groupId, String userId, String name, String email) async {
+  //   try {
+  //     // _closeOverlay();
+  //     BeStilDialog.showLoading(
+  //       bcontext,
+  //     );
+  //     await Provider.of<NotificationProvider>(context, listen: false)
+  //         .acceptGroupInvite(groupId, userId, name, email);
+  //     BeStilDialog.hideLoading(context);
+  //     BeStilDialog.showSnackBar(_key, 'Request has been accepted');
+  //   } catch (e) {
+  //     BeStilDialog.hideLoading(context);
+  //     BeStilDialog.showErrorDialog(context, e.message.toString());
+  //     // _closeOverlay();
+  //   }
+  // }
 
   void _getNotifications() async {
     try {
@@ -136,17 +136,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ),
                     SizedBox(height: 20.0),
                     Container(
-                      height: 30,
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: OutlineButton(
+                        child: OutlineButton(
                           borderSide: BorderSide(color: Colors.transparent),
                           child: Container(
                             child: Row(
@@ -159,9 +159,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               ],
                             ),
                           ),
-                          onPressed: () => _acceptInvite(
-                              groupId, _user.id, _user.firstName, _user.email)),
-                    ),
+                          onPressed: () => null,
+                        )
+                        // _acceptInvite(
+                        //     groupId, _user.id, _user.firstName, _user.email)),
+                        ),
                     Container(
                       height: 30,
                       padding: EdgeInsets.symmetric(horizontal: 15.0),

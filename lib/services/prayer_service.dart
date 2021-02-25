@@ -170,8 +170,8 @@ class PrayerService {
     }
   }
 
-  Future addUserPrayer(String prayerId, String prayerDesc, String _userID,
-      String creatorId, String creator) async {
+  Future addUserPrayer(String prayerId, String prayerDesc, String userId,
+      String senderId, String sender) async {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
     var dio = Dio(BaseOptions(followRedirects: false));
@@ -180,21 +180,16 @@ class PrayerService {
       //store user prayer
       _userPrayerCollectionReference
           .doc(_userPrayerID)
-          .set(populateUserPrayer(_userID, prayerId, creatorId).toJson());
-      await locator<NotificationService>().addMobileNotification(
-          prayerDesc, NotificationType.prayer, creator, creatorId, _userID);
+          .set(populateUserPrayer(userId, prayerId, senderId).toJson());
       var devices =
-          await locator<NotificationService>().getNotificationToken(_userID);
+          await locator<NotificationService>().getNotificationToken(userId);
       for (int i = 0; i < devices.length; i++) {
-        var data = PushNotificationModel(
+        await locator<NotificationService>().addPushNotification(
           message: prayerDesc,
-          sender: creator,
-          title: "You have been tagged in a prayer",
+          sender: sender,
+          senderId: senderId,
+          recieverId: userId,
           tokens: devices.map((e) => e.name).toList(),
-        );
-        await dio.post(
-          'https://us-central1-bestill-app.cloudfunctions.net/SendNotification',
-          data: data,
         );
       }
     } catch (e) {
@@ -225,10 +220,21 @@ class PrayerService {
           // compare old tags vs new tag to know if person has already received email/text
           if (oldTags.map((e) => e?.email).contains(email) ||
               oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) return;
-          await locator<NotificationService>().sendEmail(email, template,
-              user.firstName, contactData[i].displayName, message);
-          await locator<NotificationService>().sendSMS(phoneNumber, template,
-              user.firstName, contactData[i].displayName, message);
+          await locator<NotificationService>().addEmail(
+            email: email,
+            message: message,
+            sender: user.firstName,
+            senderId: user.id,
+            template: MessageTemplate.fromData(template),
+            receiver: contactData[i].displayName,
+          );
+          await locator<NotificationService>().addSMS(
+              phoneNumber: phoneNumber,
+              message: message,
+              sender: user.firstName,
+              senderId: user.id,
+              template: MessageTemplate.fromData(template),
+              receiver: contactData[i].displayName);
         }
       }
     } catch (e) {

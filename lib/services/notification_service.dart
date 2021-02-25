@@ -13,10 +13,14 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
-  final CollectionReference _notificationCollectionReference =
-      FirebaseFirestore.instance.collection("MobileNotification");
   final CollectionReference _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("LocalNotification");
+  final CollectionReference _pushNotificationCollectionReference =
+      FirebaseFirestore.instance.collection("PushNotification");
+  final CollectionReference _smsCollectionReference =
+      FirebaseFirestore.instance.collection("SMSMessage");
+  final CollectionReference _emailCollectionReference =
+      FirebaseFirestore.instance.collection("MailMessage");
   final CollectionReference _userDeviceCollectionReference =
       FirebaseFirestore.instance.collection("UserDevice");
   final CollectionReference _deviceCollectionReference =
@@ -74,85 +78,112 @@ class NotificationService {
     return devices;
   }
 
-  addMobileNotification(String message, String messageType, String sender,
-      String senderId, String userId) async {
+  addPushNotification(
+      {String message,
+      String sender,
+      List<String> tokens,
+      String senderId,
+      String recieverId}) async {
     final _notificationId = Uuid().v1();
+    var data = PushNotificationModel(
+      message: message,
+      sender: sender,
+      title: "You have been tagged in a prayer",
+      tokens: tokens,
+      createdBy: senderId,
+      createdOn: DateTime.now(),
+      modifiedBy: senderId,
+      modifiedOn: DateTime.now(),
+      isSent: 0,
+      recieverId: recieverId,
+      status: Status.active,
+    );
     try {
-      _notificationCollectionReference
+      _pushNotificationCollectionReference
           .doc(_notificationId)
-          .set(NotificationModel(
-            message: message,
-            messageType: messageType,
-            sender: senderId,
-            userId: userId,
-            createdBy: 'SYSTEM',
-            createdOn: DateTime.now(),
-            extra1: '',
-            extra2: '',
-            extra3: sender,
-            status: Status.active,
-          ).toJson());
+          .set(data.toJson());
     } catch (e) {
       throw HttpException(e.message);
     }
   }
 
-  sendEmail(String email, DocumentSnapshot template, String sender,
-      String receiver, String message) async {
-    var dio = Dio(BaseOptions(followRedirects: false));
-    if (email != null) {
-      var _template = MessageTemplate.fromData(template);
-      var templateSubject = _template.templateSubject;
-      var templateBody = _template.templateBody;
-      templateSubject = templateSubject.replaceAll("{Sender}", sender);
-      templateBody = templateBody.replaceAll("{Receiver}", receiver);
-      templateBody = templateBody.replaceAll("{Sender}", sender);
-      templateBody = templateBody.replaceAll("{message}", message);
-      templateBody = templateBody.replaceAll(
-          "{Link}", "<a href='https://www.bestillapp.com/'>Learn more.</a>");
-      var data = {
-        'templateSubject': templateSubject,
-        'templateBody': templateBody,
-        'email': email,
-        'sender': sender,
-      };
-      try {
-        await dio.post(
-          'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
-          data: data,
-        );
-      } catch (e) {
-        throw HttpException(e.message);
-      }
-      return;
+  addSMS({
+    String senderId,
+    String message,
+    String sender,
+    String phoneNumber,
+    String title,
+    MessageTemplate template,
+    String receiver,
+  }) async {
+    final _smsId = Uuid().v1();
+    var _templateBody = template.templateBody;
+    _templateBody = _templateBody.replaceAll('{Sender}', sender);
+    _templateBody = _templateBody.replaceAll("{Receiver}", receiver);
+    _templateBody = _templateBody.replaceAll('{message}', message);
+    _templateBody = _templateBody.replaceAll('<br/>', "\n");
+    _templateBody =
+        _templateBody.replaceAll("{Link}", 'https://www.bestillapp.com/');
+    var data = MessageModel(
+        email: '',
+        phoneNumber: phoneNumber,
+        isSent: 0,
+        senderId: senderId,
+        title: title,
+        message: _templateBody,
+        sender: sender,
+        createdBy: senderId,
+        createdOn: DateTime.now(),
+        modifiedBy: senderId,
+        modifiedOn: DateTime.now(),
+        receiver: receiver,
+        subject: '',
+        country: FlavorConfig.instance.values.country);
+    try {
+      _smsCollectionReference.doc(_smsId).set(data.toJson());
+    } catch (e) {
+      throw HttpException(e.message);
     }
   }
 
-  sendSMS(String phoneNumber, DocumentSnapshot template, String sender,
-      String receiver, String message) async {
-    var dio = Dio(BaseOptions(followRedirects: false));
-    if (phoneNumber != null) {
-      var _templateBody = MessageTemplate.fromData(template).templateBody;
-      _templateBody = _templateBody.replaceAll('{Sender}', sender);
-      _templateBody = _templateBody.replaceAll("{Receiver}", receiver);
-      _templateBody = _templateBody.replaceAll('{message}', message);
-      _templateBody = _templateBody.replaceAll('<br/>', "\n");
-      _templateBody =
-          _templateBody.replaceAll("{Link}", 'https://www.bestillapp.com/');
-      var data = {
-        'phoneNumber': phoneNumber,
-        'template': _templateBody,
-        'country': FlavorConfig.instance.values.country,
-      };
-      try {
-        await dio.post(
-          'https://us-central1-bestill-app.cloudfunctions.net/SendTextMessage',
-          data: data,
-        );
-      } catch (e) {
-        throw HttpException(e.message);
-      }
-      return;
+  addEmail({
+    String senderId,
+    String message,
+    String sender,
+    String email,
+    String title,
+    String receiver,
+    MessageTemplate template,
+  }) async {
+    final _emailId = Uuid().v1();
+    var templateSubject = template.templateSubject;
+    var templateBody = template.templateBody;
+    templateSubject = templateSubject.replaceAll("{Sender}", sender);
+    templateBody = templateBody.replaceAll("{Receiver}", receiver);
+    templateBody = templateBody.replaceAll("{Sender}", sender);
+    templateBody = templateBody.replaceAll("{message}", message);
+    templateBody = templateBody.replaceAll(
+        "{Link}", "<a href='https://www.bestillapp.com/'>Learn more.</a>");
+
+    var data = MessageModel(
+        email: email,
+        phoneNumber: '',
+        isSent: 0,
+        senderId: senderId,
+        title: title,
+        message: templateBody,
+        sender: sender,
+        createdBy: senderId,
+        createdOn: DateTime.now(),
+        modifiedBy: senderId,
+        modifiedOn: DateTime.now(),
+        receiver: receiver,
+        subject: templateSubject,
+        country: '');
+    try {
+      _emailCollectionReference.doc(_emailId).set(data.toJson());
+    } catch (e) {
+      throw HttpException(e.message);
     }
   }
 
@@ -204,8 +235,8 @@ class NotificationService {
 
   Stream<List<NotificationModel>> getUserNotifications(String userId) {
     try {
-      return _notificationCollectionReference
-          .where('UserId', isEqualTo: userId)
+      return _pushNotificationCollectionReference
+          .where('RecieverId', isEqualTo: userId)
           .snapshots()
           .map((e) =>
               e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
@@ -217,7 +248,7 @@ class NotificationService {
   Future clearNotification(List<String> ids) async {
     try {
       for (int i = 0; i < ids.length; i++) {
-        await _notificationCollectionReference
+        await _pushNotificationCollectionReference
             .doc(ids[i])
             .update({'Status': Status.inactive});
       }
@@ -226,39 +257,39 @@ class NotificationService {
     }
   }
 
-  acceptGroupInvite(
-      String groupId, String userId, String name, String email) async {
-    try {
-      var dio = Dio(BaseOptions(followRedirects: false));
-      var data = {
-        'groupId': groupId,
-        'userId': userId,
-        'name': name,
-        'email': email
-      };
-      print(data);
+  // acceptGroupInvite(
+  //     String groupId, String userId, String name, String email) async {
+  //   try {
+  //     var dio = Dio(BaseOptions(followRedirects: false));
+  //     var data = {
+  //       'groupId': groupId,
+  //       'userId': userId,
+  //       'name': name,
+  //       'email': email
+  //     };
+  //     print(data);
 
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
-        data: data,
-      );
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
+  //     await dio.post(
+  //       'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
+  //       data: data,
+  //     );
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
-  newPrayerGroupNotification(String prayerId, String groupId) async {
-    try {
-      var dio = Dio(BaseOptions(followRedirects: false));
-      var data = {'groupId': groupId, 'prayerId': prayerId};
-      print(data);
+  // newPrayerGroupNotification(String prayerId, String groupId) async {
+  //   try {
+  //     var dio = Dio(BaseOptions(followRedirects: false));
+  //     var data = {'groupId': groupId, 'prayerId': prayerId};
+  //     print(data);
 
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/NewPrayer',
-        data: data,
-      );
-    } catch (e) {
-      throw HttpException(e.message);
-    }
-  }
+  //     await dio.post(
+  //       'https://us-central1-bestill-app.cloudfunctions.net/NewPrayer',
+  //       data: data,
+  //     );
+  //   } catch (e) {
+  //     throw HttpException(e.message);
+  //   }
+  // }
 }
