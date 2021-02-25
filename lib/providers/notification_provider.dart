@@ -55,17 +55,6 @@ class NotificationProvider with ChangeNotifier {
         .clearNotification(_notifications.map((e) => e.id).toList());
   }
 
-  Future acceptGroupInvite(
-      String groupId, String userId, String name, String email) async {
-    return await _notificationService.acceptGroupInvite(
-        groupId, userId, name, email);
-  }
-
-  Future newPrayerGroupNotification(String prayerId, String groupId) async {
-    return await _notificationService.newPrayerGroupNotification(
-        prayerId, groupId);
-  }
-
   Future setLocalNotifications() async {
     final DeviceInfoPlugin info = new DeviceInfoPlugin();
     String deviceId;
@@ -98,4 +87,16 @@ class NotificationProvider with ChangeNotifier {
   Future deleteLocalNotification(String notificationId) async {
     await _notificationService.removeLocalNotification(notificationId);
   }
+
+  
+  // Future acceptGroupInvite(
+  //     String groupId, String userId, String name, String email) async {
+  //   return await _notificationService.acceptGroupInvite(
+  //       groupId, userId, name, email);
+  // }
+
+  // Future newPrayerGroupNotification(String prayerId, String groupId) async {
+  //   return await _notificationService.newPrayerGroupNotification(
+  //       prayerId, groupId);
+  // }
 }
