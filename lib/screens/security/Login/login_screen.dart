@@ -12,6 +12,7 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
@@ -30,9 +31,62 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final LocalAuthentication _localAuthentication = LocalAuthentication();
+  bool isBioMetricAvailable = false;
+  List<BiometricType> listOfBiometrics;
+  bool showFingerPrint = false;
+  bool showFaceId = false;
+
+  Future<bool> _isBiometricAvailable() async {
+    try {
+      isBioMetricAvailable = await _localAuthentication.canCheckBiometrics;
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return isBioMetricAvailable;
+
+    isBioMetricAvailable
+        ? _getListOfBiometricTypes()
+        : print('No biometrics available');
+
+    return isBioMetricAvailable;
+  }
+
+  // To retrieve the list of biometric types
+  // (if available).
+  Future<void> _getListOfBiometricTypes() async {
+    try {
+      if (Settings.enableLocalAuth) {
+        listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
+        setState(() {
+          listOfBiometrics.forEach((e) {
+            if (e.toString() == 'BiometricType.fingerprint') {
+              showFingerPrint = true;
+            } else if (e.toString() == 'BiometricType.face') {
+              showFaceId = true;
+              _biologin();
+            } else {
+              showFaceId = false;
+              showFingerPrint = false;
+            }
+          });
+        });
+      }
+
+      print(showFaceId);
+      print(showFingerPrint);
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return;
+  }
 
   @override
   void initState() {
+    _isBiometricAvailable();
+
     _usernameController.text = Settings.lastUser;
     super.initState();
   }
@@ -135,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 10),
-                                    Settings.enableLocalAuth
+                                    showFingerPrint || showFaceId
                                         ? _bioButton()
                                         : Container(),
                                   ],
@@ -160,7 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       padding: EdgeInsets.only(left: 40, right: 60),
       child: IconButton(
-        icon: Icon(Icons.fingerprint, color: AppColors.lightBlue4),
+        icon: Icon(showFingerPrint ? Icons.fingerprint : Icons.face,
+            color: AppColors.lightBlue4),
         onPressed: () => _biologin(),
         iconSize: 50,
       ),
