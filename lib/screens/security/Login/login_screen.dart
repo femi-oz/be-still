@@ -61,14 +61,19 @@ class _LoginScreenState extends State<LoginScreen>
     try {
       if (Settings.enableLocalAuth) {
         listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
-        if (listOfBiometrics[0].toString() == 'BiometricType.fingerprint') {
-          showFingerPrint = true;
-        } else if (listOfBiometrics[0].toString() == 'BiometricType.face') {
-          showFaceId = true;
-        } else {
-          showFaceId = false;
-          showFingerPrint = false;
-        }
+        setState(() {
+          listOfBiometrics.forEach((e) {
+            if (e.toString() == 'BiometricType.fingerprint') {
+              showFingerPrint = true;
+            } else if (e.toString() == 'BiometricType.face') {
+              showFaceId = true;
+              _biologin();
+            } else {
+              showFaceId = false;
+              showFingerPrint = false;
+            }
+          });
+        });
       }
 
       print(showFaceId);
@@ -186,11 +191,9 @@ class _LoginScreenState extends State<LoginScreen>
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 10),
-                                    showFingerPrint
-                                        ? _bioFingerButton()
-                                        : showFaceId
-                                            ? _bioFaceButton()
-                                            : Container(),
+                                    showFingerPrint || showFaceId
+                                        ? _bioButton()
+                                        : Container(),
                                   ],
                                 ),
                               ),
@@ -209,22 +212,12 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _bioFingerButton() {
+  Widget _bioButton() {
     return Container(
       padding: EdgeInsets.only(left: 40, right: 60),
       child: IconButton(
-        icon: Icon(Icons.fingerprint, color: AppColors.lightBlue4),
-        onPressed: () => _biologin(),
-        iconSize: 50,
-      ),
-    );
-  }
-
-  Widget _bioFaceButton() {
-    return Container(
-      padding: EdgeInsets.only(left: 40, right: 60),
-      child: IconButton(
-        icon: Icon(Icons.face_outlined, color: AppColors.lightBlue4),
+        icon: Icon(showFingerPrint ? Icons.fingerprint : Icons.face,
+            color: AppColors.lightBlue4),
         onPressed: () => _biologin(),
         iconSize: 50,
       ),
