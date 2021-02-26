@@ -27,13 +27,16 @@ class PrayerList extends StatefulWidget {
 }
 
 class _PrayerListState extends State<PrayerList> {
+  bool _isInit = true;
+  bool _canVibrate = true;
+
   void _getPrayers() async {
-    await BeStilDialog.showLoading(context, '');
+    await BeStilDialog.showLoading(context);
     try {
-      UserModel _user =
+      final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await _preLoadData();
-      var options =
+      final options =
           Provider.of<PrayerProvider>(context, listen: false).filterOptions;
       if (options.isArchived) {
         await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
@@ -62,32 +65,24 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  _preLoadData() async {
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      //load settings
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(_user.id);
+  Future<void> _preLoadData() async {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    //load settings
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setPrayerSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSharingSettings(_user.id);
 
-      //get all users
-      await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(_user.id);
+    //get all users
+    await Provider.of<UserProvider>(context, listen: false)
+        .setAllUsers(_user.id);
 
-      // get all local notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications();
-
-      await Future.delayed(Duration(milliseconds: 300));
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
+    // get all local notifications
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setLocalNotifications();
   }
 
   void onTapCard(prayerData) async {
@@ -107,17 +102,7 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  bool _canVibrate = true;
-  final Iterable<Duration> pauses = [
-    const Duration(milliseconds: 500),
-    const Duration(milliseconds: 1000),
-    const Duration(milliseconds: 500),
-  ];
-
-  init() async {
-    bool canVibrate = await Vibrate.canVibrate;
-    setState(() => _canVibrate = canVibrate);
-  }
+  void _setVibration() async => _canVibrate = await Vibrate.canVibrate;
 
   void _vibrate() async {
     if (_canVibrate) Vibrate.feedback(FeedbackType.light);
@@ -151,9 +136,9 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  _getPermissions() async {
+  void _getPermissions() async {
     if (Settings.isAppInit) {
-      var status = await Permission.contacts.status;
+      final status = await Permission.contacts.status;
       if (status.isUndetermined) {
         await Permission.contacts.request().then((p) =>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
@@ -162,20 +147,17 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  bool _isInit = true;
-
-  BuildContext selectedContext;
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      init();
+      _setVibration();
       _getPermissions();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle('MY LIST');
         _getPrayers();
       });
-      _isInit = false;
+      setState(() => _isInit = false);
     }
     super.didChangeDependencies();
   }

@@ -34,6 +34,7 @@ class PrayerService {
   final CollectionReference _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection("MessageTemplate");
 
+  final _notificationService = locator<NotificationService>();
   var prayerId;
 
   Stream<List<CombinePrayerStream>> _combineStream;
@@ -149,24 +150,25 @@ class PrayerService {
   }
 
   Future addPrayer(
-    PrayerModel prayerData,
+    String prayerDesc,
     String userId,
+    String creatorName,
   ) async {
     // Generate uuid
-    final _prayerID = Uuid().v1();
-    final _userPrayerID = Uuid().v1();
-    prayerId = _prayerID;
+    final prayerId = Uuid().v1();
+    final userPrayerID = Uuid().v1();
 
     try {
       // store prayer
-      _prayerCollectionReference.doc(_prayerID).set(prayerData.toJson());
+      await _prayerCollectionReference.doc(prayerId).set(
+          populatePrayer(userId, prayerDesc, prayerId, creatorName).toJson());
 
       //store user prayer
-      _userPrayerCollectionReference
-          .doc(_userPrayerID)
-          .set(populateUserPrayer(userId, _prayerID, userId).toJson());
+      await _userPrayerCollectionReference
+          .doc(userPrayerID)
+          .set(populateUserPrayer(userId, prayerId, userId).toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      await locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -175,17 +177,14 @@ class PrayerService {
       String senderId, String sender) async {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
-    var dio = Dio(BaseOptions(followRedirects: false));
-
     try {
       //store user prayer
-      _userPrayerCollectionReference
+      await _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(userId, prayerId, senderId).toJson());
-      var devices =
-          await locator<NotificationService>().getNotificationToken(userId);
+      var devices = await _notificationService.getNotificationToken(userId);
       for (int i = 0; i < devices.length; i++) {
-        await locator<NotificationService>().addPushNotification(
+        await _notificationService.addPushNotification(
           message: prayerDesc,
           sender: sender,
           senderId: senderId,
@@ -194,7 +193,7 @@ class PrayerService {
         );
       }
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      await locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -210,19 +209,19 @@ class PrayerService {
               populatePrayerTag(
                       contactData[i], user.id, user.firstName, message)
                   .toJson());
-          var template = await _messageTemplateCollectionReference
+          final template = await _messageTemplateCollectionReference
               .doc(MessageTemplateType.tagPrayer)
               .get();
-          var phoneNumber = contactData[i].phones.length > 0
+          final phoneNumber = contactData[i].phones.length > 0
               ? contactData[i].phones.toList()[0].value
               : null;
-          var email = contactData[i].emails.length > 0
+          final email = contactData[i].emails.length > 0
               ? contactData[i].emails.toList()[0]?.value
               : null;
           // compare old tags vs new tag to know if person has already received email/text
           if (oldTags.map((e) => e?.email).contains(email) ||
               oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) return;
-          await locator<NotificationService>().addEmail(
+          await _notificationService.addEmail(
             email: email,
             message: message,
             sender: user.firstName,
@@ -230,7 +229,7 @@ class PrayerService {
             template: MessageTemplate.fromData(template),
             receiver: contactData[i].displayName,
           );
-          await locator<NotificationService>().addSMS(
+          await _notificationService.addSMS(
               phoneNumber: phoneNumber,
               message: message,
               sender: user.firstName,
@@ -624,6 +623,33 @@ class PrayerService {
       locator<LogService>().createLog(e.code, e.message, prayerId);
       throw HttpException(e.message);
     }
+  }
+
+  populatePrayer(
+    String userId,
+    String prayerDesc,
+    String prayerId,
+    String creatorName,
+  ) {
+    PrayerModel prayer = PrayerModel(
+      isAnswer: false,
+      isArchived: false,
+      isInappropriate: false,
+      isSnoozed: false,
+      snoozeEndDate: null,
+      title: '',
+      type: '',
+      userId: userId,
+      status: Status.active,
+      creatorName: creatorName,
+      description: prayerDesc,
+      groupId: '0',
+      createdBy: userId,
+      createdOn: DateTime.now(),
+      modifiedBy: userId,
+      modifiedOn: DateTime.now(),
+    );
+    return prayer;
   }
 
   populateUserPrayer(

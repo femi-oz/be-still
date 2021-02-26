@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e);
     }
 
-    if (!mounted) return isBioMetricAvailable;
+    // if (!mounted) return isBioMetricAvailable;
 
     isBioMetricAvailable
         ? _getListOfBiometricTypes()
@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e);
     }
 
-    if (!mounted) return;
+    // if (!mounted) return;
   }
 
   @override
@@ -112,7 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      print(e.message);
       BeStillSnackbar.showInSnackBar(
           message: 'Username / Password is incorrect', key: _scaffoldKey);
     } catch (e) {

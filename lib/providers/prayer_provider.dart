@@ -31,22 +31,21 @@ class PrayerProvider with ChangeNotifier {
   CombinePrayerStream get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
 
-  Future setPrayers(String userId, String sortBy) async {
-    _prayerService.getPrayers(userId).asBroadcastStream().listen(
-      (data) {
-        _prayers = data.toList();
-        filterPrayers(
-            isAnswered: _filterOptions.isAnswered,
-            isArchived: _filterOptions.isArchived,
-            isSnoozed: _filterOptions.isSnoozed,
-            status: _filterOptions.status,
-            sortBy: sortBy);
-        notifyListeners();
-      },
-    );
-  }
+  Future<void> setPrayers(String userId, String sortBy) async =>
+      _prayerService.getPrayers(userId).asBroadcastStream().listen(
+        (data) {
+          _prayers = data.toList();
+          filterPrayers(
+              isAnswered: _filterOptions.isAnswered,
+              isArchived: _filterOptions.isArchived,
+              isSnoozed: _filterOptions.isSnoozed,
+              status: _filterOptions.status,
+              sortBy: sortBy);
+          notifyListeners();
+        },
+      );
 
-  Future searchPrayers(String searchQuery, String sortBy) async {
+  Future<void> searchPrayers(String searchQuery, String sortBy) async {
     if (searchQuery == '') {
       filterPrayers(
           isAnswered: _filterOptions.isAnswered,
@@ -67,15 +66,13 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setPrayer(String id) async {
-    _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-      _currentPrayer = prayer;
-      notifyListeners();
-    });
-    return;
-  }
+  Future<void> setPrayer(String id) async =>
+      _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
+        _currentPrayer = prayer;
+        notifyListeners();
+      });
 
-  Future filterPrayers({
+  Future<void> filterPrayers({
     String status,
     bool isSnoozed,
     bool isArchived,
@@ -145,7 +142,7 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  _sortBySettings(sortBy) {
+  Future<void> _sortBySettings(sortBy) async {
     if (sortBy == SortType.date) {
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
@@ -163,117 +160,102 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future addPrayer(
-    PrayerModel prayerData,
-    String _userID,
-  ) async {
-    await _prayerService.addPrayer(prayerData, _userID);
-  }
+  Future<void> addPrayer(
+    String prayerDesc,
+    String userId,
+    String creatorName,
+  ) async =>
+      await _prayerService.addPrayer(prayerDesc, userId, creatorName);
 
-  Future addUserPrayer(String prayerId, String prayerDesc, String userId,
-      String creatorId, String creator) async {
-    await _prayerService.addUserPrayer(
-        prayerId, prayerDesc, userId, creatorId, creator);
-  }
+  Future<void> addUserPrayer(String prayerId, String prayerDesc, String userId,
+          String creatorId, String creator) async =>
+      await _prayerService.addUserPrayer(
+          prayerId, prayerDesc, userId, creatorId, creator);
 
-  Future addPrayerTag(List<Contact> contactData, UserModel user, String message,
-      List<PrayerTagModel> oldTags) async {
-    await _prayerService.addPrayerTag(contactData, user, message, oldTags);
-  }
+  Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
+          String message, List<PrayerTagModel> oldTags) async =>
+      await _prayerService.addPrayerTag(contactData, user, message, oldTags);
 
-  Future removePrayerTag(String tagId) async {
-    await _prayerService.removePrayerTag(tagId);
-  }
+  Future<void> removePrayerTag(String tagId) async =>
+      await _prayerService.removePrayerTag(tagId);
 
-  Future addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async {
-    await _prayerService.addPrayerUpdate(prayerUpdateData);
-  }
+  Future<void> addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async =>
+      await _prayerService.addPrayerUpdate(prayerUpdateData);
 
-  Future editprayer(String description, String prayerID) async {
-    await _prayerService.editPrayer(description, prayerID);
-  }
+  Future<void> editprayer(String description, String prayerID) async =>
+      await _prayerService.editPrayer(description, prayerID);
 
-  Future archivePrayer(String prayerID) async {
-    await _prayerService.archivePrayer(prayerID);
-  }
+  Future<void> archivePrayer(String prayerID) async =>
+      await _prayerService.archivePrayer(prayerID);
 
-  Future unArchivePrayer(String prayerID) async {
-    await _prayerService.unArchivePrayer(prayerID);
-  }
+  Future<void> unArchivePrayer(String prayerID) async =>
+      await _prayerService.unArchivePrayer(prayerID);
 
-  Future snoozePrayer(String prayerID, DateTime snoozeEndDate) async {
-    await _prayerService.snoozePrayer(prayerID, snoozeEndDate);
-  }
+  Future<void> snoozePrayer(String prayerID, DateTime snoozeEndDate) async =>
+      await _prayerService.snoozePrayer(prayerID, snoozeEndDate);
 
-  Future unSnoozePrayer(String prayerID, DateTime snoozeEndDate) async {
-    await _prayerService.unSnoozePrayer(prayerID, snoozeEndDate);
-  }
+  Future<void> unSnoozePrayer(String prayerID, DateTime snoozeEndDate) async =>
+      await _prayerService.unSnoozePrayer(prayerID, snoozeEndDate);
 
-  Future favoritePrayer(String prayerID) async {
-    return await _prayerService.favoritePrayer(prayerID);
-  }
+  Future<void> favoritePrayer(String prayerID) async =>
+      await _prayerService.favoritePrayer(prayerID);
 
-  Future unfavoritePrayer(String prayerID) async {
-    return await _prayerService.unFavoritePrayer(prayerID);
-  }
+  Future<void> unfavoritePrayer(String prayerID) async =>
+      await _prayerService.unFavoritePrayer(prayerID);
 
-  Future markPrayerAsAnswered(String prayerID) async {
-    await _prayerService.markPrayerAsAnswered(prayerID);
-  }
+  Future<void> markPrayerAsAnswered(String prayerID) async =>
+      await _prayerService.markPrayerAsAnswered(prayerID);
 
-  Future deletePrayer(String prayerID) async {
-    await _prayerService.deletePrayer(prayerID);
-  }
+  Future<void> deletePrayer(String prayerID) async =>
+      await _prayerService.deletePrayer(prayerID);
 
-  Future setCurrentPrayerType(PrayerType type) async {
+  Future<void> setCurrentPrayerType(PrayerType type) async {
     _currentPrayerType = type;
     notifyListeners();
   }
 
 //Group Prayers
-  Future setGroupPrayers(
-      String userId, String groupId, bool isGroupAdmin) async {
-    _prayerService.getGroupPrayers(groupId).asBroadcastStream().listen((data) {
-      if (!isGroupAdmin) {
-        _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
-      }
-      _filteredPrayers = _prayers;
+  Future<void> setGroupPrayers(
+          String userId, String groupId, bool isGroupAdmin) async =>
+      _prayerService
+          .getGroupPrayers(groupId)
+          .asBroadcastStream()
+          .listen((data) {
+        // if (!isGroupAdmin) {
+        //   _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
+        // }
+        _filteredPrayers = _prayers;
 
-      _filteredPrayers
-          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-      _filterOptions = FilterType(
-        isAnswered: false,
-        isArchived: false,
-        isSnoozed: false,
-        status: Status.active,
-      );
-      notifyListeners();
-    });
-  }
+        _filteredPrayers
+            .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+        _filterOptions = FilterType(
+          isAnswered: false,
+          isArchived: false,
+          isSnoozed: false,
+          status: Status.active,
+        );
+        notifyListeners();
+      });
 
-  Future messageRequestor(PrayerRequestMessageModel prayerRequestData) async {
-    return await _prayerService.messageRequestor(prayerRequestData);
-  }
+  Future<void> messageRequestor(
+          PrayerRequestMessageModel prayerRequestData) async =>
+      await _prayerService.messageRequestor(prayerRequestData);
 
-  Future addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
-      List groups, String _userID) async {
-    return await _prayerService.addPrayerWithGroup(
-        context, prayerData, groups, _userID);
-  }
+  Future<void> addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
+          List groups, String _userID) async =>
+      await _prayerService.addPrayerWithGroup(
+          context, prayerData, groups, _userID);
 
-  Future addGroupPrayer(BuildContext context, PrayerModel prayerData) async {
-    return await _prayerService.addGroupPrayer(context, prayerData);
-  }
+  Future<void> addGroupPrayer(
+          BuildContext context, PrayerModel prayerData) async =>
+      await _prayerService.addGroupPrayer(context, prayerData);
 
-  Future hidePrayer(String prayerId, UserModel user) async {
-    return await _prayerService.hidePrayer(prayerId, user);
-  }
+  Future<void> hidePrayer(String prayerId, UserModel user) async =>
+      await _prayerService.hidePrayer(prayerId, user);
 
-  Future hidePrayerFromAllMembers(String prayerId, bool value) async {
-    return await _prayerService.hideFromAllMembers(prayerId, value);
-  }
+  Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async =>
+      await _prayerService.hideFromAllMembers(prayerId, value);
 
-  Future addPrayerToMyList(UserPrayerModel userPrayer) async {
-    return await _prayerService.addPrayerToMyList(userPrayer);
-  }
+  Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
+      await _prayerService.addPrayerToMyList(userPrayer);
 }
