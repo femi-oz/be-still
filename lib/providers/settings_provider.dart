@@ -21,10 +21,6 @@ class SettingsProvider with ChangeNotifier {
   GroupPreferenceSettings _groupPreferenceSettings;
   GroupPreferenceSettings get groupPreferenceSettings =>
       _groupPreferenceSettings;
-  bool _isFaceIdEnabled = false;
-  bool get isFaceIdEnabled => _isFaceIdEnabled;
-  bool _hasAccessToContact = false;
-  bool get hasAccessToContact => _hasAccessToContact;
 
   Future setSettings(String userId) async {
     _settingsService
@@ -64,10 +60,6 @@ class SettingsProvider with ChangeNotifier {
       _groupSettings = settings;
       notifyListeners();
     });
-  }
-
-  Future setContactAcessStatus(contactSettings) async {
-    _hasAccessToContact = contactSettings;
   }
 
   Future setGroupPreferenceSettings(String userId) async {

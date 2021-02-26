@@ -117,7 +117,8 @@ class _PrayerListState extends State<PrayerList> {
     if (Settings.isAppInit) {
       var status = await Permission.contacts.status;
       if (status.isUndetermined) {
-        await Permission.contacts.request();
+        await Permission.contacts.request().then((p) =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
       Settings.isAppInit = false;
     }

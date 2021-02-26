@@ -9,6 +9,7 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +140,7 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   getContacts() async {
-    if (await Permission.contacts.request().isGranted) {
+    if (Settings.enabledContactPermission) {
       localContacts = await ContactsService.getContacts(withThumbnails: false);
     }
   }
