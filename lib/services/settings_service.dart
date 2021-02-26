@@ -161,67 +161,67 @@ class SettingsService {
     }
   }
 
-  Stream<SettingsModel> fetchSettings(String userId) {
+  Future<SettingsModel> fetchSettings(String userId) async {
     try {
-      return _settingsCollectionReference
+      var settings = await _settingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .map((doc) =>
-              doc.docs.map((e) => SettingsModel.fromData(e)).toList()[0]);
+          .get();
+      return settings.docs.map((e) => SettingsModel.fromData(e)).toList()[0];
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
 
-  Stream<PrayerSettingsModel> getPrayerSettings(String userId) {
+  Future<PrayerSettingsModel> getPrayerSettings(String userId) async {
     try {
-      return _prayerSettingsCollectionReference
+      var settings = await _prayerSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .map((doc) =>
-              doc.docs.map((e) => PrayerSettingsModel.fromData(e)).toList()[0]);
+          .get();
+      return settings.docs
+          .map((e) => PrayerSettingsModel.fromData(e))
+          .toList()[0];
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
 
-  Stream<SharingSettingsModel> getSharingSettings(String userId) {
+  Future<SharingSettingsModel> getSharingSettings(String userId) async {
     try {
-      return _sharingSettingsCollectionReference
+      var settings = await _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .map((doc) => doc.docs
-              .map((e) => SharingSettingsModel.fromData(e))
-              .toList()[0]);
+          .get();
+      return settings.docs
+          .map((e) => SharingSettingsModel.fromData(e))
+          .toList()[0];
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
 
-  Stream<List<GroupSettings>> getGroupSettings(String userId) {
+  Future<List<GroupSettings>> getGroupSettings(String userId) async {
     try {
-      return _groupSettingsCollectionReference
+      var settings = await _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .asyncMap(
-              (e) => e.docs.map((doc) => GroupSettings.fromData(doc)).toList());
+          .get();
+      return settings.docs.map((e) => GroupSettings.fromData(e)).toList();
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
 
-  Stream<GroupPreferenceSettings> getGroupPreferenceSettings(String userId) {
+  Future<GroupPreferenceSettings> getGroupPreferenceSettings(
+      String userId) async {
     try {
-      return _groupPrefernceSettingsCollectionReference
+      var settings = await _groupPrefernceSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .asyncMap((e) => e.docs
-              .map((doc) => GroupPreferenceSettings.fromData(doc))
-              .toList()[0]);
+          .get();
+      return settings.docs
+          .map((e) => GroupPreferenceSettings.fromData(e))
+          .toList()[0];
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);

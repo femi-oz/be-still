@@ -4,6 +4,7 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
@@ -31,12 +32,23 @@ class _PrayerListState extends State<PrayerList> {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
-      await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(_user.id);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications();
+      await _preLoadData();
+      var options =
+          Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+      if (options.isArchived) {
+        await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+            _user?.id,
+            Provider.of<SettingsProvider>(context, listen: false)
+                .settings
+                .archiveSortBy);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+            _user?.id,
+            Provider.of<SettingsProvider>(context, listen: false)
+                .settings
+                .defaultSortBy);
+      }
+
       await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
@@ -46,6 +58,34 @@ class _PrayerListState extends State<PrayerList> {
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
+  _preLoadData() async {
+    try {
+      UserModel _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      //load settings
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setPrayerSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(_user.id);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSharingSettings(_user.id);
+
+      //get all users
+      await Provider.of<UserProvider>(context, listen: false)
+          .setAllUsers(_user.id);
+
+      // get all local notifications
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications();
+
+      await Future.delayed(Duration(milliseconds: 300));
+    } on HttpException catch (e) {
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
       BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
@@ -76,36 +116,34 @@ class _PrayerListState extends State<PrayerList> {
 
   init() async {
     bool canVibrate = await Vibrate.canVibrate;
-    setState(() {
-      _canVibrate = canVibrate;
-    });
+    setState(() => _canVibrate = canVibrate);
   }
 
-  void vibrate() async {
-    if (_canVibrate) {
-      Vibrate.vibrate();
-    }
+  void _vibrate() async {
+    if (_canVibrate) Vibrate.feedback(FeedbackType.light);
   }
 
   void onLongPressCard(prayerData, details) async {
-    vibrate();
+    _vibrate();
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(prayerData.userPrayer.id);
       var y = details.globalPosition.dy;
       await Future.delayed(
-          const Duration(milliseconds: 300),
-          () => showModalBottomSheet(
-              context: context,
-              barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
-              backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
-              isScrollControlled: true,
-              builder: (BuildContext context) {
-                return PrayerQuickAccess(
-                  y: y,
-                  prayerData: prayerData,
-                );
-              }));
+        const Duration(milliseconds: 300),
+        () => showModalBottomSheet(
+          context: context,
+          barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
+          backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return PrayerQuickAccess(
+              y: y,
+              prayerData: prayerData,
+            );
+          },
+        ),
+      );
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {

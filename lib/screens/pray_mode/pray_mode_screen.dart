@@ -1,6 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/pray_mode/Widgets/pray_mode_app_bar.dart';
 import 'package:be_still/screens/pray_mode/widgets/prayer_page.dart';
@@ -27,8 +28,11 @@ class _PrayerModeState extends State<PrayerMode> {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
+      await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+          _user?.id,
+          Provider.of<SettingsProvider>(context, listen: false)
+              .settings
+              .defaultSortBy);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
