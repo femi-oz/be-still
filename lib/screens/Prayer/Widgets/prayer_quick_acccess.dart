@@ -183,18 +183,21 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       width: 100.0,
                     ),
                   ),
-                  _buildAction(
-                      270,
-                      AppIcons.bestill_edit,
-                      () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddPrayer(
-                                    isEdit: true,
-                                    prayerData: widget.prayerData,
-                                    isGroup: false)),
-                          ),
-                      'Edit'),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: _buildAction(
+                        270,
+                        AppIcons.bestill_edit,
+                        () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddPrayer(
+                                      isEdit: true,
+                                      prayerData: widget.prayerData,
+                                      isGroup: false)),
+                            ),
+                        'Edit'),
+                  ),
                   _buildAction(
                     315,
                     widget.prayerData.userPrayer.isFavorite
@@ -241,17 +244,20 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                     'Delete',
                   ),
-                  _buildAction(
-                    90,
-                    widget.prayerData.prayer.isAnswer
-                        ? AppIcons.bestill_answered
-                        : AppIcons.bestill_answered,
-                    () => widget.prayerData.prayer.isAnswer
-                        ? null
-                        : _onMarkAsAnswered(),
-                    widget.prayerData.prayer.isAnswer
-                        ? 'Mark As Unanswered'
-                        : 'Mark As Answered',
+                  Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: _buildAction(
+                      90,
+                      widget.prayerData.prayer.isAnswer
+                          ? AppIcons.bestill_answered
+                          : AppIcons.bestill_answered,
+                      () => widget.prayerData.prayer.isAnswer
+                          ? null
+                          : _onMarkAsAnswered(),
+                      widget.prayerData.prayer.isAnswer
+                          ? 'Mark As Unanswered'
+                          : 'Mark As Answered',
+                    ),
                   ),
                   Container(
                     height: 25,

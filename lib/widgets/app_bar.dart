@@ -63,8 +63,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   _openFilter(bool isDark) {
     showModalBottomSheet(
       context: context,
-      barrierColor: AppColors.detailBackgroundColor[1],
-      backgroundColor: AppColors.detailBackgroundColor[1],
+      barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
+      backgroundColor: AppColors.addPrayerBg.withOpacity(0.8),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return PrayerFilters();
