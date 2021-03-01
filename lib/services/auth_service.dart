@@ -1,5 +1,6 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,10 +22,14 @@ class AuthenticationService {
         );
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
+          await locator<LogService>().createLog(
+              '', 'Authentication Cancelled', _firebaseAuth.currentUser.email);
           throw HttpException('Authentication Cancelled');
         }
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
+        await locator<LogService>()
+            .createLog(e.code, e.message, _firebaseAuth.currentUser.email);
         throw HttpException(e.message);
       }
     }
@@ -34,6 +39,7 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
     } catch (e) {
+      await locator<LogService>().createLog(e.code, e.message, email);
       throw HttpException(e.message);
     }
   }
@@ -46,6 +52,7 @@ class AuthenticationService {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (e) {
+      await locator<LogService>().createLog(e.code, e.message, email);
       throw HttpException(e.message);
     }
   }
@@ -72,6 +79,7 @@ class AuthenticationService {
         dob,
       );
     } catch (e) {
+      await locator<LogService>().createLog(e.code, e.message, email);
       throw HttpException(e.message);
     }
   }
@@ -80,6 +88,7 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } catch (e) {
+      await locator<LogService>().createLog(e.code, e.message, email);
       throw HttpException(e.message);
     }
   }
@@ -107,6 +116,8 @@ class AuthenticationService {
     try {
       await _firebaseAuth.signOut();
     } catch (e) {
+      await locator<LogService>()
+          .createLog(e.code, e.message, _firebaseAuth.currentUser.email);
       throw HttpException(e.message);
     }
   }
@@ -116,6 +127,8 @@ class AuthenticationService {
       User user = _firebaseAuth.currentUser;
       return user != null;
     } catch (e) {
+      await locator<LogService>()
+          .createLog(e.code, e.message, _firebaseAuth.currentUser.email);
       throw HttpException(e.message);
     }
   }

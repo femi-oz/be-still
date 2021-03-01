@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/flavor_config.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user_device.model.dart';
+import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
-import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
@@ -30,37 +31,42 @@ class NotificationService {
     final deviceId = Uuid().v1();
     final userDeviceID = Uuid().v1();
     //store device
-    await _deviceCollectionReference.doc(deviceId).set(
-          DeviceModel(
-                  createdBy: 'MOBILE',
-                  createdOn: DateTime.now(),
-                  modifiedOn: DateTime.now(),
-                  modifiedBy: 'MOBILE',
-                  model: 'MOBILE',
-                  deviceId: '',
-                  name: token,
-                  status: Status.active)
-              .toJson(),
-        );
+    try {
+      await _deviceCollectionReference.doc(deviceId).set(
+            DeviceModel(
+                    createdBy: 'MOBILE',
+                    createdOn: DateTime.now(),
+                    modifiedOn: DateTime.now(),
+                    modifiedBy: 'MOBILE',
+                    model: 'MOBILE',
+                    deviceId: '',
+                    name: token,
+                    status: Status.active)
+                .toJson(),
+          );
 
-    // store user device
-    await _userDeviceCollectionReference.doc(userDeviceID).set(
-          UserDeviceModel(
-            createdBy: 'MOBILE',
-            createdOn: DateTime.now(),
-            modifiedOn: DateTime.now(),
-            modifiedBy: 'MOBILE',
-            deviceId: deviceId,
-            userId: userId,
-            status: Status.active,
-          ).toJson(),
-        );
+      // store user device
+      await _userDeviceCollectionReference.doc(userDeviceID).set(
+            UserDeviceModel(
+              createdBy: 'MOBILE',
+              createdOn: DateTime.now(),
+              modifiedOn: DateTime.now(),
+              modifiedBy: 'MOBILE',
+              deviceId: deviceId,
+              userId: userId,
+              status: Status.active,
+            ).toJson(),
+          );
+    } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
+      throw HttpException(e.message);
+    }
   }
 
-  Future<List<DeviceModel>> getNotificationToken(_userID) async {
+  Future<List<DeviceModel>> getNotificationToken(userId) async {
     //get user devices
     var userDevices = await _userDeviceCollectionReference
-        .where('UserId', isEqualTo: _userID)
+        .where('UserId', isEqualTo: userId)
         .get();
     var userDevicesDocs =
         userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
@@ -73,6 +79,7 @@ class NotificationService {
         devices.add(DeviceModel.fromData(dev));
       }
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
     return devices;
@@ -103,6 +110,7 @@ class NotificationService {
           .doc(_notificationId)
           .set(data.toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, senderId);
       throw HttpException(e.message);
     }
   }
@@ -142,6 +150,7 @@ class NotificationService {
     try {
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, senderId);
       throw HttpException(e.message);
     }
   }
@@ -183,6 +192,7 @@ class NotificationService {
     try {
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, senderId);
       throw HttpException(e.message);
     }
   }
@@ -208,6 +218,7 @@ class NotificationService {
                   notificationText: notificationText)
               .toJson());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, deviceId);
       throw HttpException(e.message);
     }
   }
@@ -216,6 +227,7 @@ class NotificationService {
     try {
       _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, notificationId);
       throw HttpException(e.message);
     }
   }
@@ -229,6 +241,7 @@ class NotificationService {
               .map((doc) => LocalNotificationModel.fromData(doc))
               .toList());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, deviceId);
       throw HttpException(e.message);
     }
   }
@@ -241,6 +254,7 @@ class NotificationService {
           .map((e) =>
               e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
     } catch (e) {
+      locator<LogService>().createLog(e.code, e.message, userId);
       throw HttpException(e.message);
     }
   }
@@ -253,6 +267,9 @@ class NotificationService {
             .update({'Status': Status.inactive});
       }
     } catch (e) {
+      for (int i = 0; i < ids.length; i++) {
+        locator<LogService>().createLog(e.code, e.message, ids[i]);
+      }
       throw HttpException(e.message);
     }
   }

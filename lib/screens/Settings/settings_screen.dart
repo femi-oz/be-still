@@ -63,48 +63,14 @@ class SettingsTabState extends State<SettingsTab>
 
   @override
   void initState() {
-    getContactsPermission();
-
     super.initState();
     tabController = new TabController(length: 5, vsync: this);
-  }
-
-  void _getSettings() async {
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(_user.id);
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
-  }
-
-  getContactsPermission() async {
-    var status = await Permission.contacts.status;
-    if (status.isUndetermined) {
-      Provider.of<SettingsProvider>(context, listen: false)
-          .setContactAcessStatus(false);
-    } else if (status.isDenied) {
-      Provider.of<SettingsProvider>(context, listen: false)
-          .setContactAcessStatus(false);
-    } else {
-      Provider.of<SettingsProvider>(context, listen: false)
-          .setContactAcessStatus(true);
-    }
   }
 
   bool _isInit = true;
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      _getSettings();
       _isInit = false;
     }
     super.didChangeDependencies();

@@ -2,6 +2,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -22,7 +23,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
       {Key key,
       this.formKey,
       this.showPrayerctions = true,
-      // this.onSearchChange,
       this.switchSearchMode,
       this.searchMode = false,
       this.searchController})
@@ -38,15 +38,26 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   void _searchPrayer(String value) async {
-    // widget.onSearchChange(value);
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value);
+    var options =
+        Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+    if (options.isArchived) {
+      await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
+          value,
+          Provider.of<SettingsProvider>(context, listen: false)
+              .settings
+              .archiveSortBy);
+    } else {
+      await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
+          value,
+          Provider.of<SettingsProvider>(context, listen: false)
+              .settings
+              .defaultSortBy);
+    }
   }
 
   void _clearSearchField() async {
-    // widget.onSearchChange('');
     widget.searchController.text = '';
-    await Provider.of<PrayerProvider>(context, listen: false).searchPrayers('');
+    _searchPrayer('');
   }
 
   _openFilter(bool isDark) {

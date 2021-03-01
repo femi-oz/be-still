@@ -47,38 +47,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
-  PermissionStatus permission;
-
-  initState() {
-    Permission.contacts.status
-        .then((value) => setState(() => permission = value));
-    super.initState();
+  Future<void> _setPermission() async {
+    if (Settings.enabledContactPermission)
+      setState(() => Settings.enabledContactPermission = false);
+    else
+      await Permission.contacts.request().then((p) {
+        setState(() =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
+      });
   }
-
-  // Future<void> _setPermission() async {
-  //   // if true enable permission else disable permission
-  //   permission = await Permission.contacts.status;
-  //   if (permission == PermissionStatus.denied) {
-  //     final Map<Permission, PermissionStatus> permissionStatus =
-  //         await [Permission.contacts].request();
-  //     setState(() => permission =
-  //         permissionStatus[Permission.contacts] ?? PermissionStatus.denied);
-  //     Provider.of<SettingsProvider>(context, listen: false)
-  //         .setContactAcessStatus(false);
-  //   } else if (permission == PermissionStatus.granted) {
-  //     Provider.of<SettingsProvider>(context, listen: false)
-  //         .setContactAcessStatus(true);
-  //     await openAppSettings();
-  //     if (permission == PermissionStatus.denied) {
-  //       setState(() => permission = PermissionStatus.denied);
-  //     } else if (permission == PermissionStatus.granted) {
-  //       setState(() => permission = PermissionStatus.granted);
-  //     }
-  //   } else {
-  //     Provider.of<SettingsProvider>(context, listen: false)
-  //         .setContactAcessStatus(false);
-  //   }
-  // }
 
   void _updateEmail(UserModel user) async {
     BeStilDialog.showConfirmDialog(context,
@@ -262,11 +239,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   title: 'Enable Face/Touch ID',
                   value: Settings.enableLocalAuth,
                 ),
-                // CustomToggle(
-                //   onChange: (value) => _setPermission(),
-                //   title: 'Allow BeStill to access Contacts?',
-                //   value: permission.isGranted,
-                // ),
+                CustomToggle(
+                  onChange: (value) => _setPermission(),
+                  title: 'Allow BeStill to access Contacts?',
+                  value: Settings.enabledContactPermission,
+                ),
               ],
             ),
             SizedBox(height: 10),
