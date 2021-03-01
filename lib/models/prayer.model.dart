@@ -12,11 +12,9 @@ class PrayerModel {
   final String description;
   final bool isAnswer;
   final bool isArchived;
-  final bool isSnoozed;
   final bool isInappropriate;
   final bool hideFromMe;
   final bool hideFromAllMembers;
-  final DateTime snoozeEndDate;
   final String creatorName;
   final String createdBy;
   final DateTime createdOn;
@@ -32,12 +30,10 @@ class PrayerModel {
     @required this.status,
     @required this.description,
     @required this.isAnswer,
-    @required this.isSnoozed,
     @required this.isArchived,
     @required this.isInappropriate,
     @required this.hideFromMe,
     @required this.hideFromAllMembers,
-    @required this.snoozeEndDate,
     @required this.creatorName,
     @required this.createdBy,
     @required this.createdOn,
@@ -47,7 +43,7 @@ class PrayerModel {
 
   PrayerModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        groupId = snapshot.data()['GroupId'],
+        groupId = snapshot.data()['GroupId'] ?? '',
         userId = snapshot.data()['UserId'],
         type = snapshot.data()['Type'],
         title = snapshot.data()['Title'],
@@ -55,12 +51,9 @@ class PrayerModel {
         description = snapshot.data()['Description'],
         isAnswer = snapshot.data()['IsAnswer'],
         isArchived = snapshot.data()['IsArchived'],
-        isSnoozed = snapshot.data()['IsSnoozed'],
         isInappropriate = snapshot.data()['IsInappropriate'],
         hideFromMe = snapshot.data()['HideFromMe'],
         hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
-        snoozeEndDate =
-            snapshot.data()['SnoozeEndDate']?.toDate() ?? DateTime.now(),
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn']?.toDate(),
@@ -77,11 +70,9 @@ class PrayerModel {
       'Description': description,
       'IsAnswer': isAnswer,
       'IsArchived': isArchived,
-      'IsSnoozed': isSnoozed,
       'IsInappropriate': isInappropriate,
       'HideFromMe': hideFromMe,
       'HideFromAllMembers': hideFromAllMembers,
-      'SnoozeEndDate': snoozeEndDate,
       'CreatorName': creatorName,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
@@ -222,6 +213,8 @@ class UserPrayerModel {
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
+  final DateTime snoozeEndDate;
+  final bool isSnoozed;
 
   const UserPrayerModel({
     this.id,
@@ -230,6 +223,8 @@ class UserPrayerModel {
     @required this.sequence,
     @required this.isFavorite,
     @required this.status,
+    @required this.isSnoozed,
+    @required this.snoozeEndDate,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -243,6 +238,9 @@ class UserPrayerModel {
         sequence = snapshot.data()['Sequence'],
         isFavorite = snapshot.data()['IsFavourite'],
         status = snapshot.data()['Status'],
+        isSnoozed = snapshot.data()['IsSnoozed'],
+        snoozeEndDate =
+            snapshot.data()['SnoozeEndDate']?.toDate() ?? DateTime.now(),
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -255,6 +253,8 @@ class UserPrayerModel {
       'Sequence': sequence,
       'IsFavourite': isFavorite,
       'Status': status,
+      'IsSnoozed': isSnoozed,
+      'SnoozeEndDate': snoozeEndDate,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

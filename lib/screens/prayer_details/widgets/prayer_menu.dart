@@ -275,8 +275,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(bcontext);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .snoozePrayer(widget.prayerData.prayer.id, widget.snoozeEndDate);
+      await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
+          widget.prayerData.prayer.id,
+          widget.snoozeEndDate,
+          widget.prayerData.userPrayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -292,8 +294,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unSnoozePrayer(widget.prayerData.prayer.id, DateTime.now());
+      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
+          widget.prayerData.prayer.id,
+          DateTime.now(),
+          widget.prayerData.userPrayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -413,7 +417,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                   text: 'Reminder',
                 ),
-                widget.prayerData.prayer.isSnoozed == false
+                widget.prayerData.userPrayer.isSnoozed == false
                     ? MenuButton(
                         icon: AppIcons.bestill_snooze,
                         onPressed: () => _snoozePrayer(),

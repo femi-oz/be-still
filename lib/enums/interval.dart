@@ -1,4 +1,6 @@
 class IntervalRange {
+  static const thirtyMinutes = '30 Minutes';
+  static const oneHour = '1 Hour';
   static const sevenDays = '7 Days';
   static const fourtheenDays = '14 Days';
   static const thirtyDays = '30 Days';

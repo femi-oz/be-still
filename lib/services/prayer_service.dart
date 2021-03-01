@@ -308,29 +308,35 @@ class PrayerService {
     }
   }
 
-  Future snoozePrayer(String prayerID, DateTime endDate) async {
+  Future snoozePrayer(
+      String prayerID, DateTime endDate, String userPrayerID) async {
     try {
-      _prayerCollectionReference.doc(prayerID).update(
+      _userPrayerCollectionReference.doc(userPrayerID).update(
         {
+          'IsFavourite': false,
           'IsSnoozed': true,
           'SnoozeEndDate': endDate,
           'Status': Status.inactive
         },
       );
-      _userPrayerCollectionReference.doc(prayerID).update(
-        {'IsFavourite': false},
-      );
+      _prayerCollectionReference
+          .doc(prayerID)
+          .update({'Status': Status.inactive});
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, prayerID);
       throw HttpException(e.message);
     }
   }
 
-  Future unSnoozePrayer(String prayerID, DateTime endDate) async {
+  Future unSnoozePrayer(
+      String prayerID, DateTime endDate, String userPrayerID) async {
     try {
-      _prayerCollectionReference.doc(prayerID).update(
-        {'IsSnoozed': false, 'SnoozeEndDate': endDate, 'Status': Status.active},
+      _userPrayerCollectionReference.doc(userPrayerID).update(
+        {'IsSnoozed': false, 'Status': Status.active},
       );
+      _prayerCollectionReference
+          .doc(prayerID)
+          .update({'Status': Status.active});
     } catch (e) {
       locator<LogService>().createLog(e.code, e.message, prayerID);
       throw HttpException(e.message);
@@ -637,6 +643,8 @@ class PrayerService {
         sequence: null,
         prayerId: prayerID,
         isFavorite: false,
+        isSnoozed: false,
+        snoozeEndDate: DateTime.now(),
         createdBy: creatorId,
         createdOn: DateTime.now(),
         modifiedBy: creatorId,
