@@ -33,6 +33,8 @@ class _MyListSettingsState extends State<MyListSettings> {
   }
 
   List<String> snoozeInterval = [
+    IntervalRange.thirtyMinutes,
+    IntervalRange.oneHour,
     IntervalRange.sevenDays,
     IntervalRange.fourtheenDays,
     IntervalRange.thirtyDays,
