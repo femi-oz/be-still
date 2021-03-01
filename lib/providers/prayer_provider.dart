@@ -104,7 +104,6 @@ class PrayerProvider with ChangeNotifier {
     prayersToUnsnooze.forEach((data) => {
           locator<PrayerService>().unSnoozePrayer(
               data.prayer.id, DateTime.now(), data.userPrayer.id),
-          print(data.prayer.id)
         });
 
     if (status == Status.active) {

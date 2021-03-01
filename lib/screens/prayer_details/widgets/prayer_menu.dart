@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -10,6 +11,7 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
+import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -285,22 +287,30 @@ class _PrayerMenuState extends State<PrayerMenu> {
           widget.prayerData.userPrayer.id);
       if (widget.durationText == 'minutes') {
         Timer(Duration(minutes: widget.snoozeDuration), () {
-          _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
+          // _unSnoozePrayer();
         });
       }
       if (widget.durationText == 'hours') {
         Timer(Duration(hours: widget.snoozeDuration), () {
-          _unSnoozePrayer();
+          // _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
         });
       }
       if (widget.durationText == 'days') {
         Timer(Duration(days: widget.snoozeDuration), () {
-          _unSnoozePrayer();
+          // _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
         });
       }
       if (widget.durationText == 'year') {
         Timer(Duration(days: widget.snoozeDuration), () {
-          _unSnoozePrayer();
+          // _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
         });
       }
 
