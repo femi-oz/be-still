@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -28,11 +30,13 @@ class PrayerMenu extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final List<PrayerUpdateModel> updates;
   final DateTime snoozeEndDate;
+  final String durationText;
+  final int snoozeDuration;
 
   final BuildContext parentcontext;
   @override
-  PrayerMenu(
-      this.prayerData, this.updates, this.parentcontext, this.snoozeEndDate);
+  PrayerMenu(this.prayerData, this.updates, this.parentcontext,
+      this.snoozeEndDate, this.durationText, this.snoozeDuration);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -279,6 +283,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
           widget.prayerData.prayer.id,
           widget.snoozeEndDate,
           widget.prayerData.userPrayer.id);
+      if (widget.durationText == 'minutes') {
+        Timer(Duration(minutes: widget.snoozeDuration), () {
+          _unSnoozePrayer();
+        });
+      }
+      if (widget.durationText == 'hours') {
+        Timer(Duration(hours: widget.snoozeDuration), () {
+          _unSnoozePrayer();
+        });
+      }
+      if (widget.durationText == 'days') {
+        Timer(Duration(days: widget.snoozeDuration), () {
+          _unSnoozePrayer();
+        });
+      }
+      if (widget.durationText == 'year') {
+        Timer(Duration(days: widget.snoozeDuration), () {
+          _unSnoozePrayer();
+        });
+      }
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

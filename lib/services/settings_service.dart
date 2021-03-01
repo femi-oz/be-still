@@ -33,7 +33,7 @@ class SettingsService {
         deviceId: deviceId,
         appearance: '',
         defaultSortBy: SortType.date,
-        defaultSnoozeDuration: IntervalRange.thirtyDays,
+        defaultSnoozeDuration: IntervalRange.thirtyMinutes,
         archiveAutoDelete: IntervalRange.oneYear,
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,

@@ -43,36 +43,36 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   DateTime snoozeEndDate;
   Duration snoozeDurationinHour;
   Duration snoozeDurationinMinutes;
-
+  String durationText;
+  int snoozeDuration;
   Widget _buildMenu() {
     SettingsModel _settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
+    snoozeDuration = int.parse(
+        _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
 
     if (_settings.defaultSnoozeDuration.contains('Hour')) {
-      int snoozeDuration = int.parse(
-          _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
       snoozeDurationinHour = new Duration(hours: snoozeDuration);
-      print(snoozeDurationinHour);
       snoozeEndDate = DateTime.now().add(snoozeDurationinHour);
+      durationText = 'hours';
     }
 
     if (_settings.defaultSnoozeDuration.contains('Minutes')) {
-      int snoozeDuration = int.parse(
-          _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
       snoozeDurationinMinutes = new Duration(minutes: snoozeDuration);
       snoozeEndDate = DateTime.now().add(snoozeDurationinMinutes);
+      durationText = 'minutes';
     }
 
     if (_settings.defaultSnoozeDuration.contains('Days')) {
-      int snoozeDuration = int.parse(
-          _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
-      snoozeDurationinDays = new Duration(minutes: snoozeDuration);
+      snoozeDurationinDays = new Duration(days: snoozeDuration);
       snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
+      durationText = 'days';
     }
 
     if (_settings.defaultSnoozeDuration.contains('Year')) {
       snoozeDurationinDays = new Duration(days: 360);
       snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
+      durationText = 'year';
     }
 
     // if (snoozeDuration == 1) {
@@ -105,9 +105,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       updates = Provider.of<PrayerProvider>(context, listen: false)
           .currentPrayer
           .updates;
-      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate,
+          durationText, snoozeDuration);
     } else {
-      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate,
+          durationText, snoozeDuration);
     }
   }
 
