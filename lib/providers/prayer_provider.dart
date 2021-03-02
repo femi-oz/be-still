@@ -108,15 +108,17 @@ class PrayerProvider with ChangeNotifier {
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
           .toList();
 
-      snoozedPrayers = prayers
-          .where(
-              (CombinePrayerStream data) => data.userPrayer.isSnoozed == false)
-          .toList();
+      // snoozedPrayers = prayers
+      //     .where(
+      //         (CombinePrayerStream data) => data.userPrayer.isSnoozed == false)
+      //     .toList();
 
       activePrayers = prayers
           .where((CombinePrayerStream data) =>
               data.prayer.status.toLowerCase() == status.toLowerCase())
           .toList();
+
+      print(archivedPrayers.length);
     }
     if (isAnswered == true) {
       favoritePrayers = [];
