@@ -40,18 +40,46 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   }
 
   Duration snoozeDurationinDays;
-
+  DateTime snoozeEndDate;
+  Duration snoozeDurationinHour;
+  Duration snoozeDurationinMinutes;
+  String durationText;
+  int snoozeDuration;
   Widget _buildMenu() {
     SettingsModel _settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
-    int snoozeDuration = int.parse(
+    snoozeDuration = int.parse(
         _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
-    if (snoozeDuration == 1) {
-      snoozeDurationinDays = new Duration(days: 360);
-    } else {
-      snoozeDurationinDays = new Duration(days: snoozeDuration);
+
+    if (_settings.defaultSnoozeDuration.contains('Hour')) {
+      snoozeDurationinHour = new Duration(hours: snoozeDuration);
+      snoozeEndDate = DateTime.now().add(snoozeDurationinHour);
+      durationText = 'hours';
     }
-    DateTime snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
+
+    if (_settings.defaultSnoozeDuration.contains('Minutes')) {
+      snoozeDurationinMinutes = new Duration(minutes: snoozeDuration);
+      snoozeEndDate = DateTime.now().add(snoozeDurationinMinutes);
+      durationText = 'minutes';
+    }
+
+    if (_settings.defaultSnoozeDuration.contains('Days')) {
+      snoozeDurationinDays = new Duration(days: snoozeDuration);
+      snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
+      durationText = 'days';
+    }
+
+    if (_settings.defaultSnoozeDuration.contains('Year')) {
+      snoozeDurationinDays = new Duration(days: 360);
+      snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
+      durationText = 'year';
+    }
+
+    // if (snoozeDuration == 1) {
+    // } else {
+    //   snoozeDurationinDays = new Duration(days: snoozeDuration);
+    // }
+    // snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     CombinePrayerStream prayerData =
@@ -77,9 +105,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       updates = Provider.of<PrayerProvider>(context, listen: false)
           .currentPrayer
           .updates;
-      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate,
+          durationText, snoozeDuration);
     } else {
-      return PrayerMenu(prayerData, updates, context, snoozeEndDate);
+      return PrayerMenu(prayerData, updates, context, snoozeEndDate,
+          durationText, snoozeDuration);
     }
   }
 

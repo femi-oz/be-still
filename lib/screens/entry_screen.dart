@@ -1,3 +1,8 @@
+import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
@@ -17,27 +22,20 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-// bool searchEnabled = false;
 bool _searchMode = false;
 
 class _EntryScreenState extends State<EntryScreen> {
   int _currentIndex = 0;
-
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
+
+  void _switchSearchMode(bool value) => setState(() => _searchMode = value);
+
   @override
   void initState() {
-    _currentIndex = widget.screenNumber ?? 0;
+    _currentIndex = widget.screenNumber;
     super.initState();
-  }
-
-  // _onSearchChange(String value) {
-  //   setState(() => searchEnabled = value != '');
-  // }
-
-  _switchSearchMode(bool value) {
-    setState(() => _searchMode = value);
   }
 
   @override
@@ -52,7 +50,6 @@ class _EntryScreenState extends State<EntryScreen> {
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
-      // onSearchChange: (String value) => _onSearchChange(value)),
       body: Container(
           height: double.infinity,
           child: TabNavigationItem.items[_currentIndex].page),
@@ -75,12 +72,10 @@ class _EntryScreenState extends State<EntryScreen> {
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 1) {
-            return;
-          }
-          _switchSearchMode(false);
+          if (index == 1) return;
           _searchController.text = '';
-          setState(() => _currentIndex = index);
+          _currentIndex = index;
+          _switchSearchMode(false);
         },
         showSelectedLabels: false,
         showUnselectedLabels: false,

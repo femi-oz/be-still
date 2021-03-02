@@ -12,6 +12,7 @@ class Settings {
   static const String LAST_USER = 'last_user';
   static const String USER_KEY_REFERENCE = 'user_key_reference';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
+  static const String CONTACT_PERMISSION = 'contact_permission';
   static const String APP_INIT = 'app_init';
 
   static set themeMode(String mode) =>
@@ -48,8 +49,8 @@ class Settings {
   static String get userKeyRefernce =>
       sharedPrefs.getString(USER_KEY_REFERENCE) ?? '';
 
-  static set enableLocalAuth(bool enableLocalAuth) =>
-      sharedPrefs.setBool(ENABLE_LOCAL_AUTH, enableLocalAuth);
+  static set enableLocalAuth(bool isAuthEnabled) =>
+      sharedPrefs.setBool(ENABLE_LOCAL_AUTH, isAuthEnabled);
 
   static bool get enableLocalAuth =>
       sharedPrefs.getBool(ENABLE_LOCAL_AUTH) ?? false;
@@ -58,4 +59,9 @@ class Settings {
       sharedPrefs.setBool(APP_INIT, isAppInit);
 
   static bool get isAppInit => sharedPrefs.getBool(APP_INIT) ?? true;
+  static set enabledContactPermission(bool isContactEnabled) =>
+      sharedPrefs.setBool(CONTACT_PERMISSION, isContactEnabled);
+
+  static bool get enabledContactPermission =>
+      sharedPrefs.getBool(CONTACT_PERMISSION) ?? false;
 }

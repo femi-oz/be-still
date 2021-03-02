@@ -196,7 +196,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           ),
                       'Edit'),
                   _buildAction(
-                    315,
+                    320,
                     widget.prayerData.userPrayer.isFavorite
                         ? Icons.favorite
                         : Icons.favorite_border_outlined,
@@ -208,7 +208,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         : 'Favourite',
                   ),
                   _buildAction(
-                    360,
+                    355,
                     AppIcons.bestill_share,
                     () => showModalBottomSheet(
                       context: context,
@@ -226,7 +226,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     'Share',
                   ),
                   _buildAction(
-                    45,
+                    35,
                     AppIcons.bestill_archive,
                     () => showModalBottomSheet(
                       context: context,

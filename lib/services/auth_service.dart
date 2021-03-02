@@ -1,5 +1,6 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,10 +22,20 @@ class AuthenticationService {
         );
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
+          await locator<LogService>().createLog(
+              '',
+              'Authentication Cancelled',
+              _firebaseAuth.currentUser.email,
+              'AUTHENTICATION/service/biometricAuthentication');
           throw HttpException('Authentication Cancelled');
         }
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
+        await locator<LogService>().createLog(
+            e.code,
+            e.message,
+            _firebaseAuth.currentUser.email,
+            'AUTHENTICATION/service/biometricAuthentication');
         throw HttpException(e.message);
       }
     }
@@ -34,6 +45,8 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
     } catch (e) {
+      await locator<LogService>().createLog(
+          e.code, e.message, email, 'AUTHENTICATION/service/forgotPassword');
       throw HttpException(e.message);
     }
   }
@@ -46,7 +59,16 @@ class AuthenticationService {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (e) {
-      throw HttpException(e.message);
+      var message = e.code == 'wrong-password'
+          ? 'Username / Password is incorrect'
+          : e.code == 'invalid-email'
+              ? 'Email format is wrong'
+              : e.code == 'user-not-found'
+                  ? 'Username / Password is incorrect'
+                  : 'An error occured. Please try again';
+      await locator<LogService>()
+          .createLog(e.code, message, email, 'AUTHENTICATION/service/signUp');
+      throw HttpException(message);
     }
   }
 
@@ -72,6 +94,8 @@ class AuthenticationService {
         dob,
       );
     } catch (e) {
+      await locator<LogService>().createLog(
+          e.code, e.message, email, 'AUTHENTICATION/service/registerUser');
       throw HttpException(e.message);
     }
   }
@@ -80,33 +104,18 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } catch (e) {
+      await locator<LogService>().createLog(e.code, e.message, email,
+          'AUTHENTICATION/service/sendPasswordResetEmail');
       throw HttpException(e.message);
     }
   }
-
-  // Future<void> confirmToken(String code) async {
-  //   try {
-  //     await _firebaseAuth.verifyPasswordResetCode(code);
-  //   } catch (e) {
-  //     throw HttpException(e.message);
-  //   }
-  // }
-
-  // Future<void> forgotPassword(String code, String newPassword) async {
-  //   try {
-  //     await _firebaseAuth.confirmPasswordReset(
-  //       code: code,
-  //       newPassword: newPassword,
-  //     );
-  //   } catch (e) {
-  //     throw HttpException(e.message);
-  //   }
-  // }
 
   Future signOut() async {
     try {
       await _firebaseAuth.signOut();
     } catch (e) {
+      await locator<LogService>().createLog(e.code, e.message,
+          _firebaseAuth.currentUser.email, 'AUTHENTICATION/service/signOut');
       throw HttpException(e.message);
     }
   }
@@ -116,6 +125,11 @@ class AuthenticationService {
       User user = _firebaseAuth.currentUser;
       return user != null;
     } catch (e) {
+      await locator<LogService>().createLog(
+          e.code,
+          e.message,
+          _firebaseAuth.currentUser.email,
+          'AUTHENTICATION/service/isUserLoggedIn');
       throw HttpException(e.message);
     }
   }

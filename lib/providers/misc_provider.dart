@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
 
 class MiscProvider with ChangeNotifier {
   String _pageTitle = 'MY LIST';

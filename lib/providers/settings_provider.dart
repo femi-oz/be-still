@@ -21,72 +21,46 @@ class SettingsProvider with ChangeNotifier {
   GroupPreferenceSettings _groupPreferenceSettings;
   GroupPreferenceSettings get groupPreferenceSettings =>
       _groupPreferenceSettings;
-  bool _isFaceIdEnabled = false;
-  bool get isFaceIdEnabled => _isFaceIdEnabled;
-  bool _hasAccessToContact = false;
-  bool get hasAccessToContact => _hasAccessToContact;
 
   Future setSettings(String userId) async {
-    _settingsService
-        .fetchSettings(userId)
-        .asBroadcastStream()
-        .listen((settings) {
-      _settings = settings;
-      notifyListeners();
-    });
+    var settings = await _settingsService.fetchSettings(userId);
+    _settings = settings;
+    notifyListeners();
   }
 
   Future setPrayerSettings(String userId) async {
-    _settingsService
-        .getPrayerSettings(userId)
-        .asBroadcastStream()
-        .listen((settings) {
-      _prayerSettings = settings;
-      notifyListeners();
-    });
+    var settings = await _settingsService.getPrayerSettings(userId);
+    _prayerSettings = settings;
+    notifyListeners();
   }
 
   Future setSharingSettings(String userId) async {
-    _settingsService
-        .getSharingSettings(userId)
-        .asBroadcastStream()
-        .listen((settings) {
-      _sharingSettings = settings;
-      notifyListeners();
-    });
+    var settings = await _settingsService.getSharingSettings(userId);
+    _sharingSettings = settings;
+    notifyListeners();
   }
 
   Future setGroupSettings(String userId) async {
-    _settingsService
-        .getGroupSettings(userId)
-        .asBroadcastStream()
-        .listen((settings) {
-      _groupSettings = settings;
-      notifyListeners();
-    });
-  }
-
-  Future setContactAcessStatus(contactSettings) async {
-    _hasAccessToContact = contactSettings;
+    var settings = await _settingsService.getGroupSettings(userId);
+    _groupSettings = settings;
+    notifyListeners();
   }
 
   Future setGroupPreferenceSettings(String userId) async {
-    _settingsService
-        .getGroupPreferenceSettings(userId)
-        .asBroadcastStream()
-        .listen((settings) {
-      _groupPreferenceSettings = settings;
-      notifyListeners();
-    });
+    var settings = await _settingsService.getGroupPreferenceSettings(userId);
+    _groupPreferenceSettings = settings;
+    notifyListeners();
   }
 
   // Future getGroupSettings(String groupId) async {
   //   _settingsService.getGroupSettings(groupId);
   // }
 
-  Future updateSettings({String key, dynamic value, String settingsId}) async {
+  Future updateSettings(
+      {String key, dynamic value, String settingsId, String userId}) async {
     await _settingsService.updateSettings(
         key: key, settingsId: settingsId, value: value);
+    await setSettings(userId);
   }
 
   Future updatePrayerSettings(

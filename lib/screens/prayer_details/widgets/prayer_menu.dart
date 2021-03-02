@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -8,6 +11,7 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
+import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -28,11 +32,13 @@ class PrayerMenu extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final List<PrayerUpdateModel> updates;
   final DateTime snoozeEndDate;
+  final String durationText;
+  final int snoozeDuration;
 
   final BuildContext parentcontext;
   @override
-  PrayerMenu(
-      this.prayerData, this.updates, this.parentcontext, this.snoozeEndDate);
+  PrayerMenu(this.prayerData, this.updates, this.parentcontext,
+      this.snoozeEndDate, this.durationText, this.snoozeDuration);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -275,8 +281,38 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(bcontext);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .snoozePrayer(widget.prayerData.prayer.id, widget.snoozeEndDate);
+      await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
+          widget.prayerData.prayer.id,
+          widget.snoozeEndDate,
+          widget.prayerData.userPrayer.id);
+      if (widget.durationText == 'minutes') {
+        Timer(Duration(minutes: widget.snoozeDuration), () {
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
+          // _unSnoozePrayer();
+        });
+      }
+      if (widget.durationText == 'hours') {
+        Timer(Duration(hours: widget.snoozeDuration), () {
+          // _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
+        });
+      }
+      if (widget.durationText == 'days') {
+        Timer(Duration(days: widget.snoozeDuration), () {
+          // _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
+        });
+      }
+      if (widget.durationText == 'year') {
+        Timer(Duration(days: widget.snoozeDuration), () {
+          // _unSnoozePrayer();
+          locator<PrayerService>().unSnoozePrayer(widget.prayerData.prayer.id,
+              DateTime.now(), widget.prayerData.userPrayer.id);
+        });
+      }
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -292,8 +328,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unSnoozePrayer(widget.prayerData.prayer.id, DateTime.now());
+      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
+          widget.prayerData.prayer.id,
+          DateTime.now(),
+          widget.prayerData.userPrayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -413,7 +451,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   ),
                   text: 'Reminder',
                 ),
-                widget.prayerData.prayer.isSnoozed == false
+                widget.prayerData.userPrayer.isSnoozed == false
                     ? MenuButton(
                         icon: AppIcons.bestill_snooze,
                         onPressed: () => _snoozePrayer(),

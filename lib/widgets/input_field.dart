@@ -70,7 +70,7 @@ class _CustomInputState extends State<CustomInput> {
                     : AppColors.grey4),
             counterText: '',
             hintText: widget.label,
-            hintStyle: AppTextStyles.regularText15,
+            hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
             errorBorder: new OutlineInputBorder(
               borderSide: new BorderSide(color: Colors.redAccent),
             ),

@@ -46,21 +46,11 @@ class _AddUpdateState extends State<AddUpdate> {
     }
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    PrayerUpdateModel prayerUpdateData;
-    prayerUpdateData = PrayerUpdateModel(
-      prayerId: widget.prayerData.prayer.id,
-      userId: _user.id,
-      title: '',
-      description: _descriptionController.text,
-      modifiedBy: _user.id,
-      modifiedOn: DateTime.now(),
-      createdBy: _user.id,
-      createdOn: DateTime.now(),
-    );
+
     try {
       BeStilDialog.showLoading(bcontext);
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .addPrayerUpdate(prayerUpdateData);
+      await Provider.of<PrayerProvider>(context, listen: false).addPrayerUpdate(
+          _user.id, _descriptionController.text, widget.prayerData.prayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(bcontext);
       Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);

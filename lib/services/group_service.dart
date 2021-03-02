@@ -1,6 +1,7 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
@@ -64,6 +65,8 @@ class GroupService {
       });
       return _combineAllGroupsStream;
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/getAllGroups');
       throw HttpException(e.message);
     }
   }
@@ -102,15 +105,17 @@ class GroupService {
       });
       return _combineUserGroupStream;
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/getUserGroups');
       throw HttpException(e.message);
     }
   }
 
-  addGroup(String userID, GroupModel groupData, String fullName,
+  addGroup(String userId, GroupModel groupData, String fullName,
       String email) async {
     // Generate uuid
     final _groupID = Uuid().v1();
-    final _groupUserID = Uuid().v1();
+    final _groupUserId = Uuid().v1();
     try {
       var batch = FirebaseFirestore.instance.batch();
       // return FirebaseFirestore.instance.runTransaction(
@@ -119,12 +124,12 @@ class GroupService {
       batch.set(_groupCollectionReference.doc(_groupID), groupData.toJson());
 
       //store group user
-      batch.set(_groupUserCollectionReference.doc(_groupUserID),
-          populateGroupUser(groupData, userID, fullName, _groupID).toJson());
+      batch.set(_groupUserCollectionReference.doc(_groupUserId),
+          populateGroupUser(groupData, userId, fullName, _groupID).toJson());
       //store group settings
 
       await locator<SettingsService>()
-          .addGroupSettings(userID, email, _groupID);
+          .addGroupSettings(userId, email, _groupID);
       //   },
       // ).then((val) {
       //   return true;
@@ -133,6 +138,8 @@ class GroupService {
       // });
       await batch.commit();
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/addGroup');
       throw HttpException(e.message);
     }
   }
@@ -144,6 +151,8 @@ class GroupService {
           .snapshots();
       return users;
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, groupId, 'GROUP/service/getGroupUsers');
       throw HttpException(e.message);
     }
   }
@@ -152,6 +161,8 @@ class GroupService {
     try {
       _groupUserCollectionReference.doc(userGroupId).delete();
     } catch (e) {
+      locator<LogService>().createLog(
+          e.code, e.message, userGroupId, 'GROUP/service/leaveGroup');
       throw HttpException(e.message);
     }
   }
@@ -161,6 +172,8 @@ class GroupService {
       _groupUserCollectionReference.doc(userGroupId).delete();
       _groupCollectionReference.doc(groupId).delete();
     } catch (e) {
+      locator<LogService>().createLog(
+          e.code, e.message, userGroupId, 'GROUP/service/deleteGroup');
       throw HttpException(e.message);
     }
   }
@@ -174,8 +187,11 @@ class GroupService {
           .limit(1)
           .get();
       if (user.docs.length == 0) {
-        throw HttpException(
-            'This email is not registered on BeStill! Please try with a registered email');
+        var errorMessage =
+            'This email is not registered on BeStill! Please try with a registered email';
+        locator<LogService>().createLog(
+            '', errorMessage, senderId, 'GROUP/service/inviteMember');
+        throw HttpException(errorMessage);
       }
       var data = {
         'groupname': groupName,
@@ -190,6 +206,8 @@ class GroupService {
         data: data,
       );
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, senderId, 'GROUP/service/inviteMember');
       throw HttpException(e.message);
     }
   }
@@ -208,6 +226,8 @@ class GroupService {
         data: data,
       );
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/joinRequest');
       throw HttpException(e.message);
     }
   }
@@ -240,6 +260,8 @@ class GroupService {
         },
       );
     } catch (e) {
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/acceptInvite');
       throw HttpException(e.message);
     }
   }
