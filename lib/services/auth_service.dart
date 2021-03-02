@@ -59,9 +59,18 @@ class AuthenticationService {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (e) {
+      var message = e.code == 'wrong-password'
+          ? 'Username / Password is incorrect'
+          : e.code == 'invalid-email'
+              ? 'The email entered is in the wrong format'
+              : e.code == 'user-not-found'
+                  ? 'Username / Password is incorrect'
+                  : e.code == 'email-already-in-use'
+                      ? 'The email entered is alread in use'
+                      : 'An error occured. Please try again';
       await locator<LogService>()
-          .createLog(e.code, e.message, email, 'AUTHENTICATION/service/signUp');
-      throw HttpException(e.message);
+          .createLog(e.code, message, email, 'AUTHENTICATION/service/signUp');
+      throw HttpException(message);
     }
   }
 
