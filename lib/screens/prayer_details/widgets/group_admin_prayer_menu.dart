@@ -54,9 +54,9 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .hidePrayerFromAllMembers(
-              widget.prayer.id, !widget.prayer.hideFromAllMembers);
+      // await Provider.of<PrayerProvider>(context, listen: false)
+      //     .hidePrayerFromAllMembers(
+      //         widget.prayer.id, !widget.prayer.hideFromAllMembers);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
@@ -87,6 +87,8 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                 GestureDetector(
                   onTap: () {
                     UserPrayerModel userPrayer = UserPrayerModel(
+                      isSnoozed: false,
+                      snoozeEndDate: null,
                       userId: _user.id,
                       status: Status.active,
                       sequence: null,
@@ -260,19 +262,19 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                           AppIcons.bestill_hide,
                           color: AppColors.lightBlue4,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(
-                            widget.prayer.hideFromAllMembers
-                                ? 'Show in Group'
-                                : 'Hide From Group',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.only(left: 10.0),
+                        //   child: Text(
+                        //     widget.prayer.hideFromAllMembers
+                        //         ? 'Show in Group'
+                        //         : 'Hide From Group',
+                        //     style: TextStyle(
+                        //       color: AppColors.lightBlue4,
+                        //       fontSize: 14,
+                        //       fontWeight: FontWeight.w500,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

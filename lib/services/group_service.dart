@@ -65,7 +65,8 @@ class GroupService {
       });
       return _combineAllGroupsStream;
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/getAllGroups');
       throw HttpException(e.message);
     }
   }
@@ -104,7 +105,8 @@ class GroupService {
       });
       return _combineUserGroupStream;
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/getUserGroups');
       throw HttpException(e.message);
     }
   }
@@ -136,7 +138,8 @@ class GroupService {
       // });
       await batch.commit();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/addGroup');
       throw HttpException(e.message);
     }
   }
@@ -148,7 +151,8 @@ class GroupService {
           .snapshots();
       return users;
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, groupId);
+      locator<LogService>()
+          .createLog(e.code, e.message, groupId, 'GROUP/service/getGroupUsers');
       throw HttpException(e.message);
     }
   }
@@ -157,7 +161,8 @@ class GroupService {
     try {
       _groupUserCollectionReference.doc(userGroupId).delete();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userGroupId);
+      locator<LogService>().createLog(
+          e.code, e.message, userGroupId, 'GROUP/service/leaveGroup');
       throw HttpException(e.message);
     }
   }
@@ -167,7 +172,8 @@ class GroupService {
       _groupUserCollectionReference.doc(userGroupId).delete();
       _groupCollectionReference.doc(groupId).delete();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userGroupId);
+      locator<LogService>().createLog(
+          e.code, e.message, userGroupId, 'GROUP/service/deleteGroup');
       throw HttpException(e.message);
     }
   }
@@ -181,12 +187,11 @@ class GroupService {
           .limit(1)
           .get();
       if (user.docs.length == 0) {
+        var errorMessage =
+            'This email is not registered on BeStill! Please try with a registered email';
         locator<LogService>().createLog(
-            '',
-            'This email is not registered on BeStill! Please try with a registered email',
-            senderId);
-        throw HttpException(
-            'This email is not registered on BeStill! Please try with a registered email');
+            '', errorMessage, senderId, 'GROUP/service/inviteMember');
+        throw HttpException(errorMessage);
       }
       var data = {
         'groupname': groupName,
@@ -201,7 +206,8 @@ class GroupService {
         data: data,
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, senderId);
+      locator<LogService>()
+          .createLog(e.code, e.message, senderId, 'GROUP/service/inviteMember');
       throw HttpException(e.message);
     }
   }
@@ -220,7 +226,8 @@ class GroupService {
         data: data,
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/joinRequest');
       throw HttpException(e.message);
     }
   }
@@ -253,7 +260,8 @@ class GroupService {
         },
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'GROUP/service/acceptInvite');
       throw HttpException(e.message);
     }
   }

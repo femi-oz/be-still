@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e);
     }
 
-    if (!mounted) return isBioMetricAvailable;
+    // if (!mounted) return isBioMetricAvailable;
 
     isBioMetricAvailable
         ? _getListOfBiometricTypes()
@@ -80,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e);
     }
 
-    if (!mounted) return;
+    // if (!mounted) return;
   }
 
   @override
@@ -107,15 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false)
               .currentUser
               .keyReference;
-
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      print(e.message);
-      BeStillSnackbar.showInSnackBar(
-          message: 'Username / Password is incorrect', key: _scaffoldKey);
+      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(
+          e.code, e.message, _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);

@@ -58,7 +58,8 @@ class NotificationService {
             ).toJson(),
           );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'NOTIFICATION/service/init');
       throw HttpException(e.message);
     }
   }
@@ -79,7 +80,8 @@ class NotificationService {
         devices.add(DeviceModel.fromData(dev));
       }
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>().createLog(e.code, e.message, userId,
+          'NOTIFICATION/service/getNotificationToken');
       throw HttpException(e.message);
     }
     return devices;
@@ -110,7 +112,8 @@ class NotificationService {
           .doc(_notificationId)
           .set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, senderId);
+      locator<LogService>().createLog(e.code, e.message, senderId,
+          'NOTIFICATION/service/addPushNotification');
       throw HttpException(e.message);
     }
   }
@@ -150,7 +153,8 @@ class NotificationService {
     try {
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, senderId);
+      locator<LogService>().createLog(
+          e.code, e.message, senderId, 'NOTIFICATION/service/addSMS');
       throw HttpException(e.message);
     }
   }
@@ -192,7 +196,8 @@ class NotificationService {
     try {
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, senderId);
+      locator<LogService>().createLog(
+          e.code, e.message, senderId, 'NOTIFICATION/service/addEmail');
       throw HttpException(e.message);
     }
   }
@@ -218,7 +223,8 @@ class NotificationService {
                   notificationText: notificationText)
               .toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, deviceId);
+      locator<LogService>().createLog(e.code, e.message, deviceId,
+          'NOTIFICATION/service/addLocalNotification');
       throw HttpException(e.message);
     }
   }
@@ -227,7 +233,8 @@ class NotificationService {
     try {
       _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, notificationId);
+      locator<LogService>().createLog(e.code, e.message, notificationId,
+          'NOTIFICATION/service/removeLocalNotification');
       throw HttpException(e.message);
     }
   }
@@ -241,7 +248,8 @@ class NotificationService {
               .map((doc) => LocalNotificationModel.fromData(doc))
               .toList());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, deviceId);
+      locator<LogService>().createLog(e.code, e.message, deviceId,
+          'NOTIFICATION/service/getLocalNotifications');
       throw HttpException(e.message);
     }
   }
@@ -254,7 +262,8 @@ class NotificationService {
           .map((e) =>
               e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>().createLog(e.code, e.message, userId,
+          'NOTIFICATION/service/getUserNotifications');
       throw HttpException(e.message);
     }
   }
@@ -268,7 +277,8 @@ class NotificationService {
       }
     } catch (e) {
       for (int i = 0; i < ids.length; i++) {
-        locator<LogService>().createLog(e.code, e.message, ids[i]);
+        locator<LogService>().createLog(e.code, e.message, ids[i],
+            'NOTIFICATION/service/clearNotification');
       }
       throw HttpException(e.message);
     }

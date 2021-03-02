@@ -7,13 +7,11 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
@@ -24,64 +22,20 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-// bool searchEnabled = false;
 bool _searchMode = false;
 
 class _EntryScreenState extends State<EntryScreen> {
   int _currentIndex = 0;
-
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
-  bool _isInit = true;
+
+  void _switchSearchMode(bool value) => setState(() => _searchMode = value);
 
   @override
   void initState() {
-    _currentIndex = widget.screenNumber ?? 0;
+    _currentIndex = widget.screenNumber;
     super.initState();
-  }
-
-  _switchSearchMode(bool value) {
-    setState(() => _searchMode = value);
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        // await _preLoadData();
-      });
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
-  _preLoadData() async {
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      //load settings
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(_user.id);
-
-      //get all users
-      await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(_user.id);
-
-      // get all local notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications();
-
-      await Future.delayed(Duration(milliseconds: 300));
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
   }
 
   @override
@@ -96,7 +50,6 @@ class _EntryScreenState extends State<EntryScreen> {
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
-      // onSearchChange: (String value) => _onSearchChange(value)),
       body: Container(
           height: double.infinity,
           child: TabNavigationItem.items[_currentIndex].page),
@@ -119,12 +72,10 @@ class _EntryScreenState extends State<EntryScreen> {
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 1) {
-            return;
-          }
-          _switchSearchMode(false);
+          if (index == 1) return;
           _searchController.text = '';
-          setState(() => _currentIndex = index);
+          _currentIndex = index;
+          _switchSearchMode(false);
         },
         showSelectedLabels: false,
         showUnselectedLabels: false,

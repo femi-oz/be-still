@@ -13,8 +13,6 @@ class PrayerModel {
   final bool isAnswer;
   final bool isArchived;
   final bool isInappropriate;
-  final bool hideFromMe;
-  final bool hideFromAllMembers;
   final String creatorName;
   final String createdBy;
   final DateTime createdOn;
@@ -32,8 +30,6 @@ class PrayerModel {
     @required this.isAnswer,
     @required this.isArchived,
     @required this.isInappropriate,
-    @required this.hideFromMe,
-    @required this.hideFromAllMembers,
     @required this.creatorName,
     @required this.createdBy,
     @required this.createdOn,
@@ -52,8 +48,6 @@ class PrayerModel {
         isAnswer = snapshot.data()['IsAnswer'],
         isArchived = snapshot.data()['IsArchived'],
         isInappropriate = snapshot.data()['IsInappropriate'],
-        hideFromMe = snapshot.data()['HideFromMe'],
-        hideFromAllMembers = snapshot.data()['HideFromAllMembers'],
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn']?.toDate(),
@@ -71,8 +65,6 @@ class PrayerModel {
       'IsAnswer': isAnswer,
       'IsArchived': isArchived,
       'IsInappropriate': isInappropriate,
-      'HideFromMe': hideFromMe,
-      'HideFromAllMembers': hideFromAllMembers,
       'CreatorName': creatorName,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,

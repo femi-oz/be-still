@@ -57,7 +57,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       if (widget.isUpdate) {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayerUpdate(widget.prayerUpdate);
+            .addPrayerUpdate(
+                _user.id, widget.prayer.description, widget.prayer.id);
         Navigator.of(context).pushReplacementNamed(
           PrayerDetails.routeName,
           arguments: PrayerDetailsRouteArguments(

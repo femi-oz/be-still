@@ -41,91 +41,55 @@ class _AddPrayerState extends State<AddPrayer> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   List groups = [];
-  BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
-  List<String> words = [];
-  String str = '';
-  List<Contact> contactData = [];
+  List<String> tags = [];
+  String tagText = '';
+  List<Contact> contacts = [];
 
-  _save() async {
-    setState(() {
-      _autoValidate = true;
-    });
+  Future<void> _save() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
-    final _groupData =
-        Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    PrayerModel prayerData;
-    if (!widget.isEdit) {
-      prayerData = PrayerModel(
-        title: '',
-        isAnswer: false,
-        groupId: widget.isGroup ? _groupData?.group?.id : '0',
-        userId: _user.id,
-        isArchived: false,
-        description: _descriptionController.text,
-        status: Status.active,
-        modifiedBy: _user.id,
-        modifiedOn: DateTime.now(),
-        type: '',
-        creatorName: '${_user.firstName} ${_user.lastName}',
-        createdBy: _user.id,
-        createdOn: DateTime.now(),
-        hideFromAllMembers: false,
-        hideFromMe: false,
-        isInappropriate: false,
-      );
-
-      try {
-        BeStilDialog.showLoading(bcontext);
-        UserModel _user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayer(prayerData, _user.id);
-        if (contactData.length > 0) {
+    try {
+      BeStilDialog.showLoading(context);
+      if (!widget.isEdit) {
+        await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
+            _descriptionController.text,
+            _user.id,
+            '${_user.firstName} ${_user.lastName}');
+        if (contacts.length > 0) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(
-                  contactData, _user, _descriptionController.text, []);
+              .addPrayerTag(contacts, _user, _descriptionController.text, []);
         }
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(bcontext);
+        BeStilDialog.hideLoading(context);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)));
-      } on HttpException catch (e) {
-        BeStilDialog.hideLoading(bcontext);
-        BeStilDialog.showErrorDialog(bcontext, e.message);
-      } catch (e) {
-        BeStilDialog.hideLoading(bcontext);
-        BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
-      }
-    } else {
-      try {
-        BeStilDialog.showLoading(bcontext);
+      } else {
         await Provider.of<PrayerProvider>(context, listen: false).editprayer(
             _descriptionController.text, widget.prayerData.prayer.id);
         for (int i = 0; i < widget.prayerData.tags.length; i++)
           await Provider.of<PrayerProvider>(context, listen: false)
               .removePrayerTag(widget.prayerData.tags[i].id);
-        if (contactData.length > 0) {
+        if (contacts.length > 0) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(contactData, _user, _descriptionController.text,
+              .addPrayerTag(contacts, _user, _descriptionController.text,
                   widget.prayerData.tags);
         }
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(bcontext);
+        BeStilDialog.hideLoading(context);
         Navigator.of(context).pushNamed(PrayerDetails.routeName);
-      } on HttpException catch (e) {
-        BeStilDialog.hideLoading(bcontext);
-        BeStilDialog.showErrorDialog(bcontext, e.message);
-      } catch (e) {
-        BeStilDialog.hideLoading(bcontext);
-        BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
       }
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -137,18 +101,17 @@ class _AddPrayerState extends State<AddPrayer> {
     super.initState();
   }
 
-  getContacts() async {
+  Future<void> getContacts() async {
     if (Settings.enabledContactPermission) {
       localContacts = await ContactsService.getContacts(withThumbnails: false);
     }
   }
 
-  onTextChange(val) {
+  void onTextChange(val) {
     setState(() {
-      words = val.split(' ');
-
-      str = words.length > 0 && words[words.length - 1].startsWith('@')
-          ? words[words.length - 1]
+      tags = val.split(' ');
+      tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
+          ? tags[tags.length - 1]
           : '';
     });
   }
@@ -162,27 +125,23 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   _onTagSelected(s) {
-    String tmp = str.substring(1, str.length);
+    String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
-    setState(() {
-      str = '';
-      _descriptionController.text +=
-          s.displayName.substring(i + tmp.length, s.displayName.length);
-      _descriptionController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _descriptionController.text.length));
-      _descriptionController.selection =
-          TextSelection.collapsed(offset: _descriptionController.text.length);
-    });
-    if (!contactData.map((e) => e.identifier).contains(s.identifier)) {
-      contactData = [...contactData, s];
-    }
 
-    print(contactData);
+    tagText = '';
+    _descriptionController.text +=
+        s.displayName.substring(i + tmp.length, s.displayName.length);
+    _descriptionController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _descriptionController.text.length));
+    setState(() => _descriptionController.selection =
+        TextSelection.collapsed(offset: _descriptionController.text.length));
+    if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+      contacts = [...contacts, s];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -239,7 +198,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             focusNode: _focusNode,
                           ),
                         ),
-                        str.length > 1
+                        tagText.length > 1
                             ? Container(
                                 padding: EdgeInsets.only(
                                     top: _focusNode.offset.dy * 0.45,
@@ -254,7 +213,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                       ...localContacts.map((s) {
                                         if (('@' + s.displayName)
                                             .toLowerCase()
-                                            .contains(str.toLowerCase()))
+                                            .contains(tagText.toLowerCase()))
                                           return InkWell(
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
