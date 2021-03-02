@@ -183,23 +183,20 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       width: 100.0,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: _buildAction(
-                        270,
-                        AppIcons.bestill_edit,
-                        () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddPrayer(
-                                      isEdit: true,
-                                      prayerData: widget.prayerData,
-                                      isGroup: false)),
-                            ),
-                        'Edit'),
-                  ),
                   _buildAction(
-                    315,
+                      270,
+                      AppIcons.bestill_edit,
+                      () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddPrayer(
+                                    isEdit: true,
+                                    prayerData: widget.prayerData,
+                                    isGroup: false)),
+                          ),
+                      'Edit'),
+                  _buildAction(
+                    320,
                     widget.prayerData.userPrayer.isFavorite
                         ? Icons.favorite
                         : Icons.favorite_border_outlined,
@@ -211,7 +208,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         : 'Favourite',
                   ),
                   _buildAction(
-                    360,
+                    355,
                     AppIcons.bestill_share,
                     () => showModalBottomSheet(
                       context: context,
@@ -229,7 +226,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     'Share',
                   ),
                   _buildAction(
-                    45,
+                    35,
                     AppIcons.bestill_archive,
                     () => showModalBottomSheet(
                       context: context,
@@ -244,20 +241,17 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     ),
                     'Delete',
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: _buildAction(
-                      90,
-                      widget.prayerData.prayer.isAnswer
-                          ? AppIcons.bestill_answered
-                          : AppIcons.bestill_answered,
-                      () => widget.prayerData.prayer.isAnswer
-                          ? null
-                          : _onMarkAsAnswered(),
-                      widget.prayerData.prayer.isAnswer
-                          ? 'Mark As Unanswered'
-                          : 'Mark As Answered',
-                    ),
+                  _buildAction(
+                    90,
+                    widget.prayerData.prayer.isAnswer
+                        ? AppIcons.bestill_answered
+                        : AppIcons.bestill_answered,
+                    () => widget.prayerData.prayer.isAnswer
+                        ? null
+                        : _onMarkAsAnswered(),
+                    widget.prayerData.prayer.isAnswer
+                        ? 'Mark As Unanswered'
+                        : 'Mark As Answered',
                   ),
                   Container(
                     height: 25,
