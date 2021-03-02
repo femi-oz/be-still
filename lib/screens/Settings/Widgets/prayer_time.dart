@@ -34,12 +34,12 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  List<BDuration> songs = [
-    BDuration(text: 'Evening Listening'),
-    BDuration(text: 'Rock Jams'),
-    BDuration(text: 'Prayer Time'),
-    BDuration(text: 'Jason Station'),
-    BDuration(text: 'New Hits')
+  List<LookUp> songs = [
+    LookUp(text: 'Evening Listening', value: 1),
+    LookUp(text: 'Rock Jams', value: 2),
+    LookUp(text: 'Prayer Time', value: 3),
+    LookUp(text: 'Jason Station', value: 4),
+    LookUp(text: 'New Hits', value: 5)
   ];
 
   List<String> reminderInterval = [
@@ -133,7 +133,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: 'Spotify',
               ),
               Container(
-                child: CustomPicker(songs, setSnooze, true, 2),
+                child: CustomPicker(songs, setSnooze, true, 3),
               ),
               CustomToggle(
                 title: 'Auto play music during prayer time?',

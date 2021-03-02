@@ -20,35 +20,35 @@ class MyListSettings extends StatefulWidget {
 }
 
 class _MyListSettingsState extends State<MyListSettings> {
-  _setDefaultSnooze(BDuration e) {
+  _setDefaultSnooze(LookUp e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        key: SettingsKey.defaultSnoozeDuration,
+        key: SettingsKey.defaultSnoozeDurationMins,
         value: e.value,
         settingsId: widget.settings.id);
   }
 
-  _setAutoDelete(value) {
+  _setAutoDelete(LookUp e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        key: SettingsKey.archiveAutoDelete,
-        value: value,
+        key: SettingsKey.archiveAutoDeleteMins,
+        value: e.value,
         settingsId: widget.settings.id);
   }
 
-  List<BDuration> snoozeInterval = [
-    BDuration(text: IntervalRange.thirtyMinutes, value: 30),
-    BDuration(text: IntervalRange.oneHour, value: 60),
-    BDuration(text: IntervalRange.sevenDays, value: 10080),
-    BDuration(text: IntervalRange.fourtheenDays, value: 20160),
-    BDuration(text: IntervalRange.thirtyDays, value: 43200),
-    BDuration(text: IntervalRange.ninetyDays, value: 129600),
-    BDuration(text: IntervalRange.oneYear, value: 525600),
+  List<LookUp> snoozeInterval = [
+    LookUp(text: IntervalRange.thirtyMinutes, value: 30),
+    LookUp(text: IntervalRange.oneHour, value: 60),
+    LookUp(text: IntervalRange.sevenDays, value: 10080),
+    LookUp(text: IntervalRange.fourtheenDays, value: 20160),
+    LookUp(text: IntervalRange.thirtyDays, value: 43200),
+    LookUp(text: IntervalRange.ninetyDays, value: 129600),
+    LookUp(text: IntervalRange.oneYear, value: 525600),
   ];
-  List<BDuration> autoDeleteInterval = [
-    BDuration(text: IntervalRange.thirtyDays, value: 30),
-    BDuration(text: IntervalRange.ninetyDays, value: 90),
-    BDuration(text: IntervalRange.oneYear, value: 365),
-    BDuration(text: IntervalRange.twoYears, value: 730),
-    BDuration(text: IntervalRange.never, value: 0),
+  List<LookUp> autoDeleteInterval = [
+    LookUp(text: IntervalRange.thirtyDays, value: 30),
+    LookUp(text: IntervalRange.ninetyDays, value: 90),
+    LookUp(text: IntervalRange.oneYear, value: 365),
+    LookUp(text: IntervalRange.twoYears, value: 30),
+    LookUp(text: IntervalRange.never, value: 0),
   ];
   List<String> defaultSortBy = [SortType.date, SortType.tag];
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
@@ -92,14 +92,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             children: [
               CustomSectionHeder('Default Snooze Duration'),
               Container(
-                child: CustomPicker(
-                    snoozeInterval,
-                    _setDefaultSnooze,
-                    true,
-                    snoozeInterval
-                        .map((e) => e.text)
-                        .toList()
-                        .indexOf(widget.settings.defaultSnoozeDuration)),
+                child: CustomPicker(snoozeInterval, _setDefaultSnooze, true,
+                    widget.settings.defaultSnoozeDurationMins),
               ),
             ],
           ),
@@ -134,14 +128,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             children: [
               CustomSectionHeder('Archive Auto Delete'),
               Container(
-                child: CustomPicker(
-                    autoDeleteInterval,
-                    _setAutoDelete,
-                    true,
-                    autoDeleteInterval
-                        .map((e) => e.text)
-                        .toList()
-                        .indexOf(widget.settings.archiveAutoDelete)),
+                child: CustomPicker(autoDeleteInterval, _setAutoDelete, true,
+                    widget.settings.archiveAutoDeleteMins),
               ),
               CustomToggle(
                 title: 'Include Answered Prayers in Auto Delete?',

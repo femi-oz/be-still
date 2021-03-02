@@ -1,7 +1,7 @@
-class BDuration {
+class LookUp {
   String text;
   int value;
-  BDuration({
+  LookUp({
     this.text,
     this.value,
   });

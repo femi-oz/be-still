@@ -13,7 +13,8 @@ class SettingsModel {
   final int defaultSnoozeDurationMins;
   final String archiveSortBy;
   final String archiveAutoDelete;
-  final String pauseInterval;
+  final int archiveAutoDeleteMins;
+  final int pauseInterval;
   final bool includeAnsweredPrayerAutoDelete;
   final bool allowPushNotification;
   final bool allowTextNotification;
@@ -41,6 +42,7 @@ class SettingsModel {
     @required this.pauseInterval,
     @required this.archiveSortBy,
     @required this.archiveAutoDelete,
+    @required this.archiveAutoDeleteMins,
     @required this.includeAnsweredPrayerAutoDelete,
     @required this.allowPushNotification,
     @required this.allowTextNotification,
@@ -70,6 +72,7 @@ class SettingsModel {
             snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
+        archiveAutoDeleteMins = snapshot.data()['ArchiveAutoDeleteMins'],
         includeAnsweredPrayerAutoDelete =
             snapshot.data()['IncludeAnsweredPrayerAutoDelete'],
         allowPushNotification = snapshot.data()['AllowPushNotification'],
@@ -101,6 +104,7 @@ class SettingsModel {
       'DefaultSnoozeDurationMins': defaultSnoozeDurationMins,
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
+      'ArchiveAutoDeleteMins': archiveAutoDeleteMins,
       'IncludeAnsweredPrayerAutoDelete': includeAnsweredPrayerAutoDelete,
       'AllowAlexaReadPrayer': allowAlexaReadPrayer,
       'AllowPushNotification': allowPushNotification,

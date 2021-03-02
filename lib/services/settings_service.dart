@@ -39,7 +39,7 @@ class SettingsService {
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,
         allowTextNotification: false,
-        pauseInterval: SecondsInterval.ten,
+        pauseInterval: 10,
         emailUpdateFrequency: Frequency.daily,
         emailUpdateNotification: false,
         notifyMeSomeonePostOnGroup: false,

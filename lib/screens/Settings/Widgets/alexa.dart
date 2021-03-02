@@ -28,11 +28,11 @@ class _AlexaSettingsState extends State<AlexaSettings> {
         settingsId: widget.settings.id);
   }
 
-  List<BDuration> prayerTimeInterval = [
-    BDuration(text: SecondsInterval.ten),
-    BDuration(text: SecondsInterval.twenty),
-    BDuration(text: SecondsInterval.thirty),
-    BDuration(text: SecondsInterval.fourty),
+  List<LookUp> prayerTimeInterval = [
+    LookUp(text: SecondsInterval.ten),
+    LookUp(text: SecondsInterval.twenty),
+    LookUp(text: SecondsInterval.thirty),
+    LookUp(text: SecondsInterval.fourty),
   ];
 
   @override
@@ -107,14 +107,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                   ),
                   Container(
                     margin: EdgeInsets.only(bottom: 80.0),
-                    child: CustomPicker(
-                        prayerTimeInterval,
-                        _onChangeTime,
-                        true,
-                        prayerTimeInterval
-                            .map((e) => e.text)
-                            .toList()
-                            .indexOf(widget.settings.pauseInterval)),
+                    child: CustomPicker(prayerTimeInterval, _onChangeTime, true,
+                        widget.settings.pauseInterval),
                   ),
                 ],
               ),

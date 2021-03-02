@@ -20,11 +20,11 @@ class NotificationsSettings extends StatefulWidget {
 }
 
 class _NotificationsSettingsState extends State<NotificationsSettings> {
-  List<BDuration> emailFrequency = [
-    BDuration(text: Frequency.daily, value: 1),
-    BDuration(text: Frequency.weekly, value: 7),
-    BDuration(text: Frequency.monthly, value: 30),
-    BDuration(text: Frequency.per_instance, value: 0),
+  List<LookUp> emailFrequency = [
+    LookUp(text: Frequency.daily, value: 1),
+    LookUp(text: Frequency.weekly, value: 7),
+    LookUp(text: Frequency.monthly, value: 30),
+    LookUp(text: Frequency.per_instance, value: 0),
   ];
   setEmailUpdateFrequency(value) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
@@ -79,7 +79,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
               ),
               Container(
                 child: CustomPicker(
-                    emailFrequency, setEmailUpdateFrequency, true, 2),
+                    emailFrequency, setEmailUpdateFrequency, true, 7),
               ),
             ],
           ),

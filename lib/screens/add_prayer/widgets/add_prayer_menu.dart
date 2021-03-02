@@ -48,14 +48,14 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
     'Monthly',
     'Yearly'
   ];
-  List<BDuration> snoozeInterval = [
-    BDuration(text: IntervalRange.thirtyMinutes, value: 30),
-    BDuration(text: IntervalRange.oneHour, value: 60),
-    BDuration(text: IntervalRange.sevenDays, value: 10080),
-    BDuration(text: IntervalRange.fourtheenDays, value: 20160),
-    BDuration(text: IntervalRange.thirtyDays, value: 43200),
-    BDuration(text: IntervalRange.ninetyDays, value: 129600),
-    BDuration(text: IntervalRange.oneYear, value: 525600),
+  List<LookUp> snoozeInterval = [
+    LookUp(text: IntervalRange.thirtyMinutes, value: 30),
+    LookUp(text: IntervalRange.oneHour, value: 60),
+    LookUp(text: IntervalRange.sevenDays, value: 10080),
+    LookUp(text: IntervalRange.fourtheenDays, value: 20160),
+    LookUp(text: IntervalRange.thirtyDays, value: 43200),
+    LookUp(text: IntervalRange.ninetyDays, value: 129600),
+    LookUp(text: IntervalRange.oneYear, value: 525600),
   ];
 
   @override

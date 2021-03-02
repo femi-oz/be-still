@@ -7,22 +7,23 @@ class CustomPicker extends StatefulWidget {
   final Function onChange;
   final int selected;
   final bool hideActionuttons;
-  final List<BDuration> interval;
+  final List<LookUp> lookup;
 
   @override
   CustomPicker(
-      this.interval, this.onChange, this.hideActionuttons, this.selected);
+      this.lookup, this.onChange, this.hideActionuttons, this.selected);
   _CustomPickerState createState() => _CustomPickerState();
 }
 
 class _CustomPickerState extends State<CustomPicker> {
   double itemExtent = 30.0;
-
-  BDuration selectedInterval;
+  LookUp selectedInterval;
   @override
   Widget build(BuildContext context) {
+    int selectedIndex =
+        widget.lookup.map((e) => e.value).toList().indexOf(widget.selected);
     FixedExtentScrollController scrollController =
-        FixedExtentScrollController(initialItem: widget.selected);
+        FixedExtentScrollController(initialItem: selectedIndex);
     return Container(
       width: double.infinity,
       child: Column(
@@ -46,11 +47,11 @@ class _CustomPickerState extends State<CustomPicker> {
                               scrollController: scrollController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
-                                selectedInterval = widget.interval[i];
+                                selectedInterval = widget.lookup[i];
                                 widget.onChange('$selectedInterval');
                               }),
                               children: <Widget>[
-                                ...widget.interval
+                                ...widget.lookup
                                     .map(
                                       (i) => Align(
                                           alignment: Alignment.center,
