@@ -1,5 +1,6 @@
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -33,12 +34,12 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  List<String> songs = [
-    'Evening Listening',
-    'Rock Jams',
-    'Prayer Time',
-    'Jason Station',
-    'New Hits'
+  List<BDuration> songs = [
+    BDuration(text: 'Evening Listening'),
+    BDuration(text: 'Rock Jams'),
+    BDuration(text: 'Prayer Time'),
+    BDuration(text: 'Jason Station'),
+    BDuration(text: 'New Hits')
   ];
 
   List<String> reminderInterval = [

@@ -1,3 +1,4 @@
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,7 @@ class CustomPicker extends StatefulWidget {
   final Function onChange;
   final int selected;
   final bool hideActionuttons;
-
-  final List<String> interval;
+  final List<BDuration> interval;
 
   @override
   CustomPicker(
@@ -18,7 +18,7 @@ class CustomPicker extends StatefulWidget {
 class _CustomPickerState extends State<CustomPicker> {
   double itemExtent = 30.0;
 
-  var selectedInterval;
+  BDuration selectedInterval;
   @override
   Widget build(BuildContext context) {
     FixedExtentScrollController scrollController =
@@ -54,7 +54,7 @@ class _CustomPickerState extends State<CustomPicker> {
                                     .map(
                                       (i) => Align(
                                           alignment: Alignment.center,
-                                          child: Text(i,
+                                          child: Text(i.text,
                                               textAlign: TextAlign.center,
                                               style:
                                                   AppTextStyles.regularText15)),

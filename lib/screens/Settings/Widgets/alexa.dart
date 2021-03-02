@@ -1,5 +1,6 @@
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -27,11 +28,11 @@ class _AlexaSettingsState extends State<AlexaSettings> {
         settingsId: widget.settings.id);
   }
 
-  List<String> prayerTimeInterval = [
-    SecondsInterval.ten,
-    SecondsInterval.twenty,
-    SecondsInterval.thirty,
-    SecondsInterval.fourty,
+  List<BDuration> prayerTimeInterval = [
+    BDuration(text: SecondsInterval.ten),
+    BDuration(text: SecondsInterval.twenty),
+    BDuration(text: SecondsInterval.thirty),
+    BDuration(text: SecondsInterval.fourty),
   ];
 
   @override
@@ -111,6 +112,8 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                         _onChangeTime,
                         true,
                         prayerTimeInterval
+                            .map((e) => e.text)
+                            .toList()
                             .indexOf(widget.settings.pauseInterval)),
                   ),
                 ],

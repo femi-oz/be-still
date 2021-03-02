@@ -1,5 +1,6 @@
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 
@@ -19,11 +20,11 @@ class NotificationsSettings extends StatefulWidget {
 }
 
 class _NotificationsSettingsState extends State<NotificationsSettings> {
-  List<String> emailFrequency = [
-    Frequency.daily,
-    Frequency.weekly,
-    Frequency.monthly,
-    Frequency.per_instance,
+  List<BDuration> emailFrequency = [
+    BDuration(text: Frequency.daily, value: 1),
+    BDuration(text: Frequency.weekly, value: 7),
+    BDuration(text: Frequency.monthly, value: 30),
+    BDuration(text: Frequency.per_instance, value: 0),
   ];
   setEmailUpdateFrequency(value) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(

@@ -10,6 +10,7 @@ class SettingsModel {
   final String appearance;
   final String defaultSortBy;
   final String defaultSnoozeDuration;
+  final int defaultSnoozeDurationMins;
   final String archiveSortBy;
   final String archiveAutoDelete;
   final String pauseInterval;
@@ -36,6 +37,7 @@ class SettingsModel {
     @required this.appearance,
     @required this.defaultSortBy,
     @required this.defaultSnoozeDuration,
+    @required this.defaultSnoozeDurationMins,
     @required this.pauseInterval,
     @required this.archiveSortBy,
     @required this.archiveAutoDelete,
@@ -64,6 +66,8 @@ class SettingsModel {
         pauseInterval = snapshot.data()['PauseInterval'],
         defaultSortBy = snapshot.data()['DefaultSortBy'],
         defaultSnoozeDuration = snapshot.data()['DefaultSnoozeDuration'],
+        defaultSnoozeDurationMins =
+            snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
         includeAnsweredPrayerAutoDelete =
@@ -94,6 +98,7 @@ class SettingsModel {
       'DefaultSortBy': defaultSortBy,
       'PauseInterval': pauseInterval,
       'DefaultSnoozeDuration': defaultSnoozeDuration,
+      'DefaultSnoozeDurationMins': defaultSnoozeDurationMins,
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
       'IncludeAnsweredPrayerAutoDelete': includeAnsweredPrayerAutoDelete,

@@ -31,8 +31,6 @@ class PrayerDetails extends StatefulWidget {
 class _PrayerDetailsState extends State<PrayerDetails> {
   // GroupUserModel groupUser;
 
-  List<PrayerUpdateModel> updates = [];
-
   void getSettings() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<SettingsProvider>(context, listen: false)
@@ -46,71 +44,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   String durationText;
   int snoozeDuration;
   Widget _buildMenu() {
-    SettingsModel _settings =
-        Provider.of<SettingsProvider>(context, listen: false).settings;
-    snoozeDuration = int.parse(
-        _settings.defaultSnoozeDuration.replaceAll(RegExp('[^0-9]'), ''));
-
-    if (_settings.defaultSnoozeDuration.contains('Hour')) {
-      snoozeDurationinHour = new Duration(hours: snoozeDuration);
-      snoozeEndDate = DateTime.now().add(snoozeDurationinHour);
-      durationText = 'hours';
-    }
-
-    if (_settings.defaultSnoozeDuration.contains('Minutes')) {
-      snoozeDurationinMinutes = new Duration(minutes: snoozeDuration);
-      snoozeEndDate = DateTime.now().add(snoozeDurationinMinutes);
-      durationText = 'minutes';
-    }
-
-    if (_settings.defaultSnoozeDuration.contains('Days')) {
-      snoozeDurationinDays = new Duration(days: snoozeDuration);
-      snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
-      durationText = 'days';
-    }
-
-    if (_settings.defaultSnoozeDuration.contains('Year')) {
-      snoozeDurationinDays = new Duration(days: 360);
-      snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
-      durationText = 'year';
-    }
-
-    // if (snoozeDuration == 1) {
-    // } else {
-    //   snoozeDurationinDays = new Duration(days: snoozeDuration);
-    // }
-    // snoozeEndDate = DateTime.now().add(snoozeDurationinDays);
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    CombinePrayerStream prayerData =
-        Provider.of<PrayerProvider>(context).currentPrayer;
-
-    var group = Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    var isGroupAdmin = false;
-    if (group != null) {
-      isGroupAdmin = group.groupUsers
-              .firstWhere((user) => user.userId == _user.id, orElse: () => null)
-              ?.isAdmin ??
-          false;
-    }
-    var isGroup = Provider.of<PrayerProvider>(context).currentPrayerType !=
-        PrayerType.userPrayers;
-    if ((isGroup && isGroupAdmin) ||
-        (!isGroup && isGroupAdmin && prayerData.prayer.groupId != '0')) {
-      return GroupAdminPrayerMenu(prayerData.prayer);
-    } else if ((isGroup && !isGroupAdmin) ||
-        (!isGroup && !isGroupAdmin && prayerData.prayer.groupId != '0')) {
-      return OtherMemberPrayerMenu(prayerData.prayer);
-    } else if ((!isGroup && prayerData.prayer.groupId == '0')) {
-      updates = Provider.of<PrayerProvider>(context, listen: false)
-          .currentPrayer
-          .updates;
-      return PrayerMenu(prayerData, updates, context, snoozeEndDate,
-          durationText, snoozeDuration);
-    } else {
-      return PrayerMenu(prayerData, updates, context, snoozeEndDate,
-          durationText, snoozeDuration);
-    }
+    return PrayerMenu(context);
   }
 
   String reminderString;
@@ -144,6 +78,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final updates = Provider.of<PrayerProvider>(context).currentPrayer.updates;
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),

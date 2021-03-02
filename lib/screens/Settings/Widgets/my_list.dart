@@ -1,6 +1,7 @@
 import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -19,10 +20,10 @@ class MyListSettings extends StatefulWidget {
 }
 
 class _MyListSettingsState extends State<MyListSettings> {
-  _setDefaultSnooze(value) {
+  _setDefaultSnooze(BDuration e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
         key: SettingsKey.defaultSnoozeDuration,
-        value: value,
+        value: e.value,
         settingsId: widget.settings.id);
   }
 
@@ -33,22 +34,21 @@ class _MyListSettingsState extends State<MyListSettings> {
         settingsId: widget.settings.id);
   }
 
-  List<String> snoozeInterval = [
-    // IntervalRange.twoMinutes,
-    IntervalRange.thirtyMinutes,
-    IntervalRange.oneHour,
-    IntervalRange.sevenDays,
-    IntervalRange.fourtheenDays,
-    IntervalRange.thirtyDays,
-    IntervalRange.ninetyDays,
-    IntervalRange.oneYear,
+  List<BDuration> snoozeInterval = [
+    BDuration(text: IntervalRange.thirtyMinutes, value: 30),
+    BDuration(text: IntervalRange.oneHour, value: 60),
+    BDuration(text: IntervalRange.sevenDays, value: 10080),
+    BDuration(text: IntervalRange.fourtheenDays, value: 20160),
+    BDuration(text: IntervalRange.thirtyDays, value: 43200),
+    BDuration(text: IntervalRange.ninetyDays, value: 129600),
+    BDuration(text: IntervalRange.oneYear, value: 525600),
   ];
-  List<String> autoDeleteInterval = [
-    IntervalRange.thirtyDays,
-    IntervalRange.ninetyDays,
-    IntervalRange.oneYear,
-    IntervalRange.twoYears,
-    IntervalRange.never,
+  List<BDuration> autoDeleteInterval = [
+    BDuration(text: IntervalRange.thirtyDays, value: 30),
+    BDuration(text: IntervalRange.ninetyDays, value: 90),
+    BDuration(text: IntervalRange.oneYear, value: 365),
+    BDuration(text: IntervalRange.twoYears, value: 730),
+    BDuration(text: IntervalRange.never, value: 0),
   ];
   List<String> defaultSortBy = [SortType.date, SortType.tag];
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
@@ -97,6 +97,8 @@ class _MyListSettingsState extends State<MyListSettings> {
                     _setDefaultSnooze,
                     true,
                     snoozeInterval
+                        .map((e) => e.text)
+                        .toList()
                         .indexOf(widget.settings.defaultSnoozeDuration)),
               ),
             ],
@@ -137,6 +139,8 @@ class _MyListSettingsState extends State<MyListSettings> {
                     _setAutoDelete,
                     true,
                     autoDeleteInterval
+                        .map((e) => e.text)
+                        .toList()
                         .indexOf(widget.settings.archiveAutoDelete)),
               ),
               CustomToggle(

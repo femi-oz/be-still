@@ -27,6 +27,7 @@ class SettingsService {
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
+        defaultSnoozeDurationMins: 30,
         allowAlexaReadPrayer: false,
         archiveSortBy: SortType.date,
         userId: userId,

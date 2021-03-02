@@ -86,21 +86,21 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    UserPrayerModel userPrayer = UserPrayerModel(
-                      isSnoozed: false,
-                      snoozeEndDate: null,
-                      userId: _user.id,
-                      status: Status.active,
-                      sequence: null,
-                      prayerId: widget.prayer.id,
-                      isFavorite: false,
-                      createdBy: widget.prayer.createdBy,
-                      createdOn: DateTime.now(),
-                      modifiedBy: widget.prayer.modifiedBy,
-                      modifiedOn: DateTime.now(),
-                    );
-                    Provider.of<PrayerProvider>(context, listen: false)
-                        .addPrayerToMyList(userPrayer);
+                    // UserPrayerModel userPrayer = UserPrayerModel(
+                    //   isSnoozed: false,
+                    //   snoozeEndDate: null,
+                    //   userId: _user.id,
+                    //   status: Status.active,
+                    //   sequence: null,
+                    //   prayerId: widget.prayer.id,
+                    //   isFavorite: false,
+                    //   createdBy: widget.prayer.createdBy,
+                    //   createdOn: DateTime.now(),
+                    //   modifiedBy: widget.prayer.modifiedBy,
+                    //   modifiedOn: DateTime.now(),
+                    // );
+                    // Provider.of<PrayerProvider>(context, listen: false)
+                    //     .addPrayerToMyList(userPrayer);
                     Navigator.of(context)
                         .pushReplacementNamed(EntryScreen.routeName);
                   },

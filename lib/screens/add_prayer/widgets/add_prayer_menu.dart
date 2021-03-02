@@ -1,3 +1,5 @@
+import 'package:be_still/enums/interval.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -46,12 +48,14 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
     'Monthly',
     'Yearly'
   ];
-  List<String> snoozeInterval = [
-    '7 Days',
-    '14 Days',
-    '30 Days',
-    '90 Days',
-    '1 Year'
+  List<BDuration> snoozeInterval = [
+    BDuration(text: IntervalRange.thirtyMinutes, value: 30),
+    BDuration(text: IntervalRange.oneHour, value: 60),
+    BDuration(text: IntervalRange.sevenDays, value: 10080),
+    BDuration(text: IntervalRange.fourtheenDays, value: 20160),
+    BDuration(text: IntervalRange.thirtyDays, value: 43200),
+    BDuration(text: IntervalRange.ninetyDays, value: 129600),
+    BDuration(text: IntervalRange.oneYear, value: 525600),
   ];
 
   @override

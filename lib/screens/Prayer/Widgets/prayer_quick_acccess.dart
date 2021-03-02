@@ -94,7 +94,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(widget.prayerData.prayer.id);
+          .markPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();

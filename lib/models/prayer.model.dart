@@ -11,7 +11,6 @@ class PrayerModel {
   final String status;
   final String description;
   final bool isAnswer;
-  final bool isArchived;
   final bool isInappropriate;
   final String creatorName;
   final String createdBy;
@@ -28,7 +27,6 @@ class PrayerModel {
     @required this.status,
     @required this.description,
     @required this.isAnswer,
-    @required this.isArchived,
     @required this.isInappropriate,
     @required this.creatorName,
     @required this.createdBy,
@@ -46,7 +44,6 @@ class PrayerModel {
         status = snapshot.data()['Status'],
         description = snapshot.data()['Description'],
         isAnswer = snapshot.data()['IsAnswer'],
-        isArchived = snapshot.data()['IsArchived'],
         isInappropriate = snapshot.data()['IsInappropriate'],
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'],
@@ -63,85 +60,12 @@ class PrayerModel {
       'Status': status,
       'Description': description,
       'IsAnswer': isAnswer,
-      'IsArchived': isArchived,
       'IsInappropriate': isInappropriate,
       'CreatorName': creatorName,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
-    };
-  }
-}
-
-class PrayerDisableModel {
-  final String prayerId;
-  final String userId;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
-
-  const PrayerDisableModel(
-      {@required this.prayerId,
-      @required this.userId,
-      @required this.createdBy,
-      @required this.createdOn,
-      @required this.modifiedBy,
-      @required this.modifiedOn});
-
-  PrayerDisableModel.fromData(DocumentSnapshot snapshot)
-      : prayerId = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
-
-  Map<String, dynamic> toJson() {
-    return {
-      'PrayerId': prayerId,
-      'UserId': userId,
-      'CreatedBy': createdBy,
-      'CreatedOn': createdOn,
-      'ModifiedBy': modifiedBy,
-      'ModifiedOn': modifiedOn,
-    };
-  }
-}
-
-class PrayerRequestMessageModel {
-  final String senderId;
-  final String receiverId;
-  final String message;
-  final String email;
-  final String sender;
-  final String receiver;
-
-  const PrayerRequestMessageModel(
-      {@required this.senderId,
-      @required this.receiverId,
-      @required this.message,
-      @required this.email,
-      @required this.sender,
-      @required this.receiver});
-
-  PrayerRequestMessageModel.fromData(DocumentSnapshot snapshot)
-      : senderId = snapshot.id,
-        receiverId = snapshot.data()['ReceiverId'],
-        message = snapshot.data()['Message'],
-        email = snapshot.data()['Email'],
-        sender = snapshot.data()['Sender'],
-        receiver = snapshot.data()['Receiver'];
-
-  Map<String, dynamic> toJson() {
-    return {
-      'SenderId': senderId,
-      'ReceiverId': receiverId,
-      'Message': message,
-      'Email': email,
-      'Sender': sender,
-      'Receiver': receiver,
     };
   }
 }
@@ -198,6 +122,7 @@ class UserPrayerModel {
   final String id;
   final String prayerId;
   final String userId;
+  final bool isArchived;
   final String sequence;
   final bool isFavorite;
   final String status;
@@ -206,6 +131,7 @@ class UserPrayerModel {
   final String modifiedBy;
   final DateTime modifiedOn;
   final DateTime snoozeEndDate;
+  final DateTime archivedDate;
   final bool isSnoozed;
 
   const UserPrayerModel({
@@ -215,8 +141,10 @@ class UserPrayerModel {
     @required this.sequence,
     @required this.isFavorite,
     @required this.status,
+    @required this.isArchived,
     @required this.isSnoozed,
     @required this.snoozeEndDate,
+    @required this.archivedDate,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -230,7 +158,10 @@ class UserPrayerModel {
         sequence = snapshot.data()['Sequence'],
         isFavorite = snapshot.data()['IsFavourite'],
         status = snapshot.data()['Status'],
-        isSnoozed = snapshot.data()['IsSnoozed'],
+        archivedDate =
+            snapshot.data()['ArchivedDate']?.toDate() ?? DateTime.now(),
+        isArchived = snapshot.data()['IsArchived'] ?? false,
+        isSnoozed = snapshot.data()['IsSnoozed'] ?? false,
         snoozeEndDate =
             snapshot.data()['SnoozeEndDate']?.toDate() ?? DateTime.now(),
         createdBy = snapshot.data()['CreatedBy'],
@@ -245,48 +176,10 @@ class UserPrayerModel {
       'Sequence': sequence,
       'IsFavourite': isFavorite,
       'Status': status,
+      'IsArchived': isArchived,
+      'ArchivedDate': archivedDate,
       'IsSnoozed': isSnoozed,
       'SnoozeEndDate': snoozeEndDate,
-      'CreatedBy': createdBy,
-      'CreatedOn': createdOn,
-      'ModifiedBy': modifiedBy,
-      'ModifiedOn': modifiedOn,
-    };
-  }
-}
-
-class HiddenPrayerModel {
-  final String id;
-  final String prayerId;
-  final String userId;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
-
-  const HiddenPrayerModel({
-    this.id,
-    @required this.prayerId,
-    @required this.userId,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
-  });
-
-  HiddenPrayerModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.id,
-        prayerId = snapshot.data()['PrayerId'],
-        userId = snapshot.data()['UserId'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
-
-  Map<String, dynamic> toJson() {
-    return {
-      'PrayerId': prayerId,
-      'UserId': userId,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
@@ -372,4 +265,80 @@ class CombinePrayerStream {
     this.tags,
     this.updates,
   });
+}
+
+class PrayerRequestMessageModel {
+  final String senderId;
+  final String receiverId;
+  final String message;
+  final String email;
+  final String sender;
+  final String receiver;
+
+  const PrayerRequestMessageModel(
+      {@required this.senderId,
+      @required this.receiverId,
+      @required this.message,
+      @required this.email,
+      @required this.sender,
+      @required this.receiver});
+
+  PrayerRequestMessageModel.fromData(DocumentSnapshot snapshot)
+      : senderId = snapshot.id,
+        receiverId = snapshot.data()['ReceiverId'],
+        message = snapshot.data()['Message'],
+        email = snapshot.data()['Email'],
+        sender = snapshot.data()['Sender'],
+        receiver = snapshot.data()['Receiver'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'SenderId': senderId,
+      'ReceiverId': receiverId,
+      'Message': message,
+      'Email': email,
+      'Sender': sender,
+      'Receiver': receiver,
+    };
+  }
+}
+
+class HiddenPrayerModel {
+  final String id;
+  final String prayerId;
+  final String userId;
+  final String createdBy;
+  final DateTime createdOn;
+  final String modifiedBy;
+  final DateTime modifiedOn;
+
+  const HiddenPrayerModel({
+    this.id,
+    @required this.prayerId,
+    @required this.userId,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+
+  HiddenPrayerModel.fromData(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
+        userId = snapshot.data()['UserId'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'UserId': userId,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
 }
