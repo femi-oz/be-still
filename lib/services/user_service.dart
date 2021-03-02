@@ -59,7 +59,8 @@ class UserService {
       await locator<SettingsService>().addSettings('', userId, email);
       await locator<SettingsService>().addGroupPreferenceSettings(userId);
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'USER/service/addUserData');
       throw HttpException(e.message);
     }
   }
@@ -72,7 +73,8 @@ class UserService {
           .get();
       return UserModel.fromData(userRes.docs[0]);
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, keyReference);
+      locator<LogService>().createLog(
+          e.code, e.message, keyReference, 'USER/service/getCurrentUser');
       throw HttpException(e.message);
     }
   }
@@ -82,8 +84,8 @@ class UserService {
       var users = await _userCollectionReference.get();
       return users.docs.map((e) => UserModel.fromData(e)).toList();
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.code, e.message, _firebaseAuth.currentUser.email);
+      locator<LogService>().createLog(e.code, e.message,
+          _firebaseAuth.currentUser.email, 'USER/service/getAllUsers');
       throw HttpException(e.message);
     }
   }
@@ -94,7 +96,8 @@ class UserService {
       await user.updateEmail(newEmail);
       await _userCollectionReference.doc(userId).update({'Email': newEmail});
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId);
+      locator<LogService>()
+          .createLog(e.code, e.message, userId, 'USER/service/updateEmail');
       throw HttpException(e.message);
     }
   }
@@ -104,7 +107,8 @@ class UserService {
     try {
       user.updatePassword(newPassword);
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, user.email);
+      locator<LogService>().createLog(
+          e.code, e.message, user.email, 'USER/service/updatePassword');
       throw HttpException(e.message);
     }
   }

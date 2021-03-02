@@ -5,6 +5,7 @@ class ErrorLog {
   final String id;
   final String message;
   final String code;
+  final String location;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -14,6 +15,7 @@ class ErrorLog {
     this.id,
     @required this.message,
     @required this.code,
+    @required this.location,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -24,6 +26,7 @@ class ErrorLog {
       : id = snapshot.id,
         message = snapshot.data()['Message'],
         code = snapshot.data()['Code'],
+        location = snapshot.data()['Location'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -33,6 +36,7 @@ class ErrorLog {
     return {
       'Message': message,
       'Code': code,
+      'Location': location,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
