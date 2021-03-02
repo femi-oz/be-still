@@ -196,8 +196,9 @@ class PrayerProvider with ChangeNotifier {
   Future<void> removePrayerTag(String tagId) async =>
       await _prayerService.removePrayerTag(tagId);
 
-  Future<void> addPrayerUpdate(PrayerUpdateModel prayerUpdateData) async =>
-      await _prayerService.addPrayerUpdate(prayerUpdateData);
+  Future<void> addPrayerUpdate(
+          String userId, String prayer, String prayerId) async =>
+      await _prayerService.addPrayerUpdate(userId, prayer, prayerId);
 
   Future<void> editprayer(String description, String prayerID) async =>
       await _prayerService.editPrayer(description, prayerID);

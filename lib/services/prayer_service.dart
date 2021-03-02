@@ -267,16 +267,24 @@ class PrayerService {
     }
   }
 
-  Future addPrayerUpdate(
-    PrayerUpdateModel prayerupdate,
-  ) async {
+  Future addPrayerUpdate(String userId, String prayer, String prayerId) async {
+    final prayerUpdate = PrayerUpdateModel(
+      prayerId: prayerId,
+      userId: userId,
+      title: '',
+      description: prayer,
+      modifiedBy: userId,
+      modifiedOn: DateTime.now(),
+      createdBy: userId,
+      createdOn: DateTime.now(),
+    );
     try {
       final updateId = Uuid().v1();
       _prayerUpdateCollectionReference.doc(updateId).set(
-            prayerupdate.toJson(),
+            prayerUpdate.toJson(),
           );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, prayerupdate.userId);
+      locator<LogService>().createLog(e.code, e.message, prayerUpdate.userId);
       throw HttpException(e.message);
     }
   }
@@ -641,8 +649,6 @@ class PrayerService {
       isAnswer: false,
       isArchived: false,
       isInappropriate: false,
-      isSnoozed: false,
-      snoozeEndDate: null,
       title: '',
       type: '',
       userId: userId,

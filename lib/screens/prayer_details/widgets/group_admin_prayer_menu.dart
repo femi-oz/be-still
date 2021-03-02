@@ -87,6 +87,8 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                 GestureDetector(
                   onTap: () {
                     UserPrayerModel userPrayer = UserPrayerModel(
+                      isSnoozed: false,
+                      snoozeEndDate: null,
                       userId: _user.id,
                       status: Status.active,
                       sequence: null,
