@@ -62,12 +62,10 @@ class AuthenticationService {
       var message = e.code == 'wrong-password'
           ? 'Username / Password is incorrect'
           : e.code == 'invalid-email'
-              ? 'The email entered is in the wrong format'
+              ? 'Email format is wrong'
               : e.code == 'user-not-found'
                   ? 'Username / Password is incorrect'
-                  : e.code == 'email-already-in-use'
-                      ? 'The email entered is alread in use'
-                      : 'An error occured. Please try again';
+                  : 'An error occured. Please try again';
       await locator<LogService>()
           .createLog(e.code, message, email, 'AUTHENTICATION/service/signUp');
       throw HttpException(message);

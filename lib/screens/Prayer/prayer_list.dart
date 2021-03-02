@@ -105,7 +105,7 @@ class _PrayerListState extends State<PrayerList> {
   void _setVibration() async => _canVibrate = await Vibrate.canVibrate;
 
   void _vibrate() async {
-    if (_canVibrate) Vibrate.feedback(FeedbackType.light);
+    if (_canVibrate) Vibrate.feedback(FeedbackType.selection);
   }
 
   void onLongPressCard(prayerData, details) async {
