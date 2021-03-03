@@ -1,3 +1,4 @@
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -19,8 +20,11 @@ class SharePrayer extends StatefulWidget {
 class _SharePrayerState extends State<SharePrayer> {
   List groups = [];
 
-  _emailLink() async {
+  _emailLink([bool isChurch = false]) async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
+        .sharingSettings
+        .churchEmail;
     var _prayer = toBeginningOfSentenceCase(widget.prayer);
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
@@ -31,7 +35,7 @@ class _SharePrayerState extends State<SharePrayer> {
         ' $name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. $link';
     final Uri params = Uri(
         scheme: 'mailto',
-        // path: _user.email,
+        path: isChurch ? _churchEmail : '',
         query: 'subject=$name shared a prayer with you&body=$_prayer'
             '</br></br>'
             'Comments:'
@@ -48,9 +52,12 @@ class _SharePrayerState extends State<SharePrayer> {
     }
   }
 
-  _textLink() async {
+  _textLink([bool isChurch = false]) async {
+    final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
+        .sharingSettings
+        .churchPhone;
     var _prayer = widget.prayer;
-    var url = 'sms:?body=$_prayer';
+    var url = 'sms:${isChurch ? _churchPhone : ''}?body=$_prayer';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -60,6 +67,8 @@ class _SharePrayerState extends State<SharePrayer> {
 
   @override
   Widget build(BuildContext context) {
+    final sharingSettings =
+        Provider.of<SettingsProvider>(context, listen: false).sharingSettings;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -141,7 +150,9 @@ class _SharePrayerState extends State<SharePrayer> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_share,
-                  onPressed: () => _emailLink(),
+                  onPressed: () => sharingSettings.churchEmail == ''
+                      ? _textLink(true)
+                      : _emailLink(true),
                   text: 'To my Church',
                 ),
               ],
