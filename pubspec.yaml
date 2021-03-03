@@ -41,7 +41,7 @@ dependencies:
   rxdart: ^0.25.0
   flutter_spinkit: "^4.1.2"
   shared_preferences: ^0.5.12+2
-  get_version: ^0.2.2
+  package_info: ^0.4.3+4
   # persistent_bottom_nav_bar: ^3.1.0
   permission_handler: ^5.0.0
   contacts_service: ^0.4.6
