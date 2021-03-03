@@ -39,12 +39,13 @@ class PrayerProvider with ChangeNotifier {
           _autoDeleteArchivePrayers(userId);
           _unSnoozePrayerPast();
           filterPrayers(
-              userId: userId,
-              isAnswered: _filterOptions.isAnswered,
-              isArchived: _filterOptions.isArchived,
-              isSnoozed: _filterOptions.isSnoozed,
-              status: _filterOptions.status,
-              sortBy: sortBy);
+            userId: userId,
+            isAnswered: _filterOptions.isAnswered,
+            isArchived: _filterOptions.isArchived,
+            isSnoozed: _filterOptions.isSnoozed,
+            status: _filterOptions.status,
+            sortBy: sortBy,
+          );
           notifyListeners();
         },
       );
@@ -53,12 +54,13 @@ class PrayerProvider with ChangeNotifier {
       String searchQuery, String sortBy, String userId) async {
     if (searchQuery == '') {
       filterPrayers(
-          userId: userId,
-          isAnswered: _filterOptions.isAnswered,
-          isArchived: _filterOptions.isArchived,
-          isSnoozed: _filterOptions.isSnoozed,
-          status: _filterOptions.status,
-          sortBy: sortBy);
+        userId: userId,
+        isAnswered: _filterOptions.isAnswered,
+        isArchived: _filterOptions.isArchived,
+        isSnoozed: _filterOptions.isSnoozed,
+        status: _filterOptions.status,
+        sortBy: sortBy,
+      );
     } else {
       List<CombinePrayerStream> filteredPrayers = _prayers
           .where((CombinePrayerStream data) => data.prayer.description

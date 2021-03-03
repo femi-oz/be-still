@@ -2,6 +2,7 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/menu-button.dart';
@@ -32,6 +33,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
 
   Widget build(BuildContext context) {
     var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
+    var settingsProvider = Provider.of<SettingsProvider>(context).settings;
     status = filterOptions.status;
     isSnoozed = filterOptions.isSnoozed;
     isAnswered = filterOptions.isAnswered;
@@ -84,6 +86,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                               isArchived: isArchived,
                               isSnoozed: isSnoozed,
                               status: status,
+                              sortBy: settingsProvider.defaultSortBy,
                             );
                           },
                         ),
@@ -101,6 +104,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                               isArchived: isArchived,
                               isSnoozed: isSnoozed,
                               status: status,
+                              sortBy: settingsProvider.defaultSortBy,
                             );
                           },
                         ),
@@ -118,6 +122,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                               isArchived: isArchived,
                               isSnoozed: isSnoozed,
                               status: status,
+                              sortBy: settingsProvider.archiveSortBy,
                             );
                           },
                         ),
@@ -131,10 +136,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                             setPageTitle();
                             Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
-                                    isAnswered: isAnswered,
-                                    isArchived: isArchived,
-                                    isSnoozed: isSnoozed,
-                                    status: status);
+                              isAnswered: isAnswered,
+                              isArchived: isArchived,
+                              isSnoozed: isSnoozed,
+                              status: status,
+                              sortBy: settingsProvider.defaultSortBy,
+                            );
                           },
                         ),
                         text: 'ANSWERED',
