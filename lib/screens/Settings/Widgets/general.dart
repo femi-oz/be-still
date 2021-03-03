@@ -259,9 +259,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           mainAxisSize: MainAxisSize.min,
           children: [
             type == _ModalType.email
-                ? CustomInput(label: 'New Email', controller: _newEmail)
+                ? CustomInput(
+                    isRequired: true,
+                    isEmail: true,
+                    label: 'New Email',
+                    controller: _newEmail)
                 : type == _ModalType.password
                     ? CustomInput(
+                        isRequired: true,
                         isPassword: true,
                         label: 'New Password',
                         controller: _newPassword)

@@ -198,16 +198,24 @@ class _SharingSettingsState extends State<SharingSettings> {
           children: [
             type == _ModalType.church
                 ? CustomInput(
-                    label: 'Enter Church Name', controller: _churchName)
+                    isRequired: true,
+                    label: 'Enter Church Name',
+                    controller: _churchName)
                 : type == _ModalType.email
                     ? CustomInput(
-                        label: 'Enter Church Email', controller: _churchEmail)
+                        isRequired: true,
+                        isEmail: true,
+                        label: 'Enter Church Email',
+                        controller: _churchEmail)
                     : type == _ModalType.phone
                         ? CustomInput(
+                            isRequired: true,
+                            isPhone: true,
                             label: 'Enter Church Phone',
                             controller: _churchPhone)
                         : type == _ModalType.link
                             ? CustomInput(
+                                isRequired: true,
                                 label: 'Enter Church Web Prayer Form Link',
                                 controller: _churchLink)
                             : null,
