@@ -72,8 +72,7 @@ class SettingsModel {
             snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
-        archiveAutoDeleteMins =
-            snapshot.data()['ArchiveAutoDeleteMins'] ?? 43200,
+        archiveAutoDeleteMins = snapshot.data()['ArchiveAutoDeleteMins'] ?? 30,
         includeAnsweredPrayerAutoDelete =
             snapshot.data()['IncludeAnsweredPrayerAutoDelete'],
         allowPushNotification = snapshot.data()['AllowPushNotification'],

@@ -47,6 +47,7 @@ class _MyListSettingsState extends State<MyListSettings> {
   ];
 
   List<LookUp> autoDeleteInterval = [
+    LookUp(text: IntervalRange.thirtyMinutes, value: 30),
     LookUp(text: IntervalRange.thirtyDays, value: 43200),
     LookUp(text: IntervalRange.ninetyDays, value: 129600),
     LookUp(text: IntervalRange.oneYear, value: 525600),
