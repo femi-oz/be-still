@@ -133,7 +133,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               label: 'New Email', controller: _newEmail)
                           : type == _ModalType.password
                               ? CustomInput(
-                                  label: 'New Email', controller: _newPassword)
+                                  label: 'New Password',
+                                  controller: _newPassword)
                               : Text('Auth'),
                     ),
                   ),

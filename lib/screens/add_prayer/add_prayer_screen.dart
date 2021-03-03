@@ -135,6 +135,8 @@ class _AddPrayerState extends State<AddPrayer> {
         TextPosition(offset: _descriptionController.text.length));
     setState(() => _descriptionController.selection =
         TextSelection.collapsed(offset: _descriptionController.text.length));
+    // print(contacts.length);
+
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
     }
