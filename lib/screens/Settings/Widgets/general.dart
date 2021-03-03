@@ -109,6 +109,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _update(_ModalType type, ctx) {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    _newEmail.text = _user.email;
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],

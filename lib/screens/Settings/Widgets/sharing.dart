@@ -182,6 +182,12 @@ class _SharingSettingsState extends State<SharingSettings> {
   }
 
   void _update(_ModalType type, ctx) {
+    final sharingSettings =
+        Provider.of<SettingsProvider>(context, listen: false).sharingSettings;
+    _churchEmail.text = sharingSettings.churchEmail;
+    _churchName.text = sharingSettings.churchName;
+    _churchPhone.text = sharingSettings.churchPhone;
+    _churchLink.text = sharingSettings.webFormlink;
     final alert = AlertDialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 10),
       backgroundColor: AppColors.backgroundColor[1],
