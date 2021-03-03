@@ -34,9 +34,13 @@ class CustomOutlineButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(
-              actionText,
-              style: AppTextStyles.regularText18b.copyWith(color: actionColor),
+            Expanded(
+              child: Text(
+                actionText,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    AppTextStyles.regularText18b.copyWith(color: actionColor),
+              ),
             ),
             SizedBox(width: 10),
             icon != ''
@@ -61,6 +65,7 @@ class CustomOutlineButton extends StatelessWidget {
                     child: Text(
                       value,
                       textAlign: TextAlign.end,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.regularText15.copyWith(
                           color: textColor == null
                               ? AppColors.textFieldText
