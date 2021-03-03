@@ -106,6 +106,8 @@ class PrayerProvider with ChangeNotifier {
           .where((CombinePrayerStream data) =>
               data.userPrayer.status.toLowerCase() == status.toLowerCase())
           .toList();
+
+      print(archivedPrayers.length);
     }
     if (isAnswered == true) {
       answeredPrayers = prayers

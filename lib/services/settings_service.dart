@@ -171,7 +171,7 @@ class SettingsService {
       var settings = await _settingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
-      return settings.docs.map((e) => SettingsModel.fromData(e)).toList()[0];
+      return SettingsModel.fromData(settings.docs.toList()[0]);
     } catch (e) {
       locator<LogService>()
           .createLog(e.message, userId, 'SETTINGS/service/fetchSettings');
@@ -239,6 +239,7 @@ class SettingsService {
   }
 
   Future updateSettings({String key, dynamic value, String settingsId}) async {
+    print(value);
     try {
       _settingsCollectionReference.doc(settingsId).update(
         {key: value},
