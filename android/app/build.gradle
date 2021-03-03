@@ -12,7 +12,12 @@ if (flutterRoot == null) {
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
+def appCenterVersionCode = System.getenv('APPCENTER_BUILD_ID')
+if (appCenterVersionCode != null) {
+    flutterVersionCode = appCenterVersionCode
+} else if (flutterVersionCode != null) {
+    flutterVersionCode = flutterVersionCode
+} else {
     flutterVersionCode = '1'
 }
 
@@ -41,8 +46,7 @@ android {
         applicationId "com.example.be_still"
         minSdkVersion 23
         targetSdkVersion 28
-        // versionCode flutterVersionCode.toInteger()
-        versionCode System.getenv("APPCENTER_BUILD_ID")
+        versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
     signingConfigs {
