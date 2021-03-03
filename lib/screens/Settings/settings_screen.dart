@@ -165,7 +165,7 @@ class SettingsTabState extends State<SettingsTab>
                     _settingsProvider.settings),
                 NotificationsSettings(_settingsProvider.settings),
                 AlexaSettings(_settingsProvider.settings),
-                SharingSettings(_settingsProvider.sharingSetttings),
+                SharingSettings(),
                 GroupsSettings(),
               ],
             ),

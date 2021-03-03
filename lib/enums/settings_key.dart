@@ -27,4 +27,8 @@ class SettingsKey {
   static const allowEmergencyCalls = 'AllowEmergencyCalls';
   static const autoPlayMusic = 'AutoPlayMusic';
   static const enableBackgroundMusic = 'EnableBackgroundMusic';
+  static const churchName = 'ChurchName';
+  static const churchPhone = 'ChurchPhone';
+  static const churchEmail = 'ChurchEmail';
+  static const webFormLink = 'WebFormLink';
 }

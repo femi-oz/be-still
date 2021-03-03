@@ -4,6 +4,7 @@ import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
@@ -67,18 +68,20 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   _savePrayerTime(
       String selectedDay, String selectedFrequency, String date) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(
+        .updatePrayerSettings(userId,
             key: SettingsKey.day,
             value: selectedDay,
             settingsId: widget.prayerSettings.id);
     await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(
+        .updatePrayerSettings(userId,
             key: SettingsKey.frequency,
             value: selectedFrequency,
             settingsId: widget.prayerSettings.id);
     await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(
+        .updatePrayerSettings(userId,
             key: SettingsKey.time,
             value: date,
             settingsId: widget.prayerSettings.id);
@@ -90,6 +93,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   @override
   Widget build(BuildContext context) {
     final setingProvider = Provider.of<SettingsProvider>(context);
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -99,7 +103,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               CustomSectionHeder('Preference'),
               SizedBox(height: 20),
               CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.allowEmergencyCalls,
                     value: value,
                     settingsId: widget.prayerSettings.id),
@@ -108,7 +112,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: widget.prayerSettings.allowEmergencyCalls,
               ),
               CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.doNotDisturb,
                     value: value,
                     settingsId: widget.prayerSettings.id),
@@ -116,7 +120,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: widget.prayerSettings.doNotDisturb,
               ),
               CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.enableBackgroundMusic,
                     value: value,
                     settingsId: widget.prayerSettings.id),
@@ -129,7 +133,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 actionText: 'CONNECTED',
                 textIcon: 'assets/images/spotify.png',
                 onPressed: () => null,
-                isDarkModeEnabled: Settings.isDarkMode,
                 value: 'Spotify',
               ),
               Container(
@@ -137,7 +140,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               ),
               CustomToggle(
                 title: 'Auto play music during prayer time?',
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.autoPlayMusic,
                     value: value,
                     settingsId: widget.prayerSettings.id),

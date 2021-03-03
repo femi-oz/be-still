@@ -15,7 +15,7 @@ class SettingsProvider with ChangeNotifier {
   PrayerSettingsModel _prayerSettings;
   PrayerSettingsModel get prayerSetttings => _prayerSettings;
   SharingSettingsModel _sharingSettings;
-  SharingSettingsModel get sharingSetttings => _sharingSettings;
+  SharingSettingsModel get sharingSettings => _sharingSettings;
   List<GroupSettings> _groupSettings;
   List<GroupSettings> get groupSettings => _groupSettings;
   GroupPreferenceSettings _groupPreferenceSettings;
@@ -67,16 +67,18 @@ class SettingsProvider with ChangeNotifier {
     await setSettings(userId);
   }
 
-  Future updatePrayerSettings(
+  Future updatePrayerSettings(String userId,
       {String key, dynamic value, String settingsId}) async {
     await _settingsService.updatePrayerSettings(
         key: key, settingsId: settingsId, value: value);
+    await setPrayerSettings(userId);
   }
 
-  Future updateSharingSettings(
+  Future updateSharingSettings(String userId,
       {String key, dynamic value, String settingsId}) async {
     await _settingsService.updateSharingSettings(
         key: key, settingsId: settingsId, value: value);
+    await setSharingSettings(userId);
   }
 
   Future updateGroupSettings(

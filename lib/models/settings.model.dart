@@ -124,12 +124,3 @@ class SettingsModel {
     };
   }
 }
-
-class CombineSettingsStream {
-  final SettingsModel settings;
-  final SharingSettingsModel sharingSettings;
-  final PrayerSettingsModel prayerSettings;
-
-  CombineSettingsStream(
-      this.settings, this.sharingSettings, this.prayerSettings);
-}

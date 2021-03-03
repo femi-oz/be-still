@@ -61,7 +61,6 @@ class _AlexaSettingsState extends State<AlexaSettings> {
                 actionText: 'CONNECTED',
                 value: 'LOGOUT',
                 icon: 'assets/images/amazon.png',
-                isDarkModeEnabled: Settings.isDarkMode,
                 textColor: AppColors.red,
                 onPressed: () => null,
               ),

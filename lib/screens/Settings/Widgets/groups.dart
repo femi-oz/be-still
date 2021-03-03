@@ -362,8 +362,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _groupSettings = Provider.of<SettingsProvider>(context).groupSettings;
     final _groupPreferenceSettings =
         Provider.of<SettingsProvider>(context).groupPreferenceSettings;
-    // print(_groupSettings);
-    // TODO create default grop settings when group is created
     setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Column(
@@ -408,7 +406,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 ),
                 Switch.adaptive(
                   value:
-                      _groupPreferenceSettings.enableNotificationForAllGroups,
+                      _groupPreferenceSettings?.enableNotificationForAllGroups,
                   activeColor: Colors.white,
                   activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,

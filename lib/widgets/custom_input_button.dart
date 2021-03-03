@@ -2,7 +2,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
 class CustomOutlineButton extends StatelessWidget {
-  final bool isDarkModeEnabled;
   final String actionText;
   final String value;
   final Color actionColor;
@@ -14,7 +13,6 @@ class CustomOutlineButton extends StatelessWidget {
     this.actionText,
     this.actionColor = AppColors.lightBlue4,
     this.textColor,
-    this.isDarkModeEnabled,
     this.value,
     this.onPressed,
     this.textIcon = '',
@@ -40,6 +38,7 @@ class CustomOutlineButton extends StatelessWidget {
               actionText,
               style: AppTextStyles.regularText18b.copyWith(color: actionColor),
             ),
+            SizedBox(width: 10),
             icon != ''
                 ? Container(
                     height: 20,
@@ -48,19 +47,28 @@ class CustomOutlineButton extends StatelessWidget {
                     ),
                   )
                 : Container(),
-            Row(
-              children: [
-                textIcon != ''
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Image.asset(textIcon),
-                      )
-                    : Container(),
-                Text(
-                  value,
-                  style: AppTextStyles.regularText15.copyWith(color: textColor == null ? AppColors.textFieldText : textColor),
-                ),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  textIcon != ''
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Image.asset(textIcon),
+                        )
+                      : Container(),
+                  Expanded(
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.end,
+                      style: AppTextStyles.regularText15.copyWith(
+                          color: textColor == null
+                              ? AppColors.textFieldText
+                              : textColor),
+                    ),
+                  ),
+                ],
+              ),
             )
           ],
         ),

@@ -7,8 +7,10 @@ class SharingSettingsModel {
   final bool enableSharingViaText;
   final bool enableSharingViaEmail;
   final String churchId;
-  final String phone;
-  final String status;
+  final String churchName;
+  final String churchPhone;
+  final String churchEmail;
+  final String webFormlink;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -20,8 +22,10 @@ class SharingSettingsModel {
     @required this.enableSharingViaEmail,
     @required this.enableSharingViaText,
     @required this.churchId,
-    @required this.phone,
-    @required this.status,
+    @required this.churchName,
+    @required this.churchPhone,
+    @required this.churchEmail,
+    @required this.webFormlink,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -34,8 +38,10 @@ class SharingSettingsModel {
         enableSharingViaEmail = snapshot.data()["EnableSharingViaEmail"],
         enableSharingViaText = snapshot.data()["EnableSharingViaText"],
         churchId = snapshot.data()["ChurchId"],
-        phone = snapshot.data()["Phone"],
-        status = snapshot.data()["Status"],
+        churchName = snapshot.data()["ChurchName"] ?? '',
+        churchPhone = snapshot.data()["ChurchPhone"] ?? '',
+        churchEmail = snapshot.data()["ChurchEmail"] ?? '',
+        webFormlink = snapshot.data()["WebFormLink"] ?? '',
         createdBy = snapshot.data()["CreatedBy"],
         createdOn = snapshot.data()["CreatedOn"].toDate(),
         modifiedBy = snapshot.data()["ModifiedBy"],
@@ -47,8 +53,10 @@ class SharingSettingsModel {
       'EnableSharingViaEmail': enableSharingViaEmail,
       'EnableSharingViaText': enableSharingViaText,
       'ChurchId': churchId,
-      'Phone': phone,
-      'Status': status,
+      'ChurchName': churchName,
+      'ChurchPhone': churchPhone,
+      'ChurchEmail': churchEmail,
+      'WebFormLink': webFormlink,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
