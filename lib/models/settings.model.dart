@@ -14,7 +14,7 @@ class SettingsModel {
   final String archiveSortBy;
   final String archiveAutoDelete;
   final int archiveAutoDeleteMins;
-  final int pauseInterval;
+  final String pauseInterval;
   final bool includeAnsweredPrayerAutoDelete;
   final bool allowPushNotification;
   final bool allowTextNotification;
@@ -72,7 +72,8 @@ class SettingsModel {
             snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
-        archiveAutoDeleteMins = snapshot.data()['ArchiveAutoDeleteMins'],
+        archiveAutoDeleteMins =
+            snapshot.data()['ArchiveAutoDeleteMins'] ?? 43200,
         includeAnsweredPrayerAutoDelete =
             snapshot.data()['IncludeAnsweredPrayerAutoDelete'],
         allowPushNotification = snapshot.data()['AllowPushNotification'],

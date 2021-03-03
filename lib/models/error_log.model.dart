@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 class ErrorLog {
   final String id;
   final String message;
-  final String code;
   final String location;
   final String createdBy;
   final DateTime createdOn;
@@ -14,7 +13,6 @@ class ErrorLog {
   const ErrorLog({
     this.id,
     @required this.message,
-    @required this.code,
     @required this.location,
     @required this.createdBy,
     @required this.createdOn,
@@ -25,7 +23,6 @@ class ErrorLog {
   ErrorLog.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
         message = snapshot.data()['Message'],
-        code = snapshot.data()['Code'],
         location = snapshot.data()['Location'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
@@ -35,7 +32,6 @@ class ErrorLog {
   Map<String, dynamic> toJson() {
     return {
       'Message': message,
-      'Code': code,
       'Location': location,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,

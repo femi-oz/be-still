@@ -38,7 +38,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
         child: notifications.length == 0
             ? Icon(
                 AppIcons.bestill_notifications,
-                color: AppColors.bottomNavIconColor,
+                color: AppColors.grey,
                 size: 18,
               )
             : Stack(

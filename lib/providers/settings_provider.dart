@@ -23,7 +23,7 @@ class SettingsProvider with ChangeNotifier {
       _groupPreferenceSettings;
 
   Future setSettings(String userId) async {
-    var settings = await _settingsService.fetchSettings(userId);
+    var settings = await _settingsService.getSettings(userId);
     _settings = settings;
     notifyListeners();
   }
@@ -57,7 +57,11 @@ class SettingsProvider with ChangeNotifier {
   // }
 
   Future updateSettings(
-      {String key, dynamic value, String settingsId, String userId}) async {
+    String userId, {
+    String key,
+    dynamic value,
+    String settingsId,
+  }) async {
     await _settingsService.updateSettings(
         key: key, settingsId: settingsId, value: value);
     await setSettings(userId);

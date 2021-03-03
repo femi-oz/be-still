@@ -48,7 +48,7 @@ class _CustomPickerState extends State<CustomPicker> {
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
                                 selectedInterval = widget.lookup[i];
-                                widget.onChange('$selectedInterval');
+                                widget.onChange(selectedInterval.value);
                               }),
                               children: <Widget>[
                                 ...widget.lookup
@@ -82,7 +82,7 @@ class _CustomPickerState extends State<CustomPicker> {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          widget.onChange('$selectedInterval');
+                          widget.onChange(selectedInterval.value);
                           Navigator.of(context).pop();
                         },
                         child: Container(

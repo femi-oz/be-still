@@ -3,6 +3,7 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -28,6 +29,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
   ];
   setEmailUpdateFrequency(value) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
         key: SettingsKey.emailUpdateFrequency,
         value: value,
         settingsId: widget.settings.id);
@@ -36,6 +38,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
   @override
   Widget build(BuildContext context) {
     final setingProvider = Provider.of<SettingsProvider>(context);
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -43,7 +46,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           CustomSectionHeder('Preferences'),
           CustomToggle(
             title: 'Allow push Notifications?',
-            onChange: (value) => setingProvider.updateSettings(
+            onChange: (value) => setingProvider.updateSettings(userId,
                 key: SettingsKey.allowPushNotification,
                 value: value,
                 settingsId: widget.settings.id),
@@ -51,7 +54,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           ),
           CustomToggle(
             title: 'Allow text Notifications?',
-            onChange: (value) => setingProvider.updateSettings(
+            onChange: (value) => setingProvider.updateSettings(userId,
                 key: SettingsKey.allowTextNotification,
                 value: value,
                 settingsId: widget.settings.id),
@@ -59,7 +62,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           ),
           CustomToggle(
             title: 'Send notification email updates?',
-            onChange: (value) => setingProvider.updateSettings(
+            onChange: (value) => setingProvider.updateSettings(userId,
                 key: SettingsKey.emailUpdateNotification,
                 value: value,
                 settingsId: widget.settings.id),
@@ -85,7 +88,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           ),
           CustomToggle(
             title: 'Notify me when someone shares a prayer with me',
-            onChange: (value) => setingProvider.updateSettings(
+            onChange: (value) => setingProvider.updateSettings(userId,
                 key: SettingsKey.notifyMeSomeoneSharePrayerWithMe,
                 value: value,
                 settingsId: widget.settings.id),
@@ -93,7 +96,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           ),
           CustomToggle(
             title: 'Notify me when someone posts to a Group I\'m in',
-            onChange: (value) => setingProvider.updateSettings(
+            onChange: (value) => setingProvider.updateSettings(userId,
                 key: SettingsKey.notifyMeSomeonePostOnGroup,
                 value: value,
                 settingsId: widget.settings.id),

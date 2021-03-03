@@ -1,5 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -17,6 +18,17 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   bool isSnoozed;
   bool isAnswered;
   bool isArchived;
+
+  void setPageTitle() async {
+    String heading = '';
+    if (isArchived) heading = 'ARCHIVE LIST';
+    if (isAnswered) heading = 'ANSWERED LIST';
+    if (isSnoozed) heading = 'SNOOZED LIST';
+    if (status == Status.active) heading = 'MY LIST';
+
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setPageTitle(heading);
+  }
 
   Widget build(BuildContext context) {
     var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
@@ -65,6 +77,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                             status = status == Status.active
                                 ? Status.inactive
                                 : Status.active;
+                            setPageTitle();
                             Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                               isAnswered: isAnswered,
@@ -81,6 +94,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                         onPressed: () => setState(
                           () {
                             isSnoozed = !isSnoozed;
+                            setPageTitle();
                             Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                               isAnswered: isAnswered,
@@ -97,6 +111,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                         onPressed: () => setState(
                           () {
                             isArchived = !isArchived;
+                            setPageTitle();
                             Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                               isAnswered: isAnswered,
@@ -113,6 +128,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                         onPressed: () => setState(
                           () {
                             isAnswered = !isAnswered;
+                            setPageTitle();
                             Provider.of<PrayerProvider>(context, listen: false)
                                 .filterPrayers(
                                     isAnswered: isAnswered,

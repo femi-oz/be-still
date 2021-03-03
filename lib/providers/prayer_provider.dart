@@ -25,8 +25,6 @@ class PrayerProvider with ChangeNotifier {
     isSnoozed: false,
     status: Status.active,
   );
-  int _autoDeleteDuration;
-  bool _autoDeleteAnswered;
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
@@ -38,7 +36,7 @@ class PrayerProvider with ChangeNotifier {
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
           _prayers = data.toList();
-          autoDeleteArchivePrayers(userId);
+          _autoDeleteArchivePrayers(userId);
           _unSnoozePrayerPast();
           filterPrayers(
               userId: userId,
@@ -218,15 +216,15 @@ class PrayerProvider with ChangeNotifier {
           String prayerID, DateTime snoozeEndDate, String userPrayerID) async =>
       await _prayerService.unSnoozePrayer(snoozeEndDate, userPrayerID);
 
-  Future<void> autoDeleteArchivePrayers(String userId) async {
-    var archivedPrayers = prayers
+  Future<void> _autoDeleteArchivePrayers(String userId) async {
+    final archivedPrayers = prayers
         .where((CombinePrayerStream data) => data.userPrayer.isArchived == true)
         .toList();
-    var settings = await locator<SettingsService>().fetchSettings(userId);
-    _autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
-    _autoDeleteDuration = settings.defaultSnoozeDurationMins;
+    final settings = await locator<SettingsService>().getSettings(userId);
+    final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
+    final autoDeleteDuration = settings.defaultSnoozeDurationMins;
     List<CombinePrayerStream> toDelete = archivedPrayers;
-    if (!_autoDeleteAnswered) {
+    if (!autoDeleteAnswered) {
       toDelete = archivedPrayers
           .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
           .toList();
@@ -235,9 +233,9 @@ class PrayerProvider with ChangeNotifier {
       if (toDelete[i]
               .userPrayer
               .archivedDate
-              .add(Duration(minutes: _autoDeleteDuration))
+              .add(Duration(minutes: autoDeleteDuration))
               .isBefore(DateTime.now()) &&
-          _autoDeleteDuration != 0) {
+          autoDeleteDuration != 0) {
         deletePrayer(toDelete[i].userPrayer.id);
       }
     }

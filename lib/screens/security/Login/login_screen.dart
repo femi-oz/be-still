@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.code, e.message, _usernameController.text, 'LOGIN/screen/_login');
+          e.message, _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);

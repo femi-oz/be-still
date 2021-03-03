@@ -20,17 +20,19 @@ class MyListSettings extends StatefulWidget {
 }
 
 class _MyListSettingsState extends State<MyListSettings> {
-  _setDefaultSnooze(LookUp e) {
+  _setDefaultSnooze(e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
         key: SettingsKey.defaultSnoozeDurationMins,
-        value: e.value,
+        value: e,
         settingsId: widget.settings.id);
   }
 
-  _setAutoDelete(LookUp e) {
+  _setAutoDelete(e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
         key: SettingsKey.archiveAutoDeleteMins,
-        value: e.value,
+        value: e,
         settingsId: widget.settings.id);
   }
 
@@ -43,13 +45,15 @@ class _MyListSettingsState extends State<MyListSettings> {
     LookUp(text: IntervalRange.ninetyDays, value: 129600),
     LookUp(text: IntervalRange.oneYear, value: 525600),
   ];
+
   List<LookUp> autoDeleteInterval = [
-    LookUp(text: IntervalRange.thirtyDays, value: 30),
-    LookUp(text: IntervalRange.ninetyDays, value: 90),
-    LookUp(text: IntervalRange.oneYear, value: 365),
-    LookUp(text: IntervalRange.twoYears, value: 30),
+    LookUp(text: IntervalRange.thirtyDays, value: 43200),
+    LookUp(text: IntervalRange.ninetyDays, value: 129600),
+    LookUp(text: IntervalRange.oneYear, value: 525600),
+    LookUp(text: IntervalRange.twoYears, value: 1051200),
     LookUp(text: IntervalRange.never, value: 0),
   ];
+
   List<String> defaultSortBy = [SortType.date, SortType.tag];
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
   @override
@@ -75,7 +79,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                         isSelected:
                             widget.settings.defaultSortBy == defaultSortBy[i],
                         onSelected: (value) => settingsProvider.updateSettings(
-                            userId: userId,
+                            userId,
                             key: SettingsKey.defaultSortBy,
                             value: value,
                             settingsId: widget.settings.id),
@@ -111,7 +115,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                         isSelected:
                             widget.settings.archiveSortBy == archiveSortBy[i],
                         onSelected: (value) => settingsProvider.updateSettings(
-                            userId: userId,
+                            userId,
                             key: SettingsKey.archiveSortBy,
                             value: value,
                             settingsId: widget.settings.id),
@@ -133,7 +137,7 @@ class _MyListSettingsState extends State<MyListSettings> {
               ),
               CustomToggle(
                 title: 'Include Answered Prayers in Auto Delete?',
-                onChange: (value) => settingsProvider.updateSettings(
+                onChange: (value) => settingsProvider.updateSettings(userId,
                     key: SettingsKey.includeAnsweredPrayerAutoDelete,
                     value: value,
                     settingsId: widget.settings.id),
