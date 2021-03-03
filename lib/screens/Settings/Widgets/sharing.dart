@@ -182,12 +182,11 @@ class _SharingSettingsState extends State<SharingSettings> {
   }
 
   void _update(_ModalType type, ctx) {
-    // var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final alert = AlertDialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 10),
       backgroundColor: AppColors.backgroundColor[1],
       content: Container(
-        // color: AppColors.backgroundColor[1],
+        width: MediaQuery.of(context).size.width - 100,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
