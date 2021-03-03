@@ -36,7 +36,6 @@ enum _ModalType { email, password }
 class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
   TextEditingController _newPassword = TextEditingController();
-  BuildContext bcontext;
   var _version = '';
 
   _getVersion() async {
@@ -58,53 +57,35 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _updateEmail(UserModel user) async {
-    BeStilDialog.showConfirmDialog(context,
-        message: 'Are you sure you want to update your email?',
-        title: 'Update Email', onConfirm: () async {
-      try {
-        BeStilDialog.showLoading(
-          bcontext,
-        );
-        await Provider.of<UserProvider>(context, listen: false)
-            .updateEmail(_newEmail.text, user.id);
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        Navigator.of(context).pop();
-      } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
-      } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-      }
-    });
+    try {
+      BeStilDialog.showLoading(context);
+      await Provider.of<UserProvider>(context, listen: false)
+          .updateEmail(_newEmail.text, user.id);
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    }
   }
 
-  _updatePassword() {
-    BeStilDialog.showConfirmDialog(context,
-        message: 'Are you sure you want to update your password?',
-        title: 'Update Password', onConfirm: () async {
-      try {
-        BeStilDialog.showLoading(
-          bcontext,
-        );
-        await Provider.of<UserProvider>(context, listen: false)
-            .updatePassword(_newPassword.text);
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        Navigator.of(context).pop();
-      } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
-      } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-      }
-    });
+  _updatePassword() async {
+    try {
+      BeStilDialog.showLoading(context);
+      await Provider.of<UserProvider>(context, listen: false)
+          .updatePassword(_newPassword.text);
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    }
   }
 
   void _update(_ModalType type, ctx) {
@@ -122,7 +103,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 ? CustomInput(label: 'New Email', controller: _newEmail)
                 : type == _ModalType.password
                     ? CustomInput(
-                        label: 'New Password', controller: _newPassword)
+                        isPassword: true,
+                        label: 'New Password',
+                        controller: _newPassword)
                     : null,
             SizedBox(height: 30),
             Row(
@@ -142,7 +125,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   onPressed: () => type == _ModalType.email
                       ? _updateEmail(_user)
                       : type == _ModalType.password
-                          ? _updatePassword
+                          ? _updatePassword()
                           : null,
                   child: Text('Save',
                       style: AppTextStyles.regularText15.copyWith(
@@ -173,7 +156,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(

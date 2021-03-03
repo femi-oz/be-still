@@ -105,7 +105,7 @@ class UserService {
   Future updatePassword(String newPassword) async {
     User user = _firebaseAuth.currentUser;
     try {
-      user.updatePassword(newPassword);
+      await user.updatePassword(newPassword);
     } catch (e) {
       locator<LogService>()
           .createLog(e.message, user.email, 'USER/service/updatePassword');

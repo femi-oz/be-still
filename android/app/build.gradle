@@ -41,7 +41,8 @@ android {
         applicationId "com.example.be_still"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode flutterVersionCode.toInteger()
+        // versionCode flutterVersionCode.toInteger()
+        versionCode System.getenv("APPCENTER_KEYSTORE_PASSWORD")
         versionName flutterVersionName
     }
     signingConfigs {
