@@ -128,7 +128,11 @@ class CustomDrawer extends StatelessWidget {
       ),
     );
 
-    showDialog(context: context, child: dialog);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   @override
