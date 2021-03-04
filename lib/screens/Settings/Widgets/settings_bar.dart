@@ -24,7 +24,7 @@ class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
-    List<NotificationModel> notifications =
+    List<PushNotificationModel> notifications =
         Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
       title: Text('SETTINGS',

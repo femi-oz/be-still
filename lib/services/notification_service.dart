@@ -58,8 +58,10 @@ class NotificationService {
             ).toJson(),
           );
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'NOTIFICATION/service/init');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'NOTIFICATION/service/init');
       throw HttpException(e.message);
     }
   }
@@ -87,14 +89,17 @@ class NotificationService {
     return devices;
   }
 
-  addPushNotification(
-      {String message,
-      String sender,
-      List<String> tokens,
-      String senderId,
-      String recieverId}) async {
+  addPushNotification({
+    String message,
+    String messageType,
+    String sender,
+    List<String> tokens,
+    String senderId,
+    String recieverId,
+  }) async {
     final _notificationId = Uuid().v1();
     var data = PushNotificationModel(
+      messageType: messageType,
       message: message,
       sender: sender,
       title: "You have been tagged in a prayer",
@@ -153,8 +158,10 @@ class NotificationService {
     try {
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, senderId, 'NOTIFICATION/service/addSMS');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          senderId,
+          'NOTIFICATION/service/addSMS');
       throw HttpException(e.message);
     }
   }
@@ -196,8 +203,10 @@ class NotificationService {
     try {
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, senderId, 'NOTIFICATION/service/addEmail');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          senderId,
+          'NOTIFICATION/service/addEmail');
       throw HttpException(e.message);
     }
   }
@@ -233,7 +242,9 @@ class NotificationService {
     try {
       _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
-      locator<LogService>().createLog(e.message, notificationId,
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          notificationId,
           'NOTIFICATION/service/removeLocalNotification');
       throw HttpException(e.message);
     }
@@ -254,13 +265,14 @@ class NotificationService {
     }
   }
 
-  Stream<List<NotificationModel>> getUserNotifications(String userId) {
+  Stream<List<PushNotificationModel>> getUserNotifications(String userId) {
     try {
       return _pushNotificationCollectionReference
           .where('RecieverId', isEqualTo: userId)
           .snapshots()
-          .map((e) =>
-              e.docs.map((doc) => NotificationModel.fromData(doc)).toList());
+          .map((e) => e.docs
+              .map((doc) => PushNotificationModel.fromData(doc))
+              .toList());
     } catch (e) {
       locator<LogService>().createLog(
           e.message, userId, 'NOTIFICATION/service/getUserNotifications');

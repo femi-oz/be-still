@@ -1,68 +1,12 @@
-import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-class NotificationModel {
-  final String id;
-  final String message;
-  final String messageType;
-  final String sender;
-  final String status;
-  final String userId;
-  final String createdBy;
-  final DateTime createdOn;
-  final String extra1;
-  final String extra2;
-  final String extra3;
-
-  const NotificationModel({
-    this.id,
-    @required this.message,
-    @required this.messageType,
-    @required this.sender,
-    @required this.status,
-    @required this.userId,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.extra1,
-    @required this.extra2,
-    @required this.extra3,
-  });
-  NotificationModel.fromData(DocumentSnapshot snapshot)
-      : id = snapshot.id,
-        message = snapshot.data()['Message'],
-        messageType = snapshot.data()['MessageType'],
-        sender = snapshot.data()['Sender'],
-        userId = snapshot.data()['UserId'],
-        status = snapshot.data()['Status'] ?? Status.active,
-        createdBy = snapshot.data()['CreatedBy'],
-        // createdOn = DateTime.fromMillisecondsSinceEpoch(
-        //     snapshot.data()['CreatedOn'] * 1000),
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        extra1 = snapshot.data()['Extra1'],
-        extra2 = snapshot.data()['Extra2'],
-        extra3 = snapshot.data()['Extra3'];
-
-  Map<String, dynamic> toJson() {
-    return {
-      'Message': message,
-      'MessageType': messageType,
-      'Sender': sender,
-      'Status': status,
-      'UserId': userId,
-      'CreatedBy': createdBy,
-      'CreatedOn': createdOn,
-      'Extra1': extra1,
-      'Extra2': extra2,
-      'Extra3': extra3,
-    };
-  }
-}
 
 class PushNotificationModel {
   final String id;
   final String title;
   final List<String> tokens;
+  final String messageType;
   final String message;
   final String sender;
   final String recieverId;
@@ -76,6 +20,7 @@ class PushNotificationModel {
   const PushNotificationModel({
     this.id,
     @required this.title,
+    @required this.messageType,
     @required this.tokens,
     @required this.message,
     @required this.status,
@@ -92,6 +37,7 @@ class PushNotificationModel {
         title = snapshot.data()['Title'],
         tokens = snapshot.data()['Tokens'],
         message = snapshot.data()['Message'],
+        messageType = snapshot.data()['MessageType'] ?? NotificationType.prayer,
         isSent = snapshot.data()['IsSent'],
         status = snapshot.data()['Status'],
         recieverId = snapshot.data()['RecieverId'],
@@ -105,6 +51,7 @@ class PushNotificationModel {
     return {
       'Title': title,
       'Message': message,
+      'MessageType': messageType,
       'Tokens': tokens,
       'Sender': sender,
       'IsSent': isSent,

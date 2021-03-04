@@ -59,8 +59,10 @@ class UserService {
       await locator<SettingsService>().addSettings('', userId, email);
       await locator<SettingsService>().addGroupPreferenceSettings(userId);
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'USER/service/addUserData');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'USER/service/addUserData');
       throw HttpException(e.message);
     }
   }
@@ -73,8 +75,10 @@ class UserService {
           .get();
       return UserModel.fromData(userRes.docs[0]);
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, keyReference, 'USER/service/getCurrentUser');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          keyReference,
+          'USER/service/getCurrentUser');
       throw HttpException(e.message);
     }
   }
@@ -84,8 +88,10 @@ class UserService {
       var users = await _userCollectionReference.get();
       return users.docs.map((e) => UserModel.fromData(e)).toList();
     } catch (e) {
-      locator<LogService>().createLog(e.message,
-          _firebaseAuth.currentUser.email, 'USER/service/getAllUsers');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          _firebaseAuth.currentUser.email,
+          'USER/service/getAllUsers');
       throw HttpException(e.message);
     }
   }
@@ -96,8 +102,10 @@ class UserService {
       await user.updateEmail(newEmail);
       await _userCollectionReference.doc(userId).update({'Email': newEmail});
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'USER/service/updateEmail');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'USER/service/updateEmail');
       throw HttpException(e.message);
     }
   }
@@ -107,8 +115,10 @@ class UserService {
     try {
       await user.updatePassword(newPassword);
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, user.email, 'USER/service/updatePassword');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          user.email,
+          'USER/service/updatePassword');
       throw HttpException(e.message);
     }
   }

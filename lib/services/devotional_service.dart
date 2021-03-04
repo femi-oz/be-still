@@ -16,8 +16,10 @@ class DevotionalService {
       return bibles
           .map((e) => e.docs.map((e) => BibleModel.fromData(e)).toList());
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, 'bibles', 'DEVOTIONALS/service/getBibles');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          'bibles',
+          'DEVOTIONALS/service/getBibles');
       throw HttpException(e.message);
     }
   }

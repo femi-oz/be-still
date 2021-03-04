@@ -204,6 +204,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                 : type == _ModalType.email
                     ? CustomInput(
                         isRequired: true,
+            keyboardType: TextInputType.emailAddress,
                         isEmail: true,
                         label: 'Enter Church Email',
                         controller: _churchEmail)

@@ -19,8 +19,8 @@ class NotificationProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   bool _initialized = false;
 
-  List<NotificationModel> _notifications = [];
-  List<NotificationModel> get notifications => _notifications;
+  List<PushNotificationModel> _notifications = [];
+  List<PushNotificationModel> get notifications => _notifications;
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;
@@ -88,7 +88,6 @@ class NotificationProvider with ChangeNotifier {
     await _notificationService.removeLocalNotification(notificationId);
   }
 
-  
   // Future acceptGroupInvite(
   //     String groupId, String userId, String name, String email) async {
   //   return await _notificationService.acceptGroupInvite(

@@ -43,8 +43,10 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
     } catch (e) {
-      await locator<LogService>()
-          .createLog(e.message, email, 'AUTHENTICATION/service/forgotPassword');
+      await locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          email,
+          'AUTHENTICATION/service/forgotPassword');
       throw HttpException(e.message);
     }
   }
@@ -65,7 +67,7 @@ class AuthenticationService {
                   ? 'Username / Password is incorrect'
                   : 'An error occured. Please try again';
       await locator<LogService>()
-          .createLog(message, email, 'AUTHENTICATION/service/signUp');
+          .createLog(message, email, 'AUTHENTICATION/service/signIn');
       throw HttpException(message);
     }
   }
@@ -92,8 +94,10 @@ class AuthenticationService {
         dob,
       );
     } catch (e) {
-      await locator<LogService>()
-          .createLog(e.message, email, 'AUTHENTICATION/service/registerUser');
+      await locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          email,
+          'AUTHENTICATION/service/registerUser');
       throw HttpException(e.message);
     }
   }
@@ -112,8 +116,10 @@ class AuthenticationService {
     try {
       await _firebaseAuth.signOut();
     } catch (e) {
-      await locator<LogService>().createLog(e.message,
-          _firebaseAuth.currentUser.email, 'AUTHENTICATION/service/signOut');
+      await locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          _firebaseAuth.currentUser.email,
+          'AUTHENTICATION/service/signOut');
       throw HttpException(e.message);
     }
   }
