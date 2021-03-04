@@ -265,12 +265,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             children: [
               type == _ModalType.email
                   ? CustomInput(
+                      showSuffix: false,
                       isRequired: true,
                       isEmail: true,
                       label: 'New Email',
                       controller: _newEmail)
                   : type == _ModalType.password
                       ? CustomInput(
+                          showSuffix: false,
                           isRequired: true,
                           isPassword: true,
                           label: 'New Password',

@@ -205,11 +205,13 @@ class _SharingSettingsState extends State<SharingSettings> {
               type == _ModalType.church
                   ? CustomInput(
                       isRequired: true,
+                      showSuffix: false,
                       label: 'Enter Church Name',
                       controller: _churchName)
                   : type == _ModalType.email
                       ? CustomInput(
                           isRequired: true,
+                          showSuffix: false,
                           keyboardType: TextInputType.emailAddress,
                           isEmail: true,
                           label: 'Enter Church Email',
@@ -217,12 +219,15 @@ class _SharingSettingsState extends State<SharingSettings> {
                       : type == _ModalType.phone
                           ? CustomInput(
                               isRequired: true,
+                              showSuffix: false,
                               isPhone: true,
                               label: 'Enter Church Phone',
                               controller: _churchPhone)
                           : type == _ModalType.link
                               ? CustomInput(
+                                  isLink: true,
                                   isRequired: true,
+                                  showSuffix: false,
                                   label: 'Enter Church Web Prayer Form Link',
                                   controller: _churchLink)
                               : null,
