@@ -18,6 +18,7 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -41,12 +42,21 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
+  String currentTimeZone;
+
+  Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+
+    currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+  }
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
-    // _configureLocalTimeZone();
+    _configureLocalTimeZone();
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOs = IOSInitializationSettings();
