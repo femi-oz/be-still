@@ -45,8 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e);
     }
 
-    // if (!mounted) return isBioMetricAvailable;
-
     isBioMetricAvailable
         ? _getListOfBiometricTypes()
         : print('No biometrics available');
@@ -222,6 +220,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _setDefaults() {
+    Settings.rememberMe = false;
+    Settings.enableLocalAuth = false;
+  }
+
   bool _isFocused = false;
   Widget _buildForm() {
     return Form(
@@ -229,46 +232,27 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          FocusScope(
-            onFocusChange: (focus) => !_isFocused
-                ? setState(() {
-                    _isFocused = true;
-                    Settings.rememberMe = false;
-                    Settings.enableLocalAuth = false;
-                  })
+          CustomInput(
+            label: 'Username',
+            controller: _usernameController,
+            keyboardType: TextInputType.emailAddress,
+            isRequired: true,
+            isEmail: true,
+            onTextchanged: () => _usernameController.text != Settings.lastUser
+                ? _setDefaults
                 : null,
-            child: Focus(
-              child: CustomInput(
-                label: 'Username',
-                controller: _usernameController,
-                keyboardType: TextInputType.emailAddress,
-                isRequired: true,
-                isEmail: true,
-              ),
-            ),
           ),
           SizedBox(height: 15.0),
-          FocusScope(
-            onFocusChange: (focus) => !_isFocused
-                ? setState(() {
-                    _isFocused = true;
-                    Settings.rememberMe = false;
-                    Settings.enableLocalAuth = false;
-                  })
-                : null,
-            child: Focus(
-              child: CustomInput(
-                isPassword: true,
-                label: 'Password',
-                controller: _passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                isRequired: true,
-                textInputAction: TextInputAction.done,
-                unfocus: true,
-                submitForm: () => _login(),
-                validator: 'null',
-              ),
-            ),
+          CustomInput(
+            isPassword: true,
+            label: 'Password',
+            controller: _passwordController,
+            keyboardType: TextInputType.visiblePassword,
+            isRequired: true,
+            textInputAction: TextInputAction.done,
+            unfocus: true,
+            submitForm: () => _login(),
+            validator: 'null',
           ),
         ],
       ),

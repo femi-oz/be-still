@@ -8,7 +8,7 @@ class StringUtils {
 
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
-      'An error occured. Please login again';
+      'You have to be recently logged in the perform this action. Please re-login';
   static String backgroundImage([bool isDarkMode]) {
     String retVal;
     switch (Settings.isDarkMode) {

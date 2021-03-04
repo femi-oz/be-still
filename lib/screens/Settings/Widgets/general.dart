@@ -3,7 +3,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
-
+import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -16,7 +16,6 @@ import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_version/get_version.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -36,12 +35,20 @@ enum _ModalType { email, password }
 class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
   TextEditingController _newPassword = TextEditingController();
-  BuildContext bcontext;
   var _version = '';
 
+  @override
+  void initState() {
+    _getVersion();
+    super.initState();
+  }
+
   _getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
     try {
-      _version = await GetVersion.projectVersion;
+      _version = packageInfo.version;
+      setState(
+          () => _version = '${packageInfo.version}-${packageInfo.buildNumber}');
     } on PlatformException {
       _version = '0.0';
     }
@@ -58,108 +65,41 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _updateEmail(UserModel user) async {
-    BeStilDialog.showConfirmDialog(context,
-        message: 'Are you sure you want to update your email?',
-        title: 'Update Email', onConfirm: () async {
-      try {
-        BeStilDialog.showLoading(
-          bcontext,
-        );
-        await Provider.of<UserProvider>(context, listen: false)
-            .updateEmail(_newEmail.text, user.id);
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        Navigator.of(context).pop();
-      } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
-      } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-      }
-    });
+    try {
+      BeStilDialog.showLoading(context);
+      await Provider.of<UserProvider>(context, listen: false)
+          .updateEmail(_newEmail.text, user.id);
+      _newEmail.clear();
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      _newEmail.clear();
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    } catch (e) {
+      _newEmail.clear();
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    }
   }
 
-  _updatePassword() {
-    BeStilDialog.showConfirmDialog(context,
-        message: 'Are you sure you want to update your password?',
-        title: 'Update Password', onConfirm: () async {
-      try {
-        BeStilDialog.showLoading(
-          bcontext,
-        );
-        await Provider.of<UserProvider>(context, listen: false)
-            .updatePassword(_newPassword.text);
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        Navigator.of(context).pop();
-      } on HttpException catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
-      } catch (e) {
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-      }
-    });
-  }
-
-  void _update(_ModalType type, ctx) {
-    var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    _newEmail.text = _user.email;
-    final alert = AlertDialog(
-      insetPadding: EdgeInsets.all(10),
-      backgroundColor: AppColors.backgroundColor[1],
-      content: Container(
-        width: MediaQuery.of(context).size.width - 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            type == _ModalType.email
-                ? CustomInput(label: 'New Email', controller: _newEmail)
-                : type == _ModalType.password
-                    ? CustomInput(
-                        label: 'New Password', controller: _newPassword)
-                    : null,
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton(
-                    color: AppColors.grey.withOpacity(0.5),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Cancel',
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: Colors.white,
-                      ),
-                    )),
-                FlatButton(
-                  color: AppColors.lightBlue3,
-                  onPressed: () => type == _ModalType.email
-                      ? _updateEmail(_user)
-                      : type == _ModalType.password
-                          ? _updatePassword
-                          : null,
-                  child: Text('Save',
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: Colors.white,
-                      )),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-    showDialog(
-        context: ctx,
-        builder: (BuildContext context) {
-          return alert;
-        });
+  _updatePassword() async {
+    try {
+      BeStilDialog.showLoading(context);
+      await Provider.of<UserProvider>(context, listen: false)
+          .updatePassword(_newPassword.text);
+      _newPassword.clear();
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      _newPassword.clear();
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    } catch (e) {
+      _newPassword.clear();
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+    }
   }
 
   List<String> _themeModes = [
@@ -169,11 +109,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   ];
 
   Widget build(BuildContext context) {
-    _getVersion();
-
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    setState(() => this.bcontext = context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(
@@ -308,5 +245,71 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         ),
       ),
     );
+  }
+
+  void _update(_ModalType type, ctx) {
+    var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    _newEmail.text = _user.email;
+    final alert = AlertDialog(
+      insetPadding: EdgeInsets.all(10),
+      backgroundColor: AppColors.backgroundColor[1],
+      content: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            type == _ModalType.email
+                ? CustomInput(
+                    isRequired: true,
+                    isEmail: true,
+                    label: 'New Email',
+                    controller: _newEmail)
+                : type == _ModalType.password
+                    ? CustomInput(
+                        isRequired: true,
+                        isPassword: true,
+                        label: 'New Password',
+                        controller: _newPassword)
+                    : null,
+            SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FlatButton(
+                    color: AppColors.grey.withOpacity(0.5),
+                    onPressed: () {
+                      _newPassword.clear();
+                      _newEmail.clear();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: Colors.white,
+                      ),
+                    )),
+                FlatButton(
+                  color: AppColors.lightBlue3,
+                  onPressed: () => type == _ModalType.email
+                      ? _updateEmail(_user)
+                      : type == _ModalType.password
+                          ? _updatePassword()
+                          : null,
+                  child: Text('Save',
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: Colors.white,
+                      )),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+    showDialog(
+        context: ctx,
+        builder: (BuildContext context) {
+          return alert;
+        });
   }
 }

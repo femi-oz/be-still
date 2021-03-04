@@ -59,6 +59,8 @@ class CustomAlertDialog extends StatelessWidget {
           Divider(),
           Text(
             message ?? 'An error occured!',
+            style: AppTextStyles.regularText14
+                .copyWith(color: AppColors.lightBlue3),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 20.0),

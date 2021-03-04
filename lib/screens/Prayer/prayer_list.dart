@@ -41,7 +41,6 @@ class _PrayerListState extends State<PrayerList> {
           Provider.of<PrayerProvider>(context, listen: false).filterOptions;
       final settings =
           Provider.of<SettingsProvider>(context, listen: false).settings;
-
       await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
           _user?.id,
           options.isArchived ? settings.archiveSortBy : settings.defaultSortBy);
