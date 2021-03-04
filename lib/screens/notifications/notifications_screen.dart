@@ -204,7 +204,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
     );
 
-    showDialog(context: context, child: dialog);
+    // showDialog(context: context, child: dialog);
   }
 
   @override
