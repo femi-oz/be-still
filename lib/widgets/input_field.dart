@@ -108,9 +108,6 @@ class _CustomInputState extends State<CustomInput> {
   }
 
   String _validatorFn(String value) {
-    if (widget.validator == 'null') {
-      return '';
-    }
     if (widget.isRequired) {
       if (value.isEmpty) {
         return '${widget.label} is required';
@@ -136,7 +133,7 @@ class _CustomInputState extends State<CustomInput> {
         return 'Enter a valid phone number';
       }
     }
-    if (widget.isPassword && value.isNotEmpty) {
+    if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value))
