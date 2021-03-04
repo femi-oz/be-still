@@ -315,7 +315,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       ),
     );
 
-    showDialog(context: context, child: dialog);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   bool _isInit = true;
