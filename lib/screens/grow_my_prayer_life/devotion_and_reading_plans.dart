@@ -135,13 +135,13 @@ class DevotionPlans extends StatelessWidget {
         ),
       );
 
-      showDialog(
-        context: context,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: dialog,
-        ),
-      );
+      // showDialog(
+      //   context: context,
+      //   child: BackdropFilter(
+      //     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      //     child: dialog,
+      //   ),
+      // );
     }
 
     var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
