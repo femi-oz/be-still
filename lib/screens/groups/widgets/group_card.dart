@@ -251,7 +251,11 @@ class _GroupCardState extends State<GroupCard> {
         ),
       );
 
-      showDialog(context: context, child: dialog);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return dialog;
+          });
     }
 
     return GestureDetector(

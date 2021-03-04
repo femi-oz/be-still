@@ -158,6 +158,7 @@ class _PrayerListState extends State<PrayerList> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    // prayers.forEach((e) => {print(e.tags.length)});
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(

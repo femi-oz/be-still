@@ -204,7 +204,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
     );
 
-    showDialog(context: context, child: dialog);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   @override
@@ -237,6 +241,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildPanel() {
     final data = Provider.of<NotificationProvider>(context).notifications;
+    // print(data[0])
     final requests =
         data.where((e) => e.messageType == NotificationType.request).toList();
     final newPrayers =
