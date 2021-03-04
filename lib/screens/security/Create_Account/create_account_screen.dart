@@ -245,6 +245,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             SizedBox(height: 15.0),
             CustomInput(
               isPassword: true,
+              obScurePassword: true,
               label: 'Password',
               controller: _passwordController,
               keyboardType: TextInputType.visiblePassword,
@@ -253,6 +254,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             SizedBox(height: 15.0),
             CustomInput(
               isPassword: true,
+              obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,
               keyboardType: TextInputType.visiblePassword,

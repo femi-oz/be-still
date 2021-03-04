@@ -9,7 +9,7 @@ class LogService {
   Future createLog(String message, String userId, String location) async {
     final _logId = Uuid().v1();
     try {
-      await _errorLogCollectionReference.doc(_logId).set(ErrorLog(
+      _errorLogCollectionReference.doc(_logId).set(ErrorLog(
               location: location,
               message: message,
               createdBy: userId,
