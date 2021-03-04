@@ -41,7 +41,8 @@ class SettingsService {
         allowPushNotification: false,
         allowTextNotification: false,
         pauseInterval: '10s',
-        emailUpdateFrequency: Frequency.daily,
+        // emailUpdateFrequency: Frequency.daily,
+        emailUpdateFrequencyMins: 1440,
         emailUpdateNotification: false,
         notifyMeSomeonePostOnGroup: false,
         notifyMeSomeoneSharePrayerWithMe: false,
@@ -135,8 +136,10 @@ class SettingsService {
           .doc(prayerSettingsId)
           .set(populatePrayerSettings(userId, email).toJson());
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'SETTINGS/service/addSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/addSettings');
       throw HttpException(e.message);
     }
   }
@@ -149,8 +152,10 @@ class SettingsService {
           .doc(groupSettingsId)
           .set(populateGroupSettings(userId, email, groupId).toJson());
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'SETTINGS/service/addGroupSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/addGroupSettings');
       throw HttpException(e.message);
     }
   }
@@ -175,8 +180,10 @@ class SettingsService {
           .get();
       return SettingsModel.fromData(settings.docs.toList()[0]);
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'SETTINGS/service/fetchSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/fetchSettings');
       throw HttpException(e.message);
     }
   }
@@ -190,8 +197,10 @@ class SettingsService {
           .map((e) => PrayerSettingsModel.fromData(e))
           .toList()[0];
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'SETTINGS/service/getPrayerSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/getPrayerSettings');
       throw HttpException(e.message);
     }
   }
@@ -205,8 +214,10 @@ class SettingsService {
           .map((e) => SharingSettingsModel.fromData(e))
           .toList()[0];
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'SETTINGS/service/getSharingSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/getSharingSettings');
       throw HttpException(e.message);
     }
   }
@@ -218,8 +229,10 @@ class SettingsService {
           .get();
       return settings.docs.map((e) => GroupSettings.fromData(e)).toList();
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'SETTINGS/service/getGroupSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/getGroupSettings');
       throw HttpException(e.message);
     }
   }
@@ -246,8 +259,10 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, settingsId, 'SETTINGS/service/updateSettings');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          settingsId,
+          'SETTINGS/service/updateSettings');
       throw HttpException(e.message);
     }
   }
@@ -300,7 +315,9 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
-      locator<LogService>().createLog(e.message, groupPreferenceSettingsId,
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          groupPreferenceSettingsId,
           'SETTINGS/service/updateGroupPreferenceSettings');
       throw HttpException(e.message);
     }

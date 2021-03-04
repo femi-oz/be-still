@@ -65,8 +65,10 @@ class GroupService {
       });
       return _combineAllGroupsStream;
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'GROUP/service/getAllGroups');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/getAllGroups');
       throw HttpException(e.message);
     }
   }
@@ -105,8 +107,10 @@ class GroupService {
       });
       return _combineUserGroupStream;
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'GROUP/service/getUserGroups');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/getUserGroups');
       throw HttpException(e.message);
     }
   }
@@ -138,8 +142,10 @@ class GroupService {
       // });
       await batch.commit();
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'GROUP/service/addGroup');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/addGroup');
       throw HttpException(e.message);
     }
   }
@@ -151,8 +157,10 @@ class GroupService {
           .snapshots();
       return users;
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, groupId, 'GROUP/service/getGroupUsers');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          groupId,
+          'GROUP/service/getGroupUsers');
       throw HttpException(e.message);
     }
   }
@@ -161,8 +169,10 @@ class GroupService {
     try {
       _groupUserCollectionReference.doc(userGroupId).delete();
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userGroupId, 'GROUP/service/leaveGroup');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userGroupId,
+          'GROUP/service/leaveGroup');
       throw HttpException(e.message);
     }
   }
@@ -172,8 +182,10 @@ class GroupService {
       _groupUserCollectionReference.doc(userGroupId).delete();
       _groupCollectionReference.doc(groupId).delete();
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userGroupId, 'GROUP/service/deleteGroup');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userGroupId,
+          'GROUP/service/deleteGroup');
       throw HttpException(e.message);
     }
   }
@@ -206,8 +218,10 @@ class GroupService {
         data: data,
       );
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, senderId, 'GROUP/service/inviteMember');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          senderId,
+          'GROUP/service/inviteMember');
       throw HttpException(e.message);
     }
   }
@@ -226,8 +240,10 @@ class GroupService {
         data: data,
       );
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'GROUP/service/joinRequest');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/joinRequest');
       throw HttpException(e.message);
     }
   }
@@ -260,8 +276,10 @@ class GroupService {
         },
       );
     } catch (e) {
-      locator<LogService>()
-          .createLog(e.message, userId, 'GROUP/service/acceptInvite');
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/acceptInvite');
       throw HttpException(e.message);
     }
   }

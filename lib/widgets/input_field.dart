@@ -18,6 +18,7 @@ class CustomInput extends StatefulWidget {
   final isEmail;
   final padding;
   final isPhone;
+  final isLink;
   final unfocus;
   final focusNode;
 
@@ -37,6 +38,7 @@ class CustomInput extends StatefulWidget {
       this.padding = 20.0,
       this.isPhone = false,
       this.isEmail = false,
+      this.isLink = false,
       this.unfocus = false,
       this.focusNode});
 
@@ -139,6 +141,12 @@ class _CustomInputState extends State<CustomInput> {
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value))
         return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
+    }
+    if (widget.isLink && value.isNotEmpty) {
+      Pattern pattern =
+          r'^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$';
+      RegExp regex = new RegExp(pattern);
+      if (!regex.hasMatch(value)) return 'Enter a valid url';
     }
     if (widget.validator != null) {
       return widget.validator(value);

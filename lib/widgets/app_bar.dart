@@ -80,7 +80,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    List<NotificationModel> notifications =
+    List<PushNotificationModel> notifications =
         Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(

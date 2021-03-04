@@ -19,8 +19,8 @@ class NotificationProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   bool _initialized = false;
 
-  List<NotificationModel> _notifications = [];
-  List<NotificationModel> get notifications => _notifications;
+  List<PushNotificationModel> _notifications = [];
+  List<PushNotificationModel> get notifications => _notifications;
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;

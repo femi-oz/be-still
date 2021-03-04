@@ -1,5 +1,3 @@
-import 'package:be_still/models/prayer_settings.model.dart';
-import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +18,8 @@ class SettingsModel {
   final bool allowTextNotification;
   final bool allowAlexaReadPrayer;
   final bool emailUpdateNotification;
-  final String emailUpdateFrequency;
+  // final String emailUpdateFrequency;
+  final int emailUpdateFrequencyMins;
   final bool notifyMeSomeoneSharePrayerWithMe;
   final bool notifyMeSomeonePostOnGroup;
   final bool allowPrayerTimeNotification;
@@ -47,7 +46,8 @@ class SettingsModel {
     @required this.allowPushNotification,
     @required this.allowTextNotification,
     @required this.allowAlexaReadPrayer,
-    @required this.emailUpdateFrequency,
+    // @required this.emailUpdateFrequency,
+    @required this.emailUpdateFrequencyMins,
     @required this.emailUpdateNotification,
     @required this.notifyMeSomeonePostOnGroup,
     @required this.notifyMeSomeoneSharePrayerWithMe,
@@ -78,7 +78,8 @@ class SettingsModel {
         allowPushNotification = snapshot.data()['AllowPushNotification'],
         allowTextNotification = snapshot.data()['AllowTextNotification'],
         allowAlexaReadPrayer = snapshot.data()['AllowAlexaReadPrayer'],
-        emailUpdateFrequency = snapshot.data()['EmailUpdateFrequency'],
+        // emailUpdateFrequency = snapshot.data()['EmailUpdateFrequency'],
+        emailUpdateFrequencyMins = snapshot.data()['EmailUpdateFrequencySecs'],
         emailUpdateNotification = snapshot.data()['EmailUpdateNotification'],
         notifyMeSomeonePostOnGroup =
             snapshot.data()['NotifyMeSomeonePostOnGroup'],
@@ -110,7 +111,8 @@ class SettingsModel {
       'AllowPushNotification': allowPushNotification,
       'AllowTextNotification': allowTextNotification,
       'EmailUpdateNotification': emailUpdateNotification,
-      'EmailUpdateFrequency': emailUpdateFrequency,
+      // 'EmailUpdateFrequency': emailUpdateFrequency,
+      'EmailUpdateFrequencySecs': emailUpdateFrequencyMins,
       'NotifyMeSomeonePostOnGroup': notifyMeSomeonePostOnGroup,
       'NotifyMeSomeoneSharePrayerWithMe': notifyMeSomeoneSharePrayerWithMe,
       'AllowPrayerTimeNotification': allowPrayerTimeNotification,

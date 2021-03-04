@@ -273,14 +273,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     initiallyExpanded: true,
                     children: <Widget>[
                       ...requests
-                          .map((notifiaction) => Column(
+                          .map((notification) => Column(
                                 children: [
                                   SizedBox(height: 10),
                                   GestureDetector(
                                     onLongPressEnd: null,
                                     onTap: () => _showAlert(
-                                      notifiaction.extra2,
-                                      notifiaction.message,
+                                      'groupId',
+                                      notification.message,
                                     ),
                                     child: Container(
                                       margin: EdgeInsets.only(left: 20.0),
@@ -316,11 +316,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: <Widget>[
-                                                          notifiaction.sender !=
+                                                          notification.sender !=
                                                                   ''
                                                               ? Text(
-                                                                  notifiaction
-                                                                      .extra3
+                                                                  notification
+                                                                      .sender
                                                                       .toUpperCase(),
                                                                   style: AppTextStyles
                                                                       .regularText15b
@@ -335,9 +335,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           Row(
                                                             children: <Widget>[
                                                               Text(
-                                                                notifiaction
-                                                                    .extra1
-                                                                    .toUpperCase(),
+                                                                '',
                                                                 style: AppTextStyles
                                                                     .regularText15b
                                                                     .copyWith(
@@ -363,7 +361,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               Text(
                                                                 DateFormat(
                                                                         'MM.dd.yyyy')
-                                                                    .format(notifiaction
+                                                                    .format(notification
                                                                         .createdOn),
                                                                 style: AppTextStyles
                                                                     .regularText15b
@@ -394,7 +392,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .width *
                                                       0.8,
                                                   child: Text(
-                                                    notifiaction.message
+                                                    notification.message
                                                         .substring(0, 100),
                                                     style: AppTextStyles
                                                         .regularText16b
@@ -489,7 +487,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                     ''
                                                                 ? Text(
                                                                     notification
-                                                                        .extra3,
+                                                                        .sender,
                                                                     style: AppTextStyles
                                                                         .regularText15b
                                                                         .copyWith(
@@ -504,8 +502,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               children: <
                                                                   Widget>[
                                                                 Text(
-                                                                  notification
-                                                                      .extra2,
+                                                                  '',
                                                                   style: AppTextStyles
                                                                       .regularText15b
                                                                       .copyWith(
