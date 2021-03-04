@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class LogProvider with ChangeNotifier {
   Future<void> setErrorLog(
-      String code, String message, String userId, String location) async {
-    await locator<LogService>().createLog(code, message, userId, location);
+      String message, String userId, String location) async {
+    await locator<LogService>().createLog(message, userId, location);
   }
 }

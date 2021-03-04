@@ -10,8 +10,10 @@ class SettingsModel {
   final String appearance;
   final String defaultSortBy;
   final String defaultSnoozeDuration;
+  final int defaultSnoozeDurationMins;
   final String archiveSortBy;
   final String archiveAutoDelete;
+  final int archiveAutoDeleteMins;
   final String pauseInterval;
   final bool includeAnsweredPrayerAutoDelete;
   final bool allowPushNotification;
@@ -36,9 +38,11 @@ class SettingsModel {
     @required this.appearance,
     @required this.defaultSortBy,
     @required this.defaultSnoozeDuration,
+    @required this.defaultSnoozeDurationMins,
     @required this.pauseInterval,
     @required this.archiveSortBy,
     @required this.archiveAutoDelete,
+    @required this.archiveAutoDeleteMins,
     @required this.includeAnsweredPrayerAutoDelete,
     @required this.allowPushNotification,
     @required this.allowTextNotification,
@@ -64,8 +68,12 @@ class SettingsModel {
         pauseInterval = snapshot.data()['PauseInterval'],
         defaultSortBy = snapshot.data()['DefaultSortBy'],
         defaultSnoozeDuration = snapshot.data()['DefaultSnoozeDuration'],
+        defaultSnoozeDurationMins =
+            snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
+        archiveAutoDeleteMins =
+            snapshot.data()['ArchiveAutoDeleteMins'] ?? 43200,
         includeAnsweredPrayerAutoDelete =
             snapshot.data()['IncludeAnsweredPrayerAutoDelete'],
         allowPushNotification = snapshot.data()['AllowPushNotification'],
@@ -94,8 +102,10 @@ class SettingsModel {
       'DefaultSortBy': defaultSortBy,
       'PauseInterval': pauseInterval,
       'DefaultSnoozeDuration': defaultSnoozeDuration,
+      'DefaultSnoozeDurationMins': defaultSnoozeDurationMins,
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
+      'ArchiveAutoDeleteMins': archiveAutoDeleteMins,
       'IncludeAnsweredPrayerAutoDelete': includeAnsweredPrayerAutoDelete,
       'AllowAlexaReadPrayer': allowAlexaReadPrayer,
       'AllowPushNotification': allowPushNotification,
@@ -113,13 +123,4 @@ class SettingsModel {
       'ModifiedOn': modifiedOn,
     };
   }
-}
-
-class CombineSettingsStream {
-  final SettingsModel settings;
-  final SharingSettingsModel sharingSettings;
-  final PrayerSettingsModel prayerSettings;
-
-  CombineSettingsStream(
-      this.settings, this.sharingSettings, this.prayerSettings);
 }

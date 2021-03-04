@@ -1,6 +1,7 @@
 import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -19,37 +20,40 @@ class MyListSettings extends StatefulWidget {
 }
 
 class _MyListSettingsState extends State<MyListSettings> {
-  _setDefaultSnooze(value) {
+  _setDefaultSnooze(e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        key: SettingsKey.defaultSnoozeDuration,
-        value: value,
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeDurationMins,
+        value: e,
         settingsId: widget.settings.id);
   }
 
-  _setAutoDelete(value) {
+  _setAutoDelete(e) {
     Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        key: SettingsKey.archiveAutoDelete,
-        value: value,
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.archiveAutoDeleteMins,
+        value: e,
         settingsId: widget.settings.id);
   }
 
-  List<String> snoozeInterval = [
-    // IntervalRange.twoMinutes,
-    IntervalRange.thirtyMinutes,
-    IntervalRange.oneHour,
-    IntervalRange.sevenDays,
-    IntervalRange.fourtheenDays,
-    IntervalRange.thirtyDays,
-    IntervalRange.ninetyDays,
-    IntervalRange.oneYear,
+  List<LookUp> snoozeInterval = [
+    LookUp(text: IntervalRange.thirtyMinutes, value: 30),
+    LookUp(text: IntervalRange.oneHour, value: 60),
+    LookUp(text: IntervalRange.sevenDays, value: 10080),
+    LookUp(text: IntervalRange.fourtheenDays, value: 20160),
+    LookUp(text: IntervalRange.thirtyDays, value: 43200),
+    LookUp(text: IntervalRange.ninetyDays, value: 129600),
+    LookUp(text: IntervalRange.oneYear, value: 525600),
   ];
-  List<String> autoDeleteInterval = [
-    IntervalRange.thirtyDays,
-    IntervalRange.ninetyDays,
-    IntervalRange.oneYear,
-    IntervalRange.twoYears,
-    IntervalRange.never,
+
+  List<LookUp> autoDeleteInterval = [
+    LookUp(text: IntervalRange.thirtyDays, value: 43200),
+    LookUp(text: IntervalRange.ninetyDays, value: 129600),
+    LookUp(text: IntervalRange.oneYear, value: 525600),
+    LookUp(text: IntervalRange.twoYears, value: 1051200),
+    LookUp(text: IntervalRange.never, value: 0),
   ];
+
   List<String> defaultSortBy = [SortType.date, SortType.tag];
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
   @override
@@ -75,7 +79,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                         isSelected:
                             widget.settings.defaultSortBy == defaultSortBy[i],
                         onSelected: (value) => settingsProvider.updateSettings(
-                            userId: userId,
+                            userId,
                             key: SettingsKey.defaultSortBy,
                             value: value,
                             settingsId: widget.settings.id),
@@ -92,12 +96,8 @@ class _MyListSettingsState extends State<MyListSettings> {
             children: [
               CustomSectionHeder('Default Snooze Duration'),
               Container(
-                child: CustomPicker(
-                    snoozeInterval,
-                    _setDefaultSnooze,
-                    true,
-                    snoozeInterval
-                        .indexOf(widget.settings.defaultSnoozeDuration)),
+                child: CustomPicker(snoozeInterval, _setDefaultSnooze, true,
+                    widget.settings.defaultSnoozeDurationMins),
               ),
             ],
           ),
@@ -115,7 +115,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                         isSelected:
                             widget.settings.archiveSortBy == archiveSortBy[i],
                         onSelected: (value) => settingsProvider.updateSettings(
-                            userId: userId,
+                            userId,
                             key: SettingsKey.archiveSortBy,
                             value: value,
                             settingsId: widget.settings.id),
@@ -132,16 +132,12 @@ class _MyListSettingsState extends State<MyListSettings> {
             children: [
               CustomSectionHeder('Archive Auto Delete'),
               Container(
-                child: CustomPicker(
-                    autoDeleteInterval,
-                    _setAutoDelete,
-                    true,
-                    autoDeleteInterval
-                        .indexOf(widget.settings.archiveAutoDelete)),
+                child: CustomPicker(autoDeleteInterval, _setAutoDelete, true,
+                    widget.settings.archiveAutoDeleteMins),
               ),
               CustomToggle(
                 title: 'Include Answered Prayers in Auto Delete?',
-                onChange: (value) => settingsProvider.updateSettings(
+                onChange: (value) => settingsProvider.updateSettings(userId,
                     key: SettingsKey.includeAnsweredPrayerAutoDelete,
                     value: value,
                     settingsId: widget.settings.id),

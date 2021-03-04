@@ -6,13 +6,11 @@ import 'package:uuid/uuid.dart';
 class LogService {
   final CollectionReference _errorLogCollectionReference =
       FirebaseFirestore.instance.collection("ErrorLog");
-  Future createLog(
-      String code, String message, String userId, String location) async {
+  Future createLog(String message, String userId, String location) async {
     final _logId = Uuid().v1();
     try {
       await _errorLogCollectionReference.doc(_logId).set(ErrorLog(
               location: location,
-              code: code,
               message: message,
               createdBy: userId,
               modifiedBy: userId,

@@ -62,9 +62,7 @@ class PrayerService {
                       .toList());
 
           Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-              // .doc(f.data()['PrayerId'])
               .where('PrayerId', isEqualTo: f.data()['PrayerId'])
-              // .orderBy('ModifiedOn')
               .snapshots()
               .map<List<PrayerTagModel>>((list) =>
                   list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
@@ -93,7 +91,7 @@ class PrayerService {
       return _combineStream;
     } catch (e) {
       locator<LogService>()
-          .createLog(e.code, e.message, userId, 'PRAYER/service/getPrayers');
+          .createLog(e.message, userId, 'PRAYER/service/getPrayers');
       throw HttpException(e.message);
     }
   }
@@ -146,7 +144,7 @@ class PrayerService {
       return _combineStream;
     } catch (e) {
       locator<LogService>()
-          .createLog(e.code, e.message, prayerID, 'PRAYER/service/getPrayer');
+          .createLog(e.message, prayerID, 'PRAYER/service/getPrayer');
       throw HttpException(e.message);
     }
   }
@@ -157,21 +155,22 @@ class PrayerService {
     String creatorName,
   ) async {
     // Generate uuid
-    final prayerId = Uuid().v1();
+    prayerId = Uuid().v1();
     final userPrayerID = Uuid().v1();
 
     try {
       // store prayer
-      await _prayerCollectionReference.doc(prayerId).set(
-          populatePrayer(userId, prayerDesc, prayerId, creatorName).toJson());
+      _prayerCollectionReference
+          .doc(prayerId)
+          .set(populatePrayer(userId, prayerDesc, creatorName).toJson());
 
       //store user prayer
-      await _userPrayerCollectionReference
+      _userPrayerCollectionReference
           .doc(userPrayerID)
           .set(populateUserPrayer(userId, prayerId, userId).toJson());
     } catch (e) {
       await locator<LogService>()
-          .createLog(e.code, e.message, userId, 'PRAYER/service/addPrayer');
+          .createLog(e.message, userId, 'PRAYER/service/addPrayer');
       throw HttpException(e.message);
     }
   }
@@ -182,12 +181,12 @@ class PrayerService {
     final _userPrayerID = Uuid().v1();
     try {
       //store user prayer
-      await _userPrayerCollectionReference
+      _userPrayerCollectionReference
           .doc(_userPrayerID)
           .set(populateUserPrayer(userId, prayerId, senderId).toJson());
       var devices = await _notificationService.getNotificationToken(userId);
       for (int i = 0; i < devices.length; i++) {
-        await _notificationService.addPushNotification(
+        _notificationService.addPushNotification(
           message: prayerDesc,
           sender: sender,
           senderId: senderId,
@@ -197,7 +196,7 @@ class PrayerService {
       }
     } catch (e) {
       await locator<LogService>()
-          .createLog(e.code, e.message, userId, 'PRAYER/service/addUserPrayer');
+          .createLog(e.message, userId, 'PRAYER/service/addUserPrayer');
       throw HttpException(e.message);
     }
   }
@@ -209,10 +208,9 @@ class PrayerService {
       for (var i = 0; i < contactData.length; i++) {
         final _prayerTagID = Uuid().v1();
         if (contactData[i] != null) {
-          await _prayerTagCollectionReference.doc(_prayerTagID).set(
-              populatePrayerTag(
-                      contactData[i], user.id, user.firstName, message)
-                  .toJson());
+          _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
+                  contactData[i], user.id, user.firstName, message)
+              .toJson());
           final template = await _messageTemplateCollectionReference
               .doc(MessageTemplateType.tagPrayer)
               .get();
@@ -225,7 +223,7 @@ class PrayerService {
           // compare old tags vs new tag to know if person has already received email/text
           if (oldTags.map((e) => e?.email).contains(email) ||
               oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) return;
-          await _notificationService.addEmail(
+          _notificationService.addEmail(
             email: email,
             message: message,
             sender: user.firstName,
@@ -233,7 +231,7 @@ class PrayerService {
             template: MessageTemplate.fromData(template),
             receiver: contactData[i].displayName,
           );
-          await _notificationService.addSMS(
+          _notificationService.addSMS(
               phoneNumber: phoneNumber,
               message: message,
               sender: user.firstName,
@@ -244,17 +242,17 @@ class PrayerService {
       }
     } catch (e) {
       locator<LogService>()
-          .createLog(e.code, e.message, user.id, 'PRAYER/service/addPrayerTag');
+          .createLog(e.message, user.id, 'PRAYER/service/addPrayerTag');
       throw HttpException(e.message);
     }
   }
 
   Future removePrayerTag(String tagId) async {
     try {
-      await _prayerTagCollectionReference.doc(tagId).delete();
+      _prayerTagCollectionReference.doc(tagId).delete();
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, tagId, 'PRAYER/service/removePrayerTag');
+      locator<LogService>()
+          .createLog(e.message, tagId, 'PRAYER/service/removePrayerTag');
       throw HttpException(e.message);
     }
   }
@@ -269,7 +267,7 @@ class PrayerService {
       );
     } catch (e) {
       locator<LogService>()
-          .createLog(e.code, e.message, prayerID, 'PRAYER/service/editPrayer');
+          .createLog(e.message, prayerID, 'PRAYER/service/editPrayer');
       throw HttpException(e.message);
     }
   }
@@ -291,8 +289,8 @@ class PrayerService {
             prayerUpdate.toJson(),
           );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, prayerUpdate.userId,
-          'PRAYER/service/addPrayerUpdate');
+      locator<LogService>().createLog(
+          e.message, prayerUpdate.userId, 'PRAYER/service/addPrayerUpdate');
       throw HttpException(e.message);
     }
   }
@@ -307,26 +305,13 @@ class PrayerService {
           .asyncMap((event) =>
               event.docs.map((e) => PrayerUpdateModel.fromData(e)).toList());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerId, 'PRAYER/service/getPrayerUpdates');
+      locator<LogService>()
+          .createLog(e.message, prayerId, 'PRAYER/service/getPrayerUpdates');
       throw HttpException(e.message);
     }
   }
 
-  Future markPrayerAsAnswered(String prayerID) async {
-    try {
-      _prayerCollectionReference.doc(prayerID).update(
-        {'IsArchived': true, 'IsAnswer': true, 'Status': Status.inactive},
-      );
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/markPrayerAsAnswered');
-      throw HttpException(e.message);
-    }
-  }
-
-  Future snoozePrayer(
-      String prayerID, DateTime endDate, String userPrayerID) async {
+  Future snoozePrayer(DateTime endDate, String userPrayerID) async {
     try {
       _userPrayerCollectionReference.doc(userPrayerID).update(
         {
@@ -336,56 +321,70 @@ class PrayerService {
           'Status': Status.inactive
         },
       );
-      _prayerCollectionReference
-          .doc(prayerID)
-          .update({'Status': Status.inactive});
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/snoozePrayer');
+      locator<LogService>()
+          .createLog(e.message, userPrayerID, 'PRAYER/service/snoozePrayer');
       throw HttpException(e.message);
     }
   }
 
-  Future unSnoozePrayer(
-      String prayerID, DateTime endDate, String userPrayerID) async {
+  Future unSnoozePrayer(DateTime endDate, String userPrayerID) async {
     try {
       _userPrayerCollectionReference.doc(userPrayerID).update(
-        {'IsSnoozed': false, 'Status': Status.active},
+        {'IsSnoozed': false, 'Status': Status.active, 'SnoozeEndDate': null},
       );
-      _prayerCollectionReference
-          .doc(prayerID)
-          .update({'Status': Status.active});
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/unSnoozePrayer');
+      locator<LogService>()
+          .createLog(e.message, userPrayerID, 'PRAYER/service/unSnoozePrayer');
       throw HttpException(e.message);
     }
   }
 
   Future archivePrayer(
-    String prayerID,
+    String userPrayerId,
   ) async {
     try {
-      _prayerCollectionReference.doc(prayerID).update(
-        {'IsArchived': true, 'Status': Status.inactive},
+      _userPrayerCollectionReference.doc(userPrayerId).update(
+        {
+          'IsArchived': true,
+          'Status': Status.inactive,
+          'IsFavourite': false,
+          'ArchivedDate': DateTime.now()
+        },
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/archivePrayer');
+      locator<LogService>()
+          .createLog(e.message, userPrayerId, 'PRAYER/service/archivePrayer');
       throw HttpException(e.message);
     }
   }
 
   Future unArchivePrayer(
-    String prayerID,
+    String userPrayerId,
   ) async {
     try {
+      _userPrayerCollectionReference.doc(userPrayerId).update(
+          {'IsArchived': false, 'Status': Status.active, 'ArchivedDate': null});
+    } catch (e) {
+      locator<LogService>()
+          .createLog(e.message, userPrayerId, 'PRAYER/service/unArchivePrayer');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future markPrayerAsAnswered(String prayerID, String userPrayerId) async {
+    try {
       _prayerCollectionReference.doc(prayerID).update(
-        {'IsArchived': false, 'IsAnswer': false, 'Status': Status.active},
+        {'IsAnswer': true},
       );
+      _userPrayerCollectionReference.doc(userPrayerId).update({
+        'IsArchived': true,
+        'Status': Status.inactive,
+        'IsFavourite': false
+      });
     } catch (e) {
       locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/unArchivePrayer');
+          e.message, prayerID, 'PRAYER/service/markPrayerAsAnswered');
       throw HttpException(e.message);
     }
   }
@@ -398,8 +397,8 @@ class PrayerService {
         {'IsFavourite': true},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/favoritePrayer');
+      locator<LogService>()
+          .createLog(e.message, prayerID, 'PRAYER/service/favoritePrayer');
       throw HttpException(e.message);
     }
   }
@@ -412,18 +411,18 @@ class PrayerService {
         {'IsFavourite': false},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/unFavoritePrayer');
+      locator<LogService>()
+          .createLog(e.message, prayerID, 'PRAYER/service/unFavoritePrayer');
       throw HttpException(e.message);
     }
   }
 
-  Future deletePrayer(String prayerID) async {
+  Future deletePrayer(String userPrayeId) async {
     try {
-      _userPrayerCollectionReference.doc(prayerID).delete();
+      _userPrayerCollectionReference.doc(userPrayeId).delete();
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerID, 'PRAYER/service/deletePrayer');
+      locator<LogService>()
+          .createLog(e.message, userPrayeId, 'PRAYER/service/deletePrayer');
       throw HttpException(e.message);
     }
   }
@@ -445,7 +444,7 @@ class PrayerService {
           .set(hiddenPrayer.toJson());
     } catch (e) {
       locator<LogService>()
-          .createLog(e.code, e.message, user.id, 'PRAYER/service/hidePrayer');
+          .createLog(e.message, user.id, 'PRAYER/service/hidePrayer');
       throw HttpException(e.message);
     }
   }
@@ -478,8 +477,8 @@ class PrayerService {
       }
       await batch.commit();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, prayerData.userId,
-          'PRAYER/service/addPrayerWithGroup');
+      locator<LogService>().createLog(
+          e.message, prayerData.userId, 'PRAYER/service/addPrayerWithGroup');
       throw HttpException(e.message);
     }
   }
@@ -497,8 +496,8 @@ class PrayerService {
           populateGroupPrayer(prayerData, _prayerID).toJson());
       await batch.commit();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, prayerData.userId,
-          'PRAYER/service/addPrayerToGroup');
+      locator<LogService>().createLog(
+          e.message, prayerData.userId, 'PRAYER/service/addPrayerToGroup');
       throw HttpException(e.message);
     }
   }
@@ -520,8 +519,8 @@ class PrayerService {
           populateGroupPrayer(prayerData, _prayerID).toJson());
       await batch.commit();
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, prayerData.userId,
-          'PRAYER/service/addGroupPrayer');
+      locator<LogService>().createLog(
+          e.message, prayerData.userId, 'PRAYER/service/addGroupPrayer');
       throw HttpException(e.message);
     }
   }
@@ -569,8 +568,8 @@ class PrayerService {
       });
       return _combineGroupStream;
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, groupId, 'PRAYER/service/getGroupPrayers');
+      locator<LogService>()
+          .createLog(e.message, groupId, 'PRAYER/service/getGroupPrayers');
       throw HttpException(e.message);
     }
   }
@@ -585,8 +584,8 @@ class PrayerService {
           .asyncMap((event) =>
               event.docs.map((e) => HiddenPrayerModel.fromData(e)).toList());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, userId, 'PRAYER/service/getHiddenPrayers');
+      locator<LogService>()
+          .createLog(e.message, userId, 'PRAYER/service/getHiddenPrayers');
       throw HttpException(e.message);
     }
   }
@@ -602,8 +601,8 @@ class PrayerService {
           .update({'HideFromAllMembers': value});
       // });
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerId, 'PRAYER/service/hideFromAllMembers');
+      locator<LogService>()
+          .createLog(e.message, prayerId, 'PRAYER/service/hideFromAllMembers');
       throw HttpException(e.message);
     }
   }
@@ -632,8 +631,8 @@ class PrayerService {
         data: data,
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message,
-          requestMessageModel.senderId, 'PRAYER/service/messageRequestor');
+      locator<LogService>().createLog(e.message, requestMessageModel.senderId,
+          'PRAYER/service/messageRequestor');
       throw HttpException(e.message);
     }
   }
@@ -645,8 +644,8 @@ class PrayerService {
           .doc(userPrayerId)
           .set(userPrayer.toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userPrayer.userId,
-          'PRAYER/service/addPrayerToMyList');
+      locator<LogService>().createLog(
+          e.message, userPrayer.userId, 'PRAYER/service/addPrayerToMyList');
       throw HttpException(e.message);
     }
   }
@@ -657,8 +656,8 @@ class PrayerService {
           .doc(prayerId)
           .update({'IsInappropriate': true});
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, prayerId, 'PRAYER/service/flagAsInappropriate');
+      locator<LogService>()
+          .createLog(e.message, prayerId, 'PRAYER/service/flagAsInappropriate');
       throw HttpException(e.message);
     }
   }
@@ -666,12 +665,10 @@ class PrayerService {
   populatePrayer(
     String userId,
     String prayerDesc,
-    String prayerId,
     String creatorName,
   ) {
     PrayerModel prayer = PrayerModel(
       isAnswer: false,
-      isArchived: false,
       isInappropriate: false,
       title: '',
       type: '',
@@ -694,6 +691,8 @@ class PrayerService {
     String creatorId,
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
+        isArchived: false,
+        archivedDate: null,
         userId: userId,
         status: Status.active,
         sequence: null,

@@ -3,6 +3,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -40,18 +41,22 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void _searchPrayer(String value) async {
     var options =
         Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+    var userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     if (options.isArchived) {
       await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
           value,
           Provider.of<SettingsProvider>(context, listen: false)
               .settings
-              .archiveSortBy);
+              .archiveSortBy,
+          userId);
     } else {
       await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
           value,
           Provider.of<SettingsProvider>(context, listen: false)
               .settings
-              .defaultSortBy);
+              .defaultSortBy,
+          userId);
     }
   }
 

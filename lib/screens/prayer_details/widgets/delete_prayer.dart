@@ -27,7 +27,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayerData.prayer.id);
+          .unArchivePrayer(widget.prayerData.userPrayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -45,7 +45,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
         bcontext,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.prayer.id);
+          .archivePrayer(widget.prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _goHome();
@@ -145,7 +145,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 !widget.prayerData.prayer.isAnswer &&
-                        !widget.prayerData.prayer.isArchived
+                        !widget.prayerData.userPrayer.isArchived
                     ? GestureDetector(
                         onTap: _onArchive,
                         child: Container(

@@ -107,67 +107,58 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     });
   }
 
-  void _showAlert(_ModalType type) {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
-        context: context,
-        builder: (context) {
-          var _user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
-          return Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Container(
-              color: AppColors.backgroundColor[1],
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: type == _ModalType.email
-                          ? CustomInput(
-                              label: 'New Email', controller: _newEmail)
-                          : type == _ModalType.password
-                              ? CustomInput(
-                                  label: 'New Password',
-                                  controller: _newPassword)
-                              : Text('Auth'),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      FlatButton(
-                          color: AppColors.grey.withOpacity(0.5),
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Cancel',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          )),
-                      FlatButton(
-                        color: AppColors.lightBlue3,
-                        onPressed: () => type == _ModalType.email
-                            ? _updateEmail(_user)
-                            : type == _ModalType.password
-                                ? _updatePassword
-                                : null,
-                        child: Text('Submit',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            )),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
+  void _update(_ModalType type, ctx) {
+    var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    _newEmail.text = _user.email;
+    final alert = AlertDialog(
+      insetPadding: EdgeInsets.all(10),
+      backgroundColor: AppColors.backgroundColor[1],
+      content: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            type == _ModalType.email
+                ? CustomInput(label: 'New Email', controller: _newEmail)
+                : type == _ModalType.password
+                    ? CustomInput(
+                        label: 'New Password', controller: _newPassword)
+                    : null,
+            SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FlatButton(
+                    color: AppColors.grey.withOpacity(0.5),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Cancel',
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: Colors.white,
+                      ),
+                    )),
+                FlatButton(
+                  color: AppColors.lightBlue3,
+                  onPressed: () => type == _ModalType.email
+                      ? _updateEmail(_user)
+                      : type == _ModalType.password
+                          ? _updatePassword
+                          : null,
+                  child: Text('Save',
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: Colors.white,
+                      )),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+    showDialog(
+        context: ctx,
+        builder: (BuildContext context) {
+          return alert;
         });
   }
 
@@ -212,22 +203,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 CustomOutlineButton(
                     actionColor: AppColors.lightBlue4,
                     actionText: 'UPDATE',
-                    onPressed: () => _showAlert(_ModalType.email),
-                    isDarkModeEnabled: Settings.isDarkMode,
+                    onPressed: () => _update(_ModalType.email, context),
                     value: _currentUser.email),
                 SizedBox(height: 10),
                 CustomOutlineButton(
                     actionColor: AppColors.lightBlue4,
                     actionText: 'UPDATE',
-                    onPressed: () => _showAlert(_ModalType.password),
-                    isDarkModeEnabled: Settings.isDarkMode,
+                    onPressed: () => _update(_ModalType.password, context),
                     value: 'password'),
                 SizedBox(height: 10),
                 CustomOutlineButton(
                     actionColor: AppColors.red,
                     actionText: 'ADD',
                     onPressed: () => null,
-                    isDarkModeEnabled: Settings.isDarkMode,
                     value: 'Two-Factor Authentication'),
                 SizedBox(height: 10),
               ],

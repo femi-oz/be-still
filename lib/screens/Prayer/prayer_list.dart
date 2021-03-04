@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -38,20 +39,12 @@ class _PrayerListState extends State<PrayerList> {
       await _preLoadData();
       final options =
           Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-      if (options.isArchived) {
-        await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-            _user?.id,
-            Provider.of<SettingsProvider>(context, listen: false)
-                .settings
-                .archiveSortBy);
-      } else {
-        await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-            _user?.id,
-            Provider.of<SettingsProvider>(context, listen: false)
-                .settings
-                .defaultSortBy);
-      }
+      final settings =
+          Provider.of<SettingsProvider>(context, listen: false).settings;
 
+      await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+          _user?.id,
+          options.isArchived ? settings.archiveSortBy : settings.defaultSortBy);
       await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
@@ -152,10 +145,11 @@ class _PrayerListState extends State<PrayerList> {
     if (_isInit) {
       _setVibration();
       _getPermissions();
+
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        _getPrayers();
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle('MY LIST');
-        _getPrayers();
       });
       setState(() => _isInit = false);
     }

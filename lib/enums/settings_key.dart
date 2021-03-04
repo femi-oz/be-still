@@ -3,6 +3,8 @@ class SettingsKey {
   static const defaultSnoozeDuration = 'DefaultSnoozeDuration';
   static const archiveSortBy = 'ArchiveSortBy';
   static const archiveAutoDelete = 'ArchiveAutoDelete';
+  static const archiveAutoDeleteMins = 'ArchiveAutoDeleteMins';
+  static const defaultSnoozeDurationMins = 'DefaultSnoozeDurationMins';
   static const includeAnsweredPrayerAutoDelete =
       'IncludeAnsweredPrayerAutoDelete';
   static const allowPushNotification = 'AllowPushNotification';
@@ -25,4 +27,8 @@ class SettingsKey {
   static const allowEmergencyCalls = 'AllowEmergencyCalls';
   static const autoPlayMusic = 'AutoPlayMusic';
   static const enableBackgroundMusic = 'EnableBackgroundMusic';
+  static const churchName = 'ChurchName';
+  static const churchPhone = 'ChurchPhone';
+  static const churchEmail = 'ChurchEmail';
+  static const webFormLink = 'WebFormLink';
 }

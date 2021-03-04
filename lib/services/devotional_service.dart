@@ -16,8 +16,8 @@ class DevotionalService {
       return bibles
           .map((e) => e.docs.map((e) => BibleModel.fromData(e)).toList());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, 'bibles', 'DEVOTIONALS/service/getBibles');
+      locator<LogService>()
+          .createLog(e.message, 'bibles', 'DEVOTIONALS/service/getBibles');
       throw HttpException(e.message);
     }
   }
@@ -28,8 +28,8 @@ class DevotionalService {
       return devotionals
           .map((e) => e.docs.map((e) => DevotionalModel.fromData(e)).toList());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, 'devotionals',
-          'DEVOTIONALS/service/getDevotionals');
+      locator<LogService>().createLog(
+          e.message, 'devotionals', 'DEVOTIONALS/service/getDevotionals');
       throw HttpException(e.message);
     }
   }

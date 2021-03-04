@@ -1,8 +1,10 @@
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
@@ -33,12 +35,12 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  List<String> songs = [
-    'Evening Listening',
-    'Rock Jams',
-    'Prayer Time',
-    'Jason Station',
-    'New Hits'
+  List<LookUp> songs = [
+    LookUp(text: 'Evening Listening', value: 1),
+    LookUp(text: 'Rock Jams', value: 2),
+    LookUp(text: 'Prayer Time', value: 3),
+    LookUp(text: 'Jason Station', value: 4),
+    LookUp(text: 'New Hits', value: 5)
   ];
 
   List<String> reminderInterval = [
@@ -66,18 +68,20 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   _savePrayerTime(
       String selectedDay, String selectedFrequency, String date) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(
+        .updatePrayerSettings(userId,
             key: SettingsKey.day,
             value: selectedDay,
             settingsId: widget.prayerSettings.id);
     await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(
+        .updatePrayerSettings(userId,
             key: SettingsKey.frequency,
             value: selectedFrequency,
             settingsId: widget.prayerSettings.id);
     await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(
+        .updatePrayerSettings(userId,
             key: SettingsKey.time,
             value: date,
             settingsId: widget.prayerSettings.id);
@@ -89,6 +93,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   @override
   Widget build(BuildContext context) {
     final setingProvider = Provider.of<SettingsProvider>(context);
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -98,7 +103,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               CustomSectionHeder('Preference'),
               SizedBox(height: 20),
               CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.allowEmergencyCalls,
                     value: value,
                     settingsId: widget.prayerSettings.id),
@@ -107,7 +112,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: widget.prayerSettings.allowEmergencyCalls,
               ),
               CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.doNotDisturb,
                     value: value,
                     settingsId: widget.prayerSettings.id),
@@ -115,7 +120,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: widget.prayerSettings.doNotDisturb,
               ),
               CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.enableBackgroundMusic,
                     value: value,
                     settingsId: widget.prayerSettings.id),
@@ -128,15 +133,14 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 actionText: 'CONNECTED',
                 textIcon: 'assets/images/spotify.png',
                 onPressed: () => null,
-                isDarkModeEnabled: Settings.isDarkMode,
                 value: 'Spotify',
               ),
               Container(
-                child: CustomPicker(songs, setSnooze, true, 2),
+                child: CustomPicker(songs, setSnooze, true, 3),
               ),
               CustomToggle(
                 title: 'Auto play music during prayer time?',
-                onChange: (value) => setingProvider.updatePrayerSettings(
+                onChange: (value) => setingProvider.updatePrayerSettings(userId,
                     key: SettingsKey.autoPlayMusic,
                     value: value,
                     settingsId: widget.prayerSettings.id),

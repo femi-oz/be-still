@@ -27,6 +27,8 @@ class SettingsService {
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
+        archiveAutoDeleteMins: 43200,
+        defaultSnoozeDurationMins: 30,
         allowAlexaReadPrayer: false,
         archiveSortBy: SortType.date,
         userId: userId,
@@ -38,7 +40,7 @@ class SettingsService {
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,
         allowTextNotification: false,
-        pauseInterval: SecondsInterval.ten,
+        pauseInterval: '10s',
         emailUpdateFrequency: Frequency.daily,
         emailUpdateNotification: false,
         notifyMeSomeonePostOnGroup: false,
@@ -99,8 +101,10 @@ class SettingsService {
         enableSharingViaEmail: false,
         enableSharingViaText: false,
         churchId: '',
-        phone: '',
-        status: Status.active,
+        churchName: '',
+        churchPhone: '',
+        webFormlink: '',
+        churchEmail: '',
         createdBy: email,
         createdOn: DateTime.now(),
         modifiedBy: email,
@@ -132,7 +136,7 @@ class SettingsService {
           .set(populatePrayerSettings(userId, email).toJson());
     } catch (e) {
       locator<LogService>()
-          .createLog(e.code, e.message, userId, 'SETTINGS/service/addSettings');
+          .createLog(e.message, userId, 'SETTINGS/service/addSettings');
       throw HttpException(e.message);
     }
   }
@@ -145,8 +149,8 @@ class SettingsService {
           .doc(groupSettingsId)
           .set(populateGroupSettings(userId, email, groupId).toJson());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, userId, 'SETTINGS/service/addGroupSettings');
+      locator<LogService>()
+          .createLog(e.message, userId, 'SETTINGS/service/addGroupSettings');
       throw HttpException(e.message);
     }
   }
@@ -158,21 +162,21 @@ class SettingsService {
           .doc(groupPreferenceSettingsId)
           .set(populateGroupPreferenceSettings(userId).toJson());
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId,
-          'SETTINGS/service/addGroupPreferenceSettings');
+      locator<LogService>().createLog(
+          e.message, userId, 'SETTINGS/service/addGroupPreferenceSettings');
       throw HttpException(e.message);
     }
   }
 
-  Future<SettingsModel> fetchSettings(String userId) async {
+  Future<SettingsModel> getSettings(String userId) async {
     try {
       var settings = await _settingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
       return SettingsModel.fromData(settings.docs.toList()[0]);
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, userId, 'SETTINGS/service/fetchSettings');
+      locator<LogService>()
+          .createLog(e.message, userId, 'SETTINGS/service/fetchSettings');
       throw HttpException(e.message);
     }
   }
@@ -186,8 +190,8 @@ class SettingsService {
           .map((e) => PrayerSettingsModel.fromData(e))
           .toList()[0];
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, userId, 'SETTINGS/service/getPrayerSettings');
+      locator<LogService>()
+          .createLog(e.message, userId, 'SETTINGS/service/getPrayerSettings');
       throw HttpException(e.message);
     }
   }
@@ -201,8 +205,8 @@ class SettingsService {
           .map((e) => SharingSettingsModel.fromData(e))
           .toList()[0];
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, userId, 'SETTINGS/service/getSharingSettings');
+      locator<LogService>()
+          .createLog(e.message, userId, 'SETTINGS/service/getSharingSettings');
       throw HttpException(e.message);
     }
   }
@@ -214,8 +218,8 @@ class SettingsService {
           .get();
       return settings.docs.map((e) => GroupSettings.fromData(e)).toList();
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, userId, 'SETTINGS/service/getGroupSettings');
+      locator<LogService>()
+          .createLog(e.message, userId, 'SETTINGS/service/getGroupSettings');
       throw HttpException(e.message);
     }
   }
@@ -230,21 +234,20 @@ class SettingsService {
           .map((e) => GroupPreferenceSettings.fromData(e))
           .toList()[0];
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, userId,
-          'SETTINGS/service/getGroupPreferenceSettings');
+      locator<LogService>().createLog(
+          e.message, userId, 'SETTINGS/service/getGroupPreferenceSettings');
       throw HttpException(e.message);
     }
   }
 
   Future updateSettings({String key, dynamic value, String settingsId}) async {
-    print(value);
     try {
       _settingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code, e.message, settingsId, 'SETTINGS/service/updateSettings');
+      locator<LogService>()
+          .createLog(e.message, settingsId, 'SETTINGS/service/updateSettings');
       throw HttpException(e.message);
     }
   }
@@ -256,8 +259,8 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, settingsId,
-          'SETTINGS/service/updatePrayerSettings');
+      locator<LogService>().createLog(
+          e.message, settingsId, 'SETTINGS/service/updatePrayerSettings');
       throw HttpException(e.message);
     }
   }
@@ -269,8 +272,8 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, settingsId,
-          'SETTINGS/service/updateSharingSettings');
+      locator<LogService>().createLog(
+          e.message, settingsId, 'SETTINGS/service/updateSharingSettings');
       throw HttpException(e.message);
     }
   }
@@ -282,8 +285,8 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
-      locator<LogService>().createLog(e.code, e.message, groupSettingsId,
-          'SETTINGS/service/updateGroupSettings');
+      locator<LogService>().createLog(
+          e.message, groupSettingsId, 'SETTINGS/service/updateGroupSettings');
       throw HttpException(e.message);
     }
   }
@@ -297,10 +300,7 @@ class SettingsService {
         {key: value},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          e.code,
-          e.message,
-          groupPreferenceSettingsId,
+      locator<LogService>().createLog(e.message, groupPreferenceSettingsId,
           'SETTINGS/service/updateGroupPreferenceSettings');
       throw HttpException(e.message);
     }
