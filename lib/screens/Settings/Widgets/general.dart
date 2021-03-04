@@ -275,6 +275,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           showSuffix: false,
                           isRequired: true,
                           isPassword: true,
+                          obScurePassword: true,
                           label: 'New Password',
                           controller: _newPassword)
                       : null,

@@ -16,6 +16,7 @@ class CustomInput extends StatefulWidget {
   final isRequired;
   final validator;
   final isEmail;
+  final bool obScurePassword;
   final padding;
   final isPhone;
   final isLink;
@@ -35,6 +36,7 @@ class CustomInput extends StatefulWidget {
       this.keyboardType,
       this.isRequired = false,
       this.validator,
+      this.obScurePassword = false,
       this.padding = 20.0,
       this.isPhone = false,
       this.isEmail = false,
@@ -91,7 +93,7 @@ class _CustomInputState extends State<CustomInput> {
             fillColor: AppColors.textFieldBackgroundColor,
             filled: true,
           ),
-          obscureText: widget.isPassword ? true : false,
+          obscureText: widget.obScurePassword,
           validator: (value) => _validatorFn(value),
           onFieldSubmitted: (_) => {
                 widget.unfocus
@@ -108,9 +110,6 @@ class _CustomInputState extends State<CustomInput> {
   }
 
   String _validatorFn(String value) {
-    if (widget.validator == 'null') {
-      return '';
-    }
     if (widget.isRequired) {
       if (value.isEmpty) {
         return '${widget.label} is required';
@@ -136,7 +135,7 @@ class _CustomInputState extends State<CustomInput> {
         return 'Enter a valid phone number';
       }
     }
-    if (widget.isPassword && value.isNotEmpty) {
+    if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value))

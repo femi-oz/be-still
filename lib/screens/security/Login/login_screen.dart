@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           SizedBox(height: 15.0),
           CustomInput(
-            isPassword: true,
+            obScurePassword: true,
             label: 'Password',
             controller: _passwordController,
             keyboardType: TextInputType.visiblePassword,
@@ -256,7 +256,6 @@ class _LoginScreenState extends State<LoginScreen> {
             textInputAction: TextInputAction.done,
             unfocus: true,
             submitForm: () => _login(),
-            validator: 'null',
           ),
         ],
       ),
