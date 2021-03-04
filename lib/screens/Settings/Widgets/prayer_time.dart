@@ -63,8 +63,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     var initSetttings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
 
-    // flutterLocalNotificationsPlugin.initialize(initSetttings,
-    //     onSelectNotification: );
+    flutterLocalNotificationsPlugin.initialize(initSetttings);
     super.initState();
   }
 
