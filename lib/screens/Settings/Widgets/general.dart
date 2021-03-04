@@ -249,60 +249,71 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _update(_ModalType type, ctx) {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    bool _autoValidate = false;
+    final _formKey = GlobalKey<FormState>();
     _newEmail.text = _user.email;
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],
       content: Container(
         width: MediaQuery.of(context).size.width - 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            type == _ModalType.email
-                ? CustomInput(
-                    isRequired: true,
-                    isEmail: true,
-                    label: 'New Email',
-                    controller: _newEmail)
-                : type == _ModalType.password
-                    ? CustomInput(
-                        isRequired: true,
-                        isPassword: true,
-                        label: 'New Password',
-                        controller: _newPassword)
-                    : null,
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton(
-                    color: AppColors.grey.withOpacity(0.5),
-                    onPressed: () {
-                      _newPassword.clear();
-                      _newEmail.clear();
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'Cancel',
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: Colors.white,
-                      ),
-                    )),
-                FlatButton(
-                  color: AppColors.lightBlue3,
-                  onPressed: () => type == _ModalType.email
-                      ? _updateEmail(_user)
-                      : type == _ModalType.password
-                          ? _updatePassword()
-                          : null,
-                  child: Text('Save',
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: Colors.white,
+        child: Form(
+          autovalidate: _autoValidate,
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              type == _ModalType.email
+                  ? CustomInput(
+                      isRequired: true,
+                      isEmail: true,
+                      label: 'New Email',
+                      controller: _newEmail)
+                  : type == _ModalType.password
+                      ? CustomInput(
+                          isRequired: true,
+                          isPassword: true,
+                          label: 'New Password',
+                          controller: _newPassword)
+                      : null,
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FlatButton(
+                      color: AppColors.grey.withOpacity(0.5),
+                      onPressed: () {
+                        _newPassword.clear();
+                        _newEmail.clear();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: AppTextStyles.regularText15.copyWith(
+                          color: Colors.white,
+                        ),
                       )),
-                )
-              ],
-            )
-          ],
+                  FlatButton(
+                    color: AppColors.lightBlue3,
+                    onPressed: () {
+                      setState(() => _autoValidate = true);
+                      if (!_formKey.currentState.validate()) return null;
+                      _formKey.currentState.save();
+                      type == _ModalType.email
+                          ? _updateEmail(_user)
+                          : type == _ModalType.password
+                              ? _updatePassword()
+                              : null;
+                    },
+                    child: Text('Save',
+                        style: AppTextStyles.regularText15.copyWith(
+                          color: Colors.white,
+                        )),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

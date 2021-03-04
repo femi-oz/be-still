@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class PushNotificationModel {
   final String id;
   final String title;
-  final List<String> tokens;
+  final List<dynamic> tokens;
   final String messageType;
   final String message;
   final String sender;
