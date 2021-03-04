@@ -139,7 +139,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         localId,
         '$selectedFrequency reminder to pray',
-        'Hi, it is time to for your $selectedFrequency prayer',
+        'Hi, it is time to for your ${selectedFrequency.toString().toLowerCase()} prayer',
         _scheduleDate(selectedHour, selectedMinute, selectedDay, period),
         const NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
