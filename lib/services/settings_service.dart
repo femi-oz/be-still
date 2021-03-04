@@ -241,7 +241,6 @@ class SettingsService {
   }
 
   Future updateSettings({String key, dynamic value, String settingsId}) async {
-    print(value);
     try {
       _settingsCollectionReference.doc(settingsId).update(
         {key: value},

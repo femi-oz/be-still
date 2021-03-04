@@ -103,16 +103,20 @@ class _SharePrayerState extends State<SharePrayer> {
                     ),
                   ),
                 ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _textLink(),
-                  text: 'Text Message',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _emailLink(),
-                  text: 'Email',
-                ),
+                sharingSettings.enableSharingViaText
+                    ? MenuButton(
+                        icon: AppIcons.bestill_share,
+                        onPressed: () => _textLink(),
+                        text: 'Text Message',
+                      )
+                    : Container(),
+                sharingSettings.enableSharingViaEmail
+                    ? MenuButton(
+                        icon: AppIcons.bestill_share,
+                        onPressed: () => _emailLink(),
+                        text: 'Email',
+                      )
+                    : Container(),
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   onPressed: () => showModalBottomSheet(

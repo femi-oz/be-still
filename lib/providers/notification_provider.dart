@@ -88,7 +88,6 @@ class NotificationProvider with ChangeNotifier {
     await _notificationService.removeLocalNotification(notificationId);
   }
 
-  
   // Future acceptGroupInvite(
   //     String groupId, String userId, String name, String email) async {
   //   return await _notificationService.acceptGroupInvite(
