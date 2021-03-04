@@ -25,6 +25,7 @@ class _SharingSettingsState extends State<SharingSettings> {
   TextEditingController _churchLink = TextEditingController();
 
   void _updateChurch() async {
+    print('');
     try {
       final settingProvider =
           Provider.of<SettingsProvider>(context, listen: false);
