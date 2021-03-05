@@ -192,16 +192,16 @@ class PrayerService {
           .doc(_userPrayerID)
           .set(populateUserPrayer(userId, prayerId, senderId).toJson());
       var devices = await _notificationService.getNotificationToken(userId);
-      for (int i = 0; i < devices.length; i++) {
-        _notificationService.addPushNotification(
-          messageType: NotificationType.prayer,
-          message: prayerDesc,
-          sender: sender,
-          senderId: senderId,
-          recieverId: userId,
-          tokens: devices.map((e) => e.name).toList(),
-        );
-      }
+      // for (int i = 0; i < devices.length; i++) {
+      _notificationService.addPushNotification(
+        messageType: NotificationType.prayer,
+        message: prayerDesc,
+        sender: sender,
+        senderId: senderId,
+        recieverId: userId,
+        tokens: devices.map((e) => e.name).toList(),
+      );
+      // }
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
