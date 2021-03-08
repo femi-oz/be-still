@@ -182,7 +182,7 @@ class PrayerService {
     }
   }
 
-  Future addUserPrayer(String prayerId, String prayerDesc, String userId,
+  Future addUserPrayer(String prayerId, String prayerDesc, String recieverId,
       String senderId, String sender) async {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
@@ -190,22 +190,20 @@ class PrayerService {
       //store user prayer
       _userPrayerCollectionReference
           .doc(_userPrayerID)
-          .set(populateUserPrayer(userId, prayerId, senderId).toJson());
-      var devices = await _notificationService.getNotificationToken(userId);
-      // for (int i = 0; i < devices.length; i++) {
+          .set(populateUserPrayer(recieverId, prayerId, senderId).toJson());
+      var devices = await _notificationService.getNotificationToken(recieverId);
       _notificationService.addPushNotification(
         messageType: NotificationType.prayer,
         message: prayerDesc,
         sender: sender,
         senderId: senderId,
-        recieverId: userId,
+        recieverId: recieverId,
         tokens: devices.map((e) => e.name).toList(),
       );
-      // }
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
-          userId,
+          senderId,
           'PRAYER/service/addUserPrayer');
       throw HttpException(e.message);
     }

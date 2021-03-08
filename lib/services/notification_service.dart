@@ -32,6 +32,8 @@ class NotificationService {
     final userDeviceID = Uuid().v1();
     //store device
     try {
+      var tokens = await getNotificationToken(userId);
+      if (tokens.contains(token)) return;
       await _deviceCollectionReference.doc(deviceId).set(
             DeviceModel(
                     createdBy: 'MOBILE',

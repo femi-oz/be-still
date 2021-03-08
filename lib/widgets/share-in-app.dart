@@ -28,7 +28,7 @@ class _ShareInAppState extends State<ShareInApp> {
     return matches;
   }
 
-  _share(userId) async {
+  _share(receievrId) async {
     if (userInput.text == '') return;
 
     final creator =
@@ -41,7 +41,7 @@ class _ShareInAppState extends State<ShareInApp> {
       await Provider.of<PrayerProvider>(context, listen: false).addUserPrayer(
           _prayer.id,
           _prayer.description,
-          userId,
+          receievrId,
           creator.id,
           '${creator.firstName} ${creator.lastName}');
 
