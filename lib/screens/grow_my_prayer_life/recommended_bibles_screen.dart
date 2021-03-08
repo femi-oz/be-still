@@ -152,7 +152,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 40.0, vertical: 20.0),
                             child: Text(
-                              'Recommeded For ${bibleData[i].recommendedFor}',
+                              'Recommended For ${bibleData[i].recommendedFor}',
                               style: AppTextStyles.regularText16b
                                   .copyWith(color: AppColors.growMyPrayerText),
                               textAlign: TextAlign.center,
