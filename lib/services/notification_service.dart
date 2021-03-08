@@ -68,7 +68,7 @@ class NotificationService {
     }
   }
 
-  Future<List<DeviceModel>> getNotificationToken(userId) async {
+  Future<List<String>> getNotificationToken(userId) async {
     //get user devices
     var userDevices = await _userDeviceCollectionReference
         .where('UserId', isEqualTo: userId)
@@ -88,7 +88,7 @@ class NotificationService {
           e.message, userId, 'NOTIFICATION/service/getNotificationToken');
       throw HttpException(e.message);
     }
-    return devices;
+    return devices.map((e) => e.name).toList();
   }
 
   addPushNotification({
