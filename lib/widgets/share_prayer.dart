@@ -32,17 +32,12 @@ class _SharePrayerState extends State<SharePrayer> {
     var link =
         '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
     var _footerText =
-        ' $name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. $link';
+        '$name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. \n\n https://www.bestillapp.com';
     final Uri params = Uri(
         scheme: 'mailto',
         path: isChurch ? _churchEmail : '',
-        query: 'subject=$name shared a prayer with you&body=$_prayer'
-            '</br></br>'
-            'Comments:'
-            '</br>'
-            '$updates'
-            '</br></br></br></br></br>'
-            '$_footerText');
+        query:
+            "subject=$name shared a prayer with you&body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText");
 
     var url = params.toString();
     if (await canLaunch(url)) {
@@ -56,8 +51,19 @@ class _SharePrayerState extends State<SharePrayer> {
     final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchPhone;
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     var _prayer = widget.prayer;
-    var url = 'sms:${isChurch ? _churchPhone : ''}?body=$_prayer';
+    var name = _user.firstName;
+    var updates = widget.updates;
+    name = toBeginningOfSentenceCase(name);
+    var _footerText =
+        "$name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. \n\n https://www.bestillapp.com";
+    Uri params = Uri(
+        scheme: 'sms',
+        path: isChurch ? _churchPhone : '',
+        query:
+            'body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText');
+    var url = params.toString();
     if (await canLaunch(url)) {
       await launch(url);
     } else {
