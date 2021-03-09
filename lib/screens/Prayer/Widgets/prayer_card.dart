@@ -1,3 +1,4 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -18,7 +19,9 @@ class PrayerCard extends StatefulWidget {
 class _PrayerCardState extends State<PrayerCard> {
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
     var reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == widget.prayerData.prayer.id,
         orElse: () => null);

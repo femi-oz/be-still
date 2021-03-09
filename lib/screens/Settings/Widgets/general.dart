@@ -43,6 +43,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
+  @override
+  void didChangePlatformBrightness() {
+    final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    if (_themeProvider.currentTheme == BsThemeMode.auto)
+      _themeProvider.changeTheme(BsThemeMode.auto);
+    print(WidgetsBinding.instance.window
+        .platformBrightness); // should print Brightness.light / Brightness.dark when you switch
+    // super.didChangePlatformBrightness(); // make sure you call this
+  }
+
   _getVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     try {

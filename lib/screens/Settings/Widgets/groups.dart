@@ -354,8 +354,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     }
   }
 
-  updateGroupSettings() {}
-
   TextEditingController _emailController = new TextEditingController();
   bool _inviteMode = false;
   @override

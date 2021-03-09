@@ -1,13 +1,9 @@
-import 'dart:io';
-
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/notification_service.dart';
-import 'package:device_info/device_info.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import '../locator.dart';
 
 class NotificationProvider with ChangeNotifier {
@@ -34,7 +30,6 @@ class NotificationProvider with ChangeNotifier {
       String token = await _firebaseMessaging.getToken();
       print(token);
       await _notificationService.init(token, userId);
-      // });
     }
 
     _initialized = true;
@@ -56,22 +51,9 @@ class NotificationProvider with ChangeNotifier {
         .clearNotification(_notifications.map((e) => e.id).toList());
   }
 
-  Future setLocalNotifications() async {
-    final DeviceInfoPlugin info = new DeviceInfoPlugin();
-    String deviceId;
-    try {
-      if (Platform.isAndroid) {
-        var build = await info.androidInfo;
-        deviceId = build.androidId;
-      } else if (Platform.isIOS) {
-        var build = await info.iosInfo;
-        deviceId = build.identifierForVendor;
-      }
-    } on PlatformException {
-      print("couldn't fetch platform");
-    }
+  Future setLocalNotifications(userId) async {
     _notificationService
-        .getLocalNotifications(deviceId)
+        .getLocalNotifications(userId)
         .asBroadcastStream()
         .listen((notifications) {
       _localNotifications = notifications;
@@ -80,9 +62,31 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future addLocalNotification(
-      int localId, String entityId, String notificationText) async {
+    int localId,
+    String entityId,
+    String notificationText,
+    String userId,
+    String fallbackRoute,
+    String payload,
+    String title,
+    String description,
+    String frequency,
+    String type,
+    DateTime scheduledDate,
+  ) async {
     await _notificationService.addLocalNotification(
-        localId, entityId, notificationText);
+      localId,
+      entityId,
+      notificationText,
+      userId,
+      fallbackRoute,
+      payload,
+      title,
+      description,
+      frequency,
+      type,
+      scheduledDate,
+    );
   }
 
   Future deleteLocalNotification(String notificationId) async {

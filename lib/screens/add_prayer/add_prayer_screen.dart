@@ -206,7 +206,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                     top: _focusNode.offset.dy * 0.45,
                                     left: _focusNode.offset.dx),
                                 height:
-                                    MediaQuery.of(context).size.height * 0.6,
+                                    MediaQuery.of(context).size.height * 0.4,
                                 child: SingleChildScrollView(
                                   child: Column(
                                     crossAxisAlignment:

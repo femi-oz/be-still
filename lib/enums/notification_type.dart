@@ -6,4 +6,6 @@ class NotificationType {
   static const prayer_updates = 'Prayer Updates';
   static const messages = 'Messages';
   static const prayer = 'New Prayers';
+  static const reminder = 'Reminder';
+  static const prayer_time = 'Prayer Time';
 }
