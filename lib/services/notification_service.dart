@@ -33,6 +33,7 @@ class NotificationService {
     //store device
     try {
       var tokens = await getNotificationToken(userId);
+      print(tokens);
       if (tokens.contains(token)) return;
       await _deviceCollectionReference.doc(deviceId).set(
             DeviceModel(

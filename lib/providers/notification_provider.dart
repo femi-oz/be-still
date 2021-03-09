@@ -32,6 +32,7 @@ class NotificationProvider with ChangeNotifier {
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();
+      print(token);
       await _notificationService.init(token, userId);
       // });
     }
