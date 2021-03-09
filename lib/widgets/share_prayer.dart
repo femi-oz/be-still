@@ -97,14 +97,15 @@ class _SharePrayerState extends State<SharePrayer> {
                   alignment: Alignment.centerLeft,
                   child: FlatButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(AppIcons.bestill_back_arrow,
-                        color: AppColors.lightBlue5),
+                    icon: Icon(
+                      AppIcons.bestill_back_arrow,
+                      color: AppColors.lightBlue3,
+                      size: 20,
+                    ),
                     label: Text(
                       'BACK',
-                      style: TextStyle(
-                        color: AppColors.lightBlue5,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                      style: AppTextStyles.boldText20.copyWith(
+                        color: AppColors.lightBlue3,
                       ),
                     ),
                   ),
