@@ -6,6 +6,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
@@ -13,11 +14,14 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class LoginScreen extends StatefulWidget {
   static const routeName = 'login';
@@ -30,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _autoValidate = false;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
@@ -103,8 +108,34 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(false);
-      await Provider.of<NotificationProvider>(context, listen: false).init(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .init(userId);
+      // get all local notifications from db
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications(userId);
+      final _localNotifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications;
+      tz.initializeTimeZones();
+
+      var currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(currentTimeZone));
+      //set notification in new device
+      for (int i = 0; i < _localNotifications.length; i++) {
+        final scheduledDate =
+            tz.TZDateTime.from(_localNotifications[i].scheduledDate, tz.local);
+        await LocalNotification.configureNotification(
+            context, _localNotifications[i].fallbackRoute);
+        await LocalNotification.setLocalNotification(
+          title: _localNotifications[i].title,
+          description: _localNotifications[i].description,
+          scheduledDate: scheduledDate,
+          payload: _localNotifications[i].payload,
+          frequency: _localNotifications[i].frequency,
+        );
+      }
       Settings.lastUser = Settings.rememberMe ? _usernameController.text : '';
       Settings.userKeyRefernce =
           Provider.of<UserProvider>(context, listen: false)
@@ -116,8 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signOut();
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.message, _usernameController.text, 'LOGIN/screen/_login');
+          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);

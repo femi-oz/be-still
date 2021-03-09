@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -12,6 +14,7 @@ import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
@@ -23,7 +26,6 @@ import 'delete_prayer.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
@@ -49,15 +51,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     '90 Days',
     '1 Year'
   ];
-  List<String> reminderDays = [
-    DaysOfWeek.mon,
-    DaysOfWeek.tue,
-    DaysOfWeek.wed,
-    DaysOfWeek.thu,
-    DaysOfWeek.fri,
-    DaysOfWeek.sat,
-    DaysOfWeek.sun,
-  ];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -65,7 +58,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(
-        bcontext,
+        context,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData.userPrayer.id);
@@ -86,7 +79,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   _unMarkPrayerAsFavorite(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(
-        bcontext,
+        context,
       );
       await Provider.of<PrayerProvider>(context, listen: false)
           .unfavoritePrayer(prayerData.userPrayer.id);
@@ -106,124 +99,32 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void initState() {
-    _configureLocalTimeZone();
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOs = IOSInitializationSettings();
-    var initSetttings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
-
-    flutterLocalNotificationsPlugin.initialize(initSetttings,
-        onSelectNotification: onSelectNotification);
+    LocalNotification.configureNotification(context, PrayerDetails.routeName);
     super.initState();
-  }
-
-  int _getExactDy(day) {
-    var now = new DateTime.now();
-
-    while (now.weekday != day) {
-      now = now.subtract(new Duration(days: 1));
-    }
-    return now.day;
-  }
-
-  String currentTimeZone;
-  Future<void> _configureLocalTimeZone() async {
-    tz.initializeTimeZones();
-
-    currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
-  }
-
-  tz.TZDateTime _scheduleDate(
-      selectedHour, selectedMinute, selectedDay, period) {
-    var day = reminderDays.indexOf(selectedDay) + 1;
-    var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
-    hour = hour == 24 ? 00 : hour;
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, _getExactDy(day), hour, selectedMinute);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    return scheduledDate;
-  }
-
-  String reminderId;
-  int localNotificationId;
-  bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    final prayerData =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    var reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.prayer.id,
-        orElse: () => null);
-    reminderId = reminder?.id ?? '';
-    localNotificationId = reminder?.localNotificationId ?? 0;
-
-    if (reminder == null)
-      return false;
-    else
-      return true;
   }
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
       period, CombinePrayerStream prayerData) async {
-    if (hasReminder) {
-      Provider.of<NotificationProvider>(context, listen: false)
-          .deleteLocalNotification(reminderId);
-      flutterLocalNotificationsPlugin.cancel(localNotificationId);
-    }
-    var localNots = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    var localId = localNots.length > 0
-        ? localNots
-                .reduce((a, b) =>
-                    a.localNotificationId > b.localNotificationId ? a : b)
-                .localNotificationId +
-            1
-        : 0;
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        localId,
-        '$selectedFrequency reminder to pray',
-        prayerData.prayer.description,
-        _scheduleDate(selectedHour, selectedMinute, selectedDay, period),
-        const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description'),
-            iOS: IOSNotificationDetails()),
-        payload: prayerData.userPrayer.id,
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: selectedFrequency.toString().toLowerCase() ==
-                Frequency.daily.toLowerCase()
-            ? DateTimeComponents.time
-            : DateTimeComponents
-                .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
-    var notificationText = selectedFrequency == Frequency.weekly
-        ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-        : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-    await storeNotification(localId, notificationText, prayerData);
-  }
-
-  Future onSelectNotification(String payload) async {
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayer(payload);
-    Navigator.of(context).pushNamed(PrayerDetails.routeName);
-  }
-
-  storeNotification(
-      localId, notificationText, CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(bcontext);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(
-              localId, prayerData.prayer.id, notificationText);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      _goToDetails();
+      BeStilDialog.showLoading(context);
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final notificationText = selectedFrequency == Frequency.weekly
+          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
+          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
+      final title = '$selectedFrequency reminder to pray';
+      final description = prayerData.prayer.description;
+      final scheduleDate = LocalNotification.scheduleDate(
+          selectedHour, selectedMinute, selectedDay, period);
+      await LocalNotification.setLocalNotification(
+        title: title,
+        description: description,
+        scheduledDate: scheduleDate,
+        payload: userId,
+        frequency: selectedFrequency,
+      );
+      await storeNotification(notificationText, userId, title, description,
+          selectedFrequency, scheduleDate, prayerData);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -231,11 +132,37 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  BuildContext bcontext;
+  storeNotification(
+    String notificationText,
+    String userId,
+    String title,
+    String description,
+    String frequency,
+    tz.TZDateTime scheduledDate,
+    CombinePrayerStream prayerData,
+  ) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .addLocalNotification(
+      LocalNotification.localNotificationId,
+      prayerData.prayer.id,
+      notificationText,
+      userId,
+      PrayerDetails.routeName,
+      prayerData.prayer.id,
+      title,
+      description,
+      frequency,
+      NotificationType.reminder,
+      scheduledDate,
+    );
+    await Future.delayed(Duration(milliseconds: 300));
+    BeStilDialog.hideLoading(context);
+    _goToDetails();
+  }
 
   void _onMarkAsAnswered(CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(bcontext);
+      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
@@ -254,7 +181,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _unArchive(CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(bcontext);
+      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .unArchivePrayer(prayerData.userPrayer.id);
 
@@ -269,7 +196,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _snoozePrayer(CombinePrayerStream prayerData) async {
-    BeStilDialog.showLoading(bcontext);
+    BeStilDialog.showLoading(context);
     var _snoozeEndDate = DateTime.now().add(new Duration(
         minutes: Provider.of<SettingsProvider>(context, listen: false)
             .settings
@@ -283,7 +210,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(bcontext);
+      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
@@ -307,7 +234,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _onArchive(CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(bcontext);
+      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(prayerData.userPrayer.id);
 
@@ -336,7 +263,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
         prayerData.updates.map((u) => u.description).toList();
 
     var newUpdates = updates.join("<br>");
-    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -400,7 +326,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       return ReminderPicker(
                         hideActionuttons: false,
                         frequency: reminderInterval,
-                        reminderDays: reminderDays,
+                        reminderDays: LocalNotification.reminderDays,
                         onCancel: () => Navigator.of(context).pop(),
                         onSave: (selectedFrequency, selectedHour,
                                 selectedMinute, selectedDay, period) =>

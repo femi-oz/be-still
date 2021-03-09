@@ -1,3 +1,4 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/duration.model.dart';
@@ -6,9 +7,10 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -18,7 +20,6 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -33,37 +34,9 @@ class PrayerTimeSettings extends StatefulWidget {
 }
 
 class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
-  var snooze;
-  var reminder;
-
-  setSnooze(value) {
-    setState(() {
-      snooze = value;
-    });
-  }
-
-  String currentTimeZone;
-
-  Future<void> _configureLocalTimeZone() async {
-    tz.initializeTimeZones();
-
-    currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
-  }
-
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
   @override
   void initState() {
-    _configureLocalTimeZone();
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOs = IOSInitializationSettings();
-    var initSetttings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
-
-    flutterLocalNotificationsPlugin.initialize(initSetttings);
+    LocalNotification.configureNotification(context, PrayerMode.routeName);
     super.initState();
   }
 
@@ -82,92 +55,26 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     Frequency.m_w_f,
   ];
 
-  List<String> reminderDays = [
-    DaysOfWeek.sun,
-    DaysOfWeek.mon,
-    DaysOfWeek.tue,
-    DaysOfWeek.wed,
-    DaysOfWeek.thu,
-    DaysOfWeek.fri,
-    DaysOfWeek.sat,
-  ];
-
-  setReminder(value) {
-    setState(() {
-      reminder = value;
-    });
-  }
-
-  int _getExactDy(day) {
-    var now = new DateTime.now();
-
-    while (now.weekday != day) {
-      now = now.subtract(new Duration(days: 1));
-    }
-    return now.day;
-  }
-
-  tz.TZDateTime _scheduleDate(
-      selectedHour, selectedMinute, selectedDay, period) {
-    // print(selectedDay);
-    // print(selectedMinute);
-    // print(selectedHour);
-    // print(period);
-    var day = reminderDays.indexOf(selectedDay) + 1;
-    var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
-    hour = hour == 24 ? 00 : hour;
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, _getExactDy(day), hour, selectedMinute);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    return scheduledDate;
-  }
-
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
       period, userId) async {
-    var localNots = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    var localId = localNots.length > 0
-        ? localNots
-                .reduce((a, b) =>
-                    a.localNotificationId > b.localNotificationId ? a : b)
-                .localNotificationId +
-            1
-        : 0;
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        localId,
-        '$selectedFrequency reminder to pray',
-        'Hi, it is time for your ${selectedFrequency.toString().toLowerCase()} prayers',
-        _scheduleDate(selectedHour, selectedMinute, selectedDay, period),
-        const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description'),
-            iOS: IOSNotificationDetails()),
-        payload: userId,
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: selectedFrequency.toString().toLowerCase() ==
-                Frequency.daily.toLowerCase()
-            ? DateTimeComponents.time
-            : DateTimeComponents
-                .dayOfWeekAndTime); //daily:time,weekly:dayOfWeekAndTime
-    var notificationText = selectedFrequency == Frequency.weekly
-        ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-        : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-    await storeNotification(localId, notificationText, userId);
-  }
-
-  storeNotification(localId, notificationText, userId) async {
     try {
       BeStilDialog.showLoading(context);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(localId, userId, notificationText);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      setState(() => _addPrayerTypeMode = false);
+      final notificationText = selectedFrequency == Frequency.weekly
+          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
+          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
+      final title = '$selectedFrequency reminder to pray';
+      final description =
+          'Hi, it is time for your ${selectedFrequency.toString().toLowerCase()} prayers';
+      final scheduleDate = LocalNotification.scheduleDate(
+          selectedHour, selectedMinute, selectedDay, period);
+      await LocalNotification.setLocalNotification(
+          title: title,
+          description: description,
+          scheduledDate: scheduleDate,
+          payload: userId,
+          frequency: selectedFrequency);
+      await storeNotification(notificationText, userId, title, description,
+          selectedFrequency, scheduleDate);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -175,29 +82,37 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     }
   }
 
+  storeNotification(
+    String notificationText,
+    String userId,
+    String title,
+    String description,
+    String frequency,
+    DateTime scheduledDate,
+  ) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .addLocalNotification(
+      LocalNotification.localNotificationId,
+      userId,
+      notificationText,
+      userId,
+      PrayerMode.routeName,
+      userId,
+      title,
+      description,
+      frequency,
+      NotificationType.prayer_time,
+      scheduledDate,
+    );
+    await Future.delayed(Duration(milliseconds: 300));
+    BeStilDialog.hideLoading(context);
+    setState(() => _addPrayerTypeMode = false);
+  }
+
   _savePrayerTime(selectedDay, selectedFrequency, period, selectedHour,
       selectedMinute) async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(userId,
-            key: SettingsKey.day,
-            value: selectedDay,
-            settingsId: widget.prayerSettings.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(userId,
-            key: SettingsKey.frequency,
-            value: selectedFrequency,
-            settingsId: widget.prayerSettings.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .updatePrayerSettings(userId,
-            key: SettingsKey.time,
-            value: period,
-            settingsId: widget.prayerSettings.id);
-
-    // await Provider.of<NotificationProvider>(context, listen: false)
-    //     .addLocalNotification(localId, userId, notificationText);
-
     setNotification(selectedHour, selectedFrequency, selectedMinute,
         selectedDay, period, userId);
   }
@@ -250,7 +165,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 value: 'Spotify',
               ),
               Container(
-                child: CustomPicker(songs, setSnooze, true, 3),
+                child: CustomPicker(songs, null, true, 3),
               ),
               CustomToggle(
                 title: 'Auto play music during prayer time?',
@@ -287,7 +202,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                       child: ReminderPicker(
                         hideActionuttons: false,
                         frequency: reminderInterval,
-                        reminderDays: reminderDays,
+                        reminderDays: LocalNotification.reminderDays,
                         onCancel: () =>
                             setState(() => _addPrayerTypeMode = false),
                         onSave: (selectedFrequency, selectedHour,
