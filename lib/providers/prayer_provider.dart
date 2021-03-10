@@ -61,6 +61,14 @@ class PrayerProvider with ChangeNotifier {
                   e.userPrayer.status.toLowerCase() ==
                   Status.active.toLowerCase())
               .toList();
+          List<CombinePrayerStream> _distinct = [];
+          var idSet = <String>{};
+          for (var e in _filteredPrayerTimeList) {
+            if (idSet.add(e.prayer.id)) {
+              _distinct.add(e);
+            }
+          }
+          _filteredPrayerTimeList = _distinct;
           notifyListeners();
         },
       );
