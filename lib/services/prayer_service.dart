@@ -401,11 +401,13 @@ class PrayerService {
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': true},
       );
-      _userPrayerCollectionReference.doc(userPrayerId).update({
+      final data = {
         'IsArchived': true,
         'Status': Status.inactive,
-        'IsFavourite': false
-      });
+        'IsFavourite': false,
+        'ArchivedDate': DateTime.now()
+      };
+      _userPrayerCollectionReference.doc(userPrayerId).update(data);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, prayerID, 'PRAYER/service/markPrayerAsAnswered');

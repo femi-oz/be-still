@@ -35,23 +35,29 @@ class PrayerProvider with ChangeNotifier {
   CombinePrayerStream get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
 
-  Future<void> setPrayers(String userId, String sortBy) async =>
-      _prayerService.getPrayers(userId).asBroadcastStream().listen(
-        (data) {
-          _prayers = data.toList();
-          _autoDeleteArchivePrayers(userId);
-          _unSnoozePrayerPast();
-          filterPrayers(
-            userId: userId,
-            isAnswered: _filterOptions.isAnswered,
-            isArchived: _filterOptions.isArchived,
-            isSnoozed: _filterOptions.isSnoozed,
-            status: _filterOptions.status,
-            sortBy: sortBy,
-          );
-          notifyListeners();
-        },
-      );
+  Future<void> setPrayers(String userId, String sortBy) async {
+    _prayerService.getPrayers(userId).asBroadcastStream().listen(
+      (data) {
+        _prayers = data.toList();
+        filterPrayers(
+          userId: userId,
+          isAnswered: _filterOptions.isAnswered,
+          isArchived: _filterOptions.isArchived,
+          isSnoozed: _filterOptions.isSnoozed,
+          status: _filterOptions.status,
+          sortBy: sortBy,
+        );
+        notifyListeners();
+      },
+    );
+    checkPrayerValidity(userId, prayers);
+  }
+
+  Future<void> checkPrayerValidity(
+      String userId, List<CombinePrayerStream> prayers) async {
+    await _autoDeleteArchivePrayers(userId, prayers);
+    await _unSnoozePrayerPast(prayers);
+  }
 
   Future<void> setPrayerTimePrayers(String userId, String sortBy) async =>
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
@@ -172,8 +178,8 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _unSnoozePrayerPast() async {
-    var prayersToUnsnooze = prayers
+  Future<void> _unSnoozePrayerPast(data) async {
+    var prayersToUnsnooze = data
         .where((e) =>
             e.userPrayer.snoozeEndDate.isBefore(DateTime.now()) &&
             e.userPrayer.isSnoozed == true)
@@ -243,8 +249,9 @@ class PrayerProvider with ChangeNotifier {
           String prayerID, DateTime snoozeEndDate, String userPrayerID) async =>
       await _prayerService.unSnoozePrayer(snoozeEndDate, userPrayerID);
 
-  Future<void> _autoDeleteArchivePrayers(String userId) async {
-    final archivedPrayers = prayers
+  Future<void> _autoDeleteArchivePrayers(
+      String userId, List<CombinePrayerStream> data) async {
+    final archivedPrayers = data
         .where((CombinePrayerStream data) => data.userPrayer.isArchived == true)
         .toList();
     final settings = await locator<SettingsService>().getSettings(userId);
