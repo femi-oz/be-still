@@ -31,8 +31,8 @@ class _SharePrayerState extends State<SharePrayer> {
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
     var updates = widget.updates;
-    var link =
-        '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
+    // var link =
+    //     '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
     var _footerText =
         '$name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. \n\n https://www.bestillapp.com';
     final Uri params = Uri(

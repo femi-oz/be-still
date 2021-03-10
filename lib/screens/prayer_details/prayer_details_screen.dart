@@ -1,15 +1,8 @@
-import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer_details/widgets/group_admin_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
-import 'package:be_still/screens/prayer_details/widgets/other_member_prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -78,7 +71,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final updates = Provider.of<PrayerProvider>(context).currentPrayer.updates;
     return Scaffold(
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),

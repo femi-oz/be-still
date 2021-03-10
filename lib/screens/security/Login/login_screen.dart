@@ -262,7 +262,6 @@ class _LoginScreenState extends State<LoginScreen> {
     Settings.enableLocalAuth = false;
   }
 
-  bool _isFocused = false;
   Widget _buildForm() {
     return Form(
       autovalidate: _autoValidate,

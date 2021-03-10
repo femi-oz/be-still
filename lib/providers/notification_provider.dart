@@ -1,7 +1,6 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/notification_service.dart';
-import 'package:be_still/utils/local_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../locator.dart';

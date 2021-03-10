@@ -4,11 +4,8 @@ import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-
-import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
-import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
