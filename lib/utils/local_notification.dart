@@ -84,23 +84,6 @@ class LocalNotification {
     );
   }
 
-  static bool get _hasReminder {
-    var reminders = Provider.of<NotificationProvider>(_context, listen: false)
-        .localNotifications;
-    final prayerData =
-        Provider.of<PrayerProvider>(_context, listen: false).currentPrayer;
-    var reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.prayer.id,
-        orElse: () => null);
-    reminderId = reminder?.id ?? '';
-    localNotificationId = reminder?.localNotificationId ?? 0;
-
-    if (reminder == null)
-      return false;
-    else
-      return true;
-  }
-
   static int _getExactDy(day) {
     var now = new DateTime.now();
 
@@ -126,5 +109,9 @@ class LocalNotification {
 
   static Future<void> clearAll() async {
     _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  static Future<void> unschedule(id) async {
+    _flutterLocalNotificationsPlugin.cancel(id);
   }
 }

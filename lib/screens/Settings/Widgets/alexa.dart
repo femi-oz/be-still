@@ -5,7 +5,6 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:be_still/widgets/custom_section_header.dart';

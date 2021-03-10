@@ -1,8 +1,3 @@
-import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';

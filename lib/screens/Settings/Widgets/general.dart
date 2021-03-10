@@ -82,7 +82,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       _newEmail.clear();
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       _newEmail.clear();
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
@@ -101,7 +101,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       _newPassword.clear();
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       _newPassword.clear();
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
@@ -159,12 +159,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     onPressed: () => _update(_ModalType.password, context),
                     value: 'password'),
                 SizedBox(height: 10),
-                CustomOutlineButton(
-                    actionColor: AppColors.red,
-                    actionText: 'ADD',
-                    onPressed: () => null,
-                    value: 'Two-Factor Authentication'),
-                SizedBox(height: 10),
+                // CustomOutlineButton(
+                //     actionColor: AppColors.red,
+                //     actionText: 'ADD',
+                //     onPressed: () => null,
+                //     value: 'Two-Factor Authentication'),
+                // SizedBox(height: 10),
               ],
             ),
             Column(

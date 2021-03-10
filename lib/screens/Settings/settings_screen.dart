@@ -1,22 +1,14 @@
-import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
-
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/settings/Widgets/alexa.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
-import 'package:be_still/screens/settings/Widgets/groups.dart';
 import 'package:be_still/screens/settings/Widgets/notifications.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -28,8 +20,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   TabController tabController;
-
-  // String title = "Home";
 
   @override
   void initState() {
@@ -97,7 +87,7 @@ class SettingsTabState extends State<SettingsTab>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
-        length: 7,
+        length: 5,
         child: Scaffold(
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
@@ -136,15 +126,15 @@ class SettingsTabState extends State<SettingsTab>
                   Tab(
                     text: "Notifications",
                   ),
-                  Tab(
-                    text: "Alexa",
-                  ),
+                  // Tab(
+                  //   text: "Alexa",
+                  // ),
                   Tab(
                     text: "Sharing",
                   ),
-                  Tab(
-                    text: "Groups",
-                  ),
+                  // Tab(
+                  //   text: "Groups",
+                  // ),
                 ],
               ),
             ),
@@ -164,9 +154,9 @@ class SettingsTabState extends State<SettingsTab>
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
                 NotificationsSettings(_settingsProvider.settings),
-                AlexaSettings(_settingsProvider.settings),
+                // AlexaSettings(_settingsProvider.settings),
                 SharingSettings(),
-                GroupsSettings(),
+                // GroupsSettings(),
               ],
             ),
           ),

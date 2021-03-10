@@ -1,5 +1,4 @@
 import 'package:be_still/enums/settings_key.dart';
-import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
