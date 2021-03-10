@@ -143,18 +143,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
   ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-      LocalNotification.localNotificationId,
-      prayerData.prayer.id,
-      notificationText,
-      userId,
-      PrayerDetails.routeName,
-      prayerData.prayer.id,
-      title,
-      description,
-      frequency,
-      NotificationType.reminder,
-      scheduledDate,
-    );
+            LocalNotification.localNotificationId,
+            prayerData.prayer.id,
+            notificationText,
+            userId,
+            PrayerDetails.routeName,
+            prayerData.prayer.id,
+            title,
+            description,
+            frequency,
+            NotificationType.reminder,
+            scheduledDate,
+            '',
+            '',
+            '',
+            '');
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     _goToDetails();

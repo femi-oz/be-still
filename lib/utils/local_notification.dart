@@ -110,4 +110,8 @@ class LocalNotification {
   static Future<void> clearAll() async {
     _flutterLocalNotificationsPlugin.cancelAll();
   }
+
+  static Future<void> unschedule(id) async {
+    _flutterLocalNotificationsPlugin.cancel(id);
+  }
 }
