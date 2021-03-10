@@ -230,37 +230,47 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                             children: [
                               ...localNotifications.map((data) => Row(
                                     children: [
-                                      Text(
-                                        data.frequency,
-                                        style: TextStyle(
-                                            color: AppColors.lightBlue4),
+                                      Container(
+                                        child: Text(
+                                          data.frequency,
+                                          style: TextStyle(
+                                              color: AppColors.lightBlue4),
+                                        ),
                                       ),
                                       SizedBox(
                                         width: 5,
                                       ),
-                                      Text(
-                                        data.scheduledDate.day.toString(),
-                                        style: TextStyle(
-                                            color: AppColors.offWhite1),
+                                      Container(
+                                        child: Text(
+                                          data.scheduledDate.day.toString(),
+                                          style: TextStyle(
+                                              color: AppColors.offWhite1),
+                                        ),
                                       ),
                                       SizedBox(
                                         width: 5,
                                       ),
-                                      Text(
-                                        data.scheduledDate.hour.toString(),
-                                        style: TextStyle(
-                                            color: AppColors.offWhite1),
+                                      Container(
+                                        child: Text(
+                                          data.scheduledDate.hour.toString(),
+                                          style: TextStyle(
+                                              color: AppColors.offWhite1),
+                                        ),
                                       ),
-                                      Text(
-                                        ':',
-                                        style: TextStyle(
-                                            color: AppColors.offWhite1),
+                                      Container(
+                                        child: Text(
+                                          ':',
+                                          style: TextStyle(
+                                              color: AppColors.offWhite1),
+                                        ),
                                       ),
 
-                                      Text(
-                                        data.scheduledDate.minute.toString(),
-                                        style: TextStyle(
-                                            color: AppColors.offWhite1),
+                                      Container(
+                                        child: Text(
+                                          data.scheduledDate.minute.toString(),
+                                          style: TextStyle(
+                                              color: AppColors.offWhite1),
+                                        ),
                                       ),
                                       SizedBox(
                                         width: 5,
