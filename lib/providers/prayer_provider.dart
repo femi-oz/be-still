@@ -18,6 +18,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _prayers = [];
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   List<CombinePrayerStream> _filteredPrayers = [];
+  List<CombinePrayerStream> _filteredPrayerTimeList = [];
   CombinePrayerStream _currentPrayer;
   FilterType _filterOptions = FilterType(
     isAnswered: false,
@@ -28,6 +29,8 @@ class PrayerProvider with ChangeNotifier {
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
+  List<CombinePrayerStream> get filteredPrayerTimeList =>
+      _filteredPrayerTimeList;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
@@ -46,6 +49,18 @@ class PrayerProvider with ChangeNotifier {
             status: _filterOptions.status,
             sortBy: sortBy,
           );
+          notifyListeners();
+        },
+      );
+
+  Future<void> setPrayerTimePrayers(String userId, String sortBy) async =>
+      _prayerService.getPrayers(userId).asBroadcastStream().listen(
+        (data) {
+          _filteredPrayerTimeList = data
+              .where((e) =>
+                  e.userPrayer.status.toLowerCase() ==
+                  Status.active.toLowerCase())
+              .toList();
           notifyListeners();
         },
       );
