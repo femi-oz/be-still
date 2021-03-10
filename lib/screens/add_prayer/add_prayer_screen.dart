@@ -3,6 +3,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -108,12 +109,18 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void onTextChange(val) {
-    setState(() {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    try {
       tags = val.split(' ');
-      tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
-          ? tags[tags.length - 1]
-          : '';
-    });
+      setState(() => tagText =
+          tags.length > 0 && tags[tags.length - 1].startsWith('@')
+              ? tags[tags.length - 1]
+              : '');
+    } catch (e) {
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(
+          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
+    }
   }
 
   Future<bool> _onWillPop() async {
