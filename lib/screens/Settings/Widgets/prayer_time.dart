@@ -18,6 +18,7 @@ import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,18 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     super.initState();
   }
 
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _getLocalNotification();
+
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   List<LookUp> songs = [
     LookUp(text: 'Evening Listening', value: 1),
     LookUp(text: 'Rock Jams', value: 2),
@@ -54,6 +67,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     Frequency.t_th,
     Frequency.m_w_f,
   ];
+  double itemExtent = 30.0;
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
       period, userId) async {
@@ -117,10 +131,21 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
         selectedDay, period, userId);
   }
 
+  _getLocalNotification() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    Provider.of<NotificationProvider>(context, listen: false)
+        .setLocalNotifications(userId);
+  }
+
   bool _addPrayerTypeMode = false;
 
   @override
   Widget build(BuildContext context) {
+    final localNotifications =
+        Provider.of<NotificationProvider>(context, listen: false)
+            .localNotifications;
+
     final setingProvider = Provider.of<SettingsProvider>(context);
     final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
@@ -179,6 +204,124 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           ),
           SizedBox(height: 30),
           CustomSectionHeder('My Prayer Time'),
+          SizedBox(
+            height: 30.0,
+          ),
+          localNotifications.length > 0
+              ? SingleChildScrollView(
+                  child: Row(
+                    children: [
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 40),
+                          margin: EdgeInsets.only(left: 20, right: 20),
+                          height: 40.0,
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundColor[0],
+                            border: Border.all(
+                              color: AppColors.lightBlue6,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            children: [
+                              ...localNotifications.map((data) => Row(
+                                    children: [
+                                      Text(
+                                        data.frequency,
+                                        style: TextStyle(
+                                            color: AppColors.lightBlue4),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        data.scheduledDate.day.toString(),
+                                        style: TextStyle(
+                                            color: AppColors.offWhite1),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        data.scheduledDate.hour.toString(),
+                                        style: TextStyle(
+                                            color: AppColors.offWhite1),
+                                      ),
+                                      Text(
+                                        ':',
+                                        style: TextStyle(
+                                            color: AppColors.offWhite1),
+                                      ),
+
+                                      Text(
+                                        data.scheduledDate.minute.toString(),
+                                        style: TextStyle(
+                                            color: AppColors.offWhite1),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      // Text(
+                                      //   data.scheduledDate.hour.toString(),
+                                      //   style: TextStyle(
+                                      //       color: AppColors.offWhite1),
+                                      // ),
+                                    ],
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            child: Icon(
+                              Icons.edit_rounded,
+                              color: AppColors.lightBlue6,
+                              size: 20,
+                            ),
+                            onTap: () {},
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            child: Icon(
+                              Icons.cancel_rounded,
+                              color: AppColors.lightBlue6,
+                              size: 20,
+                            ),
+                            onTap: () {},
+                          )
+                        ],
+                      )
+
+                      // ...localNotifications.map((data) =>
+                      // // ReminderPicker(
+                      // //             hideActionuttons: false,
+                      // //             frequency: data.frequency,
+                      // //             reminderDays: LocalNotification.reminderDays,
+                      // //             onCancel: () =>
+                      // //                 setState(() => _addPrayerTypeMode = false),
+                      // //             onSave: (selectedFrequency, selectedHour,
+                      // //                     selectedMinute, selectedDay, selectedPeriod) =>
+                      // //                 _savePrayerTime(
+                      // //                     selectedDay,
+                      // //                     selectedFrequency,
+                      // //                     selectedPeriod,
+                      // //                     selectedHour,
+                      // //                     selectedMinute), // TODO pass the right value
+                      // //           ),
+
+                      // )
+                    ],
+                  ),
+                )
+              : Container(),
           Column(
             children: [
               !_addPrayerTypeMode

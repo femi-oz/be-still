@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
               .currentUser
               .keyReference;
       BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
