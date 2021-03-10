@@ -503,7 +503,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               : Container(),
           Column(
             children: [
-              !_addPrayerTypeMode
+              !_addPrayerTypeMode && !showUpdateField
                   ? Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 40),
