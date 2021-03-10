@@ -159,12 +159,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     onPressed: () => _update(_ModalType.password, context),
                     value: 'password'),
                 SizedBox(height: 10),
-                CustomOutlineButton(
-                    actionColor: AppColors.red,
-                    actionText: 'ADD',
-                    onPressed: () => null,
-                    value: 'Two-Factor Authentication'),
-                SizedBox(height: 10),
+                // CustomOutlineButton(
+                //     actionColor: AppColors.red,
+                //     actionText: 'ADD',
+                //     onPressed: () => null,
+                //     value: 'Two-Factor Authentication'),
+                // SizedBox(height: 10),
               ],
             ),
             Column(

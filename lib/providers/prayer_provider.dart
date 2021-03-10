@@ -252,7 +252,7 @@ class PrayerProvider with ChangeNotifier {
       if (toDelete[i]
               .userPrayer
               .archivedDate
-              .add(Duration(minutes: autoDeleteDuration))
+              .add(Duration(minutes: 1))
               .isBefore(DateTime.now()) &&
           autoDeleteDuration != 0) {
         deletePrayer(toDelete[i].userPrayer.id);

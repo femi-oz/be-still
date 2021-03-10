@@ -126,57 +126,57 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 30),
-          Column(
-            children: [
-              CustomSectionHeder('Preference'),
-              SizedBox(height: 20),
-              CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(userId,
-                    key: SettingsKey.allowEmergencyCalls,
-                    value: value,
-                    settingsId: widget.prayerSettings.id),
-                title:
-                    'Allow emergency calls (second call from the same number calls within 2 minutes)',
-                value: widget.prayerSettings.allowEmergencyCalls,
-              ),
-              CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(userId,
-                    key: SettingsKey.doNotDisturb,
-                    value: value,
-                    settingsId: widget.prayerSettings.id),
-                title: 'Set to Do Not Disturb during Prayer Time?',
-                value: widget.prayerSettings.doNotDisturb,
-              ),
-              CustomToggle(
-                onChange: (value) => setingProvider.updatePrayerSettings(userId,
-                    key: SettingsKey.enableBackgroundMusic,
-                    value: value,
-                    settingsId: widget.prayerSettings.id),
-                title: 'Enable background music during Prayer Mode?',
-                value: widget.prayerSettings.enableBackgroundMusic,
-              ),
-              SizedBox(height: 20),
-              CustomOutlineButton(
-                actionColor: AppColors.lightBlue4,
-                actionText: 'CONNECTED',
-                textIcon: 'assets/images/spotify.png',
-                onPressed: () => null,
-                value: 'Spotify',
-              ),
-              Container(
-                child: CustomPicker(songs, null, true, 3),
-              ),
-              CustomToggle(
-                title: 'Auto play music during prayer time?',
-                onChange: (value) => setingProvider.updatePrayerSettings(userId,
-                    key: SettingsKey.autoPlayMusic,
-                    value: value,
-                    settingsId: widget.prayerSettings.id),
-                value: widget.prayerSettings.autoPlayMusic,
-              ),
-            ],
-          ),
+          // SizedBox(height: 30),
+          // Column(
+          //   children: [
+          //     CustomSectionHeder('Preference'),
+          //     SizedBox(height: 20),
+          //     CustomToggle(
+          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
+          //           key: SettingsKey.allowEmergencyCalls,
+          //           value: value,
+          //           settingsId: widget.prayerSettings.id),
+          //       title:
+          //           'Allow emergency calls (second call from the same number calls within 2 minutes)',
+          //       value: widget.prayerSettings.allowEmergencyCalls,
+          //     ),
+          //     CustomToggle(
+          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
+          //           key: SettingsKey.doNotDisturb,
+          //           value: value,
+          //           settingsId: widget.prayerSettings.id),
+          //       title: 'Set to Do Not Disturb during Prayer Time?',
+          //       value: widget.prayerSettings.doNotDisturb,
+          //     ),
+          //     CustomToggle(
+          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
+          //           key: SettingsKey.enableBackgroundMusic,
+          //           value: value,
+          //           settingsId: widget.prayerSettings.id),
+          //       title: 'Enable background music during Prayer Mode?',
+          //       value: widget.prayerSettings.enableBackgroundMusic,
+          //     ),
+          //     SizedBox(height: 20),
+          //     // CustomOutlineButton(
+          //     //   actionColor: AppColors.lightBlue4,
+          //     //   actionText: 'CONNECTED',
+          //     //   textIcon: 'assets/images/spotify.png',
+          //     //   onPressed: () => null,
+          //     //   value: 'Spotify',
+          //     // ),
+          //     // Container(
+          //     //   child: CustomPicker(songs, null, true, 3),
+          //     // ),
+          //     // CustomToggle(
+          //     //   title: 'Auto play music during prayer time?',
+          //     //   onChange: (value) => setingProvider.updatePrayerSettings(userId,
+          //     //       key: SettingsKey.autoPlayMusic,
+          //     //       value: value,
+          //     //       settingsId: widget.prayerSettings.id),
+          //     //   value: widget.prayerSettings.autoPlayMusic,
+          //     // ),
+          //   ],
+          // ),
           SizedBox(height: 30),
           CustomSectionHeder('My Prayer Time'),
           Column(
