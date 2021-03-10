@@ -65,16 +65,10 @@ class _SharePrayerState extends State<SharePrayer> {
     //     path: isChurch ? _churchPhone : '',
     //     query:
     //         "body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText");
-    var uri;
-    if (Platform.isAndroid) {
-      uri =
-          "sms:${isChurch ? _churchPhone : ''}?body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
-      await launch(uri);
-    } else if (Platform.isIOS) {
-      uri =
-          'sms:${isChurch ? _churchPhone : ''}&body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText';
-      await launch(uri);
-    }
+
+    final uri =
+        "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
+
     if (await canLaunch(uri)) {
       await launch(uri);
     } else {
