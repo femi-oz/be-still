@@ -7,6 +7,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/share-in-app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -60,20 +61,23 @@ class _SharePrayerState extends State<SharePrayer> {
     name = toBeginningOfSentenceCase(name);
     final _footerText =
         "$name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. \n\n https://www.bestillapp.com";
-    // Uri params = Uri(
-    //     scheme: 'sms',
-    //     path: isChurch ? _churchPhone : '',
-    //     query:
-    //         "body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText");
 
-    final uri =
-        "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
+    String _result = await sendSMS(
+        message:
+            "$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText",
+        recipients: [isChurch ? _churchPhone : '']).catchError((onError) {
+      print(onError);
+    });
+    print(_result);
 
-    if (await canLaunch(uri)) {
-      await launch(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
+    // final uri =
+    //     "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
+
+    // if (await canLaunch(uri)) {
+    //   await launch(uri);
+    // } else {
+    //   throw 'Could not launch $uri';
+    // }
   }
 
   @override
