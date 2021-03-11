@@ -30,7 +30,7 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
+
   bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
@@ -76,7 +76,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   void _createAccount() async {
-    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -232,7 +231,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
-        autovalidate: _autoValidate,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           children: <Widget>[
             CustomInput(

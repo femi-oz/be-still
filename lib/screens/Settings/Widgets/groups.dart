@@ -72,7 +72,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        user.userId.toUpperCase(), //TODO
+                        user.userId.toUpperCase(),
                         style: TextStyle(
                             color: AppColors.lightBlue3,
                             fontSize: 14,
@@ -122,8 +122,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.transparent)),
+                          ),
                           child: Container(
                             child: Text(
                               'MESSAGE',
@@ -157,9 +160,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlineButton(
-                                borderSide:
-                                    BorderSide(color: Colors.transparent),
+                              child: OutlinedButton(
+                                style: ButtonStyle(
+                                  side: MaterialStateProperty.all<BorderSide>(
+                                      BorderSide(color: Colors.transparent)),
+                                ),
                                 child: Container(
                                   child: Text(
                                     'ADMIN',
@@ -199,9 +204,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlineButton(
-                                borderSide:
-                                    BorderSide(color: Colors.transparent),
+                              child: OutlinedButton(
+                                style: ButtonStyle(
+                                  side: MaterialStateProperty.all<BorderSide>(
+                                      BorderSide(color: Colors.transparent)),
+                                ),
                                 child: Container(
                                   child: Text(
                                     'MODERATOR',
@@ -241,9 +248,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlineButton(
-                                borderSide:
-                                    BorderSide(color: Colors.transparent),
+                              child: OutlinedButton(
+                                style: ButtonStyle(
+                                  side: MaterialStateProperty.all<BorderSide>(
+                                      BorderSide(color: Colors.transparent)),
+                                ),
                                 child: Container(
                                   child: Text(
                                     'MEMBER',
@@ -289,8 +298,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.transparent)),
+                          ),
                           child: Container(
                             child: Text(
                               'REMOVE',
@@ -937,19 +949,37 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.end,
                                                   children: [
-                                                    FlatButton(
-                                                        color: Colors.grey[700],
-                                                        onPressed: () =>
-                                                            setState(() =>
-                                                                _inviteMode =
-                                                                    false),
-                                                        child: Text('Cancel',
-                                                            style: AppTextStyles
-                                                                .regularText14)),
+                                                    TextButton(
+                                                        style: ButtonStyle(
+                                                            textStyle: MaterialStateProperty.all<TextStyle>(
+                                                                AppTextStyles
+                                                                    .boldText16
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .white)),
+                                                            backgroundColor:
+                                                                MaterialStateProperty.all<Color>(
+                                                                    Colors.grey[
+                                                                        700])),
+                                                        onPressed: () => setState(
+                                                            () => _inviteMode = false),
+                                                        child: Text('Cancel', style: AppTextStyles.regularText14)),
                                                     SizedBox(width: 15),
-                                                    FlatButton(
-                                                        color:
-                                                            AppColors.dimBlue,
+                                                    TextButton(
+                                                        style: ButtonStyle(
+                                                          textStyle: MaterialStateProperty.all<
+                                                                  TextStyle>(
+                                                              AppTextStyles
+                                                                  .boldText16
+                                                                  .copyWith(
+                                                                      color: Colors
+                                                                          .white)),
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                                      AppColors
+                                                                          .dimBlue),
+                                                        ),
                                                         onPressed: () =>
                                                             _sendInvite(
                                                                 data.group.name,

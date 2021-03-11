@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -104,7 +102,7 @@ class _SharePrayerState extends State<SharePrayer> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: FlatButton.icon(
+                  child: TextButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(
                       AppIcons.bestill_back_arrow,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class BeStillSnackbar {
   static showInSnackBar({GlobalKey<ScaffoldState> key, String message}) {
-    key.currentState.showSnackBar(
+    ScaffoldMessenger.of(key.currentContext).showSnackBar(
       new SnackBar(
         backgroundColor: AppColors.prayerMenu[1],
         content: Row(

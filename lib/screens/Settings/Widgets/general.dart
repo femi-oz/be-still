@@ -43,15 +43,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     super.initState();
   }
 
-  @override
-  void didChangePlatformBrightness() {
-    final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    if (_themeProvider.currentTheme == BsThemeMode.auto)
-      _themeProvider.changeTheme(BsThemeMode.auto);
-    print(WidgetsBinding.instance.window
-        .platformBrightness); // should print Brightness.light / Brightness.dark when you switch
-    // super.didChangePlatformBrightness(); // make sure you call this
-  }
+  // @override
+  // void didChangePlatformBrightness() {
+  //   final _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+  //   if (_themeProvider.currentTheme == BsThemeMode.auto)
+  //     _themeProvider.changeTheme(BsThemeMode.auto);
+  //   print(WidgetsBinding.instance.window
+  //       .platformBrightness); // should print Brightness.light / Brightness.dark when you switch
+  //   // super.didChangePlatformBrightness(); // make sure you call this
+  // }
 
   _getVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -259,7 +259,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _update(_ModalType type, ctx) {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    bool _autoValidate = false;
+
     final _formKey = GlobalKey<FormState>();
     _newEmail.text = _user.email;
     final alert = AlertDialog(
@@ -268,7 +268,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       content: Container(
         width: MediaQuery.of(context).size.width - 100,
         child: Form(
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -293,8 +293,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FlatButton(
-                      color: AppColors.grey.withOpacity(0.5),
+                  TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            AppColors.grey.withOpacity(0.5)),
+                      ),
                       onPressed: () {
                         _newPassword.clear();
                         _newEmail.clear();
@@ -306,17 +309,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           color: Colors.white,
                         ),
                       )),
-                  FlatButton(
-                    color: AppColors.lightBlue3,
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.lightBlue3),
+                    ),
                     onPressed: () {
-                      setState(() => _autoValidate = true);
                       if (!_formKey.currentState.validate()) return null;
                       _formKey.currentState.save();
-                      type == _ModalType.email
-                          ? _updateEmail(_user)
-                          : type == _ModalType.password
-                              ? _updatePassword()
-                              : null;
+                      if (type == _ModalType.email) _updateEmail(_user);
+                      if (type == _ModalType.password) _updatePassword();
                     },
                     child: Text('Save',
                         style: AppTextStyles.regularText15.copyWith(

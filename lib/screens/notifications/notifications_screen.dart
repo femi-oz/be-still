@@ -142,8 +142,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.transparent)),
+                            padding:
+                                MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                    EdgeInsets.zero),
+                          ),
                           child: Container(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -173,8 +179,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: OutlineButton(
-                        borderSide: BorderSide(color: Colors.transparent),
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.transparent)),
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.zero),
+                        ),
                         child: Container(
                           child: Text(
                             'DENY',

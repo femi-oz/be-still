@@ -23,7 +23,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'delete_prayer.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 

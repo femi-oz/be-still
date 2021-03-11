@@ -31,7 +31,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool rememberMe = false;
-  bool _autoValidate = false;
+
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -96,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -264,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
-      autovalidate: _autoValidate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
       child: Column(
         children: <Widget>[

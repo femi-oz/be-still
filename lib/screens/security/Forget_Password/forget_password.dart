@@ -24,12 +24,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   int step = 1;
   TextEditingController _emailController = TextEditingController();
   final _formKey1 = GlobalKey<FormState>();
-  bool _autoValidate1 = false;
   var notificationType = NotificationType.email;
   bool emailSent = false;
 
   _forgotPassword() async {
-    setState(() => _autoValidate1 = true);
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
     try {
@@ -142,7 +140,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   _buildEmailForm(BuildContext context) {
     return Form(
       key: _formKey1,
-      autovalidate: _autoValidate1,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         children: <Widget>[
           CustomInput(

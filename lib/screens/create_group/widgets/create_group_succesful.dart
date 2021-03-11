@@ -81,8 +81,11 @@ class _GroupCreatedState extends State<GroupCreated> {
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: OutlineButton(
-                borderSide: BorderSide(color: Colors.transparent),
+              child: OutlinedButton(
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all<BorderSide>(
+                      BorderSide(color: Colors.transparent)),
+                ),
                 child: Container(
                   child: Text(
                     'SEND AN EMAIL',
@@ -110,8 +113,11 @@ class _GroupCreatedState extends State<GroupCreated> {
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: OutlineButton(
-                borderSide: BorderSide(color: Colors.transparent),
+              child: OutlinedButton(
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all<BorderSide>(
+                      BorderSide(color: Colors.transparent)),
+                ),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
@@ -140,8 +146,11 @@ class _GroupCreatedState extends State<GroupCreated> {
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: OutlineButton(
-                borderSide: BorderSide(color: Colors.transparent),
+              child: OutlinedButton(
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all<BorderSide>(
+                      BorderSide(color: Colors.transparent)),
+                ),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),

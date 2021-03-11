@@ -36,7 +36,6 @@ class AddPrayer extends StatefulWidget {
 class _AddPrayerState extends State<AddPrayer> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
   List groups = [];
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
@@ -45,7 +44,6 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
 
   Future<void> _save() async {
-    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -191,7 +189,7 @@ class _AddPrayerState extends State<AddPrayer> {
                     Stack(
                       children: [
                         Form(
-                          autovalidate: _autoValidate,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           key: _formKey,
                           child: CustomInput(
                             label: 'Prayer description',

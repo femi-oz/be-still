@@ -12,7 +12,6 @@ class CreateGroupForm extends StatefulWidget {
   final Function setOption;
   final option;
   final formKey;
-  final autoValidate;
   final emailController;
 
   CreateGroupForm({
@@ -23,7 +22,6 @@ class CreateGroupForm extends StatefulWidget {
     this.descriptionController,
     this.setOption,
     this.option,
-    this.autoValidate,
     this.formKey,
     this.emailController,
   });
@@ -37,7 +35,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
   Widget build(BuildContext context) {
     return Form(
       key: widget.formKey,
-      autovalidate: widget.autoValidate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         children: [
           CustomInput(
@@ -104,8 +102,11 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   ),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
+                child: OutlinedButton(
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(
+                          BorderSide(color: Colors.transparent)),
+                    ),
                     child: Container(
                       child: Text(
                         'NORMAL',
@@ -129,8 +130,11 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   ),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
+                child: OutlinedButton(
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(
+                          BorderSide(color: Colors.transparent)),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 5.0, vertical: 5),
@@ -156,8 +160,11 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   ),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
+                child: OutlinedButton(
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(
+                          BorderSide(color: Colors.transparent)),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 5.0, vertical: 5),

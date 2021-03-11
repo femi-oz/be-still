@@ -134,18 +134,18 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 30),
-                      Container(
-                        child: GestureDetector(
-                          onTap: () => null,
-                          child: Text(
-                            'MY PRAYER GOALS',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.lightBlue4),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
+                      // SizedBox(height: 30),
+                      // Container(
+                      //   child: GestureDetector(
+                      //     onTap: () => null,
+                      //     child: Text(
+                      //       'MY PRAYER GOALS',
+                      //       style: AppTextStyles.boldText20
+                      //           .copyWith(color: AppColors.lightBlue4),
+                      //       textAlign: TextAlign.left,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

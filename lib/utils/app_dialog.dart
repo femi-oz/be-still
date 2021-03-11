@@ -56,8 +56,8 @@ class BeStilDialog {
   static void showSnackBar(
       GlobalKey<ScaffoldState> _scaffoldKey, String message,
       [AlertType type = AlertType.success]) {
-    _scaffoldKey.currentState.hideCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).hideCurrentSnackBar();
+    ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(
       SnackBar(
         content: Text(
           message,
@@ -76,7 +76,8 @@ class BeStilDialog {
           label: 'CLOSE',
           textColor: Colors.white,
           onPressed: () {
-            _scaffoldKey.currentState.hideCurrentSnackBar();
+            ScaffoldMessenger.of(_scaffoldKey.currentContext)
+                .hideCurrentSnackBar();
           },
         ),
       ),

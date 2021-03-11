@@ -98,8 +98,11 @@ class _FindAGroupState extends State<FindAGroup> {
                             ),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          child: OutlineButton(
-                            borderSide: BorderSide(color: Colors.transparent),
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              side: MaterialStateProperty.all<BorderSide>(
+                                  BorderSide(color: Colors.transparent)),
+                            ),
                             child: Container(
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -156,8 +159,11 @@ class _FindAGroupState extends State<FindAGroup> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.transparent)),
+                          ),
                           child: Container(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
