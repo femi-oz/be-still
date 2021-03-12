@@ -29,6 +29,7 @@ class PrayerProvider with ChangeNotifier {
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
+
   List<CombinePrayerStream> get filteredPrayerTimeList =>
       _filteredPrayerTimeList;
   PrayerType get currentPrayerType => _currentPrayerType;

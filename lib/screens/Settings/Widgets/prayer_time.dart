@@ -1,17 +1,20 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/duration.model.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,10 +28,24 @@ class PrayerTimeSettings extends StatefulWidget {
 }
 
 class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
+  BuildContext bcontext;
+
   @override
   void initState() {
     LocalNotification.configureNotification(context, PrayerMode.routeName);
     super.initState();
+  }
+
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _getPrayerTimeList();
+
+      _isInit = false;
+    }
+    super.didChangeDependencies();
   }
 
   List<LookUp> songs = [
@@ -45,6 +62,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     Frequency.t_th,
     Frequency.m_w_f,
   ];
+  double itemExtent = 30.0;
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
       period, userId) async {
@@ -64,8 +82,17 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           scheduledDate: scheduleDate,
           payload: userId,
           frequency: selectedFrequency);
-      await storeNotification(notificationText, userId, title, description,
-          selectedFrequency, scheduleDate);
+      await storeNotification(
+          notificationText,
+          userId,
+          title,
+          description,
+          selectedFrequency,
+          scheduleDate,
+          selectedDay,
+          period,
+          selectedHour.toString(),
+          selectedMinute.toString());
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -74,27 +101,33 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   }
 
   storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    DateTime scheduledDate,
-  ) async {
+      String notificationText,
+      String userId,
+      String title,
+      String description,
+      String frequency,
+      DateTime scheduledDate,
+      String selectedDay,
+      String period,
+      String selectedHour,
+      String selectedMinute) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-      LocalNotification.localNotificationId,
-      userId,
-      notificationText,
-      userId,
-      PrayerMode.routeName,
-      userId,
-      title,
-      description,
-      frequency,
-      NotificationType.prayer_time,
-      scheduledDate,
-    );
+            LocalNotification.localNotificationId,
+            userId,
+            notificationText,
+            userId,
+            PrayerMode.routeName,
+            userId,
+            title,
+            description,
+            frequency,
+            NotificationType.prayer_time,
+            scheduledDate,
+            selectedDay,
+            period,
+            selectedHour,
+            selectedMinute);
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     setState(() => _addPrayerTypeMode = false);
@@ -108,10 +141,161 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
         selectedDay, period, userId);
   }
 
+  _deletePrayerTime(
+    int localNotificationId,
+    String notificationId,
+  ) async {
+    try {
+      BeStilDialog.showLoading(
+        context,
+      );
+      await LocalNotification.unschedule(localNotificationId);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .deleteLocalNotification(notificationId);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      setState(() {});
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
+  bool showUpdateField = false;
+  var notificationId;
+
+  _updatePrayerTime(
+      String selectedDay,
+      String selectedPeriod,
+      String selectedFrequency,
+      String selectedHour,
+      String selectedMinute) async {
+    try {
+      BeStilDialog.showLoading(
+        context,
+      );
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .updateLocalNotification(selectedDay, selectedFrequency,
+              selectedPeriod, selectedHour, selectedMinute, notificationId);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      setState(() {});
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+    setState(() => showUpdateField = false);
+  }
+
+  _getPrayerTimeList() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setPrayerTimeNotifications(userId);
+  }
+
+  // _deleteTimerModal(BuildContext context, String prayerTimeId) {
+  //   return Container(
+  //     width: double.infinity,
+  //     height: double.infinity,
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: <Widget>[
+  //         Container(
+  //           padding: EdgeInsets.symmetric(horizontal: 100),
+  //           child: Text(
+  //             'Are you sure you want to delete this prayer time?',
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               color: AppColors.lightBlue4,
+  //               fontSize: 14,
+  //               fontWeight: FontWeight.w500,
+  //               height: 1.5,
+  //             ),
+  //           ),
+  //         ),
+  //         GestureDetector(
+  //           onTap: _deletePrayerTime(prayerTimeId),
+  //           child: Container(
+  //             height: 30,
+  //             width: double.infinity,
+  //             margin: EdgeInsets.all(40),
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                 color: AppColors.red,
+  //                 width: 1,
+  //               ),
+  //               borderRadius: BorderRadius.circular(5),
+  //             ),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: <Widget>[
+  //                 Text(
+  //                   'DELETE',
+  //                   style: TextStyle(
+  //                     color: AppColors.red,
+  //                     fontSize: 14,
+  //                     fontWeight: FontWeight.w500,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         GestureDetector(
+  //           onTap: () {
+  //             Navigator.of(context).pop();
+  //           },
+  //           child: Container(
+  //             height: 30,
+  //             width: MediaQuery.of(context).size.width * .38,
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                 color: AppColors.cardBorder,
+  //                 width: 1,
+  //               ),
+  //               borderRadius: BorderRadius.circular(5),
+  //             ),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: <Widget>[
+  //                 Text(
+  //                   'CANCEL',
+  //                   style: TextStyle(
+  //                     color: AppColors.lightBlue4,
+  //                     fontSize: 14,
+  //                     fontWeight: FontWeight.w500,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   bool _addPrayerTypeMode = false;
 
   @override
   Widget build(BuildContext context) {
+    final prayerTimeList =
+        Provider.of<NotificationProvider>(context, listen: false)
+            .prayerTimeNotifications;
+
+    // final setingProvider = Provider.of<SettingsProvider>(context);
+    // final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -168,9 +352,158 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           // ),
           SizedBox(height: 30),
           CustomSectionHeder('My Prayer Time'),
+          SizedBox(
+            height: 30.0,
+          ),
+          prayerTimeList.length > 0
+              ? SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ...prayerTimeList.map(
+                        (data) => Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 20.5, right: 15, top: 20, bottom: 20),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                height: 40.0,
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                decoration: BoxDecoration(
+                                  // color: AppColors.backgroundColor[0],
+                                  border: Border.all(
+                                    color: AppColors.lightBlue6,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      data.frequency,
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                    ),
+                                    SizedBox(
+                                      width: 30,
+                                    ),
+                                    Text(
+                                      data.selectedDay,
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                    ),
+                                    SizedBox(
+                                      width: 35,
+                                    ),
+                                    Text(
+                                      data.selectedHour,
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      ':',
+                                      style:
+                                          TextStyle(color: AppColors.offWhite1),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      data.selectedMinute,
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(
+                                      data.period,
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  child: GestureDetector(
+                                    child: Image(
+                                      image:
+                                          AssetImage('assets/images/edit.png'),
+                                      fit: BoxFit.contain,
+                                      height: 15,
+                                      width: 15,
+                                    ),
+                                    onTap: () {
+                                      setState(
+                                        () => showUpdateField = true,
+                                      );
+                                      setState(
+                                        () => notificationId = data.id,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                InkWell(
+                                  child: GestureDetector(
+                                    child: Image(
+                                      image: AssetImage(
+                                          'assets/images/delete.png'),
+                                      fit: BoxFit.contain,
+                                      height: 15,
+                                      width: 15,
+                                    ),
+                                    onTap: () {
+                                      _deletePrayerTime(
+                                          data.localNotificationId, data.id);
+                                    },
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+
+                      // ...localNotifications.map((data) =>
+                      // // ReminderPicker(
+                      // //             hideActionuttons: false,
+                      // //             frequency: data.frequency,
+                      // //             reminderDays: LocalNotification.reminderDays,
+                      // //             onCancel: () =>
+                      // //                 setState(() => _addPrayerTypeMode = false),
+                      // //             onSave: (selectedFrequency, selectedHour,
+                      // //                     selectedMinute, selectedDay, selectedPeriod) =>
+                      // //                 _savePrayerTime(
+                      // //                     selectedDay,
+                      // //                     selectedFrequency,
+                      // //                     selectedPeriod,
+                      // //                     selectedHour,
+                      // //                     selectedMinute), // TODO pass the right value
+                      // //           ),
+
+                      // )
+                    ],
+                  ),
+                )
+              : Container(),
           Column(
             children: [
-              !_addPrayerTypeMode
+              !_addPrayerTypeMode && !showUpdateField
                   ? Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 40),
@@ -200,7 +533,31 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                 selectedPeriod, selectedHour, selectedMinute),
                       ),
                     )
-                  : Container(),
+                  : showUpdateField
+                      ? Container(
+                          margin: EdgeInsets.only(bottom: 80.0),
+                          child: ReminderPicker(
+                            hideActionuttons: false,
+                            frequency: reminderInterval,
+                            reminderDays: LocalNotification.reminderDays,
+                            onCancel: () =>
+                                setState(() => showUpdateField = false),
+                            onSave: (
+                              selectedFrequency,
+                              selectedHour,
+                              selectedMinute,
+                              selectedDay,
+                              selectedPeriod,
+                            ) =>
+                                _updatePrayerTime(
+                                    selectedDay,
+                                    selectedFrequency,
+                                    selectedPeriod,
+                                    selectedHour.toString(),
+                                    selectedMinute.toString()),
+                          ),
+                        )
+                      : Container(),
               SizedBox(height: 100),
             ],
           ),

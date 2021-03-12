@@ -78,6 +78,10 @@ class LocalNotificationModel {
   final String type;
   final String notificationText;
   final int localNotificationId;
+  final String selectedDay;
+  final String period;
+  final String selectedHour;
+  final String selectedMinute;
 
   const LocalNotificationModel({
     this.id,
@@ -92,6 +96,10 @@ class LocalNotificationModel {
     @required this.fallbackRoute,
     @required this.notificationText,
     @required this.localNotificationId,
+    @required this.selectedDay,
+    @required this.period,
+    @required this.selectedHour,
+    @required this.selectedMinute,
   });
   LocalNotificationModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
@@ -105,7 +113,11 @@ class LocalNotificationModel {
         payload = snapshot.data()['Payload'],
         fallbackRoute = snapshot.data()['FallbackRoute'],
         notificationText = snapshot.data()['NotificationText'],
-        localNotificationId = snapshot.data()['LocalNotificationId'];
+        localNotificationId = snapshot.data()['LocalNotificationId'],
+        selectedDay = snapshot.data()['SelectedDay'] ?? '',
+        period = snapshot.data()['Period'] ?? '',
+        selectedHour = snapshot.data()['SelectedHour'] ?? '',
+        selectedMinute = snapshot.data()['SelectedMinute'] ?? '';
 
   Map<String, dynamic> toJson() {
     return {
@@ -120,6 +132,10 @@ class LocalNotificationModel {
       'FallbackRoute': fallbackRoute,
       'NotificationText': notificationText,
       'LocalNotificationId': localNotificationId,
+      'SelectedDay': selectedDay,
+      'Period': period,
+      'SelectedHour': selectedHour,
+      'SelectedMinute': selectedMinute,
     };
   }
 }

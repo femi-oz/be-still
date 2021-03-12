@@ -192,6 +192,7 @@ class PrayerService {
           .doc(_userPrayerID)
           .set(populateUserPrayer(recieverId, prayerId, senderId).toJson());
       var tokens = await _notificationService.getNotificationToken(recieverId);
+      print(tokens);
       _notificationService.addPushNotification(
         messageType: NotificationType.prayer,
         message: prayerDesc,
@@ -749,6 +750,10 @@ class PrayerService {
         modifiedBy: creatorId,
         modifiedOn: DateTime.now());
     return userPrayer;
+  }
+
+  populateNotificationId(String notificationId) {
+    return notificationId;
   }
 
   PrayerTagModel populatePrayerTag(
