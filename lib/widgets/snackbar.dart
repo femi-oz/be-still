@@ -3,14 +3,17 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
 class BeStillSnackbar {
-  static showInSnackBar({GlobalKey<ScaffoldState> key, String message}) {
+  static showInSnackBar(
+      {GlobalKey<ScaffoldState> key, String message, type = 'error'}) {
     ScaffoldMessenger.of(key.currentContext).showSnackBar(
       new SnackBar(
         backgroundColor: AppColors.prayerMenu[1],
         content: Row(
           children: [
             Icon(AppIcons.bestill_inappropriate,
-                color: AppColors.red.withOpacity(0.8)),
+                color: type == 'error'
+                    ? AppColors.red.withOpacity(0.8)
+                    : AppColors.white.withOpacity(0.8)),
             SizedBox(width: 10.0),
             Flexible(
               child: Text(

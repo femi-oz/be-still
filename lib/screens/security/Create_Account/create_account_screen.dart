@@ -31,7 +31,7 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  bool _isUnderAge = false;
+  // bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -53,12 +53,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-    _isUnderAge =
-        (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
-                    .isAfter(DateTime.now())
-                ? DateTime.now().year - pickedDate.year - 1
-                : DateTime.now().year - pickedDate.year) <
-            18;
+    // _isUnderAge =
+    //     (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
+    //                 .isAfter(DateTime.now())
+    //             ? DateTime.now().year - pickedDate.year - 1
+    //             : DateTime.now().year - pickedDate.year) <
+    //         18;
 
     if (pickedDate == null) {
       return null;
@@ -265,12 +265,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Birthday',
                     controller: _dobController,
                     isRequired: true,
-                    validator: (value) {
-                      if (_isUnderAge) {
-                        return 'You must be 18 or older to use this app';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (_isUnderAge) {
+                    //     return 'You must be 18 or older to use this app';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                 ),
               ),
@@ -286,7 +286,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              isPassword: true,
+              // isPassword: true,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,

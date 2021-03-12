@@ -63,8 +63,10 @@ class _CustomInputState extends State<CustomInput> {
               widget.color == null ? AppColors.lightBlue4 : widget.color,
           maxLines: widget.maxLines,
           decoration: InputDecoration(
-            suffixText:
-                widget.showSuffix && _isTextNotEmpty ? widget.label : '',
+            suffixText: (widget.showSuffix && _isTextNotEmpty) ||
+                    (widget.showSuffix && widget.controller.text != '')
+                ? widget.label
+                : '',
             isDense: true,
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
