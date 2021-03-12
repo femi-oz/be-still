@@ -63,7 +63,7 @@ class _SharePrayerState extends State<SharePrayer> {
     String _result = await sendSMS(
         message:
             "$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText",
-        recipients: [isChurch ? _churchPhone : '']).catchError((onError) {
+        recipients: isChurch ? [ _churchPhone] : []).catchError((onError) {
       print(onError);
     });
     print(_result);
