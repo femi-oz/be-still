@@ -123,7 +123,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         );
       }
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);

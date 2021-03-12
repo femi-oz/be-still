@@ -141,7 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
               .currentUser
               .keyReference;
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
@@ -164,7 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
 
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {

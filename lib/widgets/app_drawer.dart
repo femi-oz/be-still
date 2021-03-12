@@ -65,8 +65,12 @@ class CustomDrawer extends StatelessWidget {
                     onTap: () async {
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
-                      Navigator.of(context)
-                          .pushReplacementNamed(LoginScreen.routeName);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        LoginScreen.routeName,
+                        (Route<dynamic> route) => false,
+                      );
+                      // Navigator.of(context)
+                      //     .pushReplacementNamed(LoginScreen.routeName);
                     },
                     child: Container(
                       height: 30,
