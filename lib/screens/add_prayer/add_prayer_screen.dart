@@ -1,8 +1,6 @@
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -15,7 +13,6 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
 
 class AddPrayer extends StatefulWidget {
@@ -39,7 +36,6 @@ class AddPrayer extends StatefulWidget {
 class _AddPrayerState extends State<AddPrayer> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
   List groups = [];
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
@@ -48,13 +44,16 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
 
   Future<void> _save() async {
-    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
       if (!widget.isEdit) {
+        // if (_descriptionController.text == '') {
+        //   BeStilDialog.hideLoading(context);
+        //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
+        // } else {
         await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
             _descriptionController.text,
             _user.id,
@@ -69,6 +68,7 @@ class _AddPrayerState extends State<AddPrayer> {
             context,
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)));
+        // }
       } else {
         await Provider.of<PrayerProvider>(context, listen: false).editprayer(
             _descriptionController.text, widget.prayerData.prayer.id);
@@ -108,12 +108,18 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void onTextChange(val) {
-    setState(() {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    try {
       tags = val.split(' ');
-      tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
-          ? tags[tags.length - 1]
-          : '';
-    });
+      setState(() => tagText =
+          tags.length > 0 && tags[tags.length - 1].startsWith('@')
+              ? tags[tags.length - 1]
+              : '');
+    } catch (e) {
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(
+          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
+    }
   }
 
   Future<bool> _onWillPop() async {
@@ -188,7 +194,7 @@ class _AddPrayerState extends State<AddPrayer> {
                     Stack(
                       children: [
                         Form(
-                          autovalidate: _autoValidate,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           key: _formKey,
                           child: CustomInput(
                             label: 'Prayer description',
@@ -206,7 +212,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                     top: _focusNode.offset.dy * 0.45,
                                     left: _focusNode.offset.dx),
                                 height:
-                                    MediaQuery.of(context).size.height * 0.6,
+                                    MediaQuery.of(context).size.height * 0.4,
                                 child: SingleChildScrollView(
                                   child: Column(
                                     crossAxisAlignment:

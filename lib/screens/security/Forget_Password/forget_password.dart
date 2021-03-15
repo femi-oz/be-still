@@ -23,46 +23,17 @@ class ForgetPassword extends StatefulWidget {
 class _ForgetPasswordState extends State<ForgetPassword> {
   int step = 1;
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _codeController = new TextEditingController();
-  TextEditingController _confirmcodeController = new TextEditingController();
-  // TextEditingController _passwordController = new TextEditingController();
-  // TextEditingController _confirmPasswordController =
-  //     new TextEditingController();
-
   final _formKey1 = GlobalKey<FormState>();
-  final _formKey2 = GlobalKey<FormState>();
-  // final _formKey3 = GlobalKey<FormState>();
-  bool _autoValidate1 = false;
-  bool _autoValidate2 = false;
-  // bool _autoValidate3 = false;
   var notificationType = NotificationType.email;
   bool emailSent = false;
 
   _forgotPassword() async {
-    // if (step == 1) {
-    setState(() => _autoValidate1 = true);
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
     try {
       await BeStilDialog.showLoading(context, 'Sending Mail');
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .sendPasswordResetEmail(_emailController.text);
-      // }
-      // } else if (step == 2) {
-      //   setState(() => _autoValidate2 = true);
-      //   if (!_formKey2.currentState.validate()) return;
-      //   _formKey2.currentState.save();
-      //   await Provider.of<AuthenticationProvider>(context, listen: false)
-      //       .confirmToken(_codeController.text);
-      // } else if (step == 3) {
-      //   setState(() => _autoValidate3 = true);
-      //   if (!_formKey3.currentState.validate()) return;
-      //   _formKey3.currentState.save();
-      //   await Provider.of<AuthenticationProvider>(context, listen: false)
-      //       .changePassword(_codeController.text, _passwordController.text);
-      //   await Provider.of<UserProvider>(context, listen: false).setCurrentUser();
-      // }
-      // setState(() => step += 1);
 
       setState(() => step += 1);
       BeStilDialog.hideLoading(context);
@@ -104,15 +75,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   child: Column(
                     children: <Widget>[
                       Expanded(
-                        child:
-                            // _buildEmailForm(context)
-                            step == 1
-                                ? _buildEmailForm(context)
-                                // : step == 2
-                                //     ? _buildTokenForm()
-                                //     : step == 3
-                                //         ? _buildPasswordForm()
-                                : ForgetPasswordSucess(),
+                        child: step == 1
+                            ? _buildEmailForm(context)
+                            : ForgetPasswordSucess(),
                       ),
                       step > 3
                           ? Container()
@@ -157,14 +122,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                           Navigator.of(context)
                                               .pushReplacementNamed(
                                                   LoginScreen.routeName);
-
-                                          // if (step == 1) {
-                                          //   Navigator.of(context).pop();
-                                          // } else {
-                                          //   setState(() {
-                                          //     step -= 1;
-                                          //   });
-                                          // }
                                         },
                                       )
                               ],
@@ -183,7 +140,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   _buildEmailForm(BuildContext context) {
     return Form(
       key: _formKey1,
-      autovalidate: _autoValidate1,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         children: <Widget>[
           CustomInput(
@@ -206,133 +163,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           ),
           SizedBox(height: 55.0),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: <Widget>[
-          //     Container(
-          //       height: 30,
-          //       width: MediaQuery.of(context).size.width * 0.4,
-          //       decoration: BoxDecoration(
-          //         color: notificationType == NotificationType.email
-          //             ? AppColors.activeButton.withOpacity(0.5)
-          //             : Colors.transparent,
-          //         border: Border.all(
-          //           color: AppColors.cardBorder,
-          //           width: 1,
-          //         ),
-          //         borderRadius: BorderRadius.circular(5),
-          //       ),
-          //       child: FlatButton(
-          //         child: Text(
-          //           NotificationType.email.toUpperCase(),
-          //           style: AppTextStyles.regularText15,
-          //         ),
-          //         onPressed: () {
-          //           setState(
-          //             () {
-          //               notificationType = NotificationType.email;
-          //             },
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //     Container(
-          //       height: 30,
-          //       width: MediaQuery.of(context).size.width * 0.42,
-          //       decoration: BoxDecoration(
-          //         color: notificationType == NotificationType.text
-          //             ? AppColors.activeButton.withOpacity(0.5)
-          //             : Colors.transparent,
-          //         border: Border.all(
-          //           color: AppColors.cardBorder,
-          //           width: 1,
-          //         ),
-          //         borderRadius: BorderRadius.circular(5),
-          //       ),
-          //       child: FlatButton(
-          //         child: Text(
-          //           NotificationType.text.toLowerCase(),
-          //           style: AppTextStyles.regularText15,
-          //         ),
-          //         onPressed: () {
-          //           setState(
-          //             () {
-          //               notificationType = NotificationType.text;
-          //             },
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // )
         ],
       ),
     );
   }
-
-  _buildTokenForm() {
-    return Form(
-      autovalidate: _autoValidate2,
-      key: _formKey2,
-      child: Column(
-        children: <Widget>[
-          CustomInput(
-            label: 'Enter Code',
-            controller: _codeController,
-            keyboardType: TextInputType.number,
-            isRequired: true,
-          ),
-          SizedBox(height: 10.0),
-          CustomInput(
-            label: 'Confirm Code',
-            controller: _confirmcodeController,
-            keyboardType: TextInputType.number,
-            isRequired: true,
-            validator: (value) {
-              if (_codeController.text != value) {
-                return 'Password fields do not match';
-              }
-              return null;
-            },
-            textInputAction: TextInputAction.done,
-            unfocus: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // _buildPasswordForm() {
-  //   return Form(
-  //     key: _formKey3,
-  //     autovalidate: _autoValidate3,
-  //     child: Column(
-  //       children: <Widget>[
-  //         CustomInput(
-  //           isPassword: true,
-  //           label: 'New Password',
-  //           controller: _passwordController,
-  //           keyboardType: TextInputType.visiblePassword,
-  //           isRequired: true,
-  //         ),
-  //         SizedBox(height: 10.0),
-  //         CustomInput(
-  //           isPassword: true,
-  //           controller: _confirmPasswordController,
-  //           keyboardType: TextInputType.visiblePassword,
-  //           isRequired: true,
-  //           label: 'Confirm Password',
-  //           textInputAction: TextInputAction.done,
-  //           unfocus: true,
-  //           validator: (value) {
-  //             if (_passwordController.text != value) {
-  //               return 'Password fields do not match';
-  //             }
-  //             return null;
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

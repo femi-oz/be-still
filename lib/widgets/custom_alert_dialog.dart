@@ -69,14 +69,18 @@ class CustomAlertDialog extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: FlatButton(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      confirmText,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                  child: TextButton(
+                    child: Text(confirmText),
+                    style: ButtonStyle(
+                      textStyle: MaterialStateProperty.all<TextStyle>(
+                          AppTextStyles.boldText16
+                              .copyWith(color: Colors.white)),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(_getColor(type)),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.all(5.0)),
+                      elevation: MaterialStateProperty.all<double>(0.0),
                     ),
-                    color: _getColor(type),
-                    textColor: Colors.white,
                     onPressed: () {
                       Navigator.pop(context);
                       if (onConfirm != null) {
@@ -87,8 +91,11 @@ class CustomAlertDialog extends StatelessWidget {
                 ),
                 if (showCancelButton)
                   Expanded(
-                    child: FlatButton(
-                      padding: const EdgeInsets.all(5.0),
+                    child: TextButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            EdgeInsets.all(5.0)),
+                      ),
                       child: Text(cancelText),
                       onPressed: () {
                         Navigator.pop(context);

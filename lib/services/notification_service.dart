@@ -10,7 +10,6 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user_device.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
@@ -26,6 +25,8 @@ class NotificationService {
       FirebaseFirestore.instance.collection("UserDevice");
   final CollectionReference _deviceCollectionReference =
       FirebaseFirestore.instance.collection("Device");
+  final CollectionReference _prayerTimeCollectionReference =
+      FirebaseFirestore.instance.collection("PrayerTime");
 
   init(String token, String userId) async {
     final deviceId = Uuid().v1();
@@ -33,6 +34,7 @@ class NotificationService {
     //store device
     try {
       var tokens = await getNotificationToken(userId);
+      print(tokens);
       if (tokens.contains(token)) return;
       await _deviceCollectionReference.doc(deviceId).set(
             DeviceModel(
@@ -121,6 +123,28 @@ class NotificationService {
     } catch (e) {
       locator<LogService>().createLog(
           e.message, senderId, 'NOTIFICATION/service/addPushNotification');
+      throw HttpException(e.message);
+    }
+  }
+
+  updatePrayerTimeNotification(
+      String selectedDay,
+      String selectedPeriod,
+      String selectedFrequency,
+      String selectedHour,
+      String selectedMinute,
+      String notificationId) {
+    try {
+      _localNotificationCollectionReference.doc(notificationId).update({
+        'SelectedDay': selectedDay,
+        'Period': selectedPeriod,
+        'Frequency': selectedFrequency,
+        'Minute': selectedMinute,
+        'Hour': selectedHour
+      });
+    } catch (e) {
+      locator<LogService>().createLog(e.message, notificationId,
+          'NOTIFICATION/service/addPushNotification');
       throw HttpException(e.message);
     }
   }
@@ -214,28 +238,59 @@ class NotificationService {
   }
 
   addLocalNotification(
-      int localId, String entityId, String notificationText) async {
+      int localId,
+      String entityId,
+      String notificationText,
+      String userId,
+      String fallbackRoute,
+      String payload,
+      String title,
+      String description,
+      String frequency,
+      String type,
+      DateTime scheduledDate,
+      String selectedDay,
+      String period,
+      String selectedHour,
+      String selectedMinute) async {
     final _notificationId = Uuid().v1();
     String deviceId;
-    final DeviceInfoPlugin info = new DeviceInfoPlugin();
     try {
-      if (Platform.isAndroid) {
-        var build = await info.androidInfo;
-        deviceId = build.androidId;
-      } else if (Platform.isIOS) {
-        var build = await info.iosInfo;
-        deviceId = build.identifierForVendor;
-      }
       _localNotificationCollectionReference.doc(_notificationId).set(
           LocalNotificationModel(
-                  deviceId: deviceId,
+                  type: type,
+                  description: description,
+                  frequency: frequency,
+                  scheduledDate: scheduledDate,
+                  title: title,
+                  fallbackRoute: fallbackRoute,
+                  payload: payload,
+                  userId: userId,
                   localNotificationId: localId,
                   entityId: entityId,
-                  notificationText: notificationText)
+                  notificationText: notificationText,
+                  selectedDay: selectedDay,
+                  selectedHour: selectedHour,
+                  selectedMinute: selectedMinute,
+                  period: period)
               .toJson());
+      // await addPrayerTime(selectedDay, frequency, period, selectedHour,
+      //     selectedMinute, userId, _notificationId);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, deviceId, 'NOTIFICATION/service/addLocalNotification');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future deletePrayerTime(String prayerTimeId) async {
+    try {
+      _prayerTimeCollectionReference.doc(prayerTimeId).delete();
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          prayerTimeId,
+          'PRAYER/service/deletePrayerTime');
       throw HttpException(e.message);
     }
   }
@@ -252,17 +307,17 @@ class NotificationService {
     }
   }
 
-  Stream<List<LocalNotificationModel>> getLocalNotifications(String deviceId) {
+  Stream<List<LocalNotificationModel>> getLocalNotifications(String userId) {
     try {
       return _localNotificationCollectionReference
-          .where('DeviceId', isEqualTo: deviceId)
+          .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((e) => e.docs
               .map((doc) => LocalNotificationModel.fromData(doc))
               .toList());
     } catch (e) {
       locator<LogService>().createLog(
-          e.message, deviceId, 'NOTIFICATION/service/getLocalNotifications');
+          e.message, userId, 'NOTIFICATION/service/getLocalNotifications');
       throw HttpException(e.message);
     }
   }

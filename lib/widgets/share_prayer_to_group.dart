@@ -56,7 +56,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: FlatButton.icon(
+                  child: TextButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(Icons.arrow_back, color: AppColors.lightBlue5),
                     label: Text(

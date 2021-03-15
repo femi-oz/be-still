@@ -1,5 +1,4 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -21,6 +20,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 import 'widgets/prayer_card.dart';
+import 'package:flutter/services.dart';
 
 class PrayerList extends StatefulWidget {
   @override
@@ -74,7 +74,7 @@ class _PrayerListState extends State<PrayerList> {
 
     // get all local notifications
     await Provider.of<NotificationProvider>(context, listen: false)
-        .setLocalNotifications();
+        .setLocalNotifications(_user.id);
   }
 
   void onTapCard(prayerData) async {
@@ -97,6 +97,8 @@ class _PrayerListState extends State<PrayerList> {
   void _setVibration() async => _canVibrate = await Vibrate.canVibrate;
 
   void _vibrate() async {
+    // HapticFeedback.selectionClick();
+
     if (_canVibrate) Vibrate.vibrate();
   }
 
@@ -158,7 +160,6 @@ class _PrayerListState extends State<PrayerList> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
-    // prayers.forEach((e) => {print(e.tags.length)});
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(

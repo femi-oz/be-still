@@ -2,7 +2,6 @@ import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
@@ -52,8 +51,11 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 padding: const EdgeInsets.all(20.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: FlatButton.icon(
-                    padding: EdgeInsets.all(0),
+                  child: TextButton.icon(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.zero),
+                    ),
                     icon: Icon(
                       AppIcons.bestill_back_arrow,
                       color: AppColors.lightBlue3,
@@ -127,8 +129,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     ),
                   ),
                   initiallyExpanded: false,
-                  // onExpansionChanged: (bool isExpanded) {
-                  // },
                   children: <Widget>[
                     Container(
                       padding:
@@ -143,11 +143,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10),
-                          // Text(
-                          //   'Transaltion type',
-                          //   style: AppTextStyles.regularText14
-                          //       .copyWith(color: AppColors.blueTitle),
-                          // ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 40.0, vertical: 20.0),
@@ -158,8 +153,11 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          OutlineButton(
-                            borderSide: BorderSide(color: AppColors.lightBlue4),
+                          OutlinedButton(
+                            style: ButtonStyle(
+                              side: MaterialStateProperty.all<BorderSide>(
+                                  BorderSide(color: AppColors.lightBlue4)),
+                            ),
                             onPressed: () => _launchURL(bibleData[i].link),
                             child: Text(
                               'READ NOW',

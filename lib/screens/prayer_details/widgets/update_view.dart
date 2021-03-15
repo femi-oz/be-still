@@ -66,25 +66,6 @@ class UpdateView extends StatelessWidget {
                               thickness: 1,
                             ),
                           ),
-
-                          // TODO
-                          // ...u.tags
-                          //     .map(
-                          //       (t) => Container(
-                          //         margin: EdgeInsets.only(left: 10),
-                          //         child: Row(
-                          //           children: <Widget>[
-                          //             Text(
-                          //               t.toUpperCase(),
-                          //               style: TextStyle(
-                          //                 color: AppColors.red,
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ),
-                          //     )
-                          //     .toList()
                         ],
                       ),
                       SizedBox(height: 10),
@@ -181,20 +162,6 @@ class UpdateView extends StatelessWidget {
                             thickness: 1,
                           ),
                         ),
-                        // TODO
-                        // ...prayer.tags
-                        //     .map(
-                        //       (t) => Container(
-                        //         margin: EdgeInsets.only(left: 10),
-                        //         child: Text(
-                        //           t.toUpperCase(),
-                        //           style: TextStyle(
-                        //             color: AppColors.red,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     )
-                        //     .toList(),
                       ],
                     ),
                     SizedBox(height: 10),

@@ -1,12 +1,13 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/push_notification.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
@@ -14,9 +15,10 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
+import 'package:timezone/timezone.dart' as tz;
 import '../../entry_screen.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -28,8 +30,8 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
-  bool _isUnderAge = false;
+
+  // bool _isUnderAge = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -51,12 +53,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-    _isUnderAge =
-        (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
-                    .isAfter(DateTime.now())
-                ? DateTime.now().year - pickedDate.year - 1
-                : DateTime.now().year - pickedDate.year) <
-            18;
+    // _isUnderAge =
+    //     (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
+    //                 .isAfter(DateTime.now())
+    //             ? DateTime.now().year - pickedDate.year - 1
+    //             : DateTime.now().year - pickedDate.year) <
+    //         18;
 
     if (pickedDate == null) {
       return null;
@@ -74,7 +76,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   void _createAccount() async {
-    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -90,14 +91,49 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       );
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(false);
-      await Provider.of<NotificationProvider>(context, listen: false).init(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .init(userId);
+      // get all local notifications from db
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications(userId);
+      final _localNotifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications;
+      //set notification in new device
+
+      // The device's timezone.
+      String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+
+      // Find the 'current location'
+      final location = tz.getLocation(timeZoneName);
+      //set notification in new device
+      for (int i = 0; i < _localNotifications.length; i++) {
+        final scheduledDate =
+            tz.TZDateTime.from(_localNotifications[i].scheduledDate, location);
+        await LocalNotification.configureNotification(
+            context, _localNotifications[i].fallbackRoute);
+        await LocalNotification.setLocalNotification(
+          title: _localNotifications[i].title,
+          description: _localNotifications[i].description,
+          scheduledDate: scheduledDate,
+          payload: _localNotifications[i].payload,
+          frequency: _localNotifications[i].frequency,
+        );
+      }
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          _emailController.text, 'REGISTER/screen/_createAccount');
+
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: StringUtils.errorOccured, key: _scaffoldKey);
@@ -198,7 +234,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
-        autovalidate: _autoValidate,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           children: <Widget>[
             CustomInput(
@@ -232,12 +268,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     label: 'Birthday',
                     controller: _dobController,
                     isRequired: true,
-                    validator: (value) {
-                      if (_isUnderAge) {
-                        return 'You must be 18 or older to use this app';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (_isUnderAge) {
+                    //     return 'You must be 18 or older to use this app';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                 ),
               ),
@@ -253,7 +289,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              isPassword: true,
+              // isPassword: true,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,

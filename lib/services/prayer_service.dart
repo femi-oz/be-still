@@ -192,6 +192,7 @@ class PrayerService {
           .doc(_userPrayerID)
           .set(populateUserPrayer(recieverId, prayerId, senderId).toJson());
       var tokens = await _notificationService.getNotificationToken(recieverId);
+      print(tokens);
       _notificationService.addPushNotification(
         messageType: NotificationType.prayer,
         message: prayerDesc,
@@ -401,14 +402,35 @@ class PrayerService {
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': true},
       );
-      _userPrayerCollectionReference.doc(userPrayerId).update({
+      final data = {
         'IsArchived': true,
         'Status': Status.inactive,
-        'IsFavourite': false
-      });
+        'IsFavourite': false,
+        'ArchivedDate': DateTime.now()
+      };
+      _userPrayerCollectionReference.doc(userPrayerId).update(data);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, prayerID, 'PRAYER/service/markPrayerAsAnswered');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future unMarkPrayerAsAnswered(String prayerID, String userPrayerId) async {
+    try {
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsAnswer': false},
+      );
+      final data = {
+        'IsArchived': true,
+        'Status': Status.inactive,
+        'IsFavourite': false,
+        'ArchivedDate': DateTime.now()
+      };
+      _userPrayerCollectionReference.doc(userPrayerId).update(data);
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, prayerID, 'PRAYER/service/unMarkPrayerAsAnswered');
       throw HttpException(e.message);
     }
   }
@@ -747,6 +769,10 @@ class PrayerService {
         modifiedBy: creatorId,
         modifiedOn: DateTime.now());
     return userPrayer;
+  }
+
+  populateNotificationId(String notificationId) {
+    return notificationId;
   }
 
   PrayerTagModel populatePrayerTag(

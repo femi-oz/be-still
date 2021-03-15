@@ -1,13 +1,9 @@
-import 'dart:io';
-
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/notification_service.dart';
-import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import '../locator.dart';
 
 class NotificationProvider with ChangeNotifier {
@@ -17,10 +13,15 @@ class NotificationProvider with ChangeNotifier {
 
   static final NotificationProvider _instance = NotificationProvider._();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   bool _initialized = false;
 
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
+
+  List<LocalNotificationModel> _prayerTimeNotifications = [];
+  List<LocalNotificationModel> get prayerTimeNotifications =>
+      _prayerTimeNotifications;
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;
@@ -32,8 +33,8 @@ class NotificationProvider with ChangeNotifier {
 
       // For testing purposes print the Firebase Messaging token
       String token = await _firebaseMessaging.getToken();
+      print(token);
       await _notificationService.init(token, userId);
-      // });
     }
 
     _initialized = true;
@@ -55,22 +56,9 @@ class NotificationProvider with ChangeNotifier {
         .clearNotification(_notifications.map((e) => e.id).toList());
   }
 
-  Future setLocalNotifications() async {
-    final DeviceInfoPlugin info = new DeviceInfoPlugin();
-    String deviceId;
-    try {
-      if (Platform.isAndroid) {
-        var build = await info.androidInfo;
-        deviceId = build.androidId;
-      } else if (Platform.isIOS) {
-        var build = await info.iosInfo;
-        deviceId = build.identifierForVendor;
-      }
-    } on PlatformException {
-      print("couldn't fetch platform");
-    }
+  Future setLocalNotifications(userId) async {
     _notificationService
-        .getLocalNotifications(deviceId)
+        .getLocalNotifications(userId)
         .asBroadcastStream()
         .listen((notifications) {
       _localNotifications = notifications;
@@ -78,15 +66,84 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
+  Future setPrayerTimeNotifications(userId) async {
+    _notificationService
+        .getLocalNotifications(userId)
+        .asBroadcastStream()
+        .listen((notifications) {
+      _prayerTimeNotifications = notifications
+          .where((e) => e.type == NotificationType.prayer_time)
+          .toList();
+      notifyListeners();
+    });
+  }
+
   Future addLocalNotification(
-      int localId, String entityId, String notificationText) async {
+      int localId,
+      String entityId,
+      String notificationText,
+      String userId,
+      String fallbackRoute,
+      String payload,
+      String title,
+      String description,
+      String frequency,
+      String type,
+      DateTime scheduledDate,
+      String selectedDay,
+      String period,
+      String selectedHour,
+      String selectedMinute) async {
     await _notificationService.addLocalNotification(
-        localId, entityId, notificationText);
+        localId,
+        entityId,
+        notificationText,
+        userId,
+        fallbackRoute,
+        payload,
+        title,
+        description,
+        frequency,
+        type,
+        scheduledDate,
+        selectedDay,
+        period,
+        selectedHour,
+        selectedMinute);
   }
 
   Future deleteLocalNotification(String notificationId) async {
     await _notificationService.removeLocalNotification(notificationId);
   }
+
+  Future<void> deletePrayerTime(String prayerTimeId) async =>
+      await _notificationService.deletePrayerTime(prayerTimeId);
+
+  Future<void> updateLocalNotification(
+      String selectedDay,
+      String selectedPeriod,
+      String selectedFrequency,
+      String selectedHour,
+      String selectedMinute,
+      String notificationId) async {
+    await _notificationService.updatePrayerTimeNotification(
+        selectedDay,
+        selectedPeriod,
+        selectedFrequency,
+        selectedHour,
+        selectedMinute,
+        notificationId);
+  }
+
+  //   Future<void> addPrayerTime(
+  //     String selectedDay,
+  //     String selectedFrequency,
+  //     String period,
+  //     String selectedHour,
+  //     String selectedMinute,
+  //     String userId) async =>
+  // await _notificationService.addPrayerTime(selectedDay, selectedFrequency, period,
+  //     selectedHour, selectedMinute, userId);
 
   // Future acceptGroupInvite(
   //     String groupId, String userId, String name, String email) async {

@@ -67,31 +67,75 @@ class PushNotificationModel {
 
 class LocalNotificationModel {
   final String id;
-  final String deviceId;
+  final String userId;
   final String entityId;
+  final String description;
+  final DateTime scheduledDate;
+  final String frequency;
+  final String title;
+  final String fallbackRoute;
+  final String payload;
+  final String type;
   final String notificationText;
   final int localNotificationId;
+  final String selectedDay;
+  final String period;
+  final String selectedHour;
+  final String selectedMinute;
 
   const LocalNotificationModel({
     this.id,
-    @required this.deviceId,
+    @required this.userId,
     @required this.entityId,
+    @required this.payload,
+    @required this.title,
+    @required this.description,
+    @required this.frequency,
+    @required this.type,
+    @required this.scheduledDate,
+    @required this.fallbackRoute,
     @required this.notificationText,
     @required this.localNotificationId,
+    @required this.selectedDay,
+    @required this.period,
+    @required this.selectedHour,
+    @required this.selectedMinute,
   });
   LocalNotificationModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        deviceId = snapshot.data()['DeviceId'],
+        userId = snapshot.data()['UserId'],
         entityId = snapshot.data()['EntityId'],
+        description = snapshot.data()['Description'],
+        scheduledDate = snapshot.data()['ScheduledDate'].toDate(),
+        title = snapshot.data()['Title'],
+        type = snapshot.data()['Type'],
+        frequency = snapshot.data()['Frequency'],
+        payload = snapshot.data()['Payload'],
+        fallbackRoute = snapshot.data()['FallbackRoute'],
         notificationText = snapshot.data()['NotificationText'],
-        localNotificationId = snapshot.data()['LocalNotificationId'];
+        localNotificationId = snapshot.data()['LocalNotificationId'],
+        selectedDay = snapshot.data()['SelectedDay'] ?? '',
+        period = snapshot.data()['Period'] ?? '',
+        selectedHour = snapshot.data()['SelectedHour'] ?? '',
+        selectedMinute = snapshot.data()['SelectedMinute'] ?? '';
 
   Map<String, dynamic> toJson() {
     return {
-      'DeviceId': deviceId,
+      'UserId': userId,
       'EntityId': entityId,
+      'Title': title,
+      'Description': description,
+      'Frequency': frequency,
+      'ScheduledDate': scheduledDate,
+      'Type': type,
+      'Payload': payload,
+      'FallbackRoute': fallbackRoute,
       'NotificationText': notificationText,
       'LocalNotificationId': localNotificationId,
+      'SelectedDay': selectedDay,
+      'Period': period,
+      'SelectedHour': selectedHour,
+      'SelectedMinute': selectedMinute,
     };
   }
 }

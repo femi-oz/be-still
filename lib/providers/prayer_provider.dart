@@ -18,6 +18,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _prayers = [];
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   List<CombinePrayerStream> _filteredPrayers = [];
+  List<CombinePrayerStream> _filteredPrayerTimeList = [];
   CombinePrayerStream _currentPrayer;
   FilterType _filterOptions = FilterType(
     isAnswered: false,
@@ -28,24 +29,53 @@ class PrayerProvider with ChangeNotifier {
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
+
+  List<CombinePrayerStream> get filteredPrayerTimeList =>
+      _filteredPrayerTimeList;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
   FilterType get filterOptions => _filterOptions;
 
-  Future<void> setPrayers(String userId, String sortBy) async =>
+  Future<void> setPrayers(String userId, String sortBy) async {
+    _prayerService.getPrayers(userId).asBroadcastStream().listen(
+      (data) {
+        _prayers = data.toList();
+        filterPrayers(
+          userId: userId,
+          isAnswered: _filterOptions.isAnswered,
+          isArchived: _filterOptions.isArchived,
+          isSnoozed: _filterOptions.isSnoozed,
+          status: _filterOptions.status,
+          sortBy: sortBy,
+        );
+        notifyListeners();
+      },
+    );
+    checkPrayerValidity(userId, prayers);
+  }
+
+  Future<void> checkPrayerValidity(
+      String userId, List<CombinePrayerStream> prayers) async {
+    await _autoDeleteArchivePrayers(userId, prayers);
+    await _unSnoozePrayerPast(prayers);
+  }
+
+  Future<void> setPrayerTimePrayers(String userId, String sortBy) async =>
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data.toList();
-          _autoDeleteArchivePrayers(userId);
-          _unSnoozePrayerPast();
-          filterPrayers(
-            userId: userId,
-            isAnswered: _filterOptions.isAnswered,
-            isArchived: _filterOptions.isArchived,
-            isSnoozed: _filterOptions.isSnoozed,
-            status: _filterOptions.status,
-            sortBy: sortBy,
-          );
+          _filteredPrayerTimeList = data
+              .where((e) =>
+                  e.userPrayer.status.toLowerCase() ==
+                  Status.active.toLowerCase())
+              .toList();
+          List<CombinePrayerStream> _distinct = [];
+          var idSet = <String>{};
+          for (var e in _filteredPrayerTimeList) {
+            if (idSet.add(e.prayer.id)) {
+              _distinct.add(e);
+            }
+          }
+          _filteredPrayerTimeList = _distinct;
           notifyListeners();
         },
       );
@@ -67,6 +97,11 @@ class PrayerProvider with ChangeNotifier {
               .toLowerCase()
               .contains(searchQuery.toLowerCase()))
           .toList();
+      for (int i = 0; i < _prayers.length; i++) {
+        var hasMatch = _prayers[i].updates.any((u) =>
+            u.description.toLowerCase().contains(searchQuery.toLowerCase()));
+        if (hasMatch) filteredPrayers.add(_prayers[i]);
+      }
       _filteredPrayers = filteredPrayers;
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
@@ -108,8 +143,6 @@ class PrayerProvider with ChangeNotifier {
           .where((CombinePrayerStream data) =>
               data.userPrayer.status.toLowerCase() == status.toLowerCase())
           .toList();
-
-      print(archivedPrayers.length);
     }
     if (isAnswered == true) {
       answeredPrayers = prayers
@@ -149,8 +182,8 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _unSnoozePrayerPast() async {
-    var prayersToUnsnooze = prayers
+  Future<void> _unSnoozePrayerPast(data) async {
+    var prayersToUnsnooze = data
         .where((e) =>
             e.userPrayer.snoozeEndDate.isBefore(DateTime.now()) &&
             e.userPrayer.isSnoozed == true)
@@ -187,8 +220,8 @@ class PrayerProvider with ChangeNotifier {
   ) async =>
       await _prayerService.addPrayer(prayerDesc, userId, creatorName);
 
-  Future<void> addUserPrayer(String prayerId, String prayerDesc, String recieverId,
-      String senderId, String sender) async =>
+  Future<void> addUserPrayer(String prayerId, String prayerDesc,
+          String recieverId, String senderId, String sender) async =>
       await _prayerService.addUserPrayer(
           prayerId, prayerDesc, recieverId, senderId, sender);
 
@@ -220,8 +253,9 @@ class PrayerProvider with ChangeNotifier {
           String prayerID, DateTime snoozeEndDate, String userPrayerID) async =>
       await _prayerService.unSnoozePrayer(snoozeEndDate, userPrayerID);
 
-  Future<void> _autoDeleteArchivePrayers(String userId) async {
-    final archivedPrayers = prayers
+  Future<void> _autoDeleteArchivePrayers(
+      String userId, List<CombinePrayerStream> data) async {
+    final archivedPrayers = data
         .where((CombinePrayerStream data) => data.userPrayer.isArchived == true)
         .toList();
     final settings = await locator<SettingsService>().getSettings(userId);
@@ -254,6 +288,10 @@ class PrayerProvider with ChangeNotifier {
   Future<void> markPrayerAsAnswered(
           String prayerId, String userPrayerId) async =>
       await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
+
+  Future<void> unMarkPrayerAsAnswered(
+          String prayerId, String userPrayerId) async =>
+      await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> deletePrayer(String userPrayeId) async =>
       await _prayerService.deletePrayer(userPrayeId);

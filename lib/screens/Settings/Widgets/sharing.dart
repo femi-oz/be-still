@@ -1,5 +1,4 @@
 import 'package:be_still/enums/settings_key.dart';
-import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -189,7 +188,7 @@ class _SharingSettingsState extends State<SharingSettings> {
     _churchName.text = sharingSettings.churchName;
     _churchPhone.text = sharingSettings.churchPhone;
     _churchLink.text = sharingSettings.webFormlink;
-    bool _autoValidate = false;
+
     final _formKey = GlobalKey<FormState>();
     final alert = AlertDialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 10),
@@ -197,7 +196,7 @@ class _SharingSettingsState extends State<SharingSettings> {
       content: Container(
         width: MediaQuery.of(context).size.width - 100,
         child: Form(
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -235,8 +234,11 @@ class _SharingSettingsState extends State<SharingSettings> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FlatButton(
-                    color: AppColors.grey.withOpacity(0.5),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.grey.withOpacity(0.5)),
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'Cancel',
@@ -245,21 +247,18 @@ class _SharingSettingsState extends State<SharingSettings> {
                       ),
                     ),
                   ),
-                  FlatButton(
-                    color: AppColors.lightBlue3,
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          AppColors.lightBlue3),
+                    ),
                     onPressed: () {
-                      setState(() => _autoValidate = true);
                       if (!_formKey.currentState.validate()) return null;
                       _formKey.currentState.save();
-                      type == _ModalType.email
-                          ? _updateEmail()
-                          : type == _ModalType.church
-                              ? _updateChurch()
-                              : type == _ModalType.link
-                                  ? _updateLink()
-                                  : type == _ModalType.phone
-                                      ? _updatePhone()
-                                      : null;
+                      if (type == _ModalType.email) _updateEmail();
+                      if (type == _ModalType.church) _updateChurch();
+                      if (type == _ModalType.link) _updateLink();
+                      if (type == _ModalType.phone) _updatePhone();
                     },
                     child: Text('Save',
                         style: AppTextStyles.regularText15.copyWith(

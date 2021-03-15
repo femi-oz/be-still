@@ -1,3 +1,4 @@
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -5,44 +6,40 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/share-in-app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SharePrayer extends StatefulWidget {
-  final String prayer;
-  final updates;
-  SharePrayer({this.prayer, this.updates});
+  final CombinePrayerStream prayerData;
+  SharePrayer({this.prayerData});
 
   _SharePrayerState createState() => _SharePrayerState();
 }
 
 class _SharePrayerState extends State<SharePrayer> {
   List groups = [];
+  String updatesToString;
 
   _emailLink([bool isChurch = false]) async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchEmail;
-    var _prayer = toBeginningOfSentenceCase(widget.prayer);
+    var _prayer =
+        toBeginningOfSentenceCase(widget.prayerData.prayer.description);
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
-    var updates = widget.updates;
-    var link =
-        '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
+    // var link =
+    //     '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
     var _footerText =
-        ' $name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. $link';
+        '$name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. \n\n https://www.bestillapp.com';
     final Uri params = Uri(
         scheme: 'mailto',
         path: isChurch ? _churchEmail : '',
-        query: 'subject=$name shared a prayer with you&body=$_prayer'
-            '</br></br>'
-            'Comments:'
-            '</br>'
-            '$updates'
-            '</br></br></br></br></br>'
-            '$_footerText');
+        query:
+            "subject=$name shared a prayer with you&body=Please pray for | ${DateFormat('MM.dd.yyyy').format(widget.prayerData.prayer.modifiedOn)} \n $_prayer \n\n  ${updatesToString != '' ? ' $updatesToString \n\n\n' : ''}$_footerText");
 
     var url = params.toString();
     if (await canLaunch(url)) {
@@ -56,13 +53,39 @@ class _SharePrayerState extends State<SharePrayer> {
     final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchPhone;
-    var _prayer = widget.prayer;
-    var url = 'sms:${isChurch ? _churchPhone : ''}?body=$_prayer';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final _prayer = widget.prayerData.prayer.description;
+    var name = _user.firstName;
+    name = toBeginningOfSentenceCase(name);
+    final _footerText =
+        "$name used the Be Still App to share this prayer need with you. The Be Still app allows you to create a prayer list for yourself or a group of friends. \n\n https://www.bestillapp.com";
+
+    String _result = await sendSMS(
+            message:
+                "Please pray for | ${DateFormat('MM.dd.yyyy').format(widget.prayerData.prayer.modifiedOn)} \n $_prayer \n\n  ${updatesToString != '' ? ' $updatesToString \n\n\n' : ''}$_footerText",
+            recipients: isChurch ? [_churchPhone] : [])
+        .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
+
+    // final uri =
+    //     "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
+
+    // if (await canLaunch(uri)) {
+    //   await launch(uri);
+    // } else {
+    //   throw 'Could not launch $uri';
+    // }
+  }
+
+  initState() {
+    var updates = [];
+    widget.prayerData.updates.forEach((u) => updates.add(
+        '${DateFormat('hh:mma | MM.dd.yyyy').format(u.modifiedOn)}\n${u.description}'));
+
+    updatesToString = updates.join("\n\n");
+    super.initState();
   }
 
   @override
@@ -89,16 +112,17 @@ class _SharePrayerState extends State<SharePrayer> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: FlatButton.icon(
+                  child: TextButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(AppIcons.bestill_back_arrow,
-                        color: AppColors.lightBlue5),
+                    icon: Icon(
+                      AppIcons.bestill_back_arrow,
+                      color: AppColors.lightBlue3,
+                      size: 20,
+                    ),
                     label: Text(
                       'BACK',
-                      style: TextStyle(
-                        color: AppColors.lightBlue5,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                      style: AppTextStyles.boldText20.copyWith(
+                        color: AppColors.lightBlue3,
                       ),
                     ),
                   ),

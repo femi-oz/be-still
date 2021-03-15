@@ -8,7 +8,6 @@ import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
@@ -26,7 +25,6 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   BuildContext bcontext;
-  var _key = GlobalKey<State>();
   // OverlayEntry _overlayEntry;
 
   @override
@@ -90,8 +88,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   void _showAlert(String groupId, String message) {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -146,8 +142,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: OutlineButton(
-                          borderSide: BorderSide(color: Colors.transparent),
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            side: MaterialStateProperty.all<BorderSide>(
+                                BorderSide(color: Colors.transparent)),
+                            padding:
+                                MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                    EdgeInsets.zero),
+                          ),
                           child: Container(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -177,8 +179,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: OutlineButton(
-                        borderSide: BorderSide(color: Colors.transparent),
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.transparent)),
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.zero),
+                        ),
                         child: Container(
                           child: Text(
                             'DENY',

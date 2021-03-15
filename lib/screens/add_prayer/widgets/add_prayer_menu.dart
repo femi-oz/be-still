@@ -2,7 +2,6 @@ import 'package:be_still/enums/interval.dart';
 import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/material.dart';
@@ -133,23 +132,23 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      backgroundColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return SharePrayer(
-                          prayer: widget.prayer,
-                        );
-                      },
-                    ).then((value) {
-                      setState(() {
-                        groups = value;
-                      });
-                    });
+                    // showModalBottomSheet(
+                    //   context: context,
+                    //   barrierColor:
+                    //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    //   backgroundColor:
+                    //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    //   isScrollControlled: true,
+                    //   // builder: (BuildContext context) {
+                    //   //   // return SharePrayer(
+                    //   //   //   prayerData: widget.prayer,
+                    //   //   // );
+                    //   // },
+                    // ).then((value) {
+                    //   setState(() {
+                    //     groups = value;
+                    //   });
+                    // });
                   },
                   child: Container(
                     height: 50,

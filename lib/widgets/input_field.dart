@@ -63,8 +63,10 @@ class _CustomInputState extends State<CustomInput> {
               widget.color == null ? AppColors.lightBlue4 : widget.color,
           maxLines: widget.maxLines,
           decoration: InputDecoration(
-            suffixText:
-                widget.showSuffix && _isTextNotEmpty ? widget.label : '',
+            suffixText: (widget.showSuffix && _isTextNotEmpty) ||
+                    (widget.showSuffix && widget.controller.text != '')
+                ? widget.label
+                : '',
             isDense: true,
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
@@ -111,6 +113,8 @@ class _CustomInputState extends State<CustomInput> {
 
   String _validatorFn(String value) {
     if (widget.isRequired) {
+      //String p = r'(^(?!\s*$).+)';
+      //RegExp regExp = new RegExp(p);
       if (value.isEmpty) {
         return '${widget.label} is required';
       }

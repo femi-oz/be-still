@@ -28,11 +28,12 @@ class _PrayerModeState extends State<PrayerMode> {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-          _user?.id,
-          Provider.of<SettingsProvider>(context, listen: false)
-              .settings
-              .defaultSortBy);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(
+              _user?.id,
+              Provider.of<SettingsProvider>(context, listen: false)
+                  .settings
+                  .defaultSortBy);
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -59,7 +60,7 @@ class _PrayerModeState extends State<PrayerMode> {
 
   @override
   Widget build(BuildContext context) {
-    var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
     return Scaffold(
       appBar: PrayModeAppBar(
         current: currentPage,

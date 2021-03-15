@@ -26,6 +26,8 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    final GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
+
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) => MaterialApp(
         title: 'Be Still',
@@ -35,6 +37,7 @@ class _MyAppState extends State<MyApp> {
             : appThemeData[AppTheme.LightTheme],
         initialRoute: '/',
         routes: rt.routes,
+        navigatorKey: navState,
         onUnknownRoute: (settings) {
           return MaterialPageRoute(builder: (ctx) => SplashScreen());
         },

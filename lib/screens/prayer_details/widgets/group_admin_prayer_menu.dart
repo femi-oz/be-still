@@ -1,4 +1,3 @@
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
@@ -73,8 +72,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
 
   Widget build(BuildContext context) {
     setState(() => this.bcontext = context);
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
     return Container(
       width: double.infinity,
       height: double.infinity,

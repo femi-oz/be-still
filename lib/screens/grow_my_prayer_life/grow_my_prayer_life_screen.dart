@@ -5,7 +5,6 @@ import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -135,18 +134,18 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 30),
-                      Container(
-                        child: GestureDetector(
-                          onTap: () => null,
-                          child: Text(
-                            'MY PRAYER GOALS',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.lightBlue4),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
+                      // SizedBox(height: 30),
+                      // Container(
+                      //   child: GestureDetector(
+                      //     onTap: () => null,
+                      //     child: Text(
+                      //       'MY PRAYER GOALS',
+                      //       style: AppTextStyles.boldText20
+                      //           .copyWith(color: AppColors.lightBlue4),
+                      //       textAlign: TextAlign.left,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],
