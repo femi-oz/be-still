@@ -159,11 +159,6 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
         .currentPrayer
         .updates;
     Size size = MediaQuery.of(context).size;
-    List<String> prayerUpdates = [];
-    updates.forEach((data) => {
-          prayerUpdates = [...prayerUpdates, data.description].toList()
-        });
-    var newUpdates = prayerUpdates.join("<br>");
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Container(
@@ -219,9 +214,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return SharePrayer(
-                            prayer: widget.prayerData.prayer.description,
-                            updates: updates.length > 0 ? newUpdates : '');
+                        return SharePrayer(prayerData: widget.prayerData);
                       },
                     ),
                     'Share',

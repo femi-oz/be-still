@@ -498,7 +498,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                       // //                     selectedFrequency,
                       // //                     selectedPeriod,
                       // //                     selectedHour,
-                      // //                     selectedMinute), // TODO pass the right value
+                      // //                     selectedMinute),
                       // //           ),
 
                       // )

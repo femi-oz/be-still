@@ -283,8 +283,6 @@ class NotificationService {
     }
   }
 
-  Future updatePrayerTIme(String prayerTimeId) {}
-
   Future deletePrayerTime(String prayerTimeId) async {
     try {
       _prayerTimeCollectionReference.doc(prayerTimeId).delete();

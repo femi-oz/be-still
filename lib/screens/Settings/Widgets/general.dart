@@ -130,14 +130,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
       _update(type, ctx);
-    } on HttpException catch (_) {
+    } on HttpException catch (e) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -306,7 +306,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           children: [
             if (!isVerified)
               Text(
-                'Verify your password',
+                'Verify existing password',
                 style: AppTextStyles.boldText20,
               )
             else if (isVerified && type == _ModalType.email)
@@ -328,29 +328,32 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 children: [
                   if (!isVerified)
                     CustomInput(
-                        showSuffix: false,
-                        isRequired: true,
-                        obScurePassword: true,
-                        label: 'Re-enter your password to continue',
-                        controller: _currentPassword)
+                      showSuffix: false,
+                      isRequired: true,
+                      obScurePassword: true,
+                      label: 'Password',
+                      controller: _currentPassword,
+                    )
                   else if (isVerified && type == _ModalType.email)
                     CustomInput(
-                        showSuffix: false,
-                        isRequired: true,
-                        isEmail: true,
-                        label: 'Enter new email',
-                        controller: _newEmail)
+                      showSuffix: false,
+                      isRequired: true,
+                      isEmail: true,
+                      label: 'Enter new email',
+                      controller: _newEmail,
+                    )
                   else if (isVerified && type == _ModalType.password)
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CustomInput(
-                            obScurePassword: true,
-                            showSuffix: false,
-                            isRequired: true,
-                            isPassword: true,
-                            label: 'Enter new pssword',
-                            controller: _newPassword),
+                          obScurePassword: true,
+                          showSuffix: false,
+                          isRequired: true,
+                          isPassword: true,
+                          label: 'Enter new pssword',
+                          controller: _newPassword,
+                        ),
                         SizedBox(height: 15.0),
                         CustomInput(
                           obScurePassword: true,
