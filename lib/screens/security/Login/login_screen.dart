@@ -92,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _isBiometricAvailable();
 
     _usernameController.text = Settings.lastUser;
+    _passwordController.text = Settings.userPassword;
     super.initState();
   }
 
@@ -294,10 +295,6 @@ class _LoginScreenState extends State<LoginScreen> {
             isRequired: true,
             textInputAction: TextInputAction.done,
             unfocus: true,
-            onTextchanged: () =>
-                _passwordController.text != Settings.userPassword
-                    ? _setDefaults
-                    : null,
             submitForm: () => _login(),
           ),
         ],
