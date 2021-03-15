@@ -10,8 +10,6 @@ class Settings {
   static const String THEME_MODE_KEY = 'theme_mode';
   static const String REMEMBER_ME_KEY = 'remember_me';
   static const String LAST_USER = 'last_user';
-  static const String LAST_FOREGROUND_TIME = 'last_foreground_time';
-  static const String LAST_BACKGROUND_TIME = 'last_background_time';
   static const String USER_KEY_REFERENCE = 'user_key_reference';
   static const String USER_PASSWORD = 'user_password';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
@@ -55,16 +53,6 @@ class Settings {
   static set userPassword(String password) =>
       sharedPrefs.setString(USER_PASSWORD, password);
   static String get userPassword => sharedPrefs.getString(USER_PASSWORD) ?? '';
-
-  static set lastForegroundTime(String foregroundtime) =>
-      sharedPrefs.setString(LAST_FOREGROUND_TIME, foregroundtime);
-  static String get lastForegroundTime =>
-      sharedPrefs.getString(LAST_FOREGROUND_TIME) ?? '';
-
-  static set lastBackgroundTime(String backgroundtime) =>
-      sharedPrefs.setString(LAST_BACKGROUND_TIME, backgroundtime);
-  static String get lastBackgroundTime =>
-      sharedPrefs.getString(LAST_BACKGROUND_TIME) ?? '';
 
   static set enableLocalAuth(bool isAuthEnabled) =>
       sharedPrefs.setBool(ENABLE_LOCAL_AUTH, isAuthEnabled);
