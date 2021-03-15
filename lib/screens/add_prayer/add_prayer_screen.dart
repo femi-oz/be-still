@@ -50,6 +50,10 @@ class _AddPrayerState extends State<AddPrayer> {
     try {
       BeStilDialog.showLoading(context);
       if (!widget.isEdit) {
+        // if (_descriptionController.text == '') {
+        //   BeStilDialog.hideLoading(context);
+        //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
+        // } else {
         await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
             _descriptionController.text,
             _user.id,
@@ -64,6 +68,7 @@ class _AddPrayerState extends State<AddPrayer> {
             context,
             MaterialPageRoute(
                 builder: (context) => EntryScreen(screenNumber: 0)));
+        // }
       } else {
         await Provider.of<PrayerProvider>(context, listen: false).editprayer(
             _descriptionController.text, widget.prayerData.prayer.id);

@@ -416,6 +416,25 @@ class PrayerService {
     }
   }
 
+  Future unMarkPrayerAsAnswered(String prayerID, String userPrayerId) async {
+    try {
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsAnswer': false},
+      );
+      final data = {
+        'IsArchived': true,
+        'Status': Status.inactive,
+        'IsFavourite': false,
+        'ArchivedDate': DateTime.now()
+      };
+      _userPrayerCollectionReference.doc(userPrayerId).update(data);
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, prayerID, 'PRAYER/service/unMarkPrayerAsAnswered');
+      throw HttpException(e.message);
+    }
+  }
+
   Future favoritePrayer(
     String prayerID,
   ) async {

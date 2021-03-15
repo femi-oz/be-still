@@ -143,8 +143,6 @@ class PrayerProvider with ChangeNotifier {
           .where((CombinePrayerStream data) =>
               data.userPrayer.status.toLowerCase() == status.toLowerCase())
           .toList();
-
-      print(archivedPrayers.length);
     }
     if (isAnswered == true) {
       answeredPrayers = prayers
@@ -290,6 +288,10 @@ class PrayerProvider with ChangeNotifier {
   Future<void> markPrayerAsAnswered(
           String prayerId, String userPrayerId) async =>
       await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
+
+  Future<void> unMarkPrayerAsAnswered(
+          String prayerId, String userPrayerId) async =>
+      await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> deletePrayer(String userPrayeId) async =>
       await _prayerService.deletePrayer(userPrayeId);

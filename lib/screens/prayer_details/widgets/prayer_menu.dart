@@ -181,6 +181,25 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
+  void _unMarkAsAnswered(CombinePrayerStream prayerData) async {
+    try {
+      BeStilDialog.showLoading(context);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      _goToDetails();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   void _unArchive(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(context);
@@ -360,7 +379,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         onPressed: () => _onMarkAsAnswered(prayerData),
                         text: 'Mark as Answered',
                       )
-                    : Container(),
+                    : MenuButton(
+                        icon: AppIcons.bestill_answered,
+                        onPressed: () => _unMarkAsAnswered(prayerData),
+                        text: 'Mark as Unanswered',
+                      ),
                 prayerData.userPrayer.isFavorite && !prayerData.prayer.isAnswer
                     ? MenuButton(
                         icon: Icons.favorite_border_outlined,
