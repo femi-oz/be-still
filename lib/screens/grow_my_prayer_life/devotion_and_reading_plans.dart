@@ -170,8 +170,11 @@ class DevotionPlans extends StatelessWidget {
                 padding: const EdgeInsets.all(10.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: FlatButton.icon(
-                    padding: EdgeInsets.all(0),
+                  child: TextButton.icon(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.zero),
+                    ),
                     icon: Icon(
                       AppIcons.bestill_back_arrow,
                       color: AppColors.lightBlue3,

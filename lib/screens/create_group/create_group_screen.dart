@@ -32,7 +32,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   int _step = 1;
 
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
   final TextEditingController _groupNameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
@@ -40,13 +39,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   void _save() async {
-    setState(() {
-      _autoValidate = true;
-    });
-    if (!_formKey.currentState.validate()) {
-      // showInSnackBar('Please, enter your prayer');
-      return;
-    }
+    if (!_formKey.currentState.validate()) return;
+
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     GroupModel groupData = GroupModel(
@@ -96,7 +90,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   _step == 1
                       ? CreateGroupForm(
                           formKey: _formKey,
-                          autoValidate: _autoValidate,
                           cityController: _cityController,
                           descriptionController: _descriptionController,
                           groupNameController: _groupNameController,
@@ -123,7 +116,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               ],
                             ),
                           ),
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               print(_step);
                               if (_step == 1) {
@@ -139,7 +132,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                 //     EntryScreen.routeName);
                               }
                             },
-                            color: Colors.transparent,
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.transparent),
+                            ),
                             child: Icon(
                               AppIcons.bestill_next_arrow,
                               color: AppColors.offWhite1,

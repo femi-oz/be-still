@@ -31,7 +31,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool rememberMe = false;
-  bool _autoValidate = false;
+
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -96,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -142,7 +141,10 @@ class _LoginScreenState extends State<LoginScreen> {
               .currentUser
               .keyReference;
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
@@ -165,7 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
 
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
@@ -264,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
-      autovalidate: _autoValidate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
       child: Column(
         children: <Widget>[

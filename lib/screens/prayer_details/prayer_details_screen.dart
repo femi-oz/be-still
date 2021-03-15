@@ -89,8 +89,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  FlatButton.icon(
-                    padding: EdgeInsets.all(0),
+                  TextButton.icon(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.zero),
+                    ),
                     icon: Icon(
                       AppIcons.bestill_back_arrow,
                       color: AppColors.lightBlue3,

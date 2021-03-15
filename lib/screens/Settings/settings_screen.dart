@@ -50,6 +50,7 @@ class SettingsTab extends StatefulWidget {
 class SettingsTabState extends State<SettingsTab>
     with SingleTickerProviderStateMixin {
   TabController tabController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -88,7 +89,7 @@ class SettingsTabState extends State<SettingsTab>
       onWillPop: _onWillPop,
       child: DefaultTabController(
         length: 5,
-        child: Scaffold(
+        child: Scaffold(key:_scaffoldKey,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
@@ -149,7 +150,7 @@ class SettingsTabState extends State<SettingsTab>
             ),
             child: TabBarView(
               children: [
-                GeneralSettings(_settingsProvider.settings),
+                GeneralSettings(_settingsProvider.settings,_scaffoldKey),
                 MyListSettings(_settingsProvider.settings),
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),

@@ -34,7 +34,12 @@ class BsRaisedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(AppColors.lightBlue3),
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+        elevation: MaterialStateProperty.all<double>(0.0),
+      ),
       child: Container(
         width: fullWidth ? double.maxFinite : width,
         alignment: Alignment.center,
@@ -54,8 +59,6 @@ class BsRaisedButton extends StatelessWidget {
           size: 26,
         ),
       ),
-      padding: const EdgeInsets.all(0.0),
-      elevation: 0,
       onPressed: onPressed,
     );
   }

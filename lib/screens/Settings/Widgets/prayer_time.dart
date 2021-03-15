@@ -534,12 +534,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                             setState(() => _addPrayerTypeMode = false),
                         onSave: (selectedFrequency, selectedHour,
                                 selectedMinute, selectedDay, selectedPeriod) =>
-                            _savePrayerTime(
-                                selectedDay,
-                                selectedFrequency,
-                                selectedPeriod,
-                                selectedHour,
-                                selectedMinute), // TODO pass the right value
+                            _savePrayerTime(selectedDay, selectedFrequency,
+                                selectedPeriod, selectedHour, selectedMinute),
                       ),
                     )
                   : showUpdateField

@@ -44,7 +44,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
         children: <Widget>[
           Align(
             alignment: Alignment.centerLeft,
-            child: FlatButton.icon(
+            child: TextButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: Icon(AppIcons.bestill_back_arrow,
                   color: AppColors.lightBlue3),

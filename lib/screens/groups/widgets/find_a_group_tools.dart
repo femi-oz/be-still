@@ -26,8 +26,11 @@ class _FindGroupToolsState extends State<FindGroupTools> {
         children: <Widget>[
           Align(
             alignment: Alignment.centerLeft,
-            child: FlatButton.icon(
-              padding: EdgeInsets.zero,
+            child: TextButton.icon(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    EdgeInsets.zero),
+              ),
               onPressed: () => Navigator.of(context).pop(),
               icon: Icon(AppIcons.bestill_back_arrow,
                   color: AppColors.lightBlue5),
@@ -112,8 +115,11 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: OutlineButton(
-                        borderSide: BorderSide(color: Colors.transparent),
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.transparent)),
+                        ),
                         child: Container(
                           child: Text(
                             'NORMAL',
@@ -139,8 +145,11 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: OutlineButton(
-                        borderSide: BorderSide(color: Colors.transparent),
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.transparent)),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 5.0, vertical: 5),
@@ -169,8 +178,11 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                     ),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: Colors.transparent),
+                  child: OutlinedButton(
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(
+                          BorderSide(color: Colors.transparent)),
+                    ),
                     child: Container(
                       child: Text(
                         'SEARCH',

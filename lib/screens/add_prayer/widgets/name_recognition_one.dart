@@ -54,7 +54,6 @@ class _NameRecognitionMenuOneState extends State<NameRecognitionMenuOne> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // TODO
                 // ...userData.map(
                 //   (user) => GestureDetector(
                 //     onTap: () {

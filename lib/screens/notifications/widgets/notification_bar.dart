@@ -41,7 +41,7 @@ class NotificationBarState extends State<NotificationBar> {
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () =>
               Provider.of<NotificationProvider>(context, listen: false)
                   .clearNotification(),

@@ -29,18 +29,12 @@ class AddUpdate extends StatefulWidget {
 
 class _AddUpdateState extends State<AddUpdate> {
   final _descriptionController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-
-  bool _autoValidate = false;
   BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
 
   _save() async {
-    setState(() {
-      _autoValidate = true;
-    });
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -67,33 +61,8 @@ class _AddUpdateState extends State<AddUpdate> {
 
   @override
   void initState() {
-    // getContacts();
     super.initState();
   }
-
-  // getContacts() async {
-  //   var status = await Permission.contacts.status;
-  //   if (status.isUndetermined) {
-  //     await Permission.contacts.request();
-  //   }
-  //   if (await Permission.contacts.request().isGranted) {
-  //     localContacts = await ContactsService.getContacts(withThumbnails: false);
-  //   }
-  // }
-
-  // var words = [];
-  // String str = '';
-  // var phoneNumbers = [];
-
-  // onTextChange(val) {
-  //   setState(() {
-  //     words = val.split(' ');
-
-  //     str = words.length > 0 && words[words.length - 1].startsWith('@')
-  //         ? words[words.length - 1]
-  //         : '';
-  //   });
-  // }
 
   Future<bool> _onWillPop() async {
     return (Navigator.pushReplacement(
@@ -145,7 +114,7 @@ class _AddUpdateState extends State<AddUpdate> {
                   ),
                   SizedBox(height: 30.0),
                   Form(
-                    autovalidate: _autoValidate,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     key: _formKey,
                     child: CustomInput(
                       label: "Enter your text here",
@@ -153,7 +122,6 @@ class _AddUpdateState extends State<AddUpdate> {
                       maxLines: 23,
                       isRequired: true,
                       showSuffix: false,
-                      // onTextchanged: onTextChange,
                       focusNode: _focusNode,
                     ),
                   ),
@@ -213,24 +181,6 @@ class _AddUpdateState extends State<AddUpdate> {
                                         thickness: 1,
                                       ),
                                     ),
-                                    // TODO
-                                    // ...u.tags
-                                    //     .map(
-                                    //       (t) => Container(
-                                    //         margin: EdgeInsets.only(left: 10),
-                                    //         child: Row(
-                                    //           children: <Widget>[
-                                    //             Text(
-                                    //               t.toUpperCase(),
-                                    //               style: TextStyle(
-                                    //                 color: AppColors.red,
-                                    //               ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //       ),
-                                    //     )
-                                    //     .toList()
                                   ],
                                 ),
                                 Container(
@@ -290,21 +240,6 @@ class _AddUpdateState extends State<AddUpdate> {
                                       thickness: 1,
                                     ),
                                   ),
-                                  // TODO
-                                  // ...prayer.tags
-                                  //     .map(
-                                  //       (t) => Container(
-                                  //         margin: EdgeInsets.only(left: 10),
-                                  //         child: Text(
-                                  //           t.toUpperCase(),
-                                  //           style: TextStyle(
-                                  //             fontSize: 12,
-                                  //             color: AppColors.red,
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  //     )
-                                  //     .toList(),
                                 ],
                               ),
                               Container(
@@ -338,7 +273,6 @@ class _AddUpdateState extends State<AddUpdate> {
               ),
             ),
           ),
-          // ),
         ),
       ),
     );
