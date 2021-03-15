@@ -140,6 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false)
               .currentUser
               .keyReference;
+      Settings.userPassword =
+          Settings.rememberMe ? _passwordController.text : '';
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
         EntryScreen.routeName,
@@ -292,6 +294,10 @@ class _LoginScreenState extends State<LoginScreen> {
             isRequired: true,
             textInputAction: TextInputAction.done,
             unfocus: true,
+            onTextchanged: () =>
+                _passwordController.text != Settings.userPassword
+                    ? _setDefaults
+                    : null,
             submitForm: () => _login(),
           ),
         ],

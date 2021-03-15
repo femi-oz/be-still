@@ -49,40 +49,45 @@ class _AddPrayerState extends State<AddPrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
-      if (!widget.isEdit) {
-        // if (_descriptionController.text == '') {
-        //   BeStilDialog.hideLoading(context);
-        //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
-        // } else {
-        await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
-            _descriptionController.text,
-            _user.id,
-            '${_user.firstName} ${_user.lastName}');
-        if (contacts.length > 0) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(contacts, _user, _descriptionController.text, []);
-        }
-        await Future.delayed(Duration(milliseconds: 300));
+      if (_descriptionController.text == ' ') {
         BeStilDialog.hideLoading(context);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EntryScreen(screenNumber: 0)));
-        // }
+        BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false).editprayer(
-            _descriptionController.text, widget.prayerData.prayer.id);
-        for (int i = 0; i < widget.prayerData.tags.length; i++)
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .removePrayerTag(widget.prayerData.tags[i].id);
-        if (contacts.length > 0) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(contacts, _user, _descriptionController.text,
-                  widget.prayerData.tags);
+        if (!widget.isEdit) {
+          // if (_descriptionController.text == '') {
+          //   BeStilDialog.hideLoading(context);
+          //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
+          // } else {
+          await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
+              _descriptionController.text,
+              _user.id,
+              '${_user.firstName} ${_user.lastName}');
+          if (contacts.length > 0) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayerTag(contacts, _user, _descriptionController.text, []);
+          }
+          await Future.delayed(Duration(milliseconds: 300));
+          BeStilDialog.hideLoading(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EntryScreen(screenNumber: 0)));
+          // }
+        } else {
+          await Provider.of<PrayerProvider>(context, listen: false).editprayer(
+              _descriptionController.text, widget.prayerData.prayer.id);
+          for (int i = 0; i < widget.prayerData.tags.length; i++)
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .removePrayerTag(widget.prayerData.tags[i].id);
+          if (contacts.length > 0) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .addPrayerTag(contacts, _user, _descriptionController.text,
+                    widget.prayerData.tags);
+          }
+          await Future.delayed(Duration(milliseconds: 300));
+          BeStilDialog.hideLoading(context);
+          Navigator.of(context).pushNamed(PrayerDetails.routeName);
         }
-        await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamed(PrayerDetails.routeName);
       }
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
