@@ -261,10 +261,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
   Widget build(BuildContext context) {
     CombinePrayerStream prayerData =
         Provider.of<PrayerProvider>(context).currentPrayer;
-    List<String> updates =
-        prayerData.updates.map((u) => u.description).toList();
-
-    var newUpdates = updates.join("<br>");
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -286,8 +282,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
-                            prayer: prayerData.prayer.description,
-                            updates: updates.length > 0 ? newUpdates : '');
+                          prayerData: prayerData,
+                        );
                       }),
                 ),
                 MenuButton(

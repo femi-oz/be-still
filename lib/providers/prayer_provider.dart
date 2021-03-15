@@ -97,6 +97,11 @@ class PrayerProvider with ChangeNotifier {
               .toLowerCase()
               .contains(searchQuery.toLowerCase()))
           .toList();
+      for (int i = 0; i < _prayers.length; i++) {
+        var hasMatch = _prayers[i].updates.any((u) =>
+            u.description.toLowerCase().contains(searchQuery.toLowerCase()));
+        if (hasMatch) filteredPrayers.add(_prayers[i]);
+      }
       _filteredPrayers = filteredPrayers;
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
