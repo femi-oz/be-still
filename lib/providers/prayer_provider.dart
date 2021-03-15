@@ -286,6 +286,10 @@ class PrayerProvider with ChangeNotifier {
           String prayerId, String userPrayerId) async =>
       await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
 
+  Future<void> unMarkPrayerAsAnswered(
+          String prayerId, String userPrayerId) async =>
+      await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
+
   Future<void> deletePrayer(String userPrayeId) async =>
       await _prayerService.deletePrayer(userPrayeId);
 

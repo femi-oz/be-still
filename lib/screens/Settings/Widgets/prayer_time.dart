@@ -380,11 +380,15 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      data.frequency,
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
+                                    Container(
+                                      width: 30.0,
+                                      child: Text(
+                                        data.frequency,
+                                        style: AppTextStyles.regularText15
+                                            .copyWith(
+                                                color:
+                                                    AppColors.prayerTextColor),
+                                      ),
                                     ),
                                     SizedBox(
                                       width: 30,
@@ -409,8 +413,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                     ),
                                     Text(
                                       ':',
-                                      style:
-                                          TextStyle(color: AppColors.offWhite1),
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
                                     ),
                                     SizedBox(
                                       width: 10,
