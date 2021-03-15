@@ -113,7 +113,8 @@ class _CustomInputState extends State<CustomInput> {
 
   String _validatorFn(String value) {
     if (widget.isRequired) {
-      RegExp regExp = new RegExp("^(?!\s*$).+");
+      String p = r'(^(?!\s*$).+)';
+      RegExp regExp = new RegExp(p);
       if (value.isEmpty || regExp.hasMatch(value)) {
         return '${widget.label} is required';
       }
