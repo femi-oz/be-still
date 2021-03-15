@@ -386,7 +386,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     : MenuButton(
                         icon: AppIcons.bestill_answered,
                         onPressed: () => _unMarkAsAnswered(prayerData),
-                        text: 'Unmark as Answered',
+                        text: 'Mark as Unanswered',
                       ),
                 prayerData.userPrayer.isFavorite && !prayerData.prayer.isAnswer
                     ? MenuButton(
