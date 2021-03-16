@@ -78,7 +78,6 @@ class _SplashScreenState extends State<SplashScreen>
                 .setUserNotifications(_user?.id);
             await Provider.of<NotificationProvider>(context, listen: false)
                 .init(context);
-
             Navigator.of(context).pushNamedAndRemoveUntil(
                 EntryScreen.routeName, (Route<dynamic> route) => false);
           } else {

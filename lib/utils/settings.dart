@@ -8,10 +8,10 @@ class Settings {
       sharedPrefs = await SharedPreferences.getInstance();
 
   static const String THEME_MODE_KEY = 'theme_mode';
-  static const String REMEMBER_ME_KEY = 'remember_me';
-  static const String LAST_USER = 'last_user_info';
-  static const String USER_PASSWORD = 'user_password';
-  static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
+  static const String REMEMBER_ME_KEY = 'remember_me_';
+  static const String LAST_USER = 'last_user_info_';
+  static const String USER_PASSWORD = 'user_password_';
+  static const String ENABLE_LOCAL_AUTH = 'enable_local_auth_';
   static const String CONTACT_PERMISSION = 'contact_permission';
   static const String APP_INIT = 'app_init';
 

@@ -90,10 +90,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     _isBiometricAvailable();
-    var userInfo = jsonDecode(Settings.lastUser);
-    if (Settings.lastUser.isNotEmpty)
+    if (Settings.lastUser.isNotEmpty) {
+      var userInfo = jsonDecode(Settings.lastUser);
       _usernameController.text = userInfo['email'];
-    _passwordController.text = Settings.userPassword;
+      _passwordController.text = Settings.userPassword;
+    }
     super.initState();
   }
 

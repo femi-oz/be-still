@@ -48,7 +48,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> onRoute(message, context) async {
-    if (message['type'] == 'prayer') {
+    if (message['type'] == 'prayer' && message['entityId'] != 'N/A') {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(message['entityId']);
       Navigator.of(context).pushNamed(PrayerDetails.routeName);

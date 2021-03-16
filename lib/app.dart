@@ -1,9 +1,5 @@
-import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
-import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
