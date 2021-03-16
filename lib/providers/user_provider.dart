@@ -19,7 +19,7 @@ class UserProvider with ChangeNotifier {
 
   Future setCurrentUser(bool isLocalAuth) async {
     var keyRefernence = isLocalAuth
-        ? UserModel.fromData(jsonDecode(Settings.lastUser)).keyReference
+        ? jsonDecode(Settings.lastUser)['keyReference']
         : _firebaseAuth.currentUser.uid;
     _currentUser = await _userService.getCurrentUser(keyRefernence);
     notifyListeners();

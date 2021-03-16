@@ -85,8 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
     } on PlatformException catch (e) {
       print(e);
     }
-
-    // if (!mounted) return;
   }
 
   @override
