@@ -10,6 +10,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user_device.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
@@ -100,6 +101,7 @@ class NotificationService {
     List<String> tokens,
     String senderId,
     String recieverId,
+    @required String entityId,
   }) async {
     final _notificationId = Uuid().v1();
     var data = PushNotificationModel(
@@ -115,6 +117,7 @@ class NotificationService {
       isSent: 0,
       recieverId: recieverId,
       status: Status.active,
+      entityId: entityId,
     );
     try {
       _pushNotificationCollectionReference

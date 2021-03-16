@@ -192,7 +192,6 @@ class PrayerService {
           .doc(_userPrayerID)
           .set(populateUserPrayer(recieverId, prayerId, senderId).toJson());
       var tokens = await _notificationService.getNotificationToken(recieverId);
-      print(tokens);
       _notificationService.addPushNotification(
         messageType: NotificationType.prayer,
         message: prayerDesc,
@@ -200,6 +199,7 @@ class PrayerService {
         senderId: senderId,
         recieverId: recieverId,
         tokens: tokens,
+        entityId: prayerId,
       );
     } catch (e) {
       await locator<LogService>().createLog(

@@ -98,13 +98,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         );
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser(false);
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .init(userId);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        Settings.lastUser =
+            Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+        Settings.userPassword =
+            Settings.rememberMe ? _passwordController.text : '';
         // get all local notifications from db
         await Provider.of<NotificationProvider>(context, listen: false)
-            .setLocalNotifications(userId);
+            .setLocalNotifications(user.id);
         final _localNotifications =
             Provider.of<NotificationProvider>(context, listen: false)
                 .localNotifications;
@@ -130,10 +132,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           );
         }
         BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName,
-          (Route<dynamic> route) => false,
-        );
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .init(context);
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .setDevice(user.id);
+        // Navigator.of(context).pushNamedAndRemoveUntil(
+        //   EntryScreen.routeName,
+        //   (Route<dynamic> route) => false,
+        // );
       }
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);

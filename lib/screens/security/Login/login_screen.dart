@@ -111,8 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
       Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
       // get all local notifications from db
       await Provider.of<NotificationProvider>(context, listen: false)
@@ -143,10 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       await Provider.of<NotificationProvider>(context, listen: false)
           .init(context);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        EntryScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setDevice(user.id);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
@@ -169,10 +165,10 @@ class _LoginScreenState extends State<LoginScreen> {
           .setCurrentUser(true);
       await Provider.of<NotificationProvider>(context, listen: false)
           .init(context);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        EntryScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setDevice(user.id);
     } on HttpException catch (e) {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {

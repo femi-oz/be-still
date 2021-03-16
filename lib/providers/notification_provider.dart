@@ -2,6 +2,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -31,10 +32,10 @@ class NotificationProvider with ChangeNotifier {
   List<LocalNotificationModel> get localNotifications => _localNotifications;
   Future<void> init(BuildContext context) async {
     _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        onRoute(message, context);
-      },
+      // onMessage: (Map<String, dynamic> message) async {
+      //   print("onMessage: $message");
+      //   onRoute(message, context);
+      // },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
         onRoute(message, context);
@@ -44,18 +45,24 @@ class NotificationProvider with ChangeNotifier {
         onRoute(message, context);
       },
     );
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      EntryScreen.routeName,
+      (Route<dynamic> route) => false,
+    );
   }
 
   Future<void> onRoute(message, context) async {
-    if (message['type'] == 'prayer') {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(message['entityId']);
-      await Future.delayed(const Duration(milliseconds: 300),
-          () => BeStilDialog.hideLoading(context));
-      Navigator.of(context).pushNamed(PrayerDetails.routeName);
-      print(message);
-      // Navigator.of(context).pushNamed(initialMessage['type']);
-    }
+    // print('messagetype ${message['type']}');
+    // if (message['type'] == 'prayer') {
+    //   await Provider.of<PrayerProvider>(context, listen: false)
+    //       .setPrayer(message['entityId']);
+    //   await Future.delayed(const Duration(milliseconds: 300),
+    //       () => BeStilDialog.hideLoading(context));
+    Navigator.of(context).pushNamed(PrayerDetails.routeName);
+    print(message);
+    // Navigator.of(context).pushNamed(initialMessage['type']);
+    // }
+    return;
   }
 
   Future<void> setDevice(String userId) async {
