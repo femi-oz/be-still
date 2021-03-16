@@ -20,6 +20,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 import 'widgets/prayer_card.dart';
+import 'package:flutter/services.dart';
 
 class PrayerList extends StatefulWidget {
   @override
@@ -96,6 +97,8 @@ class _PrayerListState extends State<PrayerList> {
   void _setVibration() async => _canVibrate = await Vibrate.canVibrate;
 
   void _vibrate() async {
+    // HapticFeedback.selectionClick();
+
     if (_canVibrate) Vibrate.vibrate();
   }
 

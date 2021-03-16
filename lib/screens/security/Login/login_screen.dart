@@ -93,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var userInfo = jsonDecode(Settings.lastUser);
     if (Settings.lastUser.isNotEmpty)
       _usernameController.text = userInfo['email'];
+    _passwordController.text = Settings.userPassword;
     super.initState();
   }
 
@@ -137,6 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
           frequency: _localNotifications[i].frequency,
         );
       }
+      Settings.userPassword =
+          Settings.rememberMe ? _passwordController.text : '';
       BeStilDialog.hideLoading(context);
       await Provider.of<NotificationProvider>(context, listen: false)
           .init(context);

@@ -1,12 +1,16 @@
+import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
@@ -19,7 +23,8 @@ class EntryScreen extends StatefulWidget {
 
 bool _searchMode = false;
 
-class _EntryScreenState extends State<EntryScreen> {
+class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
+  BuildContext bcontext;
   int _currentIndex = 0;
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -31,6 +36,38 @@ class _EntryScreenState extends State<EntryScreen> {
   void initState() {
     _currentIndex = widget.screenNumber;
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  AppLifecycleState lifeCycleState;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        Future.delayed(Duration(hours: 24), () async {
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .signOut();
+          await LocalNotification.clearAll();
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            LoginScreen.routeName,
+            (Route<dynamic> route) => false,
+          );
+        });
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override

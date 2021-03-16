@@ -83,55 +83,58 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     try {
       await BeStilDialog.showLoading(context, 'Registering...');
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .registerUser(
-        password: _passwordController.text,
-        email: _emailController.text,
-        firstName: _firstnameController.text,
-        lastName: _lastnameController.text,
-        dob: _selectedDate,
-      );
-      await Provider.of<UserProvider>(context, listen: false)
-          .setCurrentUser(false);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
-      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-      // get all local notifications from db
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(user.id);
-      final _localNotifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications;
-      //set notification in new device
+      if (_firstnameController.text == ' ' || _lastnameController.text == ' ') {
+        BeStilDialog.hideLoading(context);
+        BeStillSnackbar.showInSnackBar(
+            message: 'You can not save empty values', key: _scaffoldKey);
+      } else {
+        await Provider.of<AuthenticationProvider>(context, listen: false)
+            .registerUser(
+          password: _passwordController.text,
+          email: _emailController.text,
+          firstName: _firstnameController.text,
+          lastName: _lastnameController.text,
+          dob: _selectedDate,
+        );
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUser(false);
+        final userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .init(userId);
+        // get all local notifications from db
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .setLocalNotifications(userId);
+        final _localNotifications =
+            Provider.of<NotificationProvider>(context, listen: false)
+                .localNotifications;
+        //set notification in new device
 
-      // The device's timezone.
-      String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+        // The device's timezone.
+        String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
 
-      // Find the 'current location'
-      final location = tz.getLocation(timeZoneName);
-      //set notification in new device
-      for (int i = 0; i < _localNotifications.length; i++) {
-        final scheduledDate =
-            tz.TZDateTime.from(_localNotifications[i].scheduledDate, location);
-        await LocalNotification.configureNotification(
-            context, _localNotifications[i].fallbackRoute);
-        await LocalNotification.setLocalNotification(
-          title: _localNotifications[i].title,
-          description: _localNotifications[i].description,
-          scheduledDate: scheduledDate,
-          payload: _localNotifications[i].payload,
-          frequency: _localNotifications[i].frequency,
+        // Find the 'current location'
+        final location = tz.getLocation(timeZoneName);
+        //set notification in new device
+        for (int i = 0; i < _localNotifications.length; i++) {
+          final scheduledDate = tz.TZDateTime.from(
+              _localNotifications[i].scheduledDate, location);
+          await LocalNotification.configureNotification(
+              context, _localNotifications[i].fallbackRoute);
+          await LocalNotification.setLocalNotification(
+            title: _localNotifications[i].title,
+            description: _localNotifications[i].description,
+            scheduledDate: scheduledDate,
+            payload: _localNotifications[i].payload,
+            frequency: _localNotifications[i].frequency,
+          );
+        }
+        BeStilDialog.hideLoading(context);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName,
+          (Route<dynamic> route) => false,
         );
       }
-      BeStilDialog.hideLoading(context);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .init(context);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        EntryScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);

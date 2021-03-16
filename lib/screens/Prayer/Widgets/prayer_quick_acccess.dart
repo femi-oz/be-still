@@ -110,6 +110,26 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     }
   }
 
+  void _unMarkAsAnswered() async {
+    try {
+      BeStilDialog.showLoading(context);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unMarkPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      Navigator.of(context).pop();
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
+  }
+
   _markPrayerAsFavorite() async {
     try {
       BeStilDialog.showLoading(
@@ -241,7 +261,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         ? AppIcons.bestill_answered
                         : AppIcons.bestill_answered,
                     () => widget.prayerData.prayer.isAnswer
-                        ? null
+                        ? _unMarkAsAnswered()
                         : _onMarkAsAnswered(),
                     widget.prayerData.prayer.isAnswer
                         ? 'Mark As Unanswered'
