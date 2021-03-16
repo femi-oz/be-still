@@ -136,10 +136,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             .init(context);
         await Provider.of<NotificationProvider>(context, listen: false)
             .setDevice(user.id);
-        // Navigator.of(context).pushNamedAndRemoveUntil(
-        //   EntryScreen.routeName,
-        //   (Route<dynamic> route) => false,
-        // );
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName,
+          (Route<dynamic> route) => false,
+        );
       }
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);

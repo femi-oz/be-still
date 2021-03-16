@@ -143,6 +143,10 @@ class _LoginScreenState extends State<LoginScreen> {
           .init(context);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);

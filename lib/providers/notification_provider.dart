@@ -45,23 +45,15 @@ class NotificationProvider with ChangeNotifier {
         onRoute(message, context);
       },
     );
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      EntryScreen.routeName,
-      (Route<dynamic> route) => false,
-    );
   }
 
   Future<void> onRoute(message, context) async {
-    // print('messagetype ${message['type']}');
-    // if (message['type'] == 'prayer') {
-    //   await Provider.of<PrayerProvider>(context, listen: false)
-    //       .setPrayer(message['entityId']);
-    //   await Future.delayed(const Duration(milliseconds: 300),
-    //       () => BeStilDialog.hideLoading(context));
-    Navigator.of(context).pushNamed(PrayerDetails.routeName);
-    print(message);
-    // Navigator.of(context).pushNamed(initialMessage['type']);
-    // }
+    if (message['type'] == 'prayer') {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(message['entityId']);
+      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+      print(message);
+    }
     return;
   }
 
