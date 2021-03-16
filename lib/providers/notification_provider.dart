@@ -63,10 +63,10 @@ class NotificationProvider with ChangeNotifier {
       _firebaseMessaging.requestNotificationPermissions(
           const IosNotificationSettings(
               sound: true, badge: true, alert: true, provisional: true));
-      // _firebaseMessaging.onIosSettingsRegistered
-      //     .listen((IosNotificationSettings settings) {
-      //   print("Settings registered: $settings");
-      // });
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print("Settings registered: $settings");
+      });
       String token = await _firebaseMessaging.getToken();
       await _notificationService.init(token, userId);
       _initialized = true;
