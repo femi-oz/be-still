@@ -351,7 +351,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           showSuffix: false,
                           isRequired: true,
                           isPassword: true,
-                          label: 'Enter new pssword',
+                          label: 'Enter new password',
                           controller: _newPassword,
                         ),
                         SizedBox(height: 15.0),
@@ -359,7 +359,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           obScurePassword: true,
                           showSuffix: false,
                           isRequired: true,
-                          label: 'Cofirm pssword',
+                          label: 'Confirm password',
                           controller: _newConfirmPassword,
                           validator: (value) {
                             if (_newPassword.text != value) {

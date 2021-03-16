@@ -11,6 +11,7 @@ class Settings {
   static const String REMEMBER_ME_KEY = 'remember_me';
   static const String LAST_USER = 'last_user';
   static const String USER_KEY_REFERENCE = 'user_key_reference';
+  static const String USER_PASSWORD = 'user_password';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
   static const String CONTACT_PERMISSION = 'contact_permission';
   static const String APP_INIT = 'app_init';
@@ -48,6 +49,10 @@ class Settings {
 
   static String get userKeyRefernce =>
       sharedPrefs.getString(USER_KEY_REFERENCE) ?? '';
+
+  static set userPassword(String password) =>
+      sharedPrefs.setString(USER_PASSWORD, password);
+  static String get userPassword => sharedPrefs.getString(USER_PASSWORD) ?? '';
 
   static set enableLocalAuth(bool isAuthEnabled) =>
       sharedPrefs.setBool(ENABLE_LOCAL_AUTH, isAuthEnabled);

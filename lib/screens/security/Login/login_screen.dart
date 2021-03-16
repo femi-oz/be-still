@@ -92,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _isBiometricAvailable();
 
     _usernameController.text = Settings.lastUser;
+    _passwordController.text = Settings.userPassword;
     super.initState();
   }
 
@@ -140,6 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false)
               .currentUser
               .keyReference;
+      Settings.userPassword =
+          Settings.rememberMe ? _passwordController.text : '';
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
         EntryScreen.routeName,
