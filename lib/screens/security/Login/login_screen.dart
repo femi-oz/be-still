@@ -1,4 +1,5 @@
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -22,6 +23,7 @@ import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = 'login';
@@ -90,15 +92,15 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     _isBiometricAvailable();
-
-    _usernameController.text = Settings.lastUser;
+    var userInfo = jsonDecode(Settings.lastUser);
+    if (Settings.lastUser.isNotEmpty)
+      _usernameController.text = userInfo['email'];
     super.initState();
   }
 
   void _login() async {
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
-
     await BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
@@ -107,13 +109,15 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(false);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
       await Provider.of<NotificationProvider>(context, listen: false)
-          .init(userId);
+          .setDevice(user.id);
+      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
       // get all local notifications from db
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(userId);
+          .setLocalNotifications(user.id);
       final _localNotifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications;
@@ -135,12 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
           frequency: _localNotifications[i].frequency,
         );
       }
-      Settings.lastUser = Settings.rememberMe ? _usernameController.text : '';
-      Settings.userKeyRefernce =
-          Provider.of<UserProvider>(context, listen: false)
-              .currentUser
-              .keyReference;
       BeStilDialog.hideLoading(context);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .init(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
         EntryScreen.routeName,
         (Route<dynamic> route) => false,
@@ -163,10 +164,10 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
-
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
-
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .init(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
         EntryScreen.routeName,
         (Route<dynamic> route) => false,
@@ -264,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _setDefaults() {
     Settings.rememberMe = false;
-    Settings.enableLocalAuth = false;
+    setState(() => Settings.enableLocalAuth = false);
   }
 
   Widget _buildForm() {
@@ -279,7 +280,8 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             isEmail: true,
-            onTextchanged: () => _usernameController.text != Settings.lastUser
+            onTextchanged: () => _usernameController.text !=
+                    jsonDecode(Settings.lastUser)['email']
                 ? _setDefaults
                 : null,
           ),

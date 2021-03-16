@@ -9,8 +9,7 @@ class Settings {
 
   static const String THEME_MODE_KEY = 'theme_mode';
   static const String REMEMBER_ME_KEY = 'remember_me';
-  static const String LAST_USER = 'last_user';
-  static const String USER_KEY_REFERENCE = 'user_key_reference';
+  static const String LAST_USER = 'last_user_info';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
   static const String CONTACT_PERMISSION = 'contact_permission';
   static const String APP_INIT = 'app_init';
@@ -38,16 +37,9 @@ class Settings {
 
   static bool get rememberMe => sharedPrefs.getBool(REMEMBER_ME_KEY) ?? false;
 
-  static set lastUser(String username) =>
-      sharedPrefs.setString(LAST_USER, username);
+  static set lastUser(String user) => sharedPrefs.setString(LAST_USER, user);
 
   static String get lastUser => sharedPrefs.getString(LAST_USER) ?? '';
-
-  static set userKeyRefernce(String keyReference) =>
-      sharedPrefs.setString(USER_KEY_REFERENCE, keyReference);
-
-  static String get userKeyRefernce =>
-      sharedPrefs.getString(USER_KEY_REFERENCE) ?? '';
 
   static set enableLocalAuth(bool isAuthEnabled) =>
       sharedPrefs.setBool(ENABLE_LOCAL_AUTH, isAuthEnabled);

@@ -55,4 +55,14 @@ class UserModel {
       'ModifiedOn': modifiedOn,
     };
   }
+
+  Map<String, dynamic> toJson2() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'keyReference': keyReference,
+    };
+  }
 }
