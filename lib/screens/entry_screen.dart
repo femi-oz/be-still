@@ -7,6 +7,7 @@ import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -42,12 +43,11 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   AppLifecycleState lifeCycleState;
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        break;
-      case AppLifecycleState.inactive:
-        Future.delayed(Duration(minutes: 2), () async {
+        var backgroundTime = DateTime.parse(Settings.backgroundTime);
+        if (DateTime.now().difference(backgroundTime) > Duration(minutes: 2)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           await LocalNotification.clearAll();
@@ -55,7 +55,10 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
             LoginScreen.routeName,
             (Route<dynamic> route) => false,
           );
-        });
+        }
+        break;
+      case AppLifecycleState.inactive:
+        Settings.backgroundTime = DateTime.now().toString();
         break;
       case AppLifecycleState.paused:
         break;
