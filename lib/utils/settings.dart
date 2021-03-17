@@ -8,12 +8,12 @@ class Settings {
       sharedPrefs = await SharedPreferences.getInstance();
 
   static const String THEME_MODE_KEY = 'theme_mode';
-  static const String REMEMBER_ME_KEY = 'remember_me';
-  static const String LAST_USER = 'last_user';
-  static const String USER_KEY_REFERENCE = 'user_key_reference';
-  static const String USER_PASSWORD = 'user_password';
-  static const String ENABLE_LOCAL_AUTH = 'enable_local_auth';
+  static const String REMEMBER_ME_KEY = 'remember_me_';
+  static const String LAST_USER = 'last_user_info_';
+  static const String USER_PASSWORD = 'user_password_';
+  static const String ENABLE_LOCAL_AUTH = 'enable_local_auth_';
   static const String CONTACT_PERMISSION = 'contact_permission';
+  static const String BACKGROUND_TIME = 'background_time';
   static const String APP_INIT = 'app_init';
 
   static set themeMode(String mode) =>
@@ -39,20 +39,18 @@ class Settings {
 
   static bool get rememberMe => sharedPrefs.getBool(REMEMBER_ME_KEY) ?? false;
 
-  static set lastUser(String username) =>
-      sharedPrefs.setString(LAST_USER, username);
+  static set lastUser(String user) => sharedPrefs.setString(LAST_USER, user);
 
   static String get lastUser => sharedPrefs.getString(LAST_USER) ?? '';
-
-  static set userKeyRefernce(String keyReference) =>
-      sharedPrefs.setString(USER_KEY_REFERENCE, keyReference);
-
-  static String get userKeyRefernce =>
-      sharedPrefs.getString(USER_KEY_REFERENCE) ?? '';
 
   static set userPassword(String password) =>
       sharedPrefs.setString(USER_PASSWORD, password);
   static String get userPassword => sharedPrefs.getString(USER_PASSWORD) ?? '';
+
+  static set backgroundTime(String time) =>
+      sharedPrefs.setString(BACKGROUND_TIME, time);
+  static String get backgroundTime =>
+      sharedPrefs.getString(BACKGROUND_TIME) ?? '';
 
   static set enableLocalAuth(bool isAuthEnabled) =>
       sharedPrefs.setBool(ENABLE_LOCAL_AUTH, isAuthEnabled);

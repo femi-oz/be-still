@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/user_service.dart';
@@ -16,8 +18,9 @@ class UserProvider with ChangeNotifier {
   List<UserModel> get allUsers => _allUsers;
 
   Future setCurrentUser(bool isLocalAuth) async {
-    var keyRefernence =
-        isLocalAuth ? Settings.userKeyRefernce : _firebaseAuth.currentUser.uid;
+    var keyRefernence = isLocalAuth
+        ? jsonDecode(Settings.lastUser)['keyReference']
+        : _firebaseAuth.currentUser.uid;
     _currentUser = await _userService.getCurrentUser(keyRefernence);
     notifyListeners();
   }

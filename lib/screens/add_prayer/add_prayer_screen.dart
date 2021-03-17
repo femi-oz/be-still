@@ -116,7 +116,7 @@ class _AddPrayerState extends State<AddPrayer> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(' ');
+      tags = val.split(new RegExp(r"\s"));
       setState(() => tagText =
           tags.length > 0 && tags[tags.length - 1].startsWith('@')
               ? tags[tags.length - 1]
@@ -207,6 +207,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             maxLines: 23,
                             isRequired: true,
                             showSuffix: false,
+                            textInputAction: TextInputAction.newline,
                             onTextchanged: (val) => onTextChange(val),
                             focusNode: _focusNode,
                           ),

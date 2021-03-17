@@ -1,9 +1,14 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/services/notification_service.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../locator.dart';
 
 class NotificationProvider with ChangeNotifier {
@@ -25,19 +30,47 @@ class NotificationProvider with ChangeNotifier {
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;
-  Future<void> init(String userId) async {
-    if (!_initialized) {
-      // For iOS request permission first.
-      _firebaseMessaging.requestNotificationPermissions();
-      _firebaseMessaging.configure();
+  Future<void> init(BuildContext context) async {
+    _firebaseMessaging.configure(
+      // onMessage: (Map<String, dynamic> message) async {
+      //   print("onMessage: $message");
+      //   onRoute(message, context);
+      // },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        onRoute(message, context);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        onRoute(message, context);
+      },
+    );
+  }
 
-      // For testing purposes print the Firebase Messaging token
-      String token = await _firebaseMessaging.getToken();
-      print(token);
-      await _notificationService.init(token, userId);
+  Future<void> onRoute(message, context) async {
+    if (message['type'] == 'prayer' && message['entityId'] != 'N/A') {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(message['entityId']);
+      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+      print(message);
     }
+    return;
+  }
 
-    _initialized = true;
+  Future<void> setDevice(String userId) async {
+    if (!_initialized) {
+      // For testing purposes print the Firebase Messaging token
+      _firebaseMessaging.requestNotificationPermissions(
+          const IosNotificationSettings(
+              sound: true, badge: true, alert: true, provisional: true));
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print("Settings registered: $settings");
+      });
+      String token = await _firebaseMessaging.getToken();
+      await _notificationService.init(token, userId);
+      _initialized = true;
+    }
   }
 
   Future setUserNotifications(String userId) async {
