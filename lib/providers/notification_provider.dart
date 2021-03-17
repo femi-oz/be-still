@@ -71,7 +71,7 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future setUserNotifications(String userId) async {
+  Future<void> setUserNotifications(String userId) async {
     _notificationService
         .getUserNotifications(userId)
         .asBroadcastStream()
@@ -82,12 +82,14 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future clearNotification() async {
+  Future<void> clearNotification() async {
+    _notifications = [];
+    notifyListeners();
     await _notificationService
         .clearNotification(_notifications.map((e) => e.id).toList());
   }
 
-  Future setLocalNotifications(userId) async {
+  Future<void> setLocalNotifications(userId) async {
     _notificationService
         .getLocalNotifications(userId)
         .asBroadcastStream()
@@ -97,7 +99,7 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future setPrayerTimeNotifications(userId) async {
+  Future<void> setPrayerTimeNotifications(userId) async {
     _notificationService
         .getLocalNotifications(userId)
         .asBroadcastStream()
@@ -109,7 +111,7 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future addLocalNotification(
+  Future<void> addLocalNotification(
       int localId,
       String entityId,
       String notificationText,
@@ -143,7 +145,7 @@ class NotificationProvider with ChangeNotifier {
         selectedMinute);
   }
 
-  Future deleteLocalNotification(String notificationId) async {
+  Future<void> deleteLocalNotification(String notificationId) async {
     await _notificationService.removeLocalNotification(notificationId);
   }
 

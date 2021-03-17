@@ -1,8 +1,6 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -30,12 +28,27 @@ class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
   bool _canVibrate = true;
 
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _setVibration();
+      _getPermissions();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        _getPrayers();
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('MY LIST');
+      });
+      setState(() => _isInit = false);
+    }
+    super.didChangeDependencies();
+  }
+
   void _getPrayers() async {
     await BeStilDialog.showLoading(context);
     try {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await _preLoadData();
       final options =
           Provider.of<PrayerProvider>(context, listen: false).filterOptions;
       final settings =
@@ -54,26 +67,6 @@ class _PrayerListState extends State<PrayerList> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
-  }
-
-  Future<void> _preLoadData() async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    //load settings
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setPrayerSettings(_user.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSharingSettings(_user.id);
-
-    //get all users
-    await Provider.of<UserProvider>(context, listen: false)
-        .setAllUsers(_user.id);
-
-    // get all local notifications
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setLocalNotifications(_user.id);
   }
 
   void onTapCard(prayerData) async {
@@ -138,22 +131,6 @@ class _PrayerListState extends State<PrayerList> {
       }
       Settings.isAppInit = false;
     }
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _setVibration();
-      _getPermissions();
-
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _getPrayers();
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY LIST');
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
   }
 
   @override

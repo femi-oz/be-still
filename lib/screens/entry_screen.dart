@@ -1,4 +1,8 @@
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
@@ -36,6 +40,7 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
+    _preLoadData();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
@@ -71,6 +76,30 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  Future<void> _preLoadData() async {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    //load settings
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setPrayerSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSharingSettings(_user.id);
+
+    //get all users
+    await Provider.of<UserProvider>(context, listen: false)
+        .setAllUsers(_user.id);
+
+    // get all push notifications
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setUserNotifications(_user?.id);
+
+    // get all local notifications
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setLocalNotifications(_user.id);
   }
 
   @override
