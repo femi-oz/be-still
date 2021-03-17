@@ -45,7 +45,9 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        Future.delayed(Duration(hours: 24), () async {
+        break;
+      case AppLifecycleState.inactive:
+        Future.delayed(Duration(minutes: 2), () async {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           await LocalNotification.clearAll();
@@ -54,8 +56,6 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
             (Route<dynamic> route) => false,
           );
         });
-        break;
-      case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.paused:
         break;
