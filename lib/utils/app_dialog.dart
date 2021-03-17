@@ -5,15 +5,25 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'essentials.dart';
 
 class BeStilDialog {
-  static Widget getLoading([String message = 'Loading...']) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SpinKitWave(color: AppColors.lightBlue1, size: 50.0),
-          SizedBox(height: 10.0),
-          Text(message)
-        ],
+  static Widget getLoading([String message = '']) {
+    return Scaffold(
+      body: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SpinKitDoubleBounce(
+                color: AppColors.lightBlue1,
+                size: 50.0,
+              ),
+              SizedBox(height: 10.0),
+              Text(
+                message,
+                style: AppTextStyles.regularText15,
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

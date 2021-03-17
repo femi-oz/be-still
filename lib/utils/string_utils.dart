@@ -1,3 +1,4 @@
+import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/utils/settings.dart';
 
 class StringUtils {
@@ -49,6 +50,42 @@ class StringUtils {
   static String copyRight1 = '$year All Rights Reserved';
   static String copyRight2 =
       "BeStill is a ministry of Second Baptist Church Houston, TX";
+
+  static generateExceptionMessage(exceptionCode) {
+    String errorMessage;
+    switch (exceptionCode) {
+      case ErrorType.emailAlreadyExists:
+        errorMessage =
+            "The email has already been registered. Please login or reset your password.";
+        break;
+      case ErrorType.invalidEmail:
+        errorMessage = "Email format is wrong";
+        break;
+      case ErrorType.wrongPassword:
+        errorMessage = "Username / Password is incorrect";
+        break;
+      case ErrorType.userNotFound:
+        errorMessage = "User with this email doesn't exist.";
+        break;
+      case ErrorType.networkRequestFailed:
+        errorMessage = "Please check your internet connection and try again";
+        break;
+      case ErrorType.requiresRecentLogin:
+        errorMessage = "Signing in with Email and Password is not enabled.";
+        break;
+      case ErrorType.userDisabled:
+        errorMessage = "User with this email has been disabled.";
+        break;
+      case ErrorType.unavailable:
+        errorMessage =
+            "The service is currently unavailable. Please try again later";
+        break;
+      default:
+        errorMessage = "The application has encountered an error.";
+    }
+
+    return errorMessage;
+  }
 }
 
 extension StringExtension on String {

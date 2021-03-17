@@ -8,6 +8,7 @@ import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -40,7 +41,7 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
-    _preLoadData();
+
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
@@ -114,9 +115,18 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
-      body: Container(
-          height: double.infinity,
-          child: TabNavigationItem.items[_currentIndex].page),
+      body: FutureBuilder(
+        future: _preLoadData(),
+        initialData: null,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
+                height: double.infinity,
+                child: TabNavigationItem.items[_currentIndex].page);
+          } else
+            return BeStilDialog.getLoading();
+        },
+      ),
       bottomNavigationBar: _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );
