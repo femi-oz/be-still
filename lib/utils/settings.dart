@@ -13,6 +13,7 @@ class Settings {
   static const String USER_PASSWORD = 'user_password_';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth_';
   static const String CONTACT_PERMISSION = 'contact_permission';
+  static const String BACKGROUND_TIME = 'background_time';
   static const String APP_INIT = 'app_init';
 
   static set themeMode(String mode) =>
@@ -45,6 +46,11 @@ class Settings {
   static set userPassword(String password) =>
       sharedPrefs.setString(USER_PASSWORD, password);
   static String get userPassword => sharedPrefs.getString(USER_PASSWORD) ?? '';
+
+  static set backgroundTime(String time) =>
+      sharedPrefs.setString(BACKGROUND_TIME, time);
+  static String get backgroundTime =>
+      sharedPrefs.getString(BACKGROUND_TIME) ?? '';
 
   static set enableLocalAuth(bool isAuthEnabled) =>
       sharedPrefs.setBool(ENABLE_LOCAL_AUTH, isAuthEnabled);
