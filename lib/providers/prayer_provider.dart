@@ -37,13 +37,13 @@ class PrayerProvider with ChangeNotifier {
         notifyListeners();
       },
     );
-    checkPrayerValidity(userId, prayers);
   }
 
-  Future<void> checkPrayerValidity(
-      String userId, List<CombinePrayerStream> prayers) async {
-    await _autoDeleteArchivePrayers(userId, prayers);
-    await _unSnoozePrayerPast(prayers);
+  Future<void> checkPrayerValidity(String userId) async {
+    if (prayers.length > 0) {
+      await _autoDeleteArchivePrayers(userId, prayers);
+      await _unSnoozePrayerPast(prayers);
+    }
   }
 
   Future<void> setPrayerTimePrayers(String userId, String sortBy) async =>
