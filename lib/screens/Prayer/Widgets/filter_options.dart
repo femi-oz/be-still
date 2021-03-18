@@ -22,7 +22,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
 
   void setPageTitle() async {
     String heading = '';
-    if (isArchived) heading = 'ARCHIVE LIST';
+    if (isArchived) heading = 'ARCHIVED LIST';
     if (isAnswered) heading = 'ANSWERED LIST';
     if (isSnoozed) heading = 'SNOOZED LIST';
     if (status == Status.active) heading = 'MY LIST';

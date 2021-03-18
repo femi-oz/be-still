@@ -83,10 +83,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     try {
       await BeStilDialog.showLoading(context, 'Registering...');
-      if (_firstnameController.text == ' ' || _lastnameController.text == ' ') {
+      if (_firstnameController.text == null ||
+          _firstnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
         BeStillSnackbar.showInSnackBar(
-            message: 'You can not save empty values', key: _scaffoldKey);
+            message: 'First Name is empty, please enter a valid name.',
+            key: _scaffoldKey);
+      } else if (_lastnameController.text == null ||
+          _lastnameController.text.trim() == '') {
+        BeStilDialog.hideLoading(context);
+        BeStillSnackbar.showInSnackBar(
+            message: 'Last Name is empty, please enter a valid name.',
+            key: _scaffoldKey);
       } else {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .registerUser(

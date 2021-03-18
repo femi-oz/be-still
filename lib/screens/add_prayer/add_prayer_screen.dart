@@ -49,7 +49,8 @@ class _AddPrayerState extends State<AddPrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
-      if (_descriptionController.text == ' ') {
+      if (_descriptionController.text == null ||
+          _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
       } else {
