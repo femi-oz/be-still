@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -55,7 +56,9 @@ class _PrayerListState extends State<PrayerList> {
           Provider.of<SettingsProvider>(context, listen: false).settings;
       await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
           _user?.id,
-          options.isArchived ? settings.archiveSortBy : settings.defaultSortBy);
+          options.contains(Status.archived) && options.length == 1
+              ? settings.archiveSortBy
+              : settings.defaultSortBy);
       await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {

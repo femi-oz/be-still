@@ -1,3 +1,4 @@
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -43,7 +44,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         Provider.of<PrayerProvider>(context, listen: false).filterOptions;
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (options.isArchived) {
+    if (options.contains(Status.archived)) {
       await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
           value,
           Provider.of<SettingsProvider>(context, listen: false)
