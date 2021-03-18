@@ -154,7 +154,7 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _unSnoozePrayerPast(data) async {
+  Future<void> _unSnoozePrayerPast(List<CombinePrayerStream> data) async {
     var prayersToUnsnooze = data
         .where((e) =>
             e.userPrayer.snoozeEndDate.isBefore(DateTime.now()) &&
@@ -167,7 +167,7 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _sortBySettings(sortBy) async {
+  Future<void> _sortBySettings(String sortBy) async {
     if (sortBy == SortType.date) {
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
