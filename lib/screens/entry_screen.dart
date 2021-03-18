@@ -83,23 +83,22 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     //load settings
-    await Provider.of<SettingsProvider>(context, listen: false)
+    Provider.of<SettingsProvider>(context, listen: false)
         .setPrayerSettings(_user.id);
     await Provider.of<SettingsProvider>(context, listen: false)
         .setSettings(_user.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
+    Provider.of<SettingsProvider>(context, listen: false)
         .setSharingSettings(_user.id);
 
     //get all users
-    await Provider.of<UserProvider>(context, listen: false)
-        .setAllUsers(_user.id);
+    Provider.of<UserProvider>(context, listen: false).setAllUsers(_user.id);
 
     // get all push notifications
     await Provider.of<NotificationProvider>(context, listen: false)
         .setUserNotifications(_user?.id);
 
     // get all local notifications
-    await Provider.of<NotificationProvider>(context, listen: false)
+    Provider.of<NotificationProvider>(context, listen: false)
         .setLocalNotifications(_user.id);
   }
 
