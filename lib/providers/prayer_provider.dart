@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/filter.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/prayer_service.dart';
@@ -20,12 +18,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _filteredPrayers = [];
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
   CombinePrayerStream _currentPrayer;
-  FilterType _filterOptions = FilterType(
-    isAnswered: false,
-    isArchived: false,
-    isSnoozed: false,
-    status: Status.active,
-  );
+  List<String> _filterOptions = [Status.active];
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
@@ -34,30 +27,23 @@ class PrayerProvider with ChangeNotifier {
       _filteredPrayerTimeList;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
-  FilterType get filterOptions => _filterOptions;
+  List<String> get filterOptions => _filterOptions;
 
   Future<void> setPrayers(String userId, String sortBy) async {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.toList();
-        filterPrayers(
-          userId: userId,
-          isAnswered: _filterOptions.isAnswered,
-          isArchived: _filterOptions.isArchived,
-          isSnoozed: _filterOptions.isSnoozed,
-          status: _filterOptions.status,
-          sortBy: sortBy,
-        );
+        filterPrayers(sortBy: sortBy);
         notifyListeners();
       },
     );
-    checkPrayerValidity(userId, prayers);
   }
 
-  Future<void> checkPrayerValidity(
-      String userId, List<CombinePrayerStream> prayers) async {
-    await _autoDeleteArchivePrayers(userId, prayers);
-    await _unSnoozePrayerPast(prayers);
+  Future<void> checkPrayerValidity(String userId) async {
+    if (prayers.length > 0) {
+      await _autoDeleteArchivePrayers(userId, prayers);
+      await _unSnoozePrayerPast(prayers);
+    }
   }
 
   Future<void> setPrayerTimePrayers(String userId, String sortBy) async =>
@@ -83,14 +69,7 @@ class PrayerProvider with ChangeNotifier {
   Future<void> searchPrayers(
       String searchQuery, String sortBy, String userId) async {
     if (searchQuery == '') {
-      filterPrayers(
-        userId: userId,
-        isAnswered: _filterOptions.isAnswered,
-        isArchived: _filterOptions.isArchived,
-        isSnoozed: _filterOptions.isSnoozed,
-        status: _filterOptions.status,
-        sortBy: sortBy,
-      );
+      filterPrayers(sortBy: sortBy);
     } else {
       List<CombinePrayerStream> filteredPrayers = _prayers
           .where((CombinePrayerStream data) => data.prayer.description
@@ -115,47 +94,40 @@ class PrayerProvider with ChangeNotifier {
         notifyListeners();
       });
 
-  Future<void> filterPrayers({
-    String status,
-    bool isSnoozed,
-    bool isArchived,
-    bool isAnswered,
-    String sortBy,
-    String userId,
-  }) async {
-    _filterOptions = FilterType(
-      isAnswered: isAnswered,
-      isArchived: isArchived,
-      isSnoozed: isSnoozed,
-      status: status,
-    );
+  void setPrayerFilterOptions(List<String> options) {
+    _filterOptions = options;
+    notifyListeners();
+  }
+
+  Future<void> filterPrayers({String sortBy}) async {
     List<CombinePrayerStream> prayers = _prayers.toList();
     List<CombinePrayerStream> activePrayers = [];
     List<CombinePrayerStream> answeredPrayers = [];
     List<CombinePrayerStream> snoozedPrayers = [];
     List<CombinePrayerStream> favoritePrayers = [];
     List<CombinePrayerStream> archivedPrayers = [];
-    if (status == Status.active) {
+    if (_filterOptions.contains(Status.active)) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
           .toList();
       activePrayers = prayers
           .where((CombinePrayerStream data) =>
-              data.userPrayer.status.toLowerCase() == status.toLowerCase())
+              data.userPrayer.status.toLowerCase() ==
+              Status.active.toLowerCase())
           .toList();
     }
-    if (isAnswered == true) {
+    if (_filterOptions.contains(Status.answered)) {
       answeredPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
           .toList();
     }
-    if (isArchived == true) {
+    if (_filterOptions.contains(Status.archived)) {
       archivedPrayers = prayers
           .where(
               (CombinePrayerStream data) => data.userPrayer.isArchived == true)
           .toList();
     }
-    if (isSnoozed == true) {
+    if (_filterOptions.contains(Status.snoozed)) {
       snoozedPrayers = prayers
           .where((CombinePrayerStream data) =>
               data.userPrayer.isSnoozed == true &&
@@ -182,7 +154,7 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _unSnoozePrayerPast(data) async {
+  Future<void> _unSnoozePrayerPast(List<CombinePrayerStream> data) async {
     var prayersToUnsnooze = data
         .where((e) =>
             e.userPrayer.snoozeEndDate.isBefore(DateTime.now()) &&
@@ -195,7 +167,7 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _sortBySettings(sortBy) async {
+  Future<void> _sortBySettings(String sortBy) async {
     if (sortBy == SortType.date) {
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
@@ -320,12 +292,6 @@ class PrayerProvider with ChangeNotifier {
 
         _filteredPrayers
             .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-        _filterOptions = FilterType(
-          isAnswered: false,
-          isArchived: false,
-          isSnoozed: false,
-          status: Status.active,
-        );
         notifyListeners();
       });
 

@@ -1,4 +1,3 @@
-import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -15,29 +14,46 @@ class PrayerFilters extends StatefulWidget {
 }
 
 class _PrayerFiltersState extends State<PrayerFilters> {
-  String status;
-  bool isSnoozed;
-  bool isAnswered;
-  bool isArchived;
+  var options = [];
 
-  void setPageTitle() async {
+  void setOption(status) async {
     String heading = '';
-    if (isArchived) heading = 'ARCHIVED LIST';
-    if (isAnswered) heading = 'ANSWERED LIST';
-    if (isSnoozed) heading = 'SNOOZED LIST';
-    if (status == Status.active) heading = 'MY LIST';
-
+    var settings =
+        Provider.of<SettingsProvider>(context, listen: false).settings;
+    if (options.contains(status)) {
+      if (options.length > 1) options.remove(status);
+    } else {
+      options.add(status);
+      Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerFilterOptions(options);
+      if (options.contains(Status.answered)) {
+        heading = 'ANSWERED LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.defaultSortBy);
+      }
+      if (options.contains(Status.snoozed)) {
+        heading = 'SNOOZED LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.defaultSortBy);
+      }
+      if (options.contains(Status.archived)) {
+        heading = 'ARCHIVED LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.archiveSortBy);
+      }
+      if (options.contains(Status.active)) {
+        heading = 'MY LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.defaultSortBy);
+      }
+    }
     await Provider.of<MiscProvider>(context, listen: false)
         .setPageTitle(heading);
+    setState(() {});
   }
 
   Widget build(BuildContext context) {
-    var filterOptions = Provider.of<PrayerProvider>(context).filterOptions;
-    var settingsProvider = Provider.of<SettingsProvider>(context).settings;
-    status = filterOptions.status;
-    isSnoozed = filterOptions.isSnoozed;
-    isAnswered = filterOptions.isAnswered;
-    isArchived = filterOptions.isArchived;
+    options = Provider.of<PrayerProvider>(context).filterOptions;
     return Container(
       padding: EdgeInsets.only(top: 40),
       child: Column(
@@ -73,87 +89,33 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                       ),
                       SizedBox(height: 15),
                       MenuButton(
-                        isActive: filterOptions.status == Status.active,
-                        onPressed: () => setState(
-                          () {
-                            status = status == Status.active
-                                ? Status.inactive
-                                : Status.active;
-                            setPageTitle();
-                            Provider.of<PrayerProvider>(context, listen: false)
-                                .filterPrayers(
-                              isAnswered: isAnswered,
-                              isArchived: isArchived,
-                              isSnoozed: isSnoozed,
-                              status: status,
-                              sortBy: settingsProvider.defaultSortBy,
-                            );
-                          },
-                        ),
+                        isActive: options.contains(Status.active),
+                        onPressed: () => setOption(Status.active),
                         text: Status.active.toUpperCase(),
                       ),
                       MenuButton(
-                        isActive: filterOptions.isSnoozed == true,
-                        onPressed: () => setState(
-                          () {
-                            isSnoozed = !isSnoozed;
-                            setPageTitle();
-                            Provider.of<PrayerProvider>(context, listen: false)
-                                .filterPrayers(
-                              isAnswered: isAnswered,
-                              isArchived: isArchived,
-                              isSnoozed: isSnoozed,
-                              status: status,
-                              sortBy: settingsProvider.defaultSortBy,
-                            );
-                          },
-                        ),
-                        text: 'SNOOZED',
+                        isActive: options.contains(Status.snoozed),
+                        onPressed: () => setOption(Status.snoozed),
+                        text: Status.snoozed.toUpperCase(),
                       ),
                       MenuButton(
-                        isActive: filterOptions.isArchived == true,
-                        onPressed: () => setState(
-                          () {
-                            isArchived = !isArchived;
-                            setPageTitle();
-                            Provider.of<PrayerProvider>(context, listen: false)
-                                .filterPrayers(
-                              isAnswered: isAnswered,
-                              isArchived: isArchived,
-                              isSnoozed: isSnoozed,
-                              status: status,
-                              sortBy: settingsProvider.archiveSortBy,
-                            );
-                          },
-                        ),
-                        text: 'ARCHIVED',
+                        isActive: options.contains(Status.archived),
+                        onPressed: () => setOption(Status.archived),
+                        text: Status.archived.toUpperCase(),
                       ),
                       MenuButton(
-                        isActive: filterOptions.isAnswered == true,
-                        onPressed: () => setState(
-                          () {
-                            isAnswered = !isAnswered;
-                            setPageTitle();
-                            Provider.of<PrayerProvider>(context, listen: false)
-                                .filterPrayers(
-                              isAnswered: isAnswered,
-                              isArchived: isArchived,
-                              isSnoozed: isSnoozed,
-                              status: status,
-                              sortBy: settingsProvider.defaultSortBy,
-                            );
-                          },
-                        ),
-                        text: 'ANSWERED',
+                        isActive: options.contains(Status.answered),
+                        onPressed: () => setOption(Status.answered),
+                        text: Status.answered.toUpperCase(),
                       ),
-                      Provider.of<PrayerProvider>(context).currentPrayerType ==
-                              PrayerType.group
-                          ? MenuButton(
-                              isActive: false,
-                              onPressed: () => null,
-                              text: 'GROUP SETTINGS',
-                            )
-                          : Container(),
+                      // Provider.of<PrayerProvider>(context).currentPrayerType ==
+                      //         PrayerType.group
+                      //     ? MenuButton(
+                      //         isActive: false,
+                      //         onPressed: () => null,
+                      //         text: 'GROUP SETTINGS',
+                      //       )
+                      //     : Container(),
                     ],
                   ),
                 )

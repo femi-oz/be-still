@@ -54,6 +54,8 @@ void main() async {
     );
   }, (Object error, StackTrace stackTrace) async {
     await locator<LogService>().createLog(
-        error.toString(), 'runZonedGuarded', 'MAIN/main/runZonedGuarded');
+        '${error.toString()}===${stackTrace.toString()}',
+        'runZonedGuarded',
+        'MAIN/main/runZonedGuarded');
   });
 }
