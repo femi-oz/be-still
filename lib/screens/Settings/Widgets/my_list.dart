@@ -3,11 +3,14 @@ import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/duration.model.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
@@ -25,11 +28,16 @@ class MyListSettings extends StatefulWidget {
 }
 
 class _MyListSettingsState extends State<MyListSettings> {
-  var selectedInterval = 'Days';
-  var selectedDuration = '1';
+  var selectedInterval;
+  var selectedDuration;
+  var selectedDurationIndex;
+  var selectedIntervalIndex;
   int minutes;
   _setDefaultSnooze() async {
     switch (selectedInterval) {
+      case 'Minutes':
+        minutes = 1;
+        break;
       case 'Days':
         minutes = 1440;
         break;
@@ -55,7 +63,15 @@ class _MyListSettingsState extends State<MyListSettings> {
               settingsId: widget.settings.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-    } catch (e) {}
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    }
   }
 
   _setAutoDelete(e) {
@@ -76,8 +92,7 @@ class _MyListSettingsState extends State<MyListSettings> {
   //   LookUp(text: IntervalRange.oneYear, value: 525600),
   // ];
 
-  List<String> snoozeIntervals = ['Days', 'Weeks', 'Months'];
-  List<String> snoozeInterval = ['Day', 'Week', 'Month'];
+  List<String> snoozeInterval = ['Minutes', 'Days', 'Weeks', 'Months'];
 
   List<String> snoozeDuration = [
     "1",
@@ -109,7 +124,6 @@ class _MyListSettingsState extends State<MyListSettings> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final userId = Provider.of<UserProvider>(context).currentUser.id;
-
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -186,17 +200,23 @@ class _MyListSettingsState extends State<MyListSettings> {
                                       child: CupertinoPicker(
                                         scrollController:
                                             FixedExtentScrollController(
-                                                initialItem:
-                                                    snoozeIntervals.indexOf(
-                                                        snoozeIntervals[0])),
+                                                initialItem: snoozeInterval
+                                                    .indexOf(snoozeInterval[
+                                                        int.parse(Settings
+                                                            .snoozeInterval)])),
                                         itemExtent: 30,
                                         onSelectedItemChanged: (i) =>
                                             setState(() {
-                                          selectedInterval = snoozeIntervals[i];
+                                          selectedInterval = snoozeInterval[i];
+                                          selectedIntervalIndex = snoozeInterval
+                                              .indexOf(snoozeInterval[i]);
+                                          Settings.snoozeInterval =
+                                              selectedIntervalIndex.toString();
+
                                           // widget.onChange(selectedInterval.value);
                                         }),
                                         children: <Widget>[
-                                          ...snoozeIntervals
+                                          ...snoozeInterval
                                               .map(
                                                 (i) => Align(
                                                     alignment: Alignment.center,
@@ -216,13 +236,19 @@ class _MyListSettingsState extends State<MyListSettings> {
                                       child: CupertinoPicker(
                                         scrollController:
                                             FixedExtentScrollController(
-                                                initialItem:
-                                                    snoozeDuration.indexOf(
-                                                        snoozeDuration[0])),
+                                                initialItem: snoozeDuration
+                                                    .indexOf(snoozeDuration[
+                                                        int.parse(Settings
+                                                            .snoozeDuration)])),
                                         itemExtent: 30,
                                         onSelectedItemChanged: (i) =>
                                             setState(() {
                                           selectedDuration = snoozeDuration[i];
+                                          selectedDurationIndex = snoozeDuration
+                                              .indexOf(selectedDuration);
+                                          Settings.snoozeDuration =
+                                              selectedDurationIndex.toString();
+
                                           // widget.onChange(selectedInterval.value);
                                         }),
                                         children: <Widget>[
