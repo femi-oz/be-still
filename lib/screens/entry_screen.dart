@@ -53,7 +53,7 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         var backgroundTime = DateTime.parse(Settings.backgroundTime);
-        if (DateTime.now().difference(backgroundTime) > Duration(minutes: 2)) {
+        if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           await LocalNotification.clearAll();
