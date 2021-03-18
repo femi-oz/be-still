@@ -1,9 +1,14 @@
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -36,6 +41,7 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
+
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
@@ -73,6 +79,30 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  Future<void> _preLoadData() async {
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    //load settings
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setPrayerSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSharingSettings(_user.id);
+
+    //get all users
+    await Provider.of<UserProvider>(context, listen: false)
+        .setAllUsers(_user.id);
+
+    // get all push notifications
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setUserNotifications(_user?.id);
+
+    // get all local notifications
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setLocalNotifications(_user.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,9 +115,18 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
-      body: Container(
-          height: double.infinity,
-          child: TabNavigationItem.items[_currentIndex].page),
+      body: FutureBuilder(
+        future: _preLoadData(),
+        initialData: null,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
+                height: double.infinity,
+                child: TabNavigationItem.items[_currentIndex].page);
+          } else
+            return BeStilDialog.getLoading();
+        },
+      ),
       bottomNavigationBar: _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );

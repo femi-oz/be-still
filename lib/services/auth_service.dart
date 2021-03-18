@@ -3,6 +3,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -30,11 +31,12 @@ class AuthenticationService {
         }
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
+        final message = StringUtils.generateExceptionMessage(e.code ?? null);
         await locator<LogService>().createLog(
-            e.message,
+            message,
             _firebaseAuth.currentUser.email,
             'AUTHENTICATION/service/biometricAuthentication');
-        throw HttpException(e.message);
+        throw HttpException(message);
       }
     }
   }
@@ -43,11 +45,10 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
     } catch (e) {
-      await locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          email,
-          'AUTHENTICATION/service/forgotPassword');
-      throw HttpException(e.message);
+      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      await locator<LogService>()
+          .createLog(message, email, 'AUTHENTICATION/service/forgotPassword');
+      throw HttpException(message);
     }
   }
 
@@ -59,13 +60,7 @@ class AuthenticationService {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (e) {
-      var message = e.code == 'wrong-password'
-          ? 'Username / Password is incorrect'
-          : e.code == 'invalid-email'
-              ? 'Email format is wrong'
-              : e.code == 'user-not-found'
-                  ? 'Username / Password is incorrect'
-                  : 'An error occured. Please try again';
+      final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/signIn');
       throw HttpException(message);
@@ -94,11 +89,10 @@ class AuthenticationService {
         dob,
       );
     } catch (e) {
-      await locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          email,
-          'AUTHENTICATION/service/registerUser');
-      throw HttpException(e.message);
+      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      await locator<LogService>()
+          .createLog(message, email, 'AUTHENTICATION/service/registerUser');
+      throw HttpException(message);
     }
   }
 
@@ -106,9 +100,10 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>().createLog(
-          e.message, email, 'AUTHENTICATION/service/sendPasswordResetEmail');
-      throw HttpException(e.message);
+          message, email, 'AUTHENTICATION/service/sendPasswordResetEmail');
+      throw HttpException(message);
     }
   }
 
@@ -116,11 +111,10 @@ class AuthenticationService {
     try {
       await _firebaseAuth.signOut();
     } catch (e) {
-      await locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          _firebaseAuth.currentUser.email,
-          'AUTHENTICATION/service/signOut');
-      throw HttpException(e.message);
+      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      await locator<LogService>().createLog(message,
+          _firebaseAuth.currentUser.email, 'AUTHENTICATION/service/signOut');
+      throw HttpException(message);
     }
   }
 
@@ -129,11 +123,12 @@ class AuthenticationService {
       User user = _firebaseAuth.currentUser;
       return user != null;
     } catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>().createLog(
-          e.message,
+          message,
           _firebaseAuth.currentUser.email,
           'AUTHENTICATION/service/isUserLoggedIn');
-      throw HttpException(e.message);
+      throw HttpException(message);
     }
   }
 }
