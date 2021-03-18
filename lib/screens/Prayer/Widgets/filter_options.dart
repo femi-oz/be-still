@@ -17,40 +17,43 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   var options = [];
 
   void setOption(status) async {
-    var settings = Provider.of<SettingsProvider>(context).settings;
+    String heading = '';
+    var settings =
+        Provider.of<SettingsProvider>(context, listen: false).settings;
     if (options.contains(status)) {
-      if (options.length > 0) options.remove(status);
+      if (options.length > 1) options.remove(status);
     } else {
       options.add(status);
-      Provider.of<PrayerProvider>(context).setPrayerFilterOptions(options);
+      Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerFilterOptions(options);
+      if (options.contains(Status.answered)) {
+        heading = 'ANSWERED LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.defaultSortBy);
+      }
+      if (options.contains(Status.snoozed)) {
+        heading = 'SNOOZED LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.defaultSortBy);
+      }
+      if (options.contains(Status.archived)) {
+        heading = 'ARCHIVED LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.archiveSortBy);
+      }
+      if (options.contains(Status.active)) {
+        heading = 'MY LIST';
+        Provider.of<PrayerProvider>(context, listen: false)
+            .filterPrayers(sortBy: settings.defaultSortBy);
+      }
     }
-    String heading = '';
-    if (options.contains(Status.answered)) {
-      heading = 'ANSWERED LIST';
-      Provider.of<PrayerProvider>(context)
-          .filterPrayers(sortBy: settings.defaultSortBy);
-    }
-    if (options.contains(Status.snoozed)) {
-      heading = 'SNOOZED LIST';
-      Provider.of<PrayerProvider>(context)
-          .filterPrayers(sortBy: settings.defaultSortBy);
-    }
-    if (options.contains(Status.archived)) {
-      heading = 'ARCHIVED LIST';
-      Provider.of<PrayerProvider>(context)
-          .filterPrayers(sortBy: settings.archiveSortBy);
-    }
-    if (options.contains(Status.active)) {
-      heading = 'MY LIST';
-      Provider.of<PrayerProvider>(context)
-          .filterPrayers(sortBy: settings.defaultSortBy);
-    }
-
     await Provider.of<MiscProvider>(context, listen: false)
         .setPageTitle(heading);
+    setState(() {});
   }
 
   Widget build(BuildContext context) {
+    options = Provider.of<PrayerProvider>(context).filterOptions;
     return Container(
       padding: EdgeInsets.only(top: 40),
       child: Column(
