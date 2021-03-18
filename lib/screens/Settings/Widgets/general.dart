@@ -167,9 +167,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 children: <Widget>[
                   Text('${_currentUser.firstName} ${_currentUser.lastName}',
                       style: AppTextStyles.boldText30),
-                  Text(
-                      DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
-                      style: AppTextStyles.regularText13),
+                  // Text(
+                  //     DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
+                  //     style: AppTextStyles.regularText13),
                 ],
               ),
             ),

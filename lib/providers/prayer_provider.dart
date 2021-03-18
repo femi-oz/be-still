@@ -218,8 +218,13 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.unArchivePrayer(userPrayerId);
 
   Future<void> snoozePrayer(
-          String prayerID, DateTime snoozeEndDate, String userPrayerID) async =>
-      await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
+      String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
+    await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
+    // var duration = snoozeEndDate.difference(DateTime.now());
+    // print(duration);
+    // Future.delayed(duration.);
+    // setPrayers(userPrayerID, '');
+  }
 
   Future<void> unSnoozePrayer(
           String prayerID, DateTime snoozeEndDate, String userPrayerID) async =>
