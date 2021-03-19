@@ -14,39 +14,28 @@ class PrayerFilters extends StatefulWidget {
 }
 
 class _PrayerFiltersState extends State<PrayerFilters> {
-  var options = [];
+  List<String> options = [];
 
   void setOption(status) async {
-    String heading = '';
     var settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
     if (options.contains(status)) {
       if (options.length > 1) options.remove(status);
     } else {
       options.add(status);
-      Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerFilterOptions(options);
-      if (options.contains(Status.answered)) {
-        heading = 'ANSWERED LIST';
-        Provider.of<PrayerProvider>(context, listen: false)
-            .filterPrayers(sortBy: settings.defaultSortBy);
-      }
-      if (options.contains(Status.snoozed)) {
-        heading = 'SNOOZED LIST';
-        Provider.of<PrayerProvider>(context, listen: false)
-            .filterPrayers(sortBy: settings.defaultSortBy);
-      }
-      if (options.contains(Status.archived)) {
-        heading = 'ARCHIVED LIST';
-        Provider.of<PrayerProvider>(context, listen: false)
-            .filterPrayers(sortBy: settings.archiveSortBy);
-      }
-      if (options.contains(Status.active)) {
-        heading = 'MY LIST';
-        Provider.of<PrayerProvider>(context, listen: false)
-            .filterPrayers(sortBy: settings.defaultSortBy);
-      }
     }
+    Provider.of<PrayerProvider>(context, listen: false)
+        .setPrayerFilterOptions(options);
+    if (options.contains(Status.archived)) {
+      Provider.of<PrayerProvider>(context, listen: false)
+          .filterPrayers(sortBy: settings.archiveSortBy);
+    } else {
+      Provider.of<PrayerProvider>(context, listen: false)
+          .filterPrayers(sortBy: settings.defaultSortBy);
+    }
+    String heading = options.length > 1 || options.length == 0
+        ? 'MY LIST'
+        : '${options[0] == Status.active ? 'MY' : options[0].toUpperCase()} LIST';
     await Provider.of<MiscProvider>(context, listen: false)
         .setPageTitle(heading);
     setState(() {});

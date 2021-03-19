@@ -1,3 +1,4 @@
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -8,6 +9,17 @@ class BeStilDialog {
   static Widget getLoading([String message = '']) {
     return Scaffold(
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+          image: DecorationImage(
+            image: AssetImage(StringUtils.backgroundImage(true)),
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
