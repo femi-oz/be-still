@@ -104,6 +104,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
 
   Widget _buildPanel() {
     var bibleData = Provider.of<DevotionalProvider>(context).bibles;
+    bibleData.sort((a, b) => a.name.compareTo(b.name));
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(

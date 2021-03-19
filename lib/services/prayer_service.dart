@@ -350,7 +350,7 @@ class PrayerService {
   Future unSnoozePrayer(DateTime endDate, String userPrayerID) async {
     try {
       _userPrayerCollectionReference.doc(userPrayerID).update(
-        {'IsSnoozed': false, 'Status': Status.active, 'SnoozeEndDate': null},
+        {'IsSnoozed': false, 'Status': Status.active, 'SnoozeEndDate': endDate},
       );
     } catch (e) {
       locator<LogService>().createLog(
