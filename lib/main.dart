@@ -17,42 +17,58 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
 import 'providers/theme_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 bool userFirestoreEmulator = false;
 void main() async {
-  FlutterError.onError = (FlutterErrorDetails details) async {
-    FlutterError.dumpErrorToConsole(details);
-    await locator<LogService>()
-        .createLog(details.exceptionAsString(), 'onError', 'MAIN/main/onError');
-    // if (kReleaseMode) exit(1);
-  };
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   setupLocator();
   await st.Settings.init();
-  await Firebase.initializeApp();
+
   if (userFirestoreEmulator) {
     FirebaseFirestore.instance.settings = Settings(
         host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
   }
-  await runZonedGuarded(() async {
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
-          ChangeNotifierProvider(create: (ctx) => UserProvider()),
-          ChangeNotifierProvider(create: (ctx) => AuthenticationProvider()),
-          ChangeNotifierProvider(create: (ctx) => PrayerProvider()),
-          ChangeNotifierProvider(create: (ctx) => SettingsProvider()),
-          ChangeNotifierProvider(create: (ctx) => GroupProvider()),
-          ChangeNotifierProvider(create: (ctx) => MiscProvider()),
-          ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
-          ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
-          ChangeNotifierProvider(create: (ctx) => LogProvider()),
-        ],
-        child: MyApp(),
-      ),
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    FlutterError.dumpErrorToConsole(details);
+    await Sentry.captureException(
+      details.exception,
+      stackTrace: details.stack,
     );
+    await locator<LogService>()
+        .createLog(details.exceptionAsString(), 'onError', 'MAIN/main/onError');
+    // if (kReleaseMode) exit(1);
+  };
+  await runZonedGuarded(() async {
+    await SentryFlutter.init((options) {
+      options.dsn =
+          'https://6a3b3509ae7e44ef8a8437960e2a7a14@o554552.ingest.sentry.io/5683235';
+    },
+        appRunner: () => runApp(
+              MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
+                  ChangeNotifierProvider(create: (ctx) => UserProvider()),
+                  ChangeNotifierProvider(
+                      create: (ctx) => AuthenticationProvider()),
+                  ChangeNotifierProvider(create: (ctx) => PrayerProvider()),
+                  ChangeNotifierProvider(create: (ctx) => SettingsProvider()),
+                  ChangeNotifierProvider(create: (ctx) => GroupProvider()),
+                  ChangeNotifierProvider(create: (ctx) => MiscProvider()),
+                  ChangeNotifierProvider(
+                      create: (ctx) => NotificationProvider()),
+                  ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
+                  ChangeNotifierProvider(create: (ctx) => LogProvider()),
+                ],
+                child: MyApp(),
+              ),
+            ));
   }, (Object error, StackTrace stackTrace) async {
+    await Sentry.captureException(
+      error,
+      stackTrace: stackTrace,
+    );
     await locator<LogService>().createLog(
         '${error.toString()}===${stackTrace.toString()}',
         'runZonedGuarded',

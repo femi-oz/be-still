@@ -55,6 +55,7 @@ dependencies:
   geocoder: ^0.2.1
   vibrate: ^0.0.4
   cron: ^0.3.0
+  sentry_flutter: ^4.0.6
 
 
 

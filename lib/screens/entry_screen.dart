@@ -1,6 +1,7 @@
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
@@ -15,6 +16,7 @@ import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +49,7 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   }
 
   AppLifecycleState lifeCycleState;
+  final cron = Cron();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -62,6 +65,11 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
             (Route<dynamic> route) => false,
           );
         }
+        final userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+        if (userId != null)
+          Provider.of<PrayerProvider>(context, listen: false)
+              .checkPrayerValidity(userId);
         break;
       case AppLifecycleState.inactive:
         Settings.backgroundTime = DateTime.now().toString();
@@ -80,6 +88,13 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _preLoadData() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+    if (userId != null)
+      cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .checkPrayerValidity(userId);
+      });
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     //load settings
