@@ -229,7 +229,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                         if (('@' + s.displayName)
                                             .toLowerCase()
                                             .contains(tagText.toLowerCase()))
-                                          return InkWell(
+                                          return GestureDetector(
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 10.0),
