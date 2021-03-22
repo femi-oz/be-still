@@ -32,8 +32,8 @@ class PrayerProvider with ChangeNotifier {
   Future<void> setPrayers(String userId, String sortBy) async {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
-        _prayers = data.toList();
-        filterPrayers(sortBy: sortBy);
+        _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
+        filterPrayers(sortBy);
         notifyListeners();
       },
     );
@@ -69,7 +69,7 @@ class PrayerProvider with ChangeNotifier {
   Future<void> searchPrayers(
       String searchQuery, String sortBy, String userId) async {
     if (searchQuery == '') {
-      filterPrayers(sortBy: sortBy);
+      filterPrayers(sortBy);
     } else {
       List<CombinePrayerStream> filteredPrayers = _prayers
           .where((CombinePrayerStream data) => data.prayer.description
@@ -99,7 +99,7 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> filterPrayers({String sortBy}) async {
+  Future<void> filterPrayers(String sortBy) async {
     List<CombinePrayerStream> prayers = _prayers.toList();
     List<CombinePrayerStream> activePrayers = [];
     List<CombinePrayerStream> answeredPrayers = [];

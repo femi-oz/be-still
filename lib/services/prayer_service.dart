@@ -469,7 +469,9 @@ class PrayerService {
 
   Future deletePrayer(String userPrayeId) async {
     try {
-      _userPrayerCollectionReference.doc(userPrayeId).delete();
+      _userPrayerCollectionReference
+          .doc(userPrayeId)
+          .update({'DeleteStatus': -1});
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -755,6 +757,7 @@ class PrayerService {
     String creatorId,
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
+        deleteStatus: 0,
         isArchived: false,
         archivedDate: null,
         userId: userId,

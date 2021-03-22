@@ -28,10 +28,10 @@ class _PrayerFiltersState extends State<PrayerFilters> {
         .setPrayerFilterOptions(options);
     if (options.contains(Status.archived)) {
       Provider.of<PrayerProvider>(context, listen: false)
-          .filterPrayers(sortBy: settings.archiveSortBy);
+          .filterPrayers(settings.archiveSortBy);
     } else {
       Provider.of<PrayerProvider>(context, listen: false)
-          .filterPrayers(sortBy: settings.defaultSortBy);
+          .filterPrayers(settings.defaultSortBy);
     }
     String heading = options.length > 1 || options.length == 0
         ? 'MY LIST'
