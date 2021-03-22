@@ -204,12 +204,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ),
             Column(
               children: [
-                CustomToggle(
-                  onChange: (value) =>
-                      setState(() => Settings.enableLocalAuth = value),
-                  title: 'Enable Face/Touch ID',
-                  value: Settings.enableLocalAuth,
-                ),
+                // CustomToggle(
+                //   onChange: (value) =>
+                //       setState(() => Settings.enableLocalAuth = value),
+                //   title: 'Enable Face/Touch ID',
+                //   value: Settings.enableLocalAuth,
+                // ),
                 CustomToggle(
                   onChange: (value) => _setPermission(),
                   title: 'Allow BeStill to access Contacts?',

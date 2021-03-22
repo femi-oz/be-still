@@ -22,6 +22,9 @@ class CustomInput extends StatefulWidget {
   final isLink;
   final unfocus;
   final focusNode;
+  final bool showBiometric;
+  final bool showFaceId;
+  final bioLogin;
 
   CustomInput(
       {this.maxLines = 1,
@@ -32,6 +35,7 @@ class CustomInput extends StatefulWidget {
       this.showSuffix = true,
       this.textInputAction = TextInputAction.next,
       this.submitForm,
+      this.bioLogin,
       this.onTextchanged,
       this.keyboardType,
       this.isRequired = false,
@@ -42,6 +46,8 @@ class CustomInput extends StatefulWidget {
       this.isEmail = false,
       this.isLink = false,
       this.unfocus = false,
+      this.showBiometric = false,
+      this.showFaceId = false,
       this.focusNode});
 
   @override
@@ -67,6 +73,14 @@ class _CustomInputState extends State<CustomInput> {
                     (widget.showSuffix && widget.controller.text != '')
                 ? widget.label
                 : '',
+            // suffixIcon: widget.showBiometric
+            //     ? IconButton(
+            //         icon: Icon(
+            //             widget.showFaceId ? Icons.face : Icons.fingerprint),
+            //         onPressed: () {
+            //           // widget.bioLogin;
+            //         })
+            //     : Container(),
             isDense: true,
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),

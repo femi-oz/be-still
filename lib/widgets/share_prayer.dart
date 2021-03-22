@@ -141,21 +141,21 @@ class _SharePrayerState extends State<SharePrayer> {
                         text: 'Email',
                       )
                     : Container(),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.7),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return ShareInApp();
-                    },
-                  ),
-                  text: 'Direct Message',
-                ),
+                // MenuButton(
+                //   icon: AppIcons.bestill_share,
+                //   onPressed: () => showModalBottomSheet(
+                //     context: context,
+                //     barrierColor:
+                //         AppColors.detailBackgroundColor[1].withOpacity(0.7),
+                //     backgroundColor:
+                //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                //     isScrollControlled: true,
+                //     builder: (BuildContext context) {
+                //       return ShareInApp();
+                //     },
+                //   ),
+                //   text: 'Direct Message',
+                // ),
                 // MenuButton(
                 //   icon: AppIcons.bestill_share,
                 //   onPressed: () => null,
