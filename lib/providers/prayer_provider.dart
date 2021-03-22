@@ -270,8 +270,9 @@ class PrayerProvider with ChangeNotifier {
           String prayerId, String userPrayerId) async =>
       await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
 
-  Future<void> deletePrayer(String userPrayeId) async =>
-      await _prayerService.deletePrayer(userPrayeId);
+  Future<void> deletePrayer(String userPrayeId) async {
+    await _prayerService.deletePrayer(userPrayeId);
+  }
 
   Future<void> setCurrentPrayerType(PrayerType type) async {
     _currentPrayerType = type;

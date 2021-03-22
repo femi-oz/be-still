@@ -256,6 +256,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
   void _onArchive(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(context);
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(prayerData.userPrayer.id);
 

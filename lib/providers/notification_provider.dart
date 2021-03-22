@@ -4,6 +4,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/services/notification_service.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -112,21 +113,22 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> addLocalNotification(
-      int localId,
-      String entityId,
-      String notificationText,
-      String userId,
-      String fallbackRoute,
-      String payload,
-      String title,
-      String description,
-      String frequency,
-      String type,
-      DateTime scheduledDate,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
+    int localId,
+    String entityId,
+    String notificationText,
+    String userId,
+    String fallbackRoute,
+    String payload,
+    String title,
+    String description,
+    String frequency,
+    String type,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+  ) async {
     await _notificationService.addLocalNotification(
         localId,
         entityId,
@@ -146,6 +148,9 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> deleteLocalNotification(String notificationId) async {
+    var notification =
+        _localNotifications.firstWhere((e) => e.id == notificationId);
+    await LocalNotification.unschedule(notification.localNotificationId);
     await _notificationService.removeLocalNotification(notificationId);
   }
 
