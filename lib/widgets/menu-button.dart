@@ -22,7 +22,7 @@ class MenuButton extends StatelessWidget {
     else
       color = Colors.transparent;
     return GestureDetector(
-      onTap: () => onPressed(),
+      onTap: () => isDisable ? null : onPressed(),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         width: double.infinity,

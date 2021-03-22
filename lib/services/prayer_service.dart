@@ -370,7 +370,8 @@ class PrayerService {
           'IsArchived': true,
           'Status': Status.inactive,
           'IsFavourite': false,
-          'ArchivedDate': DateTime.now()
+          'ArchivedDate': DateTime.now(),
+          'IsSnoozed': false
         },
       );
     } catch (e) {
@@ -406,7 +407,8 @@ class PrayerService {
         'IsArchived': true,
         'Status': Status.inactive,
         'IsFavourite': false,
-        'ArchivedDate': DateTime.now()
+        'ArchivedDate': DateTime.now(),
+        'IsSnoozed': false
       };
       _userPrayerCollectionReference.doc(userPrayerId).update(data);
     } catch (e) {

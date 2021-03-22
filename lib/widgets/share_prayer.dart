@@ -4,7 +4,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/menu-button.dart';
-import 'package:be_still/widgets/share-in-app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
