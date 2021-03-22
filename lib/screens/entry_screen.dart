@@ -124,7 +124,6 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
       appBar: _currentIndex == 2
           ? null
           : CustomAppBar(
-              searchMode: _searchMode,
               searchController: _searchController,
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
