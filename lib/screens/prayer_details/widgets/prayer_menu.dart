@@ -187,15 +187,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _goToDetails();
     } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
@@ -301,8 +301,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   text: 'Share',
-                  isDisable: !prayerData.prayer.isAnswer ||
-                      !prayerData.userPrayer.isArchived,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => showModalBottomSheet(
                       context: context,
                       barrierColor:
@@ -318,8 +318,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_edit,
-                  isDisable: !prayerData.prayer.isAnswer ||
-                      !prayerData.userPrayer.isArchived,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -333,8 +333,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_update,
-                  isDisable: !prayerData.prayer.isAnswer ||
-                      !prayerData.userPrayer.isArchived,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -347,8 +347,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_reminder,
-                  isDisable: !prayerData.prayer.isAnswer ||
-                      !prayerData.userPrayer.isArchived,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     barrierColor:
@@ -378,8 +378,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_snooze,
-                  isDisable: !prayerData.prayer.isAnswer ||
-                      !prayerData.userPrayer.isArchived,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => prayerData.userPrayer.isSnoozed
                       ? _unSnoozePrayer(prayerData)
                       : _snoozePrayer(prayerData),

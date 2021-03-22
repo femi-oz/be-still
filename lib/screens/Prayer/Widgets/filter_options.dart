@@ -15,7 +15,7 @@ class PrayerFilters extends StatefulWidget {
 
 class _PrayerFiltersState extends State<PrayerFilters> {
   List<String> options = [];
-  String errorMessage;
+  String errorMessage = '';
   void setOption(status) async {
     errorMessage = '';
     var settings =
@@ -101,6 +101,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                         onPressed: () => setOption(Status.answered),
                         text: Status.answered.toUpperCase(),
                       ),
+                      SizedBox(height: 30),
                       Text(
                         errorMessage,
                         style: AppTextStyles.regularText11

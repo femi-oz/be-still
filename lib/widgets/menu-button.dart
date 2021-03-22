@@ -18,7 +18,7 @@ class MenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     var color;
     if (isDisable)
-      color = AppColors.grey4.withOpacity(0.5);
+      color = AppColors.grey4.withOpacity(0.3);
     else
       color = Colors.transparent;
     return GestureDetector(
