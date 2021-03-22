@@ -1,8 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -30,50 +29,44 @@ class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
   bool _canVibrate = true;
 
-  void _getPrayers() async {
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _setVibration();
+      _getPermissions();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _getPrayers();
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('MY LIST');
+      });
+      setState(() => _isInit = false);
+    }
+    super.didChangeDependencies();
+  }
+
+  Future<void> _getPrayers() async {
     await BeStilDialog.showLoading(context);
     try {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await _preLoadData();
       final options =
           Provider.of<PrayerProvider>(context, listen: false).filterOptions;
       final settings =
           Provider.of<SettingsProvider>(context, listen: false).settings;
       await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
           _user?.id,
-          options.isArchived ? settings.archiveSortBy : settings.defaultSortBy);
-      await Future.delayed(Duration(milliseconds: 100));
+          options.contains(Status.archived) && options.length == 1
+              ? settings.archiveSortBy
+              : settings.defaultSortBy);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 100));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
-  }
-
-  Future<void> _preLoadData() async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    //load settings
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setPrayerSettings(_user.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSharingSettings(_user.id);
-
-    //get all users
-    await Provider.of<UserProvider>(context, listen: false)
-        .setAllUsers(_user.id);
-
-    // get all local notifications
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setLocalNotifications(_user.id);
   }
 
   void onTapCard(prayerData) async {
@@ -97,8 +90,14 @@ class _PrayerListState extends State<PrayerList> {
 
   void _vibrate() async {
     // HapticFeedback.selectionClick();
+    // Vibrate.feedback(FeedbackType.selection);
+    // await HapticFeedback.heavyImpact();
 
-    if (_canVibrate) Vibrate.vibrate();
+    if (_canVibrate) {
+      // Vibrate.vibrate();
+      Vibrate.feedback(FeedbackType.medium);
+      // HapticFeedback.heavyImpact();
+    }
   }
 
   void onLongPressCard(prayerData, details) async {
@@ -138,22 +137,6 @@ class _PrayerListState extends State<PrayerList> {
       }
       Settings.isAppInit = false;
     }
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _setVibration();
-      _getPermissions();
-
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _getPrayers();
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY LIST');
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
   }
 
   @override

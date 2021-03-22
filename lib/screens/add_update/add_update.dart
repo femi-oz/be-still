@@ -43,11 +43,18 @@ class _AddUpdateState extends State<AddUpdate> {
 
     try {
       BeStilDialog.showLoading(bcontext);
-      await Provider.of<PrayerProvider>(context, listen: false).addPrayerUpdate(
-          _user.id, _descriptionController.text, widget.prayerData.prayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(bcontext);
-      Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
+      if (_descriptionController.text == null ||
+          _descriptionController.text.trim() == '') {
+        BeStilDialog.hideLoading(context);
+        BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .addPrayerUpdate(_user.id, _descriptionController.text,
+                widget.prayerData.prayer.id);
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(bcontext);
+        Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
+      }
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(bcontext);
@@ -122,6 +129,7 @@ class _AddUpdateState extends State<AddUpdate> {
                       maxLines: 23,
                       isRequired: true,
                       showSuffix: false,
+                      textInputAction: TextInputAction.newline,
                       focusNode: _focusNode,
                     ),
                   ),

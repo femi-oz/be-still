@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -71,11 +69,6 @@ class _SplashScreenState extends State<SplashScreen>
           if (isLoggedIn) {
             await Provider.of<UserProvider>(context, listen: false)
                 .setCurrentUser(false);
-            UserModel _user =
-                Provider.of<UserProvider>(context, listen: false).currentUser;
-
-            await Provider.of<NotificationProvider>(context, listen: false)
-                .setUserNotifications(_user?.id);
             await Provider.of<NotificationProvider>(context, listen: false)
                 .init(context);
             Navigator.of(context).pushNamedAndRemoveUntil(

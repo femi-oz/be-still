@@ -18,7 +18,6 @@ import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -167,9 +166,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 children: <Widget>[
                   Text('${_currentUser.firstName} ${_currentUser.lastName}',
                       style: AppTextStyles.boldText30),
-                  Text(
-                      DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
-                      style: AppTextStyles.regularText13),
+                  // Text(
+                  //     DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
+                  //     style: AppTextStyles.regularText13),
                 ],
               ),
             ),

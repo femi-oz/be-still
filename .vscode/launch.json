@@ -10,7 +10,10 @@
       "type": "dart",
       "flutterMode": "debug",
       "program": "lib/main_local.dart",
-      "args": ["--flavor", "local"]
+      "args": [
+        "--flavor",
+        "local"
+      ]
     },
     {
       "name": "Dev",
@@ -18,7 +21,10 @@
       "type": "dart",
       "flutterMode": "debug",
       "program": "lib/main_dev.dart",
-      "args": ["--flavor", "dev"]
+      "args": [
+        "--flavor",
+        "dev"
+      ]
     },
     {
       "name": "Staging",
@@ -26,21 +32,30 @@
       "type": "dart",
       "flutterMode": "debug",
       "program": "lib/main_staging.dart",
-      "args": ["--flavor", "staging"]
+      "args": [
+        "--flavor",
+        "staging"
+      ]
     },
     {
       "name": "Prod",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
-      "args": ["--flavor", "prod"]
+      "args": [
+        "--flavor",
+        "prod"
+      ]
     },
     {
       "name": "Store",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_store.dart",
-      "args": ["--flavor", "store"]
+      "args": [
+        "--flavor",
+        "store"
+      ]
     }
   ]
 }

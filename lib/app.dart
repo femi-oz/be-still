@@ -17,6 +17,7 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
     });
+
     super.initState();
   }
 

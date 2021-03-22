@@ -1,15 +1,22 @@
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,11 +43,13 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
+
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
 
   AppLifecycleState lifeCycleState;
+  final cron = Cron();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -56,6 +65,11 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
             (Route<dynamic> route) => false,
           );
         }
+        final userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+        if (userId != null)
+          Provider.of<PrayerProvider>(context, listen: false)
+              .checkPrayerValidity(userId);
         break;
       case AppLifecycleState.inactive:
         Settings.backgroundTime = DateTime.now().toString();
@@ -73,6 +87,36 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  Future<void> _preLoadData() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+    if (userId != null)
+      cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .checkPrayerValidity(userId);
+      });
+    UserModel _user =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    //load settings
+    Provider.of<SettingsProvider>(context, listen: false)
+        .setPrayerSettings(_user.id);
+    await Provider.of<SettingsProvider>(context, listen: false)
+        .setSettings(_user.id);
+    Provider.of<SettingsProvider>(context, listen: false)
+        .setSharingSettings(_user.id);
+
+    //get all users
+    Provider.of<UserProvider>(context, listen: false).setAllUsers(_user.id);
+
+    // get all push notifications
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setUserNotifications(_user?.id);
+
+    // get all local notifications
+    Provider.of<NotificationProvider>(context, listen: false)
+        .setLocalNotifications(_user.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,14 +124,22 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
       appBar: _currentIndex == 2
           ? null
           : CustomAppBar(
-              searchMode: _searchMode,
               searchController: _searchController,
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
-      body: Container(
-          height: double.infinity,
-          child: TabNavigationItem.items[_currentIndex].page),
+      body: FutureBuilder(
+        future: _preLoadData(),
+        initialData: null,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
+                height: double.infinity,
+                child: TabNavigationItem.items[_currentIndex].page);
+          } else
+            return BeStilDialog.getLoading();
+        },
+      ),
       bottomNavigationBar: _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );

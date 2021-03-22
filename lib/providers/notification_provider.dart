@@ -2,10 +2,9 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/services/notification_service.dart';
-import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +72,7 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future setUserNotifications(String userId) async {
+  Future<void> setUserNotifications(String userId) async {
     _notificationService
         .getUserNotifications(userId)
         .asBroadcastStream()
@@ -84,12 +83,14 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future clearNotification() async {
+  Future<void> clearNotification() async {
+    _notifications = [];
+    notifyListeners();
     await _notificationService
         .clearNotification(_notifications.map((e) => e.id).toList());
   }
 
-  Future setLocalNotifications(userId) async {
+  Future<void> setLocalNotifications(userId) async {
     _notificationService
         .getLocalNotifications(userId)
         .asBroadcastStream()
@@ -99,7 +100,7 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future setPrayerTimeNotifications(userId) async {
+  Future<void> setPrayerTimeNotifications(userId) async {
     _notificationService
         .getLocalNotifications(userId)
         .asBroadcastStream()
@@ -111,22 +112,23 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future addLocalNotification(
-      int localId,
-      String entityId,
-      String notificationText,
-      String userId,
-      String fallbackRoute,
-      String payload,
-      String title,
-      String description,
-      String frequency,
-      String type,
-      DateTime scheduledDate,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
+  Future<void> addLocalNotification(
+    int localId,
+    String entityId,
+    String notificationText,
+    String userId,
+    String fallbackRoute,
+    String payload,
+    String title,
+    String description,
+    String frequency,
+    String type,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+  ) async {
     await _notificationService.addLocalNotification(
         localId,
         entityId,
@@ -145,7 +147,10 @@ class NotificationProvider with ChangeNotifier {
         selectedMinute);
   }
 
-  Future deleteLocalNotification(String notificationId) async {
+  Future<void> deleteLocalNotification(String notificationId) async {
+    var notification =
+        _localNotifications.firstWhere((e) => e.id == notificationId);
+    await LocalNotification.unschedule(notification.localNotificationId);
     await _notificationService.removeLocalNotification(notificationId);
   }
 

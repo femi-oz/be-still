@@ -37,7 +37,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   String durationText;
   int snoozeDuration;
   Widget _buildMenu() {
-    return PrayerMenu(context);
+    return PrayerMenu(context, hasReminder);
   }
 
   String reminderString;

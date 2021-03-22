@@ -53,7 +53,9 @@ dependencies:
   flutter_native_timezone: ^1.0.4
   geolocator: ^5.1.1
   geocoder: ^0.2.1
-  vibrate: ^0.0.4  
+  vibrate: ^0.0.4
+  cron: ^0.3.0
+  sentry_flutter: ^4.0.6
 
 
 
