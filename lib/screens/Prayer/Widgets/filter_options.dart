@@ -15,12 +15,16 @@ class PrayerFilters extends StatefulWidget {
 
 class _PrayerFiltersState extends State<PrayerFilters> {
   List<String> options = [];
-
+  String errorMessage;
   void setOption(status) async {
+    errorMessage = '';
     var settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
     if (options.contains(status)) {
-      if (options.length > 1) options.remove(status);
+      if (options.length > 1)
+        options.remove(status);
+      else
+        errorMessage = 'At least one filter must be selected';
     } else {
       options.add(status);
     }
@@ -97,14 +101,11 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                         onPressed: () => setOption(Status.answered),
                         text: Status.answered.toUpperCase(),
                       ),
-                      // Provider.of<PrayerProvider>(context).currentPrayerType ==
-                      //         PrayerType.group
-                      //     ? MenuButton(
-                      //         isActive: false,
-                      //         onPressed: () => null,
-                      //         text: 'GROUP SETTINGS',
-                      //       )
-                      //     : Container(),
+                      Text(
+                        errorMessage,
+                        style: AppTextStyles.regularText11
+                            .copyWith(color: AppColors.red),
+                      )
                     ],
                   ),
                 )
