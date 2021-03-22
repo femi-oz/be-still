@@ -143,39 +143,42 @@ class _SharePrayerState extends State<SharePrayer> {
                     : Container(),
                 MenuButton(
                   icon: AppIcons.bestill_share,
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.7),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return ShareInApp();
-                    },
-                  ),
+                  onPressed: () => null,
+                  isDisable: true,
+                  //  showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.7),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return ShareInApp();
+                  //   },
+                  // ),
                   text: 'Direct Message',
                 ),
-                // MenuButton(
-                //   icon: AppIcons.bestill_share,
-                //   onPressed: () => null,
-                //   showModalBottomSheet(
-                //     context: context,
-                //     barrierColor:
-                //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                //     backgroundColor:
-                //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                //     isScrollControlled: true,
-                //     builder: (BuildContext context) {
-                //       return SharePrayerToGroups();
-                //     },
-                //   ).then((value) {
-                //     setState(() {
-                //       groups = value;
-                //     });
-                //   }),
-                //   text: 'Post to Group(s)',
-                // ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => null,
+                  isDisable: true,
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return SharePrayerToGroups();
+                  //   },
+                  // ).then((value) {
+                  //   setState(() {
+                  //     groups = value;
+                  //   });
+                  // }),
+                  text: 'Post to Group(s)',
+                ),
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   onPressed: () => sharingSettings.churchEmail == ''
