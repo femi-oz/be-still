@@ -4,7 +4,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/menu-button.dart';
-import 'package:be_still/widgets/share-in-app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
@@ -141,41 +140,44 @@ class _SharePrayerState extends State<SharePrayer> {
                         text: 'Email',
                       )
                     : Container(),
-                // MenuButton(
-                //   icon: AppIcons.bestill_share,
-                //   onPressed: () => showModalBottomSheet(
-                //     context: context,
-                //     barrierColor:
-                //         AppColors.detailBackgroundColor[1].withOpacity(0.7),
-                //     backgroundColor:
-                //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                //     isScrollControlled: true,
-                //     builder: (BuildContext context) {
-                //       return ShareInApp();
-                //     },
-                //   ),
-                //   text: 'Direct Message',
-                // ),
-                // MenuButton(
-                //   icon: AppIcons.bestill_share,
-                //   onPressed: () => null,
-                //   showModalBottomSheet(
-                //     context: context,
-                //     barrierColor:
-                //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                //     backgroundColor:
-                //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                //     isScrollControlled: true,
-                //     builder: (BuildContext context) {
-                //       return SharePrayerToGroups();
-                //     },
-                //   ).then((value) {
-                //     setState(() {
-                //       groups = value;
-                //     });
-                //   }),
-                //   text: 'Post to Group(s)',
-                // ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => null,
+                  isDisable: true,
+                  //  showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.7),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return ShareInApp();
+                  //   },
+                  // ),
+                  text: 'Direct Message',
+                ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => null,
+                  isDisable: true,
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   barrierColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //   backgroundColor:
+                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //   isScrollControlled: true,
+                  //   builder: (BuildContext context) {
+                  //     return SharePrayerToGroups();
+                  //   },
+                  // ).then((value) {
+                  //   setState(() {
+                  //     groups = value;
+                  //   });
+                  // }),
+                  text: 'Post to Group(s)',
+                ),
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   onPressed: () => sharingSettings.churchEmail == ''

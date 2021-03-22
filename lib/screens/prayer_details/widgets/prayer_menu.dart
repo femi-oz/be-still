@@ -28,8 +28,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
+  final bool hasReminder;
   @override
-  PrayerMenu(this.parentcontext);
+  PrayerMenu(this.parentcontext, this.hasReminder);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -186,15 +187,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _goToDetails();
     } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
@@ -256,6 +257,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
   void _onArchive(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(context);
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(prayerData.userPrayer.id);
 
@@ -292,6 +301,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   text: 'Share',
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => showModalBottomSheet(
                       context: context,
                       barrierColor:
@@ -307,6 +318,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_edit,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -320,6 +333,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_update,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -332,6 +347,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_reminder,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
                   onPressed: () => showModalBottomSheet(
                     context: context,
                     barrierColor:
@@ -357,61 +374,46 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       );
                     },
                   ),
-                  text: 'Reminder',
+                  text: widget.hasReminder ? 'Edit Reminder' : 'Set Reminder',
                 ),
-                !prayerData.userPrayer.isSnoozed && !prayerData.prayer.isAnswer
-                    ? MenuButton(
-                        icon: AppIcons.bestill_snooze,
-                        onPressed: () => _snoozePrayer(prayerData),
-                        text: 'Snooze',
-                      )
-                    : prayerData.userPrayer.isSnoozed &&
-                            !prayerData.prayer.isAnswer
-                        ? MenuButton(
-                            icon: AppIcons.bestill_snooze,
-                            onPressed: () => _unSnoozePrayer(prayerData),
-                            text: 'Unsnooze',
-                          )
-                        : Container(),
-                prayerData.prayer.isAnswer == false
-                    ? MenuButton(
-                        icon: AppIcons.bestill_answered,
-                        onPressed: () => _onMarkAsAnswered(prayerData),
-                        text: 'Mark as Answered',
-                      )
-                    : MenuButton(
-                        icon: AppIcons.bestill_answered,
-                        onPressed: () => _unMarkAsAnswered(prayerData),
-                        text: 'Mark as Unanswered',
-                      ),
-                prayerData.userPrayer.isFavorite && !prayerData.prayer.isAnswer
-                    ? MenuButton(
-                        icon: Icons.favorite_border_outlined,
-                        onPressed: () => _unMarkPrayerAsFavorite(prayerData),
-                        text: 'Unfavorite ',
-                      )
-                    : !prayerData.userPrayer.isFavorite &&
-                            !prayerData.prayer.isAnswer
-                        ? MenuButton(
-                            icon: Icons.favorite,
-                            onPressed: () => _markPrayerAsFavorite(prayerData),
-                            text: 'Favorite ',
-                          )
-                        : Container(),
-                !prayerData.userPrayer.isArchived
-                    ? MenuButton(
-                        icon: AppIcons.bestill_archive,
-                        onPressed: () => _onArchive(prayerData),
-                        text: 'Archive',
-                      )
-                    : prayerData.userPrayer.isArchived &&
-                            prayerData.prayer.isAnswer
-                        ? Container()
-                        : MenuButton(
-                            icon: AppIcons.bestill_archive,
-                            onPressed: () => _unArchive(prayerData),
-                            text: 'Unarchive',
-                          ),
+                MenuButton(
+                  icon: AppIcons.bestill_snooze,
+                  isDisable: prayerData.prayer.isAnswer ||
+                      prayerData.userPrayer.isArchived,
+                  onPressed: () => prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer(prayerData)
+                      : _snoozePrayer(prayerData),
+                  text: prayerData.userPrayer.isSnoozed ? 'Unsnooze' : 'Snooze',
+                ),
+                MenuButton(
+                  icon: AppIcons.bestill_answered,
+                  onPressed: () => prayerData.prayer.isAnswer
+                      ? _unMarkAsAnswered(prayerData)
+                      : _onMarkAsAnswered(prayerData),
+                  text: prayerData.prayer.isAnswer
+                      ? 'Unmark as Answered'
+                      : 'Mark as Answered',
+                ),
+                MenuButton(
+                  icon: prayerData.userPrayer.isFavorite
+                      ? Icons.favorite_border_outlined
+                      : Icons.favorite,
+                  onPressed: () => prayerData.userPrayer.isFavorite
+                      ? _unMarkPrayerAsFavorite(prayerData)
+                      : _markPrayerAsFavorite(prayerData),
+                  text: prayerData.userPrayer.isFavorite
+                      ? 'Unmark as Favorite '
+                      : 'Mark Favorite ',
+                ),
+                MenuButton(
+                  icon: AppIcons.bestill_archive,
+                  onPressed: () => prayerData.userPrayer.isArchived
+                      ? _unArchive(prayerData)
+                      : _onArchive(prayerData),
+                  text: prayerData.userPrayer.isArchived
+                      ? 'Unarchive'
+                      : 'Archive',
+                ),
                 MenuButton(
                   icon: AppIcons.bestill_delete,
                   onPressed: () => showModalBottomSheet(

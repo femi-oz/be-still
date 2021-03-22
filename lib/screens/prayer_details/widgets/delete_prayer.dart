@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/utils/app_dialog.dart';
@@ -44,6 +45,14 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.showLoading(
         bcontext,
       );
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == widget.prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
@@ -73,6 +82,14 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.showLoading(
         bcontext,
       );
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == widget.prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));

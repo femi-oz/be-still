@@ -370,7 +370,8 @@ class PrayerService {
           'IsArchived': true,
           'Status': Status.inactive,
           'IsFavourite': false,
-          'ArchivedDate': DateTime.now()
+          'ArchivedDate': DateTime.now(),
+          'IsSnoozed': false
         },
       );
     } catch (e) {
@@ -406,7 +407,8 @@ class PrayerService {
         'IsArchived': true,
         'Status': Status.inactive,
         'IsFavourite': false,
-        'ArchivedDate': DateTime.now()
+        'ArchivedDate': DateTime.now(),
+        'IsSnoozed': false
       };
       _userPrayerCollectionReference.doc(userPrayerId).update(data);
     } catch (e) {
@@ -469,7 +471,9 @@ class PrayerService {
 
   Future deletePrayer(String userPrayeId) async {
     try {
-      _userPrayerCollectionReference.doc(userPrayeId).delete();
+      _userPrayerCollectionReference
+          .doc(userPrayeId)
+          .update({'DeleteStatus': -1});
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -755,6 +759,7 @@ class PrayerService {
     String creatorId,
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
+        deleteStatus: 0,
         isArchived: false,
         archivedDate: null,
         userId: userId,

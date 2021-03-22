@@ -16,18 +16,10 @@ import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
-  final bool showPrayerctions;
-  final bool searchMode;
-  // final Function onSearchChange;
   final Function switchSearchMode;
   final TextEditingController searchController;
   CustomAppBar(
-      {Key key,
-      this.formKey,
-      this.showPrayerctions = true,
-      this.switchSearchMode,
-      this.searchMode = false,
-      this.searchController})
+      {Key key, this.formKey, this.switchSearchMode, this.searchController})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -39,6 +31,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  bool isSearchMode = false;
   void _searchPrayer(String value) async {
     var options =
         Provider.of<PrayerProvider>(context, listen: false).filterOptions;
@@ -95,7 +88,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       centerTitle: true,
-      leadingWidth: widget.showPrayerctions ? 120 : 60,
+      leadingWidth: 120,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -129,32 +122,30 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ],
                   ),
           ),
-          SizedBox(width: widget.showPrayerctions ? 15 : 0),
-          widget.showPrayerctions
-              ? InkWell(
-                  onTap: () => setState(
-                      () => widget.switchSearchMode(!widget.searchMode)),
-                  child: Icon(
-                    AppIcons.bestill_search,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
-                  ),
-                )
-              : Container(),
-          SizedBox(width: widget.showPrayerctions ? 15 : 0),
-          widget.showPrayerctions
-              ? InkWell(
-                  onTap: () => _openFilter(Settings.isDarkMode),
-                  child: Icon(
-                    AppIcons.bestill_tools,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
-                  ),
-                )
-              : Container(),
+          SizedBox(width: 15),
+          InkWell(
+            onTap: () {
+              widget.switchSearchMode(true);
+              setState(() => isSearchMode = true);
+            },
+            child: Icon(
+              AppIcons.bestill_search,
+              color: AppColors.bottomNavIconColor,
+              size: 18,
+            ),
+          ),
+          SizedBox(width: 15),
+          InkWell(
+            onTap: () => _openFilter(Settings.isDarkMode),
+            child: Icon(
+              AppIcons.bestill_tools,
+              color: AppColors.bottomNavIconColor,
+              size: 18,
+            ),
+          )
         ],
       ),
-      title: widget.searchMode
+      title: isSearchMode
           ? Row(
               children: [
                 Expanded(
@@ -180,7 +171,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onPressed: () => setState(
                     () {
                       _clearSearchField();
-                      widget.switchSearchMode(!widget.searchMode);
+                      widget.switchSearchMode(false);
+                      setState(() => isSearchMode = false);
                     },
                   ),
                 )

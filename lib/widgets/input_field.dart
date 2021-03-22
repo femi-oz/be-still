@@ -3,25 +3,25 @@ import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class CustomInput extends StatefulWidget {
-  final maxLines;
-  final label;
-  final color;
-  final isPassword;
+  final int maxLines;
+  final String label;
+  final Color color;
+  final bool isPassword;
   final TextEditingController controller;
-  final showSuffix;
-  final textInputAction;
-  final submitForm;
-  final onTextchanged;
-  final keyboardType;
-  final isRequired;
+  final bool showSuffix;
+  final TextInputAction textInputAction;
+  final Function submitForm;
+  final Function onTextchanged;
+  final TextInputType keyboardType;
+  final bool isRequired;
   final validator;
-  final isEmail;
+  final bool isEmail;
   final bool obScurePassword;
-  final padding;
-  final isPhone;
-  final isLink;
-  final unfocus;
-  final focusNode;
+  final double padding;
+  final bool isPhone;
+  final bool isLink;
+  final bool unfocus;
+  final FocusNode focusNode;
 
   CustomInput(
       {this.maxLines = 1,
