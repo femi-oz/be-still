@@ -164,7 +164,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.06,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(

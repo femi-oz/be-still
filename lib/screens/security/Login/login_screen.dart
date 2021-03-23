@@ -66,7 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       if (Settings.enableLocalAuth) {
         this.showBiometrics = true;
-        this.showSuffix = false;
         listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
         setState(() {
           listOfBiometrics.forEach((e) {
@@ -78,6 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               showFaceId = false;
               showFingerPrint = false;
+              this.showSuffix = false;
             }
           });
         });
@@ -299,23 +299,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 10),
-                                    isBioMetricAvailable
-                                        ? InkWell(
-                                            child: Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 40, right: 60),
-                                              child: Text(
+                                    InkWell(
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 40, right: 60),
+                                        child: Settings.lastUser != ''
+                                            ? Text(
                                                 !Settings.enableLocalAuth
                                                     ? 'Enable Face/Touch ID'
                                                     : 'Disable Face/Touch ID',
                                                 style: TextStyle(
                                                     color:
                                                         AppColors.lightBlue4),
-                                              ),
-                                            ),
-                                            onTap: _toggleBiometrics,
-                                          )
-                                        : Container()
+                                              )
+                                            : Container(),
+                                      ),
+                                      onTap: _toggleBiometrics,
+                                    )
                                     // showFingerPrint || showFaceId
                                     //     ? _bioButton()
                                     //     : Container(),
