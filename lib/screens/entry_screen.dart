@@ -36,7 +36,6 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
   int _currentIndex = 0;
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _searchController = TextEditingController();
 
   void _switchSearchMode(bool value) => setState(() => _searchMode = value);
 
@@ -124,7 +123,6 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
       appBar: _currentIndex == 2
           ? null
           : CustomAppBar(
-              searchController: _searchController,
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
@@ -160,7 +158,6 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 1) return;
-          _searchController.text = '';
           _currentIndex = index;
           _switchSearchMode(false);
         },

@@ -17,9 +17,8 @@ import 'package:provider/provider.dart';
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
   final Function switchSearchMode;
-  final TextEditingController searchController;
-  CustomAppBar(
-      {Key key, this.formKey, this.switchSearchMode, this.searchController})
+  // final TextEditingController searchController;
+  CustomAppBar({Key key, this.formKey, this.switchSearchMode})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -31,6 +30,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  final TextEditingController searchController = TextEditingController();
   bool isSearchMode = false;
   void _searchPrayer(String value) async {
     var options =
@@ -55,7 +55,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   void _clearSearchField() async {
-    widget.searchController.text = '';
+    searchController.clear();
     _searchPrayer('');
   }
 
@@ -153,7 +153,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     key: widget.formKey,
                     autovalidateMode: AutovalidateMode.disabled,
                     child: CustomInput(
-                      controller: widget.searchController,
+                      controller: searchController,
                       label: 'Search',
                       padding: 5.0,
                       showSuffix: false,
@@ -162,13 +162,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(
+                SizedBox(width: 10),
+                InkWell(
+                  child: Icon(
                     AppIcons.bestill_close,
                     color: AppColors.bottomNavIconColor,
                     size: 18,
                   ),
-                  onPressed: () => setState(
+                  onTap: () => setState(
                     () {
                       _clearSearchField();
                       widget.switchSearchMode(false);

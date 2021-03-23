@@ -75,7 +75,10 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       final description =
           'Hi, it is time for your ${selectedFrequency.toString().toLowerCase()} prayers';
       final scheduleDate = LocalNotification.scheduleDate(
-          selectedHour, selectedMinute, selectedDay, period);
+          int.parse(selectedHour),
+          int.parse(selectedMinute),
+          selectedDay,
+          period);
       await LocalNotification.setLocalNotification(
           title: title,
           description: description,
@@ -532,8 +535,11 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                         reminderDays: LocalNotification.reminderDays,
                         onCancel: () =>
                             setState(() => _addPrayerTypeMode = false),
-                        onSave: (selectedFrequency, selectedHour,
-                                selectedMinute, selectedDay, selectedPeriod) =>
+                        onSave: (String selectedFrequency,
+                                String selectedHour,
+                                String selectedMinute,
+                                String selectedDay,
+                                String selectedPeriod) =>
                             _savePrayerTime(selectedDay, selectedFrequency,
                                 selectedPeriod, selectedHour, selectedMinute),
                       ),
