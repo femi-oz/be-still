@@ -33,9 +33,9 @@ class _MyListSettingsState extends State<MyListSettings> {
   int minutes;
   _setDefaultSnooze() async {
     switch (selectedInterval) {
-      case 'Minutes':
-        minutes = 1;
-        break;
+      // case 'Minutes':
+      //   minutes = 1;
+      //   break;
       case 'Days':
         minutes = 1440;
         break;
