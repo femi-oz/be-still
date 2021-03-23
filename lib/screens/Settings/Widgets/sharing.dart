@@ -24,20 +24,24 @@ class _SharingSettingsState extends State<SharingSettings> {
   TextEditingController _churchLink = TextEditingController();
 
   void _updateChurch() async {
-    print('');
-    try {
-      final settingProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId,
-              key: SettingsKey.churchName,
-              settingsId: settingProvider.sharingSettings.id,
-              value: _churchName.text);
-      Navigator.pop(context);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    if (_churchEmail.text == null || _churchEmail.text.trim() == '') {
+      BeStilDialog.showErrorDialog(
+          context, 'Church name can not be empty, please enter a valid name');
+    } else {
+      try {
+        final settingProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        final userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<SettingsProvider>(context, listen: false)
+            .updateSharingSettings(userId,
+                key: SettingsKey.churchName,
+                settingsId: settingProvider.sharingSettings.id,
+                value: _churchName.text);
+        Navigator.pop(context);
+      } catch (e) {
+        BeStilDialog.showErrorDialog(context, e.toString());
+      }
     }
   }
 
@@ -255,8 +259,10 @@ class _SharingSettingsState extends State<SharingSettings> {
                     onPressed: () {
                       if (!_formKey.currentState.validate()) return null;
                       _formKey.currentState.save();
-                      if (type == _ModalType.email) _updateEmail();
+
                       if (type == _ModalType.church) _updateChurch();
+
+                      if (type == _ModalType.email) _updateEmail();
                       if (type == _ModalType.link) _updateLink();
                       if (type == _ModalType.phone) _updatePhone();
                     },
