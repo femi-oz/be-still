@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
-      await BeStilDialog.showLoading(context, 'Authenticating');
+      // await BeStilDialog.showLoading(context, 'Authenticating');
 
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       await Provider.of<NotificationProvider>(context, listen: false)
           .init(context);
 
@@ -224,14 +224,14 @@ class _LoginScreenState extends State<LoginScreen> {
         (Route<dynamic> route) => false,
       );
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .signOut();
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
