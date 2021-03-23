@@ -24,7 +24,7 @@ class _SharingSettingsState extends State<SharingSettings> {
   TextEditingController _churchLink = TextEditingController();
 
   void _updateChurch() async {
-    if (_churchEmail.text == null || _churchEmail.text.trim() == '') {
+    if (_churchName.text == null || _churchName.text.trim() == '') {
       BeStilDialog.showErrorDialog(
           context, 'Church name can not be empty, please enter a valid name');
     } else {
