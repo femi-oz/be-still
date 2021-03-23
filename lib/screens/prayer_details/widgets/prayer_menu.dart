@@ -186,16 +186,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
-      // await Future.delayed(Duration(milliseconds: 300));
+          .unMarkPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _goToDetails();
     } on HttpException catch (e) {
-      // await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      // await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
