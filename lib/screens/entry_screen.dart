@@ -30,7 +30,6 @@ bool _isSearchMode = false;
 class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
   int _currentIndex = 0;
-  static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
@@ -38,11 +37,9 @@ class _EntryScreenState extends State<EntryScreen> {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
-
+    _switchSearchMode(false);
     super.initState();
   }
-
-  // AppLifecycleState lifeCycleState;
 
   final cron = Cron();
 
@@ -56,13 +53,17 @@ class _EntryScreenState extends State<EntryScreen> {
       });
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
+
     //load settings
-    Provider.of<SettingsProvider>(context, listen: false)
+    await Provider.of<SettingsProvider>(context, listen: false)
         .setPrayerSettings(_user.id);
     await Provider.of<SettingsProvider>(context, listen: false)
         .setSettings(_user.id);
     Provider.of<SettingsProvider>(context, listen: false)
         .setSharingSettings(_user.id);
+
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setPrayerTimeNotifications(userId);
 
     //get all users
     Provider.of<UserProvider>(context, listen: false).setAllUsers(_user.id);
@@ -85,7 +86,6 @@ class _EntryScreenState extends State<EntryScreen> {
           : CustomAppBar(
               isSearchMode: _isSearchMode,
               switchSearchMode: (bool val) => _switchSearchMode(val),
-              formKey: _formKey,
             ),
       body: FutureBuilder(
         future: _preLoadData(),

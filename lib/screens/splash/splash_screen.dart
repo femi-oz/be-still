@@ -10,6 +10,7 @@ import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -66,18 +67,20 @@ class _SplashScreenState extends State<SplashScreen>
     var message =
         Provider.of<NotificationProvider>(context, listen: false).message;
     if (message != null) {
-      if (message.type == NotificationType.prayer_time) {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayerTimePrayers(message.entityId);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            PrayerMode.routeName, (Route<dynamic> route) => false);
-      }
-      if (message.type == NotificationType.prayer) {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayer(message.entityId);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            PrayerDetails.routeName, (Route<dynamic> route) => false);
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (message.type == NotificationType.prayer_time) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .setPrayerTimePrayers(message.entityId);
+          NavigationService.instance
+              .navigateToReplacement(PrayerMode.routeName);
+        }
+        if (message.type == NotificationType.prayer) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .setPrayer(message.entityId);
+          NavigationService.instance
+              .navigateToReplacement(PrayerDetails.routeName);
+        }
+      });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
       Navigator.of(context).pushNamedAndRemoveUntil(
