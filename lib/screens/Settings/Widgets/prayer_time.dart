@@ -19,6 +19,7 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class PrayerTimeSettings extends StatefulWidget {
   final PrayerSettingsModel prayerSettings;
@@ -54,7 +55,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   double itemExtent = 30.0;
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, userId) async {
+      period, userId, bool isEdit, int localNotificationId) async {
     try {
       BeStilDialog.showLoading(context);
       final notificationText = selectedFrequency == Frequency.weekly
@@ -77,8 +78,19 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
         payload: jsonEncode(payload.toJson()),
         frequency: selectedFrequency,
         context: context,
+        localNotificationId: localNotificationId,
       );
-      await storeNotification(
+      if (isEdit)
+        _updatePrayerTime(
+          selectedDay,
+          period,
+          selectedFrequency,
+          selectedHour,
+          selectedMinute,
+          scheduleDate,
+        );
+      else
+        await storeNotification(
           notificationText,
           userId,
           title,
@@ -88,7 +100,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           selectedDay,
           period,
           selectedHour.toString(),
-          selectedMinute.toString());
+          selectedMinute.toString(),
+        );
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -109,7 +122,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       String selectedMinute) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-            LocalNotification.localNotificationId,
+            LocalNotification.localNotificationID,
             userId,
             notificationText,
             userId,
@@ -133,7 +146,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     setNotification(selectedHour, selectedFrequency, selectedMinute,
-        selectedDay, period, userId);
+        selectedDay, period, userId, false, null);
   }
 
   _deletePrayerTime(
@@ -162,21 +175,28 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   }
 
   bool showUpdateField = false;
-  var notificationId;
+  LocalNotificationModel notification;
 
   _updatePrayerTime(
-      String selectedDay,
-      String selectedPeriod,
-      String selectedFrequency,
-      String selectedHour,
-      String selectedMinute) async {
+    String selectedDay,
+    String selectedPeriod,
+    String selectedFrequency,
+    String selectedHour,
+    String selectedMinute,
+    tz.TZDateTime scheduledDate,
+  ) async {
     try {
-      BeStilDialog.showLoading(
-        context,
-      );
+      BeStilDialog.showLoading(context);
       await Provider.of<NotificationProvider>(context, listen: false)
-          .updateLocalNotification(selectedDay, selectedFrequency,
-              selectedPeriod, selectedHour, selectedMinute, notificationId);
+          .updateLocalNotification(
+        selectedFrequency,
+        scheduledDate,
+        selectedDay,
+        selectedPeriod,
+        selectedHour,
+        selectedMinute,
+        notification.id,
+      );
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       setState(() {});
@@ -281,6 +301,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     final prayerTimeList =
         Provider.of<NotificationProvider>(context, listen: false)
             .prayerTimeNotifications;
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
     // final setingProvider = Provider.of<SettingsProvider>(context);
     // final userId = Provider.of<UserProvider>(context).currentUser.id;
@@ -455,12 +476,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                       width: 15,
                                     ),
                                     onTap: () {
-                                      setState(
-                                        () => showUpdateField = true,
-                                      );
-                                      setState(
-                                        () => notificationId = data.id,
-                                      );
+                                      showUpdateField = true;
+                                      setState(() => notification = data);
                                     },
                                   ),
                                 ),
@@ -561,12 +578,16 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                               selectedDay,
                               selectedPeriod,
                             ) =>
-                                _updatePrayerTime(
-                                    selectedDay,
-                                    selectedFrequency,
-                                    selectedPeriod,
-                                    selectedHour.toString(),
-                                    selectedMinute.toString()),
+                                setNotification(
+                              selectedHour,
+                              selectedFrequency,
+                              selectedMinute,
+                              selectedDay,
+                              selectedPeriod,
+                              user.id,
+                              true,
+                              notification.localNotificationId,
+                            ),
                           ),
                         )
                       : Container(),
