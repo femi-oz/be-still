@@ -1,21 +1,16 @@
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotification {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  static BuildContext _context;
   static String reminderId;
   static int localNotificationId;
-  static String _fallbackRoute;
   static List<String> reminderDays = [
     DaysOfWeek.mon,
     DaysOfWeek.tue,
@@ -26,29 +21,30 @@ class LocalNotification {
     DaysOfWeek.sun,
   ];
 
-  static Future<void> configureNotification(
-      BuildContext context, String fallbackRoute) async {
-    _context = context;
-    _fallbackRoute = fallbackRoute;
-    tz.initializeTimeZones();
+  static Future<void> setNotificationsOnNewDevice(context) async {
+    final _localNotifications =
+        Provider.of<NotificationProvider>(context, listen: false)
+            .localNotifications;
+    //set notification in new device
 
-    var currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOs = IOSInitializationSettings();
-    var initSetttings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+    // The device's timezone.
+    String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
 
-    _flutterLocalNotificationsPlugin.initialize(initSetttings,
-        onSelectNotification: _onSelectNotification);
-  }
-
-  static Future _onSelectNotification(String payload) async {
-    if (_fallbackRoute == PrayerDetails.routeName)
-      await Provider.of<PrayerProvider>(_context, listen: false)
-          .setPrayer(payload);
-    Navigator.of(_context).pushNamed(_fallbackRoute);
+    // Find the 'current location'
+    final location = tz.getLocation(timeZoneName);
+    //set notification in new device
+    for (int i = 0; i < _localNotifications.length; i++) {
+      final scheduledDate =
+          tz.TZDateTime.from(_localNotifications[i].scheduledDate, location);
+      await setLocalNotification(
+        title: _localNotifications[i].title,
+        description: _localNotifications[i].description,
+        scheduledDate: scheduledDate,
+        payload: _localNotifications[i].payload,
+        frequency: _localNotifications[i].frequency,
+        context: context,
+      );
+    }
   }
 
   static Future<void> setLocalNotification({
@@ -57,8 +53,9 @@ class LocalNotification {
     @required tz.TZDateTime scheduledDate,
     @required payload,
     @required String frequency,
+    @required BuildContext context,
   }) async {
-    final localNots = Provider.of<NotificationProvider>(_context, listen: false)
+    final localNots = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
     final allIds = localNots.map((e) => e.localNotificationId).toList();
 

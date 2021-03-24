@@ -142,9 +142,9 @@ class _SharePrayerState extends State<SharePrayer> {
                     : Container(),
                 MenuButton(
                   icon: AppIcons.bestill_share,
-                  onPressed: () => null,
-                  isDisable: true,
-                  //  showModalBottomSheet(
+                  // onPressed: () => null,
+                  // isDisable: true,
+                  // onPressed: () => showModalBottomSheet(
                   //   context: context,
                   //   barrierColor:
                   //       AppColors.detailBackgroundColor[1].withOpacity(0.7),

@@ -17,9 +17,9 @@ import 'package:provider/provider.dart';
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
   final Function switchSearchMode;
-  final TextEditingController searchController;
+  final bool isSearchMode;
   CustomAppBar(
-      {Key key, this.formKey, this.switchSearchMode, this.searchController})
+      {Key key, this.formKey, this.switchSearchMode, this.isSearchMode = false})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -31,7 +31,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  bool isSearchMode = false;
+  final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
     var options =
         Provider.of<PrayerProvider>(context, listen: false).filterOptions;
@@ -55,7 +55,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   void _clearSearchField() async {
-    widget.searchController.text = '';
+    searchController.clear();
     _searchPrayer('');
   }
 
@@ -126,7 +126,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           InkWell(
             onTap: () {
               widget.switchSearchMode(true);
-              setState(() => isSearchMode = true);
+              setState(() {});
             },
             child: Icon(
               AppIcons.bestill_search,
@@ -145,7 +145,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           )
         ],
       ),
-      title: isSearchMode
+      title: widget.isSearchMode
           ? Row(
               children: [
                 Expanded(
@@ -153,7 +153,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     key: widget.formKey,
                     autovalidateMode: AutovalidateMode.disabled,
                     child: CustomInput(
-                      controller: widget.searchController,
+                      controller: searchController,
                       label: 'Search',
                       padding: 5.0,
                       showSuffix: false,
@@ -162,17 +162,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(
+                SizedBox(width: 10),
+                InkWell(
+                  child: Icon(
                     AppIcons.bestill_close,
                     color: AppColors.bottomNavIconColor,
                     size: 18,
                   ),
-                  onPressed: () => setState(
+                  onTap: () => setState(
                     () {
                       _clearSearchField();
                       widget.switchSearchMode(false);
-                      setState(() => isSearchMode = false);
+                      setState(() {});
                     },
                   ),
                 )

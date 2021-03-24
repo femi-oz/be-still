@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -28,6 +32,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
+    print(
+        'message -- splash init ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
     _textAnimationController =
         AnimationController(vsync: this, duration: Duration(seconds: 3))
           ..repeat();
@@ -56,6 +62,30 @@ class _SplashScreenState extends State<SplashScreen>
     return new Timer(duration, () => route());
   }
 
+  Future<void> setRouteDestination() async {
+    var message =
+        Provider.of<NotificationProvider>(context, listen: false).message;
+    if (message != null) {
+      if (message.type == NotificationType.prayer_time) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayerTimePrayers(message.entityId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerMode.routeName, (Route<dynamic> route) => false);
+      }
+      if (message.type == NotificationType.prayer) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayer(message.entityId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerDetails.routeName, (Route<dynamic> route) => false);
+      }
+      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
+    } else {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    }
+  }
+
+//check on login
   route() async {
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
@@ -69,10 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
           if (isLoggedIn) {
             await Provider.of<UserProvider>(context, listen: false)
                 .setCurrentUser(false);
-            await Provider.of<NotificationProvider>(context, listen: false)
-                .init(context);
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                EntryScreen.routeName, (Route<dynamic> route) => false);
+            await setRouteDestination();
           } else {
             Navigator.of(context).pushNamedAndRemoveUntil(
               LoginScreen.routeName,

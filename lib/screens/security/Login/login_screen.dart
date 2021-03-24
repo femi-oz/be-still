@@ -1,9 +1,13 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -14,14 +18,11 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
@@ -43,6 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
   List<BiometricType> listOfBiometrics;
   bool showFingerPrint = false;
   bool showFaceId = false;
+  bool showBiometrics = false;
+  bool showSuffix = false;
 
   Future<bool> _isBiometricAvailable() async {
     try {
@@ -63,6 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
+        this.showBiometrics = true;
         listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
         setState(() {
           listOfBiometrics.forEach((e) {
@@ -74,27 +78,59 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               showFaceId = false;
               showFingerPrint = false;
+              this.showSuffix = false;
             }
           });
         });
       }
-
-      print(showFaceId);
-      print(showFingerPrint);
     } on PlatformException catch (e) {
       print(e);
     }
   }
 
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _isBiometricAvailable();
+
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   void initState() {
-    _isBiometricAvailable();
     if (Settings.lastUser.isNotEmpty) {
       var userInfo = jsonDecode(Settings.lastUser);
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
     }
     super.initState();
+  }
+
+  Future<void> setRouteDestination() async {
+    var message =
+        Provider.of<NotificationProvider>(context, listen: false).message;
+    if (message != null) {
+      if (message.type == NotificationType.prayer_time) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayerTimePrayers(message.entityId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerMode.routeName, (Route<dynamic> route) => false);
+      }
+      if (message.type == NotificationType.prayer) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayer(message.entityId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerDetails.routeName, (Route<dynamic> route) => false);
+      }
+      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
+    } else {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    }
   }
 
   void _login() async {
@@ -112,37 +148,46 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
       Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-      // get all local notifications from db
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(user.id);
-      final _localNotifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications;
-      tz.initializeTimeZones();
-
-      var currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(currentTimeZone));
-      //set notification in new device
-      for (int i = 0; i < _localNotifications.length; i++) {
-        final scheduledDate =
-            tz.TZDateTime.from(_localNotifications[i].scheduledDate, tz.local);
-        await LocalNotification.configureNotification(
-            context, _localNotifications[i].fallbackRoute);
-        await LocalNotification.setLocalNotification(
-          title: _localNotifications[i].title,
-          description: _localNotifications[i].description,
-          scheduledDate: scheduledDate,
-          payload: _localNotifications[i].payload,
-          frequency: _localNotifications[i].frequency,
-        );
-      }
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      BeStilDialog.hideLoading(context);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .init(context);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
+      LocalNotification.setNotificationsOnNewDevice(context);
+      BeStilDialog.hideLoading(context);
+      await setRouteDestination();
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+    } catch (e) {
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signOut();
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(
+          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
+      BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
+    }
+  }
+
+  void _biologin() async {
+    if (!_formKey.currentState.validate()) return null;
+    _formKey.currentState.save();
+    try {
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .biometricSignin();
+      await BeStilDialog.showLoading(context, 'Authenticating');
+
+      await Provider.of<UserProvider>(context, listen: false)
+          .setCurrentUser(true);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+      Settings.userPassword =
+          Settings.rememberMe ? _passwordController.text : '';
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setDevice(user.id);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
         EntryScreen.routeName,
         (Route<dynamic> route) => false,
@@ -161,23 +206,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _biologin() async {
-    try {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .biometricSignin();
-      await Provider.of<UserProvider>(context, listen: false)
-          .setCurrentUser(true);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .init(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
-    } on HttpException catch (e) {
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
-    } catch (e) {
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+  _toggleBiometrics() {
+    if (!Settings.enableLocalAuth) {
+      setState(() {
+        Settings.enableLocalAuth = true;
+      });
+    } else {
+      setState(() {
+        Settings.enableLocalAuth = false;
+      });
     }
   }
 
@@ -231,9 +268,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 10),
-                                    showFingerPrint || showFaceId
-                                        ? _bioButton()
-                                        : Container(),
+                                    InkWell(
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 40, right: 60),
+                                        child: Settings.lastUser != ''
+                                            ? Text(
+                                                !Settings.enableLocalAuth
+                                                    ? 'Enable Face/Touch ID'
+                                                    : 'Disable Face/Touch ID',
+                                                style: TextStyle(
+                                                    color:
+                                                        AppColors.lightBlue4),
+                                              )
+                                            : Container(),
+                                      ),
+                                      onTap: _toggleBiometrics,
+                                    )
+                                    // showFingerPrint || showFaceId
+                                    //     ? _bioButton()
+                                    //     : Container(),
                                   ],
                                 ),
                               ),
@@ -254,7 +308,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _bioButton() {
     return Container(
-      padding: EdgeInsets.only(left: 40, right: 60),
+      padding: EdgeInsets.only(
+        left: 40,
+      ),
       child: IconButton(
         icon: Icon(showFingerPrint ? Icons.fingerprint : Icons.face,
             color: AppColors.lightBlue4),
@@ -287,16 +343,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 : null,
           ),
           SizedBox(height: 15.0),
-          CustomInput(
-            obScurePassword: true,
-            label: 'Password',
-            controller: _passwordController,
-            keyboardType: TextInputType.visiblePassword,
-            isRequired: true,
-            textInputAction: TextInputAction.done,
-            unfocus: true,
-            submitForm: () => _login(),
-          ),
+          Stack(
+            children: [
+              Align(
+                child: CustomInput(
+                  obScurePassword: true,
+                  label: 'Password',
+                  controller: _passwordController,
+                  keyboardType: TextInputType.visiblePassword,
+                  isRequired: true,
+                  textInputAction: TextInputAction.done,
+                  unfocus: true,
+                  submitForm: () => _login(),
+                  showSuffix: showSuffix,
+                ),
+              ),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Settings.enableLocalAuth ? _bioButton() : Container())
+            ],
+          )
         ],
       ),
     );

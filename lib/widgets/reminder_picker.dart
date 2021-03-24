@@ -1,6 +1,5 @@
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -73,8 +72,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
+                            width: MediaQuery.of(context).size.width * 0.15,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
+                              backgroundColor: Colors.transparent,
                               scrollController: frequencyController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() =>
@@ -101,6 +105,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             width: MediaQuery.of(context).size.width * 0.3,
                             child: selectedFrequency == Frequency.weekly
                                 ? CupertinoPicker(
+                                    selectionOverlay:
+                                        CupertinoPickerDefaultSelectionOverlay(
+                                      background: Colors.transparent,
+                                    ),
+                                    backgroundColor: Colors.transparent,
                                     scrollController: daysController,
                                     itemExtent: itemExtent,
                                     onSelectedItemChanged: (i) => setState(() =>
@@ -116,19 +125,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                       ),
                                     ],
                                   )
-                                : Container(
-                                    height: 31,
-                                    decoration: BoxDecoration(
-                                        border: Border.symmetric(
-                                            horizontal: BorderSide(
-                                                color: Settings.isDarkMode
-                                                    ? Colors.white12
-                                                    : Colors.grey[350]))),
-                                  ),
+                                : Container(height: 31),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.1,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
+                              backgroundColor: Colors.transparent,
                               scrollController: hourController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(
@@ -148,15 +154,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           ),
                           Container(
                             height: 31,
-                            decoration: BoxDecoration(
-                              border: Border.symmetric(
-                                horizontal: BorderSide(
-                                    color: Settings.isDarkMode
-                                        ? Colors.white12
-                                        : Colors.grey[350]),
-                              ),
-                            ),
-                            width: MediaQuery.of(context).size.width * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.1,
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(':',
@@ -165,8 +163,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.09,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
+                              backgroundColor: Colors.transparent,
                               scrollController: minuteController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(
@@ -176,7 +179,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                   Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                        i < 10
+                                        i < 9
                                             ? '0${minInTheHour[i]}'
                                             : '${minInTheHour[i]}',
                                         style: AppTextStyles.regularText15),
@@ -187,6 +190,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.1,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
+                              backgroundColor: Colors.transparent,
                               scrollController: periodController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {
@@ -229,10 +237,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
                       CustomButtonGroup(
                         title: 'SAVE',
                         onSelected: (_) {
+                          var min = selectedMinute < 10
+                              ? '0$selectedMinute'
+                              : '$selectedMinute';
+                          var hour = selectedHour < 10
+                              ? '0${selectedHour.toString()}'
+                              : '$selectedHour';
                           // var date =
                           //     '$selectedHour:$selectedMinute $selectedPeriod';
-                          widget.onSave(selectedFrequency, selectedHour,
-                              selectedMinute, selectedDay, selectedPeriod);
+                          widget.onSave(selectedFrequency, hour, min,
+                              selectedDay, selectedPeriod);
                         },
                         length: 2,
                         index: 0,
