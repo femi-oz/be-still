@@ -26,7 +26,7 @@ class UpdateView extends StatelessWidget {
             children: <Widget>[
               prayerData.prayer.groupId != '0'
                   ? Container(
-                      margin: EdgeInsets.only(bottom: 20),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: Text(
                         prayerData.prayer.creatorName,
                         style: AppTextStyles.regularText18b.copyWith(
@@ -37,159 +37,74 @@ class UpdateView extends StatelessWidget {
                     )
                   : Container(),
               for (int i = 0; i < updates.length; i++)
-                Container(
-                  margin: EdgeInsets.only(bottom: 30),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(right: 30),
-                            child: Row(
-                              children: <Widget>[
-                                Text(
-                                  DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(updates[i].modifiedOn)
-                                      .toLowerCase(),
-                                  style: AppTextStyles.regularText14.copyWith(
-                                    color: AppColors.lightBlue4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: AppColors.lightBlue4,
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 30.0, horizontal: 20),
-                        child: i == 0
-                            ? new ConstrainedBox(
-                                constraints: new BoxConstraints(
-                                  minHeight: 200,
-                                ),
-                                child: new DecoratedBox(
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          updates[i].description,
-                                          style: AppTextStyles.regularText18b
-                                              .copyWith(
-                                            color: AppColors.prayerTextColor,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  decoration: new BoxDecoration(),
-                                ),
-                              )
-                            : Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      updates[i].description,
-                                      style:
-                                          AppTextStyles.regularText18b.copyWith(
-                                        color: AppColors.prayerTextColor,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                      ),
-                      // Padding(
-                      //   padding:
-                      //       EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-                      //   child: Row(
-                      //     children: [
-                      //       Flexible(
-                      //         child: Text(
-                      //           u.description,
-                      //           style: AppTextStyles.regularText18b.copyWith(
-                      //             color: AppColors.prayerTextColor,
-                      //           ),
-                      //           textAlign: TextAlign.left,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
+                _buildDetail(
+                    DateFormat('hh:mma |')
+                        .format(updates[i].modifiedOn)
+                        .toLowerCase(),
+                    updates[i].modifiedOn,
+                    updates[i].description),
+              _buildDetail('Initial Prayer Request |',
+                  prayerData.prayer.modifiedOn, prayerData.prayer.description),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetail(time, modifiedOn, description) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
               Container(
-                child: Column(
+                margin: EdgeInsets.only(right: 15),
+                child: Row(
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(right: 30),
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                'Initial Prayer Request |',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.lightBlue4,
-                                ),
-                              ),
-                              Text(
-                                DateFormat(' MM.dd.yyyy')
-                                    .format(prayerData.prayer.modifiedOn),
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.lightBlue4,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: AppColors.lightBlue4,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      time,
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: AppColors.lightBlue4,
+                      ),
                     ),
-                    SizedBox(height: 10),
-                    Container(
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                prayerData.prayer.description,
-                                style: AppTextStyles.regularText18b.copyWith(
-                                  color: AppColors.prayerTextColor,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ],
-                        ),
+                    Text(
+                      DateFormat(' MM.dd.yyyy').format(modifiedOn),
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: AppColors.lightBlue4,
                       ),
                     ),
                   ],
                 ),
               ),
+              Expanded(
+                child: Divider(
+                  color: AppColors.lightBlue4,
+                  thickness: 1,
+                ),
+              ),
             ],
           ),
-        ),
+          Container(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      description,
+                      style: AppTextStyles.regularText18b.copyWith(
+                        color: AppColors.prayerTextColor,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

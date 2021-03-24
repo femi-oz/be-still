@@ -116,7 +116,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
       final title = '$selectedFrequency reminder to pray';
       final description = prayerData.prayer.description;
       final scheduleDate = LocalNotification.scheduleDate(
-          selectedHour, selectedMinute, selectedDay, period);
+          int.parse(selectedHour),
+          int.parse(selectedMinute),
+          selectedDay,
+          period);
       final payload = NotificationMessage(
           entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
       await LocalNotification.setLocalNotification(

@@ -19,7 +19,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function switchSearchMode;
   final bool isSearchMode;
   CustomAppBar(
-      {Key key, this.formKey, this.switchSearchMode, this.isSearchMode})
+      {Key key, this.formKey, this.switchSearchMode, this.isSearchMode = false})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 

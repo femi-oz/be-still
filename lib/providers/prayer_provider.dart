@@ -54,6 +54,13 @@ class PrayerProvider with ChangeNotifier {
                   e.userPrayer.status.toLowerCase() ==
                   Status.active.toLowerCase())
               .toList();
+          var favoritePrayers = data
+              .where((CombinePrayerStream e) => e.userPrayer.isFavorite)
+              .toList();
+          _filteredPrayerTimeList = [
+            ...favoritePrayers,
+            ..._filteredPrayerTimeList
+          ];
           List<CombinePrayerStream> _distinct = [];
           var idSet = <String>{};
           for (var e in _filteredPrayerTimeList) {
