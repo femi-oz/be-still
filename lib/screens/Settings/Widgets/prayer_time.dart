@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -32,7 +35,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   @override
   void initState() {
-    LocalNotification.configureNotification(context, PrayerMode.routeName);
     super.initState();
   }
 
@@ -79,12 +81,16 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           int.parse(selectedMinute),
           selectedDay,
           period);
+      final payload = NotificationMessage(
+          entityId: userId, type: NotificationType.prayer_time);
       await LocalNotification.setLocalNotification(
-          title: title,
-          description: description,
-          scheduledDate: scheduleDate,
-          payload: userId,
-          frequency: selectedFrequency);
+        title: title,
+        description: description,
+        scheduledDate: scheduleDate,
+        payload: jsonEncode(payload.toJson()),
+        frequency: selectedFrequency,
+        context: context,
+      );
       await storeNotification(
           notificationText,
           userId,
@@ -120,7 +126,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             userId,
             notificationText,
             userId,
-            PrayerMode.routeName,
             userId,
             title,
             description,

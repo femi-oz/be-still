@@ -1,13 +1,16 @@
+import 'dart:convert';
+
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../locator.dart';
 
 class NotificationProvider with ChangeNotifier {
@@ -17,6 +20,8 @@ class NotificationProvider with ChangeNotifier {
 
   static final NotificationProvider _instance = NotificationProvider._();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   bool _initialized = false;
 
@@ -29,6 +34,9 @@ class NotificationProvider with ChangeNotifier {
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;
+  NotificationMessage _message;
+  NotificationMessage get message => _message;
+
   Future<void> init(BuildContext context) async {
     _firebaseMessaging.configure(
       // onMessage: (Map<String, dynamic> message) async {
@@ -36,24 +44,39 @@ class NotificationProvider with ChangeNotifier {
       //   onRoute(message, context);
       // },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
-        onRoute(message, context);
+        _message = NotificationMessage.fromData(message);
+
+        print("onLaunch: $_message");
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
-        onRoute(message, context);
+        _message = NotificationMessage.fromData(message);
+        print("onResume: $_message");
       },
     );
   }
 
-  Future<void> onRoute(message, context) async {
-    if (message['type'] == 'prayer' && message['entityId'] != 'N/A') {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(message['entityId']);
-      Navigator.of(context).pushNamed(PrayerDetails.routeName);
-      print(message);
-    }
-    return;
+  Future<void> initLocal(BuildContext context) async {
+    tz.initializeTimeZones();
+
+    var currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+
+    _flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: _onSelectNotification);
+  }
+
+  Future _onSelectNotification(String payload) async {
+    _message = NotificationMessage.fromData(jsonDecode(payload));
+    print('message -- prov _onSelectNotification ===> $_message');
+  }
+
+  Future<void> clearMessage() async {
+    _message = null;
   }
 
   Future<void> setDevice(String userId) async {
@@ -117,7 +140,6 @@ class NotificationProvider with ChangeNotifier {
     String entityId,
     String notificationText,
     String userId,
-    String fallbackRoute,
     String payload,
     String title,
     String description,
@@ -134,7 +156,6 @@ class NotificationProvider with ChangeNotifier {
         entityId,
         notificationText,
         userId,
-        fallbackRoute,
         payload,
         title,
         description,

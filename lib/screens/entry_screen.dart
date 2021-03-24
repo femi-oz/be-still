@@ -1,5 +1,4 @@
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -8,12 +7,9 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
@@ -29,62 +25,26 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-bool _searchMode = false;
+bool _isSearchMode = false;
 
-class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
+class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
   int _currentIndex = 0;
   static final _formKey = new GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void _switchSearchMode(bool value) => setState(() => _searchMode = value);
+  void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
 
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
 
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
-  AppLifecycleState lifeCycleState;
+  // AppLifecycleState lifeCycleState;
+
   final cron = Cron();
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        var backgroundTime = DateTime.parse(Settings.backgroundTime);
-        if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .signOut();
-          await LocalNotification.clearAll();
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName,
-            (Route<dynamic> route) => false,
-          );
-        }
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-        if (userId != null)
-          Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(userId);
-        break;
-      case AppLifecycleState.inactive:
-        Settings.backgroundTime = DateTime.now().toString();
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
 
   Future<void> _preLoadData() async {
     final userId =
@@ -123,6 +83,7 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
       appBar: _currentIndex == 2
           ? null
           : CustomAppBar(
+              isSearchMode: _isSearchMode,
               switchSearchMode: (bool val) => _switchSearchMode(val),
               formKey: _formKey,
             ),
@@ -215,7 +176,7 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: _searchMode ? PrayerList() : GrowMyPrayerLifeScreen(),
+          page: _isSearchMode ? PrayerList() : GrowMyPrayerLifeScreen(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",

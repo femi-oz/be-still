@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -99,7 +101,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void initState() {
-    LocalNotification.configureNotification(context, PrayerDetails.routeName);
     super.initState();
   }
 
@@ -115,12 +116,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
       final title = '$selectedFrequency reminder to pray';
       final description = prayerData.prayer.description;
       final scheduleDate = LocalNotification.scheduleDate(
-          selectedHour, selectedMinute, selectedDay, period);
+          int.parse(selectedHour),
+          int.parse(selectedMinute),
+          selectedDay,
+          period);
+      final payload = NotificationMessage(
+          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
       await LocalNotification.setLocalNotification(
+        context: context,
         title: title,
         description: description,
         scheduledDate: scheduleDate,
-        payload: userId,
+        payload: jsonEncode(payload.toJson()),
         frequency: selectedFrequency,
       );
       await storeNotification(notificationText, userId, title, description,
@@ -143,21 +150,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
   ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-            LocalNotification.localNotificationId,
-            prayerData.prayer.id,
-            notificationText,
-            userId,
-            PrayerDetails.routeName,
-            prayerData.prayer.id,
-            title,
-            description,
-            frequency,
-            NotificationType.reminder,
-            scheduledDate,
-            '',
-            '',
-            '',
-            '');
+      LocalNotification.localNotificationId,
+      prayerData.prayer.id,
+      notificationText,
+      userId,
+      prayerData.prayer.id,
+      title,
+      description,
+      frequency,
+      NotificationType.reminder,
+      scheduledDate,
+      '',
+      '',
+      '',
+      '',
+    );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     _goToDetails();
@@ -186,7 +193,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
+          .unMarkPrayerAsAnswered(
+              prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       _goToDetails();
