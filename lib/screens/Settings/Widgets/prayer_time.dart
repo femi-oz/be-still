@@ -38,18 +38,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     super.initState();
   }
 
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _getPrayerTimeList();
-
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
   List<LookUp> songs = [
     LookUp(text: 'Evening Listening', value: 1),
     LookUp(text: 'Rock Jams', value: 2),
@@ -203,13 +191,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
     setState(() => showUpdateField = false);
-  }
-
-  _getPrayerTimeList() async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setPrayerTimeNotifications(userId);
   }
 
   // _deleteTimerModal(BuildContext context, String prayerTimeId) {
@@ -389,7 +370,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      width: 30.0,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
                                       child: Text(
                                         data.frequency,
                                         style: AppTextStyles.regularText15
@@ -399,17 +381,32 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 30,
-                                    ),
-                                    Text(
-                                      data.selectedDay,
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
-                                    ),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    data.frequency == Frequency.weekly
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.15,
+                                            child: Text(
+                                              data.selectedDay,
+                                              style: AppTextStyles.regularText15
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .prayerTextColor),
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.15),
                                     SizedBox(
-                                      width: 35,
-                                    ),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
                                     Text(
                                       data.selectedHour,
                                       style: AppTextStyles.regularText15
