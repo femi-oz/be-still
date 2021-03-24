@@ -1,9 +1,13 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -14,14 +18,11 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
 import '../Forget_Password/forget_password.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
@@ -109,6 +110,29 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
+  Future<void> setRouteDestination() async {
+    var message =
+        Provider.of<NotificationProvider>(context, listen: false).message;
+    if (message != null) {
+      if (message.type == NotificationType.prayer_time) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayerTimePrayers(message.entityId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerMode.routeName, (Route<dynamic> route) => false);
+      }
+      if (message.type == NotificationType.prayer) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayer(message.entityId);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            PrayerDetails.routeName, (Route<dynamic> route) => false);
+      }
+      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
+    } else {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    }
+  }
+
   void _login() async {
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
@@ -124,41 +148,13 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
       Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-      // get all local notifications from db
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(user.id);
-      final _localNotifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications;
-      tz.initializeTimeZones();
-
-      var currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(currentTimeZone));
-      //set notification in new device
-      for (int i = 0; i < _localNotifications.length; i++) {
-        final scheduledDate =
-            tz.TZDateTime.from(_localNotifications[i].scheduledDate, tz.local);
-        await LocalNotification.configureNotification(
-            context, _localNotifications[i].fallbackRoute);
-        await LocalNotification.setLocalNotification(
-          title: _localNotifications[i].title,
-          description: _localNotifications[i].description,
-          scheduledDate: scheduledDate,
-          payload: _localNotifications[i].payload,
-          frequency: _localNotifications[i].frequency,
-        );
-      }
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
       await Provider.of<NotificationProvider>(context, listen: false)
-          .init(context);
-      await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
+      LocalNotification.setNotificationsOnNewDevice(context);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        EntryScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
+      await setRouteDestination();
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
@@ -187,35 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
       Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-      // get all local notifications from db
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(user.id);
-      final _localNotifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications;
-      tz.initializeTimeZones();
-
-      var currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(currentTimeZone));
-      //set notification in new device
-      for (int i = 0; i < _localNotifications.length; i++) {
-        final scheduledDate =
-            tz.TZDateTime.from(_localNotifications[i].scheduledDate, tz.local);
-        await LocalNotification.configureNotification(
-            context, _localNotifications[i].fallbackRoute);
-        await LocalNotification.setLocalNotification(
-          title: _localNotifications[i].title,
-          description: _localNotifications[i].description,
-          scheduledDate: scheduledDate,
-          payload: _localNotifications[i].payload,
-          frequency: _localNotifications[i].frequency,
-        );
-      }
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .init(context);
-
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
       BeStilDialog.hideLoading(context);

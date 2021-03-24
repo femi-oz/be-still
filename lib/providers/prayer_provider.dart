@@ -46,7 +46,7 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayerTimePrayers(String userId, String sortBy) async =>
+  Future<void> setPrayerTimePrayers(String userId) async =>
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
           _filteredPrayerTimeList = data

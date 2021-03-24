@@ -31,7 +31,7 @@ class EntryScreen extends StatefulWidget {
 
 bool _searchMode = false;
 
-class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
+class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
   int _currentIndex = 0;
   static final _formKey = new GlobalKey<FormState>();
@@ -44,47 +44,11 @@ class _EntryScreenState extends State<EntryScreen> with WidgetsBindingObserver {
     _currentIndex = widget.screenNumber;
 
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
-  AppLifecycleState lifeCycleState;
+  // AppLifecycleState lifeCycleState;
+
   final cron = Cron();
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        var backgroundTime = DateTime.parse(Settings.backgroundTime);
-        if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .signOut();
-          await LocalNotification.clearAll();
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName,
-            (Route<dynamic> route) => false,
-          );
-        }
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-        if (userId != null)
-          Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(userId);
-        break;
-      case AppLifecycleState.inactive:
-        Settings.backgroundTime = DateTime.now().toString();
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
 
   Future<void> _preLoadData() async {
     final userId =

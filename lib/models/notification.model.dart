@@ -77,7 +77,6 @@ class LocalNotificationModel {
   final DateTime scheduledDate;
   final String frequency;
   final String title;
-  final String fallbackRoute;
   final String payload;
   final String type;
   final String notificationText;
@@ -97,7 +96,6 @@ class LocalNotificationModel {
     @required this.frequency,
     @required this.type,
     @required this.scheduledDate,
-    @required this.fallbackRoute,
     @required this.notificationText,
     @required this.localNotificationId,
     @required this.selectedDay,
@@ -115,7 +113,6 @@ class LocalNotificationModel {
         type = snapshot.data()['Type'],
         frequency = snapshot.data()['Frequency'],
         payload = snapshot.data()['Payload'],
-        fallbackRoute = snapshot.data()['FallbackRoute'],
         notificationText = snapshot.data()['NotificationText'],
         localNotificationId = snapshot.data()['LocalNotificationId'],
         selectedDay = snapshot.data()['SelectedDay'] ?? '',
@@ -133,7 +130,6 @@ class LocalNotificationModel {
       'ScheduledDate': scheduledDate,
       'Type': type,
       'Payload': payload,
-      'FallbackRoute': fallbackRoute,
       'NotificationText': notificationText,
       'LocalNotificationId': localNotificationId,
       'SelectedDay': selectedDay,
@@ -211,6 +207,27 @@ class MessageModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
+class NotificationMessage {
+  final String entityId;
+  final String type;
+
+  const NotificationMessage({
+    @required this.entityId,
+    @required this.type,
+  });
+
+  NotificationMessage.fromData(Map<String, dynamic> data)
+      : entityId = data['entityId'],
+        type = data['type'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'entityId': entityId,
+      'type': type,
     };
   }
 }
