@@ -9,6 +9,7 @@ import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,20 +65,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (userId != null)
           Provider.of<PrayerProvider>(context, listen: false)
               .checkPrayerValidity(userId);
+        print(
+            'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .init(context);
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .initLocal(context);
+        print(
+            'message -- didChangeAppLifecycleState after ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+
         var message =
             Provider.of<NotificationProvider>(context, listen: false).message;
         if (message != null) {
           print('AppLifecycleState resume ===> ${message.entityId}');
-          if (message.type == NotificationType.prayer_time) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .setPrayerTimePrayers(message.entityId);
-            Navigator.of(context).pushNamed(PrayerMode.routeName);
-          }
-          if (message.type == NotificationType.prayer) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .setPrayer(message.entityId);
-            Navigator.of(context).pushNamed(PrayerDetails.routeName);
-          }
+          await gotoPage(message);
           Provider.of<NotificationProvider>(context, listen: false)
               .clearMessage();
         }
@@ -96,13 +97,26 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  gotoPage(message) async {
+    if (message.type == NotificationType.prayer_time) {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(message.entityId);
+
+      NavigationService.instance.navigateToReplacement(PrayerMode.routeName);
+    }
+    if (message.type == NotificationType.prayer) {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(message.entityId);
+      NavigationService.instance.navigateToReplacement(PrayerDetails.routeName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    final GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
 
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) => MaterialApp(
@@ -113,7 +127,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             : appThemeData[AppTheme.LightTheme],
         initialRoute: '/',
         routes: rt.routes,
-        navigatorKey: navState,
+        navigatorKey: NavigationService.instance.navigationKey,
         onUnknownRoute: (settings) {
           return MaterialPageRoute(builder: (ctx) => SplashScreen());
         },

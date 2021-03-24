@@ -94,7 +94,9 @@ class LocalNotification {
       selectedHour, selectedMinute, selectedDay, period) {
     var day = reminderDays.indexOf(selectedDay) + 1;
     var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
-    hour = hour == 24 ? 00 : hour;
+    if (period == PeriodOfDay.am && selectedHour == 12)
+      hour = 00;
+    else if (period == PeriodOfDay.pm && selectedHour == 12) hour = 12;
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
         tz.local, now.year, now.month, _getExactDy(day), hour, selectedMinute);

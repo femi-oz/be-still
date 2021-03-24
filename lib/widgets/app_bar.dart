@@ -15,12 +15,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final formKey;
   final Function switchSearchMode;
   final bool isSearchMode;
-  CustomAppBar(
-      {Key key, this.formKey, this.switchSearchMode, this.isSearchMode = false})
-      : preferredSize = Size.fromHeight(kToolbarHeight),
+  CustomAppBar({
+    Key key,
+    this.switchSearchMode,
+    this.isSearchMode = false,
+  })  : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   @override
@@ -149,18 +150,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ? Row(
               children: [
                 Expanded(
-                  child: Form(
-                    key: widget.formKey,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    child: CustomInput(
-                      controller: searchController,
-                      label: 'Search',
-                      padding: 5.0,
-                      showSuffix: false,
-                      textInputAction: TextInputAction.done,
-                      onTextchanged: _searchPrayer,
-                    ),
+                  // child: Form(
+                  //   key: widget.formKey,
+                  // autovalidateMode: AutovalidateMode.disabled,
+                  child: CustomInput(
+                    controller: searchController,
+                    label: 'Search',
+                    padding: 5.0,
+                    showSuffix: false,
+                    textInputAction: TextInputAction.done,
+                    onTextchanged: _searchPrayer,
                   ),
+                  // ),
                 ),
                 SizedBox(width: 10),
                 InkWell(
