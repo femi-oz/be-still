@@ -102,7 +102,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.3,
                             child: selectedFrequency == Frequency.weekly
                                 ? CupertinoPicker(
                                     selectionOverlay:
@@ -128,7 +128,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 : Container(height: 31),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.06,
+                            width: MediaQuery.of(context).size.width * 0.1,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -154,7 +154,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           ),
                           Container(
                             height: 31,
-                            width: MediaQuery.of(context).size.width * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.1,
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(':',
@@ -163,7 +163,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.06,
+                            width: MediaQuery.of(context).size.width * 0.09,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(

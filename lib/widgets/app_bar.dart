@@ -17,8 +17,9 @@ import 'package:provider/provider.dart';
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final formKey;
   final Function switchSearchMode;
-  // final TextEditingController searchController;
-  CustomAppBar({Key key, this.formKey, this.switchSearchMode})
+  final bool isSearchMode;
+  CustomAppBar(
+      {Key key, this.formKey, this.switchSearchMode, this.isSearchMode})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -31,7 +32,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
-  bool isSearchMode = false;
   void _searchPrayer(String value) async {
     var options =
         Provider.of<PrayerProvider>(context, listen: false).filterOptions;
@@ -126,7 +126,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           InkWell(
             onTap: () {
               widget.switchSearchMode(true);
-              setState(() => isSearchMode = true);
+              setState(() {});
             },
             child: Icon(
               AppIcons.bestill_search,
@@ -145,7 +145,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           )
         ],
       ),
-      title: isSearchMode
+      title: widget.isSearchMode
           ? Row(
               children: [
                 Expanded(
@@ -173,7 +173,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     () {
                       _clearSearchField();
                       widget.switchSearchMode(false);
-                      setState(() => isSearchMode = false);
+                      setState(() {});
                     },
                   ),
                 )
