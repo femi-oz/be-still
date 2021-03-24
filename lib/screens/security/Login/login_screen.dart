@@ -6,7 +6,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
+import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
           NavigationService.instance
-              .navigateToReplacement(PrayerMode.routeName);
+              .navigateToReplacement(PrayerTime.routeName);
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)

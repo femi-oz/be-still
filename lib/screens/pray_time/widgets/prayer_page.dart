@@ -1,7 +1,7 @@
 import 'package:be_still/models/prayer.model.dart';
 
-import 'package:be_still/screens/pray_mode/Widgets/no_update_view.dart';
-import 'package:be_still/screens/pray_mode/Widgets/update_view.dart';
+import 'package:be_still/screens/prayer_time/Widgets/no_update_view.dart';
+import 'package:be_still/screens/prayer_time/Widgets/update_view.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 

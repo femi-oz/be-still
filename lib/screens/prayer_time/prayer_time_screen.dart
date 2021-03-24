@@ -2,22 +2,22 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/pray_mode/Widgets/pray_mode_app_bar.dart';
-import 'package:be_still/screens/pray_mode/widgets/prayer_page.dart';
+import 'package:be_still/screens/prayer_time/Widgets/prayer_time_app_bar.dart';
+import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PrayerMode extends StatefulWidget {
-  static const routeName = '/prayer-mode';
+class PrayerTime extends StatefulWidget {
+  static const routeName = '/prayer-time';
 
   @override
-  _PrayerModeState createState() => _PrayerModeState();
+  _PrayerTimeState createState() => _PrayerTimeState();
 }
 
-class _PrayerModeState extends State<PrayerMode> {
+class _PrayerTimeState extends State<PrayerTime> {
   PageController _controller = PageController(
     initialPage: 0,
   );
@@ -82,7 +82,7 @@ class _PrayerModeState extends State<PrayerMode> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                child: Icon(Icons.first_page,color: AppColors.lightBlue3),
+                child: Icon(Icons.first_page, color: AppColors.lightBlue3),
                 onTap: () {
                   _controller.animateToPage(0,
                       curve: Curves.easeIn,
@@ -91,7 +91,7 @@ class _PrayerModeState extends State<PrayerMode> {
               ),
               SizedBox(width: 10),
               InkWell(
-                child: Icon(Icons.navigate_before,color: AppColors.lightBlue3),
+                child: Icon(Icons.navigate_before, color: AppColors.lightBlue3),
                 onTap: () {
                   if (currentPage > 1) {
                     _controller.jumpToPage(currentPage - 2);
@@ -100,7 +100,7 @@ class _PrayerModeState extends State<PrayerMode> {
               ),
               SizedBox(width: 10),
               InkWell(
-                  child: Icon(Icons.navigate_next,color: AppColors.lightBlue3),
+                  child: Icon(Icons.navigate_next, color: AppColors.lightBlue3),
                   onTap: () {
                     if (currentPage < prayers.length) {
                       _controller.jumpToPage(currentPage);
