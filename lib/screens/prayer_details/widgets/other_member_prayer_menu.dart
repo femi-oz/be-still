@@ -145,7 +145,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     child: Row(
                       children: <Widget>[
                         Icon(
-                          Icons.calendar_today,
+                          AppIcons.bestill_reminder,
                           color: AppColors.lightBlue4,
                         ),
                         Padding(

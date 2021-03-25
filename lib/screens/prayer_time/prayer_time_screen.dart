@@ -82,16 +82,26 @@ class _PrayerTimeState extends State<PrayerTime> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                child: Icon(Icons.first_page, color: AppColors.lightBlue3),
+                child: Icon(
+                  Icons.first_page,
+                  color:
+                      currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
+                ),
                 onTap: () {
-                  _controller.animateToPage(0,
-                      curve: Curves.easeIn,
-                      duration: Duration(milliseconds: 200));
+                  if (currentPage > 1) {
+                    _controller.animateToPage(0,
+                        curve: Curves.easeIn,
+                        duration: Duration(milliseconds: 200));
+                  }
                 },
               ),
               SizedBox(width: 10),
               InkWell(
-                child: Icon(Icons.navigate_before, color: AppColors.lightBlue3),
+                child: Icon(
+                  Icons.navigate_before,
+                  color:
+                      currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
+                ),
                 onTap: () {
                   if (currentPage > 1) {
                     _controller.jumpToPage(currentPage - 2);
@@ -100,7 +110,10 @@ class _PrayerTimeState extends State<PrayerTime> {
               ),
               SizedBox(width: 10),
               InkWell(
-                  child: Icon(Icons.navigate_next, color: AppColors.lightBlue3),
+                  child: Icon(Icons.navigate_next, color: currentPage < prayers.length
+                        ? AppColors.lightBlue3
+                        : AppColors.grey,
+                  ),
                   onTap: () {
                     if (currentPage < prayers.length) {
                       _controller.jumpToPage(currentPage);
@@ -108,11 +121,18 @@ class _PrayerTimeState extends State<PrayerTime> {
                   }),
               SizedBox(width: 10),
               InkWell(
-                child: Icon(Icons.last_page, color: AppColors.lightBlue3),
+                child: Icon(
+                  Icons.last_page,
+                  color: currentPage < prayers.length
+                      ? AppColors.lightBlue3
+                      : AppColors.grey,
+                ),
                 onTap: () {
-                  _controller.animateToPage(prayers.length - 1,
-                      curve: Curves.easeIn,
-                      duration: Duration(milliseconds: 200));
+                  if (currentPage < prayers.length) {
+                    _controller.animateToPage(prayers.length - 1,
+                        curve: Curves.easeIn,
+                        duration: Duration(milliseconds: 200));
+                  }
                 },
               ),
             ],

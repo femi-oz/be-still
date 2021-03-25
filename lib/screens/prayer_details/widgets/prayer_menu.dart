@@ -31,8 +31,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
+  LocalNotificationModel reminder;
   @override
-  PrayerMenu(this.parentcontext, this.hasReminder);
+  PrayerMenu(this.parentcontext, this.hasReminder, this.reminder);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -386,6 +387,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 selectedDay,
                                 period,
                                 prayerData),
+                        selectedFrequency: widget.reminder != null ?widget.reminder.frequency: null,
+                        selectedHour: widget.reminder != null
+                            ? int.parse(widget.reminder.selectedHour): null,
+                        selectedMinute:widget.reminder != null ?
+                            int.parse(widget.reminder.selectedMinute)
+                            : null,
+                        selectedPeriod: widget.reminder != null ?widget.reminder.period
+                            : null,
                       );
                     },
                   ),

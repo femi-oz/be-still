@@ -47,11 +47,15 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   @override
   void initState() {
-    selectedHour = widget.selectedHour;
-    selectedMinute = widget.selectedMinute;
-    selectedDay = widget.selectedDay;
-    selectedPeriod = widget.selectedPeriod;
-    selectedFrequency = widget.selectedFrequency;
+    selectedHour = widget.selectedHour != null ? widget.selectedHour : 6;
+    selectedMinute = widget.selectedMinute != null ? widget.selectedMinute : 30;
+    selectedDay =
+        widget.selectedDay != null ? widget.selectedDay : DateTime.wednesday;
+    selectedPeriod =
+        widget.selectedPeriod != null ? widget.selectedPeriod : PeriodOfDay.pm;
+    selectedFrequency = widget.selectedFrequency != null
+        ? widget.selectedFrequency
+        : Frequency.daily;
     // selectedDay = widget.reminderDays[DateTime.now().weekday - 1];
     super.initState();
   }

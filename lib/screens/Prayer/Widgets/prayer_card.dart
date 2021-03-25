@@ -6,6 +6,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -217,7 +218,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                             },
                                           ),
                                           child: Icon(
-                                            Icons.calendar_today,
+                                            AppIcons.bestill_reminder,
                                             size: 12,
                                             color: AppColors.lightBlue3,
                                           ),
