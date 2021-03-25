@@ -295,12 +295,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _snoozePrayer(CombinePrayerStream prayerData) async {
-    selectedInterval = snoozeInterval
-        .indexOf(snoozeInterval[int.parse(Settings.snoozeInterval)]);
-    selectedDuration = snoozeDuration
-        .indexOf(snoozeDuration[int.parse(Settings.snoozeDuration)]);
-    if (selectedInterval == null) {}
-    if (selectedDuration == null) {}
+    if (selectedInterval == null) {
+      var selectedIntervalIndex = snoozeInterval
+          .indexOf(snoozeInterval[int.parse(Settings.snoozeInterval)]);
+      selectedInterval = snoozeInterval[selectedIntervalIndex];
+    }
+    if (selectedDuration == null) {
+      var selectedDurationindex = snoozeDuration
+          .indexOf(snoozeDuration[int.parse(Settings.snoozeDuration)]);
+      selectedDuration = snoozeDuration[selectedDurationindex];
+    }
     BeStilDialog.showLoading(context);
     switch (selectedInterval) {
       case 'Minutes':
