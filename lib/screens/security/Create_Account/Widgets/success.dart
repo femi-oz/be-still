@@ -1,4 +1,4 @@
-import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -17,7 +17,10 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushReplacementNamed(EntryScreen.routeName),
+        () => Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginScreen.routeName,
+          (Route<dynamic> route) => false,
+        ),
       ),
     );
   }
@@ -26,7 +29,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: const EdgeInsets.only(top: 100),
+        padding: const EdgeInsets.all(50),
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -39,25 +42,13 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             alignment: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          children: <Widget>[
-            Text(
-              'Your account has been succesfully created.',
-              style: TextStyle(
-                color: AppColors.textFieldText,
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-              ),
-            ),
-            Text(
-              'Login to your BeStill...',
-              style: TextStyle(
-                color: AppColors.textFieldText,
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-              ),
-            ),
-          ],
+        child: Center(
+          child: Text(
+            'Your account regstration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration',
+            style: AppTextStyles.regularText16b
+                .copyWith(color: AppColors.lightBlue4),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

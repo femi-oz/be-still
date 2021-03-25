@@ -9,6 +9,6 @@ class ErrorType {
   static const invalidArgument = 'invalid-argument';
   static const unavailable = 'unavailable';
   static const not_found = 'NOT_FOUND';
-  // static const userDisabled = 'user-disabled';
+  static const userNotVerified = 'not-verified';
   // static const userDisabled = 'user-disabled';
 }

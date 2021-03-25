@@ -57,10 +57,16 @@ class AuthenticationService {
     String password,
   }) async {
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      final user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (!user.user.emailVerified) {
+        _firebaseAuth.signOut();
+        var e = PlatformException(code: 'not-verified');
+        throw HttpException(e.code);
+      }
     } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      final message = StringUtils.generateExceptionMessage(
+          e.message == 'not-verified' ? e.message : e.code ?? null);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/signIn');
       throw HttpException(message);
@@ -80,6 +86,7 @@ class AuthenticationService {
         password: password,
       );
       User user = _firebaseAuth.currentUser;
+      user.sendEmailVerification();
       await locator<UserService>().addUserData(
         user.uid,
         email,
