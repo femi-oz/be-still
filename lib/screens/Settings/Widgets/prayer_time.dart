@@ -88,6 +88,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           selectedHour,
           selectedMinute,
           scheduleDate,
+          userId, notificationText,
         );
       else
         await storeNotification(
@@ -184,32 +185,24 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     String selectedHour,
     String selectedMinute,
     tz.TZDateTime scheduledDate,
+    String userId,String notificationText,
   ) async {
-    try {
-      BeStilDialog.showLoading(context);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .updateLocalNotification(
-        selectedFrequency,
-        scheduledDate,
-        selectedDay,
-        selectedPeriod,
-        selectedHour,
-        selectedMinute,
-        notification.id,
-      );
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      setState(() {});
-    } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-    }
-    setState(() => showUpdateField = false);
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .updateLocalNotification(
+      selectedFrequency,
+      scheduledDate,
+      selectedDay,
+      selectedPeriod,
+      selectedHour,
+      selectedMinute,
+      notification.id,
+      userId,
+      notificationText,
+    );
+    await Future.delayed(Duration(milliseconds: 300));
+    BeStilDialog.hideLoading(context);
+    Navigator.pop(context);
+    setState(() {});
   }
 
   // _deleteTimerModal(BuildContext context, String prayerTimeId) {

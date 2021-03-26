@@ -176,16 +176,20 @@ class NotificationProvider with ChangeNotifier {
     String selectedHour,
     String selectedMinute,
     String notificationId,
+    String userId,
+    String notificationText,
   ) async {
     await _notificationService.updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      notificationId,
-    );
+        frequency,
+        scheduledDate,
+        selectedDay,
+        period,
+        selectedHour,
+        selectedMinute,
+        notificationId,
+        notificationText);
+    await setLocalNotifications(userId);
+    notifyListeners();
   }
 
   Future<void> deleteLocalNotification(String notificationId) async {

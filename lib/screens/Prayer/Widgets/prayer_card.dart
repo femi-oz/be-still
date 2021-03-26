@@ -104,8 +104,17 @@ class _PrayerCardState extends State<PrayerCard> {
       String selectedHour,
       String selectedMinute) async {
     await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(frequency, scheduledDate, selectedDay, period,
-            selectedHour, selectedMinute, reminder.id);
+        .updateLocalNotification(
+      frequency,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      reminder.id,
+      userId,
+      notificationText,
+    );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     Navigator.of(context).pop();

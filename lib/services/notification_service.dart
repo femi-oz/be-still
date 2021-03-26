@@ -268,6 +268,7 @@ class NotificationService {
     String selectedHour,
     String selectedMinute,
     String notificationId,
+    String notificationText,
   ) async {
     String deviceId;
     try {
@@ -278,6 +279,7 @@ class NotificationService {
         'SelectedHour': selectedHour,
         'SelectedMinute': selectedMinute,
         'ScheduledDate': scheduledDate,
+        'NotificationText': notificationText,
       });
     } catch (e) {
       locator<LogService>().createLog(
