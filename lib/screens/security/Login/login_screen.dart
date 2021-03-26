@@ -136,6 +136,39 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  var verificationSent = false;
+  var verificationSendMessage = 'Resend verification email';
+  var needsVerification = false;
+
+  void _resendVerification() async {
+    try {
+      await BeStilDialog.showLoading(context, '');
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .sendEmailVerification();
+      verificationSent = true;
+      setState(() => verificationSendMessage =
+          'Email verification sent. Please check your email');
+      BeStilDialog.hideLoading(context);
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .signOut();
+    } on HttpException catch (e) {
+      verificationSent = false;
+      setState(() => verificationSendMessage =
+          'Resend verification email failed. Please try again');
+      BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+    } catch (e) {
+      verificationSent = false;
+      setState(() => verificationSendMessage =
+          'Resend verification email failed. Please try again');
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          _usernameController.text, 'LOGIN/screen/_resendVerification');
+      BeStilDialog.hideLoading(context);
+      BeStillSnackbar.showInSnackBar(
+          message: 'An error occured. Please try again', key: _scaffoldKey);
+    }
+  }
+
   void _login() async {
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
@@ -159,11 +192,15 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
     } on HttpException catch (e) {
+      needsVerification =
+          Provider.of<AuthenticationProvider>(context, listen: false)
+              .needsVerification;
       BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .signOut();
+      needsVerification =
+          Provider.of<AuthenticationProvider>(context, listen: false)
+              .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
@@ -271,23 +308,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SizedBox(height: 8),
                                     _buildActions(),
                                     SizedBox(height: 10),
-                                    InkWell(
-                                      child: Container(
-                                        padding: EdgeInsets.only(
-                                            left: 40, right: 60),
-                                        child: Settings.lastUser != ''
-                                            ? Text(
-                                                !Settings.enableLocalAuth
-                                                    ? 'Enable Face/Touch ID'
-                                                    : 'Disable Face/Touch ID',
-                                                style: TextStyle(
-                                                    color:
-                                                        AppColors.lightBlue4),
-                                              )
-                                            : Container(),
-                                      ),
-                                      onTap: _toggleBiometrics,
-                                    )
+                                    if (isBioMetricAvailable)
+                                      InkWell(
+                                        child: Container(
+                                          // padding: EdgeInsets.only(
+                                          //     left: 40, right: 60),
+                                          child: Settings.lastUser != ''
+                                              ? Text(
+                                                  !Settings.enableLocalAuth
+                                                      ? 'Enable Face/Touch ID'
+                                                      : 'Disable Face/Touch ID',
+                                                  style: TextStyle(
+                                                      color:
+                                                          AppColors.lightBlue4),
+                                                )
+                                              : Container(),
+                                        ),
+                                        onTap: _toggleBiometrics,
+                                      )
                                     // showFingerPrint || showFaceId
                                     //     ? _bioButton()
                                     //     : Container(),
@@ -311,14 +349,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _bioButton() {
     return Container(
+      // height: 30,
       padding: EdgeInsets.only(
         left: 40,
       ),
       child: IconButton(
-        icon: Icon(showFingerPrint ? Icons.fingerprint : Icons.face,
+        icon: Icon(
+            showFingerPrint && showFaceId
+                ? Icons.face
+                : !showFingerPrint && showFaceId
+                    ? Icons.face
+                    : Icons.fingerprint,
             color: AppColors.lightBlue4),
         onPressed: () => _biologin(),
-        iconSize: 50,
+        iconSize: 40,
       ),
     );
   }
@@ -400,6 +444,20 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildFooter() {
     return Column(
       children: <Widget>[
+        if (needsVerification && !verificationSent)
+          InkWell(
+            onTap: () => _resendVerification(),
+            child: Text(
+              verificationSendMessage,
+              style: AppTextStyles.regularText13,
+            ),
+          ),
+        if (verificationSent)
+          Text(
+            verificationSendMessage,
+            style: AppTextStyles.regularText13,
+          ),
+        SizedBox(height: 20),
         BsRaisedButton(onPressed: _login),
         // Settings.enableLocalAuth
         //     ? BsRaisedButton(
