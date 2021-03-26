@@ -48,7 +48,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   int snoozeDuration;
   LocalNotificationModel reminder;
   Widget _buildMenu() {
-    return PrayerMenu(context, hasReminder, reminder);
+    return PrayerMenu(context, hasReminder, reminder, () => updateUI());
   }
 
   String reminderString;
@@ -69,6 +69,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   }
 
   bool _isInit = true;
+
+  updateUI() {
+    if (hasReminder) {
+      print('reminderString $reminderString');
+    }
+    setState(() {});
+  }
 
   BuildContext selectedContext;
   @override
@@ -140,8 +147,17 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       String selectedHour,
       String selectedMinute) async {
     await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(frequency, scheduledDate, selectedDay, period,
-            selectedHour, selectedMinute, reminder.id);
+        .updateLocalNotification(
+      frequency,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      reminder.id,
+      userId,
+      notificationText,
+    );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     Navigator.of(context).pop();

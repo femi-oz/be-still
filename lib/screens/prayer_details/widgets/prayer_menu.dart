@@ -34,9 +34,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
-  LocalNotificationModel reminder;
+  final Function updateUI;
+  final LocalNotificationModel reminder;
   @override
-  PrayerMenu(this.parentcontext, this.hasReminder, this.reminder);
+  PrayerMenu(
+      this.parentcontext, this.hasReminder, this.reminder, this.updateUI);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -200,19 +202,31 @@ class _PrayerMenuState extends State<PrayerMenu> {
         payload: jsonEncode(payload.toJson()),
         frequency: selectedFrequency,
       );
-      await storeNotification(
-        notificationText,
-        userId,
-        title,
-        description,
-        selectedFrequency,
-        scheduleDate,
-        prayerData.userPrayer.id,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-      );
+      if (widget.hasReminder)
+        _updatePrayerTime(
+          selectedDay,
+          period,
+          selectedFrequency,
+          selectedHour,
+          selectedMinute,
+          scheduleDate,
+          userId,
+          notificationText,
+        );
+      else
+        await storeNotification(
+          notificationText,
+          userId,
+          title,
+          description,
+          selectedFrequency,
+          scheduleDate,
+          prayerData.userPrayer.id,
+          selectedDay,
+          period,
+          selectedHour,
+          selectedMinute,
+        );
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -248,6 +262,33 @@ class _PrayerMenuState extends State<PrayerMenu> {
       period,
       selectedHour,
       selectedMinute,
+    );
+    await Future.delayed(Duration(milliseconds: 300));
+    BeStilDialog.hideLoading(context);
+    _goToDetails();
+  }
+
+  _updatePrayerTime(
+    String selectedDay,
+    String selectedPeriod,
+    String selectedFrequency,
+    String selectedHour,
+    String selectedMinute,
+    tz.TZDateTime scheduledDate,
+    String userId,
+    String notificationText,
+  ) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .updateLocalNotification(
+      selectedFrequency,
+      scheduledDate,
+      selectedDay,
+      selectedPeriod,
+      selectedHour,
+      selectedMinute,
+      widget.reminder.id,
+      userId,
+      notificationText,
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
@@ -399,6 +440,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   _goToDetails() {
+    widget.updateUI();
     Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
   }
 
@@ -487,18 +529,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 selectedDay,
                                 period,
                                 prayerData),
-                        selectedFrequency: widget.reminder != null
+                        selectedFrequency: widget.hasReminder
                             ? widget.reminder.frequency
                             : null,
-                        selectedHour: widget.reminder != null
+                        selectedHour: widget.hasReminder
                             ? int.parse(widget.reminder.selectedHour)
                             : null,
-                        selectedMinute: widget.reminder != null
+                        selectedMinute: widget.hasReminder
                             ? int.parse(widget.reminder.selectedMinute)
                             : null,
-                        selectedPeriod: widget.reminder != null
-                            ? widget.reminder.period
-                            : null,
+                        selectedPeriod:
+                            widget.hasReminder ? widget.reminder.period : null,
                       );
                     },
                   ),

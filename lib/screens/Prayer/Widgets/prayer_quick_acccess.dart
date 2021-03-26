@@ -205,12 +205,16 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddPrayer(
-                                    isEdit: true,
-                                    prayerData: widget.prayerData,
-                                    isGroup: false)),
+                              builder: (context) => AddPrayer(
+                                isEdit: true,
+                                prayerData: widget.prayerData,
+                                isGroup: false,
+                              ),
+                            ),
                           ),
-                      'Edit'),
+                      'Edit',
+                      widget.prayerData.prayer.isAnswer ||
+                          widget.prayerData.userPrayer.isArchived),
                   _buildAction(
                     320,
                     widget.prayerData.userPrayer.isFavorite
@@ -222,6 +226,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     widget.prayerData.userPrayer.isFavorite
                         ? 'Unfavourite'
                         : 'Favourite',
+                    false,
                   ),
                   _buildAction(
                     355,
@@ -238,6 +243,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       },
                     ),
                     'Share',
+                    widget.prayerData.prayer.isAnswer ||
+                        widget.prayerData.userPrayer.isArchived,
                   ),
                   _buildAction(
                     35,
@@ -254,6 +261,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                       },
                     ),
                     'Delete',
+                    false,
                   ),
                   _buildAction(
                     90,
@@ -266,6 +274,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                     widget.prayerData.prayer.isAnswer
                         ? 'Mark As Unanswered'
                         : 'Mark As Answered',
+                    false,
                   ),
                   Container(
                     height: 25,
@@ -287,7 +296,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     );
   }
 
-  _buildAction(double degree, IconData icon, Function onClick, String text) {
+  _buildAction(double degree, IconData icon, Function onClick, String text,
+      bool isDisabled) {
     return Transform.translate(
       offset: Offset.fromDirection(
           getRadiansFromDegree(degree), degOneTranslationAnimation.value * 60),
@@ -297,13 +307,13 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
               ..scale(degOneTranslationAnimation.value),
         alignment: Alignment.center,
         child: InkWell(
-          onTap: onClick,
+          onTap: isDisabled ? null : onClick,
           child: Row(
             children: [
               CircularButton(
                 icon: Icon(
                   icon,
-                  color: AppColors.lightBlue4,
+                  color: isDisabled ? AppColors.grey : AppColors.lightBlue4,
                   size: 18,
                 ),
                 onClick: null,
