@@ -14,6 +14,7 @@ class Settings {
   static const String SNOOZE_DURATION = 'snooze_duration';
   static const String SNOOZE_INTERVAL = 'snooze_interval';
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth_';
+  static const String SET_ENABLE_LOCAL_AUTH = 'set_enable_local_auth_';
   static const String CONTACT_PERMISSION = 'contact_permission';
   static const String BACKGROUND_TIME = 'background_time';
   static const String APP_INIT = 'app_init';
@@ -69,6 +70,12 @@ class Settings {
 
   static bool get enableLocalAuth =>
       sharedPrefs.getBool(ENABLE_LOCAL_AUTH) ?? false;
+
+  static set setenableLocalAuth(bool isAuthEnabled) =>
+      sharedPrefs.setBool(SET_ENABLE_LOCAL_AUTH, isAuthEnabled);
+
+  static bool get setenableLocalAuth =>
+      sharedPrefs.getBool(SET_ENABLE_LOCAL_AUTH) ?? false;
 
   static set isAppInit(bool isAppInit) =>
       sharedPrefs.setBool(APP_INIT, isAppInit);
