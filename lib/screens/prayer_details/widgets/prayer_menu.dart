@@ -34,8 +34,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
+  LocalNotificationModel reminder;
   @override
-  PrayerMenu(this.parentcontext, this.hasReminder);
+  PrayerMenu(this.parentcontext, this.hasReminder, this.reminder);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -199,8 +200,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
         payload: jsonEncode(payload.toJson()),
         frequency: selectedFrequency,
       );
-      await storeNotification(notificationText, userId, title, description,
-          selectedFrequency, scheduleDate, prayerData);
+      await storeNotification(
+        notificationText,
+        userId,
+        title,
+        description,
+        selectedFrequency,
+        scheduleDate,
+        prayerData.userPrayer.id,
+        selectedDay,
+        period,
+        selectedHour,
+        selectedMinute,
+      );
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -209,30 +221,33 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    CombinePrayerStream prayerData,
-  ) async {
+      String notificationText,
+      String userId,
+      String title,
+      String description,
+      String frequency,
+      tz.TZDateTime scheduledDate,
+      String prayerid,
+      String selectedDay,
+      String period,
+      String selectedHour,
+      String selectedMinute) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-      LocalNotification.localNotificationId,
-      prayerData.prayer.id,
+      LocalNotification.localNotificationID,
+      prayerid,
       notificationText,
       userId,
-      prayerData.prayer.id,
+      prayerid,
       title,
       description,
       frequency,
       NotificationType.reminder,
       scheduledDate,
-      '',
-      '',
-      '',
-      '',
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
@@ -460,7 +475,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     builder: (BuildContext context) {
                       return ReminderPicker(
                         hideActionuttons: false,
-                        frequency: reminderInterval,
+                        frequency: LocalNotification.reminderInterval,
                         reminderDays: LocalNotification.reminderDays,
                         onCancel: () => Navigator.of(context).pop(),
                         onSave: (selectedFrequency, selectedHour,
@@ -472,6 +487,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 selectedDay,
                                 period,
                                 prayerData),
+                        selectedFrequency: widget.reminder != null
+                            ? widget.reminder.frequency
+                            : null,
+                        selectedHour: widget.reminder != null
+                            ? int.parse(widget.reminder.selectedHour)
+                            : null,
+                        selectedMinute: widget.reminder != null
+                            ? int.parse(widget.reminder.selectedMinute)
+                            : null,
+                        selectedPeriod: widget.reminder != null
+                            ? widget.reminder.period
+                            : null,
                       );
                     },
                   ),

@@ -1,6 +1,6 @@
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
+import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -214,7 +214,7 @@ class CustomDrawer extends StatelessWidget {
                           ),
                           ListTile(
                             onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(PrayerMode.routeName),
+                                .pushReplacementNamed(PrayerTime.routeName),
                             title: Text("PRAY",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),

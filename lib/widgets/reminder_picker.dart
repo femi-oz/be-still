@@ -10,6 +10,11 @@ class ReminderPicker extends StatefulWidget {
   final List<String> frequency;
   final List<String> reminderDays;
   final bool hideActionuttons;
+  final int selectedDay;
+  final int selectedMinute;
+  final int selectedHour;
+  final String selectedPeriod;
+  final String selectedFrequency;
 
   @override
   ReminderPicker({
@@ -18,6 +23,11 @@ class ReminderPicker extends StatefulWidget {
     this.reminderDays,
     this.hideActionuttons,
     this.onCancel,
+    this.selectedDay = DateTime.wednesday,
+    this.selectedHour = 6,
+    this.selectedMinute = 30,
+    this.selectedPeriod = PeriodOfDay.pm,
+    this.selectedFrequency = Frequency.daily,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
@@ -25,11 +35,11 @@ class ReminderPicker extends StatefulWidget {
 class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
-  String selectedFrequency = Frequency.daily;
-  String selectedDay;
-  String selectedPeriod = PeriodOfDay.pm;
-  int selectedHour = 3;
-  int selectedMinute = 30;
+  String selectedFrequency;
+  int selectedDay;
+  String selectedPeriod;
+  int selectedHour;
+  int selectedMinute;
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
@@ -37,7 +47,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   @override
   void initState() {
-    selectedDay = widget.reminderDays[DateTime.now().weekday - 1];
+    selectedHour = widget.selectedHour != null ? widget.selectedHour : 6;
+    selectedMinute = widget.selectedMinute != null ? widget.selectedMinute : 30;
+    selectedDay =
+        widget.selectedDay != null ? widget.selectedDay : DateTime.wednesday;
+    selectedPeriod =
+        widget.selectedPeriod != null ? widget.selectedPeriod : PeriodOfDay.pm;
+    selectedFrequency = widget.selectedFrequency != null
+        ? widget.selectedFrequency
+        : Frequency.daily;
+    // selectedDay = widget.reminderDays[DateTime.now().weekday - 1];
     super.initState();
   }
 
@@ -47,7 +66,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         FixedExtentScrollController(
             initialItem: widget.frequency.indexOf(selectedFrequency));
     FixedExtentScrollController daysController = FixedExtentScrollController(
-        initialItem: widget.reminderDays.indexOf(selectedDay));
+        initialItem:
+            widget.reminderDays.indexOf(widget.reminderDays[selectedDay - 1]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
     FixedExtentScrollController hourController = FixedExtentScrollController(
@@ -112,8 +132,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     backgroundColor: Colors.transparent,
                                     scrollController: daysController,
                                     itemExtent: itemExtent,
-                                    onSelectedItemChanged: (i) => setState(() =>
-                                        selectedDay = widget.reminderDays[i]),
+                                    onSelectedItemChanged: (i) =>
+                                        setState(() => selectedDay = i + 1),
                                     children: <Widget>[
                                       ...widget.reminderDays.map(
                                         (r) => Align(
@@ -245,8 +265,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               : '$selectedHour';
                           // var date =
                           //     '$selectedHour:$selectedMinute $selectedPeriod';
-                          widget.onSave(selectedFrequency, hour, min,
-                              selectedDay, selectedPeriod);
+                          widget.onSave(
+                              selectedFrequency,
+                              hour,
+                              min,
+                              widget.reminderDays[selectedDay - 1],
+                              selectedPeriod);
                         },
                         length: 2,
                         index: 0,
