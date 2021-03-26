@@ -622,9 +622,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         CustomButtonGroup(
                                           title: 'SNOOZE',
                                           onSelected: (_) {
-                                            // var date =
-                                            //     '$selectedHour:$selectedMinute $selectedPeriod';
                                             _snoozePrayer(prayerData);
+                                          },
+                                          length: 2,
+                                          index: 0,
+                                        ),
+                                        CustomButtonGroup(
+                                          title: 'CANCEL',
+                                          onSelected: (_) {
+                                            Navigator.of(context).pop();
                                           },
                                           length: 2,
                                           index: 0,
