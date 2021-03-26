@@ -172,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
+
     await BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
@@ -189,6 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
+
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
     } on HttpException catch (e) {
@@ -215,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
-      await BeStilDialog.showLoading(context, 'Authenticating');
+      // await BeStilDialog.showLoading(context, 'Authenticating');
 
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
@@ -233,29 +235,111 @@ class _LoginScreenState extends State<LoginScreen> {
         (Route<dynamic> route) => false,
       );
     } on HttpException catch (e) {
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .signOut();
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
   }
 
   _toggleBiometrics() {
-    if (!Settings.enableLocalAuth) {
-      setState(() {
-        Settings.enableLocalAuth = true;
-      });
-    } else {
+    if (Settings.enableLocalAuth) {
       setState(() {
         Settings.enableLocalAuth = false;
+        Settings.setenableLocalAuth = false;
       });
+    } else {
+      _openLogoutConfirmation(context);
+      Settings.setenableLocalAuth = true;
     }
+  }
+
+  _openLogoutConfirmation(BuildContext context) {
+    AlertDialog dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.2,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Text(
+                'Please login with your password to enable biometrics.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue4,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            // GestureDetector(
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .50,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'OK',
+                            style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   @override
