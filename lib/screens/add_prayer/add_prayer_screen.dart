@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -146,7 +147,10 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
     _descriptionController.text += tmpText;
-    print(_descriptionController.text.split('@'));
+    _descriptionController.text = _descriptionController.text
+        .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
+    // print(_descriptionController.text.split('@'));
+    print(s.displayName);
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));

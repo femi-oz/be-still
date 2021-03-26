@@ -56,6 +56,8 @@ dependencies:
   vibrate: ^0.0.4
   cron: ^0.3.0
   sentry_flutter: ^4.0.6
+  extended_text_field: ^6.0.1
+
 
 
 

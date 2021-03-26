@@ -246,7 +246,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: widget.prayerData.tags.map((tag) {
                                       return Text(
-                                        '${tag.displayName.toUpperCase()}, ',
+                                        ' ${tag.displayName}',
                                         style: TextStyle(
                                           color: AppColors.red,
                                           fontSize: 10,
