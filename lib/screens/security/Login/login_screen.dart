@@ -48,9 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showBiometrics = false;
   bool showSuffix = false;
 
-  Future<bool> _isBiometricAvailable() async {
+  Future<void> _isBiometricAvailable() async {
     try {
-      isBioMetricAvailable = await _localAuthentication.canCheckBiometrics;
+      var _isBioMetricAvailable = await _localAuthentication.canCheckBiometrics;
+      setState(() => isBioMetricAvailable = _isBioMetricAvailable);
     } on PlatformException catch (e) {
       print(e);
     }
@@ -58,8 +59,6 @@ class _LoginScreenState extends State<LoginScreen> {
     isBioMetricAvailable
         ? _getListOfBiometricTypes()
         : print('No biometrics available');
-
-    return isBioMetricAvailable;
   }
 
   // To retrieve the list of biometric types
@@ -395,19 +394,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                     if (isBioMetricAvailable)
                                       InkWell(
                                         child: Container(
-                                          // padding: EdgeInsets.only(
-                                          //     left: 40, right: 60),
-                                          child: Settings.lastUser != ''
-                                              ? Text(
-                                                  !Settings.enableLocalAuth
-                                                      ? 'Enable Face/Touch ID'
-                                                      : 'Disable Face/Touch ID',
-                                                  style: TextStyle(
-                                                      color:
-                                                          AppColors.lightBlue4),
-                                                )
-                                              : Container(),
-                                        ),
+                                            // padding: EdgeInsets.only(
+                                            //     left: 40, right: 60),
+                                            child: Text(
+                                          !Settings.enableLocalAuth
+                                              ? 'Enable Face/Touch ID'
+                                              : 'Disable Face/Touch ID',
+                                          style: TextStyle(
+                                              color: AppColors.lightBlue4),
+                                        )),
                                         onTap: _toggleBiometrics,
                                       )
                                     // showFingerPrint || showFaceId
