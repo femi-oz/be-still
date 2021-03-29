@@ -52,17 +52,35 @@ class AuthenticationService {
     }
   }
 
-  Future signIn({
+  Future<Map<String, Object>> signIn({
     String email,
     String password,
   }) async {
+    var needsVerification = false;
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      final user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (!user.user.emailVerified) {
+        needsVerification = true;
+        var e = FirebaseAuthException(
+            code: 'not-verified', message: 'not-verified');
+        throw HttpException(e.code);
+      }
+      return {'error': null, 'needsVerification': needsVerification};
+    } catch (e) {
+      return {'error': e, 'needsVerification': needsVerification};
+    }
+  }
+
+  Future sendEmailVerification() async {
+    try {
+      await _firebaseAuth.currentUser.sendEmailVerification();
     } catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code ?? null);
-      await locator<LogService>()
-          .createLog(message, email, 'AUTHENTICATION/service/signIn');
+      await locator<LogService>().createLog(
+          message,
+          _firebaseAuth.currentUser.email,
+          'AUTHENTICATION/service/sendEmailVerification');
       throw HttpException(message);
     }
   }
@@ -88,6 +106,7 @@ class AuthenticationService {
         lastName,
         dob,
       );
+      await sendEmailVerification();
     } catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>()

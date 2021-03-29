@@ -168,6 +168,30 @@ class NotificationProvider with ChangeNotifier {
         selectedMinute);
   }
 
+  Future<void> updateLocalNotification(
+    String frequency,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+    String notificationId,
+    String userId,
+    String notificationText,
+  ) async {
+    await _notificationService.updateLocalNotification(
+        frequency,
+        scheduledDate,
+        selectedDay,
+        period,
+        selectedHour,
+        selectedMinute,
+        notificationId,
+        notificationText);
+    await setLocalNotifications(userId);
+    notifyListeners();
+  }
+
   Future<void> deleteLocalNotification(String notificationId) async {
     var notification =
         _localNotifications.firstWhere((e) => e.id == notificationId);
@@ -177,41 +201,4 @@ class NotificationProvider with ChangeNotifier {
 
   Future<void> deletePrayerTime(String prayerTimeId) async =>
       await _notificationService.deletePrayerTime(prayerTimeId);
-
-  Future<void> updateLocalNotification(
-      String selectedDay,
-      String selectedPeriod,
-      String selectedFrequency,
-      String selectedHour,
-      String selectedMinute,
-      String notificationId) async {
-    await _notificationService.updatePrayerTimeNotification(
-        selectedDay,
-        selectedPeriod,
-        selectedFrequency,
-        selectedHour,
-        selectedMinute,
-        notificationId);
-  }
-
-  //   Future<void> addPrayerTime(
-  //     String selectedDay,
-  //     String selectedFrequency,
-  //     String period,
-  //     String selectedHour,
-  //     String selectedMinute,
-  //     String userId) async =>
-  // await _notificationService.addPrayerTime(selectedDay, selectedFrequency, period,
-  //     selectedHour, selectedMinute, userId);
-
-  // Future acceptGroupInvite(
-  //     String groupId, String userId, String name, String email) async {
-  //   return await _notificationService.acceptGroupInvite(
-  //       groupId, userId, name, email);
-  // }
-
-  // Future newPrayerGroupNotification(String prayerId, String groupId) async {
-  //   return await _notificationService.newPrayerGroupNotification(
-  //       prayerId, groupId);
-  // }
 }

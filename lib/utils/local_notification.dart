@@ -10,7 +10,7 @@ class LocalNotification {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   static String reminderId;
-  static int localNotificationId;
+  static int localNotificationID;
   static List<String> reminderDays = [
     DaysOfWeek.mon,
     DaysOfWeek.tue,
@@ -19,6 +19,13 @@ class LocalNotification {
     DaysOfWeek.fri,
     DaysOfWeek.sat,
     DaysOfWeek.sun,
+  ];
+  static List<String> reminderInterval = [
+    // 'Hourly',
+    Frequency.daily,
+    Frequency.weekly,
+    // 'Monthly',
+    // 'Yearly'
   ];
 
   static Future<void> setNotificationsOnNewDevice(context) async {
@@ -54,15 +61,21 @@ class LocalNotification {
     @required payload,
     @required String frequency,
     @required BuildContext context,
+    int localNotificationId,
   }) async {
-    final localNots = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    final allIds = localNots.map((e) => e.localNotificationId).toList();
+    if (localNotificationId != null)
+      localNotificationID = localNotificationId;
+    else {
+      final localNots =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications;
+      final allIds = localNots.map((e) => e.localNotificationId).toList();
 
-    localNotificationId =
-        allIds.length > 0 ? allIds.reduce((a, b) => a > b ? a : b) + 1 : 0;
+      localNotificationID =
+          allIds.length > 0 ? allIds.reduce((a, b) => a > b ? a : b) + 1 : 0;
+    }
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-      localNotificationId,
+      localNotificationID,
       title,
       description,
       scheduledDate,

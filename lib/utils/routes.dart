@@ -9,7 +9,7 @@ import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
-import 'package:be_still/screens/pray_mode/pray_mode_screen.dart';
+import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/security/local_auth/local_auth.dart';
@@ -23,7 +23,7 @@ final routes = {
   CreateAccountScreen.routeName: (context) => CreateAccountScreen(),
   ForgetPassword.routeName: (context) => ForgetPassword(),
   PrayerDetails.routeName: (context) => PrayerDetails(),
-  PrayerMode.routeName: (context) => PrayerMode(),
+  PrayerTime.routeName: (context) => PrayerTime(),
   AddUpdate.routeName: (context) => AddUpdate(),
   GrowMyPrayerLifeScreen.routeName: (context) => GrowMyPrayerLifeScreen(),
   RecommenededBibles.routeName: (context) => RecommenededBibles(),

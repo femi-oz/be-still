@@ -10,6 +10,7 @@ import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
@@ -44,6 +45,16 @@ class _EntryScreenState extends State<EntryScreen> {
   final cron = Cron();
 
   Future<void> _preLoadData() async {
+    if (Settings.setenableLocalAuth) {
+      setState(() {
+        Settings.enableLocalAuth = true;
+      });
+    } else {
+      setState(() {
+        Settings.enableLocalAuth = false;
+      });
+    }
+
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser?.id;
     if (userId != null)

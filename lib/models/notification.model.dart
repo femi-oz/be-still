@@ -1,4 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -115,10 +116,17 @@ class LocalNotificationModel {
         payload = snapshot.data()['Payload'],
         notificationText = snapshot.data()['NotificationText'],
         localNotificationId = snapshot.data()['LocalNotificationId'],
-        selectedDay = snapshot.data()['SelectedDay'] ?? '',
-        period = snapshot.data()['Period'] ?? '',
-        selectedHour = snapshot.data()['SelectedHour'] ?? '',
-        selectedMinute = snapshot.data()['SelectedMinute'] ?? '';
+        selectedDay = snapshot.data()['SelectedDay'] != ''
+            ? snapshot.data()['SelectedDay']
+            : DaysOfWeek.wed,
+        period =
+            snapshot.data()['Period'] != '' ? snapshot.data()['Period'] : 'pm',
+        selectedHour = snapshot.data()['SelectedHour'] != ''
+            ? snapshot.data()['SelectedHour']
+            : '06',
+        selectedMinute = snapshot.data()['SelectedMinute'] != ''
+            ? snapshot.data()['SelectedMinute']
+            : '40';
 
   Map<String, dynamic> toJson() {
     return {

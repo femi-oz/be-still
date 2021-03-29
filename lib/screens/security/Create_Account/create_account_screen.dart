@@ -6,6 +6,7 @@ import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/security/create_account/widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -113,7 +114,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         await Provider.of<NotificationProvider>(context, listen: false)
             .setDevice(user.id);
         Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName,
+          CreateAccountSuccess.routeName,
           (Route<dynamic> route) => false,
         );
       }

@@ -130,28 +130,6 @@ class NotificationService {
     }
   }
 
-  updatePrayerTimeNotification(
-      String selectedDay,
-      String selectedPeriod,
-      String selectedFrequency,
-      String selectedHour,
-      String selectedMinute,
-      String notificationId) {
-    try {
-      _localNotificationCollectionReference.doc(notificationId).update({
-        'SelectedDay': selectedDay,
-        'Period': selectedPeriod,
-        'Frequency': selectedFrequency,
-        'Minute': selectedMinute,
-        'Hour': selectedHour
-      });
-    } catch (e) {
-      locator<LogService>().createLog(e.message, notificationId,
-          'NOTIFICATION/service/addPushNotification');
-      throw HttpException(e.message);
-    }
-  }
-
   addSMS({
     String senderId,
     String message,
@@ -275,11 +253,37 @@ class NotificationService {
                   selectedMinute: selectedMinute,
                   period: period)
               .toJson());
-      // await addPrayerTime(selectedDay, frequency, period, selectedHour,
-      //     selectedMinute, userId, _notificationId);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, deviceId, 'NOTIFICATION/service/addLocalNotification');
+      throw HttpException(e.message);
+    }
+  }
+
+  updateLocalNotification(
+    String frequency,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+    String notificationId,
+    String notificationText,
+  ) async {
+    String deviceId;
+    try {
+      _localNotificationCollectionReference.doc(notificationId).update({
+        'Frequency': frequency,
+        'Period': period,
+        'SelectedDay': selectedDay,
+        'SelectedHour': selectedHour,
+        'SelectedMinute': selectedMinute,
+        'ScheduledDate': scheduledDate,
+        'NotificationText': notificationText,
+      });
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, deviceId, 'NOTIFICATION/service/updateLocalNotification');
       throw HttpException(e.message);
     }
   }
