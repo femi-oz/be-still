@@ -349,7 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
           key: _scaffoldKey,
           body: Container(
-            height: double.infinity,
+            height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
