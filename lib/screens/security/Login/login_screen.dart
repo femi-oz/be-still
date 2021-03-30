@@ -47,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showFaceId = false;
   bool showBiometrics = false;
   bool showSuffix = false;
+  bool _autoValidate = false;
 
   Future<void> _isBiometricAvailable() async {
     try {
@@ -169,6 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -453,7 +455,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidate: _autoValidate,
       key: _formKey,
       child: Column(
         children: <Widget>[

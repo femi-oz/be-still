@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
@@ -132,49 +130,49 @@ class _PrayerMenuState extends State<PrayerMenu> {
     super.initState();
   }
 
-  _setDefaultSnooze() async {
-    switch (selectedInterval) {
-      // case 'Minutes':
-      //   minutes = 1;
-      //   break;
-      case 'Days':
-        minutes = 1440;
-        break;
-      case 'Weeks':
-        minutes = 10080;
-        break;
-      case 'Months':
-        minutes = 43800;
-        break;
-      default:
-    }
+  // _setDefaultSnooze() async {
+  //   switch (selectedInterval) {
+  //     // case 'Minutes':
+  //     //   minutes = 1;
+  //     //   break;
+  //     case 'Days':
+  //       minutes = 1440;
+  //       break;
+  //     case 'Weeks':
+  //       minutes = 10080;
+  //       break;
+  //     case 'Months':
+  //       minutes = 43800;
+  //       break;
+  //     default:
+  //   }
 
-    var settingsId =
-        Provider.of<SettingsProvider>(context, listen: false).settings.id;
+  //   var settingsId =
+  //       Provider.of<SettingsProvider>(context, listen: false).settings.id;
 
-    var e = int.parse(selectedDuration) * minutes;
-    try {
-      BeStilDialog.showLoading(
-        context,
-      );
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSettings(
-              Provider.of<UserProvider>(context, listen: false).currentUser.id,
-              key: SettingsKey.defaultSnoozeDurationMins,
-              value: e,
-              settingsId: settingsId);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-    }
-  }
+  //   var e = int.parse(selectedDuration) * minutes;
+  //   try {
+  //     BeStilDialog.showLoading(
+  //       context,
+  //     );
+  //     await Provider.of<SettingsProvider>(context, listen: false)
+  //         .updateSettings(
+  //             Provider.of<UserProvider>(context, listen: false).currentUser.id,
+  //             key: SettingsKey.defaultSnoozeDurationMins,
+  //             value: e,
+  //             settingsId: settingsId);
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //   } on HttpException catch (e) {
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //     BeStilDialog.showErrorDialog(context, e.message);
+  //   } catch (e) {
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     BeStilDialog.hideLoading(context);
+  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+  //   }
+  // }
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
       period, CombinePrayerStream prayerData) async {

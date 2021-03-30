@@ -42,8 +42,10 @@ class _AddPrayerState extends State<AddPrayer> {
   List<String> tags = [];
   String tagText = '';
   List<Contact> contacts = [];
+  bool _autoValidate = false;
 
   Future<void> _save() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -200,7 +202,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     Stack(
                       children: [
                         Form(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          // autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autovalidate: _autoValidate,
                           key: _formKey,
                           child: CustomInput(
                             label: 'Prayer description',
