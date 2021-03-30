@@ -45,8 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   List<BiometricType> listOfBiometrics;
   bool showFingerPrint = false;
   bool showFaceId = false;
-  bool showBiometrics = false;
-  bool showSuffix = false;
+  bool showSuffix = true;
 
   Future<void> _isBiometricAvailable() async {
     try {
@@ -66,9 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
-        this.showBiometrics = true;
         listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
         setState(() {
+          showSuffix = false;
           listOfBiometrics.forEach((e) {
             if (e.toString() == 'BiometricType.fingerprint') {
               showFingerPrint = true;
@@ -78,7 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               showFaceId = false;
               showFingerPrint = false;
-              this.showSuffix = false;
             }
           });
         });
@@ -228,20 +226,21 @@ class _LoginScreenState extends State<LoginScreen> {
           Settings.rememberMe ? _passwordController.text : '';
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        EntryScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
-    } on HttpException catch (e) {
       // BeStilDialog.hideLoading(context);
+      await setRouteDestination();
+    } on HttpException catch (e) {
+      needsVerification =
+          Provider.of<AuthenticationProvider>(context, listen: false)
+              .needsVerification;
+      BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .signOut();
+      needsVerification =
+          Provider.of<AuthenticationProvider>(context, listen: false)
+              .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      // BeStilDialog.hideLoading(context);
+      BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
@@ -252,10 +251,12 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         Settings.enableLocalAuth = false;
         Settings.setenableLocalAuth = false;
+        showSuffix = true;
       });
     } else {
       _openLogoutConfirmation(context);
       Settings.setenableLocalAuth = true;
+      showSuffix = false;
     }
   }
 

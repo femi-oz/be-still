@@ -118,10 +118,12 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
-      setState(() => tagText =
-          tags.length > 0 && tags[tags.length - 1].startsWith('@')
-              ? tags[tags.length - 1]
-              : '');
+      setState(() {
+        tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
+            ? tags[tags.length - 1]
+            : '';
+        // tagText = tagText.replaceAll('@', '');
+      });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -141,16 +143,20 @@ class _AddPrayerState extends State<AddPrayer> {
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
     tagText = '';
-    _descriptionController.text +=
+    String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
+    _descriptionController.text += tmpText;
+    _descriptionController.text = _descriptionController.text
+        .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
+
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
     setState(() => _descriptionController.selection =
         TextSelection.collapsed(offset: _descriptionController.text.length));
-    // print(contacts.length);
 
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
+      print(contacts.length);
     }
   }
 
