@@ -209,8 +209,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _biologin() async {
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    // if (!_formKey.currentState.validate()) return null;
+    // _formKey.currentState.save();
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();

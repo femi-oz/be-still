@@ -154,13 +154,13 @@ class _AddPrayerState extends State<AddPrayer> {
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
+
     setState(() {
       _descriptionController.selection =
           TextSelection.collapsed(offset: _descriptionController.text.length);
-      // if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
-      //   contacts = [...contacts, s];
-      // }
-      contacts = [...contacts, s];
+      if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+        contacts = [...contacts, s];
+      }
     });
   }
 
