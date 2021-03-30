@@ -75,11 +75,14 @@ class _AddPrayerState extends State<AddPrayer> {
                   builder: (context) => EntryScreen(screenNumber: 0)));
           // }
         } else {
+          print(contacts.length);
+
+          print(widget.prayerData.tags.length);
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
-          for (int i = 0; i < widget.prayerData.tags.length; i++)
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .removePrayerTag(widget.prayerData.tags[i].id);
+          // for (int i = 0; i < widget.prayerData.tags.length; i++)
+          //   await Provider.of<PrayerProvider>(context, listen: false)
+          //       .removePrayerTag(widget.prayerData.tags[i].id);
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text,
@@ -151,13 +154,14 @@ class _AddPrayerState extends State<AddPrayer> {
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
-    setState(() => _descriptionController.selection =
-        TextSelection.collapsed(offset: _descriptionController.text.length));
 
-    if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
-      contacts = [...contacts, s];
-      print(contacts.length);
-    }
+    setState(() {
+      _descriptionController.selection =
+          TextSelection.collapsed(offset: _descriptionController.text.length);
+      if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+        contacts = [...contacts, s];
+      }
+    });
   }
 
   @override

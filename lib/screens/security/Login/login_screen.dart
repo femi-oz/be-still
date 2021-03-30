@@ -209,8 +209,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _biologin() async {
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    // if (!_formKey.currentState.validate()) return null;
+    // _formKey.currentState.save();
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
@@ -349,7 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
           key: _scaffoldKey,
           body: Container(
-            height: double.infinity,
+            height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
