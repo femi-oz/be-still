@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:extended_text_field/extended_text_field.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -149,17 +148,15 @@ class _AddPrayerState extends State<AddPrayer> {
     _descriptionController.text += tmpText;
     _descriptionController.text = _descriptionController.text
         .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
-    // print(_descriptionController.text.split('@'));
-    print(s.displayName);
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
     setState(() => _descriptionController.selection =
         TextSelection.collapsed(offset: _descriptionController.text.length));
-    // print(contacts.length);
 
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
+      print(contacts.length);
     }
   }
 
