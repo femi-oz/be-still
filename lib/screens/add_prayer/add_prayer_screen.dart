@@ -111,7 +111,9 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> getContacts() async {
     if (Settings.enabledContactPermission) {
-      localContacts = await ContactsService.getContacts(withThumbnails: false);
+      var _localContacts =
+          await ContactsService.getContacts(withThumbnails: false);
+      localContacts = _localContacts.where((e) => e.displayName != null);
     }
   }
 
@@ -235,7 +237,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       ...localContacts.map((s) {
-                                        if (('@' + s.displayName)
+                                        var displayName = s.displayName ?? '';
+                                        if (('@' + displayName)
                                             .toLowerCase()
                                             .contains(tagText.toLowerCase()))
                                           return GestureDetector(
@@ -243,7 +246,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 10.0),
                                                 child: Text(
-                                                  s.displayName,
+                                                  displayName,
                                                   style: AppTextStyles
                                                       .regularText14
                                                       .copyWith(
