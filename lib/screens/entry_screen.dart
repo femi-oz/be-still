@@ -65,15 +65,15 @@ class _EntryScreenState extends State<EntryScreen> {
       });
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    final options =
-        Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-    final settings =
-        Provider.of<SettingsProvider>(context, listen: false).settings;
-    await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-        _user?.id,
-        options.contains(Status.archived) && options.length == 1
-            ? settings.archiveSortBy
-            : settings.defaultSortBy);
+    // final options =
+    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+    // final settings =
+    //     Provider.of<SettingsProvider>(context, listen: false).settings;
+    // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+    //     _user?.id,
+    //     options.contains(Status.archived) && options.length == 1
+    //         ? settings.archiveSortBy
+    //         : settings.defaultSortBy);
 
     //load settings
     await Provider.of<SettingsProvider>(context, listen: false)
