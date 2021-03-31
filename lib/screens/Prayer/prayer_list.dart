@@ -48,17 +48,17 @@ class _PrayerListState extends State<PrayerList> {
   Future<void> _getPrayers() async {
     await BeStilDialog.showLoading(context);
     try {
-      // final _user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // final options =
-      //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-      // final settings =
-      //     Provider.of<SettingsProvider>(context, listen: false).settings;
-      // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-      //     _user?.id,
-      //     options.contains(Status.archived) && options.length == 1
-      //         ? settings.archiveSortBy
-      //         : settings.defaultSortBy);
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final options =
+          Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+      final settings =
+          Provider.of<SettingsProvider>(context, listen: false).settings;
+      await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
+          _user?.id,
+          options.contains(Status.archived) && options.length == 1
+              ? settings.archiveSortBy
+              : settings.defaultSortBy);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
