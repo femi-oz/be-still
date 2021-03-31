@@ -42,13 +42,17 @@ class _AddPrayerState extends State<AddPrayer> {
   List<String> tags = [];
   String tagText = '';
   List<Contact> contacts = [];
+  List<PrayerTagModel> oldTags = [];
+  bool _autoValidate = false;
 
   Future<void> _save() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
+
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
@@ -75,11 +79,24 @@ class _AddPrayerState extends State<AddPrayer> {
                   builder: (context) => EntryScreen(screenNumber: 0)));
           // }
         } else {
+          print(contacts.length);
+
+          print(widget.prayerData.tags.length);
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
           for (int i = 0; i < widget.prayerData.tags.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(widget.prayerData.tags[i].id);
+          List<Contact> oldContacts = [];
+          oldTags.forEach((data) {
+            var contact = localContacts.firstWhere(
+                (element) => element.identifier == data.identifier,
+                orElse: () => null);
+            if (contact != null) {
+              oldContacts.add(contact);
+            }
+          });
+          contacts = [...contacts, ...oldContacts];
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text,
@@ -109,7 +126,9 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> getContacts() async {
     if (Settings.enabledContactPermission) {
-      localContacts = await ContactsService.getContacts(withThumbnails: false);
+      var _localContacts =
+          await ContactsService.getContacts(withThumbnails: false);
+      localContacts = _localContacts.where((e) => e.displayName != null);
     }
   }
 
@@ -118,10 +137,21 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
-      setState(() => tagText =
-          tags.length > 0 && tags[tags.length - 1].startsWith('@')
-              ? tags[tags.length - 1]
-              : '');
+      setState(() {
+        tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
+            ? tags[tags.length - 1]
+            : '';
+        // tagText = tagText.replaceAll('@', '');
+      });
+      oldTags = widget.prayerData.tags;
+
+      oldTags.forEach((element) {
+        if (!_descriptionController.text
+            .toLowerCase()
+            .contains(element.displayName.toLowerCase())) {
+          oldTags.remove(element);
+        }
+      });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -141,14 +171,19 @@ class _AddPrayerState extends State<AddPrayer> {
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
     tagText = '';
-    _descriptionController.text +=
+    String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
+    _descriptionController.text += tmpText;
+    _descriptionController.text = _descriptionController.text
+        .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
+
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
-    setState(() => _descriptionController.selection =
-        TextSelection.collapsed(offset: _descriptionController.text.length));
-    // print(contacts.length);
 
+    setState(() {
+      _descriptionController.selection =
+          TextSelection.collapsed(offset: _descriptionController.text.length);
+    });
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
     }
@@ -200,7 +235,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     Stack(
                       children: [
                         Form(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          // autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autovalidate: _autoValidate,
                           key: _formKey,
                           child: CustomInput(
                             label: 'Prayer description',
@@ -226,7 +262,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       ...localContacts.map((s) {
-                                        if (('@' + s.displayName)
+                                        var displayName = s.displayName ?? '';
+                                        if (('@' + displayName)
                                             .toLowerCase()
                                             .contains(tagText.toLowerCase()))
                                           return GestureDetector(
@@ -234,7 +271,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 10.0),
                                                 child: Text(
-                                                  s.displayName,
+                                                  displayName,
                                                   style: AppTextStyles
                                                       .regularText14
                                                       .copyWith(

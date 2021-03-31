@@ -45,8 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
   List<BiometricType> listOfBiometrics;
   bool showFingerPrint = false;
   bool showFaceId = false;
-  bool showBiometrics = false;
-  bool showSuffix = false;
+  bool showSuffix = true;
+  bool _autoValidate = false;
 
   Future<void> _isBiometricAvailable() async {
     try {
@@ -66,9 +66,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
-        this.showBiometrics = true;
         listOfBiometrics = await _localAuthentication.getAvailableBiometrics();
         setState(() {
+          showSuffix = false;
           listOfBiometrics.forEach((e) {
             if (e.toString() == 'BiometricType.fingerprint') {
               showFingerPrint = true;
@@ -78,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               showFaceId = false;
               showFingerPrint = false;
-              this.showSuffix = false;
             }
           });
         });
@@ -102,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    if (Settings.lastUser.isNotEmpty) {
+    if (Settings.rememberMe && Settings.lastUser.isNotEmpty) {
       var userInfo = jsonDecode(Settings.lastUser);
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
@@ -169,6 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+      Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
       await Provider.of<NotificationProvider>(context, listen: false)
@@ -211,8 +211,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _biologin() async {
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    // if (!_formKey.currentState.validate()) return null;
+    // _formKey.currentState.save();
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
@@ -223,22 +223,29 @@ class _LoginScreenState extends State<LoginScreen> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+      Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
-      BeStilDialog.hideLoading(context);
+      LocalNotification.setNotificationsOnNewDevice(context);
+
+      // BeStilDialog.hideLoading(context);
+      // await setRouteDestination();
       Navigator.of(context).pushNamedAndRemoveUntil(
         EntryScreen.routeName,
         (Route<dynamic> route) => false,
       );
     } on HttpException catch (e) {
+      // needsVerification =
+      //     Provider.of<AuthenticationProvider>(context, listen: false)
+      //         .needsVerification;
       // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .signOut();
+      // needsVerification =
+      //     Provider.of<AuthenticationProvider>(context, listen: false)
+      //         .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       // BeStilDialog.hideLoading(context);
@@ -252,10 +259,12 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         Settings.enableLocalAuth = false;
         Settings.setenableLocalAuth = false;
+        showSuffix = true;
       });
     } else {
       _openLogoutConfirmation(context);
       Settings.setenableLocalAuth = true;
+      showSuffix = false;
     }
   }
 
@@ -348,7 +357,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
           key: _scaffoldKey,
           body: Container(
-            height: double.infinity,
+            height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -411,8 +420,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 30),
                               _buildFooter(),
-                              SizedBox(height: 10),
                             ],
                           ),
                         ),
@@ -453,7 +462,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidate: _autoValidate,
       key: _formKey,
       child: Column(
         children: <Widget>[

@@ -201,6 +201,7 @@ class PrayerTagModel {
   final String phoneNumber;
   final String email;
   final String message;
+  final String identifier;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -212,6 +213,7 @@ class PrayerTagModel {
     @required this.userId,
     @required this.tagger,
     @required this.displayName,
+    @required this.identifier,
     @required this.phoneNumber,
     @required this.email,
     @required this.message,
@@ -226,6 +228,7 @@ class PrayerTagModel {
         userId = snapshot.data()['UserId'],
         tagger = snapshot.data()['Tagger'],
         displayName = snapshot.data()['DisplayName'],
+        identifier = snapshot.data()['Identifier'],
         phoneNumber = snapshot.data()['PhoneNumber'],
         message = snapshot.data()['Message'],
         email = snapshot.data()['Email'],
@@ -239,6 +242,7 @@ class PrayerTagModel {
       'UserId': userId,
       'Tagger': tagger,
       'DisplayName': displayName,
+      'Identifier': identifier,
       'PhoneNumber': phoneNumber,
       'Message': message,
       'Email': email,

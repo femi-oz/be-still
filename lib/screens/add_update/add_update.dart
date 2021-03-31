@@ -33,11 +33,11 @@ class _AddUpdateState extends State<AddUpdate> {
   BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
+  bool _autoValidate = false;
 
   _save() async {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
+    setState(() => _autoValidate = true);
+    if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
@@ -121,7 +121,8 @@ class _AddUpdateState extends State<AddUpdate> {
                   ),
                   SizedBox(height: 30.0),
                   Form(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    // autovalidateMode: AutovalidateMode.onUserInteraction,
+                    autovalidate: _autoValidate,
                     key: _formKey,
                     child: CustomInput(
                       label: "Enter your text here",
