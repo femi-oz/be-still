@@ -215,6 +215,7 @@ class PrayerService {
     try {
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
+        ///de0b6480-9211-11eb-abd0-71e75bb12b30
         final _prayerTagID = Uuid().v1();
         if (contactData[i] != null) {
           _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
@@ -230,23 +231,24 @@ class PrayerService {
               ? contactData[i].emails.toList()[0]?.value
               : null;
           // compare old tags vs new tag to know if person has already received email/text
-          if (oldTags.map((e) => e?.email).contains(email) ||
-              oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) return;
-          _notificationService.addEmail(
-            email: email,
-            message: message,
-            sender: user.firstName,
-            senderId: user.id,
-            template: MessageTemplate.fromData(template),
-            receiver: contactData[i].displayName,
-          );
-          _notificationService.addSMS(
-              phoneNumber: phoneNumber,
+          if (!oldTags.map((e) => e?.email).contains(email) ||
+              !oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) {
+            _notificationService.addEmail(
+              email: email,
               message: message,
               sender: user.firstName,
               senderId: user.id,
               template: MessageTemplate.fromData(template),
-              receiver: contactData[i].displayName);
+              receiver: contactData[i].displayName,
+            );
+            _notificationService.addSMS(
+                phoneNumber: phoneNumber,
+                message: message,
+                sender: user.firstName,
+                senderId: user.id,
+                template: MessageTemplate.fromData(template),
+                receiver: contactData[i].displayName);
+          }
         }
       }
     } catch (e) {
@@ -786,6 +788,7 @@ class PrayerService {
       userId: userId,
       prayerId: prayerId,
       displayName: contact.displayName,
+      identifier: contact.identifier,
       phoneNumber:
           contact.phones.length > 0 ? contact.phones.toList()[0].value : null,
       email:

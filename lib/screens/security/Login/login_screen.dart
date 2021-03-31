@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    if (Settings.lastUser.isNotEmpty) {
+    if (Settings.rememberMe && Settings.lastUser.isNotEmpty) {
       var userInfo = jsonDecode(Settings.lastUser);
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+      Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
       await Provider.of<NotificationProvider>(context, listen: false)
@@ -223,26 +223,32 @@ class _LoginScreenState extends State<LoginScreen> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      Settings.lastUser = Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+      Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
+      LocalNotification.setNotificationsOnNewDevice(context);
+
       // BeStilDialog.hideLoading(context);
-      await setRouteDestination();
+      // await setRouteDestination();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName,
+        (Route<dynamic> route) => false,
+      );
     } on HttpException catch (e) {
-      needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
-              .needsVerification;
-      BeStilDialog.hideLoading(context);
+      // needsVerification =
+      //     Provider.of<AuthenticationProvider>(context, listen: false)
+      //         .needsVerification;
+      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
-              .needsVerification;
+      // needsVerification =
+      //     Provider.of<AuthenticationProvider>(context, listen: false)
+      //         .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
