@@ -43,8 +43,10 @@ class _AddPrayerState extends State<AddPrayer> {
   String tagText = '';
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
+  bool _autoValidate = false;
 
   Future<void> _save() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -124,7 +126,9 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> getContacts() async {
     if (Settings.enabledContactPermission) {
-      localContacts = await ContactsService.getContacts(withThumbnails: false);
+      var _localContacts =
+          await ContactsService.getContacts(withThumbnails: false);
+      localContacts = _localContacts.where((e) => e.displayName != null);
     }
   }
 
@@ -231,7 +235,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     Stack(
                       children: [
                         Form(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          // autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autovalidate: _autoValidate,
                           key: _formKey,
                           child: CustomInput(
                             label: 'Prayer description',
@@ -257,7 +262,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       ...localContacts.map((s) {
-                                        if (('@' + s.displayName)
+                                        var displayName = s.displayName ?? '';
+                                        if (('@' + displayName)
                                             .toLowerCase()
                                             .contains(tagText.toLowerCase()))
                                           return GestureDetector(
@@ -265,7 +271,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 10.0),
                                                 child: Text(
-                                                  s.displayName,
+                                                  displayName,
                                                   style: AppTextStyles
                                                       .regularText14
                                                       .copyWith(

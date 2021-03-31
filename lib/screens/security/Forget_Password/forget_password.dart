@@ -26,8 +26,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final _formKey1 = GlobalKey<FormState>();
   var notificationType = NotificationType.email;
   bool emailSent = false;
+  bool _autoValidate = false;
 
   _forgotPassword() async {
+    setState(() => _autoValidate = true);
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
     try {
@@ -140,7 +142,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   _buildEmailForm(BuildContext context) {
     return Form(
       key: _formKey1,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidate: _autoValidate,
       child: Column(
         children: <Widget>[
           CustomInput(

@@ -19,7 +19,6 @@ import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../entry_screen.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   static const routeName = '/create-account';
@@ -42,6 +41,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   TextEditingController _dobController = new TextEditingController();
   DateTime _selectedDate;
   bool _enableSubmit = false;
+  bool _autoValidate = false;
 
   var termsAccepted = false;
 
@@ -76,6 +76,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   void _createAccount() async {
+    setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
@@ -225,7 +226,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidate: _autoValidate,
         child: Column(
           children: <Widget>[
             CustomInput(
