@@ -204,7 +204,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     // Navigator.pop(context);
-    setState(() {});
+    setState(() {
+      showUpdateField = false;
+    });
   }
 
   // _deleteTimerModal(BuildContext context, String prayerTimeId) {
