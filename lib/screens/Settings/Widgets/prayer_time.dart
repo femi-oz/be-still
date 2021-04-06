@@ -447,7 +447,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                               color: AppColors.prayerTextColor),
                                     ),
                                     SizedBox(
-                                      width: 20,
+                                      width: 5,
                                     ),
                                     Text(
                                       data.period,

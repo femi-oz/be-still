@@ -729,7 +729,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       : _markPrayerAsFavorite(prayerData),
                   text: prayerData.userPrayer.isFavorite
                       ? 'Unmark as Favorite '
-                      : 'Mark Favorite ',
+                      : 'Mark as Favorite ',
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_archive,
