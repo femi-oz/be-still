@@ -64,7 +64,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
     showModalBottomSheet(
       context: context,
       barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
-      backgroundColor: AppColors.addPrayerBg.withOpacity(0.8),
+      backgroundColor: AppColors.darkMode
+          ? AppColors.addPrayerBg.withOpacity(0.8)
+          : AppColors.offWhite4.withOpacity(0.8),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return PrayerFilters();

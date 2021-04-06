@@ -1,6 +1,7 @@
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:masked_text/masked_text.dart';
 
 class CustomInput extends StatefulWidget {
   final int maxLines;
@@ -54,68 +55,118 @@ class _CustomInputState extends State<CustomInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: TextFormField(
-          controller: widget.controller,
-          keyboardType: widget.keyboardType,
-          style: AppTextStyles.regularText15,
-          focusNode: widget.focusNode,
-          cursorColor:
-              widget.color == null ? AppColors.lightBlue4 : widget.color,
-          maxLines: widget.maxLines,
-          decoration: InputDecoration(
-            suffixText: (widget.showSuffix && _isTextNotEmpty) ||
-                    (widget.showSuffix && widget.controller.text != '')
-                ? widget.label
-                : '',
-            // suffixIcon: widget.showBiometric
-            //     ? IconButton(
-            //         icon: Icon(
-            //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-            //         onPressed: () {
-            //           // widget.bioLogin;
-            //         })
-            //     : Container(),
-            isDense: true,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
-            suffixStyle: AppTextStyles.regularText14.copyWith(
-                color: Settings.isDarkMode
-                    ? AppColors.offWhite2
-                    : AppColors.grey4),
-            counterText: '',
-            hintText: widget.label,
-            hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
-            errorBorder: new OutlineInputBorder(
-              borderSide: new BorderSide(color: Colors.redAccent),
-            ),
-            errorMaxLines: 5,
-            errorStyle: AppTextStyles.errorText,
-            border: OutlineInputBorder(),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: AppColors.lightBlue4.withOpacity(0.5),
-                width: 1.0,
+      child: widget.isPhone
+          ? MaskedTextField(
+              maskedTextFieldController: widget.controller,
+              mask: "(xxx) xxx-xxxx",
+              maxLength: 14,
+              keyboardType: TextInputType.number,
+              inputDecoration: InputDecoration(
+                suffixText: (widget.showSuffix && _isTextNotEmpty) ||
+                        (widget.showSuffix && widget.controller.text != '')
+                    ? widget.label
+                    : '',
+                // suffixIcon: widget.showBiometric
+                //     ? IconButton(
+                //         icon: Icon(
+                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
+                //         onPressed: () {
+                //           // widget.bioLogin;
+                //         })
+                //     : Container(),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: 15, vertical: widget.padding),
+                suffixStyle: AppTextStyles.regularText14.copyWith(
+                    color: Settings.isDarkMode
+                        ? AppColors.offWhite2
+                        : AppColors.grey4),
+                counterText: '',
+                hintText: widget.label,
+                hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
+                errorBorder: new OutlineInputBorder(
+                  borderSide: new BorderSide(color: Colors.redAccent),
+                ),
+                errorMaxLines: 5,
+                errorStyle: AppTextStyles.errorText,
+                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.lightBlue4.withOpacity(0.5),
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.lightBlue4, width: 1.0),
+                ),
+                fillColor: AppColors.textFieldBackgroundColor,
+                filled: true,
               ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.lightBlue4, width: 1.0),
-            ),
-            fillColor: AppColors.textFieldBackgroundColor,
-            filled: true,
-          ),
-          obscureText: widget.obScurePassword,
-          validator: (value) => _validatorFn(value),
-          onFieldSubmitted: (_) => {
-                widget.unfocus
-                    ? FocusScope.of(context).unfocus()
-                    : FocusScope.of(context).nextFocus(),
-                widget.unfocus ? widget.submitForm : null
-              },
-          textInputAction: widget.textInputAction,
-          onChanged: (val) {
-            setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
-            if (widget.onTextchanged != null) widget.onTextchanged(val);
-          }),
+            )
+          : TextFormField(
+              controller: widget.controller,
+              keyboardType: widget.keyboardType,
+              style: AppTextStyles.regularText15,
+              focusNode: widget.focusNode,
+              cursorColor:
+                  widget.color == null ? AppColors.lightBlue4 : widget.color,
+              maxLines: widget.maxLines,
+              decoration: InputDecoration(
+                suffixText: (widget.showSuffix && _isTextNotEmpty) ||
+                        (widget.showSuffix && widget.controller.text != '')
+                    ? widget.label
+                    : '',
+                // suffixIcon: widget.showBiometric
+                //     ? IconButton(
+                //         icon: Icon(
+                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
+                //         onPressed: () {
+                //           // widget.bioLogin;
+                //         })
+                //     : Container(),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: 15, vertical: widget.padding),
+                suffixStyle: AppTextStyles.regularText14.copyWith(
+                    color: Settings.isDarkMode
+                        ? AppColors.offWhite2
+                        : AppColors.grey4),
+                counterText: '',
+                hintText: widget.label,
+                hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
+                errorBorder: new OutlineInputBorder(
+                  borderSide: new BorderSide(color: Colors.redAccent),
+                ),
+                errorMaxLines: 5,
+                errorStyle: AppTextStyles.errorText,
+                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: AppColors.lightBlue4.withOpacity(0.5),
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.lightBlue4, width: 1.0),
+                ),
+                fillColor: AppColors.textFieldBackgroundColor,
+                filled: true,
+              ),
+              obscureText: widget.obScurePassword,
+              validator: (value) => _validatorFn(value),
+              onFieldSubmitted: (_) => {
+                    widget.unfocus
+                        ? FocusScope.of(context).unfocus()
+                        : FocusScope.of(context).nextFocus(),
+                    widget.unfocus ? widget.submitForm : null
+                  },
+              textInputAction: widget.textInputAction,
+              onChanged: (val) {
+                setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
+                if (widget.onTextchanged != null) widget.onTextchanged(val);
+              }),
     );
   }
 
