@@ -203,7 +203,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    Navigator.pop(context);
+    // Navigator.pop(context);
     setState(() {});
   }
 
