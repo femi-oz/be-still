@@ -181,17 +181,12 @@ class CustomDrawer extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.75,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 60,
-                  ),
-                  child: SingleChildScrollView(
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 60),
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.height * 0.22,
-                      ),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           ListTile(
                             onTap: () => Navigator.of(context)
