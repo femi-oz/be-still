@@ -158,7 +158,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 40.0),
             child: Text(
-              'An email will be sent to you. Please click on the link to reset your password',
+              'An email will be sent to you. Please click on the link in the email to reset your password.',
               textAlign: TextAlign.center,
               style: AppTextStyles.regularText16b.copyWith(
                 color: AppColors.prayerTextColor,

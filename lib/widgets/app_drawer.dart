@@ -182,14 +182,15 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.75,
+                  // height: MediaQuery.of(context).size.height,
                   padding: EdgeInsets.symmetric(
                     horizontal: 60,
                   ),
-                  child: SingleChildScrollView(
+                  child: Expanded(
                     child: Container(
+                      // height: MediaQuery.of(context).size.height,
                       padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.height * 0.22,
+                        vertical: MediaQuery.of(context).size.height * 0.1,
                       ),
                       child: Column(
                         children: <Widget>[

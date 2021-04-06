@@ -223,6 +223,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                           ? CustomInput(
                               isRequired: true,
                               showSuffix: false,
+                              keyboardType: TextInputType.phone,
                               isPhone: true,
                               label: 'Enter Church Phone',
                               controller: _churchPhone)

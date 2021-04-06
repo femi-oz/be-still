@@ -88,7 +88,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           selectedHour,
           selectedMinute,
           scheduleDate,
-          userId, notificationText,
+          userId,
+          notificationText,
         );
       else
         await storeNotification(
@@ -185,7 +186,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     String selectedHour,
     String selectedMinute,
     tz.TZDateTime scheduledDate,
-    String userId,String notificationText,
+    String userId,
+    String notificationText,
   ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .updateLocalNotification(
@@ -201,7 +203,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    Navigator.pop(context);
+    // Navigator.pop(context);
     setState(() {});
   }
 
