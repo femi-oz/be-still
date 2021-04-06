@@ -90,6 +90,12 @@ class _MyListSettingsState extends State<MyListSettings> {
   //   LookUp(text: IntervalRange.oneYear, value: 525600),
   // ];
 
+  @override
+  dispose() {
+    _setDefaultSnooze();
+    super.dispose();
+  }
+
   List<String> snoozeInterval = ['Minutes', 'Days', 'Weeks', 'Months'];
 
   List<String> snoozeDuration = [
@@ -272,24 +278,6 @@ class _MyListSettingsState extends State<MyListSettings> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40),
-                      width: double.infinity,
-                      child: Row(
-                        children: <Widget>[
-                          CustomButtonGroup(
-                            title: 'SAVE',
-                            onSelected: (_) {
-                              // var date =
-                              //     '$selectedHour:$selectedMinute $selectedPeriod';
-                              _setDefaultSnooze();
-                            },
-                            length: 2,
-                            index: 0,
-                          ),
-                        ],
-                      ),
-                    )
                   ],
                 ),
               )
