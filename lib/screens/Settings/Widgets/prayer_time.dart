@@ -10,6 +10,7 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -53,6 +54,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     Frequency.m_w_f,
   ];
   double itemExtent = 30.0;
+  bool _addPrayerTypeMode = false;
+  bool showUpdateField = false;
+  LocalNotificationModel notification;
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
       period, userId, bool isEdit, int localNotificationId) async {
@@ -88,7 +92,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           selectedHour,
           selectedMinute,
           scheduleDate,
-          userId, notificationText,
+          userId,
+          notificationText,
         );
       else
         await storeNotification(
@@ -111,16 +116,17 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   }
 
   storeNotification(
-      String notificationText,
-      String userId,
-      String title,
-      String description,
-      String frequency,
-      DateTime scheduledDate,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
+    String notificationText,
+    String userId,
+    String title,
+    String description,
+    String frequency,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+  ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
             LocalNotification.localNotificationID,
@@ -175,9 +181,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     }
   }
 
-  bool showUpdateField = false;
-  LocalNotificationModel notification;
-
   _updatePrayerTime(
     String selectedDay,
     String selectedPeriod,
@@ -185,7 +188,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     String selectedHour,
     String selectedMinute,
     tz.TZDateTime scheduledDate,
-    String userId,String notificationText,
+    String userId,
+    String notificationText,
   ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .updateLocalNotification(
@@ -201,8 +205,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    Navigator.pop(context);
-    setState(() {});
+    setState(() => showUpdateField = false);
   }
 
   // _deleteTimerModal(BuildContext context, String prayerTimeId) {
@@ -286,8 +289,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   //     ),
   //   );
   // }
-
-  bool _addPrayerTypeMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -445,7 +446,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                               color: AppColors.prayerTextColor),
                                     ),
                                     SizedBox(
-                                      width: 20,
+                                      width: 5,
                                     ),
                                     Text(
                                       data.period,
@@ -461,16 +462,14 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                               children: [
                                 InkWell(
                                   child: GestureDetector(
-                                    child: Image(
-                                      image:
-                                          AssetImage('assets/images/edit.png'),
-                                      fit: BoxFit.contain,
-                                      height: 15,
-                                      width: 15,
+                                    child: Icon(
+                                      AppIcons.bestill_edit,
+                                      size: 16,
+                                      color: AppColors.lightBlue3,
                                     ),
                                     onTap: () {
-                                      showUpdateField = true;
-                                      setState(() => notification = data);
+                                      notification = data;
+                                      setState(() => showUpdateField = true);
                                     },
                                   ),
                                 ),
@@ -479,12 +478,10 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                 ),
                                 InkWell(
                                   child: GestureDetector(
-                                    child: Image(
-                                      image: AssetImage(
-                                          'assets/images/delete.png'),
-                                      fit: BoxFit.contain,
-                                      height: 15,
-                                      width: 15,
+                                    child: Icon(
+                                      AppIcons.bestill_delete,
+                                      size: 16,
+                                      color: AppColors.lightBlue3,
                                     ),
                                     onTap: () {
                                       _deletePrayerTime(
@@ -581,6 +578,14 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                               true,
                               notification.localNotificationId,
                             ),
+                            selectedDay: LocalNotification.reminderDays
+                                    .indexOf(notification.selectedDay) +
+                                1,
+                            selectedFrequency: notification.frequency,
+                            selectedHour: int.parse(notification.selectedHour),
+                            selectedMinute:
+                                int.parse(notification.selectedMinute),
+                            selectedPeriod: notification.period,
                           ),
                         )
                       : Container(),

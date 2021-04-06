@@ -74,7 +74,7 @@ class CustomOutlineButton extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -64,7 +64,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
     showModalBottomSheet(
       context: context,
       barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
-      backgroundColor: AppColors.addPrayerBg.withOpacity(0.8),
+      backgroundColor: AppColors.darkMode
+          ? AppColors.addPrayerBg.withOpacity(0.8)
+          : AppColors.offWhite4.withOpacity(0.8),
       isScrollControlled: true,
       builder: (BuildContext context) {
         return PrayerFilters();
@@ -96,35 +98,39 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: <Widget>[
           SizedBox(width: 20),
           InkWell(
-            onTap: () =>
-                Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-            child: notifications.length == 0
-                ? Icon(
-                    AppIcons.bestill_notifications,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
-                  )
-                : Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(
-                        AppIcons.bestill_notifications,
-                        color: AppColors.red,
-                        size: 18,
-                      ),
-                      Text(
-                        notifications.length.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-          ),
+              onTap: () => null,
+              // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
+              child: Icon(
+                Icons.notifications_none,
+                color: AppColors.white,
+              )
+              //notifications.length == 0
+              // ? Icon(
+              //     AppIcons.bestill_notifications,
+              //     color: AppColors.bottomNavIconColor,
+              //     size: 18,
+              //   )
+              // : Stack(
+              //     alignment: Alignment.center,
+              //     children: [
+              //       Icon(
+              //         AppIcons.bestill_notifications,
+              //         color: AppColors.red,
+              //         size: 18,
+              //       ),
+              //       Text(
+              //         notifications.length.toString(),
+              //         style: TextStyle(
+              //           color: Colors.white,
+              //           fontSize: 11,
+              //         ),
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ],
+              //   ),
+              ),
           SizedBox(width: 15),
-          InkWell(
+          GestureDetector(
             onTap: () {
               widget.switchSearchMode(true);
               setState(() {});
@@ -136,7 +142,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ),
           ),
           SizedBox(width: 15),
-          InkWell(
+          GestureDetector(
             onTap: () => _openFilter(Settings.isDarkMode),
             child: Icon(
               AppIcons.bestill_tools,
@@ -191,19 +197,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
       actions: <Widget>[
         Builder(
           builder: (BuildContext context) {
-            return InkWell(
-              child: Icon(
+            return IconButton(
+              icon: Icon(
                 AppIcons.bestill_main_menu,
                 size: 18,
                 color: AppColors.bottomNavIconColor,
               ),
-              onTap: () {
+              onPressed: () {
                 Scaffold.of(context).openEndDrawer();
               },
             );
           },
         ),
-        SizedBox(width: 20),
       ],
     );
   }

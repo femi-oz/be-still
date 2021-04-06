@@ -243,7 +243,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ),
             Column(
               children: [
-                CustomSectionHeder('App Data'),
+                CustomSectionHeder('App Version'),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(
                 //       vertical: 40.0, horizontal: 20.0),
@@ -260,11 +260,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('App is running the latest version',
-                          style: AppTextStyles.regularText15
-                              .copyWith(color: AppColors.textFieldText)),
+                      // Text('App is running the latest version',
+                      //     style: AppTextStyles.regularText15
+                      //         .copyWith(color: AppColors.textFieldText)),
                       Text(_version, style: AppTextStyles.regularText15),
                     ],
                   ),

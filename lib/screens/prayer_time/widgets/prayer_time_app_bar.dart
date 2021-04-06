@@ -22,22 +22,23 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: AppColors.backgroundColor[0],
       elevation: 0,
       centerTitle: true,
       automaticallyImplyLeading: false,
-      leading: Container(
-        child: Row(
-          children: <Widget>[
-            SizedBox(width: 20),
-            Text(
-              DateFormat('hh:mm').format(DateTime.now()),
-              style: AppTextStyles.regularText13
-                  .copyWith(color: AppColors.lightBlue1),
-            ),
-          ],
-        ),
-      ),
-      leadingWidth: 80,
+      // leading: Container(
+      //   child: Row(
+      //     children: <Widget>[
+      //       SizedBox(width: 20),
+      //       Text(
+      //         DateFormat('hh:mm').format(DateTime.now()),
+      //         style: AppTextStyles.regularText13
+      //             .copyWith(color: AppColors.lightBlue1),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      // leadingWidth: 80,
       title: Text(
         '${widget.current} OF ${widget.totalPrayers}',
         style:

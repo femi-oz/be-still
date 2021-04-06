@@ -381,44 +381,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-                        SizedBox(height: 220),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.43),
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          // padding: EdgeInsets.symmetric(
-                          //     vertical: 15.0, horizontal: 24.0),
-                          padding: EdgeInsets.only(
-                              top: 100, right: 24.0, left: 24.0, bottom: 15.0),
-
+                          // height: MediaQuery.of(context).size.height * 0.56,
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
                           width: double.infinity,
                           child: Column(
                             children: <Widget>[
-                              Expanded(
-                                child: Column(
-                                  children: <Widget>[
-                                    SizedBox(height: 10),
-                                    _buildForm(),
-                                    SizedBox(height: 8),
-                                    _buildActions(),
-                                    SizedBox(height: 10),
-                                    if (isBioMetricAvailable)
-                                      InkWell(
-                                        child: Container(
-                                            // padding: EdgeInsets.only(
-                                            //     left: 40, right: 60),
-                                            child: Text(
-                                          !Settings.enableLocalAuth
-                                              ? 'Enable Face/Touch ID'
-                                              : 'Disable Face/Touch ID',
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue4),
-                                        )),
-                                        onTap: _toggleBiometrics,
-                                      )
-                                    // showFingerPrint || showFaceId
-                                    //     ? _bioButton()
-                                    //     : Container(),
-                                  ],
-                                ),
+                              Column(
+                                children: <Widget>[
+                                  SizedBox(height: 10),
+                                  _buildForm(),
+                                  SizedBox(height: 8),
+                                  _buildActions(),
+                                  SizedBox(height: 10),
+                                  if (isBioMetricAvailable)
+                                    InkWell(
+                                      child: Container(
+                                          // padding: EdgeInsets.only(
+                                          //     left: 40, right: 60),
+                                          child: Text(
+                                        !Settings.enableLocalAuth
+                                            ? 'Enable Face/Touch ID'
+                                            : 'Disable Face/Touch ID',
+                                        style: TextStyle(
+                                            color: AppColors.lightBlue4),
+                                      )),
+                                      onTap: _toggleBiometrics,
+                                    )
+                                  // showFingerPrint || showFaceId
+                                  //     ? _bioButton()
+                                  //     : Container(),
+                                ],
                               ),
                               SizedBox(height: 30),
                               _buildFooter(),
@@ -546,7 +541,7 @@ class _LoginScreenState extends State<LoginScreen> {
             verificationSendMessage,
             style: AppTextStyles.regularText13,
           ),
-        SizedBox(height: 20),
+        // SizedBox(height: 20),
         BsRaisedButton(onPressed: _login),
         // Settings.enableLocalAuth
         //     ? BsRaisedButton(

@@ -86,6 +86,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                   Icons.first_page,
                   color:
                       currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
+                  size: 30,
                 ),
                 onTap: () {
                   if (currentPage > 1) {
@@ -95,12 +96,13 @@ class _PrayerTimeState extends State<PrayerTime> {
                   }
                 },
               ),
-              SizedBox(width: 10),
+              SizedBox(width: 30),
               InkWell(
                 child: Icon(
                   Icons.navigate_before,
                   color:
                       currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
+                  size: 30,
                 ),
                 onTap: () {
                   if (currentPage > 1) {
@@ -108,24 +110,28 @@ class _PrayerTimeState extends State<PrayerTime> {
                   }
                 },
               ),
-              SizedBox(width: 10),
+              SizedBox(width: 30),
               InkWell(
-                  child: Icon(Icons.navigate_next, color: currentPage < prayers.length
+                  child: Icon(
+                    Icons.navigate_next,
+                    color: currentPage < prayers.length
                         ? AppColors.lightBlue3
                         : AppColors.grey,
+                    size: 30,
                   ),
                   onTap: () {
                     if (currentPage < prayers.length) {
                       _controller.jumpToPage(currentPage);
                     }
                   }),
-              SizedBox(width: 10),
+              SizedBox(width: 30),
               InkWell(
                 child: Icon(
                   Icons.last_page,
                   color: currentPage < prayers.length
                       ? AppColors.lightBlue3
                       : AppColors.grey,
+                  size: 30,
                 ),
                 onTap: () {
                   if (currentPage < prayers.length) {
@@ -137,7 +143,7 @@ class _PrayerTimeState extends State<PrayerTime> {
               ),
             ],
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 40),
         ],
       ),
       endDrawer: CustomDrawer(),

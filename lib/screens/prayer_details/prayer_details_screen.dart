@@ -307,7 +307,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 barrierColor:
                     AppColors.detailBackgroundColor[1].withOpacity(0.5),
                 backgroundColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                    AppColors.detailBackgroundColor[1].withOpacity(1),
                 isScrollControlled: true,
                 builder: (BuildContext context) {
                   return _buildMenu();

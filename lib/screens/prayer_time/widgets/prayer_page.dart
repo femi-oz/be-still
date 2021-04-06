@@ -14,6 +14,13 @@ class PrayerView extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.backgroundColor,
+        ),
+      ),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 30),
         child: data.updates.length > 0 ? UpdateView(data) : NoUpdateView(data),
