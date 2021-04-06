@@ -111,7 +111,7 @@ class _PrayerListState extends State<PrayerList> {
         () => showModalBottomSheet(
           context: context,
           barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
-          backgroundColor: AppColors.addPrayerBg.withOpacity(0.9),
+          backgroundColor: AppColors.addPrayerBg.withOpacity(0.5),
           isScrollControlled: true,
           builder: (BuildContext context) {
             return PrayerQuickAccess(

@@ -36,7 +36,8 @@ class CustomOutlineButton extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Text(
-                actionText,
+                actionText.replaceAll("", "\u{200B}"),
+                softWrap: false,
                 overflow: TextOverflow.ellipsis,
                 style:
                     AppTextStyles.regularText18b.copyWith(color: actionColor),
@@ -74,7 +75,7 @@ class CustomOutlineButton extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

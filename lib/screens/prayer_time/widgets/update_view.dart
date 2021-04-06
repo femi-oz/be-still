@@ -65,36 +65,24 @@ class UpdateView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 30.0, horizontal: 20),
                         child: i == 0
-                            ? new ConstrainedBox(
-                                constraints: new BoxConstraints(
-                                  minHeight: 300,
-                                ),
-                                child: new DecoratedBox(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          updates[i].description,
-                                          style: AppTextStyles.regularText18b
-                                              .copyWith(
-                                                  color: AppColors
-                                                      .prayerTextColor),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ],
+                            ? Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      updates[i].description,
+                                      style: AppTextStyles.regularText18b
+                                          .copyWith(
+                                              color: AppColors.prayerTextColor),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                  decoration: new BoxDecoration(),
-                                ),
+                                ],
                               )
                             : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Flexible(
                                     child: Text(
@@ -143,12 +131,10 @@ class UpdateView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Flexible(
                             child: Text(

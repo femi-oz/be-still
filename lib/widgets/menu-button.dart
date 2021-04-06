@@ -16,11 +16,6 @@ class MenuButton extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    var color;
-    if (isDisable)
-      color = AppColors.grey4.withOpacity(0.3);
-    else
-      color = Colors.transparent;
     return GestureDetector(
       onTap: () => isDisable ? null : onPressed(),
       child: Container(
@@ -29,10 +24,12 @@ class MenuButton extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 50, vertical: 7),
         decoration: BoxDecoration(
           border: Border.all(
-            color: AppColors.lightBlue4,
+            color: AppColors.lightBlue4.withOpacity(isDisable ? 0.5 : 1),
             width: 1,
           ),
-          color: isActive ? AppColors.lightBlue4.withOpacity(0.5) : color,
+          color: isActive
+              ? AppColors.lightBlue4.withOpacity(0.5)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -40,15 +37,16 @@ class MenuButton extends StatelessWidget {
             icon != null
                 ? Icon(
                     icon,
-                    color: AppColors.lightBlue4,
+                    color:
+                        AppColors.lightBlue4.withOpacity(isDisable ? 0.5 : 1),
                     size: 18,
                   )
                 : Container(),
             SizedBox(width: icon != null ? 10 : 0),
             Text(
               text,
-              style: AppTextStyles.boldText14
-                  .copyWith(color: AppColors.lightBlue4),
+              style: AppTextStyles.boldText16.copyWith(
+                  color: AppColors.lightBlue4.withOpacity(isDisable ? 0.5 : 1)),
             ),
           ],
         ),

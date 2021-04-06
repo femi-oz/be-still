@@ -180,9 +180,7 @@ class _SharePrayerState extends State<SharePrayer> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_share,
-                  onPressed: () => sharingSettings.churchEmail == ''
-                      ? _textLink(true)
-                      : _emailLink(true),
+                  onPressed: () => _emailLink(true),
                   text: 'To my Church',
                 ),
               ],

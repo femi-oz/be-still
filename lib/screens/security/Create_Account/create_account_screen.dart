@@ -304,7 +304,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: Container(
                     width: double.infinity,
                     child: Text(
-                      'Read the Terms of Use / User Agreement',
+                      'Read the Terms of Use',
                       style: AppTextStyles.regularText15,
                     ),
                   ),
