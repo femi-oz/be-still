@@ -33,33 +33,39 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
                   Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2)),
       centerTitle: true,
       leading: InkWell(
-        onTap: () =>
-            Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-        child: notifications.length == 0
-            ? Icon(
-                AppIcons.bestill_notifications,
-                color: AppColors.grey,
-                size: 18,
-              )
-            : Stack(
-                alignment: Alignment.center,
-                children: [
-                  Icon(
-                    AppIcons.bestill_notifications,
-                    color: AppColors.red,
-                    size: 18,
-                  ),
-                  Text(
-                    notifications.length.toString(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-      ),
+          onTap: () => null,
+          // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
+          child: Icon(
+            Icons.notifications_none,
+            color: AppColors.grey,
+          )
+          // onTap: () =>
+          //     Navigator.of(context).pushNamed(NotificationsScreen.routeName),
+          // child: notifications.length == 0
+          //     ? Icon(
+          //         AppIcons.bestill_notifications,
+          //         color: AppColors.grey,
+          //         size: 18,
+          //       )
+          //     : Stack(
+          //         alignment: Alignment.center,
+          //         children: [
+          //           Icon(
+          //             AppIcons.bestill_notifications,
+          //             color: AppColors.red,
+          //             size: 18,
+          //           ),
+          //           Text(
+          //             notifications.length.toString(),
+          //             style: TextStyle(
+          //               color: Colors.white,
+          //               fontSize: 11,
+          //             ),
+          //             textAlign: TextAlign.center,
+          //           ),
+          //         ],
+          //       ),
+          ),
       actions: <Widget>[
         Builder(
           builder: (BuildContext context) {
