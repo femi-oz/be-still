@@ -1,4 +1,3 @@
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
