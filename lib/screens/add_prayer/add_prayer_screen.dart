@@ -44,6 +44,7 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   bool _autoValidate = false;
+  String backupText;
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -64,9 +65,11 @@ class _AddPrayerState extends State<AddPrayer> {
           //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
           // } else {
           await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
-              _descriptionController.text,
-              _user.id,
-              '${_user.firstName} ${_user.lastName}');
+            _descriptionController.text,
+            _user.id,
+            '${_user.firstName} ${_user.lastName}',
+            backupText,
+          );
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, []);
@@ -79,11 +82,19 @@ class _AddPrayerState extends State<AddPrayer> {
                   builder: (context) => EntryScreen(screenNumber: 0)));
           // }
         } else {
-          print(contacts.length);
-
-          print(widget.prayerData.tags.length);
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
+          // backupText = _descriptionController.text;
+          // var oldBackupText = widget.prayerData.prayer.descriptionBackup;
+          oldTags = widget.prayerData.tags;
+
+          oldTags.forEach((element) {
+            if (!_descriptionController.text
+                .toLowerCase()
+                .contains(element.displayName.toLowerCase())) {
+              oldTags.remove(element);
+            }
+          });
           for (int i = 0; i < widget.prayerData.tags.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(widget.prayerData.tags[i].id);
@@ -143,15 +154,6 @@ class _AddPrayerState extends State<AddPrayer> {
             : '';
         // tagText = tagText.replaceAll('@', '');
       });
-      oldTags = widget.prayerData.tags;
-
-      oldTags.forEach((element) {
-        if (!_descriptionController.text
-            .toLowerCase()
-            .contains(element.displayName.toLowerCase())) {
-          oldTags.remove(element);
-        }
-      });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -173,7 +175,9 @@ class _AddPrayerState extends State<AddPrayer> {
     tagText = '';
     String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
+
     _descriptionController.text += tmpText;
+    backupText = _descriptionController.text;
     _descriptionController.text = _descriptionController.text
         .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
 

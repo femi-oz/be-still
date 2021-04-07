@@ -196,8 +196,10 @@ class PrayerProvider with ChangeNotifier {
     String prayerDesc,
     String userId,
     String creatorName,
+    String prayerDescBackup,
   ) async =>
-      await _prayerService.addPrayer(prayerDesc, userId, creatorName);
+      await _prayerService.addPrayer(
+          prayerDesc, userId, creatorName, prayerDescBackup);
 
   Future<void> addUserPrayer(String prayerId, String prayerDesc,
           String recieverId, String senderId, String sender) async =>

@@ -158,6 +158,7 @@ class PrayerService {
     String prayerDesc,
     String userId,
     String creatorName,
+    String prayerDescBackup,
   ) async {
     // Generate uuid
     prayerId = Uuid().v1();
@@ -165,9 +166,9 @@ class PrayerService {
 
     try {
       // store prayer
-      _prayerCollectionReference
-          .doc(prayerId)
-          .set(populatePrayer(userId, prayerDesc, creatorName).toJson());
+      _prayerCollectionReference.doc(prayerId).set(
+          populatePrayer(userId, prayerDesc, creatorName, prayerDescBackup)
+              .toJson());
 
       //store user prayer
       _userPrayerCollectionReference
@@ -736,6 +737,7 @@ class PrayerService {
     String userId,
     String prayerDesc,
     String creatorName,
+    String prayerDescBackup,
   ) {
     PrayerModel prayer = PrayerModel(
       isAnswer: false,
@@ -746,6 +748,7 @@ class PrayerService {
       status: Status.active,
       creatorName: creatorName,
       description: prayerDesc,
+      descriptionBackup: prayerDescBackup,
       groupId: '0',
       createdBy: userId,
       createdOn: DateTime.now(),
