@@ -1,11 +1,8 @@
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -77,8 +74,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    List<PushNotificationModel> notifications =
-        Provider.of<NotificationProvider>(context).notifications;
+    // List<PushNotificationModel> notifications =
+    //     Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
