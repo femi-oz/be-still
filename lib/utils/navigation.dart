@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class NavigationService {
   GlobalKey<NavigatorState> navigationKey;
@@ -9,8 +10,9 @@ class NavigationService {
     navigationKey = GlobalKey<NavigatorState>();
   }
 
-  Future<dynamic> navigateToReplacement(String _rn) {
-    return navigationKey.currentState.pushReplacementNamed(_rn);
+  Future<dynamic> navigateToReplacement(Widget _rn) {
+    return navigationKey.currentState.pushReplacement(PageTransition(
+        type: PageTransitionType.leftToRightWithFade, child: _rn));
   }
 
   Future<dynamic> navigateTo(String _rn) {

@@ -71,7 +71,7 @@ class ExpansionTile extends StatefulWidget {
   final Color headerBackgroundColorStart;
   final Color headerBackgroundColorEnd;
   final Color shadowColor;
-  final ScrollController scrollController;
+  final scrollController;
 
   /// The color to display the icon of the header.
   final Color iconColor;

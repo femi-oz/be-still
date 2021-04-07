@@ -8,6 +8,7 @@ import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -65,10 +66,17 @@ class CustomDrawer extends StatelessWidget {
                     onTap: () async {
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginScreen.routeName,
-                        (Route<dynamic> route) => false,
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: LoginScreen(),
+                        ),
                       );
+                      // Navigator.of(context).pushNamedAndRemoveUntil(
+                      //   LoginScreen.routeName,
+                      //   (Route<dynamic> route) => false,
+                      // );
                     },
                     child: Container(
                       height: 30,

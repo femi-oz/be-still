@@ -18,7 +18,6 @@ import 'package:be_still/screens/splash/splash_screen.dart';
 final routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   LoginScreen.routeName: (context) => LoginScreen(),
-  // EntryScreen.routeName: (context) => PrayerScreen(),
   SettingsScreen.routeName: (context) => SettingsScreen(),
   CreateAccountScreen.routeName: (context) => CreateAccountScreen(),
   ForgetPassword.routeName: (context) => ForgetPassword(),
@@ -32,5 +31,5 @@ final routes = {
   LocalAuth.routeName: (context) => LocalAuth(),
   CreateAccountSuccess.routeName: (context) => CreateAccountSuccess(),
   NotificationsScreen.routeName: (context) => NotificationsScreen(),
-  EntryScreen.routeName: (ctx) => EntryScreen(),
+  EntryScreen.routeName: (context) => EntryScreen(),
 };

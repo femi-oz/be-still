@@ -102,12 +102,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayerTimePrayers(message.entityId);
 
-      NavigationService.instance.navigateToReplacement(PrayerTime.routeName);
+      NavigationService.instance.navigateToReplacement(PrayerTime());
     }
     if (message.type == NotificationType.prayer) {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(message.entityId);
-      NavigationService.instance.navigateToReplacement(PrayerDetails.routeName);
+      NavigationService.instance.navigateToReplacement(PrayerDetails());
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/security/create_account/widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -18,6 +19,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -114,10 +116,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         BeStilDialog.hideLoading(context);
         await Provider.of<NotificationProvider>(context, listen: false)
             .setDevice(user.id);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          CreateAccountSuccess.routeName,
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageTransition(
+              type: PageTransitionType.leftToRightWithFade,
+              child: CreateAccountScreen()),
           (Route<dynamic> route) => false,
         );
+        // Navigator.of(context).pushNamedAndRemoveUntil(
+        //   CreateAccountSuccess.routeName,
+        //   (Route<dynamic> route) => false,
+        // );
       }
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
@@ -214,7 +223,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             style: AppTextStyles.regularText13,
           ),
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.pushAndRemoveUntil(
+              context,
+              PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: LoginScreen()),
+              (Route<dynamic> route) => false,
+            );
+            // Navigator.of(context).pop();
           },
         ),
         SizedBox(height: 20.0),
