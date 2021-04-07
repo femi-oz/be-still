@@ -104,6 +104,7 @@ class _EntryScreenState extends State<EntryScreen> {
       appBar: _currentIndex == 2
           ? null
           : CustomAppBar(
+              showPrayerActions: _currentIndex == 0,
               isSearchMode: _isSearchMode,
               switchSearchMode: (bool val) => _switchSearchMode(val),
             ),
@@ -196,7 +197,7 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: _isSearchMode ? PrayerList() : GrowMyPrayerLifeScreen(),
+          page: GrowMyPrayerLifeScreen(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",

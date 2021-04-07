@@ -14,10 +14,12 @@ import 'package:provider/provider.dart';
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function switchSearchMode;
   final bool isSearchMode;
+  final bool showPrayerActions;
   CustomAppBar({
     Key key,
     this.switchSearchMode,
     this.isSearchMode = false,
+    this.showPrayerActions = true,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -127,26 +129,30 @@ class _CustomAppBarState extends State<CustomAppBar> {
               //   ),
               ),
           SizedBox(width: 15),
-          GestureDetector(
-            onTap: () {
-              widget.switchSearchMode(true);
-              setState(() {});
-            },
-            child: Icon(
-              AppIcons.bestill_search,
-              color: AppColors.bottomNavIconColor,
-              size: 18,
-            ),
-          ),
+          widget.showPrayerActions
+              ? GestureDetector(
+                  onTap: () {
+                    widget.switchSearchMode(true);
+                    setState(() {});
+                  },
+                  child: Icon(
+                    AppIcons.bestill_search,
+                    color: AppColors.bottomNavIconColor,
+                    size: 18,
+                  ),
+                )
+              : Container(),
           SizedBox(width: 15),
-          GestureDetector(
-            onTap: () => _openFilter(Settings.isDarkMode),
-            child: Icon(
-              AppIcons.bestill_tools,
-              color: AppColors.bottomNavIconColor,
-              size: 18,
-            ),
-          )
+          widget.showPrayerActions
+              ? GestureDetector(
+                  onTap: () => _openFilter(Settings.isDarkMode),
+                  child: Icon(
+                    AppIcons.bestill_tools,
+                    color: AppColors.bottomNavIconColor,
+                    size: 18,
+                  ),
+                )
+              : Container()
         ],
       ),
       title: widget.isSearchMode
