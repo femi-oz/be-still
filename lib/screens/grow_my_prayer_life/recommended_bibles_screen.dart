@@ -7,6 +7,7 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -64,8 +65,15 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => Navigator.popUntil(
-                        context, ModalRoute.withName(EntryScreen.routeName)),
+                    onPressed: () => Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: EntryScreen(screenNumber: 3),
+                      ),
+                    ),
+                    // Navigator.popUntil(
+                    //     context, ModalRoute.withName(EntryScreen.routeName)),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

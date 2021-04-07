@@ -57,6 +57,7 @@ dependencies:
   cron: ^0.3.0
   sentry_flutter: ^4.0.6
   masked_text: ^0.0.6
+  page_transition: "^1.1.7+6"
 
 
 

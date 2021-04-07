@@ -11,6 +11,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -121,9 +122,17 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                           style: AppTextStyles.regularText13,
                                         ),
                                         onTap: () {
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  LoginScreen.routeName);
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            PageTransition(
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: LoginScreen()),
+                                            (Route<dynamic> route) => false,
+                                          );
+                                          // Navigator.of(context)
+                                          //     .pushReplacementNamed(
+                                          //         LoginScreen.routeName);
                                         },
                                       )
                               ],

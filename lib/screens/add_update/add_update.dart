@@ -12,6 +12,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../entry_screen.dart';
@@ -53,7 +54,14 @@ class _AddUpdateState extends State<AddUpdate> {
                 widget.prayerData.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
-        Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.leftToRightWithFade,
+            child: PrayerDetails(),
+          ),
+        );
+        // Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
       }
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -117,8 +125,15 @@ class _AddUpdateState extends State<AddUpdate> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(PrayerDetails.routeName),
+                    onTap: () => Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: PrayerDetails(),
+                      ),
+                    ),
+                    // Navigator.of(context)
+                    //     .pushNamed(PrayerDetails.routeName),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .20,
@@ -219,8 +234,15 @@ class _AddUpdateState extends State<AddUpdate> {
                         ),
                         onTap: () => _descriptionController.text.isNotEmpty
                             ? onCancel()
-                            : Navigator.popUntil(context,
-                                ModalRoute.withName(PrayerDetails.routeName)),
+                            : Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: EntryScreen(screenNumber: 0),
+                                ),
+                              ),
+                        // Navigator.popUntil(context,
+                        //     ModalRoute.withName(PrayerDetails.routeName)),
                       ),
                       InkWell(
                         child: Text('SAVE',

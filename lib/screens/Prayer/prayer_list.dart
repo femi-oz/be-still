@@ -15,6 +15,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
@@ -81,7 +82,13 @@ class _PrayerListState extends State<PrayerList> {
           .setPrayer(prayerData.userPrayer.id);
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      Navigator.of(context).pushNamed(PrayerDetails.routeName);
+      Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.leftToRightWithFade,
+            child: PrayerDetails()),
+      );
+      // Navigator.of(context).pushNamed(PrayerDetails.routeName);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
@@ -203,8 +210,11 @@ class _PrayerListState extends State<PrayerList> {
                   : LongButton(
                       onPress: () => Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => EntryScreen(screenNumber: 2),
+                        PageTransition(
+                          type: PageTransitionType.leftToRightWithFade,
+                          child: EntryScreen(
+                            screenNumber: 2,
+                          ),
                         ),
                       ),
                       text: 'Add New Prayer',

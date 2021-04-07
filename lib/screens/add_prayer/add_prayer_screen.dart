@@ -12,6 +12,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 
@@ -77,8 +78,15 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.popUntil(
-              context, ModalRoute.withName(EntryScreen.routeName));
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.leftToRightWithFade,
+              child: EntryScreen(screenNumber: 0),
+            ),
+          );
+          // Navigator.popUntil(
+          //     context, ModalRoute.withName(EntryScreen.routeName));
           // }
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
@@ -114,7 +122,14 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.of(context).pushNamed(PrayerDetails.routeName);
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.leftToRightWithFade,
+              child: PrayerDetails(),
+            ),
+          );
+          // Navigator.of(context).pushNamed(PrayerDetails.routeName);
         }
       }
     } on HttpException catch (e) {
@@ -232,12 +247,28 @@ class _AddPrayerState extends State<AddPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => widget.isEdit
-                        ? Navigator.popUntil(context,
-                            ModalRoute.withName(PrayerDetails.routeName))
-                        : Navigator.popUntil(
+                        ? Navigator.push(
                             context,
-                            ModalRoute.withName(EntryScreen.routeName),
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: PrayerDetails(),
+                            ),
+                          )
+                        // Navigator.popUntil(context,
+                        //       ModalRoute.withName(PrayerDetails.routeName))
+                        : Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: EntryScreen(
+                                screenNumber: 0,
+                              ),
+                            ),
                           ),
+                    //  Navigator.popUntil(
+                    //       context,
+                    //       ModalRoute.withName(EntryScreen.routeName),
+                    //     ),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .20,
@@ -341,14 +372,30 @@ class _AddPrayerState extends State<AddPrayer> {
                           onTap: () => isValid
                               ? onCancel()
                               : widget.isEdit
-                                  ? Navigator.popUntil(
+                                  ? Navigator.push(
                                       context,
-                                      ModalRoute.withName(
-                                          PrayerDetails.routeName))
-                                  : Navigator.popUntil(
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: PrayerDetails(),
+                                      ),
+                                    )
+                                  // Navigator.popUntil(
+                                  //     context,
+                                  //     ModalRoute.withName(
+                                  //         PrayerDetails.routeName))
+                                  : Navigator.push(
                                       context,
-                                      ModalRoute.withName(
-                                          EntryScreen.routeName)),
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: EntryScreen(screenNumber: 0),
+                                      ),
+                                    ),
+                          // Navigator.popUntil(
+                          //                 context,
+                          //                 ModalRoute.withName(
+                          //                     EntryScreen.routeName)),
                         ),
                         InkWell(
                           child: Text('SAVE',
