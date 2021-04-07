@@ -300,6 +300,7 @@ class PrayerService {
       modifiedOn: DateTime.now(),
       createdBy: userId,
       createdOn: DateTime.now(),
+      descriptionBackup: '',
     );
     try {
       final updateId = Uuid().v1();

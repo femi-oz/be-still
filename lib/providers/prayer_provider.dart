@@ -33,6 +33,7 @@ class PrayerProvider with ChangeNotifier {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
+        print(_prayers.length);
         filterPrayers(sortBy);
         notifyListeners();
       },

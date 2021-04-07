@@ -39,13 +39,13 @@ class PrayerModel {
 
   PrayerModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        groupId = snapshot.data()['GroupId'] ?? '',
+        groupId = snapshot.data()['GroupId'],
         userId = snapshot.data()['UserId'],
         type = snapshot.data()['Type'],
         title = snapshot.data()['Title'],
         status = snapshot.data()['Status'],
         description = snapshot.data()['Description'],
-        descriptionBackup = snapshot.data()['DescriptionBackup'] ?? 'N/A',
+        descriptionBackup = snapshot.data()['DescriptionBackup'] ?? '',
         isAnswer = snapshot.data()['IsAnswer'],
         isInappropriate = snapshot.data()['IsInappropriate'],
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
