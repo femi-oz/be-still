@@ -10,6 +10,7 @@ class PrayerModel {
   final String title;
   final String status;
   final String description;
+  final String descriptionBackup;
   final bool isAnswer;
   final bool isInappropriate;
   final String creatorName;
@@ -26,6 +27,7 @@ class PrayerModel {
     @required this.title,
     @required this.status,
     @required this.description,
+    @required this.descriptionBackup,
     @required this.isAnswer,
     @required this.isInappropriate,
     @required this.creatorName,
@@ -43,6 +45,7 @@ class PrayerModel {
         title = snapshot.data()['Title'],
         status = snapshot.data()['Status'],
         description = snapshot.data()['Description'],
+        descriptionBackup = snapshot.data()['DescriptionBackup'],
         isAnswer = snapshot.data()['IsAnswer'],
         isInappropriate = snapshot.data()['IsInappropriate'],
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
@@ -59,6 +62,7 @@ class PrayerModel {
       'Title': title,
       'Status': status,
       'Description': description,
+      'DescriptionBackup': descriptionBackup,
       'IsAnswer': isAnswer,
       'IsInappropriate': isInappropriate,
       'CreatorName': creatorName,
@@ -76,6 +80,7 @@ class PrayerUpdateModel {
   final String userId;
   final String title;
   final String description;
+  final String descriptionBackup;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -87,6 +92,7 @@ class PrayerUpdateModel {
     @required this.userId,
     @required this.title,
     @required this.description,
+    @required this.descriptionBackup,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -99,6 +105,7 @@ class PrayerUpdateModel {
         userId = snapshot.data()['UserId'],
         title = snapshot.data()['Title'],
         description = snapshot.data()['Description'],
+        descriptionBackup = snapshot.data()['DescriptionBackup'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -110,6 +117,7 @@ class PrayerUpdateModel {
       'UserId': userId,
       'Title': title,
       'Description': description,
+      'DescriptionBackup': descriptionBackup,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

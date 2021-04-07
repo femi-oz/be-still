@@ -102,7 +102,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
               child: Icon(
                 Icons.notifications_none,
-                color: AppColors.offWhite4,
+                color: AppColors.white,
               )
               //notifications.length == 0
               // ? Icon(
