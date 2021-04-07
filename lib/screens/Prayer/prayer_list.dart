@@ -45,6 +45,11 @@ class _PrayerListState extends State<PrayerList> {
     super.didChangeDependencies();
   }
 
+  @override
+  dispose() {
+    super.dispose();
+  }
+
   Future<void> _getPrayers() async {
     await BeStilDialog.showLoading(context);
     try {

@@ -70,11 +70,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
   }
 
   _goHome() {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EntryScreen(screenNumber: 0),
-        ));
+    Navigator.popUntil(context, ModalRoute.withName(EntryScreen.routeName));
   }
 
   _onDelete() async {

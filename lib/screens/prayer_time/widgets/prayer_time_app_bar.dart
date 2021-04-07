@@ -1,7 +1,6 @@
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final current;

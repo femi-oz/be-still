@@ -1,4 +1,3 @@
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -105,6 +104,7 @@ class _EntryScreenState extends State<EntryScreen> {
       appBar: _currentIndex == 2
           ? null
           : CustomAppBar(
+              showPrayerActions: _currentIndex == 0,
               isSearchMode: _isSearchMode,
               switchSearchMode: (bool val) => _switchSearchMode(val),
             ),
@@ -197,7 +197,7 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: _isSearchMode ? PrayerList() : GrowMyPrayerLifeScreen(),
+          page: GrowMyPrayerLifeScreen(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",

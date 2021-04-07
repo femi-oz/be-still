@@ -1,11 +1,7 @@
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
   SettingsAppBar({Key key})
@@ -24,8 +20,8 @@ class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
-    List<PushNotificationModel> notifications =
-        Provider.of<NotificationProvider>(context).notifications;
+    // List<PushNotificationModel> notifications =
+    //     Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
       title: Text('SETTINGS',
           style: AppTextStyles.boldText28.copyWith(

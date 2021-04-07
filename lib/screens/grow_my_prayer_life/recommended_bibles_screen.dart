@@ -26,6 +26,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     }
   }
 
+  ScrollController _scrollController = new ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +47,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
           ),
         ),
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(
             children: <Widget>[
               Padding(
@@ -61,11 +64,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                EntryScreen(screenNumber: 3))),
+                    onPressed: () => Navigator.popUntil(
+                        context, ModalRoute.withName(EntryScreen.routeName)),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(
@@ -130,6 +130,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     ),
                   ),
                   initiallyExpanded: false,
+                  scrollController: _scrollController,
                   children: <Widget>[
                     Container(
                       padding:

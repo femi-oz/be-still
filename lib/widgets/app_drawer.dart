@@ -69,8 +69,6 @@ class CustomDrawer extends StatelessWidget {
                         LoginScreen.routeName,
                         (Route<dynamic> route) => false,
                       );
-                      // Navigator.of(context)
-                      //     .pushReplacementNamed(LoginScreen.routeName);
                     },
                     child: Container(
                       height: 30,

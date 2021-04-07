@@ -47,10 +47,7 @@ class _ShareInAppState extends State<ShareInApp> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0)));
+      Navigator.popUntil(context, ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
