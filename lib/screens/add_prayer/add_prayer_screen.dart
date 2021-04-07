@@ -74,10 +74,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EntryScreen(screenNumber: 0)));
+          Navigator.popUntil(
+              context, ModalRoute.withName(EntryScreen.routeName));
           // }
         } else {
           print(contacts.length);
@@ -230,14 +228,11 @@ class _AddPrayerState extends State<AddPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => widget.isEdit
-                        ? Navigator.of(context)
-                            .pushNamed(PrayerDetails.routeName)
-                        : Navigator.push(
+                        ? Navigator.popUntil(context,
+                            ModalRoute.withName(PrayerDetails.routeName))
+                        : Navigator.popUntil(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EntryScreen(screenNumber: 0),
-                            ),
+                            ModalRoute.withName(EntryScreen.routeName),
                           ),
                     child: Container(
                       height: 30,
@@ -342,15 +337,14 @@ class _AddPrayerState extends State<AddPrayer> {
                           onTap: () => isValid
                               ? onCancel()
                               : widget.isEdit
-                                  ? Navigator.of(context)
-                                      .pushNamed(PrayerDetails.routeName)
-                                  : Navigator.push(
+                                  ? Navigator.popUntil(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            EntryScreen(screenNumber: 0),
-                                      ),
-                                    ),
+                                      ModalRoute.withName(
+                                          PrayerDetails.routeName))
+                                  : Navigator.popUntil(
+                                      context,
+                                      ModalRoute.withName(
+                                          EntryScreen.routeName)),
                         ),
                         InkWell(
                           child: Text('SAVE',

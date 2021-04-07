@@ -193,11 +193,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                EntryScreen(screenNumber: 0))),
+                    onPressed: () => Navigator.popUntil(
+                        context, ModalRoute.withName(EntryScreen.routeName)),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

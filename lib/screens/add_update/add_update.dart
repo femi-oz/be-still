@@ -219,8 +219,8 @@ class _AddUpdateState extends State<AddUpdate> {
                         ),
                         onTap: () => _descriptionController.text.isNotEmpty
                             ? onCancel()
-                            : Navigator.of(context)
-                                .pushNamed(PrayerDetails.routeName),
+                            : Navigator.popUntil(context,
+                                ModalRoute.withName(PrayerDetails.routeName)),
                       ),
                       InkWell(
                         child: Text('SAVE',
