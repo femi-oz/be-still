@@ -204,10 +204,11 @@ class _AddUpdateState extends State<AddUpdate> {
               ),
             ),
             padding: EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Row(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       InkWell(
@@ -233,167 +234,186 @@ class _AddUpdateState extends State<AddUpdate> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30.0),
-                  Form(
-                    // autovalidateMode: AutovalidateMode.onUserInteraction,
-                    autovalidate: _autoValidate,
-                    key: _formKey,
-                    child: CustomInput(
-                      label: "Enter your text here",
-                      controller: _descriptionController,
-                      maxLines: 23,
-                      isRequired: true,
-                      showSuffix: false,
-                      textInputAction: TextInputAction.newline,
-                      focusNode: _focusNode,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.darkBlue2,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    margin: EdgeInsets.only(top: 20),
-                    width: double.infinity,
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        widget.prayerData.prayer.userId != _currentUser.id
-                            ? Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                child: Text(
-                                  widget.prayerData.prayer.createdBy,
-                                  style: TextStyle(
-                                      color: AppColors.lightBlue3,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500),
-                                  textAlign: TextAlign.center,
-                                ),
-                              )
-                            : Container(),
-                        ...widget.prayerData.updates.map(
-                          (u) => Container(
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Column(
+                        children: [
+                          Form(
+                            // autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidate: _autoValidate,
+                            key: _formKey,
+                            child: CustomInput(
+                              label: "Enter your text here",
+                              controller: _descriptionController,
+                              maxLines: 23,
+                              isRequired: true,
+                              showSuffix: false,
+                              textInputAction: TextInputAction.newline,
+                              focusNode: _focusNode,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.darkBlue2,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            margin: EdgeInsets.only(top: 20),
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20),
                             child: Column(
-                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(right: 30),
-                                      child: Row(
+                                widget.prayerData.prayer.userId !=
+                                        _currentUser.id
+                                    ? Container(
+                                        margin: EdgeInsets.only(bottom: 20),
+                                        child: Text(
+                                          widget.prayerData.prayer.createdBy,
+                                          style: TextStyle(
+                                              color: AppColors.lightBlue3,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                    : Container(),
+                                ...widget.prayerData.updates.map(
+                                  (u) => Container(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 30),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    DateFormat(
+                                                            'hh:mma | MM.dd.yyyy')
+                                                        .format(u.modifiedOn),
+                                                    style: TextStyle(
+                                                        color:
+                                                            AppColors.dimBlue,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Divider(
+                                                color: AppColors.darkBlue2,
+                                                thickness: 1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(20),
+                                            child: Center(
+                                              child: Text(
+                                                u.description,
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.textFieldText,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w300,
+                                                  height: 2,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(
-                                            DateFormat('hh:mma | MM.dd.yyyy')
-                                                .format(u.modifiedOn),
-                                            style: TextStyle(
-                                                color: AppColors.dimBlue,
-                                                fontWeight: FontWeight.w500),
+                                          Container(
+                                            margin: EdgeInsets.only(right: 30),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  'Initial Prayer Request |',
+                                                  style: TextStyle(
+                                                      color: AppColors.dimBlue,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                                Text(
+                                                  DateFormat(' MM.dd.yyyy')
+                                                      .format(widget.prayerData
+                                                          .prayer.modifiedOn),
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColors.dimBlue,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Divider(
+                                              color: AppColors.darkBlue2,
+                                              thickness: 1,
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Divider(
-                                        color: AppColors.darkBlue2,
-                                        thickness: 1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(20),
-                                    child: Center(
-                                      child: Text(
-                                        u.description,
-                                        style: TextStyle(
-                                          color: AppColors.textFieldText,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300,
-                                          height: 2,
+                                      Container(
+                                        constraints: BoxConstraints(
+                                          minHeight: 200,
                                         ),
-                                        textAlign: TextAlign.center,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 20.0, horizontal: 20),
+                                          child: Center(
+                                            child: Text(
+                                              widget.prayerData.prayer
+                                                  .description,
+                                              style: TextStyle(
+                                                color: AppColors.textFieldText,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300,
+                                                height: 2,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.only(right: 30),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text(
-                                          'Initial Prayer Request |',
-                                          style: TextStyle(
-                                              color: AppColors.dimBlue,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        Text(
-                                          DateFormat(' MM.dd.yyyy').format(
-                                              widget.prayerData.prayer
-                                                  .modifiedOn),
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: AppColors.dimBlue,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: AppColors.darkBlue2,
-                                      thickness: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                constraints: BoxConstraints(
-                                  minHeight: 200,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 20.0, horizontal: 20),
-                                  child: Center(
-                                    child: Text(
-                                      widget.prayerData.prayer.description,
-                                      style: TextStyle(
-                                        color: AppColors.textFieldText,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w300,
-                                        height: 2,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

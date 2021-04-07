@@ -328,10 +328,11 @@ class _AddPrayerState extends State<AddPrayer> {
                 ),
               ),
               padding: EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Row(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
@@ -361,90 +362,98 @@ class _AddPrayerState extends State<AddPrayer> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 50.0),
-                    Stack(
-                      children: [
-                        Form(
-                          // autovalidateMode: AutovalidateMode.onUserInteraction,
-                          autovalidate: _autoValidate,
-                          key: _formKey,
-                          child: CustomInput(
-                            label: 'Prayer description',
-                            controller: _descriptionController,
-                            maxLines: 23,
-                            isRequired: true,
-                            showSuffix: false,
-                            textInputAction: TextInputAction.newline,
-                            onTextchanged: (val) => onTextChange(val),
-                            focusNode: _focusNode,
+                  ),
+
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: Form(
+                              // autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidate: _autoValidate,
+                              key: _formKey,
+                              child: CustomInput(
+                                label: 'Prayer description',
+                                controller: _descriptionController,
+                                maxLines: 23,
+                                isRequired: true,
+                                showSuffix: false,
+                                textInputAction: TextInputAction.newline,
+                                onTextchanged: (val) => onTextChange(val),
+                                focusNode: _focusNode,
+                              ),
+                            ),
                           ),
-                        ),
-                        tagText.length > 1
-                            ? Container(
-                                padding: EdgeInsets.only(
-                                    top: _focusNode.offset.dy * 0.45,
-                                    left: _focusNode.offset.dx),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...localContacts.map((s) {
-                                        var displayName = s.displayName ?? '';
-                                        if (('@' + displayName)
-                                            .toLowerCase()
-                                            .contains(tagText.toLowerCase()))
-                                          return GestureDetector(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10.0),
-                                                child: Text(
-                                                  displayName,
-                                                  style: AppTextStyles
-                                                      .regularText14
-                                                      .copyWith(
-                                                    color: AppColors.lightBlue4,
+                          tagText.length > 1
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                      top: _focusNode.offset.dy * 0.45,
+                                      left: _focusNode.offset.dx),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ...localContacts.map((s) {
+                                          var displayName = s.displayName ?? '';
+                                          if (('@' + displayName)
+                                              .toLowerCase()
+                                              .contains(tagText.toLowerCase()))
+                                            return GestureDetector(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.0),
+                                                  child: Text(
+                                                    displayName,
+                                                    style: AppTextStyles
+                                                        .regularText14
+                                                        .copyWith(
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              onTap: () => _onTagSelected(s));
-                                        else
-                                          return SizedBox();
-                                      }).toList()
-                                    ],
+                                                onTap: () => _onTagSelected(s));
+                                          else
+                                            return SizedBox();
+                                        }).toList()
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
                     ),
+                  ),
 
-                    // IconButton(
-                    //   icon: Icon(
-                    //     Icons.more_horiz,
-                    //     color: AppColors.lightBlue4,
-                    //   ),
-                    //   onPressed: () => showModalBottomSheet(
-                    //     context: context,
-                    //     barrierColor:
-                    //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    //     backgroundColor:
-                    //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    //     isScrollControlled: true,
-                    //     builder: (BuildContext context) {
-                    //       return AddPrayerMenu(
-                    //           prayer: _descriptionController.text);
-                    //     },
-                    //   ).then((value) {
-                    //     setState(() {
-                    //       groups = value;
-                    //     });
-                    //   }),
-                    // ),
-                  ],
-                ),
+                  // IconButton(
+                  //   icon: Icon(
+                  //     Icons.more_horiz,
+                  //     color: AppColors.lightBlue4,
+                  //   ),
+                  //   onPressed: () => showModalBottomSheet(
+                  //     context: context,
+                  //     barrierColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //     backgroundColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //     isScrollControlled: true,
+                  //     builder: (BuildContext context) {
+                  //       return AddPrayerMenu(
+                  //           prayer: _descriptionController.text);
+                  //     },
+                  //   ).then((value) {
+                  //     setState(() {
+                  //       groups = value;
+                  //     });
+                  //   }),
+                  // ),
+                ],
               ),
             ),
           ),
