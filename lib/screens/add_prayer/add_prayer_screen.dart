@@ -310,9 +310,8 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    bool isNotValid =
-        (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
-            (widget.isEdit && _oldDesc != _descriptionController.text);
+    bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
+        (widget.isEdit && _oldDesc != _descriptionController.text);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -339,7 +338,7 @@ class _AddPrayerState extends State<AddPrayer> {
                           child: Text('CANCEL',
                               style: AppTextStyles.boldText18
                                   .copyWith(color: AppColors.lightBlue5)),
-                          onTap: () => isNotValid
+                          onTap: () => isValid
                               ? onCancel()
                               : widget.isEdit
                                   ? Navigator.of(context)
@@ -355,10 +354,10 @@ class _AddPrayerState extends State<AddPrayer> {
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(
-                                  color: !isNotValid
-                                      ? AppColors.grey
+                                  color: !isValid
+                                      ? AppColors.lightBlue5.withOpacity(0.5)
                                       : AppColors.lightBlue5)),
-                          onTap: () => isNotValid ? _save() : null,
+                          onTap: () => isValid ? _save() : null,
                         ),
                       ],
                     ),
