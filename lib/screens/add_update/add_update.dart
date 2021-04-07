@@ -191,7 +191,6 @@ class _AddUpdateState extends State<AddUpdate> {
   Widget build(BuildContext context) {
     setState(() => this.bcontext = context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    bool isValid = _descriptionController.text.isNotEmpty;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -217,7 +216,7 @@ class _AddUpdateState extends State<AddUpdate> {
                           style: TextStyle(
                               color: AppColors.lightBlue5, fontSize: 16),
                         ),
-                        onTap: () => isValid
+                        onTap: () => _descriptionController.text.isNotEmpty
                             ? onCancel()
                             : Navigator.of(context)
                                 .pushNamed(PrayerDetails.routeName),
@@ -225,10 +224,12 @@ class _AddUpdateState extends State<AddUpdate> {
                       InkWell(
                         child: Text('SAVE',
                             style: TextStyle(
-                                color: !isValid
+                                color: _descriptionController.text.isEmpty
                                     ? AppColors.lightBlue5.withOpacity(0.5)
                                     : AppColors.lightBlue5)),
-                        onTap: () => isValid ? _save() : null,
+                        onTap: () => _descriptionController.text.isNotEmpty
+                            ? _save()
+                            : null,
                       ),
                     ],
                   ),

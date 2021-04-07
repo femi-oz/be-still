@@ -57,13 +57,15 @@ class _NoUpdateViewState extends State<NoUpdateView> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-              child: Center(
-                child: Text(
-                  prayerData.prayer.description,
-                  style: AppTextStyles.regularText18b.copyWith(
-                    color: AppColors.prayerTextColor,
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Text(
+                    prayerData.prayer.description,
+                    style: AppTextStyles.regularText18b.copyWith(
+                      color: AppColors.prayerTextColor,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
                 ),
               ),
             ),
