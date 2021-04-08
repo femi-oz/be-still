@@ -20,6 +20,7 @@ import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
@@ -117,20 +118,27 @@ class _LoginScreenState extends State<LoginScreen> {
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
-          NavigationService.instance
-              .navigateToReplacement(PrayerTime.routeName);
+          NavigationService.instance.navigateToReplacement(PrayerTime());
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          NavigationService.instance
-              .navigateToReplacement(PrayerDetails.routeName);
+          NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            type: PageTransitionType.leftToRightWithFade,
+            child: EntryScreen(
+              screenNumber: 0,
+            )),
+        (Route<dynamic> route) => false,
+      );
+      // Navigator.of(context).pushNamedAndRemoveUntil(
+      //     EntryScreen.routeName, (Route<dynamic> route) => false);
     }
   }
 
@@ -232,10 +240,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // BeStilDialog.hideLoading(context);
       // await setRouteDestination();
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        EntryScreen.routeName,
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            type: PageTransitionType.leftToRightWithFade,
+            child: EntryScreen(
+              screenNumber: 0,
+            )),
         (Route<dynamic> route) => false,
       );
+      // Navigator.of(context).pushNamedAndRemoveUntil(
+      //   EntryScreen.routeName,
+      //   (Route<dynamic> route) => false,
+      // );
     } on HttpException catch (e) {
       // needsVerification =
       //     Provider.of<AuthenticationProvider>(context, listen: false)
@@ -507,7 +524,13 @@ class _LoginScreenState extends State<LoginScreen> {
         InkWell(
           child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
-            Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
+            Navigator.push(
+              context,
+              PageTransition(
+                  type: PageTransitionType.leftToRightWithFade,
+                  child: CreateAccountScreen()),
+            );
+            // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
           },
         ),
         Row(
@@ -550,13 +573,17 @@ class _LoginScreenState extends State<LoginScreen> {
         //     : Container(),
         SizedBox(height: 24),
         GestureDetector(
-          child: Text(
-            "Forgot my Password",
-            style: AppTextStyles.regularText13,
-          ),
-          onTap: () =>
-              Navigator.of(context).pushNamed(ForgetPassword.routeName),
-        ),
+            child: Text(
+              "Forgot my Password",
+              style: AppTextStyles.regularText13,
+            ),
+            onTap: () => Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.leftToRightWithFade,
+                    child: ForgetPassword()))
+            // Navigator.of(context).pushNamed(ForgetPassword.routeName),
+            ),
       ],
     );
   }

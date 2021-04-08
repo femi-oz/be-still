@@ -99,8 +99,8 @@ class SettingsService {
   populateSharingSettings(String userId, String email) {
     SharingSettingsModel sharingSettings = SharingSettingsModel(
         userId: userId,
-        enableSharingViaEmail: false,
-        enableSharingViaText: false,
+        enableSharingViaEmail: true,
+        enableSharingViaText: true,
         churchId: '',
         churchName: '',
         churchPhone: '',

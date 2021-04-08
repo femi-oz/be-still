@@ -39,8 +39,9 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 30),
+          SizedBox(height: 15.0),
           CustomSectionHeder('Preferences'),
+          SizedBox(height: 20.0),
           CustomToggle(
             title: 'Allow push notifications?',
             onChange: (value) => setingProvider.updateSettings(userId,

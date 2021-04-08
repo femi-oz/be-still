@@ -102,38 +102,33 @@ class _SharingSettingsState extends State<SharingSettings> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 40),
-          Column(
-            children: [
-              CustomSectionHeder('Preferences'),
-              CustomToggle(
-                title: 'Enable sharing via text?',
-                onChange: (value) => settingProvider.updateSharingSettings(
-                    userId,
-                    key: SettingsKey.enableSharingViaText,
-                    value: value,
-                    settingsId: settingProvider.sharingSettings.id),
-                value: settingProvider.sharingSettings.enableSharingViaText,
-              ),
-              CustomToggle(
-                title: 'Enable sharing via email?',
-                onChange: (value) => settingProvider.updateSharingSettings(
-                    userId,
-                    key: SettingsKey.enableSharingViaEmail,
-                    value: value,
-                    settingsId: settingProvider.sharingSettings.id),
-                value: settingProvider.sharingSettings.enableSharingViaEmail,
-              ),
-            ],
+          SizedBox(height: 15),
+          CustomSectionHeder('Preferences'),
+          SizedBox(height: 30),
+          CustomToggle(
+            title: 'Enable sharing via text?',
+            onChange: (value) => settingProvider.updateSharingSettings(userId,
+                key: SettingsKey.enableSharingViaText,
+                value: value,
+                settingsId: settingProvider.sharingSettings.id),
+            value: settingProvider.sharingSettings.enableSharingViaText,
           ),
-          SizedBox(height: 40),
+          CustomToggle(
+            title: 'Enable sharing via email?',
+            onChange: (value) => settingProvider.updateSharingSettings(userId,
+                key: SettingsKey.enableSharingViaEmail,
+                value: value,
+                settingsId: settingProvider.sharingSettings.id),
+            value: settingProvider.sharingSettings.enableSharingViaEmail,
+          ),
+          SizedBox(height: 30),
           //method hidelAllTextFieled
           GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Column(
               children: [
                 CustomSectionHeder('With My Church'),
-                SizedBox(height: 30),
+                SizedBox(height: 35),
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -143,7 +138,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                         .copyWith(color: AppColors.textFieldText),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 35),
                 _button(
                   onPressed: () => _update(_ModalType.church, context),
                   value: settingProvider.sharingSettings.churchName == ''

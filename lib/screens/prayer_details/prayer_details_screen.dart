@@ -20,6 +20,7 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 import '../entry_screen.dart';
@@ -194,10 +195,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       size: 20,
                     ),
                     onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                EntryScreen(screenNumber: 0))),
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: EntryScreen(
+                            screenNumber: 0,
+                          )),
+                    ),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

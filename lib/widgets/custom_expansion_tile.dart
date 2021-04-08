@@ -38,6 +38,7 @@ class ExpansionTile extends StatefulWidget {
     this.children = const <Widget>[],
     this.trailing,
     this.initiallyExpanded = false,
+    this.scrollController,
   })  : assert(initiallyExpanded != null),
         super(key: key);
 
@@ -70,6 +71,7 @@ class ExpansionTile extends StatefulWidget {
   final Color headerBackgroundColorStart;
   final Color headerBackgroundColorEnd;
   final Color shadowColor;
+  final scrollController;
 
   /// The color to display the icon of the header.
   final Color iconColor;
@@ -125,6 +127,10 @@ class _ExpansionTileState extends State<ExpansionTile>
   }
 
   void _handleTap() {
+    widget.scrollController.animateTo(
+        widget.scrollController.position.maxScrollExtent,
+        duration: Duration(seconds: 1),
+        curve: Curves.ease);
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {

@@ -12,6 +12,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 
@@ -44,6 +45,7 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   bool _autoValidate = false;
+  String _oldDesc = '';
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -73,10 +75,15 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EntryScreen(screenNumber: 0)));
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.leftToRightWithFade,
+              child: EntryScreen(screenNumber: 0),
+            ),
+          );
+          // Navigator.popUntil(
+          //     context, ModalRoute.withName(EntryScreen.routeName));
           // }
         } else {
           print(contacts.length);
@@ -104,7 +111,14 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.of(context).pushNamed(PrayerDetails.routeName);
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.leftToRightWithFade,
+              child: PrayerDetails(),
+            ),
+          );
+          // Navigator.of(context).pushNamed(PrayerDetails.routeName);
         }
       }
     } on HttpException catch (e) {
@@ -120,6 +134,7 @@ class _AddPrayerState extends State<AddPrayer> {
   void initState() {
     _descriptionController.text =
         widget.isEdit ? widget.prayerData.prayer.description : '';
+    _oldDesc = _descriptionController.text;
     getContacts();
     super.initState();
   }
@@ -166,7 +181,7 @@ class _AddPrayerState extends State<AddPrayer> {
         false;
   }
 
-  _onTagSelected(s) {
+  Future<void> _onTagSelected(s) async {
     String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
@@ -189,8 +204,140 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
+  Future<void> onCancel() async {
+    AlertDialog dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.2,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Text(
+                'Are you sure you want to cancel?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue4,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () => widget.isEdit
+                        ? Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: PrayerDetails(),
+                            ),
+                          )
+                        // Navigator.popUntil(context,
+                        //       ModalRoute.withName(PrayerDetails.routeName))
+                        : Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: EntryScreen(
+                                screenNumber: 0,
+                              ),
+                            ),
+                          ),
+                    //  Navigator.popUntil(
+                    //       context,
+                    //       ModalRoute.withName(EntryScreen.routeName),
+                    //     ),
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .20,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'YES',
+                            style: TextStyle(
+                              color: AppColors.lightBlue4,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .20,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'NO',
+                            style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
+        (widget.isEdit && _oldDesc != _descriptionController.text);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -207,114 +354,147 @@ class _AddPrayerState extends State<AddPrayer> {
                 ),
               ),
               padding: EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Row(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                            child: Text('CANCEL',
-                                style: AppTextStyles.boldText18
-                                    .copyWith(color: AppColors.lightBlue5)),
-                            onTap: () => widget.isEdit
-                                ? Navigator.of(context).pop()
-                                : Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            EntryScreen(screenNumber: 0)))),
+                          child: Text('CANCEL',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.lightBlue5)),
+                          onTap: () => isValid
+                              ? onCancel()
+                              : widget.isEdit
+                                  ? Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: PrayerDetails(),
+                                      ),
+                                    )
+                                  // Navigator.popUntil(
+                                  //     context,
+                                  //     ModalRoute.withName(
+                                  //         PrayerDetails.routeName))
+                                  : Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: EntryScreen(screenNumber: 0),
+                                      ),
+                                    ),
+                          // Navigator.popUntil(
+                          //                 context,
+                          //                 ModalRoute.withName(
+                          //                     EntryScreen.routeName)),
+                        ),
                         InkWell(
-                            child: Text('SAVE',
-                                style: AppTextStyles.boldText18
-                                    .copyWith(color: AppColors.lightBlue5)),
-                            onTap: () => _save()),
+                          child: Text('SAVE',
+                              style: AppTextStyles.boldText18.copyWith(
+                                  color: !isValid
+                                      ? AppColors.lightBlue5.withOpacity(0.5)
+                                      : AppColors.lightBlue5)),
+                          onTap: () => isValid ? _save() : null,
+                        ),
                       ],
                     ),
-                    SizedBox(height: 50.0),
-                    Stack(
-                      children: [
-                        Form(
-                          // autovalidateMode: AutovalidateMode.onUserInteraction,
-                          autovalidate: _autoValidate,
-                          key: _formKey,
-                          child: CustomInput(
-                            label: 'Prayer description',
-                            controller: _descriptionController,
-                            maxLines: 23,
-                            isRequired: true,
-                            showSuffix: false,
-                            textInputAction: TextInputAction.newline,
-                            onTextchanged: (val) => onTextChange(val),
-                            focusNode: _focusNode,
+                  ),
+
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: Form(
+                              // autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidate: _autoValidate,
+                              key: _formKey,
+                              child: CustomInput(
+                                label: 'Prayer description',
+                                controller: _descriptionController,
+                                maxLines: 23,
+                                isRequired: true,
+                                showSuffix: false,
+                                textInputAction: TextInputAction.newline,
+                                onTextchanged: (val) => onTextChange(val),
+                                focusNode: _focusNode,
+                              ),
+                            ),
                           ),
-                        ),
-                        tagText.length > 1
-                            ? Container(
-                                padding: EdgeInsets.only(
-                                    top: _focusNode.offset.dy * 0.45,
-                                    left: _focusNode.offset.dx),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...localContacts.map((s) {
-                                        var displayName = s.displayName ?? '';
-                                        if (('@' + displayName)
-                                            .toLowerCase()
-                                            .contains(tagText.toLowerCase()))
-                                          return GestureDetector(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10.0),
-                                                child: Text(
-                                                  displayName,
-                                                  style: AppTextStyles
-                                                      .regularText14
-                                                      .copyWith(
-                                                    color: AppColors.lightBlue4,
+                          tagText.length > 1
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                      top: _focusNode.offset.dy * 0.45,
+                                      left: _focusNode.offset.dx),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ...localContacts.map((s) {
+                                          var displayName = s.displayName ?? '';
+                                          if (('@' + displayName)
+                                              .toLowerCase()
+                                              .contains(tagText.toLowerCase()))
+                                            return GestureDetector(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.0),
+                                                  child: Text(
+                                                    displayName,
+                                                    style: AppTextStyles
+                                                        .regularText14
+                                                        .copyWith(
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              onTap: () => _onTagSelected(s));
-                                        else
-                                          return SizedBox();
-                                      }).toList()
-                                    ],
+                                                onTap: () => _onTagSelected(s));
+                                          else
+                                            return SizedBox();
+                                        }).toList()
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
                     ),
+                  ),
 
-                    // IconButton(
-                    //   icon: Icon(
-                    //     Icons.more_horiz,
-                    //     color: AppColors.lightBlue4,
-                    //   ),
-                    //   onPressed: () => showModalBottomSheet(
-                    //     context: context,
-                    //     barrierColor:
-                    //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    //     backgroundColor:
-                    //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    //     isScrollControlled: true,
-                    //     builder: (BuildContext context) {
-                    //       return AddPrayerMenu(
-                    //           prayer: _descriptionController.text);
-                    //     },
-                    //   ).then((value) {
-                    //     setState(() {
-                    //       groups = value;
-                    //     });
-                    //   }),
-                    // ),
-                  ],
-                ),
+                  // IconButton(
+                  //   icon: Icon(
+                  //     Icons.more_horiz,
+                  //     color: AppColors.lightBlue4,
+                  //   ),
+                  //   onPressed: () => showModalBottomSheet(
+                  //     context: context,
+                  //     barrierColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                  //     backgroundColor:
+                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
+                  //     isScrollControlled: true,
+                  //     builder: (BuildContext context) {
+                  //       return AddPrayerMenu(
+                  //           prayer: _descriptionController.text);
+                  //     },
+                  //   ).then((value) {
+                  //     setState(() {
+                  //       groups = value;
+                  //     });
+                  //   }),
+                  // ),
+                ],
               ),
             ),
           ),

@@ -150,143 +150,109 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 30.0,
-          bottom: 20.0,
-        ),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 30),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                ),
+                child: Text(
+                  '${_currentUser.firstName} ${_currentUser.lastName}',
+                  style: AppTextStyles.boldText30.copyWith(height: 1),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('${_currentUser.firstName} ${_currentUser.lastName}',
-                      style: AppTextStyles.boldText30),
-                  // Text(
-                  //     DateFormat('MM/dd/yyyy').format(_currentUser.dateOfBirth),
-                  //     style: AppTextStyles.regularText13),
-                ],
-              ),
-            ),
-            SizedBox(height: 25),
-            Column(
-              children: [
-                CustomOutlineButton(
-                    actionColor: AppColors.lightBlue4,
-                    actionText: 'UPDATE',
-                    onPressed: () {
-                      setState(() => isVerified = false);
-                      _update(_ModalType.email, context);
-                    },
-                    value: _currentUser.email),
-                SizedBox(height: 10),
-                CustomOutlineButton(
-                    actionColor: AppColors.lightBlue4,
-                    actionText: 'UPDATE',
-                    onPressed: () {
-                      setState(() => isVerified = false);
-                      _update(_ModalType.password, context);
-                    },
-                    value: 'password'),
-                SizedBox(height: 10),
-                // CustomOutlineButton(
-                //     actionColor: AppColors.red,
-                //     actionText: 'ADD',
-                //     onPressed: () => null,
-                //     value: 'Two-Factor Authentication'),
-                // SizedBox(height: 10),
-              ],
-            ),
-            Column(
-              children: [
-                // CustomToggle(
-                //   onChange: (value) =>
-                //       setState(() => Settings.enableLocalAuth = value),
-                //   title: 'Enable Face/Touch ID',
-                //   value: Settings.enableLocalAuth,
-                // ),
-                CustomToggle(
-                  onChange: (value) => _setPermission(),
-                  title: 'Allow BeStill to access Contacts?',
-                  value: Settings.enabledContactPermission,
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Column(
-              children: [
-                CustomSectionHeder('App Appearance'),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 40.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      for (int i = 0; i < _themeModes.length; i++)
-                        CustomButtonGroup(
-                          isSelected:
-                              _themeProvider.currentTheme == _themeModes[i],
-                          length: _themeModes.length,
-                          onSelected: (value) =>
-                              _themeProvider.changeTheme(value),
-                          title: _themeModes[i],
-                          index: i,
-                        ),
-                    ],
+            ],
+          ),
+          SizedBox(height: 30),
+          CustomOutlineButton(
+            actionColor: AppColors.lightBlue4,
+            actionText: 'UPDATE',
+            onPressed: () {
+              setState(() => isVerified = false);
+              _update(_ModalType.email, context);
+            },
+            value: _currentUser.email,
+          ),
+          SizedBox(height: 10),
+          CustomOutlineButton(
+            actionColor: AppColors.lightBlue4,
+            actionText: 'UPDATE',
+            onPressed: () {
+              setState(() => isVerified = false);
+              _update(_ModalType.password, context);
+            },
+            value: 'password',
+          ),
+          SizedBox(height: 15),
+          CustomToggle(
+            onChange: (value) => _setPermission(),
+            title: 'Allow BeStill to access Contacts?',
+            value: Settings.enabledContactPermission,
+          ),
+          SizedBox(height: 20),
+          CustomSectionHeder('App Appearance'),
+          SizedBox(height: 35),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                for (int i = 0; i < _themeModes.length; i++)
+                  CustomButtonGroup(
+                    isSelected: _themeProvider.currentTheme == _themeModes[i],
+                    length: _themeModes.length,
+                    onSelected: (value) => _themeProvider.changeTheme(value),
+                    title: _themeModes[i],
+                    index: i,
                   ),
-                ),
               ],
             ),
-            Column(
-              children: [
-                CustomSectionHeder('App Version'),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(
-                //       vertical: 40.0, horizontal: 20.0),
-                //   child: Row(
-                //     children: [
-                //       CustomButtonGroup(
-                //         onSelected: () => null,
-                //         title: 'EXPORT',
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                SizedBox(height: 40),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // Text('App is running the latest version',
-                      //     style: AppTextStyles.regularText15
-                      //         .copyWith(color: AppColors.textFieldText)),
-                      Text(_version, style: AppTextStyles.regularText15),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 40),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(
-                //       vertical: 40.0, horizontal: 20.0),
-                //   child: Row(
-                //     children: [
-                //       CustomButtonGroup(
-                //         onSelected: () => null,
-                //         title: 'DELETE ACCOUNT & ALL DATA',
-                //         color: AppColors.red,
-                //       ),
-                //     ],
-                //   ),
-                // ),
+          ),
+          SizedBox(height: 35),
+          CustomSectionHeder('App Version'),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //       vertical: 40.0, horizontal: 20.0),
+          //   child: Row(
+          //     children: [
+          //       CustomButtonGroup(
+          //         onSelected: () => null,
+          //         title: 'EXPORT',
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          SizedBox(height: 30),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Text('App is running the latest version',
+                //     style: AppTextStyles.regularText15
+                //         .copyWith(color: AppColors.textFieldText)),
+                Text(_version, style: AppTextStyles.regularText15),
               ],
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: 30),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //       vertical: 40.0, horizontal: 20.0),
+          //   child: Row(
+          //     children: [
+          //       CustomButtonGroup(
+          //         onSelected: () => null,
+          //         title: 'DELETE ACCOUNT & ALL DATA',
+          //         color: AppColors.red,
+          //       ),
+          //     ],
+          //   ),
+          // ),
+        ],
       ),
     );
   }
