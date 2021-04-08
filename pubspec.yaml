@@ -58,6 +58,8 @@ dependencies:
   sentry_flutter: ^4.0.6
   masked_text: ^0.0.6
   page_transition: "^1.1.7+6"
+  easy_rich_text: ^0.5.3
+
 
 
 

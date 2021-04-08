@@ -31,36 +31,32 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
       leading: InkWell(
           onTap: () => null,
           // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-          child: Icon(
-            Icons.notifications_none,
+          child:
+              // notifications.length == 0
+              //     ?
+              Icon(
+            AppIcons.bestill_notifications,
             color: AppColors.grey,
+            size: 18,
           )
-          // onTap: () =>
-          //     Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-          // child: notifications.length == 0
-          //     ? Icon(
+          // : Stack(
+          //     alignment: Alignment.center,
+          //     children: [
+          //       Icon(
           //         AppIcons.bestill_notifications,
-          //         color: AppColors.grey,
+          //         color: AppColors.red,
           //         size: 18,
-          //       )
-          //     : Stack(
-          //         alignment: Alignment.center,
-          //         children: [
-          //           Icon(
-          //             AppIcons.bestill_notifications,
-          //             color: AppColors.red,
-          //             size: 18,
-          //           ),
-          //           Text(
-          //             notifications.length.toString(),
-          //             style: TextStyle(
-          //               color: Colors.white,
-          //               fontSize: 11,
-          //             ),
-          //             textAlign: TextAlign.center,
-          //           ),
-          //         ],
           //       ),
+          //       Text(
+          //         notifications.length.toString(),
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontSize: 11,
+          //         ),
+          //         textAlign: TextAlign.center,
+          //       ),
+          //     ],
+          //   ),
           ),
       actions: <Widget>[
         Builder(

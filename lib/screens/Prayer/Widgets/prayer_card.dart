@@ -11,11 +11,15 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:easy_rich_text/easy_rich_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
@@ -42,6 +46,158 @@ class _PrayerCardState extends State<PrayerCard> {
     else {
       return true;
     }
+  }
+
+  _emailLink([bool isChurch = false]) async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    var name = _user.firstName;
+    name = toBeginningOfSentenceCase(name);
+
+    final Uri params = Uri(scheme: 'mailto', path: '', query: "");
+
+    var url = params.toString();
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _textLink([bool isChurch = false]) async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    var name = _user.firstName;
+    name = toBeginningOfSentenceCase(name);
+
+    String _result =
+        await sendSMS(message: '', recipients: []).catchError((onError) {
+      print(onError);
+    });
+    print(_result);
+
+    // final uri =
+    //     "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
+
+    // if (await canLaunch(uri)) {
+    //   await launch(uri);
+    // } else {
+    //   throw 'Could not launch $uri';
+    // }
+  }
+
+  _openShareModal(BuildContext context) {
+    AlertDialog dialog = AlertDialog(
+        actionsPadding: EdgeInsets.all(0),
+        contentPadding: EdgeInsets.all(0),
+        backgroundColor: AppColors.prayerCardBgColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.darkBlue),
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        content: Container(
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 5, right: 5),
+                  alignment: Alignment.topRight,
+                  child: Icon(
+                    Icons.cancel,
+                    color: AppColors.red,
+                    size: 20,
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 40),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              _emailLink(false);
+                            },
+                            child: Container(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width * .20,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'EMAIL',
+                                    style: TextStyle(
+                                      color: AppColors.lightBlue4,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              _textLink(false);
+                            },
+                            child: Container(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width * .20,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'SMS',
+                                    style: TextStyle(
+                                      color: AppColors.lightBlue4,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
@@ -300,7 +456,25 @@ class _PrayerCardState extends State<PrayerCard> {
               children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
+                  child:
+                      // EasyRichText(
+                      //   widget.prayerData.prayer.description,
+                      //   defaultStyle: AppTextStyles.regularText15
+                      //       .copyWith(color: AppColors.prayerTextColor),
+                      //   patternList: [
+                      //     for (var i = 0; i < widget.prayerData.tags.length; i++)
+                      //       EasyRichTextPattern(
+                      //           targetString: widget.prayerData.tags[i].displayName,
+                      //           recognizer: TapGestureRecognizer()
+                      //             ..onTap = () {
+                      //               _openShareModal(context);
+                      //             },
+                      //           style: AppTextStyles.regularText15.copyWith(
+                      //               color: AppColors.lightBlue2,
+                      //               decoration: TextDecoration.underline))
+                      //   ],
+                      // ),
+                      Text(
                     widget.prayerData.prayer.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

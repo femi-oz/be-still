@@ -196,17 +196,19 @@ class PrayerProvider with ChangeNotifier {
     String prayerDesc,
     String userId,
     String creatorName,
+    String prayerDescBackup,
   ) async =>
-      await _prayerService.addPrayer(prayerDesc, userId, creatorName);
+      await _prayerService.addPrayer(
+          prayerDesc, userId, creatorName, prayerDescBackup);
 
   Future<void> addUserPrayer(String prayerId, String prayerDesc,
           String recieverId, String senderId, String sender) async =>
       await _prayerService.addUserPrayer(
           prayerId, prayerDesc, recieverId, senderId, sender);
 
-  Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
-          String message, List<PrayerTagModel> oldTags) async =>
-      await _prayerService.addPrayerTag(contactData, user, message, oldTags);
+  Future<void> addPrayerTag(
+          List<Contact> contactData, UserModel user, String message) async =>
+      await _prayerService.addPrayerTag(contactData, user, message);
 
   Future<void> removePrayerTag(String tagId) async =>
       await _prayerService.removePrayerTag(tagId);
