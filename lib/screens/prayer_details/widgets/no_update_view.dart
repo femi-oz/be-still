@@ -1,3 +1,4 @@
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
@@ -17,7 +18,7 @@ class NoUpdateView extends StatefulWidget {
 }
 
 class _NoUpdateViewState extends State<NoUpdateView> {
-  _emailLink([bool isChurch = false]) async {
+  _emailLink([String email]) async {
     final Uri params = Uri(scheme: 'mailto', path: '', query: "");
 
     var url = params.toString();
@@ -28,9 +29,9 @@ class _NoUpdateViewState extends State<NoUpdateView> {
     }
   }
 
-  _textLink([bool isChurch = false]) async {
-    String _result =
-        await sendSMS(message: '', recipients: []).catchError((onError) {
+  _textLink([String phoneNumber]) async {
+    String _result = await sendSMS(message: '', recipients: [phoneNumber])
+        .catchError((onError) {
       print(onError);
     });
     print(_result);
@@ -45,7 +46,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
     // }
   }
 
-  _openShareModal(BuildContext context) {
+  _openShareModal(BuildContext context, String phoneNumber, String email) {
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -87,7 +88,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              _emailLink(false);
+                              _emailLink(email);
                             },
                             child: Container(
                               height: 30,
@@ -116,7 +117,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _textLink(false);
+                              _textLink(phoneNumber);
                             },
                             child: Container(
                               height: 30,
@@ -218,7 +219,10 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                             targetString: prayerData.tags[i].displayName,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                _openShareModal(context);
+                                _openShareModal(
+                                    context,
+                                    prayerData.tags[i].phoneNumber,
+                                    prayerData.tags[i].email);
                               },
                             style: AppTextStyles.regularText15.copyWith(
                                 color: AppColors.lightBlue2,
