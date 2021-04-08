@@ -356,144 +356,162 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           //     // ),
           //   ],
           // ),
-          SizedBox(height: 30),
+          SizedBox(height: 15),
           CustomSectionHeder('My Prayer Time'),
-          SizedBox(
-            height: 30.0,
-          ),
+          SizedBox(height: 35.0),
           prayerTimeList.length > 0
               ? SingleChildScrollView(
                   child: Column(
                     children: [
                       ...prayerTimeList.map(
-                        (data) => Row(
+                        (data) => Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 20.5, right: 15, top: 20, bottom: 20),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                height: 40.0,
-                                width: MediaQuery.of(context).size.width * 0.75,
-                                decoration: BoxDecoration(
-                                  // color: AppColors.backgroundColor[0],
-                                  border: Border.all(
-                                    color: AppColors.lightBlue6,
-                                    width: 1,
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20.0,
+                                    right: 15.0,
                                   ),
-                                  borderRadius: BorderRadius.circular(5),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0,
+                                      vertical: 10.0,
+                                    ),
+                                    height: 40.0,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.75,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: AppColors.lightBlue6,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.15,
+                                          child: Text(
+                                            data.frequency,
+                                            style: AppTextStyles.regularText15
+                                                .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05),
+                                        data.frequency == Frequency.weekly
+                                            ? Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.15,
+                                                child: Text(
+                                                  data.selectedDay,
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .prayerTextColor),
+                                                ),
+                                              )
+                                            : SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.15),
+                                        SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05),
+                                        Text(
+                                          data.selectedHour,
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .prayerTextColor),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          ':',
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .prayerTextColor),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          data.selectedMinute,
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .prayerTextColor),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          data.period,
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .prayerTextColor),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                child: Row(
+                                Row(
                                   children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.15,
-                                      child: Text(
-                                        data.frequency,
-                                        style: AppTextStyles.regularText15
-                                            .copyWith(
-                                                color:
-                                                    AppColors.prayerTextColor),
+                                    InkWell(
+                                      child: GestureDetector(
+                                        child: Icon(
+                                          AppIcons.bestill_edit,
+                                          size: 16,
+                                          color: AppColors.lightBlue3,
+                                        ),
+                                        onTap: () {
+                                          notification = data;
+                                          setState(
+                                              () => showUpdateField = true);
+                                        },
                                       ),
                                     ),
                                     SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    data.frequency == Frequency.weekly
-                                        ? Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.15,
-                                            child: Text(
-                                              data.selectedDay,
-                                              style: AppTextStyles.regularText15
-                                                  .copyWith(
-                                                      color: AppColors
-                                                          .prayerTextColor),
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.15),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    Text(
-                                      data.selectedHour,
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
+                                      width: 15,
                                     ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      ':',
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      data.selectedMinute,
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      data.period,
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
-                                    ),
+                                    InkWell(
+                                      child: GestureDetector(
+                                        child: Icon(
+                                          AppIcons.bestill_delete,
+                                          size: 16,
+                                          color: AppColors.lightBlue3,
+                                        ),
+                                        onTap: () {
+                                          _deletePrayerTime(
+                                              data.localNotificationId,
+                                              data.id);
+                                        },
+                                      ),
+                                    )
                                   ],
-                                ),
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  child: GestureDetector(
-                                    child: Icon(
-                                      AppIcons.bestill_edit,
-                                      size: 16,
-                                      color: AppColors.lightBlue3,
-                                    ),
-                                    onTap: () {
-                                      notification = data;
-                                      setState(() => showUpdateField = true);
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                InkWell(
-                                  child: GestureDetector(
-                                    child: Icon(
-                                      AppIcons.bestill_delete,
-                                      size: 16,
-                                      color: AppColors.lightBlue3,
-                                    ),
-                                    onTap: () {
-                                      _deletePrayerTime(
-                                          data.localNotificationId, data.id);
-                                    },
-                                  ),
                                 )
                               ],
-                            )
+                            ),
+                            SizedBox(height: 10.0),
                           ],
                         ),
                       ),
@@ -525,7 +543,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
               !_addPrayerTypeMode && !showUpdateField
                   ? Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 40),
+                        horizontal: 20,
+                        vertical: 30,
+                      ),
                       child: Row(
                         children: [
                           CustomButtonGroup(
