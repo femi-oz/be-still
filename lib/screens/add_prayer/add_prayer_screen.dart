@@ -74,7 +74,7 @@ class _AddPrayerState extends State<AddPrayer> {
           );
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text, []);
+                .addPrayerTag(contacts, _user, _descriptionController.text);
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
@@ -92,25 +92,33 @@ class _AddPrayerState extends State<AddPrayer> {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
           // backupText = _descriptionController.text;
-          // var oldBackupText = widget.prayerData.prayer.descriptionBackup;
+          var newText = _descriptionController.text;
+          List textList = [];
 
-          for (int i = 0; i < widget.prayerData.tags.length; i++)
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .removePrayerTag(widget.prayerData.tags[i].id);
-          List<Contact> oldContacts = [];
-          oldTags.forEach((data) {
-            var contact = localContacts.firstWhere(
-                (element) => element.identifier == data.identifier,
-                orElse: () => null);
-            if (contact != null) {
-              oldContacts.add(contact);
+          var text = [...widget.prayerData.tags];
+          text.forEach((element) {
+            if (!newText.contains(element.displayName)) {
+              textList.add(element);
+              // text.remove(element);
             }
           });
-          contacts = [...contacts, ...oldContacts];
+          for (int i = 0; i < textList.length; i++)
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .removePrayerTag(textList[i].id);
+
+          // List<Contact> oldContacts = [];
+          // text.forEach((data) {
+          //   var contact = localContacts.firstWhere(
+          //       (element) => element.identifier == data.identifier,
+          //       orElse: () => null);
+          //   if (contact != null) {
+          //     oldContacts.add(contact);
+          //   }
+          // });
+          // contacts = [...contacts, ...oldContacts];
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text,
-                    widget.prayerData.tags);
+                .addPrayerTag(contacts, _user, _descriptionController.text);
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
@@ -161,15 +169,15 @@ class _AddPrayerState extends State<AddPrayer> {
             : '';
         // tagText = tagText.replaceAll('@', '');
       });
-      oldTags = widget.prayerData.tags;
+      // oldTags = widget.prayerData.tags;
 
-      oldTags.forEach((element) {
-        if (!_descriptionController.text
-            .toLowerCase()
-            .contains(element.displayName.toLowerCase())) {
-          oldTags.remove(element);
-        }
-      });
+      // oldTags.forEach((element) {
+      //   if (!_descriptionController.text
+      //       .toLowerCase()
+      //       .contains(element.displayName.toLowerCase())) {
+      //     oldTags.remove(element);
+      //   }
+      // });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');

@@ -11,11 +11,13 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:easy_rich_text/easy_rich_text.dart';
 
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
@@ -300,13 +302,30 @@ class _PrayerCardState extends State<PrayerCard> {
               children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
+                  child: EasyRichText(
                     widget.prayerData.prayer.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.regularText15
+                    defaultStyle: AppTextStyles.regularText15
                         .copyWith(color: AppColors.prayerTextColor),
+                    patternList: [
+                      for (var i = 0; i < widget.prayerData.tags.length; i++)
+                        EasyRichTextPattern(
+                            targetString: widget.prayerData.tags[i].displayName,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                print("Tap recognizer to print this sentence.");
+                              },
+                            style: AppTextStyles.regularText15.copyWith(
+                                color: AppColors.lightBlue2,
+                                decoration: TextDecoration.underline))
+                    ],
                   ),
+                  // Text(
+                  //   widget.prayerData.prayer.description,
+                  //   maxLines: 2,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   style: AppTextStyles.regularText15
+                  //       .copyWith(color: AppColors.prayerTextColor),
+                  // ),
                 ),
               ],
             ),

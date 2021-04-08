@@ -33,7 +33,6 @@ class PrayerProvider with ChangeNotifier {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
-        print(_prayers.length);
         filterPrayers(sortBy);
         notifyListeners();
       },
@@ -207,9 +206,9 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.addUserPrayer(
           prayerId, prayerDesc, recieverId, senderId, sender);
 
-  Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
-          String message, List<PrayerTagModel> oldTags) async =>
-      await _prayerService.addPrayerTag(contactData, user, message, oldTags);
+  Future<void> addPrayerTag(
+          List<Contact> contactData, UserModel user, String message) async =>
+      await _prayerService.addPrayerTag(contactData, user, message);
 
   Future<void> removePrayerTag(String tagId) async =>
       await _prayerService.removePrayerTag(tagId);
