@@ -58,7 +58,7 @@ class _EntryScreenState extends State<EntryScreen> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser?.id;
     if (userId != null)
-      cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+      cron.schedule(Schedule.parse('*/10 * * * *'), () async {
         Provider.of<PrayerProvider>(context, listen: false)
             .checkPrayerValidity(userId);
       });

@@ -31,8 +31,8 @@ class _CustomPickerState extends State<CustomPicker> {
         children: <Widget>[
           Center(
             child: Container(
-              padding: EdgeInsets.all(20),
-              height: 200,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              height: MediaQuery.of(context).size.height * 0.2,
               child: Column(
                 children: <Widget>[
                   Expanded(
