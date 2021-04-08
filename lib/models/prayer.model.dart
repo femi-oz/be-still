@@ -39,19 +39,19 @@ class PrayerModel {
 
   PrayerModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        groupId = snapshot.data()['GroupId'],
-        userId = snapshot.data()['UserId'],
-        type = snapshot.data()['Type'],
-        title = snapshot.data()['Title'],
-        status = snapshot.data()['Status'],
-        description = snapshot.data()['Description'],
-        descriptionBackup = snapshot.data()['DescriptionBackup'],
-        isAnswer = snapshot.data()['IsAnswer'],
-        isInappropriate = snapshot.data()['IsInappropriate'],
+        groupId = snapshot.data()['GroupId'] ?? 'N/A',
+        userId = snapshot.data()['UserId'] ?? 'N/A',
+        type = snapshot.data()['Type'] ?? 'N/A',
+        title = snapshot.data()['Title'] ?? 'N/A',
+        status = snapshot.data()['Status'] ?? 'N/A',
+        description = snapshot.data()['Description'] ?? 'N/A',
+        descriptionBackup = snapshot.data()['DescriptionBackup'] ?? 'N/A',
+        isAnswer = snapshot.data()['IsAnswer'] ?? 'N/A',
+        isInappropriate = snapshot.data()['IsInappropriate'] ?? 'N/A',
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
-        createdBy = snapshot.data()['CreatedBy'],
+        createdBy = snapshot.data()['CreatedBy'] ?? 'N/A',
         createdOn = snapshot.data()['CreatedOn']?.toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedBy = snapshot.data()['ModifiedBy'] ?? 'N/A',
         modifiedOn = snapshot.data()['ModifiedOn']?.toDate();
 
   Map<String, dynamic> toJson() {

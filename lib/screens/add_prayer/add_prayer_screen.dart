@@ -93,15 +93,7 @@ class _AddPrayerState extends State<AddPrayer> {
               _descriptionController.text, widget.prayerData.prayer.id);
           // backupText = _descriptionController.text;
           // var oldBackupText = widget.prayerData.prayer.descriptionBackup;
-          oldTags = widget.prayerData.tags;
 
-          oldTags.forEach((element) {
-            if (!_descriptionController.text
-                .toLowerCase()
-                .contains(element.displayName.toLowerCase())) {
-              oldTags.remove(element);
-            }
-          });
           for (int i = 0; i < widget.prayerData.tags.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(widget.prayerData.tags[i].id);
@@ -168,6 +160,15 @@ class _AddPrayerState extends State<AddPrayer> {
             ? tags[tags.length - 1]
             : '';
         // tagText = tagText.replaceAll('@', '');
+      });
+      oldTags = widget.prayerData.tags;
+
+      oldTags.forEach((element) {
+        if (!_descriptionController.text
+            .toLowerCase()
+            .contains(element.displayName.toLowerCase())) {
+          oldTags.remove(element);
+        }
       });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
