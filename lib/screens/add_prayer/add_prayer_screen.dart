@@ -456,7 +456,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                   //         painter.width),
                                   top: _focusNode.offset.dy +
                                       painter.height -
-                                      36,
+                                      46,
                                   left: _focusNode.offset.dx,
 
                                   height:
