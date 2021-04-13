@@ -47,6 +47,9 @@ class _AddPrayerState extends State<AddPrayer> {
   bool _autoValidate = false;
   String backupText;
   String _oldDesc = '';
+  var dy;
+  var dx;
+  TextPainter painter;
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -147,7 +150,13 @@ class _AddPrayerState extends State<AddPrayer> {
         widget.isEdit ? widget.prayerData.prayer.description : '';
     _oldDesc = _descriptionController.text;
     getContacts();
+    _descriptionController.addListener(listen);
+
     super.initState();
+  }
+
+  void listen() {
+    print(_descriptionController.selection.base);
   }
 
   Future<void> getContacts() async {
@@ -167,17 +176,15 @@ class _AddPrayerState extends State<AddPrayer> {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
             : '';
-        // tagText = tagText.replaceAll('@', '');
       });
-      // oldTags = widget.prayerData.tags;
 
-      // oldTags.forEach((element) {
-      //   if (!_descriptionController.text
-      //       .toLowerCase()
-      //       .contains(element.displayName.toLowerCase())) {
-      //     oldTags.remove(element);
-      //   }
-      // });
+      painter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+          text: val,
+        ),
+      );
+      painter.layout();
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -441,10 +448,17 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 1
-                              ? Container(
-                                  padding: EdgeInsets.only(
-                                      top: _focusNode.offset.dy * 0.45,
-                                      left: _focusNode.offset.dx),
+                              ? Positioned(
+                                  // padding: EdgeInsets.only(
+                                  //     top: _focusNode.offset.dy * 0.5 +
+                                  //         painter.height,
+                                  //     left: _focusNode.offset.dx * 0.5 +
+                                  //         painter.width),
+                                  top: _focusNode.offset.dy +
+                                      painter.height -
+                                      36,
+                                  left: _focusNode.offset.dx,
+
                                   height:
                                       MediaQuery.of(context).size.height * 0.4,
                                   child: SingleChildScrollView(
