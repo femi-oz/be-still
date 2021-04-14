@@ -88,8 +88,9 @@ class SettingsTabState extends State<SettingsTab>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
-        length: 5,
-        child: Scaffold(key:_scaffoldKey,
+        length: 4,
+        child: Scaffold(
+          key: _scaffoldKey,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
@@ -122,11 +123,11 @@ class SettingsTabState extends State<SettingsTab>
                     text: "My List",
                   ),
                   Tab(
-                    text: "Prayer Time",
+                    text: "Set Reminder",
                   ),
-                  Tab(
-                    text: "Notifications",
-                  ),
+                  // Tab(
+                  //   text: "Notifications",
+                  // ),
                   // Tab(
                   //   text: "Alexa",
                   // ),
@@ -150,11 +151,11 @@ class SettingsTabState extends State<SettingsTab>
             ),
             child: TabBarView(
               children: [
-                GeneralSettings(_settingsProvider.settings,_scaffoldKey),
+                GeneralSettings(_settingsProvider.settings, _scaffoldKey),
                 MyListSettings(_settingsProvider.settings),
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
-                NotificationsSettings(_settingsProvider.settings),
+                // NotificationsSettings(_settingsProvider.settings),
                 // AlexaSettings(_settingsProvider.settings),
                 SharingSettings(),
                 // GroupsSettings(),

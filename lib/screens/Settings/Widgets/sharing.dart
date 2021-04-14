@@ -103,25 +103,25 @@ class _SharingSettingsState extends State<SharingSettings> {
       child: Column(
         children: <Widget>[
           SizedBox(height: 15),
-          CustomSectionHeder('Preferences'),
-          SizedBox(height: 30),
-          CustomToggle(
-            title: 'Enable sharing via text?',
-            onChange: (value) => settingProvider.updateSharingSettings(userId,
-                key: SettingsKey.enableSharingViaText,
-                value: value,
-                settingsId: settingProvider.sharingSettings.id),
-            value: settingProvider.sharingSettings.enableSharingViaText,
-          ),
-          CustomToggle(
-            title: 'Enable sharing via email?',
-            onChange: (value) => settingProvider.updateSharingSettings(userId,
-                key: SettingsKey.enableSharingViaEmail,
-                value: value,
-                settingsId: settingProvider.sharingSettings.id),
-            value: settingProvider.sharingSettings.enableSharingViaEmail,
-          ),
-          SizedBox(height: 30),
+          // CustomSectionHeder('Preferences'),
+          // // SizedBox(height: 30),
+          // CustomToggle(
+          //   title: 'Enable sharing via text?',
+          //   onChange: (value) => settingProvider.updateSharingSettings(userId,
+          //       key: SettingsKey.enableSharingViaText,
+          //       value: value,
+          //       settingsId: settingProvider.sharingSettings.id),
+          //   value: settingProvider.sharingSettings.enableSharingViaText,
+          // ),
+          // CustomToggle(
+          //   title: 'Enable sharing via email?',
+          //   onChange: (value) => settingProvider.updateSharingSettings(userId,
+          //       key: SettingsKey.enableSharingViaEmail,
+          //       value: value,
+          //       settingsId: settingProvider.sharingSettings.id),
+          //   value: settingProvider.sharingSettings.enableSharingViaEmail,
+          // ),
+          // SizedBox(height: 30),
           //method hidelAllTextFieled
           GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),

@@ -38,8 +38,8 @@ class _PrayerFiltersState extends State<PrayerFilters> {
           .filterPrayers(settings.defaultSortBy);
     }
     String heading = options.length > 1 || options.length == 0
-        ? 'MY LIST'
-        : '${options[0] == Status.active ? 'MY' : options[0].toUpperCase()} LIST';
+        ? 'MY PRAYERS'
+        : '${options[0] == Status.active ? '' : options[0].toUpperCase()} ';
     await Provider.of<MiscProvider>(context, listen: false)
         .setPageTitle(heading);
     setState(() {});

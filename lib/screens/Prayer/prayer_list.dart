@@ -39,7 +39,7 @@ class _PrayerListState extends State<PrayerList> {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY LIST');
+            .setPageTitle('MY PRAYERS');
       });
       setState(() => _isInit = false);
     }

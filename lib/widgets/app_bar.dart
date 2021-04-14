@@ -96,39 +96,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(width: 20),
-          InkWell(
-              onTap: () => null,
-              // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-              child: Icon(
-                Icons.notifications_none,
-                color: AppColors.white,
-              )
-              //notifications.length == 0
-              // ? Icon(
-              //     AppIcons.bestill_notifications,
-              //     color: AppColors.bottomNavIconColor,
-              //     size: 18,
-              //   )
-              // : Stack(
-              //     alignment: Alignment.center,
-              //     children: [
-              //       Icon(
-              //         AppIcons.bestill_notifications,
-              //         color: AppColors.red,
-              //         size: 18,
-              //       ),
-              //       Text(
-              //         notifications.length.toString(),
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //           fontSize: 11,
-              //         ),
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ],
-              //   ),
-              ),
-          SizedBox(width: 15),
           widget.showPrayerActions
               ? GestureDetector(
                   onTap: () {
@@ -152,7 +119,41 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     size: 18,
                   ),
                 )
-              : Container()
+              : Container(),
+          SizedBox(width: 15),
+          // InkWell(
+          //     onTap: () => null,
+          //     // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
+          //     child: Icon(
+          //       Icons.notifications_none,
+          //       color: AppColors.white,
+          //     )
+          //     //notifications.length == 0
+          //     // ? Icon(
+          //     //     AppIcons.bestill_notifications,
+          //     //     color: AppColors.bottomNavIconColor,
+          //     //     size: 18,
+          //     //   )
+          //     // : Stack(
+          //     //     alignment: Alignment.center,
+          //     //     children: [
+          //     //       Icon(
+          //     //         AppIcons.bestill_notifications,
+          //     //         color: AppColors.red,
+          //     //         size: 18,
+          //     //       ),
+          //     //       Text(
+          //     //         notifications.length.toString(),
+          //     //         style: TextStyle(
+          //     //           color: Colors.white,
+          //     //           fontSize: 11,
+          //     //         ),
+          //     //         textAlign: TextAlign.center,
+          //     //       ),
+          //     //     ],
+          //     //   ),
+          //     ),
+          // SizedBox(width: 15),
         ],
       ),
       title: widget.isSearchMode
