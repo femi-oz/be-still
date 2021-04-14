@@ -13,6 +13,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
+import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -125,6 +126,90 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
+  showInfoModal() {
+    // BeStilDialog.showConfirmDialog(context,
+    //     message: 'This feature will be available soon.');
+    //
+    AlertDialog dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.25,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Text(
+                'This feature will be avaialable soon.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue4,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            // GestureDetector(
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .60,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'OK',
+                            style: TextStyle(
+                              color: AppColors.lightBlue4,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
   Widget _createBottomNavigationBar() {
     return Container(
       decoration: BoxDecoration(
@@ -139,7 +224,10 @@ class _EntryScreenState extends State<EntryScreen> {
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 1) return;
+          if (index == 1) {
+            return showInfoModal();
+          }
+
           _currentIndex = index;
           _switchSearchMode(false);
         },
