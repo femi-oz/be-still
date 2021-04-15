@@ -18,7 +18,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _filteredPrayers = [];
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
   CombinePrayerStream _currentPrayer;
-  List<String> _filterOptions = [Status.active];
+  String _filterOption = Status.active;
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
@@ -27,13 +27,13 @@ class PrayerProvider with ChangeNotifier {
       _filteredPrayerTimeList;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
-  List<String> get filterOptions => _filterOptions;
+  String get filterOption => _filterOption;
 
-  Future<void> setPrayers(String userId, String sortBy) async {
+  Future<void> setPrayers(String userId) async {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
-        filterPrayers(sortBy);
+        filterPrayers();
         notifyListeners();
       },
     );
@@ -73,10 +73,9 @@ class PrayerProvider with ChangeNotifier {
         },
       );
 
-  Future<void> searchPrayers(
-      String searchQuery, String sortBy, String userId) async {
+  Future<void> searchPrayers(String searchQuery, String userId) async {
     if (searchQuery == '') {
-      filterPrayers(sortBy);
+      filterPrayers();
     } else {
       List<CombinePrayerStream> filteredPrayers = _prayers
           .where((CombinePrayerStream data) => data.prayer.description
@@ -101,19 +100,26 @@ class PrayerProvider with ChangeNotifier {
         notifyListeners();
       });
 
-  void setPrayerFilterOptions(List<String> options) {
-    _filterOptions = options;
+  void setPrayerFilterOptions(String option) {
+    _filterOption = option;
     notifyListeners();
   }
 
-  Future<void> filterPrayers(String sortBy) async {
+  Future<void> filterPrayers() async {
     List<CombinePrayerStream> prayers = _prayers.toList();
     List<CombinePrayerStream> activePrayers = [];
     List<CombinePrayerStream> answeredPrayers = [];
     List<CombinePrayerStream> snoozedPrayers = [];
     List<CombinePrayerStream> favoritePrayers = [];
     List<CombinePrayerStream> archivedPrayers = [];
-    if (_filterOptions.contains(Status.active)) {
+    List<CombinePrayerStream> allPrayers = [];
+    if (_filterOption == Status.all) {
+      favoritePrayers = prayers
+          .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
+          .toList();
+      allPrayers = prayers;
+    }
+    if (_filterOption == Status.active) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
           .toList();
@@ -123,18 +129,18 @@ class PrayerProvider with ChangeNotifier {
               Status.active.toLowerCase())
           .toList();
     }
-    if (_filterOptions.contains(Status.answered)) {
+    if (_filterOption == Status.answered) {
       answeredPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
           .toList();
     }
-    if (_filterOptions.contains(Status.archived)) {
+    if (_filterOption == Status.archived) {
       archivedPrayers = prayers
           .where(
               (CombinePrayerStream data) => data.userPrayer.isArchived == true)
           .toList();
     }
-    if (_filterOptions.contains(Status.snoozed)) {
+    if (_filterOption == Status.snoozed) {
       snoozedPrayers = prayers
           .where((CombinePrayerStream data) =>
               data.userPrayer.isSnoozed == true &&
@@ -142,12 +148,13 @@ class PrayerProvider with ChangeNotifier {
           .toList();
     }
     _filteredPrayers = [
+      ...allPrayers,
       ...activePrayers,
       ...archivedPrayers,
       ...snoozedPrayers,
       ...answeredPrayers
     ];
-    await _sortBySettings(sortBy);
+    await _sortBySettings();
 
     _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
     List<CombinePrayerStream> _distinct = [];
@@ -174,11 +181,13 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _sortBySettings(String sortBy) async {
-    if (sortBy == SortType.date) {
-      _filteredPrayers
-          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    }
+  Future<void> _sortBySettings() async {
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    // if (sortBy == SortType.date) {
+    //   _filteredPrayers
+    //       .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    // }
     // else if (sortBy == SortType.tag) {
     //   var hasTags = _filteredPrayers.where((e) => e.tags.length > 0).toList();
     //   var noTags = _filteredPrayers.where((e) => e.tags.length == 0).toList();

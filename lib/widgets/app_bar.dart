@@ -33,25 +33,23 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
-    var options =
-        Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+    // var options =
+    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (options.contains(Status.archived)) {
-      await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
-          value,
-          Provider.of<SettingsProvider>(context, listen: false)
-              .settings
-              .archiveSortBy,
-          userId);
-    } else {
-      await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
-          value,
-          Provider.of<SettingsProvider>(context, listen: false)
-              .settings
-              .defaultSortBy,
-          userId);
-    }
+    // if (options.contains(Status.archived)) {
+    //   await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
+    //       value,
+    //       Provider.of<SettingsProvider>(context, listen: false)
+    //           .settings
+    //           .archiveSortBy,
+    //       userId);
+    // } else {
+
+    // }
+    //
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
   }
 
   void _clearSearchField() async {
@@ -60,17 +58,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   _openFilter(bool isDark) {
-    showModalBottomSheet(
-      context: context,
-      barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
-      backgroundColor: AppColors.darkMode
-          ? AppColors.addPrayerBg.withOpacity(0.8)
-          : AppColors.offWhite4.withOpacity(0.8),
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return PrayerFilters();
-      },
-    );
+    // showModalBottomSheet(
+    //   context: context,
+    //   barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
+    //   backgroundColor: AppColors.darkMode
+    //       ? AppColors.addPrayerBg.withOpacity(0.8)
+    //       : AppColors.offWhite4.withOpacity(0.8),
+    //   isScrollControlled: true,
+    //   builder: (BuildContext context) {
+    //     return PrayerFilters();
+    //   },
+    // );
+    //
+    // BeStilDialog.showConfirmDialog(context,
+    //     message: 'This feature will be available soon.');
+    //
+    Dialog dialog = Dialog(
+        // actionsPadding: EdgeInsets.all(0),
+        // contentPadding: EdgeInsets.all(0),
+        insetPadding: EdgeInsets.all(40),
+        backgroundColor: AppColors.prayerCardBgColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.darkBlue),
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        child: PrayerFilters());
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   @override
@@ -199,20 +218,27 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
       actions: <Widget>[
-        Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                AppIcons.bestill_main_menu,
-                size: 18,
-                color: AppColors.bottomNavIconColor,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
-            );
-          },
-        ),
+        IconButton(
+          icon: Icon(
+            Icons.notifications_none,
+            color: AppColors.white,
+          ),
+          onPressed: null,
+        )
+        // Builder(
+        //   builder: (BuildContext context) {
+        //     return IconButton(
+        //       icon: Icon(
+        //         AppIcons.bestill_main_menu,
+        //         size: 18,
+        //         color: AppColors.bottomNavIconColor,
+        //       ),
+        //       onPressed: () {
+        //         Scaffold.of(context).openEndDrawer();
+        //       },
+        //     );
+        //   },
+        // ),
       ],
     );
   }
