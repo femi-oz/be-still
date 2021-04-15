@@ -13,7 +13,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
-import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -225,7 +224,10 @@ class _EntryScreenState extends State<EntryScreen> {
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 1) {
-            return showInfoModal();
+            showInfoModal();
+          }
+          if (index == 4) {
+            Scaffold.of(context).openEndDrawer();
           }
 
           _currentIndex = index;
@@ -262,8 +264,8 @@ class TabNavigationItem {
         TabNavigationItem(
           page: PrayerList(),
           icon: Icon(
-            AppIcons.bestill_my_list,
-            size: 16,
+            Icons.home,
+            size: 26,
             color: AppColors.bottomNavIconColor,
           ),
           title: "prayer",
@@ -289,6 +291,15 @@ class TabNavigationItem {
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",
+        ),
+        TabNavigationItem(
+          page: null,
+          icon: Icon(
+            AppIcons.bestill_main_menu,
+            size: 18,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "Main Menu",
         ),
       ];
 }

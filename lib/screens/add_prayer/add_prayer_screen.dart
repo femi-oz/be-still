@@ -207,7 +207,7 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
 
-    _descriptionController.text += tmpText;
+    _descriptionController.text += tmpText.toLowerCase();
     backupText = _descriptionController.text;
     _descriptionController.text = _descriptionController.text
         .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
