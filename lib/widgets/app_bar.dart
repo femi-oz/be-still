@@ -218,20 +218,27 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
       actions: <Widget>[
-        Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                AppIcons.bestill_main_menu,
-                size: 18,
-                color: AppColors.bottomNavIconColor,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
-            );
-          },
-        ),
+        IconButton(
+          icon: Icon(
+            Icons.notifications_none,
+            color: AppColors.white,
+          ),
+          onPressed: null,
+        )
+        // Builder(
+        //   builder: (BuildContext context) {
+        //     return IconButton(
+        //       icon: Icon(
+        //         AppIcons.bestill_main_menu,
+        //         size: 18,
+        //         color: AppColors.bottomNavIconColor,
+        //       ),
+        //       onPressed: () {
+        //         Scaffold.of(context).openEndDrawer();
+        //       },
+        //     );
+        //   },
+        // ),
       ],
     );
   }

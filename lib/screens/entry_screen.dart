@@ -210,42 +210,46 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   Widget _createBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: AppColors.appBarBackground,
-          begin: Alignment.topLeft,
-          end: Alignment.topRight,
-          stops: [0.0, 0.8],
-          tileMode: TileMode.clamp,
+    return Builder(builder: (BuildContext context) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: AppColors.appBarBackground,
+            begin: Alignment.topLeft,
+            end: Alignment.topRight,
+            stops: [0.0, 0.8],
+            tileMode: TileMode.clamp,
+          ),
         ),
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          if (index == 1) {
-            showInfoModal();
-          }
-          if (index == 4) {
-            Scaffold.of(context).openEndDrawer();
-          }
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            if (index == 1) {
+              showInfoModal();
+              return;
+            }
+            if (index == 4) {
+              Scaffold.of(context).openEndDrawer();
+              return;
+            }
 
-          _currentIndex = index;
-          _switchSearchMode(false);
-        },
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        backgroundColor: Colors.transparent,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0,
-        unselectedItemColor: AppColors.bottomNavIconColor,
-        selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
-        items: [
-          for (final tabItem in TabNavigationItem.items)
-            BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
-        ],
-      ),
-    );
+            _currentIndex = index;
+            _switchSearchMode(false);
+          },
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          backgroundColor: Colors.transparent,
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          unselectedItemColor: AppColors.bottomNavIconColor,
+          selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
+          items: [
+            for (final tabItem in TabNavigationItem.items)
+              BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
+          ],
+        ),
+      );
+    });
   }
 }
 
