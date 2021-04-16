@@ -9,13 +9,7 @@ class DateFormatter {
     DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
     DateTime localDateTime = dateTime.toLocal();
 
-    if (now.difference(localDateTime).inDays > 365) {
-      var val = now.difference(localDateTime).inDays / 365;
-      return "${val.ceil()} ${val.ceil() > 1 ? 'Years' : 'Year'} ago";
-    }
-
-    if (now.difference(localDateTime).inDays > 30 &&
-        now.difference(localDateTime).inDays < 365) {
+    if (now.difference(localDateTime).inDays > 30) {
       var val = now.difference(localDateTime).inDays / 30;
       return "${val.ceil()} ${val.ceil() > 1 ? 'Months' : 'Month'} ago";
     }
