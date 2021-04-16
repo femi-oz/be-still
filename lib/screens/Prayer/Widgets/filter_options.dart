@@ -17,9 +17,6 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   // List<String> options = [];
   String errorMessage = '';
   void setOption(status) async {
-    print(status);
-    // print('options before processing ===> $options');
-
     errorMessage = '';
     var settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;

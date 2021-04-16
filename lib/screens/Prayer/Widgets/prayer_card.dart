@@ -403,6 +403,29 @@ class _PrayerCardState extends State<PrayerCard> {
                                       ],
                                     )
                                   : Container(),
+                              widget.prayerData.prayer.isAnswer
+                                  ? Row(
+                                      children: [
+                                        Icon(
+                                          AppIcons.bestill_answered,
+                                          size: 12,
+                                          color: AppColors.lightBlue3,
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                          ),
+                                          child: Text(
+                                            '|',
+                                            style: TextStyle(
+                                              color: AppColors.lightBlue3,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  : Container(),
                               Container(
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
