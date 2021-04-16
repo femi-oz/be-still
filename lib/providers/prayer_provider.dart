@@ -119,6 +119,7 @@ class PrayerProvider with ChangeNotifier {
           .toList();
       allPrayers = prayers;
     }
+    print(_filterOption);
     if (_filterOption == Status.active) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
@@ -240,7 +241,6 @@ class PrayerProvider with ChangeNotifier {
       String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
     await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
     // var duration = snoozeEndDate.difference(DateTime.now());
-    // print(duration);
     // Future.delayed(duration.);
     // setPrayers(userPrayerID, '');
   }
