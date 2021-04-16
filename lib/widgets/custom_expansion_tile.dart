@@ -37,7 +37,7 @@ class ExpansionTile extends StatefulWidget {
     this.onExpansionChanged,
     this.children = const <Widget>[],
     this.trailing,
-    this.initiallyExpanded = false,
+    this.initiallyExpanded = true,
     this.scrollController,
   })  : assert(initiallyExpanded != null),
         super(key: key);
@@ -127,10 +127,10 @@ class _ExpansionTileState extends State<ExpansionTile>
   }
 
   void _handleTap() {
-    widget.scrollController.animateTo(
-        widget.scrollController.position.maxScrollExtent,
-        duration: Duration(seconds: 1),
-        curve: Curves.ease);
+    // widget.scrollController.animateTo(
+    //     widget.scrollController.position.maxScrollExtent,
+    //     duration: Duration(seconds: 1),
+    //     curve: Curves.ease);
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {

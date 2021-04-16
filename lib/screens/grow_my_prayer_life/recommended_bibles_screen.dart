@@ -36,74 +36,76 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
       endDrawer: CustomDrawer(),
       body: Container(
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppColors.backgroundColor,
-          ),
-          image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage()),
-            alignment: Alignment.bottomCenter,
-          ),
-        ),
         child: SingleChildScrollView(
           controller: _scrollController,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.zero),
-                    ),
-                    icon: Icon(
-                      AppIcons.bestill_back_arrow,
-                      color: AppColors.lightBlue3,
-                      size: 20,
-                    ),
-                    onPressed: () => Navigator.pushReplacement(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: EntryScreen(screenNumber: 3),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+              image: DecorationImage(
+                image: AssetImage(StringUtils.backgroundImage()),
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            EdgeInsets.zero),
                       ),
-                    ),
-                    // Navigator.popUntil(
-                    //     context, ModalRoute.withName(EntryScreen.routeName)),
-                    label: Text(
-                      'BACK',
-                      style: AppTextStyles.boldText20.copyWith(
+                      icon: Icon(
+                        AppIcons.bestill_back_arrow,
                         color: AppColors.lightBlue3,
+                        size: 20,
+                      ),
+                      onPressed: () => Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: EntryScreen(screenNumber: 3),
+                        ),
+                      ),
+                      // Navigator.popUntil(
+                      //     context, ModalRoute.withName(EntryScreen.routeName)),
+                      label: Text(
+                        'BACK',
+                        style: AppTextStyles.boldText20.copyWith(
+                          color: AppColors.lightBlue3,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Text(
-                  'Recommended Bibles',
-                  style: AppTextStyles.boldText24
-                      .copyWith(color: AppColors.blueTitle),
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Text(
+                    'Recommended Bibles',
+                    style: AppTextStyles.boldText24
+                        .copyWith(color: AppColors.blueTitle),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 40.0, horizontal: 40.0),
-                child: Text(
-                  'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                  style: AppTextStyles.regularText16b
-                      .copyWith(color: AppColors.prayerTextColor),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 40.0, horizontal: 40.0),
+                  child: Text(
+                    'Consider the following reading plans available in the Bible app to supplement your prayer time.',
+                    style: AppTextStyles.regularText16b
+                        .copyWith(color: AppColors.prayerTextColor),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
-              _buildPanel(),
-            ],
+                _buildPanel(),
+              ],
+            ),
           ),
         ),
       ),
@@ -137,7 +139,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                       ),
                     ),
                   ),
-                  initiallyExpanded: false,
+                  initiallyExpanded: true,
                   scrollController: _scrollController,
                   children: <Widget>[
                     Container(

@@ -50,120 +50,122 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppColors.backgroundColor,
-          ),
-          image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage()),
-            alignment: Alignment.bottomCenter,
-          ),
-        ),
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 30),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Grow My Prayer Life',
-                    style: AppTextStyles.boldText28
-                        .copyWith(color: AppColors.blueTitle),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.835,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
               ),
-              Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
-                      style: AppTextStyles.regularText16b
-                          .copyWith(color: AppColors.prayerTextColor),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 20),
-                    child: Text(
-                      'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
-                      style: AppTextStyles.regularText16b
-                          .copyWith(color: AppColors.prayerTextColor),
-                    ),
-                  ),
-                ],
+              image: DecorationImage(
+                image: AssetImage(StringUtils.backgroundImage()),
+                alignment: Alignment.bottomCenter,
               ),
-              SizedBox(height: 30),
-              Row(
-                children: [
-                  SizedBox(width: 30),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: GestureDetector(
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRightWithFade,
-                              child: RecommenededBibles(),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Grow My Prayer Life',
+                      style: AppTextStyles.boldText28
+                          .copyWith(color: AppColors.blueTitle),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Text(
+                        'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                        style: AppTextStyles.regularText16b
+                            .copyWith(color: AppColors.prayerTextColor),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Text(
+                        'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                        style: AppTextStyles.regularText16b
+                            .copyWith(color: AppColors.prayerTextColor),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    SizedBox(width: 30),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRightWithFade,
+                                child: RecommenededBibles(),
+                              ),
+                            ),
+                            // Navigator.of(context)
+                            //     .pushNamed(RecommenededBibles.routeName);
+
+                            child: Text(
+                              'RECOMMENDED BIBLES',
+                              style: AppTextStyles.boldText20
+                                  .copyWith(color: AppColors.lightBlue4),
+                              textAlign: TextAlign.left,
                             ),
                           ),
-                          // Navigator.of(context)
-                          //     .pushNamed(RecommenededBibles.routeName);
-
-                          child: Text(
-                            'RECOMMENDED BIBLES',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.lightBlue4),
-                            textAlign: TextAlign.left,
-                          ),
                         ),
-                      ),
-                      SizedBox(height: 30),
-                      Container(
-                        child: GestureDetector(
-                          onTap: () => Navigator.pushReplacement(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRightWithFade,
-                              child: DevotionPlans(),
+                        SizedBox(height: 30),
+                        Container(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRightWithFade,
+                                child: DevotionPlans(),
+                              ),
+                            ),
+                            // Navigator.of(context)
+                            //     .pushNamed(DevotionPlans.routeName);
+
+                            child: Text(
+                              'DEVOTIONALS & READING PLANS',
+                              style: AppTextStyles.boldText20
+                                  .copyWith(color: AppColors.lightBlue4),
+                              textAlign: TextAlign.left,
                             ),
                           ),
-                          // Navigator.of(context)
-                          //     .pushNamed(DevotionPlans.routeName);
-
-                          child: Text(
-                            'DEVOTIONALS & READING PLANS',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.lightBlue4),
-                            textAlign: TextAlign.left,
-                          ),
                         ),
-                      ),
-                      // SizedBox(height: 30),
-                      // Container(
-                      //   child: GestureDetector(
-                      //     onTap: () => null,
-                      //     child: Text(
-                      //       'MY PRAYER GOALS',
-                      //       style: AppTextStyles.boldText20
-                      //           .copyWith(color: AppColors.lightBlue4),
-                      //       textAlign: TextAlign.left,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ],
-              )
-            ],
+                        // SizedBox(height: 30),
+                        // Container(
+                        //   child: GestureDetector(
+                        //     onTap: () => null,
+                        //     child: Text(
+                        //       'MY PRAYER GOALS',
+                        //       style: AppTextStyles.boldText20
+                        //           .copyWith(color: AppColors.lightBlue4),
+                        //       textAlign: TextAlign.left,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
