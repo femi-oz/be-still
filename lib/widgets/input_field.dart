@@ -107,6 +107,7 @@ class _CustomInputState extends State<CustomInput> {
           : TextFormField(
               controller: widget.controller,
               keyboardType: widget.keyboardType,
+              textCapitalization: TextCapitalization.sentences,
               style: AppTextStyles.regularText15,
               focusNode: widget.focusNode,
               cursorColor:

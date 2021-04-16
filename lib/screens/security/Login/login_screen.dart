@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
               showFingerPrint = true;
             } else if (e.toString() == 'BiometricType.face') {
               showFaceId = true;
-              _biologin();
+              // _biologin();
             } else {
               showFaceId = false;
               showFingerPrint = false;
