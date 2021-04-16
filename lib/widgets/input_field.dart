@@ -131,7 +131,7 @@ class _CustomInputState extends State<CustomInput> {
                 suffixStyle: AppTextStyles.regularText14.copyWith(
                     color: Settings.isDarkMode
                         ? AppColors.offWhite2
-                        : AppColors.grey4),
+                        : AppColors.prayerTextColor),
                 counterText: '',
                 hintText: widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),

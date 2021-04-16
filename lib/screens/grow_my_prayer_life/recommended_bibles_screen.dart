@@ -98,7 +98,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 child: Text(
                   'Consider the following reading plans available in the Bible app to supplement your prayer time.',
                   style: AppTextStyles.regularText16b
-                      .copyWith(color: AppColors.growMyPrayerText),
+                      .copyWith(color: AppColors.prayerTextColor),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -149,7 +149,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                           Text(
                             bibleData[i].name,
                             style: AppTextStyles.regularText16b
-                                .copyWith(color: AppColors.growMyPrayerText),
+                                .copyWith(color: AppColors.prayerTextColor),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10),
@@ -159,7 +159,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                             child: Text(
                               'Recommended For ${bibleData[i].recommendedFor}',
                               style: AppTextStyles.regularText16b
-                                  .copyWith(color: AppColors.growMyPrayerText),
+                                  .copyWith(color: AppColors.prayerTextColor),
                               textAlign: TextAlign.center,
                             ),
                           ),

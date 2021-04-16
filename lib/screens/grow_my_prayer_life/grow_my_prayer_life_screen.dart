@@ -86,7 +86,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                     child: Text(
                       'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
                       style: AppTextStyles.regularText16b
-                          .copyWith(color: AppColors.growMyPrayerText),
+                          .copyWith(color: AppColors.prayerTextColor),
                     ),
                   ),
                   Container(
@@ -94,7 +94,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                     child: Text(
                       'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
                       style: AppTextStyles.regularText16b
-                          .copyWith(color: AppColors.growMyPrayerText),
+                          .copyWith(color: AppColors.prayerTextColor),
                     ),
                   ),
                 ],
