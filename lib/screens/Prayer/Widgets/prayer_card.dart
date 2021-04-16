@@ -7,18 +7,17 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PrayerCard extends StatefulWidget {
@@ -32,6 +31,12 @@ class PrayerCard extends StatefulWidget {
 
 class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
+  var _timeago = '';
+  initState() {
+    _timeago = DateFormatter(widget.prayerData.prayer.modifiedOn).format();
+    super.initState();
+  }
+
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications
@@ -248,17 +253,18 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   storeNotification(
-      String notificationText,
-      String userId,
-      String title,
-      String description,
-      String frequency,
-      tz.TZDateTime scheduledDate,
-      String prayerid,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
+    String notificationText,
+    String userId,
+    String title,
+    String description,
+    String frequency,
+    tz.TZDateTime scheduledDate,
+    String prayerid,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+  ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .updateLocalNotification(
       frequency,
@@ -434,8 +440,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                     )
                                   : Container(),
                               Text(
-                                DateFormat('MM.dd.yyyy').format(
-                                    widget.prayerData.prayer.modifiedOn),
+                                _timeago,
                                 style: AppTextStyles.regularText13
                                     .copyWith(color: AppColors.prayerTextColor),
                               ),
