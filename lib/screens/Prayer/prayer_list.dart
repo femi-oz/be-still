@@ -157,15 +157,17 @@ class _PrayerListState extends State<PrayerList> {
     return WillPopScope(
       onWillPop: () => null,
       child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+        ),
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(left: 20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage(true)),
                 alignment: Alignment.bottomCenter,

@@ -151,16 +151,18 @@ class DevotionPlans extends StatelessWidget {
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+        ),
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
         child: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage()),
                 alignment: Alignment.bottomCenter,

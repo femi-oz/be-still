@@ -35,16 +35,18 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
       appBar: CustomAppBar(),
       endDrawer: CustomDrawer(),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+        ),
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage()),
                 alignment: Alignment.bottomCenter,

@@ -149,6 +149,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       child: Scaffold(
         key: _scaffoldKey,
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: AppColors.backgroundColor,
+            ),
+          ),
           height: double.infinity,
           child: Stack(
             children: [
@@ -157,11 +164,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: SingleChildScrollView(
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: AppColors.backgroundColor,
-                      ),
                       image: DecorationImage(
                         image: AssetImage(
                             StringUtils.backgroundImage(Settings.isDarkMode)),

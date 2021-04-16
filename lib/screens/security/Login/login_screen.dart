@@ -374,6 +374,17 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
           key: _scaffoldKey,
           body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.backgroundColor[0],
+                  ...AppColors.backgroundColor,
+                  ...AppColors.backgroundColor,
+                ],
+              ),
+            ),
             height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [

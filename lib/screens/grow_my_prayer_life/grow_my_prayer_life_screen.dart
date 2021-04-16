@@ -50,16 +50,18 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+        ),
         width: double.infinity,
         child: SingleChildScrollView(
           child: Container(
             height: MediaQuery.of(context).size.height * 0.835,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage()),
                 alignment: Alignment.bottomCenter,
