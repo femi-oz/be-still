@@ -192,9 +192,9 @@ class _PrayerListState extends State<PrayerList> {
                             ...prayers
                                 .map((e) => GestureDetector(
                                     onTap: () => onTapCard(e),
-                                    onLongPressEnd:
-                                        (LongPressEndDetails details) =>
-                                            onLongPressCard(e, details),
+                                    // onLongPressEnd:
+                                    //     (LongPressEndDetails details) =>
+                                    //         onLongPressCard(e, details),
                                     child: PrayerCard(
                                       prayerData: e,
                                     )))
