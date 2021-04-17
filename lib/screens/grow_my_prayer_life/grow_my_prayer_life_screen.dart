@@ -30,7 +30,6 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
   _getDevotionals() async {
     await BeStilDialog.showLoading(context, '');
     try {
-      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
       await Provider.of<DevotionalProvider>(context, listen: false)
           .getDevotionals();
       await Future.delayed(Duration(milliseconds: 300));
@@ -109,26 +108,26 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: RecommenededBibles(),
-                              ),
-                            ),
-                            // Navigator.of(context)
-                            //     .pushNamed(RecommenededBibles.routeName);
+                        // Container(
+                        //   child: GestureDetector(
+                        //     onTap: () => Navigator.pushReplacement(
+                        //       context,
+                        //       PageTransition(
+                        //         type: PageTransitionType.leftToRightWithFade,
+                        //         child: RecommenededBibles(),
+                        //       ),
+                        //     ),
+                        //     // Navigator.of(context)
+                        //     //     .pushNamed(RecommenededBibles.routeName);
 
-                            child: Text(
-                              'RECOMMENDED BIBLES',
-                              style: AppTextStyles.boldText20
-                                  .copyWith(color: AppColors.lightBlue4),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
+                        //     child: Text(
+                        //       'RECOMMENDED BIBLES',
+                        //       style: AppTextStyles.boldText20
+                        //           .copyWith(color: AppColors.lightBlue4),
+                        //       textAlign: TextAlign.left,
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(height: 30),
                         Container(
                           child: GestureDetector(

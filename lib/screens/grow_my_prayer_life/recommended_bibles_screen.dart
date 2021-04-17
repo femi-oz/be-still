@@ -1,5 +1,9 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -19,6 +23,32 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Provider.of<MiscProvider>(context, listen: false).setPageTitle('');
+      _getDevotionals();
+    });
+    super.didChangeDependencies();
+  }
+
+  _getDevotionals() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
   _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -32,7 +62,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: SettingsAppBar(title: ''),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
@@ -54,38 +84,39 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             ),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.zero),
-                      ),
-                      icon: Icon(
-                        AppIcons.bestill_back_arrow,
-                        color: AppColors.lightBlue3,
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pushReplacement(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: EntryScreen(screenNumber: 3),
-                        ),
-                      ),
-                      // Navigator.popUntil(
-                      //     context, ModalRoute.withName(EntryScreen.routeName)),
-                      label: Text(
-                        'BACK',
-                        style: AppTextStyles.boldText20.copyWith(
-                          color: AppColors.lightBlue3,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(20.0),
+                //   child: Align(
+                //     alignment: Alignment.centerLeft,
+                //     child: TextButton.icon(
+                //       style: ButtonStyle(
+                //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                //             EdgeInsets.zero),
+                //       ),
+                //       icon: Icon(
+                //         AppIcons.bestill_back_arrow,
+                //         color: AppColors.lightBlue3,
+                //         size: 20,
+                //       ),
+                //       onPressed: () => Navigator.pushReplacement(
+                //         context,
+                //         PageTransition(
+                //           type: PageTransitionType.rightToLeftWithFade,
+                //           child: EntryScreen(screenNumber: 3),
+                //         ),
+                //       ),
+                //       // Navigator.popUntil(
+                //       //     context, ModalRoute.withName(EntryScreen.routeName)),
+                //       label: Text(
+                //         'BACK',
+                //         style: AppTextStyles.boldText20.copyWith(
+                //           color: AppColors.lightBlue3,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: Text(
@@ -136,7 +167,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     child: Text(
                       bibleData[i].shortName,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.boldText24.copyWith(
+                      style: AppTextStyles.boldText20.copyWith(
                         color: Color(0xFFffffff),
                       ),
                     ),

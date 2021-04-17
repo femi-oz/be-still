@@ -149,7 +149,7 @@ class _EntryScreenState extends State<EntryScreen> {
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'This feature will be avaialable soon.',
+                'This feature will be available soon.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
