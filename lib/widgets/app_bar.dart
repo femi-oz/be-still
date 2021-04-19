@@ -109,7 +109,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       centerTitle: true,
-      leadingWidth: 120,
+      leadingWidth: 100,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -139,7 +139,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   ),
                 )
               : Container(),
-          SizedBox(width: 15),
+          // SizedBox(width: 15),
           // InkWell(
           //     onTap: () => null,
           //     // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
