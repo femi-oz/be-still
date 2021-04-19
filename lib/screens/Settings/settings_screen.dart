@@ -112,7 +112,7 @@ class SettingsTabState extends State<SettingsTab>
                 indicatorColor: Colors.transparent,
                 unselectedLabelColor: AppColors.inactvePrayerMenu,
                 labelColor: AppColors.lightBlue4,
-                labelStyle: AppTextStyles.boldText16,
+                labelStyle: AppTextStyles.boldText24,
                 isScrollable: true,
                 tabs: [
                   Tab(
