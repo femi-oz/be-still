@@ -62,11 +62,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   setContactStatus() async {
-    if (PermissionStatus.granted.isGranted) {
-      setState(() => Settings.enabledContactPermission == true);
-    } else {
-      setState(() => Settings.enabledContactPermission == false);
-    }
+    var status = await Permission.contacts.status;
+    setState(() =>
+        Settings.enabledContactPermission = status == PermissionStatus.granted);
   }
 
   _openContactConfirmation(BuildContext context) {

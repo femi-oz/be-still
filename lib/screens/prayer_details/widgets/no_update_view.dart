@@ -208,7 +208,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                 child: Center(
                   child: EasyRichText(
                     prayerData.prayer.description,
-                    defaultStyle: AppTextStyles.regularText18b.copyWith(
+                    defaultStyle: AppTextStyles.regularText16b.copyWith(
                       color: AppColors.prayerTextColor,
                     ),
                     textAlign: TextAlign.left,
