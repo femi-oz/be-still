@@ -11,7 +11,6 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,21 +22,28 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
+  bool _isInit = true;
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<MiscProvider>(context, listen: false).setPageTitle('');
-      _getDevotionals();
-    });
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        _getBibles();
+      });
+      setState(() => _isInit = false);
+    }
     super.didChangeDependencies();
   }
 
-  _getDevotionals() async {
+  _getBibles() async {
     await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
       await Future.delayed(Duration(milliseconds: 300));
+      print('object');
       BeStilDialog.hideLoading(context);
+      print('object2');
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

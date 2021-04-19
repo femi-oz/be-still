@@ -18,12 +18,17 @@ class GrowMyPrayerLifeScreen extends StatefulWidget {
 }
 
 class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
+  bool _isInit = true;
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<MiscProvider>(context, listen: false).setPageTitle('');
-      _getDevotionals();
-    });
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        _getDevotionals();
+      });
+      setState(() => _isInit = false);
+    }
     super.didChangeDependencies();
   }
 
