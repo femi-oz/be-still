@@ -1,11 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +54,8 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: SettingsAppBar(title: ''),
+      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

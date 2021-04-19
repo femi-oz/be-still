@@ -1,5 +1,6 @@
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
@@ -228,11 +229,11 @@ class CustomDrawer extends StatelessWidget {
                                     color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
-                            onTap: () => Navigator.push(
+                            onTap: () => Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EntryScreen(screenNumber: 3),
+                              PageTransition(
+                                type: PageTransitionType.leftToRightWithFade,
+                                child: GrowMyPrayerLifeScreen(),
                               ),
                             ),
                             title: Text("GROW MY PRAYER LIFE",

@@ -1,9 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
@@ -56,10 +54,6 @@ class _PrayerListState extends State<PrayerList> {
     try {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      final status =
-          Provider.of<PrayerProvider>(context, listen: false).filterOption;
-      final settings =
-          Provider.of<SettingsProvider>(context, listen: false).settings;
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayers(_user?.id);
 

@@ -70,8 +70,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   _openContactConfirmation(BuildContext context) {
-    final _authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
