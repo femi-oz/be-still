@@ -467,16 +467,29 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.only(
         left: 40,
       ),
-      child: IconButton(
-        icon: Icon(
-            showFingerPrint && showFaceId
-                ? Icons.face
+      child: Container(
+        width: 50.0,
+        height: 50.0,
+        padding: EdgeInsets.only(top: 15.0, right: 15.0),
+        child: GestureDetector(
+            onTap: () => _biologin(),
+            child: showFingerPrint && showFaceId
+                ? Image.asset(
+                    'assets/images/icon_face_id_ios.png',
+                  )
                 : !showFingerPrint && showFaceId
-                    ? Icons.face
-                    : Icons.fingerprint,
-            color: AppColors.lightBlue4),
-        onPressed: () => _biologin(),
-        iconSize: 40,
+                    ? Image.asset(
+                        'assets/images/icon_face_id_ios.png',
+                      )
+                    : Icon(
+                        Icons.fingerprint,
+                        color: Colors.black,
+                        size: 37,
+                      )
+            // Image.asset(
+            //     'assets/images/icon_face_id_ios.png',
+            //   ),
+            ),
       ),
     );
   }

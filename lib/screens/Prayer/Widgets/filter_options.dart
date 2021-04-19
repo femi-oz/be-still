@@ -44,7 +44,7 @@ class _PrayerFiltersState extends State<PrayerFilters> {
         // options.length > 1 || options.length == 0
         //     ? 'MY PRAYERS'
         //     :
-        '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()} ';
+        '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
     await Provider.of<MiscProvider>(context, listen: false)
         .setPageTitle(heading);
     setState(() {});
