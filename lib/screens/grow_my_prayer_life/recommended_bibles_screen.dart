@@ -32,7 +32,9 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        showPrayerActions: false,
+      ),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
