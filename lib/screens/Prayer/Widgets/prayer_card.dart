@@ -334,7 +334,13 @@ class _PrayerCardState extends State<PrayerCard> {
                                       color: AppColors.lightBlue3,
                                       size: 10,
                                     )
-                                  : Container()
+                                  : widget.prayerData.prayer.isAnswer
+                                      ? Icon(
+                                          AppIcons.bestill_answered,
+                                          size: 10,
+                                          color: AppColors.lightBlue3,
+                                        )
+                                      : Container()
                             ],
                           ),
                           Row(
@@ -410,36 +416,6 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       ],
-                                    )
-                                  : Container(),
-                              widget.prayerData.prayer.isAnswer
-                                  ? Container(
-                                      padding: EdgeInsets.only(
-                                          right: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.70),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            AppIcons.bestill_answered,
-                                            size: 12,
-                                            color: AppColors.lightBlue3,
-                                          ),
-                                          // Container(
-                                          //   margin: EdgeInsets.symmetric(
-                                          //     horizontal: 10,
-                                          //   ),
-                                          //   child: Text(
-                                          //     '|',
-                                          //     style: TextStyle(
-                                          //       color: AppColors.lightBlue3,
-                                          //       fontSize: 10,
-                                          //     ),
-                                          //   ),
-                                          // )
-                                        ],
-                                      ),
                                     )
                                   : Container(),
                               Container(
