@@ -181,12 +181,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   Future<void> _setPermission() async {
     if (Settings.enabledContactPermission)
       _openContactConfirmation(context);
-    // setState(() => Settings.enabledContactPermission = false);
-    else
-      await Permission.contacts.request().then((p) {
-        setState(() =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
-      });
+    else {
+      var status = await Permission.contacts.request();
+      setState(() => Settings.enabledContactPermission =
+          status == PermissionStatus.granted);
+    }
   }
 
   void _updateEmail(UserModel user) async {

@@ -192,7 +192,7 @@ class UpdateView extends StatelessWidget {
                     updates[i].description,
                     prayerData.tags,
                     context),
-              _buildDetail('Initial Prayer |', prayerData.prayer.modifiedOn,
+              _buildDetail('Initial Prayer |', prayerData.prayer.createdOn,
                   prayerData.prayer.description, prayerData.tags, context),
             ],
           ),
