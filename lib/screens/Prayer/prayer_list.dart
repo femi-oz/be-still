@@ -3,11 +3,13 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -17,7 +19,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
-import 'widgets/prayer_card.dart';
 
 class PrayerList extends StatefulWidget {
   @override
@@ -185,16 +186,17 @@ class _PrayerListState extends State<PrayerList> {
                     : Container(
                         child: Column(
                           children: <Widget>[
-                            ...prayers
-                                .map((e) => GestureDetector(
-                                    onTap: () => onTapCard(e),
-                                    // onLongPressEnd:
-                                    //     (LongPressEndDetails details) =>
-                                    //         onLongPressCard(e, details),
-                                    child: PrayerCard(
-                                      prayerData: e,
-                                    )))
-                                .toList(),
+                            ...prayers.map((e) {
+                              var _timeago =
+                                  DateFormatter(e.prayer.modifiedOn).format();
+                              return GestureDetector(
+                                  onTap: () => onTapCard(e),
+                                  // onLongPressEnd:
+                                  //     (LongPressEndDetails details) =>
+                                  //         onLongPressCard(e, details),
+                                  child: PrayerCard(
+                                      prayerData: e, timeago: _timeago));
+                            }).toList(),
                           ],
                         ),
                       ),

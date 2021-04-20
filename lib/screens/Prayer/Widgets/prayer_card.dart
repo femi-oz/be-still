@@ -7,7 +7,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
-import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -22,8 +21,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
+  final String timeago;
 
-  PrayerCard({this.prayerData});
+  PrayerCard({@required this.prayerData, @required this.timeago});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
@@ -31,11 +31,6 @@ class PrayerCard extends StatefulWidget {
 
 class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
-  var _timeago = '';
-  initState() {
-    _timeago = DateFormatter(widget.prayerData.prayer.modifiedOn).format();
-    super.initState();
-  }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
@@ -449,7 +444,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                     )
                                   : Container(),
                               Text(
-                                _timeago,
+                                widget.timeago,
                                 style: AppTextStyles.regularText13
                                     .copyWith(color: AppColors.prayerTextColor),
                               ),
