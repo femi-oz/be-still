@@ -109,67 +109,29 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 50),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 30),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        // Container(
-                        //   child: GestureDetector(
-                        //     onTap: () => Navigator.pushReplacement(
-                        //       context,
-                        //       PageTransition(
-                        //         type: PageTransitionType.leftToRightWithFade,
-                        //         child: RecommenededBibles(),
-                        //       ),
-                        //     ),
-                        //     // Navigator.of(context)
-                        //     //     .pushNamed(RecommenededBibles.routeName);
-
-                        //     child: Text(
-                        //       'RECOMMENDED BIBLES',
-                        //       style: AppTextStyles.boldText20
-                        //           .copyWith(color: AppColors.lightBlue4),
-                        //       textAlign: TextAlign.left,
-                        //     ),
-                        //   ),
-                        // ),
-                        SizedBox(height: 30),
-                        Container(
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: DevotionPlans(),
-                              ),
-                            ),
-                            // Navigator.of(context)
-                            //     .pushNamed(DevotionPlans.routeName);
-
-                            child: Text(
-                              'DEVOTIONALS & READING PLANS',
-                              style: AppTextStyles.boldText20
-                                  .copyWith(color: AppColors.lightBlue4),
-                              textAlign: TextAlign.left,
-                            ),
+                    Container(
+                      child: GestureDetector(
+                        onTap: () => Navigator.pushReplacement(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.leftToRightWithFade,
+                            child: DevotionPlans(),
                           ),
                         ),
-                        // SizedBox(height: 30),
-                        // Container(
-                        //   child: GestureDetector(
-                        //     onTap: () => null,
-                        //     child: Text(
-                        //       'MY PRAYER GOALS',
-                        //       style: AppTextStyles.boldText20
-                        //           .copyWith(color: AppColors.lightBlue4),
-                        //       textAlign: TextAlign.left,
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
+                        // Navigator.of(context)
+                        //     .pushNamed(DevotionPlans.routeName);
+
+                        child: Text(
+                          'DEVOTIONALS & READING PLANS',
+                          style: AppTextStyles.boldText20
+                              .copyWith(color: AppColors.lightBlue4),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                   ],
                 )
