@@ -1,8 +1,6 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +16,6 @@ class _PrayerFiltersState extends State<PrayerFilters> {
   String errorMessage = '';
   void setOption(status) async {
     errorMessage = '';
-    var settings =
-        Provider.of<SettingsProvider>(context, listen: false).settings;
 
     // if (options.contains(status)) {
     //   if (options.length > 1)

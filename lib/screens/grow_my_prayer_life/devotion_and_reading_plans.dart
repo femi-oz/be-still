@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -188,7 +188,7 @@ class DevotionPlans extends StatelessWidget {
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
-                          child: EntryScreen(screenNumber: 3),
+                          child: GrowMyPrayerLifeScreen(),
                         ),
                       ),
                       // Navigator.popUntil(

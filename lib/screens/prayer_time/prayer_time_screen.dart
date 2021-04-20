@@ -63,57 +63,79 @@ class _PrayerTimeState extends State<PrayerTime> {
         current: currentPage,
         totalPrayers: prayers.length,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _controller,
-              itemBuilder: (context, index) {
-                return PrayerView(prayers[currentPage - 1]);
-              },
-              itemCount: prayers.length,
-              onPageChanged: (value) => {
-                setState(() => currentPage = value + 1),
-              },
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
           ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                child: Icon(
-                  Icons.first_page,
-                  color:
-                      currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
-                  size: 30,
-                ),
-                onTap: () {
-                  if (currentPage > 1) {
-                    _controller.animateToPage(0,
-                        curve: Curves.easeIn,
-                        duration: Duration(milliseconds: 200));
-                  }
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _controller,
+                itemBuilder: (context, index) {
+                  return PrayerView(prayers[currentPage - 1]);
+                },
+                itemCount: prayers.length,
+                onPageChanged: (value) => {
+                  setState(() => currentPage = value + 1),
                 },
               ),
-              SizedBox(width: 30),
-              InkWell(
-                child: Icon(
-                  Icons.navigate_before,
-                  color:
-                      currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
-                  size: 30,
-                ),
-                onTap: () {
-                  if (currentPage > 1) {
-                    _controller.jumpToPage(currentPage - 2);
-                  }
-                },
-              ),
-              SizedBox(width: 30),
-              InkWell(
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
                   child: Icon(
-                    Icons.navigate_next,
+                    Icons.first_page,
+                    color:
+                        currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
+                    size: 30,
+                  ),
+                  onTap: () {
+                    if (currentPage > 1) {
+                      _controller.animateToPage(0,
+                          curve: Curves.easeIn,
+                          duration: Duration(milliseconds: 200));
+                    }
+                  },
+                ),
+                SizedBox(width: 30),
+                InkWell(
+                  child: Icon(
+                    Icons.navigate_before,
+                    color:
+                        currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
+                    size: 30,
+                  ),
+                  onTap: () {
+                    if (currentPage > 1) {
+                      _controller.jumpToPage(currentPage - 2);
+                    }
+                  },
+                ),
+                SizedBox(width: 30),
+                InkWell(
+                    child: Icon(
+                      Icons.navigate_next,
+                      color: currentPage < prayers.length
+                          ? AppColors.lightBlue3
+                          : AppColors.grey,
+                      size: 30,
+                    ),
+                    onTap: () {
+                      if (currentPage < prayers.length) {
+                        _controller.jumpToPage(currentPage);
+                      }
+                    }),
+                SizedBox(width: 30),
+                InkWell(
+                  child: Icon(
+                    Icons.last_page,
                     color: currentPage < prayers.length
                         ? AppColors.lightBlue3
                         : AppColors.grey,
@@ -121,30 +143,17 @@ class _PrayerTimeState extends State<PrayerTime> {
                   ),
                   onTap: () {
                     if (currentPage < prayers.length) {
-                      _controller.jumpToPage(currentPage);
+                      _controller.animateToPage(prayers.length - 1,
+                          curve: Curves.easeIn,
+                          duration: Duration(milliseconds: 200));
                     }
-                  }),
-              SizedBox(width: 30),
-              InkWell(
-                child: Icon(
-                  Icons.last_page,
-                  color: currentPage < prayers.length
-                      ? AppColors.lightBlue3
-                      : AppColors.grey,
-                  size: 30,
+                  },
                 ),
-                onTap: () {
-                  if (currentPage < prayers.length) {
-                    _controller.animateToPage(prayers.length - 1,
-                        curve: Curves.easeIn,
-                        duration: Duration(milliseconds: 200));
-                  }
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 40),
-        ],
+              ],
+            ),
+            SizedBox(height: 40),
+          ],
+        ),
       ),
       endDrawer: CustomDrawer(),
     );

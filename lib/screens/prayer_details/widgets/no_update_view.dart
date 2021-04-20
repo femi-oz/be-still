@@ -1,4 +1,3 @@
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
@@ -209,7 +208,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                 child: Center(
                   child: EasyRichText(
                     prayerData.prayer.description,
-                    defaultStyle: AppTextStyles.regularText18b.copyWith(
+                    defaultStyle: AppTextStyles.regularText16b.copyWith(
                       color: AppColors.prayerTextColor,
                     ),
                     textAlign: TextAlign.left,

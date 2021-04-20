@@ -1,13 +1,13 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +19,39 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        _getBibles();
+      });
+      setState(() => _isInit = false);
+    }
+    super.didChangeDependencies();
+  }
+
+  _getBibles() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+      await Future.delayed(Duration(milliseconds: 300));
+      print('object');
+      BeStilDialog.hideLoading(context);
+      print('object2');
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
   _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -32,9 +65,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        showPrayerActions: false,
-      ),
+      appBar: SettingsAppBar(title: ''),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
@@ -56,38 +87,39 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             ),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.zero),
-                      ),
-                      icon: Icon(
-                        AppIcons.bestill_back_arrow,
-                        color: AppColors.lightBlue3,
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pushReplacement(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: EntryScreen(screenNumber: 3),
-                        ),
-                      ),
-                      // Navigator.popUntil(
-                      //     context, ModalRoute.withName(EntryScreen.routeName)),
-                      label: Text(
-                        'BACK',
-                        style: AppTextStyles.boldText20.copyWith(
-                          color: AppColors.lightBlue3,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(20.0),
+                //   child: Align(
+                //     alignment: Alignment.centerLeft,
+                //     child: TextButton.icon(
+                //       style: ButtonStyle(
+                //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                //             EdgeInsets.zero),
+                //       ),
+                //       icon: Icon(
+                //         AppIcons.bestill_back_arrow,
+                //         color: AppColors.lightBlue3,
+                //         size: 20,
+                //       ),
+                //       onPressed: () => Navigator.pushReplacement(
+                //         context,
+                //         PageTransition(
+                //           type: PageTransitionType.rightToLeftWithFade,
+                //           child: EntryScreen(screenNumber: 3),
+                //         ),
+                //       ),
+                //       // Navigator.popUntil(
+                //       //     context, ModalRoute.withName(EntryScreen.routeName)),
+                //       label: Text(
+                //         'BACK',
+                //         style: AppTextStyles.boldText20.copyWith(
+                //           color: AppColors.lightBlue3,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
                   child: Text(
@@ -138,7 +170,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     child: Text(
                       bibleData[i].shortName,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.boldText24.copyWith(
+                      style: AppTextStyles.boldText20.copyWith(
                         color: Color(0xFFffffff),
                       ),
                     ),

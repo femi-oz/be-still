@@ -1,7 +1,5 @@
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';

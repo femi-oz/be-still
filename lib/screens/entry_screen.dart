@@ -5,8 +5,8 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
-import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/prayer/prayer_list.dart';
+import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -101,7 +101,7 @@ class _EntryScreenState extends State<EntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: _currentIndex == 2
+      appBar: _currentIndex == 2 || _currentIndex == 3
           ? null
           : CustomAppBar(
               showPrayerActions: _currentIndex == 0,
@@ -120,7 +120,8 @@ class _EntryScreenState extends State<EntryScreen> {
             return BeStilDialog.getLoading();
         },
       ),
-      bottomNavigationBar: _createBottomNavigationBar(),
+      bottomNavigationBar:
+          _currentIndex == 3 ? null : _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );
   }
@@ -149,7 +150,7 @@ class _EntryScreenState extends State<EntryScreen> {
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'This feature will be avaialable soon.',
+                'This feature will be available soon.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -291,7 +292,7 @@ class TabNavigationItem {
           title: "add prayer",
         ),
         TabNavigationItem(
-          page: GrowMyPrayerLifeScreen(),
+          page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
               size: 18, color: AppColors.bottomNavIconColor),
           title: "grow my prayer life",

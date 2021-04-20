@@ -4,7 +4,8 @@ import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
-  SettingsAppBar({Key key})
+  final String title;
+  SettingsAppBar({this.title = 'SETTINGS', Key key})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -23,7 +24,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
     // List<PushNotificationModel> notifications =
     //     Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
-      title: Text('SETTINGS',
+      title: Text(widget.title,
           style: AppTextStyles.boldText28.copyWith(
               color:
                   Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2)),

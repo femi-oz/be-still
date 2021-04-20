@@ -388,10 +388,13 @@ class _PrayerCardState extends State<PrayerCard> {
                                               );
                                             },
                                           ),
-                                          child: Icon(
-                                            AppIcons.bestill_reminder,
-                                            size: 12,
-                                            color: AppColors.lightBlue3,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              AppIcons.bestill_reminder,
+                                              size: 12,
+                                              color: AppColors.lightBlue3,
+                                            ),
                                           ),
                                         ),
                                         Container(

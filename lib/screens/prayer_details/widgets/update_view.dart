@@ -1,5 +1,4 @@
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
@@ -244,7 +243,7 @@ class UpdateView extends StatelessWidget {
                   Flexible(
                     child: EasyRichText(
                       description,
-                      defaultStyle: AppTextStyles.regularText15
+                      defaultStyle: AppTextStyles.regularText16b
                           .copyWith(color: AppColors.prayerTextColor),
                       patternList: [
                         for (var i = 0; i < tags.length; i++)

@@ -1,11 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -18,19 +19,23 @@ class GrowMyPrayerLifeScreen extends StatefulWidget {
 }
 
 class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
+  bool _isInit = true;
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<MiscProvider>(context, listen: false).setPageTitle('');
-      _getDevotionals();
-    });
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        _getDevotionals();
+      });
+      setState(() => _isInit = false);
+    }
     super.didChangeDependencies();
   }
 
   _getDevotionals() async {
     await BeStilDialog.showLoading(context, '');
     try {
-      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
       await Provider.of<DevotionalProvider>(context, listen: false)
           .getDevotionals();
       await Future.delayed(Duration(milliseconds: 300));
@@ -49,6 +54,8 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: SettingsAppBar(title: ''),
+      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -109,26 +116,26 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: RecommenededBibles(),
-                              ),
-                            ),
-                            // Navigator.of(context)
-                            //     .pushNamed(RecommenededBibles.routeName);
+                        // Container(
+                        //   child: GestureDetector(
+                        //     onTap: () => Navigator.pushReplacement(
+                        //       context,
+                        //       PageTransition(
+                        //         type: PageTransitionType.leftToRightWithFade,
+                        //         child: RecommenededBibles(),
+                        //       ),
+                        //     ),
+                        //     // Navigator.of(context)
+                        //     //     .pushNamed(RecommenededBibles.routeName);
 
-                            child: Text(
-                              'RECOMMENDED BIBLES',
-                              style: AppTextStyles.boldText20
-                                  .copyWith(color: AppColors.lightBlue4),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
+                        //     child: Text(
+                        //       'RECOMMENDED BIBLES',
+                        //       style: AppTextStyles.boldText20
+                        //           .copyWith(color: AppColors.lightBlue4),
+                        //       textAlign: TextAlign.left,
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(height: 30),
                         Container(
                           child: GestureDetector(
