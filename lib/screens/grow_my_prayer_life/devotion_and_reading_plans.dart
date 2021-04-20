@@ -148,7 +148,7 @@ class DevotionPlans extends StatelessWidget {
 
     var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(showPrayerActions: false),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
