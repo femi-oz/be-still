@@ -57,26 +57,22 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
       appBar: SettingsAppBar(title: ''),
       endDrawer: CustomDrawer(),
       body: Container(
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: AppColors.backgroundColor,
           ),
+          image: DecorationImage(
+            image: AssetImage(StringUtils.backgroundImage()),
+            alignment: Alignment.bottomCenter,
+          ),
         ),
-        width: double.infinity,
         child: SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.835,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage()),
-                alignment: Alignment.bottomCenter,
-              ),
-            ),
             padding: EdgeInsets.symmetric(horizontal: 40, vertical: 30),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
