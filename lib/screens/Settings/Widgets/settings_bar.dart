@@ -26,6 +26,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
     return AppBar(
       title: Text(widget.title,
           style: AppTextStyles.boldText28.copyWith(
+              height: 1.5,
               color:
                   Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2)),
       centerTitle: true,
