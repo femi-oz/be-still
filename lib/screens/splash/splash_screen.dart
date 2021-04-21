@@ -33,8 +33,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    print(
-        'message -- splash init ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
     _textAnimationController =
         AnimationController(vsync: this, duration: Duration(seconds: 3))
           ..repeat();

@@ -29,13 +29,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
     });
-    print(
-        'message -- app before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
     Provider.of<NotificationProvider>(context, listen: false).init(context);
     Provider.of<NotificationProvider>(context, listen: false)
         .initLocal(context);
-    print(
-        'message -- app after ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
 
     super.initState();
   }
