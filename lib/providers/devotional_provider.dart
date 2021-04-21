@@ -10,19 +10,20 @@ class DevotionalProvider with ChangeNotifier {
   List<DevotionalModel> _devotionals = [];
   List<BibleModel> get bibles => _bibles;
   List<DevotionalModel> get devotionals => _devotionals;
-  Future getBibles() async {
-    _devotionalService
-        .getBibles()
-        .asBroadcastStream()
-        .listen((bibles) => _bibles = bibles);
-    notifyListeners();
+  Future<void> getBibles() async {
+    _devotionalService.getBibles().asBroadcastStream().listen((bibles) {
+      _bibles = bibles;
+      notifyListeners();
+    });
   }
 
-  Future getDevotionals() async {
+  Future<void> getDevotionals() async {
     _devotionalService
         .getDevotionals()
         .asBroadcastStream()
-        .listen((devotionals) => _devotionals = devotionals);
-    notifyListeners();
+        .listen((devotionals) {
+      _devotionals = devotionals;
+      notifyListeners();
+    });
   }
 }

@@ -45,7 +45,11 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   bool _autoValidate = false;
+  String backupText;
   String _oldDesc = '';
+  var dy;
+  var dx;
+  TextPainter painter;
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -66,12 +70,14 @@ class _AddPrayerState extends State<AddPrayer> {
           //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
           // } else {
           await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
-              _descriptionController.text,
-              _user.id,
-              '${_user.firstName} ${_user.lastName}');
+            _descriptionController.text,
+            _user.id,
+            '${_user.firstName} ${_user.lastName}',
+            backupText,
+          );
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text, []);
+                .addPrayerTag(contacts, _user, _descriptionController.text);
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
@@ -86,28 +92,36 @@ class _AddPrayerState extends State<AddPrayer> {
           //     context, ModalRoute.withName(EntryScreen.routeName));
           // }
         } else {
-          print(contacts.length);
-
-          print(widget.prayerData.tags.length);
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
-          for (int i = 0; i < widget.prayerData.tags.length; i++)
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .removePrayerTag(widget.prayerData.tags[i].id);
-          List<Contact> oldContacts = [];
-          oldTags.forEach((data) {
-            var contact = localContacts.firstWhere(
-                (element) => element.identifier == data.identifier,
-                orElse: () => null);
-            if (contact != null) {
-              oldContacts.add(contact);
+          // backupText = _descriptionController.text;
+          var newText = _descriptionController.text;
+          List textList = [];
+
+          var text = [...widget.prayerData.tags];
+          text.forEach((element) {
+            if (!newText.contains(element.displayName)) {
+              textList.add(element);
+              // text.remove(element);
             }
           });
-          contacts = [...contacts, ...oldContacts];
+          for (int i = 0; i < textList.length; i++)
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .removePrayerTag(textList[i].id);
+
+          // List<Contact> oldContacts = [];
+          // text.forEach((data) {
+          //   var contact = localContacts.firstWhere(
+          //       (element) => element.identifier == data.identifier,
+          //       orElse: () => null);
+          //   if (contact != null) {
+          //     oldContacts.add(contact);
+          //   }
+          // });
+          // contacts = [...contacts, ...oldContacts];
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text,
-                    widget.prayerData.tags);
+                .addPrayerTag(contacts, _user, _descriptionController.text);
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
@@ -136,7 +150,13 @@ class _AddPrayerState extends State<AddPrayer> {
         widget.isEdit ? widget.prayerData.prayer.description : '';
     _oldDesc = _descriptionController.text;
     getContacts();
+    _descriptionController.addListener(listen);
+
     super.initState();
+  }
+
+  void listen() {
+    print(_descriptionController.selection.base);
   }
 
   Future<void> getContacts() async {
@@ -156,17 +176,15 @@ class _AddPrayerState extends State<AddPrayer> {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
             : '';
-        // tagText = tagText.replaceAll('@', '');
       });
-      oldTags = widget.prayerData.tags;
 
-      oldTags.forEach((element) {
-        if (!_descriptionController.text
-            .toLowerCase()
-            .contains(element.displayName.toLowerCase())) {
-          oldTags.remove(element);
-        }
-      });
+      painter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+          text: val,
+        ),
+      );
+      painter.layout();
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -188,7 +206,9 @@ class _AddPrayerState extends State<AddPrayer> {
     tagText = '';
     String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
-    _descriptionController.text += tmpText;
+
+    _descriptionController.text += tmpText.toLowerCase();
+    backupText = _descriptionController.text;
     _descriptionController.text = _descriptionController.text
         .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
 
@@ -428,10 +448,17 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 1
-                              ? Container(
-                                  padding: EdgeInsets.only(
-                                      top: _focusNode.offset.dy * 0.45,
-                                      left: _focusNode.offset.dx),
+                              ? Positioned(
+                                  // padding: EdgeInsets.only(
+                                  //     top: _focusNode.offset.dy * 0.5 +
+                                  //         painter.height,
+                                  //     left: _focusNode.offset.dx * 0.5 +
+                                  //         painter.width),
+                                  top: _focusNode.offset.dy +
+                                      painter.height -
+                                      46,
+                                  left: _focusNode.offset.dx,
+
                                   height:
                                       MediaQuery.of(context).size.height * 0.4,
                                   child: SingleChildScrollView(

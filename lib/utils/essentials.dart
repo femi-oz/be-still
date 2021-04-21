@@ -79,7 +79,7 @@ class AppColors {
   static Color get divider =>
       getColor(darkMode, light: 0xFF0D1319, dark: 0xFF005780);
   static Color get textFieldText =>
-      getColor(darkMode, light: 0xFF79858A, dark: 0xFFC1C5C8);
+      getColor(darkMode, light: 0xFF002D4B, dark: 0xFFC1C5C8);
   static Color get textFieldBorder =>
       getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
   static Color get prayeModeBg =>
@@ -95,7 +95,7 @@ class AppColors {
   static Color get drawerTopColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF0D1319);
   static Color get prayerTextColor =>
-      getColor(darkMode, light: 0xFF788489, dark: 0XFFC1C5C8);
+      getColor(darkMode, light: 0xFF002D4B, dark: 0XFFC1C5C8);
   static Color get addprayerTextColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF009FD0);
   static Color get addprayerBgColor =>
@@ -114,8 +114,8 @@ class AppColors {
       getColor(darkMode, light: 0xFF004E75, dark: 0xFF004E75);
   static Color get blueTitle =>
       getColor(darkMode, light: 0xFF003B87, dark: 0xFF00ACD8);
-  static Color get growMyPrayerText =>
-      getColor(darkMode, light: 0xFF002D4B, dark: 0xFFC1C5C8);
+  // static Color get growMyPrayerText =>
+  //     getColor(darkMode, light: 0xFF002D4B, dark: 0xFFC1C5C8);
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),

@@ -374,7 +374,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                             child: Row(
                                               children: <Widget>[
                                                 Text(
-                                                  'Initial Prayer Request |',
+                                                  'Initial Prayer |',
                                                   style: TextStyle(
                                                       color: AppColors.dimBlue,
                                                       fontSize: 12,

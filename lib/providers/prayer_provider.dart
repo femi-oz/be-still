@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -18,7 +17,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _filteredPrayers = [];
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
   CombinePrayerStream _currentPrayer;
-  List<String> _filterOptions = [Status.active];
+  String _filterOption = Status.active;
 
   List<CombinePrayerStream> get prayers => _prayers;
   List<CombinePrayerStream> get filteredPrayers => _filteredPrayers;
@@ -27,13 +26,13 @@ class PrayerProvider with ChangeNotifier {
       _filteredPrayerTimeList;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
-  List<String> get filterOptions => _filterOptions;
+  String get filterOption => _filterOption;
 
-  Future<void> setPrayers(String userId, String sortBy) async {
+  Future<void> setPrayers(String userId) async {
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
-        filterPrayers(sortBy);
+        filterPrayers();
         notifyListeners();
       },
     );
@@ -73,10 +72,9 @@ class PrayerProvider with ChangeNotifier {
         },
       );
 
-  Future<void> searchPrayers(
-      String searchQuery, String sortBy, String userId) async {
+  Future<void> searchPrayers(String searchQuery, String userId) async {
     if (searchQuery == '') {
-      filterPrayers(sortBy);
+      filterPrayers();
     } else {
       List<CombinePrayerStream> filteredPrayers = _prayers
           .where((CombinePrayerStream data) => data.prayer.description
@@ -101,19 +99,27 @@ class PrayerProvider with ChangeNotifier {
         notifyListeners();
       });
 
-  void setPrayerFilterOptions(List<String> options) {
-    _filterOptions = options;
+  void setPrayerFilterOptions(String option) {
+    _filterOption = option;
     notifyListeners();
   }
 
-  Future<void> filterPrayers(String sortBy) async {
+  Future<void> filterPrayers() async {
     List<CombinePrayerStream> prayers = _prayers.toList();
     List<CombinePrayerStream> activePrayers = [];
     List<CombinePrayerStream> answeredPrayers = [];
     List<CombinePrayerStream> snoozedPrayers = [];
     List<CombinePrayerStream> favoritePrayers = [];
     List<CombinePrayerStream> archivedPrayers = [];
-    if (_filterOptions.contains(Status.active)) {
+    List<CombinePrayerStream> allPrayers = [];
+    if (_filterOption == Status.all) {
+      favoritePrayers = prayers
+          .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
+          .toList();
+      allPrayers = prayers;
+    }
+    print(_filterOption);
+    if (_filterOption == Status.active) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
           .toList();
@@ -123,18 +129,18 @@ class PrayerProvider with ChangeNotifier {
               Status.active.toLowerCase())
           .toList();
     }
-    if (_filterOptions.contains(Status.answered)) {
+    if (_filterOption == Status.answered) {
       answeredPrayers = prayers
           .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
           .toList();
     }
-    if (_filterOptions.contains(Status.archived)) {
+    if (_filterOption == Status.archived) {
       archivedPrayers = prayers
           .where(
               (CombinePrayerStream data) => data.userPrayer.isArchived == true)
           .toList();
     }
-    if (_filterOptions.contains(Status.snoozed)) {
+    if (_filterOption == Status.snoozed) {
       snoozedPrayers = prayers
           .where((CombinePrayerStream data) =>
               data.userPrayer.isSnoozed == true &&
@@ -142,12 +148,13 @@ class PrayerProvider with ChangeNotifier {
           .toList();
     }
     _filteredPrayers = [
+      ...allPrayers,
       ...activePrayers,
       ...archivedPrayers,
       ...snoozedPrayers,
       ...answeredPrayers
     ];
-    await _sortBySettings(sortBy);
+    await _sortBySettings();
 
     _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
     List<CombinePrayerStream> _distinct = [];
@@ -174,39 +181,44 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _sortBySettings(String sortBy) async {
-    if (sortBy == SortType.date) {
-      _filteredPrayers
-          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    } else if (sortBy == SortType.tag) {
-      var hasTags = _filteredPrayers.where((e) => e.tags.length > 0).toList();
-      var noTags = _filteredPrayers.where((e) => e.tags.length == 0).toList();
-      hasTags.sort(
-          (a, b) => a.tags[0].displayName.compareTo(b.tags[0].displayName));
-      _filteredPrayers = [...hasTags, ...noTags];
-    } else {
-      var answered = _filteredPrayers.where((e) => e.prayer.isAnswer).toList();
-      var unAnswered =
-          _filteredPrayers.where((e) => !e.prayer.isAnswer).toList();
-      _filteredPrayers = [...answered, ...unAnswered];
-    }
+  Future<void> _sortBySettings() async {
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    // if (sortBy == SortType.date) {
+    //   _filteredPrayers
+    //       .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    // }
+    // else if (sortBy == SortType.tag) {
+    //   var hasTags = _filteredPrayers.where((e) => e.tags.length > 0).toList();
+    //   var noTags = _filteredPrayers.where((e) => e.tags.length == 0).toList();
+    //   hasTags.sort(
+    //       (a, b) => a.tags[0].displayName.compareTo(b.tags[0].displayName));
+    //   _filteredPrayers = [...hasTags, ...noTags];
+    // } else {
+    //   var answered = _filteredPrayers.where((e) => e.prayer.isAnswer).toList();
+    //   var unAnswered =
+    //       _filteredPrayers.where((e) => !e.prayer.isAnswer).toList();
+    //   _filteredPrayers = [...answered, ...unAnswered];
+    // }
   }
 
   Future<void> addPrayer(
     String prayerDesc,
     String userId,
     String creatorName,
+    String prayerDescBackup,
   ) async =>
-      await _prayerService.addPrayer(prayerDesc, userId, creatorName);
+      await _prayerService.addPrayer(
+          prayerDesc, userId, creatorName, prayerDescBackup);
 
   Future<void> addUserPrayer(String prayerId, String prayerDesc,
           String recieverId, String senderId, String sender) async =>
       await _prayerService.addUserPrayer(
           prayerId, prayerDesc, recieverId, senderId, sender);
 
-  Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
-          String message, List<PrayerTagModel> oldTags) async =>
-      await _prayerService.addPrayerTag(contactData, user, message, oldTags);
+  Future<void> addPrayerTag(
+          List<Contact> contactData, UserModel user, String message) async =>
+      await _prayerService.addPrayerTag(contactData, user, message);
 
   Future<void> removePrayerTag(String tagId) async =>
       await _prayerService.removePrayerTag(tagId);
@@ -228,7 +240,6 @@ class PrayerProvider with ChangeNotifier {
       String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
     await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
     // var duration = snoozeEndDate.difference(DateTime.now());
-    // print(duration);
     // Future.delayed(duration.);
     // setPrayers(userPrayerID, '');
   }

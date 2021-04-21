@@ -7,7 +7,6 @@ import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
-import 'package:be_still/screens/security/create_account/widgets/success.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -149,55 +148,59 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       child: Scaffold(
         key: _scaffoldKey,
         body: Container(
-          height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: AppColors.backgroundColor,
             ),
-            image: DecorationImage(
-              image:
-                  AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
-              alignment: Alignment.bottomCenter,
-            ),
           ),
+          height: double.infinity,
           child: Stack(
             children: [
-              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
               Align(
                 alignment: Alignment.topCenter,
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 260),
-                      Text(
-                        'CREATE AN ACCOUNT',
-                        style: AppTextStyles.boldText24.copyWith(
-                            color: Settings.isDarkMode
-                                ? AppColors.lightBlue3
-                                : AppColors.grey2),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                            StringUtils.backgroundImage(Settings.isDarkMode)),
+                        alignment: Alignment.bottomCenter,
                       ),
-                      SizedBox(height: 6),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              child: Container(
-                                child: _buildForm(),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            _buildFooter(),
-                            // SizedBox(height: 100),
-                          ],
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 260),
+                        Text(
+                          'CREATE AN ACCOUNT',
+                          style: AppTextStyles.boldText24.copyWith(
+                              color: Settings.isDarkMode
+                                  ? AppColors.lightBlue3
+                                  : AppColors.grey2),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 6),
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                child: Container(
+                                  child: _buildForm(),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              _buildFooter(),
+                              // SizedBox(height: 100),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
             ],
           ),
         ),

@@ -110,7 +110,7 @@ class UpdateView extends StatelessWidget {
                           child: Row(
                             children: <Widget>[
                               Text(
-                                'Initial Prayer Request |',
+                                'Initial Prayer |',
                                 style: AppTextStyles.boldText16
                                     .copyWith(color: AppColors.prayeModeBorder),
                               ),

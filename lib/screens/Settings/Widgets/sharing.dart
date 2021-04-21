@@ -4,7 +4,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
-import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -98,30 +97,29 @@ class _SharingSettingsState extends State<SharingSettings> {
   @override
   Widget build(BuildContext context) {
     final settingProvider = Provider.of<SettingsProvider>(context);
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           SizedBox(height: 15),
-          CustomSectionHeder('Preferences'),
-          SizedBox(height: 30),
-          CustomToggle(
-            title: 'Enable sharing via text?',
-            onChange: (value) => settingProvider.updateSharingSettings(userId,
-                key: SettingsKey.enableSharingViaText,
-                value: value,
-                settingsId: settingProvider.sharingSettings.id),
-            value: settingProvider.sharingSettings.enableSharingViaText,
-          ),
-          CustomToggle(
-            title: 'Enable sharing via email?',
-            onChange: (value) => settingProvider.updateSharingSettings(userId,
-                key: SettingsKey.enableSharingViaEmail,
-                value: value,
-                settingsId: settingProvider.sharingSettings.id),
-            value: settingProvider.sharingSettings.enableSharingViaEmail,
-          ),
-          SizedBox(height: 30),
+          // CustomSectionHeder('Preferences'),
+          // // SizedBox(height: 30),
+          // CustomToggle(
+          //   title: 'Enable sharing via text?',
+          //   onChange: (value) => settingProvider.updateSharingSettings(userId,
+          //       key: SettingsKey.enableSharingViaText,
+          //       value: value,
+          //       settingsId: settingProvider.sharingSettings.id),
+          //   value: settingProvider.sharingSettings.enableSharingViaText,
+          // ),
+          // CustomToggle(
+          //   title: 'Enable sharing via email?',
+          //   onChange: (value) => settingProvider.updateSharingSettings(userId,
+          //       key: SettingsKey.enableSharingViaEmail,
+          //       value: value,
+          //       settingsId: settingProvider.sharingSettings.id),
+          //   value: settingProvider.sharingSettings.enableSharingViaEmail,
+          // ),
+          // SizedBox(height: 30),
           //method hidelAllTextFieled
           GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),

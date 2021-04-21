@@ -55,92 +55,94 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
-            ),
-            image: DecorationImage(
-              image:
-                  AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
-              alignment: Alignment.bottomCenter,
-            ),
-          ),
           child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                CustomLogoShape(),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.67,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: step == 1
-                            ? _buildEmailForm(context)
-                            : ForgetPasswordSucess(),
-                      ),
-                      step > 3
-                          ? Container()
-                          : Column(
-                              children: <Widget>[
-                                step > 1
-                                    ? Container()
-                                    : GestureDetector(
-                                        onTap: () => {
-                                          setState(() {
-                                            _forgotPassword();
-                                          })
-                                        },
-                                        child: Container(
-                                          height: 50.0,
-                                          width: double.infinity,
-                                          margin: EdgeInsets.only(bottom: 20),
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.centerLeft,
-                                              end: Alignment.centerRight,
-                                              colors: [
-                                                AppColors.lightBlue1,
-                                                AppColors.lightBlue2,
-                                              ],
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: AppColors.backgroundColor,
+                ),
+                image: DecorationImage(
+                  image: AssetImage(
+                      StringUtils.backgroundImage(Settings.isDarkMode)),
+                  alignment: Alignment.bottomCenter,
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  CustomLogoShape(),
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.67,
+                    child: Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: step == 1
+                              ? _buildEmailForm(context)
+                              : ForgetPasswordSucess(),
+                        ),
+                        step > 3
+                            ? Container()
+                            : Column(
+                                children: <Widget>[
+                                  step > 1
+                                      ? Container()
+                                      : GestureDetector(
+                                          onTap: () => {
+                                            setState(() {
+                                              _forgotPassword();
+                                            })
+                                          },
+                                          child: Container(
+                                            height: 50.0,
+                                            width: double.infinity,
+                                            margin: EdgeInsets.only(bottom: 20),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.centerLeft,
+                                                end: Alignment.centerRight,
+                                                colors: [
+                                                  AppColors.lightBlue1,
+                                                  AppColors.lightBlue2,
+                                                ],
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              AppIcons.bestill_next_arrow,
+                                              color: AppColors.offWhite4,
                                             ),
                                           ),
-                                          child: Icon(
-                                            AppIcons.bestill_next_arrow,
-                                            color: AppColors.offWhite4,
+                                        ),
+                                  step > 3
+                                      ? Container()
+                                      : GestureDetector(
+                                          child: Text(
+                                            "Go Back",
+                                            style: AppTextStyles.regularText13,
                                           ),
-                                        ),
-                                      ),
-                                step > 3
-                                    ? Container()
-                                    : GestureDetector(
-                                        child: Text(
-                                          "Go Back",
-                                          style: AppTextStyles.regularText13,
-                                        ),
-                                        onTap: () {
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            PageTransition(
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: LoginScreen()),
-                                            (Route<dynamic> route) => false,
-                                          );
-                                          // Navigator.of(context)
-                                          //     .pushReplacementNamed(
-                                          //         LoginScreen.routeName);
-                                        },
-                                      )
-                              ],
-                            ),
-                    ],
+                                          onTap: () {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              PageTransition(
+                                                  type: PageTransitionType
+                                                      .rightToLeftWithFade,
+                                                  child: LoginScreen()),
+                                              (Route<dynamic> route) => false,
+                                            );
+                                            // Navigator.of(context)
+                                            //     .pushReplacementNamed(
+                                            //         LoginScreen.routeName);
+                                          },
+                                        )
+                                ],
+                              ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

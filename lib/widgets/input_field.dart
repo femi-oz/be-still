@@ -107,6 +107,7 @@ class _CustomInputState extends State<CustomInput> {
           : TextFormField(
               controller: widget.controller,
               keyboardType: widget.keyboardType,
+              textCapitalization: TextCapitalization.sentences,
               style: AppTextStyles.regularText15,
               focusNode: widget.focusNode,
               cursorColor:
@@ -131,7 +132,7 @@ class _CustomInputState extends State<CustomInput> {
                 suffixStyle: AppTextStyles.regularText14.copyWith(
                     color: Settings.isDarkMode
                         ? AppColors.offWhite2
-                        : AppColors.grey4),
+                        : AppColors.prayerTextColor),
                 counterText: '',
                 hintText: widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),

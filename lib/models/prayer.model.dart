@@ -10,6 +10,7 @@ class PrayerModel {
   final String title;
   final String status;
   final String description;
+  final String descriptionBackup;
   final bool isAnswer;
   final bool isInappropriate;
   final String creatorName;
@@ -26,6 +27,7 @@ class PrayerModel {
     @required this.title,
     @required this.status,
     @required this.description,
+    @required this.descriptionBackup,
     @required this.isAnswer,
     @required this.isInappropriate,
     @required this.creatorName,
@@ -37,18 +39,19 @@ class PrayerModel {
 
   PrayerModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        groupId = snapshot.data()['GroupId'] ?? '',
-        userId = snapshot.data()['UserId'],
-        type = snapshot.data()['Type'],
-        title = snapshot.data()['Title'],
-        status = snapshot.data()['Status'],
-        description = snapshot.data()['Description'],
-        isAnswer = snapshot.data()['IsAnswer'],
-        isInappropriate = snapshot.data()['IsInappropriate'],
+        groupId = snapshot.data()['GroupId'] ?? 'N/A',
+        userId = snapshot.data()['UserId'] ?? 'N/A',
+        type = snapshot.data()['Type'] ?? 'N/A',
+        title = snapshot.data()['Title'] ?? 'N/A',
+        status = snapshot.data()['Status'] ?? 'N/A',
+        description = snapshot.data()['Description'] ?? 'N/A',
+        descriptionBackup = snapshot.data()['DescriptionBackup'] ?? 'N/A',
+        isAnswer = snapshot.data()['IsAnswer'] ?? 'N/A',
+        isInappropriate = snapshot.data()['IsInappropriate'] ?? 'N/A',
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
-        createdBy = snapshot.data()['CreatedBy'],
+        createdBy = snapshot.data()['CreatedBy'] ?? 'N/A',
         createdOn = snapshot.data()['CreatedOn']?.toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedBy = snapshot.data()['ModifiedBy'] ?? 'N/A',
         modifiedOn = snapshot.data()['ModifiedOn']?.toDate();
 
   Map<String, dynamic> toJson() {
@@ -59,6 +62,7 @@ class PrayerModel {
       'Title': title,
       'Status': status,
       'Description': description,
+      'DescriptionBackup': descriptionBackup,
       'IsAnswer': isAnswer,
       'IsInappropriate': isInappropriate,
       'CreatorName': creatorName,
@@ -76,6 +80,7 @@ class PrayerUpdateModel {
   final String userId;
   final String title;
   final String description;
+  final String descriptionBackup;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -87,6 +92,7 @@ class PrayerUpdateModel {
     @required this.userId,
     @required this.title,
     @required this.description,
+    @required this.descriptionBackup,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -99,6 +105,7 @@ class PrayerUpdateModel {
         userId = snapshot.data()['UserId'],
         title = snapshot.data()['Title'],
         description = snapshot.data()['Description'],
+        descriptionBackup = snapshot.data()['DescriptionBackup'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -110,6 +117,7 @@ class PrayerUpdateModel {
       'UserId': userId,
       'Title': title,
       'Description': description,
+      'DescriptionBackup': descriptionBackup,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

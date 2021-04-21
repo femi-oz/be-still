@@ -2,7 +2,6 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
-import 'package:be_still/screens/settings/Widgets/notifications.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
@@ -88,8 +87,9 @@ class SettingsTabState extends State<SettingsTab>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
-        length: 5,
-        child: Scaffold(key:_scaffoldKey,
+        length: 4,
+        child: Scaffold(
+          key: _scaffoldKey,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
@@ -112,7 +112,7 @@ class SettingsTabState extends State<SettingsTab>
                 indicatorColor: Colors.transparent,
                 unselectedLabelColor: AppColors.inactvePrayerMenu,
                 labelColor: AppColors.lightBlue4,
-                labelStyle: AppTextStyles.boldText20,
+                labelStyle: AppTextStyles.boldText24,
                 isScrollable: true,
                 tabs: [
                   Tab(
@@ -122,11 +122,11 @@ class SettingsTabState extends State<SettingsTab>
                     text: "My List",
                   ),
                   Tab(
-                    text: "Prayer Time",
+                    text: "Set Reminder",
                   ),
-                  Tab(
-                    text: "Notifications",
-                  ),
+                  // Tab(
+                  //   text: "Notifications",
+                  // ),
                   // Tab(
                   //   text: "Alexa",
                   // ),
@@ -150,11 +150,11 @@ class SettingsTabState extends State<SettingsTab>
             ),
             child: TabBarView(
               children: [
-                GeneralSettings(_settingsProvider.settings,_scaffoldKey),
+                GeneralSettings(_settingsProvider.settings, _scaffoldKey),
                 MyListSettings(_settingsProvider.settings),
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
-                NotificationsSettings(_settingsProvider.settings),
+                // NotificationsSettings(_settingsProvider.settings),
                 // AlexaSettings(_settingsProvider.settings),
                 SharingSettings(),
                 // GroupsSettings(),

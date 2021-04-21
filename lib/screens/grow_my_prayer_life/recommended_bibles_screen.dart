@@ -1,13 +1,13 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +19,34 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        _getBibles();
+      });
+      setState(() => _isInit = false);
+    }
+    super.didChangeDependencies();
+  }
+
+  _getBibles() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
+
   _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -32,78 +60,83 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: SettingsAppBar(title: ''),
       endDrawer: CustomDrawer(),
       body: Container(
-        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: AppColors.backgroundColor,
           ),
-          image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage()),
-            alignment: Alignment.bottomCenter,
-          ),
         ),
+        height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
           controller: _scrollController,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.zero),
-                    ),
-                    icon: Icon(
-                      AppIcons.bestill_back_arrow,
-                      color: AppColors.lightBlue3,
-                      size: 20,
-                    ),
-                    onPressed: () => Navigator.pushReplacement(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: EntryScreen(screenNumber: 3),
-                      ),
-                    ),
-                    // Navigator.popUntil(
-                    //     context, ModalRoute.withName(EntryScreen.routeName)),
-                    label: Text(
-                      'BACK',
-                      style: AppTextStyles.boldText20.copyWith(
-                        color: AppColors.lightBlue3,
-                      ),
-                    ),
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(StringUtils.backgroundImage()),
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
+            child: Column(
+              children: <Widget>[
+                // Padding(
+                //   padding: const EdgeInsets.all(20.0),
+                //   child: Align(
+                //     alignment: Alignment.centerLeft,
+                //     child: TextButton.icon(
+                //       style: ButtonStyle(
+                //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                //             EdgeInsets.zero),
+                //       ),
+                //       icon: Icon(
+                //         AppIcons.bestill_back_arrow,
+                //         color: AppColors.lightBlue3,
+                //         size: 20,
+                //       ),
+                //       onPressed: () => Navigator.pushReplacement(
+                //         context,
+                //         PageTransition(
+                //           type: PageTransitionType.rightToLeftWithFade,
+                //           child: EntryScreen(screenNumber: 3),
+                //         ),
+                //       ),
+                //       // Navigator.popUntil(
+                //       //     context, ModalRoute.withName(EntryScreen.routeName)),
+                //       label: Text(
+                //         'BACK',
+                //         style: AppTextStyles.boldText20.copyWith(
+                //           color: AppColors.lightBlue3,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Text(
+                    'Recommended Bibles',
+                    style: AppTextStyles.boldText24
+                        .copyWith(color: AppColors.blueTitle),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Text(
-                  'Recommended Bibles',
-                  style: AppTextStyles.boldText24
-                      .copyWith(color: AppColors.blueTitle),
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 40.0, horizontal: 40.0),
+                  child: Text(
+                    'Consider the following reading plans available in the Bible app to supplement your prayer time.',
+                    style: AppTextStyles.regularText16b
+                        .copyWith(color: AppColors.prayerTextColor),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 40.0, horizontal: 40.0),
-                child: Text(
-                  'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                  style: AppTextStyles.regularText16b
-                      .copyWith(color: AppColors.growMyPrayerText),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              _buildPanel(),
-            ],
+                _buildPanel(),
+              ],
+            ),
           ),
         ),
       ),
@@ -132,12 +165,12 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     child: Text(
                       bibleData[i].shortName,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.boldText24.copyWith(
+                      style: AppTextStyles.boldText20.copyWith(
                         color: Color(0xFFffffff),
                       ),
                     ),
                   ),
-                  initiallyExpanded: false,
+                  initiallyExpanded: true,
                   scrollController: _scrollController,
                   children: <Widget>[
                     Container(
@@ -149,7 +182,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                           Text(
                             bibleData[i].name,
                             style: AppTextStyles.regularText16b
-                                .copyWith(color: AppColors.growMyPrayerText),
+                                .copyWith(color: AppColors.prayerTextColor),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10),
@@ -159,7 +192,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                             child: Text(
                               'Recommended For ${bibleData[i].recommendedFor}',
                               style: AppTextStyles.regularText16b
-                                  .copyWith(color: AppColors.growMyPrayerText),
+                                  .copyWith(color: AppColors.prayerTextColor),
                               textAlign: TextAlign.center,
                             ),
                           ),

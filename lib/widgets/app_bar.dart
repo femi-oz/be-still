@@ -1,7 +1,5 @@
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -33,25 +31,23 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
-    var options =
-        Provider.of<PrayerProvider>(context, listen: false).filterOptions;
+    // var options =
+    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (options.contains(Status.archived)) {
-      await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
-          value,
-          Provider.of<SettingsProvider>(context, listen: false)
-              .settings
-              .archiveSortBy,
-          userId);
-    } else {
-      await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
-          value,
-          Provider.of<SettingsProvider>(context, listen: false)
-              .settings
-              .defaultSortBy,
-          userId);
-    }
+    // if (options.contains(Status.archived)) {
+    //   await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
+    //       value,
+    //       Provider.of<SettingsProvider>(context, listen: false)
+    //           .settings
+    //           .archiveSortBy,
+    //       userId);
+    // } else {
+
+    // }
+    //
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
   }
 
   void _clearSearchField() async {
@@ -60,17 +56,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   _openFilter(bool isDark) {
-    showModalBottomSheet(
-      context: context,
-      barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
-      backgroundColor: AppColors.darkMode
-          ? AppColors.addPrayerBg.withOpacity(0.8)
-          : AppColors.offWhite4.withOpacity(0.8),
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return PrayerFilters();
-      },
-    );
+    // showModalBottomSheet(
+    //   context: context,
+    //   barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
+    //   backgroundColor: AppColors.darkMode
+    //       ? AppColors.addPrayerBg.withOpacity(0.8)
+    //       : AppColors.offWhite4.withOpacity(0.8),
+    //   isScrollControlled: true,
+    //   builder: (BuildContext context) {
+    //     return PrayerFilters();
+    //   },
+    // );
+    //
+    // BeStilDialog.showConfirmDialog(context,
+    //     message: 'This feature will be available soon.');
+    //
+    Dialog dialog = Dialog(
+        // actionsPadding: EdgeInsets.all(0),
+        // contentPadding: EdgeInsets.all(0),
+        insetPadding: EdgeInsets.all(40),
+        backgroundColor: AppColors.prayerCardBgColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.darkBlue),
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        child: PrayerFilters());
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   @override
@@ -90,45 +107,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       centerTitle: true,
-      leadingWidth: 120,
+      leadingWidth: 100,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(width: 20),
-          InkWell(
-              onTap: () => null,
-              // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-              child: Icon(
-                Icons.notifications_none,
-                color: AppColors.white,
-              )
-              //notifications.length == 0
-              // ? Icon(
-              //     AppIcons.bestill_notifications,
-              //     color: AppColors.bottomNavIconColor,
-              //     size: 18,
-              //   )
-              // : Stack(
-              //     alignment: Alignment.center,
-              //     children: [
-              //       Icon(
-              //         AppIcons.bestill_notifications,
-              //         color: AppColors.red,
-              //         size: 18,
-              //       ),
-              //       Text(
-              //         notifications.length.toString(),
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //           fontSize: 11,
-              //         ),
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ],
-              //   ),
-              ),
-          SizedBox(width: 15),
           widget.showPrayerActions
               ? GestureDetector(
                   onTap: () {
@@ -152,7 +136,41 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     size: 18,
                   ),
                 )
-              : Container()
+              : Container(),
+          // SizedBox(width: 15),
+          // InkWell(
+          //     onTap: () => null,
+          //     // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
+          //     child: Icon(
+          //       Icons.notifications_none,
+          //       color: AppColors.white,
+          //     )
+          //     //notifications.length == 0
+          //     // ? Icon(
+          //     //     AppIcons.bestill_notifications,
+          //     //     color: AppColors.bottomNavIconColor,
+          //     //     size: 18,
+          //     //   )
+          //     // : Stack(
+          //     //     alignment: Alignment.center,
+          //     //     children: [
+          //     //       Icon(
+          //     //         AppIcons.bestill_notifications,
+          //     //         color: AppColors.red,
+          //     //         size: 18,
+          //     //       ),
+          //     //       Text(
+          //     //         notifications.length.toString(),
+          //     //         style: TextStyle(
+          //     //           color: Colors.white,
+          //     //           fontSize: 11,
+          //     //         ),
+          //     //         textAlign: TextAlign.center,
+          //     //       ),
+          //     //     ],
+          //     //   ),
+          //     ),
+          // SizedBox(width: 15),
         ],
       ),
       title: widget.isSearchMode
@@ -198,20 +216,27 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
       actions: <Widget>[
-        Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                AppIcons.bestill_main_menu,
-                size: 18,
-                color: AppColors.bottomNavIconColor,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
-            );
-          },
-        ),
+        IconButton(
+          icon: Icon(
+            Icons.notifications_none,
+            color: AppColors.white,
+          ),
+          onPressed: null,
+        )
+        // Builder(
+        //   builder: (BuildContext context) {
+        //     return IconButton(
+        //       icon: Icon(
+        //         AppIcons.bestill_main_menu,
+        //         size: 18,
+        //         color: AppColors.bottomNavIconColor,
+        //       ),
+        //       onPressed: () {
+        //         Scaffold.of(context).openEndDrawer();
+        //       },
+        //     );
+        //   },
+        // ),
       ],
     );
   }

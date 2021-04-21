@@ -1,15 +1,15 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
+import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -19,7 +19,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
-import 'widgets/prayer_card.dart';
 
 class PrayerList extends StatefulWidget {
   @override
@@ -39,7 +38,7 @@ class _PrayerListState extends State<PrayerList> {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY LIST');
+            .setPageTitle('MY PRAYERS');
       });
       setState(() => _isInit = false);
     }
@@ -56,15 +55,9 @@ class _PrayerListState extends State<PrayerList> {
     try {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      final options =
-          Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-      final settings =
-          Provider.of<SettingsProvider>(context, listen: false).settings;
-      await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-          _user?.id,
-          options.contains(Status.archived) && options.length == 1
-              ? settings.archiveSortBy
-              : settings.defaultSortBy);
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayers(_user?.id);
+
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
@@ -159,72 +152,77 @@ class _PrayerListState extends State<PrayerList> {
     return WillPopScope(
       onWillPop: () => null,
       child: Container(
-        padding: EdgeInsets.only(left: 20),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: AppColors.backgroundColor,
           ),
-          image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(true)),
-            alignment: Alignment.bottomCenter,
-          ),
         ),
         child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20),
-              prayers.length == 0
-                  ? Container(
-                      padding: EdgeInsets.only(
-                          left: 60, right: 100, top: 60, bottom: 60),
-                      child: Opacity(
-                        opacity: 0.3,
-                        child: Text(
-                          'No Prayers in My List',
-                          style: AppTextStyles.demiboldText34,
-                          textAlign: TextAlign.center,
-                        ),
-                      ))
-                  : Container(
-                      child: Column(
-                        children: <Widget>[
-                          ...prayers
-                              .map((e) => GestureDetector(
+          child: Container(
+            padding: EdgeInsets.only(left: 20),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(StringUtils.backgroundImage(true)),
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 20),
+                prayers.length == 0
+                    ? Container(
+                        padding: EdgeInsets.only(
+                            left: 60, right: 100, top: 60, bottom: 60),
+                        child: Opacity(
+                          opacity: 0.3,
+                          child: Text(
+                            'No Prayers in My List',
+                            style: AppTextStyles.demiboldText34,
+                            textAlign: TextAlign.center,
+                          ),
+                        ))
+                    : Container(
+                        child: Column(
+                          children: <Widget>[
+                            ...prayers.map((e) {
+                              var _timeago =
+                                  DateFormatter(e.prayer.modifiedOn).format();
+                              return GestureDetector(
                                   onTap: () => onTapCard(e),
-                                  onLongPressEnd:
-                                      (LongPressEndDetails details) =>
-                                          onLongPressCard(e, details),
+                                  // onLongPressEnd:
+                                  //     (LongPressEndDetails details) =>
+                                  //         onLongPressCard(e, details),
                                   child: PrayerCard(
-                                    prayerData: e,
-                                  )))
-                              .toList(),
-                        ],
+                                      prayerData: e, timeago: _timeago));
+                            }).toList(),
+                          ],
+                        ),
                       ),
-                    ),
-              SizedBox(height: 5),
-              currentPrayerType == PrayerType.archived ||
-                      currentPrayerType == PrayerType.answered
-                  ? Container()
-                  : LongButton(
-                      onPress: () => Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.leftToRightWithFade,
-                          child: EntryScreen(
-                            screenNumber: 2,
+                SizedBox(height: 5),
+                currentPrayerType == PrayerType.archived ||
+                        currentPrayerType == PrayerType.answered
+                    ? Container()
+                    : LongButton(
+                        onPress: () => Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.leftToRightWithFade,
+                            child: EntryScreen(
+                              screenNumber: 2,
+                            ),
                           ),
                         ),
+                        text: 'Add New Prayer',
+                        backgroundColor:
+                            AppColors.addprayerBgColor.withOpacity(0.9),
+                        textColor: AppColors.addprayerTextColor,
+                        icon: AppIcons.bestill_add_btn,
                       ),
-                      text: 'Add New Prayer',
-                      backgroundColor:
-                          AppColors.addprayerBgColor.withOpacity(0.9),
-                      textColor: AppColors.addprayerTextColor,
-                      icon: AppIcons.bestill_add_btn,
-                    ),
-              SizedBox(height: 80),
-            ],
+                SizedBox(height: 80),
+              ],
+            ),
           ),
         ),
       ),

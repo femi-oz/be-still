@@ -158,6 +158,7 @@ class PrayerService {
     String prayerDesc,
     String userId,
     String creatorName,
+    String prayerDescBackup,
   ) async {
     // Generate uuid
     prayerId = Uuid().v1();
@@ -165,9 +166,9 @@ class PrayerService {
 
     try {
       // store prayer
-      _prayerCollectionReference
-          .doc(prayerId)
-          .set(populatePrayer(userId, prayerDesc, creatorName).toJson());
+      _prayerCollectionReference.doc(prayerId).set(
+          populatePrayer(userId, prayerDesc, creatorName, prayerDescBackup)
+              .toJson());
 
       //store user prayer
       _userPrayerCollectionReference
@@ -210,12 +211,16 @@ class PrayerService {
     }
   }
 
-  Future addPrayerTag(List<Contact> contactData, UserModel user, String message,
-      [List<PrayerTagModel> oldTags]) async {
+  Future addPrayerTag(
+    List<Contact> contactData,
+    UserModel user,
+    String message,
+  ) async {
     try {
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
-        ///de0b6480-9211-11eb-abd0-71e75bb12b30
+        ///b70b8540-9860-11eb-8da1-dfaaff472e96
+
         final _prayerTagID = Uuid().v1();
         if (contactData[i] != null) {
           _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
@@ -230,25 +235,22 @@ class PrayerService {
           final email = contactData[i].emails.length > 0
               ? contactData[i].emails.toList()[0]?.value
               : null;
-          // compare old tags vs new tag to know if person has already received email/text
-          if (!oldTags.map((e) => e?.email).contains(email) ||
-              !oldTags.map((e) => e?.phoneNumber).contains(phoneNumber)) {
-            _notificationService.addEmail(
-              email: email,
+
+          _notificationService.addEmail(
+            email: email,
+            message: message,
+            sender: user.firstName,
+            senderId: user.id,
+            template: MessageTemplate.fromData(template),
+            receiver: contactData[i].displayName,
+          );
+          _notificationService.addSMS(
+              phoneNumber: phoneNumber,
               message: message,
               sender: user.firstName,
               senderId: user.id,
               template: MessageTemplate.fromData(template),
-              receiver: contactData[i].displayName,
-            );
-            _notificationService.addSMS(
-                phoneNumber: phoneNumber,
-                message: message,
-                sender: user.firstName,
-                senderId: user.id,
-                template: MessageTemplate.fromData(template),
-                receiver: contactData[i].displayName);
-          }
+              receiver: contactData[i].displayName);
         }
       }
     } catch (e) {
@@ -277,6 +279,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
+      prayerId = prayerID;
       _prayerCollectionReference.doc(prayerID).update(
         {"Description": description, "ModifiedOn": DateTime.now()},
       );
@@ -299,9 +302,14 @@ class PrayerService {
       modifiedOn: DateTime.now(),
       createdBy: userId,
       createdOn: DateTime.now(),
+      descriptionBackup: '',
     );
     try {
       final updateId = Uuid().v1();
+      await _prayerCollectionReference
+          .doc(prayerId)
+          .update({'ModifiedOn': DateTime.now()});
+
       _prayerUpdateCollectionReference.doc(updateId).set(
             prayerUpdate.toJson(),
           );
@@ -736,6 +744,7 @@ class PrayerService {
     String userId,
     String prayerDesc,
     String creatorName,
+    String prayerDescBackup,
   ) {
     PrayerModel prayer = PrayerModel(
       isAnswer: false,
@@ -746,6 +755,7 @@ class PrayerService {
       status: Status.active,
       creatorName: creatorName,
       description: prayerDesc,
+      descriptionBackup: prayerDescBackup,
       groupId: '0',
       createdBy: userId,
       createdOn: DateTime.now(),

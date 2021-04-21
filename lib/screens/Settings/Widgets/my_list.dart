@@ -11,7 +11,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
-import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -132,30 +131,30 @@ class _MyListSettingsState extends State<MyListSettings> {
       child: Column(
         children: <Widget>[
           SizedBox(height: 15),
-          CustomSectionHeder('Default Sort By'),
-          SizedBox(height: 35),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                for (int i = 0; i < defaultSortBy.length; i++)
-                  CustomButtonGroup(
-                    isSelected:
-                        widget.settings.defaultSortBy == defaultSortBy[i],
-                    onSelected: (value) => settingsProvider.updateSettings(
-                        userId,
-                        key: SettingsKey.defaultSortBy,
-                        value: value,
-                        settingsId: widget.settings.id),
-                    title: defaultSortBy[i],
-                    length: defaultSortBy.length,
-                    index: i,
-                  ),
-              ],
-            ),
-          ),
-          SizedBox(height: 35),
+          // CustomSectionHeder('Default Sort By'),
+          // SizedBox(height: 35),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: <Widget>[
+          //       for (int i = 0; i < defaultSortBy.length; i++)
+          //         CustomButtonGroup(
+          //           isSelected:
+          //               widget.settings.defaultSortBy == defaultSortBy[i],
+          //           onSelected: (value) => settingsProvider.updateSettings(
+          //               userId,
+          //               key: SettingsKey.defaultSortBy,
+          //               value: value,
+          //               settingsId: widget.settings.id),
+          //           title: defaultSortBy[i],
+          //           length: defaultSortBy.length,
+          //           index: i,
+          //         ),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: 35),
           CustomSectionHeder('Default Snooze Duration'),
           // Container(
           //   child: CustomPicker(snoozeInterval, _setDefaultSnooze, true,
@@ -271,30 +270,30 @@ class _MyListSettingsState extends State<MyListSettings> {
             ),
           ),
           SizedBox(height: 10.0),
-          CustomSectionHeder('Archive Default Sort By'),
-          SizedBox(height: 35),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                for (int i = 0; i < archiveSortBy.length; i++)
-                  CustomButtonGroup(
-                    isSelected:
-                        widget.settings.archiveSortBy == archiveSortBy[i],
-                    onSelected: (value) => settingsProvider.updateSettings(
-                        userId,
-                        key: SettingsKey.archiveSortBy,
-                        value: value,
-                        settingsId: widget.settings.id),
-                    title: archiveSortBy[i],
-                    length: archiveSortBy.length,
-                    index: i,
-                  ),
-              ],
-            ),
-          ),
-          SizedBox(height: 35),
+          // CustomSectionHeder('Archive Default Sort By'),
+          // SizedBox(height: 35),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: <Widget>[
+          //       for (int i = 0; i < archiveSortBy.length; i++)
+          //         CustomButtonGroup(
+          //           isSelected:
+          //               widget.settings.archiveSortBy == archiveSortBy[i],
+          //           onSelected: (value) => settingsProvider.updateSettings(
+          //               userId,
+          //               key: SettingsKey.archiveSortBy,
+          //               value: value,
+          //               settingsId: widget.settings.id),
+          //           title: archiveSortBy[i],
+          //           length: archiveSortBy.length,
+          //           index: i,
+          //         ),
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: 35),
           CustomSectionHeder('Archive Auto Delete'),
           SizedBox(height: 15),
           Container(

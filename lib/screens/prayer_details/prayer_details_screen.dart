@@ -167,7 +167,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        showPrayerActions: false,
+      ),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
@@ -210,67 +212,60 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     ),
                   ),
                   hasReminder
-                      ? Row(
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () => showModalBottomSheet(
-                                context: context,
-                                barrierColor: AppColors.detailBackgroundColor[1]
-                                    .withOpacity(0.5),
-                                backgroundColor: AppColors
-                                    .detailBackgroundColor[1]
-                                    .withOpacity(0.9),
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return ReminderPicker(
-                                    hideActionuttons: false,
-                                    frequency:
-                                        LocalNotification.reminderInterval,
-                                    reminderDays:
-                                        LocalNotification.reminderDays,
-                                    onCancel: () => Navigator.of(context).pop(),
-                                    onSave: (selectedFrequency,
-                                            selectedHour,
-                                            selectedMinute,
-                                            selectedDay,
-                                            period) =>
-                                        setNotification(
-                                            selectedHour,
-                                            selectedFrequency,
-                                            selectedMinute,
-                                            selectedDay,
-                                            period,
-                                            Provider.of<PrayerProvider>(context,
-                                                    listen: false)
-                                                .currentPrayer),
-                                    selectedDay: LocalNotification.reminderDays
-                                            .indexOf(reminder.selectedDay) +
-                                        1,
-                                    selectedFrequency: reminder.frequency,
-                                    selectedHour:
-                                        int.parse(reminder.selectedHour),
-                                    selectedMinute:
-                                        int.parse(reminder.selectedMinute),
-                                    selectedPeriod: reminder.period,
-                                  );
-                                },
-                              ),
-                              child: Icon(
+                      ? InkWell(
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            barrierColor: AppColors.detailBackgroundColor[1]
+                                .withOpacity(0.5),
+                            backgroundColor: AppColors.detailBackgroundColor[1]
+                                .withOpacity(0.9),
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return ReminderPicker(
+                                hideActionuttons: false,
+                                frequency: LocalNotification.reminderInterval,
+                                reminderDays: LocalNotification.reminderDays,
+                                onCancel: () => Navigator.of(context).pop(),
+                                onSave: (selectedFrequency, selectedHour,
+                                        selectedMinute, selectedDay, period) =>
+                                    setNotification(
+                                        selectedHour,
+                                        selectedFrequency,
+                                        selectedMinute,
+                                        selectedDay,
+                                        period,
+                                        Provider.of<PrayerProvider>(context,
+                                                listen: false)
+                                            .currentPrayer),
+                                selectedDay: LocalNotification.reminderDays
+                                        .indexOf(reminder.selectedDay) +
+                                    1,
+                                selectedFrequency: reminder.frequency,
+                                selectedHour: int.parse(reminder.selectedHour),
+                                selectedMinute:
+                                    int.parse(reminder.selectedMinute),
+                                selectedPeriod: reminder.period,
+                              );
+                            },
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
                                 AppIcons.bestill_reminder,
                                 size: 14,
                                 color: AppColors.lightBlue5,
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              child: Text(
-                                reminderString,
-                                style: TextStyle(
-                                  color: AppColors.lightBlue5,
+                              Container(
+                                margin: EdgeInsets.only(left: 10),
+                                child: Text(
+                                  reminderString,
+                                  style: TextStyle(
+                                    color: AppColors.lightBlue5,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         )
                       : Container(),
                 ],

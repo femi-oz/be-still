@@ -39,6 +39,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     super.initState();
   }
 
+  var prayerTimeText =
+      'Be Still can remind you to pray at a specific time each day or on a regular schedule. Tap the "Add Reminder" button to create one or more prayer times. You will receive a short notification whenever you have scheduled a prayer time to start.';
+
   List<LookUp> songs = [
     LookUp(text: 'Evening Listening', value: 1),
     LookUp(text: 'Rock Jams', value: 2),
@@ -205,7 +208,10 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    setState(() => showUpdateField = false);
+    // Navigator.pop(context);
+    setState(() {
+      showUpdateField = false;
+    });
   }
 
   // _deleteTimerModal(BuildContext context, String prayerTimeId) {
@@ -355,6 +361,14 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           // ),
           SizedBox(height: 15),
           CustomSectionHeder('My Prayer Time'),
+          SizedBox(height: 35.0),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                prayerTimeText,
+                style: AppTextStyles.regularText15
+                    .copyWith(color: AppColors.prayerTextColor),
+              )),
           SizedBox(height: 35.0),
           prayerTimeList.length > 0
               ? SingleChildScrollView(
@@ -546,7 +560,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                       child: Row(
                         children: [
                           CustomButtonGroup(
-                            title: 'ADD PRAYER TIME',
+                            title: 'ADD REMINDER',
                             onSelected: (_) =>
                                 setState(() => _addPrayerTypeMode = true),
                           )
