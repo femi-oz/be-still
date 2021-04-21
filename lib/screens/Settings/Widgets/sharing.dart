@@ -3,6 +3,7 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -307,7 +308,7 @@ class _SharingSettingsState extends State<SharingSettings> {
           Text(actionText,
               textAlign: TextAlign.end,
               style: AppTextStyles.regularText18b
-                  .copyWith(color: AppColors.white)),
+                  .copyWith(color: AppColors.prayerTextColor)),
         ]),
       ),
     );

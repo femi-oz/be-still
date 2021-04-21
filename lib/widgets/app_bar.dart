@@ -213,6 +213,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 color: AppColors.bottomNavIconColor,
                 fontSize: 32,
                 fontWeight: FontWeight.w700,
+                height: 1.5,
               ),
             ),
       actions: <Widget>[
