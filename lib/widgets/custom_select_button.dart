@@ -43,7 +43,8 @@ class CustomButtonGroup extends StatelessWidget {
               child: FittedBox(
                 child: Text(
                   title.toUpperCase(),
-                  style: AppTextStyles.boldText20.copyWith(color: color),
+                  style: AppTextStyles.boldText20
+                      .copyWith(color: color, height: 1.5),
                 ),
               ),
             ),
