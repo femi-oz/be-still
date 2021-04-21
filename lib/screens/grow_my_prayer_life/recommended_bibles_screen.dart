@@ -37,16 +37,11 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
-      await Future.delayed(Duration(milliseconds: 300));
-      print('object');
       BeStilDialog.hideLoading(context);
-      print('object2');
     } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.toString());
     }
