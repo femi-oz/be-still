@@ -279,7 +279,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: CustomInput(
                     label: 'Birthday',
                     controller: _dobController,
-                    isRequired: true,
+                    // isRequired: true,
                     // validator: (value) {
                     //   if (_isUnderAge) {
                     //     return 'You must be 18 or older to use this app';
