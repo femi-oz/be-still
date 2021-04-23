@@ -385,76 +385,73 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
+                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
                 Align(
                   alignment: Alignment.topCenter,
                   child: SingleChildScrollView(
                     child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.backgroundColor[0],
-                            ...AppColors.backgroundColor,
-                            ...AppColors.backgroundColor,
-                          ],
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage(StringUtils.backgroundImage()),
-                          alignment: Alignment.bottomCenter,
-                        ),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.43),
-                          Container(
-                            // height: MediaQuery.of(context).size.height * 0.56,
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            width: double.infinity,
-                            child: Column(
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    SizedBox(height: 10),
-                                    _buildForm(),
-                                    SizedBox(height: 8),
-                                    _buildActions(),
-                                    SizedBox(height: 10),
-                                    if (isBioMetricAvailable)
-                                      InkWell(
-                                        child: Container(
-                                            // padding: EdgeInsets.only(
-                                            //     left: 40, right: 60),
-                                            child: Text(
-                                          !Settings.enableLocalAuth
-                                              ? 'Enable Face/Touch ID'
-                                              : 'Disable Face/Touch ID',
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue4),
-                                        )),
-                                        onTap: _toggleBiometrics,
-                                      )
-                                    // showFingerPrint || showFaceId
-                                    //     ? _bioButton()
-                                    //     : Container(),
-                                  ],
-                                ),
-                                SizedBox(height: 30),
-                                _buildFooter(),
-                              ],
+                      height: MediaQuery.of(context).size.height,
+                      child: new LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            // color: Colors.red,
+                            image: DecorationImage(
+                              image: AssetImage(StringUtils.backgroundImage()),
+                              alignment: Alignment.bottomCenter,
                             ),
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.43),
+                              Container(
+                                // height: MediaQuery.of(context).size.height * 0.56,
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                width: double.infinity,
+                                child: Column(
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        SizedBox(height: 10),
+                                        _buildForm(),
+                                        SizedBox(height: 8),
+                                        _buildActions(),
+                                        SizedBox(height: 10),
+                                        if (isBioMetricAvailable)
+                                          InkWell(
+                                            child: Container(
+                                                // padding: EdgeInsets.only(
+                                                //     left: 40, right: 60),
+                                                child: Text(
+                                              !Settings.enableLocalAuth
+                                                  ? 'Enable Face/Touch ID'
+                                                  : 'Disable Face/Touch ID',
+                                              style: TextStyle(
+                                                  color: AppColors.lightBlue4),
+                                            )),
+                                            onTap: _toggleBiometrics,
+                                          )
+                                        // showFingerPrint || showFaceId
+                                        //     ? _bioButton()
+                                        //     : Container(),
+                                      ],
+                                    ),
+                                    SizedBox(height: 30),
+                                    _buildFooter(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ),
-                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
               ],
             ),
           )),
