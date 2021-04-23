@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:validators/validators.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -207,10 +208,16 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmpText =
         s.displayName.substring(i + tmp.length, s.displayName.length);
 
-    _descriptionController.text += tmpText.toLowerCase();
+    _descriptionController.text += tmpText;
     backupText = _descriptionController.text;
-    _descriptionController.text = _descriptionController.text
-        .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
+
+    if (isLowercase(tmp)) {
+      _descriptionController.text = _descriptionController.text
+          .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
+    } else {
+      _descriptionController.text = _descriptionController.text
+          .replaceAll('@${s.displayName}', s.displayName);
+    }
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
