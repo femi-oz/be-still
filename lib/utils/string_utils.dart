@@ -49,7 +49,7 @@ class StringUtils {
   static String backText = "Go Back";
   static String copyRight1 = '$year All Rights Reserved';
   static String copyRight2 =
-      "BeStill is a ministry of Second Baptist Church Houston, TX";
+      "Be Still is a ministry of Second Baptist Church Houston, TX";
 
   static generateExceptionMessage(exceptionCode) {
     String errorMessage;

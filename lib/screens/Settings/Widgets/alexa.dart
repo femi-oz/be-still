@@ -51,7 +51,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
-                  'How to Enable the BeStill skill on Alexa',
+                  'How to Enable the Be Still skill on Alexa',
                   style: AppTextStyles.regularText20,
                 ),
               ),

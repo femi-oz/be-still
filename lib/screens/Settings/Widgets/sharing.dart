@@ -159,7 +159,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                   value: settingProvider.sharingSettings.churchPhone == ''
                       ? '---------'
                       : settingProvider.sharingSettings.churchPhone,
-                  actionText: 'Phone(mobile only)',
+                  actionText: 'Phone (mobile only)',
                 ),
                 SizedBox(height: 15),
                 _button(

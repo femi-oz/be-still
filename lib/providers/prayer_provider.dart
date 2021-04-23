@@ -48,14 +48,19 @@ class PrayerProvider with ChangeNotifier {
   Future<void> setPrayerTimePrayers(String userId) async =>
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _filteredPrayerTimeList = data
+          _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
+          _prayers.sort(
+              (a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+
+          _filteredPrayerTimeList = _prayers
               .where((e) =>
                   e.userPrayer.status.toLowerCase() ==
                   Status.active.toLowerCase())
               .toList();
-          var favoritePrayers = data
+          var favoritePrayers = _prayers
               .where((CombinePrayerStream e) => e.userPrayer.isFavorite)
               .toList();
+
           _filteredPrayerTimeList = [
             ...favoritePrayers,
             ..._filteredPrayerTimeList
@@ -118,7 +123,6 @@ class PrayerProvider with ChangeNotifier {
           .toList();
       allPrayers = prayers;
     }
-    print(_filterOption);
     if (_filterOption == Status.active) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
@@ -154,8 +158,9 @@ class PrayerProvider with ChangeNotifier {
       ...snoozedPrayers,
       ...answeredPrayers
     ];
-    await _sortBySettings();
-
+    // await _sortBySettings();
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
     List<CombinePrayerStream> _distinct = [];
     var idSet = <String>{};
