@@ -129,14 +129,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       }
     } on HttpException catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
 
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: StringUtils.errorOccured, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e.message);
     }
   }
 
