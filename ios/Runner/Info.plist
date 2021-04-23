@@ -62,7 +62,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>camera</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Be Still can automatically insert the full name of your contacts in prayers.</string>
+	<string>contacts</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>microphone</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
