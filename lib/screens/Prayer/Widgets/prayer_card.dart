@@ -327,12 +327,12 @@ class _PrayerCardState extends State<PrayerCard> {
                                   ? Icon(
                                       Icons.favorite,
                                       color: AppColors.lightBlue3,
-                                      size: 10,
+                                      size: 13,
                                     )
                                   : widget.prayerData.prayer.isAnswer
                                       ? Icon(
                                           AppIcons.bestill_answered,
-                                          size: 10,
+                                          size: 12,
                                           color: AppColors.lightBlue3,
                                         )
                                       : Container()

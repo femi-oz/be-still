@@ -197,13 +197,13 @@ class CustomDrawer extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          // ListTile(
-                          //   onTap: () => Navigator.of(context)
-                          //       .pushReplacementNamed(EntryScreen.routeName),
-                          //   title: Text("MY LIST",
-                          //       style: AppTextStyles.drawerMenu.copyWith(
-                          //           color: AppColors.drawerMenuColor)),
-                          // ),
+                          ListTile(
+                            onTap: () => Navigator.of(context)
+                                .pushReplacementNamed(EntryScreen.routeName),
+                            title: Text("MY LIST",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
+                          ),
                           // ListTile(
                           //   onTap: () => Navigator.push(
                           //     context,
