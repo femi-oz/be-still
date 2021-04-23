@@ -1,5 +1,5 @@
 class ErrorType {
-  static const emailAlreadyExists = 'email-already-exists';
+  static const emailAlreadyExists = 'email-already-in-use';
   static const invalidEmail = 'invalid-email';
   static const wrongPassword = 'wrong-password';
   static const userNotFound = 'user-not-found';
