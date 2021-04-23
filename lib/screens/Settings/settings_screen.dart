@@ -149,6 +149,7 @@ class SettingsTabState extends State<SettingsTab>
               ),
             ),
             child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 GeneralSettings(_settingsProvider.settings, _scaffoldKey),
                 MyListSettings(_settingsProvider.settings),
