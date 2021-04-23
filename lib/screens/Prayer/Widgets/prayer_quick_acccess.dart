@@ -224,8 +224,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         ? _unMarkPrayerAsFavorite()
                         : _markPrayerAsFavorite(),
                     widget.prayerData.userPrayer.isFavorite
-                        ? 'Unfavourite'
-                        : 'Favourite',
+                        ? 'Unfavorite'
+                        : 'Favorite',
                     false,
                   ),
                   _buildAction(

@@ -151,13 +151,7 @@ class _AddPrayerState extends State<AddPrayer> {
         widget.isEdit ? widget.prayerData.prayer.description : '';
     _oldDesc = _descriptionController.text;
     getContacts();
-    _descriptionController.addListener(listen);
-
     super.initState();
-  }
-
-  void listen() {
-    print(_descriptionController.selection.base);
   }
 
   Future<void> getContacts() async {

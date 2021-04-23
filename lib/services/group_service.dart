@@ -200,7 +200,7 @@ class GroupService {
           .get();
       if (user.docs.length == 0) {
         var errorMessage =
-            'This email is not registered on BeStill! Please try with a registered email';
+            'This email is not registered on Be Still! Please try with a registered email';
         locator<LogService>()
             .createLog(errorMessage, senderId, 'GROUP/service/inviteMember');
         throw HttpException(errorMessage);

@@ -434,8 +434,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           !Settings.enableLocalAuth
                                               ? 'Enable Face/Touch ID'
                                               : 'Disable Face/Touch ID',
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue4),
+                                          style: AppTextStyles.regularText15,
                                         )),
                                         onTap: _toggleBiometrics,
                                       )
@@ -583,13 +582,13 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () => _resendVerification(),
             child: Text(
               verificationSendMessage,
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
           ),
         if (verificationSent)
           Text(
             verificationSendMessage,
-            style: AppTextStyles.regularText13,
+            style: AppTextStyles.regularText15,
           ),
         // SizedBox(height: 20),
         BsRaisedButton(onPressed: _login),
@@ -602,7 +601,7 @@ class _LoginScreenState extends State<LoginScreen> {
         GestureDetector(
             child: Text(
               "Forgot my Password",
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
             onTap: () => Navigator.push(
                 context,
