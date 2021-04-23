@@ -14,7 +14,7 @@ class DateFormatter {
       return "${val.ceil()} ${val.ceil() > 1 ? 'months' : 'month'} ago";
     }
 
-    if (now.difference(localDateTime).inDays > 7 &&
+    if (now.difference(localDateTime).inDays > 6 &&
         now.difference(localDateTime).inDays < 31) {
       var val = now.difference(localDateTime).inDays / 7;
       return "${val.ceil()} ${val.ceil() > 1 ? 'weeks' : 'week'} ago";
