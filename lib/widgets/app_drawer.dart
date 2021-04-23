@@ -1,5 +1,6 @@
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
@@ -171,11 +172,11 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  color: AppColors.drawerTopColor,
+                  // color: AppColors.drawerTopColor,
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       InkWell(
                         child: Icon(
@@ -203,40 +204,28 @@ class CustomDrawer extends StatelessWidget {
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EntryScreen(screenNumber: 2),
-                              ),
-                            ),
-                            title: Text("ADD A PRAYER",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(PrayerTime.routeName),
-                            title: Text("PRAY",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
+                          // ListTile(
+                          //   onTap: () => Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) =>
+                          //           EntryScreen(screenNumber: 2),
+                          //     ),
+                          //   ),
+                          //   title: Text("ADD A PRAYER",
+                          //       style: AppTextStyles.drawerMenu.copyWith(
+                          //           color: AppColors.drawerMenuColor)),
+                          // ),
+                          // ListTile(
+                          //   onTap: () => Navigator.of(context)
+                          //       .pushReplacementNamed(PrayerTime.routeName),
+                          //   title: Text("PRAY",
+                          //       style: AppTextStyles.drawerMenu.copyWith(
+                          //           color: AppColors.drawerMenuColor)),
+                          // ),
                           ListTile(
                             onTap: _launchURL,
-                            title: Text("BIBLE",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
-                          ListTile(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: GrowMyPrayerLifeScreen(),
-                              ),
-                            ),
-                            title: Text("GROW MY PRAYER LIFE",
+                            title: Text("BIBLE APP",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
@@ -253,9 +242,27 @@ class CustomDrawer extends StatelessWidget {
                                     color: AppColors.drawerMenuColor)),
                           ),
                           ListTile(
+                            onTap: () => Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRightWithFade,
+                                child: DevotionPlans(),
+                              ),
+                            ),
+                            title: Text("DEVOTIONALS AND READING PLANS",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
+                          ),
+                          ListTile(
                             onTap: () => Navigator.of(context)
                                 .pushReplacementNamed(SettingsScreen.routeName),
                             title: Text("SETTINGS",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
+                          ),
+                          ListTile(
+                            onTap: () => null,
+                            title: Text("HELP",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),

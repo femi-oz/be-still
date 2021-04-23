@@ -158,6 +158,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           height: double.infinity,
           child: Stack(
             children: [
+              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
               Align(
                 alignment: Alignment.topCenter,
                 child: SingleChildScrollView(
@@ -200,7 +201,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                 ),
               ),
-              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
             ],
           ),
         ),
@@ -279,7 +279,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: CustomInput(
                     label: 'Birthday',
                     controller: _dobController,
-                    isRequired: true,
+                    // isRequired: true,
                     // validator: (value) {
                     //   if (_isUnderAge) {
                     //     return 'You must be 18 or older to use this app';

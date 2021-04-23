@@ -19,38 +19,6 @@ class GrowMyPrayerLifeScreen extends StatefulWidget {
 }
 
 class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
-  bool _isInit = true;
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
-        _getDevotionals();
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
-  }
-
-  _getDevotionals() async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      await Provider.of<DevotionalProvider>(context, listen: false)
-          .getDevotionals();
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
