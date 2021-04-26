@@ -130,7 +130,7 @@ class _AddPrayerState extends State<AddPrayer> {
             context,
             PageTransition(
               type: PageTransitionType.leftToRightWithFade,
-              child: PrayerDetails(),
+              child: EntryScreen(),
             ),
           );
           // Navigator.of(context).pushNamed(PrayerDetails.routeName);

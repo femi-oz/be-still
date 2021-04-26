@@ -78,6 +78,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     height: MediaQuery.of(context).size.height * 0.67,
                     child: Column(
                       children: <Widget>[
+                        Text(
+                          'RECOVER PASSWORD',
+                          style: AppTextStyles.boldText24.copyWith(
+                              color: Settings.isDarkMode
+                                  ? AppColors.lightBlue3
+                                  : AppColors.grey2),
+                        ),
+                        SizedBox(height: 40),
                         Expanded(
                           child: step == 1
                               ? _buildEmailForm(context)

@@ -11,7 +11,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -24,6 +23,7 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'delete_prayer.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -92,7 +92,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .favoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -113,7 +113,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unfavoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -263,7 +263,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    _goToDetails();
+    _goHome();
   }
 
   _updatePrayerTime(
@@ -290,7 +290,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    _goToDetails();
+    _goHome();
   }
 
   void _onMarkAsAnswered(CombinePrayerStream prayerData) async {
@@ -300,7 +300,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -320,7 +320,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
               prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -340,7 +340,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
+      _goHome();
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -425,7 +425,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
+      _goHome();
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -437,9 +437,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  _goToDetails() {
+  _goHome() {
     widget.updateUI();
-    Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: EntryScreen(),
+      ),
+    );
+    // Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
   }
 
   Widget build(BuildContext context) {

@@ -186,26 +186,26 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _sortBySettings() async {
-    _filteredPrayers
-        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    // if (sortBy == SortType.date) {
-    //   _filteredPrayers
-    //       .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    // }
-    // else if (sortBy == SortType.tag) {
-    //   var hasTags = _filteredPrayers.where((e) => e.tags.length > 0).toList();
-    //   var noTags = _filteredPrayers.where((e) => e.tags.length == 0).toList();
-    //   hasTags.sort(
-    //       (a, b) => a.tags[0].displayName.compareTo(b.tags[0].displayName));
-    //   _filteredPrayers = [...hasTags, ...noTags];
-    // } else {
-    //   var answered = _filteredPrayers.where((e) => e.prayer.isAnswer).toList();
-    //   var unAnswered =
-    //       _filteredPrayers.where((e) => !e.prayer.isAnswer).toList();
-    //   _filteredPrayers = [...answered, ...unAnswered];
-    // }
-  }
+  // Future<void> _sortBySettings() async {
+  //   _filteredPrayers
+  //       .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+  //   // if (sortBy == SortType.date) {
+  //   //   _filteredPrayers
+  //   //       .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+  //   // }
+  //   // else if (sortBy == SortType.tag) {
+  //   //   var hasTags = _filteredPrayers.where((e) => e.tags.length > 0).toList();
+  //   //   var noTags = _filteredPrayers.where((e) => e.tags.length == 0).toList();
+  //   //   hasTags.sort(
+  //   //       (a, b) => a.tags[0].displayName.compareTo(b.tags[0].displayName));
+  //   //   _filteredPrayers = [...hasTags, ...noTags];
+  //   // } else {
+  //   //   var answered = _filteredPrayers.where((e) => e.prayer.isAnswer).toList();
+  //   //   var unAnswered =
+  //   //       _filteredPrayers.where((e) => !e.prayer.isAnswer).toList();
+  //   //   _filteredPrayers = [...answered, ...unAnswered];
+  //   // }
+  // }
 
   Future<void> addPrayer(
     String prayerDesc,

@@ -58,7 +58,7 @@ class _AddUpdateState extends State<AddUpdate> {
           context,
           PageTransition(
             type: PageTransitionType.leftToRightWithFade,
-            child: PrayerDetails(),
+            child: EntryScreen(),
           ),
         );
         // Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
