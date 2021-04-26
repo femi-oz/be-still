@@ -450,6 +450,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(
+                  AppIcons.bestill_close,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                color: AppColors.textFieldText,
+              ),
+            ),
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -758,15 +773,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
               ],
             ),
           ),
-          IconButton(
-            icon: Icon(
-              AppIcons.bestill_close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            color: AppColors.textFieldText,
-          ),
+          // IconButton(
+          //   icon: Icon(
+          //     AppIcons.bestill_close,
+          //   ),
+          //   onPressed: () {
+          //     Navigator.of(context).pop();
+          //   },
+          //   color: AppColors.textFieldText,
+          // ),
         ],
       ),
     );

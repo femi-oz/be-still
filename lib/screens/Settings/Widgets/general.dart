@@ -310,7 +310,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           SizedBox(height: 15),
           CustomToggle(
             onChange: (value) => _setPermission(),
-            title: 'Allow Be Still to access Contacts?',
+            title: 'Allow Be Still to access contacts?',
             value: Settings.enabledContactPermission,
           ),
           SizedBox(height: 20),

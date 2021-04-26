@@ -3,13 +3,17 @@ import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../entry_screen.dart';
 
 class RecommenededBibles extends StatefulWidget {
   static const routeName = 'recommended-bible';
@@ -60,7 +64,46 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SettingsAppBar(title: ''),
+      appBar: AppBar(
+        backgroundColor: AppColors.backgroundColor[0],
+        elevation: 0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: Container(
+          width: 30,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20.0),
+          child: Row(
+            children: <Widget>[
+              TextButton.icon(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
+                ),
+                icon: Icon(
+                  AppIcons.bestill_back_arrow,
+                  color: AppColors.lightBlue3,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: EntryScreen(
+                        screenNumber: 0,
+                      )),
+                ),
+                label: Text(
+                  'BACK',
+                  style: AppTextStyles.boldText20.copyWith(
+                    color: AppColors.lightBlue3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        leadingWidth: 150,
+      ),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
@@ -149,6 +192,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
+        padding: EdgeInsets.symmetric(vertical: 35.0),
         child: Column(
           children: <Widget>[
             for (int i = 0; i < bibleData.length; i++)

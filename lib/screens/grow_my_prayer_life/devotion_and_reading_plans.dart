@@ -16,6 +16,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../entry_screen.dart';
+
 class DevotionPlans extends StatefulWidget {
   static const routeName = 'devotion-plan';
 
@@ -189,7 +191,46 @@ class _DevotionPlansState extends State<DevotionPlans> {
 
     var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
     return Scaffold(
-      appBar: SettingsAppBar(title: ''),
+      appBar: AppBar(
+        backgroundColor: AppColors.backgroundColor[0],
+        elevation: 0,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: Container(
+          width: 30,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20.0),
+          child: Row(
+            children: <Widget>[
+              TextButton.icon(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
+                ),
+                icon: Icon(
+                  AppIcons.bestill_back_arrow,
+                  color: AppColors.lightBlue3,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: EntryScreen(
+                        screenNumber: 0,
+                      )),
+                ),
+                label: Text(
+                  'BACK',
+                  style: AppTextStyles.boldText20.copyWith(
+                    color: AppColors.lightBlue3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        leadingWidth: 150,
+      ),
       endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
@@ -213,7 +254,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
               children: <Widget>[
                 SizedBox(height: 40),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     'Devotionals & Reading Plans',
                     style: AppTextStyles.boldText24
