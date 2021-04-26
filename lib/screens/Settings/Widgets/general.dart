@@ -184,7 +184,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       setState(() => Settings.enabledContactPermission = true);
     else if (!Settings.enabledContactPermission && status.isDenied)
       setState(() => Settings.enabledContactPermission = false);
-    else if (Settings.enabledContactPermission && status.isDenied)
+    else if (Settings.enabledContactPermission && status.isGranted)
       _openContactConfirmation(context);
     else
       setState(() => Settings.enabledContactPermission = false);
