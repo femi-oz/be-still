@@ -82,38 +82,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             ),
             child: Column(
               children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.all(20.0),
-                //   child: Align(
-                //     alignment: Alignment.centerLeft,
-                //     child: TextButton.icon(
-                //       style: ButtonStyle(
-                //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                //             EdgeInsets.zero),
-                //       ),
-                //       icon: Icon(
-                //         AppIcons.bestill_back_arrow,
-                //         color: AppColors.lightBlue3,
-                //         size: 20,
-                //       ),
-                //       onPressed: () => Navigator.pushReplacement(
-                //         context,
-                //         PageTransition(
-                //           type: PageTransitionType.rightToLeftWithFade,
-                //           child: EntryScreen(screenNumber: 3),
-                //         ),
-                //       ),
-                //       // Navigator.popUntil(
-                //       //     context, ModalRoute.withName(EntryScreen.routeName)),
-                //       label: Text(
-                //         'BACK',
-                //         style: AppTextStyles.boldText20.copyWith(
-                //           color: AppColors.lightBlue3,
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -147,17 +115,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 20.0, horizontal: 40.0),
-                  child: Text(
-                    'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                    style: AppTextStyles.regularText16b
-                        .copyWith(color: AppColors.prayerTextColor),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                SizedBox(height: 20),
+                SizedBox(height: 30),
                 _buildPanel(),
               ],
             ),

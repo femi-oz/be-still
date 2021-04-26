@@ -81,9 +81,6 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                             child: DevotionPlans(),
                           ),
                         ),
-                        // Navigator.of(context)
-                        //     .pushNamed(DevotionPlans.routeName);
-
                         child: Text(
                           'DEVOTIONALS & READING PLANS',
                           style: AppTextStyles.boldText20
