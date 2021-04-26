@@ -43,7 +43,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
-  var minInTheHour = new List<int>.generate(60, (i) => i + 1);
+  var minInTheHour = new List<int>.generate(60, (i) => i + 0);
 
   @override
   void initState() {

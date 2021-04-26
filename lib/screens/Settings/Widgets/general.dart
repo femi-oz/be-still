@@ -207,9 +207,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
     } catch (e) {
+      print(e);
       _newEmail.clear();
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      BeStilDialog.showErrorDialog(context, e.message);
     }
   }
 
@@ -309,7 +310,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           SizedBox(height: 15),
           CustomToggle(
             onChange: (value) => _setPermission(),
-            title: 'Allow BeStill to access Contacts?',
+            title: 'Allow Be Still to access Contacts?',
             value: Settings.enabledContactPermission,
           ),
           SizedBox(height: 20),

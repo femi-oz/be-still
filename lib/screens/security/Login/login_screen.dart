@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<AuthenticationProvider>(context, listen: false)
               .needsVerification;
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
@@ -213,8 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(
+          context, 'An error occured. Please try again');
     }
   }
 
@@ -430,8 +430,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                               !Settings.enableLocalAuth
                                                   ? 'Enable Face/Touch ID'
                                                   : 'Disable Face/Touch ID',
-                                              style: TextStyle(
-                                                  color: AppColors.lightBlue4),
+                                              style:
+                                                  AppTextStyles.regularText15,
                                             )),
                                             onTap: _toggleBiometrics,
                                           )
@@ -580,13 +580,13 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () => _resendVerification(),
             child: Text(
               verificationSendMessage,
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
           ),
         if (verificationSent)
           Text(
             verificationSendMessage,
-            style: AppTextStyles.regularText13,
+            style: AppTextStyles.regularText15,
           ),
         // SizedBox(height: 20),
         BsRaisedButton(onPressed: _login),
@@ -599,7 +599,7 @@ class _LoginScreenState extends State<LoginScreen> {
         GestureDetector(
             child: Text(
               "Forgot my Password",
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
             onTap: () => Navigator.push(
                 context,
