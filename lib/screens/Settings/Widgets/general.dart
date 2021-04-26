@@ -88,7 +88,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'You must deny access from your device\'s Settings',
+                'You must allow/deny access from your device\'s Settings',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -179,13 +179,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<void> _setPermission() async {
-    if (Settings.enabledContactPermission)
+    var status = await Permission.contacts.request();
+    if (!Settings.enabledContactPermission && status.isGranted)
+      setState(() => Settings.enabledContactPermission = true);
+    else if (!Settings.enabledContactPermission && status.isDenied)
+      setState(() => Settings.enabledContactPermission = false);
+    else if (Settings.enabledContactPermission && status.isDenied)
       _openContactConfirmation(context);
-    else {
-      var status = await Permission.contacts.request();
-      setState(() => Settings.enabledContactPermission =
-          status == PermissionStatus.granted);
-    }
+    else
+      setState(() => Settings.enabledContactPermission = false);
   }
 
   void _updateEmail(UserModel user) async {
