@@ -57,7 +57,7 @@ class _AddUpdateState extends State<AddUpdate> {
         Navigator.push(
           context,
           PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
+            type: PageTransitionType.leftToRightWithFade,
             child: EntryScreen(),
           ),
         );
@@ -128,7 +128,7 @@ class _AddUpdateState extends State<AddUpdate> {
                     onTap: () => Navigator.push(
                       context,
                       PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
+                        type: PageTransitionType.leftToRightWithFade,
                         child: PrayerDetails(),
                       ),
                     ),
@@ -237,7 +237,7 @@ class _AddUpdateState extends State<AddUpdate> {
                             : Navigator.push(
                                 context,
                                 PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
+                                  type: PageTransitionType.leftToRightWithFade,
                                   child: EntryScreen(screenNumber: 0),
                                 ),
                               ),

@@ -6,6 +6,7 @@ import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -119,7 +120,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           context,
           PageTransition(
               type: PageTransitionType.rightToLeftWithFade,
-              child: CreateAccountScreen()),
+              child: CreateAccountSuccess()),
           (Route<dynamic> route) => false,
         );
         // Navigator.of(context).pushNamedAndRemoveUntil(
@@ -228,7 +229,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             Navigator.pushAndRemoveUntil(
               context,
               PageTransition(
-                  type: PageTransitionType.rightToLeftWithFade,
+                  type: PageTransitionType.leftToRightWithFade,
                   child: LoginScreen()),
               (Route<dynamic> route) => false,
             );

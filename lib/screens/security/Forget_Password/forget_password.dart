@@ -135,7 +135,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                               context,
                                               PageTransition(
                                                   type: PageTransitionType
-                                                      .rightToLeftWithFade,
+                                                      .leftToRightWithFade,
                                                   child: LoginScreen()),
                                               (Route<dynamic> route) => false,
                                             );

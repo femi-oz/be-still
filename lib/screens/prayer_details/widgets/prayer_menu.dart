@@ -442,7 +442,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     Navigator.push(
       context,
       PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
+        type: PageTransitionType.leftToRightWithFade,
         child: EntryScreen(),
       ),
     );

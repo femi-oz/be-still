@@ -199,7 +199,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     onPressed: () => Navigator.push(
                       context,
                       PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
+                          type: PageTransitionType.leftToRightWithFade,
                           child: EntryScreen(
                             screenNumber: 0,
                           )),
