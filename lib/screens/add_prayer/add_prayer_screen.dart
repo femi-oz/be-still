@@ -47,9 +47,7 @@ class _AddPrayerState extends State<AddPrayer> {
   List<PrayerTagModel> oldTags = [];
   bool _autoValidate = false;
   String backupText;
-  String _oldDesc = '';
-  var dy;
-  var dx;
+  String _oldDescription = '';
   TextPainter painter;
 
   Future<void> _save() async {
@@ -66,10 +64,6 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
       } else {
         if (!widget.isEdit) {
-          // if (_descriptionController.text == '') {
-          //   BeStilDialog.hideLoading(context);
-          //   BeStilDialog.showErrorDialog(context, 'Prayer requests can not be empty, please provide a valid value');
-          // } else {
           await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
             _descriptionController.text,
             _user.id,
@@ -89,37 +83,19 @@ class _AddPrayerState extends State<AddPrayer> {
               child: EntryScreen(screenNumber: 0),
             ),
           );
-          // Navigator.popUntil(
-          //     context, ModalRoute.withName(EntryScreen.routeName));
-          // }
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
-          // backupText = _descriptionController.text;
-          var newText = _descriptionController.text;
-          List textList = [];
-
-          var text = [...widget.prayerData.tags];
+          List<PrayerTagModel> textList = [];
+          final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (!newText.contains(element.displayName)) {
+            if (!_descriptionController.text.contains(element.displayName)) {
               textList.add(element);
-              // text.remove(element);
             }
           });
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
-
-          // List<Contact> oldContacts = [];
-          // text.forEach((data) {
-          //   var contact = localContacts.firstWhere(
-          //       (element) => element.identifier == data.identifier,
-          //       orElse: () => null);
-          //   if (contact != null) {
-          //     oldContacts.add(contact);
-          //   }
-          // });
-          // contacts = [...contacts, ...oldContacts];
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
@@ -133,7 +109,6 @@ class _AddPrayerState extends State<AddPrayer> {
               child: PrayerDetails(),
             ),
           );
-          // Navigator.of(context).pushNamed(PrayerDetails.routeName);
         }
       }
     } on HttpException catch (e) {
@@ -149,20 +124,20 @@ class _AddPrayerState extends State<AddPrayer> {
   void initState() {
     _descriptionController.text =
         widget.isEdit ? widget.prayerData.prayer.description : '';
-    _oldDesc = _descriptionController.text;
+    _oldDescription = _descriptionController.text;
     getContacts();
     super.initState();
   }
 
   Future<void> getContacts() async {
     if (Settings.enabledContactPermission) {
-      var _localContacts =
+      final _localContacts =
           await ContactsService.getContacts(withThumbnails: false);
       localContacts = _localContacts.where((e) => e.displayName != null);
     }
   }
 
-  void onTextChange(val) {
+  void _onTextChange(val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
@@ -263,33 +238,32 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => widget.isEdit
-                        ? Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              child: PrayerDetails(),
-                            ),
-                          )
-                        // Navigator.popUntil(context,
-                        //       ModalRoute.withName(PrayerDetails.routeName))
-                        : Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              child: EntryScreen(
-                                screenNumber: 0,
+                    onTap: () {
+                      widget.isEdit
+                          ? Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: PrayerDetails(),
                               ),
-                            ),
-                          ),
-                    //  Navigator.popUntil(
-                    //       context,
-                    //       ModalRoute.withName(EntryScreen.routeName),
-                    //     ),
+                            )
+                          // Navigator.popUntil(context,
+                          //       ModalRoute.withName(PrayerDetails.routeName))
+                          : Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: EntryScreen(
+                                  screenNumber: 0,
+                                ),
+                              ),
+                            );
+                    },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: AppColors.grey,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -300,9 +274,9 @@ class _AddPrayerState extends State<AddPrayer> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'YES',
+                            'Discard Changes',
                             style: TextStyle(
-                              color: AppColors.lightBlue4,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -311,14 +285,21 @@ class _AddPrayerState extends State<AddPrayer> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: 20,
+                  ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+                    onTap: () => Navigator.of(context).pop(),
+
+                    //  Navigator.popUntil(
+                    //       context,
+                    //       ModalRoute.withName(EntryScreen.routeName),
+                    //     ),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: Colors.blue,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -329,9 +310,9 @@ class _AddPrayerState extends State<AddPrayer> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'NO',
+                            'Resume Editing',
                             style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -358,7 +339,7 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   Widget build(BuildContext context) {
     bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
-        (widget.isEdit && _oldDesc != _descriptionController.text);
+        (widget.isEdit && _oldDescription != _descriptionController.text);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -385,7 +366,7 @@ class _AddPrayerState extends State<AddPrayer> {
                         InkWell(
                           child: Text('CANCEL',
                               style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.lightBlue5)),
+                                  .copyWith(color: AppColors.grey)),
                           onTap: () => isValid
                               ? onCancel()
                               : widget.isEdit
@@ -397,10 +378,6 @@ class _AddPrayerState extends State<AddPrayer> {
                                         child: PrayerDetails(),
                                       ),
                                     )
-                                  // Navigator.popUntil(
-                                  //     context,
-                                  //     ModalRoute.withName(
-                                  //         PrayerDetails.routeName))
                                   : Navigator.push(
                                       context,
                                       PageTransition(
@@ -419,7 +396,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               style: AppTextStyles.boldText18.copyWith(
                                   color: !isValid
                                       ? AppColors.lightBlue5.withOpacity(0.5)
-                                      : AppColors.lightBlue5)),
+                                      : Colors.blue)),
                           onTap: () => isValid ? _save() : null,
                         ),
                       ],
@@ -443,7 +420,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 isRequired: true,
                                 showSuffix: false,
                                 textInputAction: TextInputAction.newline,
-                                onTextchanged: (val) => onTextChange(val),
+                                onTextchanged: (val) => _onTextChange(val),
                                 focusNode: _focusNode,
                               ),
                             ),
@@ -468,7 +445,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         ...localContacts.map((s) {
-                                          var displayName = s.displayName ?? '';
+                                          final displayName =
+                                              s.displayName ?? '';
                                           if (('@' + displayName)
                                               .toLowerCase()
                                               .contains(tagText.toLowerCase()))
