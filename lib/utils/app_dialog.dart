@@ -51,10 +51,11 @@ class BeStilDialog {
 
   static Future showErrorDialog(BuildContext context, String message) async {
     await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
-        confirmText: 'Close',
+        confirmText: 'OK',
         message: message,
       ),
     );
@@ -83,8 +84,7 @@ class BeStilDialog {
       SnackBar(
         content: Text(
           message,
-          style:
-              AppTextStyles.medium10.copyWith(color: AppColors.splashTextColor),
+          style: AppTextStyles.medium10.copyWith(color: AppColors.lightBlue3),
         ),
         backgroundColor: type == AlertType.info
             ? AppColors.lightBlue2

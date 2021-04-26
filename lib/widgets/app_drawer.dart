@@ -25,7 +25,7 @@ class CustomDrawer extends StatelessWidget {
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
-    AlertDialog dialog = AlertDialog(
+    final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
       backgroundColor: AppColors.prayerCardBgColor,
@@ -42,8 +42,22 @@ class CustomDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
+              margin: EdgeInsets.only(bottom: 5.0),
+              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Text(
+                'LOGOUT',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Container(
               margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
                 'Are you sure you want to logout?',
                 textAlign: TextAlign.center,
@@ -63,47 +77,6 @@ class CustomDrawer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () async {
-                      await _authProvider.signOut();
-                      await LocalNotification.clearAll();
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: LoginScreen(),
-                        ),
-                      );
-                      // Navigator.of(context).pushNamedAndRemoveUntil(
-                      //   LoginScreen.routeName,
-                      //   (Route<dynamic> route) => false,
-                      // );
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'LOGOUT',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
                     },
@@ -116,6 +89,7 @@ class CustomDrawer extends StatelessWidget {
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
+                        color: AppColors.grey,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -123,7 +97,45 @@ class CustomDrawer extends StatelessWidget {
                           Text(
                             'CANCEL',
                             style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      await _authProvider.signOut();
+                      await LocalNotification.clearAll();
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: LoginScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .20,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'LOGOUT',
+                            style: TextStyle(
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),

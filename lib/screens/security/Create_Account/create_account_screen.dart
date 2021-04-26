@@ -129,8 +129,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         // );
       }
     } on HttpException catch (e) {
+      var message = '';
+
+      if (e.message ==
+          'The email has already been registered. Please login or reset your password.') {
+        message =
+            'That email address is already in use. Please select another one.';
+      } else {
+        message = e.message;
+      }
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      BeStilDialog.showErrorDialog(context, message);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
@@ -384,7 +393,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               child: Column(
                 children: <Widget>[
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(top: 6.0, right: 6.0),
