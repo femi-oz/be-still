@@ -231,7 +231,6 @@ class _DevotionPlansState extends State<DevotionPlans> {
         ),
         leadingWidth: 150,
       ),
-      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

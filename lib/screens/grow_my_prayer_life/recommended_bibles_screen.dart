@@ -104,7 +104,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
         ),
         leadingWidth: 150,
       ),
-      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
