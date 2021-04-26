@@ -7,6 +7,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../entry_screen.dart';
 
@@ -70,7 +71,14 @@ class _DeletePrayerState extends State<DeletePrayer> {
   }
 
   _goHome() {
-    Navigator.popUntil(context, ModalRoute.withName(EntryScreen.routeName));
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.leftToRightWithFade,
+        child: EntryScreen(),
+      ),
+    );
+    // Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
   }
 
   _onDelete() async {
