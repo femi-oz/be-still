@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
+            type: PageTransitionType.rightToLeftWithFade,
             child: EntryScreen(
               screenNumber: 0,
             )),
@@ -243,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
+            type: PageTransitionType.rightToLeftWithFade,
             child: EntryScreen(
               screenNumber: 0,
             )),
@@ -551,7 +551,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.push(
               context,
               PageTransition(
-                  type: PageTransitionType.leftToRightWithFade,
+                  type: PageTransitionType.rightToLeftWithFade,
                   child: CreateAccountScreen()),
             );
             // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
@@ -604,7 +604,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () => Navigator.push(
                 context,
                 PageTransition(
-                    type: PageTransitionType.leftToRightWithFade,
+                    type: PageTransitionType.rightToLeftWithFade,
                     child: ForgetPassword()))
             // Navigator.of(context).pushNamed(ForgetPassword.routeName),
             ),

@@ -12,7 +12,7 @@ class NavigationService {
 
   Future<dynamic> navigateToReplacement(Widget _rn) {
     return navigationKey.currentState.pushReplacement(PageTransition(
-        type: PageTransitionType.leftToRightWithFade, child: _rn));
+        type: PageTransitionType.rightToLeftWithFade, child: _rn));
   }
 
   Future<dynamic> navigateTo(String _rn) {

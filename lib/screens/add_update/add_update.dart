@@ -57,7 +57,7 @@ class _AddUpdateState extends State<AddUpdate> {
         Navigator.push(
           context,
           PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
+            type: PageTransitionType.rightToLeftWithFade,
             child: EntryScreen(),
           ),
         );

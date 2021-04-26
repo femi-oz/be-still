@@ -78,7 +78,7 @@ class _PrayerListState extends State<PrayerList> {
       Navigator.push(
         context,
         PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
+            type: PageTransitionType.rightToLeftWithFade,
             child: PrayerDetails()),
       );
       // Navigator.of(context).pushNamed(PrayerDetails.routeName);
@@ -208,7 +208,7 @@ class _PrayerListState extends State<PrayerList> {
                         onPress: () => Navigator.push(
                           context,
                           PageTransition(
-                            type: PageTransitionType.leftToRightWithFade,
+                            type: PageTransitionType.rightToLeftWithFade,
                             child: EntryScreen(
                               screenNumber: 2,
                             ),

@@ -125,8 +125,31 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   ),
                 ),
                 Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 40.0),
+                      vertical: 20.0, horizontal: 40.0),
                   child: Text(
                     'Consider the following reading plans available in the Bible app to supplement your prayer time.',
                     style: AppTextStyles.regularText16b
@@ -134,6 +157,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     textAlign: TextAlign.left,
                   ),
                 ),
+                SizedBox(height: 20),
                 _buildPanel(),
               ],
             ),

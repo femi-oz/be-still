@@ -31,7 +31,7 @@ class CustomInput extends StatefulWidget {
       this.isPassword = false,
       @required this.controller,
       this.showSuffix = true,
-      this.textInputAction = TextInputAction.next,
+      this.textInputAction = TextInputAction.done,
       this.submitForm,
       this.onTextchanged,
       this.keyboardType,

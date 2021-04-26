@@ -118,7 +118,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
+              type: PageTransitionType.rightToLeftWithFade,
               child: CreateAccountScreen()),
           (Route<dynamic> route) => false,
         );

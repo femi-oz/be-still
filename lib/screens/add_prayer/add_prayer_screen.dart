@@ -85,7 +85,7 @@ class _AddPrayerState extends State<AddPrayer> {
           Navigator.push(
             context,
             PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
+              type: PageTransitionType.rightToLeftWithFade,
               child: EntryScreen(screenNumber: 0),
             ),
           );
@@ -129,7 +129,7 @@ class _AddPrayerState extends State<AddPrayer> {
           Navigator.push(
             context,
             PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
+              type: PageTransitionType.rightToLeftWithFade,
               child: EntryScreen(),
             ),
           );

@@ -231,7 +231,7 @@ class CustomDrawer extends StatelessWidget {
                             onTap: () => Navigator.pushReplacement(
                               context,
                               PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
+                                type: PageTransitionType.rightToLeftWithFade,
                                 child: RecommenededBibles(),
                               ),
                             ),
@@ -243,7 +243,7 @@ class CustomDrawer extends StatelessWidget {
                             onTap: () => Navigator.pushReplacement(
                               context,
                               PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
+                                type: PageTransitionType.rightToLeftWithFade,
                                 child: DevotionPlans(),
                               ),
                             ),
