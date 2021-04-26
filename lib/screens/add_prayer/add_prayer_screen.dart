@@ -238,22 +238,13 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => widget.isEdit
-                        ? Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRightWithFade,
-                              child: PrayerDetails(),
-                            ),
-                          )
-                        // Navigator.popUntil(context,
-                        //       ModalRoute.withName(PrayerDetails.routeName))
-                        : Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.leftToRightWithFade,
-                              child: EntryScreen(
-                                screenNumber: 0,
+                    onTap: () {
+                      widget.isEdit
+                          ? Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: PrayerDetails(),
                               ),
                             )
                           // Navigator.popUntil(context,
@@ -261,7 +252,7 @@ class _AddPrayerState extends State<AddPrayer> {
                           : Navigator.push(
                               context,
                               PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
+                                type: PageTransitionType.leftToRightWithFade,
                                 child: EntryScreen(
                                   screenNumber: 0,
                                 ),
