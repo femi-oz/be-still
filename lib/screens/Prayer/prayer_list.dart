@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -37,8 +38,12 @@ class _PrayerListState extends State<PrayerList> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
+        var status =
+            Provider.of<PrayerProvider>(context, listen: false).filterOption;
+        String heading =
+            '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY PRAYERS');
+            .setPageTitle(heading);
       });
       setState(() => _isInit = false);
     }
