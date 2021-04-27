@@ -8,6 +8,7 @@ import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -84,8 +85,8 @@ class _NameRecognitionMenuTwoState extends State<NameRecognitionMenuTwo> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => EntryScreen()));
+
+          NavigationService.instance.goHome(0);
         }
       }
     } on HttpException catch (e) {

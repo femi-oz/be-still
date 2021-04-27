@@ -15,6 +15,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
@@ -92,7 +93,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .favoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goHome();
+
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -113,7 +115,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unfavoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goHome();
+
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -263,7 +266,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    _goHome();
+
+    NavigationService.instance.goHome(0);
   }
 
   _updatePrayerTime(
@@ -290,7 +294,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
-    _goHome();
+
+    NavigationService.instance.goHome(0);
   }
 
   void _onMarkAsAnswered(CombinePrayerStream prayerData) async {
@@ -300,7 +305,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goHome();
+
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -320,7 +326,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
               prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goHome();
+
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -340,7 +347,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goHome();
+
+      NavigationService.instance.goHome(0);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -425,7 +433,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goHome();
+
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -435,18 +444,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
-  }
-
-  _goHome() {
-    widget.updateUI();
-    Navigator.push(
-      context,
-      PageTransition(
-        type: PageTransitionType.leftToRightWithFade,
-        child: EntryScreen(),
-      ),
-    );
-    // Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
   }
 
   Widget build(BuildContext context) {

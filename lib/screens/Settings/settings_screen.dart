@@ -6,6 +6,7 @@ import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,12 +74,7 @@ class SettingsTabState extends State<SettingsTab>
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
-        false;
+    return (NavigationService.instance.goHome(0)) ?? false;
   }
 
   @override

@@ -15,6 +15,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -196,14 +197,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => Navigator.push(
-                      context,
-                      PageTransition(
-                          type: PageTransitionType.leftToRightWithFade,
-                          child: EntryScreen(
-                            screenNumber: 0,
-                          )),
-                    ),
+                    onPressed: () => NavigationService.instance.goHome(0),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

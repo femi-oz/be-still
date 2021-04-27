@@ -12,6 +12,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
@@ -195,15 +196,7 @@ class _PrayerListState extends State<PrayerList> {
                         currentPrayerType == PrayerType.answered
                     ? Container()
                     : LongButton(
-                        onPress: () => Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.rightToLeftWithFade,
-                            child: EntryScreen(
-                              screenNumber: 2,
-                            ),
-                          ),
-                        ),
+                        onPress: () => NavigationService.instance.goHome(2),
                         text: 'Add New Prayer',
                         backgroundColor:
                             AppColors.addprayerBgColor.withOpacity(0.9),

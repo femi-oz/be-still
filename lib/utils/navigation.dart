@@ -1,5 +1,8 @@
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class NavigationService {
   GlobalKey<NavigatorState> navigationKey;
@@ -13,6 +16,13 @@ class NavigationService {
   Future<dynamic> navigateToReplacement(Widget _rn) {
     return navigationKey.currentState.pushReplacement(PageTransition(
         type: PageTransitionType.rightToLeftWithFade, child: _rn));
+  }
+
+  Future<dynamic> goHome(int index) async {
+    await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
+        .setCurrentPage(index);
+    return navigationKey.currentState.pushReplacement(PageTransition(
+        type: PageTransitionType.leftToRightWithFade, child: EntryScreen()));
   }
 
   Future<dynamic> navigateTo(String _rn) {

@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -54,14 +55,8 @@ class _AddUpdateState extends State<AddUpdate> {
                 widget.prayerData.prayer.id);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(bcontext);
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(),
-          ),
-        );
-        // Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
+
+        NavigationService.instance.goHome(0);
       }
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -80,11 +75,7 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EntryScreen(screenNumber: 0)))) ??
-        false;
+    return (NavigationService.instance.goHome(0)) ?? false;
   }
 
   Future<void> onCancel() async {
@@ -227,23 +218,14 @@ class _AddUpdateState extends State<AddUpdate> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       InkWell(
-                        child: Text(
-                          'CANCEL',
-                          style: TextStyle(
-                              color: AppColors.lightBlue5, fontSize: 16),
-                        ),
-                        onTap: () => _descriptionController.text.isNotEmpty
-                            ? onCancel()
-                            : Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.leftToRightWithFade,
-                                  child: EntryScreen(screenNumber: 0),
-                                ),
-                              ),
-                        // Navigator.popUntil(context,
-                        //     ModalRoute.withName(PrayerDetails.routeName)),
-                      ),
+                          child: Text(
+                            'CANCEL',
+                            style: TextStyle(
+                                color: AppColors.lightBlue5, fontSize: 16),
+                          ),
+                          onTap: () => _descriptionController.text.isNotEmpty
+                              ? onCancel()
+                              : NavigationService.instance.goHome(0)),
                       InkWell(
                         child: Text('SAVE',
                             style: TextStyle(

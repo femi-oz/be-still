@@ -62,8 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
         : print('No biometrics available');
   }
 
-  // To retrieve the list of biometric types
-  // (if available).
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
@@ -128,17 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //     EntryScreen.routeName, (Route<dynamic> route) => false);
+      NavigationService.instance.goHome(0);
     }
   }
 
@@ -238,34 +226,12 @@ class _LoginScreenState extends State<LoginScreen> {
           .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
-      // BeStilDialog.hideLoading(context);
-      // await setRouteDestination();
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //   EntryScreen.routeName,
-      //   (Route<dynamic> route) => false,
-      // );
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }

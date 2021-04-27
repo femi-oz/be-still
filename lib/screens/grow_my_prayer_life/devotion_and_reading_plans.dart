@@ -8,6 +8,7 @@ import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -190,46 +191,6 @@ class _DevotionPlansState extends State<DevotionPlans> {
 
     var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.backgroundColor[0],
-        elevation: 0,
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: Container(
-          width: 30,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20.0),
-          child: Row(
-            children: <Widget>[
-              TextButton.icon(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.zero),
-                ),
-                icon: Icon(
-                  AppIcons.bestill_back_arrow,
-                  color: AppColors.lightBlue3,
-                  size: 20,
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  PageTransition(
-                      type: PageTransitionType.rightToLeftWithFade,
-                      child: EntryScreen(
-                        screenNumber: 0,
-                      )),
-                ),
-                label: Text(
-                  'BACK',
-                  style: AppTextStyles.boldText20.copyWith(
-                    color: AppColors.lightBlue3,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        leadingWidth: 150,
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -250,6 +211,32 @@ class _DevotionPlansState extends State<DevotionPlans> {
             ),
             child: Column(
               children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    children: <Widget>[
+                      TextButton.icon(
+                        style: ButtonStyle(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.zero),
+                        ),
+                        icon: Icon(
+                          AppIcons.bestill_back_arrow,
+                          color: AppColors.lightBlue3,
+                          size: 20,
+                        ),
+                        onPressed: () => NavigationService.instance.goHome(0),
+                        label: Text(
+                          'BACK',
+                          style: AppTextStyles.boldText20.copyWith(
+                            color: AppColors.lightBlue3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
