@@ -690,7 +690,7 @@ class PrayerService {
           .get();
       if (user.docs.length == 0) {
         throw HttpException(
-            'This email is not registered on BeStill! Please try with a registered email');
+            'This email is not registered on Be Still! Please try with a registered email');
       }
       var data = {
         'recieverId': requestMessageModel.receiverId,

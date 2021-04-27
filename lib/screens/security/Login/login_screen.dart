@@ -62,8 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
         : print('No biometrics available');
   }
 
-  // To retrieve the list of biometric types
-  // (if available).
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
@@ -128,17 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //     EntryScreen.routeName, (Route<dynamic> route) => false);
+      NavigationService.instance.goHome(0);
     }
   }
 
@@ -205,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<AuthenticationProvider>(context, listen: false)
               .needsVerification;
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
@@ -213,8 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(
+          context, 'An error occured. Please try again');
     }
   }
 
@@ -238,34 +226,12 @@ class _LoginScreenState extends State<LoginScreen> {
           .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
-      // BeStilDialog.hideLoading(context);
-      // await setRouteDestination();
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //   EntryScreen.routeName,
-      //   (Route<dynamic> route) => false,
-      // );
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
@@ -385,76 +351,73 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
+                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
                 Align(
                   alignment: Alignment.topCenter,
                   child: SingleChildScrollView(
                     child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.backgroundColor[0],
-                            ...AppColors.backgroundColor,
-                            ...AppColors.backgroundColor,
-                          ],
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage(StringUtils.backgroundImage()),
-                          alignment: Alignment.bottomCenter,
-                        ),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.43),
-                          Container(
-                            // height: MediaQuery.of(context).size.height * 0.56,
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            width: double.infinity,
-                            child: Column(
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    SizedBox(height: 10),
-                                    _buildForm(),
-                                    SizedBox(height: 8),
-                                    _buildActions(),
-                                    SizedBox(height: 10),
-                                    if (isBioMetricAvailable)
-                                      InkWell(
-                                        child: Container(
-                                            // padding: EdgeInsets.only(
-                                            //     left: 40, right: 60),
-                                            child: Text(
-                                          !Settings.enableLocalAuth
-                                              ? 'Enable Face/Touch ID'
-                                              : 'Disable Face/Touch ID',
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue4),
-                                        )),
-                                        onTap: _toggleBiometrics,
-                                      )
-                                    // showFingerPrint || showFaceId
-                                    //     ? _bioButton()
-                                    //     : Container(),
-                                  ],
-                                ),
-                                SizedBox(height: 30),
-                                _buildFooter(),
-                              ],
+                      height: MediaQuery.of(context).size.height,
+                      child: new LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            // color: Colors.red,
+                            image: DecorationImage(
+                              image: AssetImage(StringUtils.backgroundImage()),
+                              alignment: Alignment.bottomCenter,
                             ),
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.43),
+                              Container(
+                                // height: MediaQuery.of(context).size.height * 0.56,
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                width: double.infinity,
+                                child: Column(
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        SizedBox(height: 10),
+                                        _buildForm(),
+                                        SizedBox(height: 8),
+                                        _buildActions(),
+                                        SizedBox(height: 10),
+                                        if (isBioMetricAvailable)
+                                          InkWell(
+                                            child: Container(
+                                                // padding: EdgeInsets.only(
+                                                //     left: 40, right: 60),
+                                                child: Text(
+                                              !Settings.enableLocalAuth
+                                                  ? 'Enable Face/Touch ID'
+                                                  : 'Disable Face/Touch ID',
+                                              style:
+                                                  AppTextStyles.regularText15,
+                                            )),
+                                            onTap: _toggleBiometrics,
+                                          )
+                                        // showFingerPrint || showFaceId
+                                        //     ? _bioButton()
+                                        //     : Container(),
+                                      ],
+                                    ),
+                                    SizedBox(height: 30),
+                                    _buildFooter(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ),
-                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
               ],
             ),
           )),
@@ -554,7 +517,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.push(
               context,
               PageTransition(
-                  type: PageTransitionType.leftToRightWithFade,
+                  type: PageTransitionType.rightToLeftWithFade,
                   child: CreateAccountScreen()),
             );
             // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
@@ -583,13 +546,13 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () => _resendVerification(),
             child: Text(
               verificationSendMessage,
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
           ),
         if (verificationSent)
           Text(
             verificationSendMessage,
-            style: AppTextStyles.regularText13,
+            style: AppTextStyles.regularText15,
           ),
         // SizedBox(height: 20),
         BsRaisedButton(onPressed: _login),
@@ -602,12 +565,12 @@ class _LoginScreenState extends State<LoginScreen> {
         GestureDetector(
             child: Text(
               "Forgot my Password",
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
             onTap: () => Navigator.push(
                 context,
                 PageTransition(
-                    type: PageTransitionType.leftToRightWithFade,
+                    type: PageTransitionType.rightToLeftWithFade,
                     child: ForgetPassword()))
             // Navigator.of(context).pushNamed(ForgetPassword.routeName),
             ),

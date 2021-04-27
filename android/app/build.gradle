@@ -89,31 +89,31 @@ android {
     productFlavors {
         local {
             dimension "app"
-            resValue "string", "app_name", "BeStill Local"
+            resValue "string", "app_name", "Be Still Local"
             versionNameSuffix "-local"
             applicationId "org.second.bestill.local"
         }
         dev {
             dimension "app"
-            resValue "string", "app_name", "BeStill Dev"
+            resValue "string", "app_name", "Be Still Dev"
             versionNameSuffix "-dev"
             applicationId "org.second.bestill.dev"
         }
         staging {
             dimension "app"
-            resValue "string", "app_name", "BeStill Test"
+            resValue "string", "app_name", "Be Still Test"
             versionNameSuffix "-test"
             applicationId "org.second.bestill.test"
         }
         prod {
             dimension "app"
-            resValue "string", "app_name", "BeStill Prod"
+            resValue "string", "app_name", "Be Still Prod"
             versionNameSuffix "-prod"
             applicationId "org.second.bestill.prod"
         }
         store {
             dimension "app"
-            resValue "string", "app_name", "BeStill"
+            resValue "string", "app_name", "Be Still"
             versionNameSuffix "-store"
             applicationId "org.second.bestill"
         }

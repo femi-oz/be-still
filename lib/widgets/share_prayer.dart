@@ -96,36 +96,42 @@ class _SharePrayerState extends State<SharePrayer> {
       height: double.infinity,
       child: Column(
         children: <Widget>[
-          IconButton(
-            icon: Icon(
-              AppIcons.bestill_close,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(
+                  AppIcons.bestill_close,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                color: AppColors.textFieldText,
+              ),
             ),
-            onPressed: () {
-              Navigator.of(context).pop(groups);
-            },
-            color: AppColors.textFieldText,
           ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(
-                      AppIcons.bestill_back_arrow,
-                      color: AppColors.lightBlue3,
-                      size: 20,
-                    ),
-                    label: Text(
-                      'BACK',
-                      style: AppTextStyles.boldText20.copyWith(
-                        color: AppColors.lightBlue3,
-                      ),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.centerLeft,
+                //   child: TextButton.icon(
+                //     onPressed: () => Navigator.of(context).pop(),
+                //     icon: Icon(
+                //       AppIcons.bestill_back_arrow,
+                //       color: AppColors.lightBlue3,
+                //       size: 20,
+                //     ),
+                //     label: Text(
+                //       'BACK',
+                //       style: AppTextStyles.boldText20.copyWith(
+                //         color: AppColors.lightBlue3,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 sharingSettings.enableSharingViaText
                     ? MenuButton(
                         icon: AppIcons.bestill_share,

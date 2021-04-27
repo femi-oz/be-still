@@ -77,7 +77,7 @@ class UpdateView extends StatelessWidget {
                                       style: AppTextStyles.regularText18b
                                           .copyWith(
                                               color: AppColors.prayerTextColor),
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.left,
                                     ),
                                   ),
                                 ],
@@ -90,7 +90,7 @@ class UpdateView extends StatelessWidget {
                                       style: AppTextStyles.regularText18b
                                           .copyWith(
                                               color: AppColors.prayerTextColor),
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.left,
                                     ),
                                   ),
                                 ],
@@ -110,7 +110,7 @@ class UpdateView extends StatelessWidget {
                           child: Row(
                             children: <Widget>[
                               Text(
-                                'Initial Prayer |',
+                                'Initial Prayer | ',
                                 style: AppTextStyles.boldText16
                                     .copyWith(color: AppColors.prayeModeBorder),
                               ),
@@ -141,7 +141,7 @@ class UpdateView extends StatelessWidget {
                               data.prayer.description,
                               style: AppTextStyles.regularText18b
                                   .copyWith(color: AppColors.prayerTextColor),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                         ],

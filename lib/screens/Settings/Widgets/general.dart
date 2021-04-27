@@ -88,7 +88,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'You must deny access from your device\'s Settings',
+                'You must allow/deny access from your device\'s Settings',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -179,12 +179,22 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<void> _setPermission() async {
-    if (Settings.enabledContactPermission)
+    var status = await Permission.contacts.request();
+    //disabled and alowed through popup
+    if (!Settings.enabledContactPermission && status.isGranted)
+      setState(() => Settings.enabledContactPermission = true);
+    //disabled and is permanently denied (iOS)
+    else if (!Settings.enabledContactPermission && status.isPermanentlyDenied) {
       _openContactConfirmation(context);
+      setState(() => Settings.enabledContactPermission = true);
+    }
+    //disabled and denied through popup
+    else if (!Settings.enabledContactPermission && status.isDenied)
+      setState(() => Settings.enabledContactPermission = false);
+    //enabled and needs to be diabled
     else {
-      var status = await Permission.contacts.request();
-      setState(() => Settings.enabledContactPermission =
-          status == PermissionStatus.granted);
+      setState(() => Settings.enabledContactPermission = false);
+      _openContactConfirmation(context);
     }
   }
 
@@ -205,9 +215,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
     } catch (e) {
+      print(e);
       _newEmail.clear();
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      BeStilDialog.showErrorDialog(context, e.message);
     }
   }
 
@@ -307,7 +318,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           SizedBox(height: 15),
           CustomToggle(
             onChange: (value) => _setPermission(),
-            title: 'Allow BeStill to access Contacts?',
+            title: 'Allow Be Still to access contacts?',
             value: Settings.enabledContactPermission,
           ),
           SizedBox(height: 20),

@@ -1,4 +1,5 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -11,6 +12,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
@@ -37,17 +39,16 @@ class _PrayerListState extends State<PrayerList> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
+        var status =
+            Provider.of<PrayerProvider>(context, listen: false).filterOption;
+        String heading =
+            '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY PRAYERS');
+            .setPageTitle(heading);
       });
       setState(() => _isInit = false);
     }
     super.didChangeDependencies();
-  }
-
-  @override
-  dispose() {
-    super.dispose();
   }
 
   Future<void> _getPrayers() async {
@@ -68,7 +69,7 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  void onTapCard(prayerData) async {
+  Future<void> onTapCard(prayerData) async {
     await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
@@ -78,7 +79,7 @@ class _PrayerListState extends State<PrayerList> {
       Navigator.push(
         context,
         PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
+            type: PageTransitionType.rightToLeftWithFade,
             child: PrayerDetails()),
       );
       // Navigator.of(context).pushNamed(PrayerDetails.routeName);
@@ -91,26 +92,16 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  void _setVibration() async => _canVibrate = await Vibrate.canVibrate;
+  Future<void> _setVibration() async => _canVibrate = await Vibrate.canVibrate;
 
-  void _vibrate() async {
-    // HapticFeedback.selectionClick();
-    // Vibrate.feedback(FeedbackType.selection);
-    // await HapticFeedback.heavyImpact();
+  void _vibrate() => _canVibrate ? Vibrate.feedback(FeedbackType.medium) : null;
 
-    if (_canVibrate) {
-      // Vibrate.vibrate();
-      Vibrate.feedback(FeedbackType.medium);
-      // HapticFeedback.heavyImpact();
-    }
-  }
-
-  void onLongPressCard(prayerData, details) async {
+  Future<void> onLongPressCard(prayerData, details) async {
     _vibrate();
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(prayerData.userPrayer.id);
-      var y = details.globalPosition.dy;
+      final y = details.globalPosition.dy;
       await Future.delayed(
         const Duration(milliseconds: 300),
         () => showModalBottomSheet(
@@ -134,19 +125,23 @@ class _PrayerListState extends State<PrayerList> {
   }
 
   void _getPermissions() async {
-    if (Settings.isAppInit) {
-      final status = await Permission.contacts.status;
-      if (status.isUndetermined) {
-        await Permission.contacts.request().then((p) =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
+    try {
+      if (Settings.isAppInit) {
+        final status = await Permission.contacts.status;
+        if (status.isUndetermined) {
+          await Permission.contacts.request().then((p) => Settings
+              .enabledContactPermission = p == PermissionStatus.granted);
+        }
+        Settings.isAppInit = false;
       }
-      Settings.isAppInit = false;
+    } catch (e) {
+      BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
@@ -182,38 +177,26 @@ class _PrayerListState extends State<PrayerList> {
                             style: AppTextStyles.demiboldText34,
                             textAlign: TextAlign.center,
                           ),
-                        ))
-                    : Container(
-                        child: Column(
-                          children: <Widget>[
-                            ...prayers.map((e) {
-                              var _timeago =
-                                  DateFormatter(e.prayer.modifiedOn).format();
-                              return GestureDetector(
-                                  onTap: () => onTapCard(e),
-                                  // onLongPressEnd:
-                                  //     (LongPressEndDetails details) =>
-                                  //         onLongPressCard(e, details),
-                                  child: PrayerCard(
-                                      prayerData: e, timeago: _timeago));
-                            }).toList(),
-                          ],
                         ),
+                      )
+                    : Column(
+                        children: <Widget>[
+                          ...prayers.map((e) {
+                            final _timeago =
+                                DateFormatter(e.prayer.modifiedOn).format();
+                            return GestureDetector(
+                                onTap: () => onTapCard(e),
+                                child: PrayerCard(
+                                    prayerData: e, timeago: _timeago));
+                          }).toList(),
+                        ],
                       ),
                 SizedBox(height: 5),
                 currentPrayerType == PrayerType.archived ||
                         currentPrayerType == PrayerType.answered
                     ? Container()
                     : LongButton(
-                        onPress: () => Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.leftToRightWithFade,
-                            child: EntryScreen(
-                              screenNumber: 2,
-                            ),
-                          ),
-                        ),
+                        onPress: () => NavigationService.instance.goHome(2),
                         text: 'Add New Prayer',
                         backgroundColor:
                             AppColors.addprayerBgColor.withOpacity(0.9),

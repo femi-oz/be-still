@@ -3,13 +3,18 @@ import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../entry_screen.dart';
 
 class RecommenededBibles extends StatefulWidget {
   static const routeName = 'recommended-bible';
@@ -60,8 +65,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SettingsAppBar(title: ''),
-      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -82,38 +85,32 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             ),
             child: Column(
               children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.all(20.0),
-                //   child: Align(
-                //     alignment: Alignment.centerLeft,
-                //     child: TextButton.icon(
-                //       style: ButtonStyle(
-                //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                //             EdgeInsets.zero),
-                //       ),
-                //       icon: Icon(
-                //         AppIcons.bestill_back_arrow,
-                //         color: AppColors.lightBlue3,
-                //         size: 20,
-                //       ),
-                //       onPressed: () => Navigator.pushReplacement(
-                //         context,
-                //         PageTransition(
-                //           type: PageTransitionType.rightToLeftWithFade,
-                //           child: EntryScreen(screenNumber: 3),
-                //         ),
-                //       ),
-                //       // Navigator.popUntil(
-                //       //     context, ModalRoute.withName(EntryScreen.routeName)),
-                //       label: Text(
-                //         'BACK',
-                //         style: AppTextStyles.boldText20.copyWith(
-                //           color: AppColors.lightBlue3,
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    children: <Widget>[
+                      TextButton.icon(
+                        style: ButtonStyle(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.zero),
+                        ),
+                        icon: Icon(
+                          AppIcons.bestill_back_arrow,
+                          color: AppColors.lightBlue3,
+                          size: 20,
+                        ),
+                        onPressed: () => NavigationService.instance.goHome(0),
+                        label: Text(
+                          'BACK',
+                          style: AppTextStyles.boldText20.copyWith(
+                            color: AppColors.lightBlue3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -125,15 +122,29 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 40.0),
-                  child: Text(
-                    'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                    style: AppTextStyles.regularText16b
-                        .copyWith(color: AppColors.prayerTextColor),
-                    textAlign: TextAlign.left,
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                SizedBox(height: 30),
                 _buildPanel(),
               ],
             ),
@@ -149,6 +160,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
+        padding: EdgeInsets.symmetric(vertical: 35.0),
         child: Column(
           children: <Widget>[
             for (int i = 0; i < bibleData.length; i++)

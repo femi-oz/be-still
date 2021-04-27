@@ -1,4 +1,5 @@
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -19,9 +20,6 @@ import 'package:provider/provider.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
-  final int screenNumber;
-
-  EntryScreen({this.screenNumber = 0});
   @override
   _EntryScreenState createState() => _EntryScreenState();
 }
@@ -37,7 +35,8 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   void initState() {
-    _currentIndex = widget.screenNumber;
+    _currentIndex =
+        Provider.of<MiscProvider>(context, listen: false).currentPage;
     _switchSearchMode(false);
     super.initState();
   }
@@ -57,44 +56,33 @@ class _EntryScreenState extends State<EntryScreen> {
 
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-    if (userId != null)
+    if (userId != null) {
       cron.schedule(Schedule.parse('*/10 * * * *'), () async {
         Provider.of<PrayerProvider>(context, listen: false)
             .checkPrayerValidity(userId);
       });
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    // final options =
-    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-    // final settings =
-    //     Provider.of<SettingsProvider>(context, listen: false).settings;
-    // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-    //     _user?.id,
-    //     options.contains(Status.archived) && options.length == 1
-    //         ? settings.archiveSortBy
-    //         : settings.defaultSortBy);
+    }
 
     //load settings
     await Provider.of<SettingsProvider>(context, listen: false)
-        .setPrayerSettings(_user.id);
+        .setPrayerSettings(userId);
     await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
+        .setSettings(userId);
     Provider.of<SettingsProvider>(context, listen: false)
-        .setSharingSettings(_user.id);
-
+        .setSharingSettings(userId);
     await Provider.of<NotificationProvider>(context, listen: false)
         .setPrayerTimeNotifications(userId);
 
-    //get all users
-    Provider.of<UserProvider>(context, listen: false).setAllUsers(_user.id);
+    //set all users
+    Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
 
     // get all push notifications
     await Provider.of<NotificationProvider>(context, listen: false)
-        .setUserNotifications(_user?.id);
+        .setUserNotifications(userId);
 
     // get all local notifications
     Provider.of<NotificationProvider>(context, listen: false)
-        .setLocalNotifications(_user.id);
+        .setLocalNotifications(userId);
   }
 
   @override
@@ -126,11 +114,8 @@ class _EntryScreenState extends State<EntryScreen> {
     );
   }
 
-  showInfoModal() {
-    // BeStilDialog.showConfirmDialog(context,
-    //     message: 'This feature will be available soon.');
-    //
-    AlertDialog dialog = AlertDialog(
+  void showInfoModal() {
+    final dialogContent = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
       backgroundColor: AppColors.prayerCardBgColor,
@@ -160,7 +145,6 @@ class _EntryScreenState extends State<EntryScreen> {
                 ),
               ),
             ),
-            // GestureDetector(
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
@@ -204,10 +188,7 @@ class _EntryScreenState extends State<EntryScreen> {
       ),
     );
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
+        context: context, builder: (BuildContext context) => dialogContent);
   }
 
   Widget _createBottomNavigationBar() {
@@ -225,17 +206,18 @@ class _EntryScreenState extends State<EntryScreen> {
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
-            if (index == 1) {
-              showInfoModal();
-              return;
+            switch (index) {
+              case 1:
+                showInfoModal();
+                break;
+              case 4:
+                Scaffold.of(context).openEndDrawer();
+                break;
+              default:
+                _currentIndex = index;
+                _switchSearchMode(false);
+                break;
             }
-            if (index == 4) {
-              Scaffold.of(context).openEndDrawer();
-              return;
-            }
-
-            _currentIndex = index;
-            _switchSearchMode(false);
           },
           showSelectedLabels: false,
           showUnselectedLabels: false,

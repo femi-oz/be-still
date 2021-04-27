@@ -43,7 +43,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
-  var minInTheHour = new List<int>.generate(60, (i) => i + 1);
+  var minInTheHour = new List<int>.generate(60, (i) => i + 0);
 
   @override
   void initState() {
@@ -255,6 +255,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       CustomButtonGroup(
+                        title: 'CANCEL',
+                        onSelected: (_) => widget.onCancel(),
+                        length: 2,
+                        index: 0,
+                      ),
+                      CustomButtonGroup(
                         title: 'SAVE',
                         onSelected: (_) {
                           var min = selectedMinute < 10
@@ -273,14 +279,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               selectedPeriod);
                         },
                         length: 2,
-                        index: 0,
-                      ),
-                      CustomButtonGroup(
-                        title: 'CANCEL',
-                        onSelected: (_) => widget.onCancel(),
-                        length: 2,
                         index: 1,
-                      )
+                      ),
                     ],
                   ),
                 ),

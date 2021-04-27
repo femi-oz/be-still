@@ -1,20 +1,63 @@
 import 'dart:ui';
 
 import 'package:be_still/models/devotionals.model.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DevotionPlans extends StatelessWidget {
+import '../entry_screen.dart';
+
+class DevotionPlans extends StatefulWidget {
   static const routeName = 'devotion-plan';
+
+  @override
+  _DevotionPlansState createState() => _DevotionPlansState();
+}
+
+class _DevotionPlansState extends State<DevotionPlans> {
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        _getDevotionals();
+      });
+      setState(() => _isInit = false);
+    }
+    super.didChangeDependencies();
+  }
+
+  _getDevotionals() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false)
+          .getDevotionals();
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
+    } catch (e) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.toString());
+    }
+  }
 
   _launchURL(url) async {
     if (await canLaunch(url)) {
@@ -148,8 +191,6 @@ class DevotionPlans extends StatelessWidget {
 
     var devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
     return Scaffold(
-      appBar: CustomAppBar(showPrayerActions: false),
-      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -170,40 +211,35 @@ class DevotionPlans extends StatelessWidget {
             ),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.zero),
-                      ),
-                      icon: Icon(
-                        AppIcons.bestill_back_arrow,
-                        color: AppColors.lightBlue3,
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pushReplacement(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: GrowMyPrayerLifeScreen(),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    children: <Widget>[
+                      TextButton.icon(
+                        style: ButtonStyle(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.zero),
                         ),
-                      ),
-                      // Navigator.popUntil(
-                      //     context, ModalRoute.withName(EntryScreen.routeName)),
-                      label: Text(
-                        'BACK',
-                        style: AppTextStyles.boldText20.copyWith(
+                        icon: Icon(
+                          AppIcons.bestill_back_arrow,
                           color: AppColors.lightBlue3,
+                          size: 20,
+                        ),
+                        onPressed: () => NavigationService.instance.goHome(0),
+                        label: Text(
+                          'BACK',
+                          style: AppTextStyles.boldText20.copyWith(
+                            color: AppColors.lightBlue3,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
+                SizedBox(height: 40),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     'Devotionals & Reading Plans',
                     style: AppTextStyles.boldText24
@@ -213,7 +249,7 @@ class DevotionPlans extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: 40.0,
+                    top: 30.0,
                     left: 20,
                     bottom: 20,
                   ),

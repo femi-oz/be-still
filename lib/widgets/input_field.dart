@@ -31,7 +31,7 @@ class CustomInput extends StatefulWidget {
       this.isPassword = false,
       @required this.controller,
       this.showSuffix = true,
-      this.textInputAction = TextInputAction.next,
+      this.textInputAction = TextInputAction.done,
       this.submitForm,
       this.onTextchanged,
       this.keyboardType,
@@ -82,7 +82,8 @@ class _CustomInputState extends State<CustomInput> {
                         ? AppColors.offWhite2
                         : AppColors.grey4),
                 counterText: '',
-                hintText: widget.label,
+                hintText:
+                    widget.isRequired ? '${widget.label} \*' : widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
                 errorBorder: new OutlineInputBorder(
                   borderSide: new BorderSide(color: Colors.redAccent),
@@ -134,7 +135,8 @@ class _CustomInputState extends State<CustomInput> {
                         ? AppColors.offWhite2
                         : AppColors.prayerTextColor),
                 counterText: '',
-                hintText: widget.label,
+                hintText:
+                    widget.isRequired ? '${widget.label} \*' : widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
                 errorBorder: new OutlineInputBorder(
                   borderSide: new BorderSide(color: Colors.redAccent),

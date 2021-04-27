@@ -1,3 +1,4 @@
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -25,45 +26,52 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
       elevation: 0,
       centerTitle: true,
       automaticallyImplyLeading: false,
-      // leading: Container(
-      //   child: Row(
-      //     children: <Widget>[
-      //       SizedBox(width: 20),
-      //       Text(
-      //         DateFormat('hh:mm').format(DateTime.now()),
-      //         style: AppTextStyles.regularText13
-      //             .copyWith(color: AppColors.lightBlue1),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      // leadingWidth: 80,
+      leading: Container(
+        child: Row(
+          children: <Widget>[
+            SizedBox(width: 15),
+            IconButton(
+              icon: Icon(
+                AppIcons.bestill_close,
+                color: AppColors.lightBlue1,
+                size: 20,
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(EntryScreen.routeName);
+              },
+            ),
+          ],
+        ),
+      ),
+      leadingWidth: 80,
       title: Text(
         '${widget.current} OF ${widget.totalPrayers}',
         style:
             AppTextStyles.regularText13.copyWith(color: AppColors.lightBlue1),
       ),
-      actions: <Widget>[
-        Row(
-          children: <Widget>[
-            Builder(
-              builder: (BuildContext context) {
-                return IconButton(
-                  icon: Icon(
-                    AppIcons.bestill_main_menu,
-                    color: AppColors.lightBlue1,
-                    size: 18,
-                  ),
-                  onPressed: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                );
-              },
-            ),
-            SizedBox(width: 15),
-          ],
-        ),
-      ],
+      // actions: <Widget>[
+      //   Row(
+      //     children: <Widget>[
+      //       Builder(
+      //         builder: (BuildContext context) {
+      //           return IconButton(
+      //             icon: Icon(
+      //               AppIcons.bestill_close,
+      //               color: AppColors.lightBlue1,
+      //               size: 20,
+      //             ),
+      //             onPressed: () {
+      //               Navigator.of(context)
+      //                   .pushReplacementNamed(EntryScreen.routeName);
+      //             },
+      //           );
+      //         },
+      //       ),
+      //       SizedBox(width: 15),
+      //     ],
+      //   ),
+      // ],
     );
   }
 }

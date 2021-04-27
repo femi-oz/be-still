@@ -6,6 +6,7 @@ import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -118,8 +119,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
-              child: CreateAccountScreen()),
+              type: PageTransitionType.rightToLeftWithFade,
+              child: CreateAccountSuccess()),
           (Route<dynamic> route) => false,
         );
         // Navigator.of(context).pushNamedAndRemoveUntil(
@@ -128,15 +129,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         // );
       }
     } on HttpException catch (e) {
+      var message = '';
+
+      if (e.message ==
+          'The email has already been registered. Please login or reset your password.') {
+        message =
+            'That email address is already in use. Please select another one.';
+      } else {
+        message = e.message;
+      }
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, message);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
 
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: StringUtils.errorOccured, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e.message);
     }
   }
 
@@ -158,6 +167,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           height: double.infinity,
           child: Stack(
             children: [
+              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
               Align(
                 alignment: Alignment.topCenter,
                 child: SingleChildScrollView(
@@ -200,7 +210,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                 ),
               ),
-              Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
             ],
           ),
         ),
@@ -229,7 +238,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             Navigator.pushAndRemoveUntil(
               context,
               PageTransition(
-                  type: PageTransitionType.rightToLeftWithFade,
+                  type: PageTransitionType.leftToRightWithFade,
                   child: LoginScreen()),
               (Route<dynamic> route) => false,
             );
@@ -279,7 +288,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: CustomInput(
                     label: 'Birthday',
                     controller: _dobController,
-                    isRequired: true,
+                    // isRequired: true,
                     // validator: (value) {
                     //   if (_isUnderAge) {
                     //     return 'You must be 18 or older to use this app';
@@ -384,7 +393,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               child: Column(
                 children: <Widget>[
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(top: 6.0, right: 6.0),

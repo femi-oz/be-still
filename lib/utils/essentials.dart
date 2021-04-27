@@ -326,7 +326,7 @@ class AppTextStyles {
     letterSpacing: 1,
   );
   static const TextStyle drawerMenu = const TextStyle(
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.bold,
     letterSpacing: 1,
   );
