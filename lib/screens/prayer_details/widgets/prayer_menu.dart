@@ -443,8 +443,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    CombinePrayerStream prayerData =
-        Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -509,9 +508,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddUpdate(
-                        prayerData: prayerData,
-                      ),
+                      builder: (context) => AddUpdate(),
                     ),
                   ),
                   text: 'Add an Update',
