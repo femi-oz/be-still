@@ -155,7 +155,7 @@ class _PrayerTimeState extends State<PrayerTime> {
           ],
         ),
       ),
-      endDrawer: CustomDrawer(),
+      // endDrawer: CustomDrawer(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -38,7 +39,9 @@ class _EntryScreenState extends State<EntryScreen> {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
-    _switchSearchMode(false);
+    final isSearchMode =
+        Provider.of<MiscProvider>(context, listen: false).search;
+    _switchSearchMode(isSearchMode);
     super.initState();
   }
 
@@ -88,6 +91,9 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isSearchMode =
+        Provider.of<MiscProvider>(context, listen: false).search;
+    _switchSearchMode(isSearchMode);
     return Scaffold(
       key: _scaffoldKey,
       appBar: _currentIndex == 2 || _currentIndex == 3

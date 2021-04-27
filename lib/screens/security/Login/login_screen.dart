@@ -2,6 +2,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -38,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool disableButton = false;
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -94,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       _isBiometricAvailable();
-
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -176,56 +177,55 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    if (!disableButton) {
+      setState(() => _autoValidate = true);
+      if (!_formKey.currentState.validate()) return null;
+      _formKey.currentState.save();
 
-    await BeStilDialog.showLoading(context, 'Authenticating');
-    try {
-      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
-        email: _usernameController.text,
-        password: _passwordController.text,
-      );
-      await Provider.of<UserProvider>(context, listen: false)
-          .setCurrentUser(false);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await BeStilDialog.showLoading(context, 'Authenticating');
+      try {
+        await Provider.of<AuthenticationProvider>(context, listen: false)
+            .signIn(
+          email: _usernameController.text,
+          password: _passwordController.text,
+        );
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUser(false);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      Settings.lastUser = jsonEncode(user.toJson2());
-      Settings.userPassword =
-          Settings.rememberMe ? _passwordController.text : '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
-      LocalNotification.setNotificationsOnNewDevice(context);
+        Settings.lastUser = jsonEncode(user.toJson2());
+        Settings.userPassword =
+            Settings.rememberMe ? _passwordController.text : '';
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .setDevice(user.id);
+        LocalNotification.setNotificationsOnNewDevice(context);
 
-      BeStilDialog.hideLoading(context);
-      await setRouteDestination();
-    } on HttpException catch (e) {
-      needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
-              .needsVerification;
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
-              .needsVerification;
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(
-          context, 'An error occured. Please try again');
+        BeStilDialog.hideLoading(context);
+        await setRouteDestination();
+      } on HttpException catch (e) {
+        needsVerification =
+            Provider.of<AuthenticationProvider>(context, listen: false)
+                .needsVerification;
+        BeStilDialog.hideLoading(context);
+        BeStilDialog.showErrorDialog(context, e.message);
+      } catch (e) {
+        needsVerification =
+            Provider.of<AuthenticationProvider>(context, listen: false)
+                .needsVerification;
+        Provider.of<LogProvider>(context, listen: false).setErrorLog(
+            e.toString(), _usernameController.text, 'LOGIN/screen/_login');
+        BeStilDialog.hideLoading(context);
+        BeStilDialog.showErrorDialog(
+            context, 'An error occured. Please try again');
+      }
     }
   }
 
   void _biologin() async {
-    // if (!_formKey.currentState.validate()) return null;
-    // _formKey.currentState.save();
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
-      // await BeStilDialog.showLoading(context, 'Authenticating');
-
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
       final user =
@@ -237,35 +237,21 @@ class _LoginScreenState extends State<LoginScreen> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
-
-      // BeStilDialog.hideLoading(context);
-      // await setRouteDestination();
       Navigator.pushAndRemoveUntil(
         context,
         PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
+          type: PageTransitionType.leftToRightWithFade,
+          child: EntryScreen(
+            screenNumber: 0,
+          ),
+        ),
         (Route<dynamic> route) => false,
       );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //   EntryScreen.routeName,
-      //   (Route<dynamic> route) => false,
-      // );
     } on HttpException catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
@@ -369,6 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    disableButton = Provider.of<MiscProvider>(context, listen: true).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -548,6 +535,8 @@ class _LoginScreenState extends State<LoginScreen> {
         InkWell(
           child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
+            Provider.of<MiscProvider>(context, listen: false)
+                .setVisibility(true);
             Navigator.push(
               context,
               PageTransition(
@@ -589,7 +578,10 @@ class _LoginScreenState extends State<LoginScreen> {
             style: AppTextStyles.regularText15,
           ),
         // SizedBox(height: 20),
-        BsRaisedButton(onPressed: _login),
+        BsRaisedButton(
+          onPressed: _login,
+          disabled: disableButton,
+        ),
         // Settings.enableLocalAuth
         //     ? BsRaisedButton(
         //         onPressed: _biologin,
@@ -601,11 +593,15 @@ class _LoginScreenState extends State<LoginScreen> {
               "Forgot my Password",
               style: AppTextStyles.regularText15,
             ),
-            onTap: () => Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.leftToRightWithFade,
-                    child: ForgetPassword()))
+            onTap: () {
+              Provider.of<MiscProvider>(context, listen: false)
+                  .setVisibility(true);
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.leftToRightWithFade,
+                      child: ForgetPassword()));
+            }
             // Navigator.of(context).pushNamed(ForgetPassword.routeName),
             ),
       ],

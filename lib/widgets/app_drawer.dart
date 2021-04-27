@@ -1,4 +1,5 @@
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
@@ -8,6 +9,7 @@ import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
@@ -28,6 +30,7 @@ class CustomDrawer extends StatelessWidget {
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+    final rememberMe = Settings.rememberMe;
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -111,6 +114,13 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      rememberMe
+                          ? await Provider.of<MiscProvider>(context,
+                                  listen: false)
+                              .setVisibility(false)
+                          : await Provider.of<MiscProvider>(context,
+                                  listen: false)
+                              .setVisibility(true);
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
                       Navigator.push(
