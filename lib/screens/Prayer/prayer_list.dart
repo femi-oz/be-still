@@ -155,56 +155,61 @@ class _PrayerListState extends State<PrayerList> {
           ),
         ),
         child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(left: 20),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage(true)),
-                alignment: Alignment.bottomCenter,
-              ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.83,
             ),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20),
-                prayers.length == 0
-                    ? Container(
-                        padding: EdgeInsets.only(
-                            left: 60, right: 100, top: 60, bottom: 60),
-                        child: Opacity(
-                          opacity: 0.3,
-                          child: Text(
-                            'No Prayers in My List',
-                            style: AppTextStyles.demiboldText34,
-                            textAlign: TextAlign.center,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage(true)),
+                  alignment: Alignment.bottomCenter,
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 20),
+                  prayers.length == 0
+                      ? Container(
+                          padding: EdgeInsets.only(
+                              left: 60, right: 100, top: 60, bottom: 60),
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Text(
+                              'No Prayers in My List',
+                              style: AppTextStyles.demiboldText34,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            ...prayers.map((e) {
+                              final _timeago =
+                                  DateFormatter(e.prayer.modifiedOn).format();
+                              return GestureDetector(
+                                  onTap: () => onTapCard(e),
+                                  child: PrayerCard(
+                                      prayerData: e, timeago: _timeago));
+                            }).toList(),
+                          ],
                         ),
-                      )
-                    : Column(
-                        children: <Widget>[
-                          ...prayers.map((e) {
-                            final _timeago =
-                                DateFormatter(e.prayer.modifiedOn).format();
-                            return GestureDetector(
-                                onTap: () => onTapCard(e),
-                                child: PrayerCard(
-                                    prayerData: e, timeago: _timeago));
-                          }).toList(),
-                        ],
-                      ),
-                SizedBox(height: 5),
-                currentPrayerType == PrayerType.archived ||
-                        currentPrayerType == PrayerType.answered
-                    ? Container()
-                    : LongButton(
-                        onPress: () => NavigationService.instance.goHome(2),
-                        text: 'Add New Prayer',
-                        backgroundColor:
-                            AppColors.addprayerBgColor.withOpacity(0.9),
-                        textColor: AppColors.addprayerTextColor,
-                        icon: AppIcons.bestill_add_btn,
-                      ),
-                SizedBox(height: 80),
-              ],
+                  SizedBox(height: 5),
+                  currentPrayerType == PrayerType.archived ||
+                          currentPrayerType == PrayerType.answered
+                      ? Container()
+                      : LongButton(
+                          onPress: () => NavigationService.instance.goHome(2),
+                          text: 'Add New Prayer',
+                          backgroundColor:
+                              AppColors.addprayerBgColor.withOpacity(0.9),
+                          textColor: AppColors.addprayerTextColor,
+                          icon: AppIcons.bestill_add_btn,
+                        ),
+                  SizedBox(height: 80),
+                ],
+              ),
             ),
           ),
         ),
