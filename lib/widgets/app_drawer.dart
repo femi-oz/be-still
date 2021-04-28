@@ -2,9 +2,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
-import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -18,8 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomDrawer extends StatelessWidget {
-  _launchURL() async {
-    const url = 'https://my.bible.com/bible';
+  _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -218,81 +215,87 @@ class CustomDrawer extends StatelessWidget {
                     child: Container(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(EntryScreen.routeName),
-                            title: Text("MY LIST",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
-                          // ListTile(
-                          //   onTap: () => Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           EntryScreen(screenNumber: 2),
-                          //     ),
-                          //   ),
-                          //   title: Text("ADD A PRAYER",
-                          //       style: AppTextStyles.drawerMenu.copyWith(
-                          //           color: AppColors.drawerMenuColor)),
-                          // ),
-                          // ListTile(
-                          //   onTap: () => Navigator.of(context)
-                          //       .pushReplacementNamed(PrayerTime.routeName),
-                          //   title: Text("PRAY",
-                          //       style: AppTextStyles.drawerMenu.copyWith(
-                          //           color: AppColors.drawerMenuColor)),
-                          // ),
-                          ListTile(
-                            onTap: _launchURL,
-                            title: Text("BIBLE APP",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
-                          ListTile(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: RecommenededBibles(),
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () => Navigator.of(context)
+                                  .pushReplacementNamed(EntryScreen.routeName),
+                              child: Text("MY LIST",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
                             ),
-                            title: Text("RECOMMENDED BIBLES",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: DevotionPlans(),
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () =>
+                                  _launchURL('https://my.bible.com/bible'),
+                              child: Text("BIBLE APP",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
                             ),
-                            title: Text("DEVOTIONALS AND READING PLANS",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(SettingsScreen.routeName),
-                            title: Text("SETTINGS",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () => Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: RecommenededBibles(),
+                                ),
+                              ),
+                              child: Text("RECOMMENDED BIBLES",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
                           ),
-                          ListTile(
-                            onTap: () => null,
-                            title: Text("HELP",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () => Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: DevotionPlans(),
+                                ),
+                              ),
+                              child: Text("DEVOTIONALS AND READING PLANS",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
                           ),
-                          ListTile(
-                            onTap: () => _openLogoutConfirmation(context),
-                            title: Text("LOGOUT",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () => Navigator.of(context)
+                                  .pushReplacementNamed(
+                                      SettingsScreen.routeName),
+                              child: Text("SETTINGS",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () =>
+                                  _launchURL('https://www.bestillapp.com'),
+                              child: Text("HELP",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () => _openLogoutConfirmation(context),
+                              child: Text("LOGOUT",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
                           ),
                         ],
                       ),

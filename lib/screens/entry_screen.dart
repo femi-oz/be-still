@@ -1,4 +1,3 @@
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -20,9 +19,6 @@ import 'package:provider/provider.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
-  final int screenNumber;
-
-  EntryScreen({this.screenNumber = 0});
   @override
   _EntryScreenState createState() => _EntryScreenState();
 }
@@ -38,7 +34,8 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   void initState() {
-    _currentIndex = widget.screenNumber;
+    _currentIndex =
+        Provider.of<MiscProvider>(context, listen: false).currentPage;
     // final isSearchMode =
     //     Provider.of<MiscProvider>(context, listen: false).search;
     // _switchSearchMode(isSearchMode);

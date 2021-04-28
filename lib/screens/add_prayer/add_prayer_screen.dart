@@ -1,12 +1,14 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
@@ -76,13 +78,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
-              child: EntryScreen(screenNumber: 0),
-            ),
-          );
+
+          NavigationService.instance.goHome(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -102,13 +99,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
-              child: PrayerDetails(),
-            ),
-          );
+
+          NavigationService.instance.goHome(0);
         }
       }
     } on HttpException catch (e) {
@@ -162,11 +154,7 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EntryScreen(screenNumber: 0)))) ??
-        false;
+    return (NavigationService.instance.goHome(0)) ?? false;
   }
 
   Future<void> _onTagSelected(s) async {
@@ -247,17 +235,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 child: PrayerDetails(),
                               ),
                             )
-                          // Navigator.popUntil(context,
-                          //       ModalRoute.withName(PrayerDetails.routeName))
-                          : Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: EntryScreen(
-                                  screenNumber: 0,
-                                ),
-                              ),
-                            );
+                          : NavigationService.instance.goHome(0);
                     },
                     child: Container(
                       height: 30,
@@ -369,22 +347,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                       context,
                                       PageTransition(
                                         type: PageTransitionType
-                                            .rightToLeftWithFade,
+                                            .leftToRightWithFade,
                                         child: PrayerDetails(),
                                       ),
                                     )
-                                  : Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child: EntryScreen(screenNumber: 0),
-                                      ),
-                                    ),
-                          // Navigator.popUntil(
-                          //                 context,
-                          //                 ModalRoute.withName(
-                          //                     EntryScreen.routeName)),
+                                  : NavigationService.instance.goHome(0),
                         ),
                         InkWell(
                           child: Text('SAVE',
@@ -408,15 +375,17 @@ class _AddPrayerState extends State<AddPrayer> {
                               // autovalidateMode: AutovalidateMode.onUserInteraction,
                               autovalidate: _autoValidate,
                               key: _formKey,
-                              child: CustomInput(
-                                label: 'Prayer description',
-                                controller: _descriptionController,
-                                maxLines: 23,
-                                isRequired: true,
-                                showSuffix: false,
-                                textInputAction: TextInputAction.newline,
-                                onTextchanged: (val) => _onTextChange(val),
-                                focusNode: _focusNode,
+                              child: Container(
+                                child: CustomInput(
+                                  label: 'Prayer description',
+                                  controller: _descriptionController,
+                                  maxLines: 23,
+                                  isRequired: true,
+                                  showSuffix: false,
+                                  textInputAction: TextInputAction.newline,
+                                  onTextchanged: (val) => _onTextChange(val),
+                                  focusNode: _focusNode,
+                                ),
                               ),
                             ),
                           ),

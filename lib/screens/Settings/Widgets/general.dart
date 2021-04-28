@@ -180,14 +180,22 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> _setPermission() async {
     var status = await Permission.contacts.request();
+    //disabled and alowed through popup
     if (!Settings.enabledContactPermission && status.isGranted)
       setState(() => Settings.enabledContactPermission = true);
+    //disabled and is permanently denied (iOS)
+    else if (!Settings.enabledContactPermission && status.isPermanentlyDenied) {
+      _openContactConfirmation(context);
+      setState(() => Settings.enabledContactPermission = true);
+    }
+    //disabled and denied through popup
     else if (!Settings.enabledContactPermission && status.isDenied)
       setState(() => Settings.enabledContactPermission = false);
-    else if (Settings.enabledContactPermission && status.isGranted)
-      _openContactConfirmation(context);
-    else
+    //enabled and needs to be diabled
+    else {
       setState(() => Settings.enabledContactPermission = false);
+      _openContactConfirmation(context);
+    }
   }
 
   void _updateEmail(UserModel user) async {

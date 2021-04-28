@@ -83,6 +83,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     height: MediaQuery.of(context).size.height * 0.67,
                     child: Column(
                       children: <Widget>[
+                        Text(
+                          'RECOVER PASSWORD',
+                          style: AppTextStyles.boldText24.copyWith(
+                              color: Settings.isDarkMode
+                                  ? AppColors.lightBlue3
+                                  : AppColors.grey2),
+                        ),
+                        SizedBox(height: 40),
                         Expanded(
                           child: step == 1
                               ? _buildEmailForm(context)
@@ -227,32 +235,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                             SizedBox(height: 20.0),
                                           ],
                                         ),
-                                  // GestureDetector(
-                                  //     onTap: () => {
-                                  //       setState(() {
-                                  //         _forgotPassword();
-                                  //       })
-                                  //     },
-                                  //     child: Container(
-                                  //       height: 50.0,
-                                  //       width: double.infinity,
-                                  //       margin: EdgeInsets.only(bottom: 20),
-                                  //       decoration: BoxDecoration(
-                                  //         gradient: LinearGradient(
-                                  //           begin: Alignment.centerLeft,
-                                  //           end: Alignment.centerRight,
-                                  //           colors: [
-                                  //             AppColors.lightBlue1,
-                                  //             AppColors.lightBlue2,
-                                  //           ],
-                                  //         ),
-                                  //       ),
-                                  //       child: Icon(
-                                  //         AppIcons.bestill_next_arrow,
-                                  //         color: AppColors.offWhite4,
-                                  //       ),
-                                  //     ),
-                                  //   ),
                                 ],
                               ),
                       ],

@@ -77,7 +77,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
                         onTap: () => Navigator.pushReplacement(
                           context,
                           PageTransition(
-                            type: PageTransitionType.leftToRightWithFade,
+                            type: PageTransitionType.rightToLeftWithFade,
                             child: DevotionPlans(),
                           ),
                         ),

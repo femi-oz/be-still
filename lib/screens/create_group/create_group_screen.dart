@@ -9,6 +9,7 @@ import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:flutter/material.dart';
@@ -122,14 +123,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               if (_step == 1) {
                                 _save();
                               } else {
-                                Navigator.pushReplacement(
-                                  context,
-                                  new MaterialPageRoute(
-                                    builder: (context) => new EntryScreen(),
-                                  ),
-                                );
-                                // Navigator.of(context).pushReplacementNamed(
-                                //     EntryScreen.routeName);
+                                NavigationService.instance.goHome(0);
                               }
                             },
                             style: ButtonStyle(

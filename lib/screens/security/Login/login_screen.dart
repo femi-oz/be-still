@@ -64,8 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
         : print('No biometrics available');
   }
 
-  // To retrieve the list of biometric types
-  // (if available).
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
@@ -129,17 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //     EntryScreen.routeName, (Route<dynamic> route) => false);
+      NavigationService.instance.goHome(0);
     }
   }
 
@@ -237,16 +225,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-          type: PageTransitionType.leftToRightWithFade,
-          child: EntryScreen(
-            screenNumber: 0,
-          ),
-        ),
-        (Route<dynamic> route) => false,
-      );
+
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
@@ -540,7 +520,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.push(
               context,
               PageTransition(
-                  type: PageTransitionType.leftToRightWithFade,
+                  type: PageTransitionType.rightToLeftWithFade,
                   child: CreateAccountScreen()),
             );
             // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
@@ -601,9 +581,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   PageTransition(
                       type: PageTransitionType.leftToRightWithFade,
                       child: ForgetPassword()));
-            }
-            // Navigator.of(context).pushNamed(ForgetPassword.routeName),
-            ),
+            }),
       ],
     );
   }

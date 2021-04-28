@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -47,13 +48,7 @@ class _AddUpdateState extends State<AddUpdate> {
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: PrayerDetails(),
-          ),
-        );
+        NavigationService.instance.goHome(0);
       }
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -67,11 +62,7 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EntryScreen(screenNumber: 0)))) ??
-        false;
+    return (NavigationService.instance.goHome(0)) ?? false;
   }
 
   Future<void> onCancel() async {
@@ -112,17 +103,13 @@ class _AddUpdateState extends State<AddUpdate> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: EntryScreen(
-                            screenNumber: 0,
-                          ),
-                        ),
-                      );
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.leftToRightWithFade,
+                        child: PrayerDetails(),
+                      ),
+                    ),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -216,20 +203,14 @@ class _AddUpdateState extends State<AddUpdate> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       InkWell(
-                        child: Text(
-                          'CANCEL',
-                          style: TextStyle(color: AppColors.grey, fontSize: 16),
-                        ),
-                        onTap: () => _descriptionController.text.isNotEmpty
-                            ? onCancel()
-                            : Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: EntryScreen(screenNumber: 0),
-                                ),
-                              ),
-                      ),
+                          child: Text(
+                            'CANCEL',
+                            style: TextStyle(
+                                color: AppColors.lightBlue5, fontSize: 16),
+                          ),
+                          onTap: () => _descriptionController.text.isNotEmpty
+                              ? onCancel()
+                              : NavigationService.instance.goHome(0)),
                       InkWell(
                         child: Text('SAVE',
                             style: TextStyle(

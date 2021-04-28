@@ -4,6 +4,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:flutter/material.dart';
@@ -62,7 +63,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -83,6 +83,32 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
             ),
             child: Column(
               children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    children: <Widget>[
+                      TextButton.icon(
+                        style: ButtonStyle(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  EdgeInsets.zero),
+                        ),
+                        icon: Icon(
+                          AppIcons.bestill_back_arrow,
+                          color: AppColors.lightBlue3,
+                          size: 20,
+                        ),
+                        onPressed: () => NavigationService.instance.goHome(0),
+                        label: Text(
+                          'BACK',
+                          style: AppTextStyles.boldText20.copyWith(
+                            color: AppColors.lightBlue3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -94,14 +120,29 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Text(
-                    'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                    style: AppTextStyles.regularText16b
-                        .copyWith(color: AppColors.prayerTextColor),
-                    textAlign: TextAlign.left,
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                SizedBox(height: 30),
                 _buildPanel(),
               ],
             ),
@@ -111,48 +152,48 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.backgroundColor[0],
-      elevation: 0,
-      centerTitle: true,
-      automaticallyImplyLeading: false,
-      leading: Container(
-        width: 30,
-        padding: EdgeInsets.all(20.0),
-        child: Row(
-          children: <Widget>[
-            TextButton.icon(
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    EdgeInsets.zero),
-              ),
-              icon: Icon(
-                AppIcons.bestill_back_arrow,
-                color: AppColors.lightBlue3,
-                size: 20,
-              ),
-              onPressed: () => Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: EntryScreen(
-                      screenNumber: 0,
-                    )),
-              ),
-              label: Text(
-                'BACK',
-                style: AppTextStyles.boldText20.copyWith(
-                  color: AppColors.lightBlue3,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      leadingWidth: 150,
-    );
-  }
+  // AppBar _buildAppBar() {
+  //   return AppBar(
+  //     backgroundColor: AppColors.backgroundColor[0],
+  //     elevation: 0,
+  //     centerTitle: true,
+  //     automaticallyImplyLeading: false,
+  //     leading: Container(
+  //       width: 30,
+  //       padding: EdgeInsets.all(20.0),
+  //       child: Row(
+  //         children: <Widget>[
+  //           TextButton.icon(
+  //             style: ButtonStyle(
+  //               padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+  //                   EdgeInsets.zero),
+  //             ),
+  //             icon: Icon(
+  //               AppIcons.bestill_back_arrow,
+  //               color: AppColors.lightBlue3,
+  //               size: 20,
+  //             ),
+  //             onPressed: () => Navigator.push(
+  //               context,
+  //               PageTransition(
+  //                   type: PageTransitionType.rightToLeftWithFade,
+  //                   child: EntryScreen(
+  //                     screenNumber: 0,
+  //                   )),
+  //             ),
+  //             label: Text(
+  //               'BACK',
+  //               style: AppTextStyles.boldText20.copyWith(
+  //                 color: AppColors.lightBlue3,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     leadingWidth: 150,
+  //   );
+  // }
 
   Widget _buildPanel() {
     final bibleData = Provider.of<DevotionalProvider>(context).bibles;

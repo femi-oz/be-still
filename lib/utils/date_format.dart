@@ -20,19 +20,19 @@ class DateFormatter {
       return "${val.ceil()} ${val.ceil() > 1 ? 'weeks' : 'week'} ago";
     }
     if (!localDateTime.difference(justNow).isNegative) {
-      return 'just now';
+      return 'Just now';
     }
 
     if (localDateTime.day == now.day &&
         localDateTime.month == now.month &&
         localDateTime.year == now.year) {
-      return 'today';
+      return 'Today';
     }
     DateTime yesterday = now.subtract(Duration(days: 1));
     if (localDateTime.day == yesterday.day &&
         localDateTime.month == yesterday.month &&
         localDateTime.year == yesterday.year) {
-      return 'yesterday';
+      return 'Yesterday';
     }
 
     if (now.difference(localDateTime).inDays < 7) {

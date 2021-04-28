@@ -7,6 +7,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -351,13 +352,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: CustomInput(
                     label: 'Birthday',
                     controller: _dobController,
-                    // isRequired: true,
-                    // validator: (value) {
-                    //   if (_isUnderAge) {
-                    //     return 'You must be 18 or older to use this app';
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
               ),
@@ -373,7 +367,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              // isPassword: true,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,
