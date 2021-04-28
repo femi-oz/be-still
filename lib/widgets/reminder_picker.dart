@@ -158,7 +158,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               scrollController: hourController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(
-                                  () => selectedHour = minInTheHour[i]),
+                                  () => selectedHour = hoursOfTheDay[i]),
                               children: <Widget>[
                                 for (var i = 0; i < hoursOfTheDay.length; i++)
                                   Align(
