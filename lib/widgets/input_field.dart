@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
+import 'package:provider/provider.dart';
 
 class CustomInput extends StatefulWidget {
   final int maxLines;
@@ -167,15 +171,43 @@ class _CustomInputState extends State<CustomInput> {
                   },
               textInputAction: widget.textInputAction,
               onChanged: (val) {
+                setVisibilty(val);
                 setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
                 if (widget.onTextchanged != null) widget.onTextchanged(val);
               }),
     );
   }
 
+  void setVisibilty(String value) {
+    Pattern passwordPattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
+    RegExp regex = new RegExp(passwordPattern);
+    Pattern emailPattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(emailPattern);
+    if (widget.isRequired) {
+      if (value.isNotEmpty) {
+        Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
+      } else {
+        Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
+      }
+    }
+    if (value.contains(regExp) || value.contains(regex)) {
+      Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
+    } else {
+      Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
+    }
+  }
+
   String _validatorFn(String value) {
     if (widget.isRequired) {
-      if (value.isEmpty) {
+      //  if (value.isEmpty ) {
+      //   return '${widget.label} is required';
+      // }
+      if (value.isEmpty && widget.isEmail) {
+        return 'Email is required';
+      } else if (value.isEmpty && widget.isPassword) {
+        return 'Password is required';
+      } else if (value.isEmpty) {
         return '${widget.label} is required';
       }
     }
@@ -202,8 +234,9 @@ class _CustomInputState extends State<CustomInput> {
     if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(value))
+      if (!regex.hasMatch(value)) {
         return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
+      }
     }
     if (widget.isLink && value.isNotEmpty) {
       Pattern pattern =

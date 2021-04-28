@@ -141,6 +141,12 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    final searchQuery =
+        Provider.of<MiscProvider>(context, listen: false).searchQuery;
+    if (searchQuery.isNotEmpty) {
+      Provider.of<PrayerProvider>(context).searchPrayers(searchQuery, userId);
+    }
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;

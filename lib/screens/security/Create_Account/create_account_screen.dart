@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -31,6 +32,7 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool disabled = false;
 
   // bool _isUnderAge = false;
 
@@ -78,80 +80,90 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   void _createAccount() async {
-    setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    if (!_enableSubmit) {
+      BeStilDialog.showErrorDialog(
+          context, 'You must accept terms to create an account.');
+      return;
+    }
+    if (!disabled) {
+      setState(() => _autoValidate = true);
+      if (!_formKey.currentState.validate()) return null;
+      _formKey.currentState.save();
 
-    try {
-      await BeStilDialog.showLoading(context, 'Registering...');
-      if (_firstnameController.text == null ||
-          _firstnameController.text.trim() == '') {
+      try {
+        await BeStilDialog.showLoading(context, 'Registering...');
+        if (_firstnameController.text == null ||
+            _firstnameController.text.trim() == '') {
+          BeStilDialog.hideLoading(context);
+          BeStillSnackbar.showInSnackBar(
+              message: 'First Name is empty, please enter a valid name.',
+              key: _scaffoldKey);
+        } else if (_lastnameController.text == null ||
+            _lastnameController.text.trim() == '') {
+          BeStilDialog.hideLoading(context);
+          BeStillSnackbar.showInSnackBar(
+              message: 'Last Name is empty, please enter a valid name.',
+              key: _scaffoldKey);
+        } else {
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .registerUser(
+            password: _passwordController.text,
+            email: _emailController.text,
+            firstName: _firstnameController.text,
+            lastName: _lastnameController.text,
+            dob: _selectedDate,
+          );
+          await Provider.of<UserProvider>(context, listen: false)
+              .setCurrentUser(false);
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          Settings.lastUser =
+              Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+          Settings.userPassword =
+              Settings.rememberMe ? _passwordController.text : '';
+          BeStilDialog.hideLoading(context);
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .setDevice(user.id);
+          Navigator.pushAndRemoveUntil(
+            context,
+            PageTransition(
+                type: PageTransitionType.leftToRightWithFade,
+                child: CreateAccountScreen()),
+            (Route<dynamic> route) => false,
+          );
+          // Navigator.of(context).pushNamedAndRemoveUntil(
+          //   CreateAccountSuccess.routeName,
+          //   (Route<dynamic> route) => false,
+          // );
+        }
+      } on HttpException catch (e) {
+        var message = '';
+
+        if (e.message ==
+            'The email has already been registered. Please login or reset your password.') {
+          message =
+              'That email address is already in use. Please select another one.';
+        } else {
+          message = e.message;
+        }
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'First Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
-      } else if (_lastnameController.text == null ||
-          _lastnameController.text.trim() == '') {
+        BeStilDialog.showErrorDialog(context, message);
+      } catch (e) {
+        Provider.of<LogProvider>(context, listen: false).setErrorLog(
+            e.toString(),
+            _emailController.text,
+            'REGISTER/screen/_createAccount');
+
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'Last Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
-      } else {
-        await Provider.of<AuthenticationProvider>(context, listen: false)
-            .registerUser(
-          password: _passwordController.text,
-          email: _emailController.text,
-          firstName: _firstnameController.text,
-          lastName: _lastnameController.text,
-          dob: _selectedDate,
-        );
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(false);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        Settings.lastUser =
-            Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-        Settings.userPassword =
-            Settings.rememberMe ? _passwordController.text : '';
-        BeStilDialog.hideLoading(context);
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .setDevice(user.id);
-        Navigator.pushAndRemoveUntil(
-          context,
-          PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: CreateAccountSuccess()),
-          (Route<dynamic> route) => false,
-        );
-        // Navigator.of(context).pushNamedAndRemoveUntil(
-        //   CreateAccountSuccess.routeName,
-        //   (Route<dynamic> route) => false,
-        // );
+        BeStilDialog.showErrorDialog(context, e.message);
       }
-    } on HttpException catch (e) {
-      var message = '';
-
-      if (e.message ==
-          'The email has already been registered. Please login or reset your password.') {
-        message =
-            'That email address is already in use. Please select another one.';
-      } else {
-        message = e.message;
-      }
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, message);
-    } catch (e) {
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
-          _emailController.text, 'REGISTER/screen/_createAccount');
-
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
     }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
+    disabled = Provider.of<MiscProvider>(context).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -220,30 +232,82 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   _buildFooter() {
     return Column(
       children: <Widget>[
-        BsRaisedButton(
-            disabled: !_enableSubmit,
-            onPressed: () => !_enableSubmit
-                ? BeStilDialog.showErrorDialog(
+        Row(
+          children: [
+            Container(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(AppColors.lightBlue3),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
+                  elevation: MaterialStateProperty.all<double>(0.0),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.42,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: AppColors.grey),
+                  margin: const EdgeInsets.all(0),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 10,
+                  ),
+                  child: Text('Cancel',
+                      style: AppTextStyles.regularText16b
+                          .copyWith(color: AppColors.white)),
+                ),
+                onPressed: () {
+                  Settings.rememberMe
+                      ? Provider.of<MiscProvider>(context, listen: false)
+                          .setVisibility(false)
+                      : Provider.of<MiscProvider>(context, listen: false)
+                          .setVisibility(true);
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    'You must accept terms to proceed',
-                  )
-                : _createAccount()),
-        SizedBox(height: 16),
-        InkWell(
-          child: Text(
-            StringUtils.backText,
-            style: AppTextStyles.regularText13,
-          ),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              PageTransition(
-                  type: PageTransitionType.leftToRightWithFade,
-                  child: LoginScreen()),
-              (Route<dynamic> route) => false,
-            );
-            // Navigator.of(context).pop();
-          },
+                    PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: LoginScreen()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Container(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(AppColors.lightBlue3),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
+                  elevation: MaterialStateProperty.all<double>(0.0),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.42,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  margin: const EdgeInsets.all(0),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 10,
+                  ),
+                  child: Text('Create',
+                      style: disabled
+                          ? AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.grey)
+                          : AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.white)),
+                ),
+                onPressed: () {
+                  _createAccount();
+                },
+              ),
+            )
+          ],
         ),
         SizedBox(height: 20.0),
       ],
@@ -288,13 +352,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: CustomInput(
                     label: 'Birthday',
                     controller: _dobController,
-                    // isRequired: true,
-                    // validator: (value) {
-                    //   if (_isUnderAge) {
-                    //     return 'You must be 18 or older to use this app';
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
               ),
@@ -310,7 +367,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              // isPassword: true,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,

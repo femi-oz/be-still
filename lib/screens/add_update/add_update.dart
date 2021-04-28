@@ -19,12 +19,7 @@ import 'package:provider/provider.dart';
 import '../entry_screen.dart';
 
 class AddUpdate extends StatefulWidget {
-  final CombinePrayerStream prayerData;
   static const routeName = 'update-prayer';
-
-  @override
-  AddUpdate({this.prayerData});
-
   @override
   _AddUpdateState createState() => _AddUpdateState();
 }
@@ -37,41 +32,33 @@ class _AddUpdateState extends State<AddUpdate> {
   FocusNode _focusNode = FocusNode();
   bool _autoValidate = false;
 
-  _save() async {
+  Future<void> _save(String prayerId) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
-      BeStilDialog.showLoading(bcontext);
+      BeStilDialog.showLoading(context);
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
         BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayerUpdate(_user.id, _descriptionController.text,
-                widget.prayerData.prayer.id);
+            .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(bcontext);
-
+        BeStilDialog.hideLoading(context);
         NavigationService.instance.goHome(0);
       }
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(bcontext);
-      BeStilDialog.showErrorDialog(bcontext, e.message);
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(bcontext);
-      BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
+      BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Future<bool> _onWillPop() async {
@@ -123,12 +110,11 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: PrayerDetails(),
                       ),
                     ),
-                    // Navigator.of(context)
-                    //     .pushNamed(PrayerDetails.routeName),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: AppColors.grey,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -139,9 +125,9 @@ class _AddUpdateState extends State<AddUpdate> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'YES',
+                            'Discard Changes',
                             style: TextStyle(
-                              color: AppColors.lightBlue4,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -150,14 +136,16 @@ class _AddUpdateState extends State<AddUpdate> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: 20,
+                  ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+                    onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: Colors.blue,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -168,9 +156,9 @@ class _AddUpdateState extends State<AddUpdate> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'NO',
+                            'Resume Editing',
                             style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -187,16 +175,13 @@ class _AddUpdateState extends State<AddUpdate> {
       ),
     );
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
+    showDialog(context: context, builder: (BuildContext context) => dialog);
   }
 
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -231,9 +216,9 @@ class _AddUpdateState extends State<AddUpdate> {
                             style: TextStyle(
                                 color: _descriptionController.text.isEmpty
                                     ? AppColors.lightBlue5.withOpacity(0.5)
-                                    : AppColors.lightBlue5)),
+                                    : Colors.blue)),
                         onTap: () => _descriptionController.text.isNotEmpty
-                            ? _save()
+                            ? _save(prayerData.prayer.id)
                             : null,
                       ),
                     ],
@@ -246,7 +231,6 @@ class _AddUpdateState extends State<AddUpdate> {
                       child: Column(
                         children: [
                           Form(
-                            // autovalidateMode: AutovalidateMode.onUserInteraction,
                             autovalidate: _autoValidate,
                             key: _formKey,
                             child: CustomInput(
@@ -273,12 +257,11 @@ class _AddUpdateState extends State<AddUpdate> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                widget.prayerData.prayer.userId !=
-                                        _currentUser.id
+                                prayerData.prayer.userId != currentUser.id
                                     ? Container(
                                         margin: EdgeInsets.only(bottom: 20),
                                         child: Text(
-                                          widget.prayerData.prayer.createdBy,
+                                          prayerData.prayer.createdBy,
                                           style: TextStyle(
                                               color: AppColors.lightBlue3,
                                               fontSize: 18,
@@ -287,7 +270,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                         ),
                                       )
                                     : Container(),
-                                ...widget.prayerData.updates.map(
+                                ...prayerData.updates.map(
                                   (u) => Container(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
@@ -365,7 +348,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                                 ),
                                                 Text(
                                                   DateFormat(' MM.dd.yyyy')
-                                                      .format(widget.prayerData
+                                                      .format(prayerData
                                                           .prayer.modifiedOn),
                                                   style: TextStyle(
                                                       fontSize: 12,
@@ -393,8 +376,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                               vertical: 20.0, horizontal: 20),
                                           child: Center(
                                             child: Text(
-                                              widget.prayerData.prayer
-                                                  .description,
+                                              prayerData.prayer.description,
                                               style: TextStyle(
                                                 color: AppColors.textFieldText,
                                                 fontSize: 14,

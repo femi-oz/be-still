@@ -12,6 +12,7 @@ class DevotionalProvider with ChangeNotifier {
   List<DevotionalModel> get devotionals => _devotionals;
   Future<void> getBibles() async {
     _devotionalService.getBibles().asBroadcastStream().listen((bibles) {
+      bibles.sort((a, b) => a.name.compareTo(b.name));
       _bibles = bibles;
       notifyListeners();
     });
