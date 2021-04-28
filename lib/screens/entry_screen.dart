@@ -26,20 +26,25 @@ class EntryScreen extends StatefulWidget {
 
 bool _isSearchMode = false;
 
-class _EntryScreenState extends State<EntryScreen> {
+class _EntryScreenState extends State<EntryScreen>
+    with TickerProviderStateMixin {
   BuildContext bcontext;
   int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  AnimationController controller;
+  Animation<double> animation;
 
   void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
-
   @override
   void initState() {
     _currentIndex =
         Provider.of<MiscProvider>(context, listen: false).currentPage;
     _switchSearchMode(false);
+    _isInit = false;
     super.initState();
   }
+
+  bool _isInit = true;
 
   final cron = Cron();
 
@@ -100,18 +105,35 @@ class _EntryScreenState extends State<EntryScreen> {
         future: _preLoadData(),
         initialData: null,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Container(
-                height: double.infinity,
-                child: TabNavigationItem.items[_currentIndex].page);
-          } else
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _currentIndex == 0 &&
+              _isInit) {
             return BeStilDialog.getLoading();
+          }
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+            ),
+            child: Transform.translate(
+                offset: Offset(animation?.value ?? 0, 0),
+                child: TabNavigationItem.items[_currentIndex].page),
+          );
         },
       ),
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void showInfoModal() {
@@ -214,6 +236,19 @@ class _EntryScreenState extends State<EntryScreen> {
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
+                controller = new AnimationController(
+                    duration: Duration(milliseconds: 300), vsync: this)
+                  ..addListener(() => setState(() {}));
+                animation = _currentIndex > index
+                    ? Tween(begin: MediaQuery.of(context).size.width, end: 0.0)
+                        .animate(controller)
+                    : _currentIndex == index
+                        ? Tween(begin: 0.0, end: 0.0).animate(controller)
+                        : Tween(
+                                begin: -MediaQuery.of(context).size.width,
+                                end: 0.0)
+                            .animate(controller);
+                controller.forward();
                 _currentIndex = index;
                 _switchSearchMode(false);
                 break;
