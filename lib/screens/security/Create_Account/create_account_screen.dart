@@ -123,10 +123,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               child: CreateAccountSuccess()),
           (Route<dynamic> route) => false,
         );
-        // Navigator.of(context).pushNamedAndRemoveUntil(
-        //   CreateAccountSuccess.routeName,
-        //   (Route<dynamic> route) => false,
-        // );
       }
     } on HttpException catch (e) {
       var message = '';
