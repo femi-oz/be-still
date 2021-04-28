@@ -507,8 +507,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                     InkWell(
                                       child: GestureDetector(
                                         child: Icon(
-                                          AppIcons.bestill_delete,
-                                          size: 16,
+                                          AppIcons.bestill_close,
+                                          size: 18,
                                           color: AppColors.lightBlue3,
                                         ),
                                         onTap: () {
@@ -526,25 +526,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                           ],
                         ),
                       ),
-
-                      // ...localNotifications.map((data) =>
-                      // // ReminderPicker(
-                      // //             hideActionuttons: false,
-                      // //             frequency: data.frequency,
-                      // //             reminderDays: LocalNotification.reminderDays,
-                      // //             onCancel: () =>
-                      // //                 setState(() => _addPrayerTypeMode = false),
-                      // //             onSave: (selectedFrequency, selectedHour,
-                      // //                     selectedMinute, selectedDay, selectedPeriod) =>
-                      // //                 _savePrayerTime(
-                      // //                     selectedDay,
-                      // //                     selectedFrequency,
-                      // //                     selectedPeriod,
-                      // //                     selectedHour,
-                      // //                     selectedMinute),
-                      // //           ),
-
-                      // )
                     ],
                   ),
                 )
