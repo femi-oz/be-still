@@ -31,6 +31,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
+    print('got here');
+
     // var options =
     //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
     var userId =
@@ -93,6 +95,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
+
     // List<PushNotificationModel> notifications =
     //     Provider.of<NotificationProvider>(context).notifications;
 
@@ -107,7 +110,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       centerTitle: true,
-      leadingWidth: 100,
+      leadingWidth: widget.showPrayerActions && !widget.isSearchMode ? 100 : 53,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,8 +119,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.showPrayerActions
               ? GestureDetector(
                   onTap: () {
-                    widget.switchSearchMode(true);
-                    setState(() {});
+                    if (searchController.text.isEmpty) {
+                      widget.switchSearchMode(true);
+                      Provider.of<MiscProvider>(context, listen: false)
+                          .setSearchMode(true);
+                      setState(() {});
+                    } else {
+                      _searchPrayer(searchController.text);
+                      Provider.of<MiscProvider>(context, listen: false)
+                          .setSearchQuery(searchController.text);
+                    }
                   },
                   child: Icon(
                     AppIcons.bestill_search,
@@ -127,7 +138,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 )
               : Container(),
           SizedBox(width: 15),
-          widget.showPrayerActions
+          widget.showPrayerActions && !widget.isSearchMode
               ? GestureDetector(
                   onTap: () => _openFilter(Settings.isDarkMode),
                   child: Icon(
@@ -137,75 +148,48 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   ),
                 )
               : Container(),
-          // SizedBox(width: 15),
-          // InkWell(
-          //     onTap: () => null,
-          //     // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-          //     child: Icon(
-          //       Icons.notifications_none,
-          //       color: AppColors.white,
-          //     )
-          //     //notifications.length == 0
-          //     // ? Icon(
-          //     //     AppIcons.bestill_notifications,
-          //     //     color: AppColors.bottomNavIconColor,
-          //     //     size: 18,
-          //     //   )
-          //     // : Stack(
-          //     //     alignment: Alignment.center,
-          //     //     children: [
-          //     //       Icon(
-          //     //         AppIcons.bestill_notifications,
-          //     //         color: AppColors.red,
-          //     //         size: 18,
-          //     //       ),
-          //     //       Text(
-          //     //         notifications.length.toString(),
-          //     //         style: TextStyle(
-          //     //           color: Colors.white,
-          //     //           fontSize: 11,
-          //     //         ),
-          //     //         textAlign: TextAlign.center,
-          //     //       ),
-          //     //     ],
-          //     //   ),
-          //     ),
-          // SizedBox(width: 15),
         ],
       ),
       title: widget.isSearchMode
-          ? Row(
-              children: [
-                Expanded(
-                  // child: Form(
-                  //   key: widget.formKey,
-                  // autovalidateMode: AutovalidateMode.disabled,
-                  child: CustomInput(
-                    controller: searchController,
-                    label: 'Search',
-                    padding: 5.0,
-                    showSuffix: false,
-                    textInputAction: TextInputAction.done,
-                    onTextchanged: _searchPrayer,
+          ? Container(
+              width: MediaQuery.of(context).size.width * 2,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomInput(
+                      controller: searchController,
+                      label: 'Search',
+                      padding: 5.0,
+                      showSuffix: false,
+                      textInputAction: TextInputAction.done,
+                      submitForm: () => _searchPrayer(searchController.text),
+
+                      // onTextchanged: _searchPrayer,
+                    ),
+                    // ),
                   ),
-                  // ),
-                ),
-                SizedBox(width: 10),
-                InkWell(
-                  child: Icon(
-                    AppIcons.bestill_close,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
-                  ),
-                  onTap: () => setState(
-                    () {
-                      _clearSearchField();
-                      widget.switchSearchMode(false);
-                      setState(() {});
-                    },
-                  ),
-                )
-              ],
+                  SizedBox(width: 10),
+                  InkWell(
+                    child: Icon(
+                      AppIcons.bestill_close,
+                      color: AppColors.bottomNavIconColor,
+                      size: 18,
+                    ),
+                    onTap: () => setState(
+                      () {
+                        _clearSearchField();
+                        widget.switchSearchMode(false);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchMode(false);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchQuery('');
+
+                        setState(() {});
+                      },
+                    ),
+                  )
+                ],
+              ),
             )
           : Text(
               pageTitle,
@@ -217,27 +201,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.notifications_none,
-            color: AppColors.white,
-          ),
-          onPressed: null,
-        )
-        // Builder(
-        //   builder: (BuildContext context) {
-        //     return IconButton(
-        //       icon: Icon(
-        //         AppIcons.bestill_main_menu,
-        //         size: 18,
-        //         color: AppColors.bottomNavIconColor,
-        //       ),
-        //       onPressed: () {
-        //         Scaffold.of(context).openEndDrawer();
-        //       },
-        //     );
-        //   },
-        // ),
+        widget.showPrayerActions && !widget.isSearchMode
+            ? IconButton(
+                icon: Icon(
+                  Icons.notifications_none,
+                  color: AppColors.white,
+                ),
+                onPressed: null,
+              )
+            : Container(),
       ],
     );
   }

@@ -199,7 +199,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                   Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                        i < 9
+                                        i < 10
                                             ? '0${minInTheHour[i]}'
                                             : '${minInTheHour[i]}',
                                         style: AppTextStyles.regularText15),
@@ -267,8 +267,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               ? '0$selectedMinute'
                               : '$selectedMinute';
                           var hour = selectedHour < 10
-                              ? '0${selectedHour.toString()}'
-                              : '$selectedHour';
+                              ? '0$selectedHour'
+                              : '${selectedHour + 1} ';
                           // var date =
                           //     '$selectedHour:$selectedMinute $selectedPeriod';
                           widget.onSave(

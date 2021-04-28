@@ -1,14 +1,12 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +23,8 @@ class RecommenededBibles extends StatefulWidget {
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
   bool _isInit = true;
+  final _scrollController = new ScrollController();
+
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -38,7 +38,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     super.didChangeDependencies();
   }
 
-  _getBibles() async {
+  Future<void> _getBibles() async {
     await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
@@ -52,15 +52,13 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     }
   }
 
-  _launchURL(url) async {
+  Future<void> _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       throw 'Could not launch $url';
     }
   }
-
-  ScrollController _scrollController = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +152,51 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     );
   }
 
+  // AppBar _buildAppBar() {
+  //   return AppBar(
+  //     backgroundColor: AppColors.backgroundColor[0],
+  //     elevation: 0,
+  //     centerTitle: true,
+  //     automaticallyImplyLeading: false,
+  //     leading: Container(
+  //       width: 30,
+  //       padding: EdgeInsets.all(20.0),
+  //       child: Row(
+  //         children: <Widget>[
+  //           TextButton.icon(
+  //             style: ButtonStyle(
+  //               padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+  //                   EdgeInsets.zero),
+  //             ),
+  //             icon: Icon(
+  //               AppIcons.bestill_back_arrow,
+  //               color: AppColors.lightBlue3,
+  //               size: 20,
+  //             ),
+  //             onPressed: () => Navigator.push(
+  //               context,
+  //               PageTransition(
+  //                   type: PageTransitionType.rightToLeftWithFade,
+  //                   child: EntryScreen(
+  //                     screenNumber: 0,
+  //                   )),
+  //             ),
+  //             label: Text(
+  //               'BACK',
+  //               style: AppTextStyles.boldText20.copyWith(
+  //                 color: AppColors.lightBlue3,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     leadingWidth: 150,
+  //   );
+  // }
+
   Widget _buildPanel() {
-    var bibleData = Provider.of<DevotionalProvider>(context).bibles;
-    bibleData.sort((a, b) => a.name.compareTo(b.name));
+    final bibleData = Provider.of<DevotionalProvider>(context).bibles;
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
@@ -178,7 +218,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                       bibleData[i].shortName,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.boldText20.copyWith(
-                        color: Color(0xFFffffff),
+                        color: AppColors.white,
                       ),
                     ),
                   ),

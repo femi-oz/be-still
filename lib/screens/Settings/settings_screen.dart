@@ -106,8 +106,8 @@ class SettingsTabState extends State<SettingsTab>
               height: 50.0,
               child: new TabBar(
                 indicatorColor: Colors.transparent,
-                unselectedLabelColor: AppColors.inactvePrayerMenu,
-                labelColor: AppColors.lightBlue4,
+                unselectedLabelColor: AppColors.inactveTabMenu,
+                labelColor: AppColors.actveTabMenu,
                 labelStyle: AppTextStyles.boldText24,
                 isScrollable: true,
                 tabs: [
