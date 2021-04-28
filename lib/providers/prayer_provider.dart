@@ -81,7 +81,7 @@ class PrayerProvider with ChangeNotifier {
     if (searchQuery == '') {
       filterPrayers();
     } else {
-      filterPrayers();
+      // filterPrayers();
 
       List<CombinePrayerStream> filteredPrayers = _filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.description

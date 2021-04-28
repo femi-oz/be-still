@@ -290,11 +290,6 @@ class _AddPrayerState extends State<AddPrayer> {
                   ),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
-
-                    //  Navigator.popUntil(
-                    //       context,
-                    //       ModalRoute.withName(EntryScreen.routeName),
-                    //     ),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,

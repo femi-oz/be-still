@@ -200,7 +200,14 @@ class _CustomInputState extends State<CustomInput> {
 
   String _validatorFn(String value) {
     if (widget.isRequired) {
-      if (value.isEmpty) {
+      //  if (value.isEmpty ) {
+      //   return '${widget.label} is required';
+      // }
+      if (value.isEmpty && widget.isEmail) {
+        return 'Email is required';
+      } else if (value.isEmpty && widget.isPassword) {
+        return 'Password is required';
+      } else if (value.isEmpty) {
         return '${widget.label} is required';
       }
     }

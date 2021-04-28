@@ -59,6 +59,11 @@ class AppColors {
   static Color get inactvePrayerMenu =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
 
+  static Color get inactveTabMenu =>
+      getColor(darkMode, light: 0xFF009FD0, dark: 0xFF005780);
+  static Color get actveTabMenu =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF009FD0);
+
   static Color get textFieldBackgroundColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF022F52);
   static Color get appBarColor =>

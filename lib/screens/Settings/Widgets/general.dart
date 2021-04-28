@@ -192,66 +192,73 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _updateEmail(UserModel user) async {
     try {
-      BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .updateEmail(_newEmail.text, user.id);
+      BeStilDialog.showSuccessDialog(
+          context, 'Your email has been updated successfully');
       _newEmail.clear();
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
-      BeStillSnackbar.showInSnackBar(
-          type: 'success',
-          message: 'Your email has been updated successfully',
-          key: widget.scaffoldKey);
     } on HttpException catch (_) {
       _newEmail.clear();
-      BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
     } catch (e) {
-      print(e);
+      print(e.message);
+      var message = '';
+      if (e.message ==
+          'The email address is already in use by another account.') {
+        message =
+            'That email address is already in use. Please select another email.';
+      } else {
+        message = e.message;
+      }
+      BeStilDialog.showErrorDialog(context, message);
       _newEmail.clear();
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
     }
   }
 
   void _updatePassword() async {
     try {
-      BeStilDialog.showLoading(context);
+      // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
-      BeStillSnackbar.showInSnackBar(
-          type: 'success',
-          message: 'Your password has been updated successfully',
-          key: widget.scaffoldKey);
+      // BeStilDialog.hideLoading(context);
+      // Navigator.of(context).pop();
+      BeStilDialog.showSuccessDialog(
+          context, 'Your password has been updated successfully');
     } on HttpException catch (_) {
-      _newPassword.clear();
-      _newConfirmPassword.clear();
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      _newPassword.clear();
+      _newConfirmPassword.clear();
     } catch (e) {
-      _newPassword.clear();
-      _newConfirmPassword.clear();
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      _newPassword.clear();
+      _newConfirmPassword.clear();
     }
   }
 
-  void _verifyPassword(String email, type, ctx) async {
+  void _verifyPassword(_user, type, ctx) async {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<AuthenticationProvider>(context, listen: false)
-          .signIn(email: email, password: _currentPassword.text);
+          .signIn(email: _user.email, password: _currentPassword.text);
       _currentPassword.clear();
-      setState(() => isVerified = true);
+      Future.delayed(Duration(milliseconds: 300), () async {
+        if (type == _ModalType.email) {
+          _updateEmail(_user);
+        }
+
+        if (type == _ModalType.password) {
+          _updatePassword();
+        }
+      });
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-      _update(type, ctx);
     } on HttpException catch (e) {
       _currentPassword.clear();
+
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
@@ -385,129 +392,133 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],
-      content: Container(
-        width: MediaQuery.of(context).size.width - 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isVerified)
-              Text(
-                'Verify existing password',
-                style: AppTextStyles.boldText20,
-              )
-            else if (isVerified && type == _ModalType.email)
-              Text(
-                'Update your email',
-                style: AppTextStyles.boldText20,
-              )
-            else if (isVerified && type == _ModalType.password)
-              Text(
-                'Update your password',
-                style: AppTextStyles.boldText20,
-              ),
-            SizedBox(height: 30.0),
-            Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!isVerified)
+      content: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width - 100,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (type == _ModalType.email)
+                Text(
+                  'Update your email',
+                  style: AppTextStyles.boldText20,
+                )
+              else if (type == _ModalType.password)
+                Text(
+                  'Update your password',
+                  style: AppTextStyles.boldText20,
+                ),
+              SizedBox(height: 10.0),
+              Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (type == _ModalType.email)
+                      CustomInput(
+                        showSuffix: false,
+                        isRequired: true,
+                        isEmail: true,
+                        label: 'Enter new email',
+                        controller: _newEmail,
+                      ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
                     CustomInput(
                       showSuffix: false,
                       isRequired: true,
                       obScurePassword: true,
-                      label: 'Password',
+                      isPassword: true,
+                      label: 'Enter current password',
                       controller: _currentPassword,
-                    )
-                  else if (isVerified && type == _ModalType.email)
-                    CustomInput(
-                      showSuffix: false,
-                      isRequired: true,
-                      isEmail: true,
-                      label: 'Enter new email',
-                      controller: _newEmail,
-                    )
-                  else if (isVerified && type == _ModalType.password)
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomInput(
-                          obScurePassword: true,
-                          showSuffix: false,
-                          isRequired: true,
-                          isPassword: true,
-                          label: 'Enter new password',
-                          controller: _newPassword,
-                        ),
-                        SizedBox(height: 15.0),
-                        CustomInput(
-                          obScurePassword: true,
-                          showSuffix: false,
-                          isRequired: true,
-                          label: 'Confirm password',
-                          controller: _newConfirmPassword,
-                          validator: (value) {
-                            if (_newPassword.text != value) {
-                              return 'Password fields do not match';
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
                     ),
-                  SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.grey.withOpacity(0.5)),
-                        ),
-                        onPressed: () {
-                          _newPassword.clear();
-                          _newEmail.clear();
-                          _newConfirmPassword.clear();
-                          _currentPassword.clear();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          'Cancel',
-                          style: AppTextStyles.regularText15.copyWith(
-                            color: Colors.white,
-                          ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    if (type == _ModalType.password)
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CustomInput(
+                              obScurePassword: true,
+                              showSuffix: false,
+                              isRequired: true,
+                              isPassword: true,
+                              label: 'Enter new password',
+                              controller: _newPassword,
+                            ),
+                            SizedBox(height: 15.0),
+                            CustomInput(
+                              obScurePassword: true,
+                              showSuffix: false,
+                              isRequired: true,
+                              label: 'Confirm password',
+                              controller: _newConfirmPassword,
+                              validator: (value) {
+                                if (_newPassword.text != value) {
+                                  return 'Password fields do not match';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 5.0),
+                          ],
                         ),
                       ),
-                      TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.lightBlue3),
-                        ),
-                        onPressed: () {
-                          if (!_formKey.currentState.validate()) return null;
-                          _formKey.currentState.save();
-
-                          if (!isVerified)
-                            _verifyPassword(_user.email, type, ctx);
-                          else if (isVerified && type == _ModalType.email)
-                            _updateEmail(_user);
-                          else if (isVerified && type == _ModalType.password)
-                            _updatePassword();
-                        },
-                        child: Text(
-                          !isVerified ? 'Proceed' : 'Submit',
-                          style: AppTextStyles.regularText15.copyWith(
-                            color: Colors.white,
+                    // SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.grey.withOpacity(0.5)),
+                          ),
+                          onPressed: () {
+                            _newPassword.clear();
+                            _newEmail.clear();
+                            _newConfirmPassword.clear();
+                            _currentPassword.clear();
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: AppTextStyles.regularText15.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      )
-                    ],
-                  )
-                ],
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.lightBlue3),
+                          ),
+                          onPressed: () {
+                            if (!_formKey.currentState.validate()) return null;
+                            _formKey.currentState.save();
+                            _verifyPassword(
+                              _user,
+                              type,
+                              ctx,
+                            );
+                          },
+                          child: Text(
+                            'Submit',
+                            style: AppTextStyles.regularText15.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

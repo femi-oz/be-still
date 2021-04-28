@@ -11,7 +11,7 @@ class MiscProvider with ChangeNotifier {
   bool _disable = Settings.rememberMe ? false : true;
   bool get disable => _disable;
 
-  bool _search = true;
+  bool _search = false;
   bool get search => _search;
 
   setPageTitle(String title) {

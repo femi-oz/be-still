@@ -256,6 +256,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           .copyWith(color: AppColors.white)),
                 ),
                 onPressed: () {
+                  Settings.rememberMe
+                      ? Provider.of<MiscProvider>(context, listen: false)
+                          .setVisibility(false)
+                      : Provider.of<MiscProvider>(context, listen: false)
+                          .setVisibility(true);
                   Navigator.pushAndRemoveUntil(
                     context,
                     PageTransition(

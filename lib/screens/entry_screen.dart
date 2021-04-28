@@ -39,9 +39,9 @@ class _EntryScreenState extends State<EntryScreen> {
   @override
   void initState() {
     _currentIndex = widget.screenNumber;
-    final isSearchMode =
-        Provider.of<MiscProvider>(context, listen: false).search;
-    _switchSearchMode(isSearchMode);
+    // final isSearchMode =
+    //     Provider.of<MiscProvider>(context, listen: false).search;
+    // _switchSearchMode(isSearchMode);
     super.initState();
   }
 

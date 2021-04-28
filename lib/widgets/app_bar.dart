@@ -31,6 +31,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
+    print('got here');
+
     // var options =
     //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
     var userId =
@@ -160,6 +162,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       padding: 5.0,
                       showSuffix: false,
                       textInputAction: TextInputAction.done,
+                      submitForm: () => _searchPrayer(searchController.text),
+
                       // onTextchanged: _searchPrayer,
                     ),
                     // ),

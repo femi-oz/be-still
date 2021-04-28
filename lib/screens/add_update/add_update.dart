@@ -75,7 +75,7 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   Future<void> onCancel() async {
-    final dialog = AlertDialog(
+    AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
       backgroundColor: AppColors.prayerCardBgColor,
@@ -112,17 +112,22 @@ class _AddUpdateState extends State<AddUpdate> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: PrayerDetails(),
-                      ),
-                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: EntryScreen(
+                            screenNumber: 0,
+                          ),
+                        ),
+                      );
+                    },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: AppColors.grey,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -133,9 +138,9 @@ class _AddUpdateState extends State<AddUpdate> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'YES',
+                            'Discard Changes',
                             style: TextStyle(
-                              color: AppColors.lightBlue4,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -144,14 +149,16 @@ class _AddUpdateState extends State<AddUpdate> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: 20,
+                  ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+                    onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: Colors.blue,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -162,9 +169,9 @@ class _AddUpdateState extends State<AddUpdate> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'NO',
+                            'Resume Editing',
                             style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -211,8 +218,7 @@ class _AddUpdateState extends State<AddUpdate> {
                       InkWell(
                         child: Text(
                           'CANCEL',
-                          style: TextStyle(
-                              color: AppColors.lightBlue5, fontSize: 16),
+                          style: TextStyle(color: AppColors.grey, fontSize: 16),
                         ),
                         onTap: () => _descriptionController.text.isNotEmpty
                             ? onCancel()
@@ -229,7 +235,7 @@ class _AddUpdateState extends State<AddUpdate> {
                             style: TextStyle(
                                 color: _descriptionController.text.isEmpty
                                     ? AppColors.lightBlue5.withOpacity(0.5)
-                                    : AppColors.lightBlue5)),
+                                    : Colors.blue)),
                         onTap: () => _descriptionController.text.isNotEmpty
                             ? _save(prayerData.prayer.id)
                             : null,
