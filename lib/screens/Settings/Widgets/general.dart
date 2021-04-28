@@ -224,6 +224,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _updatePassword() async {
+    print('got here');
     try {
       // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
@@ -240,15 +241,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       _newPassword.clear();
       _newConfirmPassword.clear();
     } catch (e) {
-      var message = '';
-      print(e.message);
-      if (e.message == 'username or password is incorrect') {
-        message = 'Password is incorrect.';
-      } else {
-        message = e.message;
-      }
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, message);
+      BeStilDialog.showErrorDialog(context, e.message);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -273,9 +267,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       _currentPassword.clear();
-
+      var message = '';
+      if (e.message == 'Username / Password is incorrect' ||
+          e.message == 'The application has encountered an error.') {
+        message = 'Password is incorrect.';
+      } else {
+        message = e.message;
+      }
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      BeStilDialog.showErrorDialog(context, message);
     } catch (e) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
