@@ -128,7 +128,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             context,
             PageTransition(
                 type: PageTransitionType.leftToRightWithFade,
-                child: CreateAccountScreen()),
+                child: CreateAccountSuccess()),
             (Route<dynamic> route) => false,
           );
           // Navigator.of(context).pushNamedAndRemoveUntil(
