@@ -142,7 +142,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     ],
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 10),
                 _buildPanel(),
               ],
             ),
@@ -200,7 +200,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 35.0),
+        padding: EdgeInsets.only(top: 35, bottom: 200),
         child: Column(
           children: <Widget>[
             for (int i = 0; i < bibleData.length; i++)

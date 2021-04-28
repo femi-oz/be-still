@@ -61,6 +61,7 @@ class AppColors {
 
   static Color get inactveTabMenu =>
       getColor(darkMode, light: 0xFF009FD0, dark: 0xFF005780);
+
   static Color get actveTabMenu =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF009FD0);
 
