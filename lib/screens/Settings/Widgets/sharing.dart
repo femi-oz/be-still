@@ -3,6 +3,7 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -137,36 +138,48 @@ class _SharingSettingsState extends State<SharingSettings> {
                   ),
                 ),
                 SizedBox(height: 35),
-                _button(
-                  onPressed: () => _update(_ModalType.church, context),
+                CustomEditField(
                   value: settingProvider.sharingSettings.churchName == ''
                       ? '---------'
                       : settingProvider.sharingSettings.churchName,
-                  actionText: 'Church',
+                  onPressed: () {
+                    _update(_ModalType.church, context);
+                  },
+                  showLabel: true,
+                  label: 'Church',
                 ),
                 SizedBox(height: 15),
-                _button(
-                  onPressed: () => _update(_ModalType.email, context),
+                CustomEditField(
                   value: settingProvider.sharingSettings.churchEmail == ''
                       ? '---------'
                       : settingProvider.sharingSettings.churchEmail,
-                  actionText: 'Email',
+                  onPressed: () {
+                    _update(_ModalType.email, context);
+                  },
+                  showLabel: true,
+                  label: 'Email',
                 ),
                 SizedBox(height: 15),
-                _button(
-                  onPressed: () => _update(_ModalType.phone, context),
+                CustomEditField(
                   value: settingProvider.sharingSettings.churchPhone == ''
                       ? '---------'
                       : settingProvider.sharingSettings.churchPhone,
-                  actionText: 'Phone (mobile only)',
+                  onPressed: () {
+                    _update(_ModalType.phone, context);
+                  },
+                  showLabel: true,
+                  label: 'Phone (mobile only)',
                 ),
                 SizedBox(height: 15),
-                _button(
-                  onPressed: () => _update(_ModalType.link, context),
+                CustomEditField(
                   value: settingProvider.sharingSettings.webFormlink == ''
                       ? '---------'
                       : settingProvider.sharingSettings.webFormlink,
-                  actionText: 'Web Prayer Form',
+                  onPressed: () {
+                    _update(_ModalType.link, context);
+                  },
+                  showLabel: true,
+                  label: 'Web Prayer Form',
                 ),
               ],
             ),
