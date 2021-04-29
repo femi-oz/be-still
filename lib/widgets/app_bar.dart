@@ -31,9 +31,10 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
-    print(value);
-    var userId =
+    final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
         .searchPrayers(value, userId);
   }
@@ -93,8 +94,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         setState(() {});
                       } else {
                         _searchPrayer(searchController.text);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchQuery(searchController.text);
                       }
                     },
                     child: Icon(
@@ -130,9 +129,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       padding: 5.0,
                       showSuffix: false,
                       textInputAction: TextInputAction.done,
-                      submitForm: () => _searchPrayer(searchController.text),
-
-                      // onTextchanged: _searchPrayer,
                     ),
                     // ),
                   ),

@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
@@ -163,7 +165,8 @@ class _CustomInputState extends State<CustomInput> {
               ),
               obscureText: widget.obScurePassword,
               validator: (value) => _validatorFn(value),
-              onFieldSubmitted: (_) => {
+              onFieldSubmitted: (val) => {
+                    _searchPrayer(val),
                     widget.unfocus
                         ? FocusScope.of(context).unfocus()
                         : FocusScope.of(context).nextFocus(),
@@ -176,6 +179,15 @@ class _CustomInputState extends State<CustomInput> {
                 if (widget.onTextchanged != null) widget.onTextchanged(val);
               }),
     );
+  }
+
+  void _searchPrayer(String value) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
   }
 
   void setVisibilty(String value) {
