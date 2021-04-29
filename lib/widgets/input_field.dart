@@ -72,14 +72,6 @@ class _CustomInputState extends State<CustomInput> {
                         (widget.showSuffix && widget.controller.text != '')
                     ? widget.label
                     : '',
-                // suffixIcon: widget.showBiometric
-                //     ? IconButton(
-                //         icon: Icon(
-                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-                //         onPressed: () {
-                //           // widget.bioLogin;
-                //         })
-                //     : Container(),
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(
                     horizontal: 15, vertical: widget.padding),
