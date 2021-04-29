@@ -31,10 +31,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
-    print('got here');
+    print(value);
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-
     await Provider.of<PrayerProvider>(context, listen: false)
         .searchPrayers(value, userId);
   }
@@ -83,27 +82,30 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: <Widget>[
           SizedBox(width: 20),
           widget.showPrayerActions
-              ? InkWell(
-                  onTap: () {
-                    if (searchController.text.isEmpty) {
-                      widget.switchSearchMode(true);
-                      Provider.of<MiscProvider>(context, listen: false)
-                          .setSearchMode(true);
-                      setState(() {});
-                    } else {
-                      _searchPrayer(searchController.text);
-                      Provider.of<MiscProvider>(context, listen: false)
-                          .setSearchQuery(searchController.text);
-                    }
-                  },
-                  child: Icon(
-                    AppIcons.bestill_search,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
+              ? Container(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      if (searchController.text.isEmpty) {
+                        widget.switchSearchMode(true);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchMode(true);
+                        setState(() {});
+                      } else {
+                        _searchPrayer(searchController.text);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchQuery(searchController.text);
+                      }
+                    },
+                    child: Icon(
+                      AppIcons.bestill_search,
+                      color: AppColors.bottomNavIconColor,
+                      size: 18,
+                    ),
                   ),
                 )
               : Container(),
-          SizedBox(width: 15),
+          SizedBox(width: 10),
           widget.showPrayerActions && !widget.isSearchMode
               ? GestureDetector(
                   onTap: () => _openFilter(Settings.isDarkMode),
