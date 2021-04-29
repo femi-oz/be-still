@@ -45,6 +45,8 @@ class _PrayerListState extends State<PrayerList> {
             '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle(heading);
+        final _user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
       });
       setState(() => _isInit = false);
     }
@@ -56,8 +58,15 @@ class _PrayerListState extends State<PrayerList> {
     try {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      if (searchQuery.isNotEmpty) {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers(searchQuery, _user.id);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayers(_user?.id);
+      }
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e) {
@@ -141,12 +150,6 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    final searchQuery =
-        Provider.of<MiscProvider>(context, listen: false).searchQuery;
-    if (searchQuery.isNotEmpty) {
-      Provider.of<PrayerProvider>(context).searchPrayers(searchQuery, userId);
-    }
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
