@@ -6,7 +6,7 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/widgets/snackbar.dart';
+import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -299,8 +299,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     BsThemeMode.auto,
   ];
 
-  // Widget build
-
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
@@ -322,24 +320,25 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ],
           ),
           SizedBox(height: 30),
-          CustomOutlineButton(
-            actionColor: AppColors.lightBlue4,
-            actionText: 'UPDATE',
+          CustomEditField(
+            value: _currentUser.email,
             onPressed: () {
               setState(() => isVerified = false);
               _update(_ModalType.email, context);
             },
-            value: _currentUser.email,
+            showLabel: false,
+            label: 'Email',
           ),
+
           SizedBox(height: 10),
-          CustomOutlineButton(
-            actionColor: AppColors.lightBlue4,
-            actionText: 'UPDATE',
+          CustomEditField(
+            value: '',
             onPressed: () {
               setState(() => isVerified = false);
               _update(_ModalType.password, context);
             },
-            value: 'password',
+            showLabel: true,
+            label: 'Password',
           ),
           SizedBox(height: 15),
           CustomToggle(
