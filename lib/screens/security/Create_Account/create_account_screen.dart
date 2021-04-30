@@ -56,13 +56,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-    // _isUnderAge =
-    //     (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
-    //                 .isAfter(DateTime.now())
-    //             ? DateTime.now().year - pickedDate.year - 1
-    //             : DateTime.now().year - pickedDate.year) <
-    //         18;
-
     if (pickedDate == null) {
       return null;
     }
@@ -349,7 +342,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.transparent,
                 child: IgnorePointer(
                   child: CustomInput(
-                    label: 'Birthday',
+                    label: 'Date of Birth (optional)',
                     controller: _dobController,
                   ),
                 ),
