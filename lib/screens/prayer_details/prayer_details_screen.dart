@@ -163,6 +163,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     Navigator.of(context).pop();
+    setState(() => reminderString = notificationText);
   }
 
   @override

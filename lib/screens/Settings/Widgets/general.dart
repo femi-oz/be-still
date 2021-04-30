@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
@@ -184,9 +186,17 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     if (!Settings.enabledContactPermission && status.isGranted)
       setState(() => Settings.enabledContactPermission = true);
     //disabled and is permanently denied (iOS)
-    else if (!Settings.enabledContactPermission && status.isPermanentlyDenied) {
+    else if (!Settings.enabledContactPermission &&
+        (status.isPermanentlyDenied)) {
       _openContactConfirmation(context);
       setState(() => Settings.enabledContactPermission = true);
+    }
+    //disabled and denied and it's iOS
+    else if (!Settings.enabledContactPermission &&
+        status.isDenied &&
+        Platform.isIOS) {
+      _openContactConfirmation(context);
+      setState(() => Settings.enabledContactPermission = false);
     }
     //disabled and denied through popup
     else if (!Settings.enabledContactPermission && status.isDenied)
