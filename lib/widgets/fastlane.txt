@@ -17,7 +17,7 @@ fastlane pem —generate_p12 --force -u support@eminenttechnology.com -p "time2P
 fastlane pem —generate_p12 --force -u support@eminenttechnology.com -p "time2PRAY" -b 9DPT62GHB3 -a org.second.bestill.dev -o "bestill.dev.pem"
 fastlane pem —generate_p12 --force -u support@eminenttechnology.com -p "time2PRAY" -b 9DPT62GHB3 -a org.second.bestill.test -o "bestill.test.pem"
 fastlane pem —generate_p12 --force -u support@eminenttechnology.com -p "time2PRAY" -b 9DPT62GHB3 -a org.second.bestill.prod -o "bestill.prod.pem"
-fastlane pem —generate_p12 --force -u support@eminenttechnology.com -p "time2PRAY" -b 9DPT62GHB3 -a org.second.bestill -o "bestill.pem"
+fastlane pem —generate_p12 --force -u support@eminenttechnology.com -p "time2PRAY" -b 9DPT62GHB3 -a org.second.bestill.v2 -o "bestill.pem"
 
 --force is not required and typically should only be used if you need certificate generated and the previously generated certificate has not yet expired.
 -p is the password set on the p12 file
@@ -63,7 +63,7 @@ fastlane match adhoc -u support@eminenttechnology.com -b 9DPT62GHB3 -a org.secon
 fastlane match adhoc -u support@eminenttechnology.com -b 9DPT62GHB3 -a org.second.bestill.prod
 
 be still store
-fastlane match appstore -u support@eminenttechnology.com -b 9DPT62GHB3 -a org.second.bestill
+fastlane match appstore -u support@eminenttechnology.com -b 9DPT62GHB3 -a org.second.bestill.v2
 ——
 to add new devices run the above code with force_for_new_devices
 
