@@ -6,6 +6,7 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -233,6 +234,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _updatePassword() async {
+    print('got here');
     try {
       // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
@@ -250,7 +252,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       _newConfirmPassword.clear();
     } catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      BeStilDialog.showErrorDialog(context, e.message);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -275,9 +277,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       Navigator.of(context).pop();
     } on HttpException catch (e) {
       _currentPassword.clear();
-
+      var message = '';
+      if (e.message == 'Username / Password is incorrect' ||
+          e.message == 'The application has encountered an error.') {
+        message = 'Password is incorrect.';
+      } else {
+        message = e.message;
+      }
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      BeStilDialog.showErrorDialog(context, message);
     } catch (e) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
@@ -312,24 +320,25 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ],
           ),
           SizedBox(height: 30),
-          CustomOutlineButton(
-            actionColor: AppColors.lightBlue4,
-            actionText: 'UPDATE',
+          CustomEditField(
+            value: _currentUser.email,
             onPressed: () {
               setState(() => isVerified = false);
               _update(_ModalType.email, context);
             },
-            value: _currentUser.email,
+            showLabel: false,
+            label: 'Email',
           ),
+
           SizedBox(height: 10),
-          CustomOutlineButton(
-            actionColor: AppColors.lightBlue4,
-            actionText: 'UPDATE',
+          CustomEditField(
+            value: '',
             onPressed: () {
               setState(() => isVerified = false);
               _update(_ModalType.password, context);
             },
-            value: 'password',
+            showLabel: true,
+            label: 'Password',
           ),
           SizedBox(height: 15),
           CustomToggle(
@@ -437,7 +446,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         showSuffix: false,
                         isRequired: true,
                         isEmail: true,
-                        label: 'Enter new email',
+                        label: 'New Email',
                         controller: _newEmail,
                       ),
                     SizedBox(
@@ -448,7 +457,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       isRequired: true,
                       obScurePassword: true,
                       isPassword: true,
-                      label: 'Enter current password',
+                      label: 'Current Password',
                       controller: _currentPassword,
                     ),
                     SizedBox(
@@ -464,7 +473,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               showSuffix: false,
                               isRequired: true,
                               isPassword: true,
-                              label: 'Enter new password',
+                              label: 'New Password',
                               controller: _newPassword,
                             ),
                             SizedBox(height: 15.0),
@@ -472,7 +481,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               obScurePassword: true,
                               showSuffix: false,
                               isRequired: true,
-                              label: 'Confirm password',
+                              label: 'Confirm Password',
                               controller: _newConfirmPassword,
                               validator: (value) {
                                 if (_newPassword.text != value) {

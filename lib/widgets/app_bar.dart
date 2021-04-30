@@ -31,23 +31,10 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   void _searchPrayer(String value) async {
-    print('got here');
-
-    // var options =
-    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-    var userId =
+    final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    // if (options.contains(Status.archived)) {
-    //   await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
-    //       value,
-    //       Provider.of<SettingsProvider>(context, listen: false)
-    //           .settings
-    //           .archiveSortBy,
-    //       userId);
-    // } else {
-
-    // }
-    //
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
         .searchPrayers(value, userId);
   }
@@ -58,24 +45,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   _openFilter(bool isDark) {
-    // showModalBottomSheet(
-    //   context: context,
-    //   barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
-    //   backgroundColor: AppColors.darkMode
-    //       ? AppColors.addPrayerBg.withOpacity(0.8)
-    //       : AppColors.offWhite4.withOpacity(0.8),
-    //   isScrollControlled: true,
-    //   builder: (BuildContext context) {
-    //     return PrayerFilters();
-    //   },
-    // );
-    //
-    // BeStilDialog.showConfirmDialog(context,
-    //     message: 'This feature will be available soon.');
-    //
-    Dialog dialog = Dialog(
-        // actionsPadding: EdgeInsets.all(0),
-        // contentPadding: EdgeInsets.all(0),
+    final dialog = Dialog(
         insetPadding: EdgeInsets.all(40),
         backgroundColor: AppColors.prayerCardBgColor,
         shape: RoundedRectangleBorder(
@@ -95,10 +65,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-
-    // List<PushNotificationModel> notifications =
-    //     Provider.of<NotificationProvider>(context).notifications;
-
     return AppBar(
       flexibleSpace: Container(
         decoration: BoxDecoration(
@@ -117,27 +83,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: <Widget>[
           SizedBox(width: 20),
           widget.showPrayerActions
-              ? GestureDetector(
-                  onTap: () {
-                    if (searchController.text.isEmpty) {
-                      widget.switchSearchMode(true);
-                      Provider.of<MiscProvider>(context, listen: false)
-                          .setSearchMode(true);
-                      setState(() {});
-                    } else {
-                      _searchPrayer(searchController.text);
-                      Provider.of<MiscProvider>(context, listen: false)
-                          .setSearchQuery(searchController.text);
-                    }
-                  },
-                  child: Icon(
-                    AppIcons.bestill_search,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
+              ? Container(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      if (searchController.text.isEmpty) {
+                        widget.switchSearchMode(true);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchMode(true);
+                        setState(() {});
+                      } else {
+                        _searchPrayer(searchController.text);
+                      }
+                    },
+                    child: Icon(
+                      AppIcons.bestill_search,
+                      color: AppColors.bottomNavIconColor,
+                      size: 18,
+                    ),
                   ),
                 )
               : Container(),
-          SizedBox(width: 15),
+          SizedBox(width: 10),
           widget.showPrayerActions && !widget.isSearchMode
               ? GestureDetector(
                   onTap: () => _openFilter(Settings.isDarkMode),
@@ -162,9 +129,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       padding: 5.0,
                       showSuffix: false,
                       textInputAction: TextInputAction.done,
-                      submitForm: () => _searchPrayer(searchController.text),
-
-                      // onTextchanged: _searchPrayer,
                     ),
                     // ),
                   ),

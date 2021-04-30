@@ -373,8 +373,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                     InkWell(
                                       child: GestureDetector(
                                         child: Icon(
-                                          AppIcons.bestill_delete,
-                                          size: 16,
+                                          AppIcons.bestill_close,
+                                          size: 18,
                                           color: AppColors.lightBlue3,
                                         ),
                                         onTap: () {
