@@ -38,9 +38,6 @@ class _EntryScreenState extends State<EntryScreen>
   void initState() {
     _currentIndex =
         Provider.of<MiscProvider>(context, listen: false).currentPage;
-    // final isSearchMode =
-    //     Provider.of<MiscProvider>(context, listen: false).search;
-    // _switchSearchMode(isSearchMode);
     _isInit = false;
     super.initState();
   }
