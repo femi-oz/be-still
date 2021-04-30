@@ -220,8 +220,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.of(context)
-                                  .pushReplacementNamed(EntryScreen.routeName),
+                              onTap: () => Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.leftToRightWithFade,
+                                  child: EntryScreen(),
+                                ),
+                              ),
                               child: Text("MY LIST",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
@@ -270,9 +275,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.of(context)
-                                  .pushReplacementNamed(
-                                      SettingsScreen.routeName),
+                              onTap: () => Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: SettingsScreen(),
+                                ),
+                              ),
                               child: Text("SETTINGS",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),

@@ -38,9 +38,6 @@ class _EntryScreenState extends State<EntryScreen>
   void initState() {
     _currentIndex =
         Provider.of<MiscProvider>(context, listen: false).currentPage;
-    // final isSearchMode =
-    //     Provider.of<MiscProvider>(context, listen: false).search;
-    // _switchSearchMode(isSearchMode);
     _isInit = false;
     super.initState();
   }
@@ -132,12 +129,6 @@ class _EntryScreenState extends State<EntryScreen>
           _currentIndex == 3 ? null : _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
     );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
   }
 
   void showInfoModal() {
