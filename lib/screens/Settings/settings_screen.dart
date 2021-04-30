@@ -1,6 +1,5 @@
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';

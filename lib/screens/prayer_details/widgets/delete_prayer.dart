@@ -8,9 +8,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import '../../entry_screen.dart';
 
 class DeletePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;

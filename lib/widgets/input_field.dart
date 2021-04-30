@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';

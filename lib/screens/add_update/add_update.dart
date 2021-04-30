@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -15,8 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-
-import '../entry_screen.dart';
 
 class AddUpdate extends StatefulWidget {
   static const routeName = 'update-prayer';
