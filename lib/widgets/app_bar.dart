@@ -29,7 +29,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  final TextEditingController searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   void _searchPrayer(String value) async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -40,7 +40,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   void _clearSearchField() async {
-    searchController.clear();
+    _searchController.clear();
     _searchPrayer('');
   }
 
@@ -65,6 +65,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
+
     return AppBar(
       flexibleSpace: Container(
         decoration: BoxDecoration(
@@ -87,13 +88,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () {
-                      if (searchController.text.isEmpty) {
+                      if (_searchController.text.isEmpty) {
                         widget.switchSearchMode(true);
                         Provider.of<MiscProvider>(context, listen: false)
                             .setSearchMode(true);
                         setState(() {});
                       } else {
-                        _searchPrayer(searchController.text);
+                        _searchPrayer(_searchController.text);
                       }
                     },
                     child: Icon(
@@ -124,7 +125,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 children: [
                   Expanded(
                     child: CustomInput(
-                      controller: searchController,
+                      controller: _searchController,
                       label: 'Search',
                       padding: 5.0,
                       showSuffix: false,
