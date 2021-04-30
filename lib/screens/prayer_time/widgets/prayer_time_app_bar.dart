@@ -1,6 +1,7 @@
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -37,8 +38,7 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
                 size: 20,
               ),
               onPressed: () {
-                Navigator.of(context)
-                    .pushReplacementNamed(EntryScreen.routeName);
+                NavigationService.instance.goback();
               },
             ),
           ],

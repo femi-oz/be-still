@@ -1,10 +1,16 @@
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
+import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/screens/groups/groups_screen.dart';
+import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/app_drawer.dart';
@@ -17,12 +23,18 @@ class SettingsScreen extends StatefulWidget {
   _SettingsScreenPage createState() => _SettingsScreenPage();
 }
 
+bool _isSearchMode = false;
+
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
+  int _currentIndex = 0;
+
   TabController tabController;
 
   @override
   void initState() {
+    _currentIndex =
+        Provider.of<MiscProvider>(context, listen: false).currentPage;
     super.initState();
     tabController = new TabController(length: 5, vsync: this);
   }
@@ -33,12 +45,154 @@ class _SettingsScreenPage extends State<SettingsScreen>
     super.dispose();
   }
 
+  void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
+
+  void showInfoModal() {
+    final dialogContent = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.25,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Text(
+                'This feature will be available soon.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue4,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .60,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'OK',
+                            style: TextStyle(
+                              color: AppColors.lightBlue4,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+    showDialog(
+        context: context, builder: (BuildContext context) => dialogContent);
+  }
+
+  Widget _createBottomNavigationBar() {
+    return Builder(builder: (BuildContext context) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: AppColors.appBarBackground,
+            begin: Alignment.topLeft,
+            end: Alignment.topRight,
+            stops: [0.0, 0.8],
+            tileMode: TileMode.clamp,
+          ),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            print(index);
+            switch (index) {
+              case 0:
+                NavigationService.instance.goHome(0);
+                break;
+              case 1:
+                showInfoModal();
+                break;
+              case 2:
+                Provider.of<MiscProvider>(context, listen: false)
+                    .setCurrentPage(index);
+                NavigationService.instance.navigateToReplacement(AddPrayer(
+                  isEdit: false,
+                  isGroup: false,
+                  showCancel: false,
+                ));
+                break;
+              case 3:
+                NavigationService.instance.navigateToReplacement(PrayerTime());
+                break;
+              case 4:
+                Scaffold.of(context).openEndDrawer();
+                break;
+              default:
+                _currentIndex = index;
+                _switchSearchMode(false);
+                break;
+            }
+          },
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          backgroundColor: Colors.transparent,
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          unselectedItemColor: AppColors.bottomNavIconColor,
+          selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
+          items: [
+            for (final tabItem in TabNavigationItem.items)
+              BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
+          ],
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: SettingsAppBar(),
-        endDrawer: CustomDrawer(),
-        body: SettingsTab());
+      appBar: SettingsAppBar(),
+      endDrawer: CustomDrawer(),
+      body: SettingsTab(),
+      bottomNavigationBar:
+          _currentIndex == 3 ? null : _createBottomNavigationBar(),
+    );
   }
 }
 
@@ -97,11 +251,7 @@ class SettingsTabState extends State<SettingsTab>
                     blurRadius: 5.0,
                   ),
                 ],
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: AppColors.prayerMenu,
-                ),
+                color: AppColors.tabBackground,
               ),
               height: 50.0,
               child: new TabBar(
@@ -162,4 +312,59 @@ class SettingsTabState extends State<SettingsTab>
       ),
     );
   }
+}
+
+class TabNavigationItem {
+  final Widget page;
+  final String title;
+  final Icon icon;
+
+  TabNavigationItem({
+    @required this.page,
+    @required this.title,
+    @required this.icon,
+  });
+
+  static List<TabNavigationItem> get items => [
+        TabNavigationItem(
+          page: PrayerList(),
+          icon: Icon(
+            Icons.home,
+            size: 26,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "prayer",
+        ),
+        TabNavigationItem(
+          page: GroupScreen(),
+          icon: Icon(AppIcons.bestill_groups,
+              size: 18, color: AppColors.bottomNavIconColor),
+          title: "group",
+        ),
+        TabNavigationItem(
+          page: AddPrayer(
+            isEdit: false,
+            isGroup: false,
+            showCancel: false,
+          ),
+          icon: Icon(AppIcons.bestill_add,
+              size: 18, color: AppColors.bottomNavIconColor),
+          title: "add prayer",
+        ),
+        TabNavigationItem(
+          page: PrayerTime(),
+          icon: Icon(AppIcons.bestill_menu_logo_lt,
+              size: 18, color: AppColors.bottomNavIconColor),
+          title: "grow my prayer life",
+        ),
+        TabNavigationItem(
+          page: null,
+          icon: Icon(
+            AppIcons.bestill_main_menu,
+            size: 18,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "Main Menu",
+        ),
+      ];
 }
