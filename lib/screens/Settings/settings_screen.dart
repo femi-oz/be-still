@@ -3,7 +3,6 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
