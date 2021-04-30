@@ -135,35 +135,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       ),
                     ),
                   ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.of(context).pop();
-                  //   },
-                  //   child: Container(
-                  //     height: 30,
-                  //     width: MediaQuery.of(context).size.width * .20,
-                  //     decoration: BoxDecoration(
-                  //       border: Border.all(
-                  //         color: AppColors.cardBorder,
-                  //         width: 1,
-                  //       ),
-                  //       borderRadius: BorderRadius.circular(5),
-                  //     ),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       children: <Widget>[
-                  //         Text(
-                  //           'CANCEL',
-                  //           style: TextStyle(
-                  //             color: AppColors.red,
-                  //             fontSize: 14,
-                  //             fontWeight: FontWeight.w500,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             )
@@ -328,7 +299,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             showLabel: false,
             label: 'Email',
           ),
-
           SizedBox(height: 10),
           CustomEditField(
             value: '',
@@ -366,45 +336,17 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           ),
           SizedBox(height: 35),
           CustomSectionHeder('App Version'),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       vertical: 40.0, horizontal: 20.0),
-          //   child: Row(
-          //     children: [
-          //       CustomButtonGroup(
-          //         onSelected: () => null,
-          //         title: 'EXPORT',
-          //       ),
-          //     ],
-          //   ),
-          // ),
           SizedBox(height: 30),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Text('App is running the latest version',
-                //     style: AppTextStyles.regularText15
-                //         .copyWith(color: AppColors.textFieldText)),
                 Text(_version, style: AppTextStyles.regularText15),
               ],
             ),
           ),
           SizedBox(height: 30),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       vertical: 40.0, horizontal: 20.0),
-          //   child: Row(
-          //     children: [
-          //       CustomButtonGroup(
-          //         onSelected: () => null,
-          //         title: 'DELETE ACCOUNT & ALL DATA',
-          //         color: AppColors.red,
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

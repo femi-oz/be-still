@@ -220,21 +220,6 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.pushReplacement(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.leftToRightWithFade,
-                                  child: EntryScreen(),
-                                ),
-                              ),
-                              child: Text("MY LIST",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
                               onTap: () =>
                                   _launchURL('https://my.bible.com/bible'),
                               child: Text("BIBLE APP",
