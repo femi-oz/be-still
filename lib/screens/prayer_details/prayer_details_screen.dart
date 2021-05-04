@@ -4,6 +4,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -81,7 +82,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      getSettings();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('');
+        getSettings();
+      });
       _isInit = false;
     }
     super.didChangeDependencies();

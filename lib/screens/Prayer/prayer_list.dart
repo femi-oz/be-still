@@ -44,8 +44,6 @@ class _PrayerListState extends State<PrayerList> {
             '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle(heading);
-        final _user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
       });
       setState(() => _isInit = false);
     }
