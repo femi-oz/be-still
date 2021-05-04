@@ -111,7 +111,7 @@ class _AddUpdateState extends State<AddUpdate> {
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -202,16 +202,16 @@ class _AddUpdateState extends State<AddUpdate> {
                       InkWell(
                           child: Text(
                             'CANCEL',
-                            style: TextStyle(
-                                color: AppColors.lightBlue5, fontSize: 16),
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
                           ),
                           onTap: () => _descriptionController.text.isNotEmpty
                               ? onCancel()
                               : NavigationService.instance.goHome(0)),
                       InkWell(
                         child: Text('SAVE',
-                            style: TextStyle(
-                                color: _descriptionController.text.isEmpty
+                            style: AppTextStyles.boldText18.copyWith(
+                                color: _descriptionController.text.isNotEmpty
                                     ? AppColors.lightBlue5.withOpacity(0.5)
                                     : Colors.blue)),
                         onTap: () => _descriptionController.text.isNotEmpty

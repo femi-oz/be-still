@@ -320,7 +320,7 @@ class TabNavigationItem {
           page: GroupScreen(),
           icon: Icon(AppIcons.bestill_groups,
               size: 16, color: AppColors.bottomNavIconColor),
-          title: "Group",
+          title: "Groups",
         ),
         TabNavigationItem(
           page: AddPrayer(

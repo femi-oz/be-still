@@ -131,9 +131,9 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: double.infinity,
                     margin: EdgeInsets.all(40),
                     decoration: BoxDecoration(
-                      color: AppColors.grey,
+                      color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -160,9 +160,9 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: double.infinity,
                     margin: EdgeInsets.all(40),
                     decoration: BoxDecoration(
-                      color: AppColors.grey,
+                      color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -196,7 +196,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     height: 30,
                     width: MediaQuery.of(context).size.width * .38,
                     decoration: BoxDecoration(
-                      color: AppColors.grey,
+                      color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
                         color: AppColors.cardBorder,
                         width: 1,

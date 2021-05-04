@@ -130,7 +130,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       showSuffix: false,
                       textInputAction: TextInputAction.done,
                     ),
-                    // ),
                   ),
                   SizedBox(width: 10),
                   InkWell(
@@ -165,7 +164,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
       actions: <Widget>[
-        widget.showPrayerActions && !widget.isSearchMode
+        !widget.isSearchMode
             ? IconButton(
                 icon: Icon(
                   Icons.notifications_none,

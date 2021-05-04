@@ -224,22 +224,20 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      widget.isEdit
-                          ? Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: PrayerDetails(),
-                              ),
-                            )
-                          : NavigationService.instance.goHome(0);
-                    },
+                    onTap: () => widget.isEdit
+                        ? Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: PrayerDetails(),
+                            ),
+                          )
+                        : NavigationService.instance.goHome(0),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -335,9 +333,11 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Text('CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey)),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
+                          ),
                           onTap: () => isValid
                               ? onCancel()
                               : widget.isEdit
@@ -345,7 +345,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                       context,
                                       PageTransition(
                                         type: PageTransitionType
-                                            .leftToRightWithFade,
+                                            .rightToLeftWithFade,
                                         child: PrayerDetails(),
                                       ),
                                     )

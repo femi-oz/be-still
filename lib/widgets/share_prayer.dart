@@ -60,7 +60,7 @@ class _SharePrayerState extends State<SharePrayer> {
 
     await sendSMS(
             message:
-                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.prayer.createdOn)}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : ''}$_footerText",
+                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.prayer.createdOn)}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
             recipients: isChurch ? [_churchPhone] : [])
         .catchError((onError) {
       print(onError);

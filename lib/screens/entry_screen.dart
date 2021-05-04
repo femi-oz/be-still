@@ -120,8 +120,9 @@ class _EntryScreenState extends State<EntryScreen>
               ),
             ),
             child: Transform.translate(
-                offset: Offset(animation?.value ?? 0, 0),
-                child: TabNavigationItem.items[_currentIndex].page),
+              offset: Offset(animation?.value ?? 0, 0),
+              child: TabNavigationItem.items[_currentIndex].page,
+            ),
           );
         },
       ),
@@ -297,7 +298,7 @@ class TabNavigationItem {
           page: GroupScreen(),
           icon: Icon(AppIcons.bestill_groups,
               size: 16, color: AppColors.bottomNavIconColor),
-          title: "Group",
+          title: "Groups",
         ),
         TabNavigationItem(
           page: AddPrayer(

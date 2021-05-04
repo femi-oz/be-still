@@ -92,7 +92,7 @@ class CustomDrawer extends StatelessWidget {
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
