@@ -275,13 +275,6 @@ class SettingsTabState extends State<SettingsTab>
             ),
           ),
           body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
-            ),
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [

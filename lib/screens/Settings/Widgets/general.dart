@@ -272,82 +272,91 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 30),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                ),
-                child: Text(
-                  '${_currentUser.firstName} ${_currentUser.lastName}',
-                  style: AppTextStyles.boldText30.copyWith(height: 1),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 30),
-          CustomEditField(
-            value: _currentUser.email,
-            onPressed: () {
-              setState(() => isVerified = false);
-              _update(_ModalType.email, context);
-            },
-            showLabel: false,
-            label: 'Email',
-          ),
-          SizedBox(height: 10),
-          CustomEditField(
-            value: '',
-            onPressed: () {
-              setState(() => isVerified = false);
-              _update(_ModalType.password, context);
-            },
-            showLabel: true,
-            label: 'Password',
-          ),
-          SizedBox(height: 15),
-          CustomToggle(
-            onChange: (value) => _setPermission(),
-            title: 'Allow Be Still to access contacts?',
-            value: Settings.enabledContactPermission,
-          ),
-          SizedBox(height: 20),
-          CustomSectionHeder('App Appearance'),
-          SizedBox(height: 35),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                for (int i = 0; i < _themeModes.length; i++)
-                  CustomButtonGroup(
-                    isSelected: _themeProvider.currentTheme == _themeModes[i],
-                    length: _themeModes.length,
-                    onSelected: (value) => _themeProvider.changeTheme(value),
-                    title: _themeModes[i],
-                    index: i,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.backgroundColor,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 30),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
                   ),
+                  child: Text(
+                    '${_currentUser.firstName} ${_currentUser.lastName}',
+                    style: AppTextStyles.boldText30.copyWith(height: 1),
+                  ),
+                ),
               ],
             ),
-          ),
-          SizedBox(height: 35),
-          CustomSectionHeder('App Version'),
-          SizedBox(height: 30),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(_version, style: AppTextStyles.regularText15),
-              ],
+            SizedBox(height: 30),
+            CustomEditField(
+              value: _currentUser.email,
+              onPressed: () {
+                setState(() => isVerified = false);
+                _update(_ModalType.email, context);
+              },
+              showLabel: false,
+              label: 'Email',
             ),
-          ),
-          SizedBox(height: 30),
-        ],
+            SizedBox(height: 10),
+            CustomEditField(
+              value: '',
+              onPressed: () {
+                setState(() => isVerified = false);
+                _update(_ModalType.password, context);
+              },
+              showLabel: true,
+              label: 'Password',
+            ),
+            SizedBox(height: 15),
+            CustomToggle(
+              onChange: (value) => _setPermission(),
+              title: 'Allow Be Still to access contacts?',
+              value: Settings.enabledContactPermission,
+            ),
+            SizedBox(height: 20),
+            CustomSectionHeder('App Appearance'),
+            SizedBox(height: 35),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  for (int i = 0; i < _themeModes.length; i++)
+                    CustomButtonGroup(
+                      isSelected: _themeProvider.currentTheme == _themeModes[i],
+                      length: _themeModes.length,
+                      onSelected: (value) => _themeProvider.changeTheme(value),
+                      title: _themeModes[i],
+                      index: i,
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 35),
+            CustomSectionHeder('App Version'),
+            SizedBox(height: 30),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(_version, style: AppTextStyles.regularText15),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }

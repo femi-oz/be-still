@@ -131,102 +131,95 @@ class _SharingSettingsState extends State<SharingSettings> {
   @override
   Widget build(BuildContext context) {
     final settingProvider = Provider.of<SettingsProvider>(context);
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 15),
-          // CustomSectionHeder('Preferences'),
-          // // SizedBox(height: 30),
-          // CustomToggle(
-          //   title: 'Enable sharing via text?',
-          //   onChange: (value) => settingProvider.updateSharingSettings(userId,
-          //       key: SettingsKey.enableSharingViaText,
-          //       value: value,
-          //       settingsId: settingProvider.sharingSettings.id),
-          //   value: settingProvider.sharingSettings.enableSharingViaText,
-          // ),
-          // CustomToggle(
-          //   title: 'Enable sharing via email?',
-          //   onChange: (value) => settingProvider.updateSharingSettings(userId,
-          //       key: SettingsKey.enableSharingViaEmail,
-          //       value: value,
-          //       settingsId: settingProvider.sharingSettings.id),
-          //   value: settingProvider.sharingSettings.enableSharingViaEmail,
-          // ),
-          // SizedBox(height: 30),
-          //method hidelAllTextFieled
-          GestureDetector(
-            onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-            child: Column(
-              children: [
-                CustomSectionHeder('With My Church'),
-                SizedBox(height: 35),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    'Set your Church\'s preferred method of submitting prayers here to save it as a quick selection in the sharing options.',
-                    style: AppTextStyles.regularText15
-                        .copyWith(color: AppColors.textFieldText),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.backgroundColor,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 15),
+            GestureDetector(
+              onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+              child: Column(
+                children: [
+                  CustomSectionHeder('With My Church'),
+                  SizedBox(height: 35),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Set your Church\'s preferred method of submitting prayers here to save it as a quick selection in the sharing options.',
+                      style: AppTextStyles.regularText15
+                          .copyWith(color: AppColors.textFieldText),
+                    ),
                   ),
-                ),
-                SizedBox(height: 35),
-                !showChurchEditField
-                    ? CustomEditField(
-                        value: settingProvider.sharingSettings.churchName == ''
-                            ? '---------'
-                            : settingProvider.sharingSettings.churchName,
-                        onPressed: () {
-                          toggleForm('church');
-                        },
-                        showLabel: true,
-                        label: 'Church',
-                      )
-                    : _update(_ModalType.church, context),
-                SizedBox(height: 15),
-                !showEmailEditField
-                    ? CustomEditField(
-                        value: settingProvider.sharingSettings.churchEmail == ''
-                            ? '---------'
-                            : settingProvider.sharingSettings.churchEmail,
-                        onPressed: () {
-                          toggleForm('email');
-                        },
-                        showLabel: true,
-                        label: 'Email',
-                      )
-                    : _update(_ModalType.email, context),
-                SizedBox(height: 15),
-                !showPhoneEditField
-                    ? CustomEditField(
-                        value: settingProvider.sharingSettings.churchPhone == ''
-                            ? '---------'
-                            : settingProvider.sharingSettings.churchPhone,
-                        onPressed: () {
-                          toggleForm('phone');
-                        },
-                        showLabel: true,
-                        label: 'Phone (mobile only)',
-                      )
-                    : _update(_ModalType.phone, context),
-                SizedBox(height: 15),
-                !showUrlEditField
-                    ? CustomEditField(
-                        value: settingProvider.sharingSettings.webFormlink == ''
-                            ? '---------'
-                            : settingProvider.sharingSettings.webFormlink,
-                        onPressed: () {
-                          toggleForm('url');
-                        },
-                        showLabel: true,
-                        label: 'Web Prayer Form',
-                      )
-                    : _update(_ModalType.link, context),
-              ],
+                  SizedBox(height: 35),
+                  !showChurchEditField
+                      ? CustomEditField(
+                          value:
+                              settingProvider.sharingSettings.churchName == ''
+                                  ? '---------'
+                                  : settingProvider.sharingSettings.churchName,
+                          onPressed: () {
+                            toggleForm('church');
+                          },
+                          showLabel: true,
+                          label: 'Church',
+                        )
+                      : _update(_ModalType.church, context),
+                  SizedBox(height: 15),
+                  !showEmailEditField
+                      ? CustomEditField(
+                          value:
+                              settingProvider.sharingSettings.churchEmail == ''
+                                  ? '---------'
+                                  : settingProvider.sharingSettings.churchEmail,
+                          onPressed: () {
+                            toggleForm('email');
+                          },
+                          showLabel: true,
+                          label: 'Email',
+                        )
+                      : _update(_ModalType.email, context),
+                  SizedBox(height: 15),
+                  !showPhoneEditField
+                      ? CustomEditField(
+                          value:
+                              settingProvider.sharingSettings.churchPhone == ''
+                                  ? '---------'
+                                  : settingProvider.sharingSettings.churchPhone,
+                          onPressed: () {
+                            toggleForm('phone');
+                          },
+                          showLabel: true,
+                          label: 'Phone (mobile only)',
+                        )
+                      : _update(_ModalType.phone, context),
+                  SizedBox(height: 15),
+                  !showUrlEditField
+                      ? CustomEditField(
+                          value:
+                              settingProvider.sharingSettings.webFormlink == ''
+                                  ? '---------'
+                                  : settingProvider.sharingSettings.webFormlink,
+                          onPressed: () {
+                            toggleForm('url');
+                          },
+                          showLabel: true,
+                          label: 'Web Prayer Form',
+                        )
+                      : _update(_ModalType.link, context),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 100),
-        ],
+            SizedBox(height: 100),
+          ],
+        ),
       ),
     );
   }
@@ -240,17 +233,6 @@ class _SharingSettingsState extends State<SharingSettings> {
     _churchLink.text = sharingSettings.webFormlink;
 
     final _formKey = GlobalKey<FormState>();
-    // final alert = AlertDialog(
-    //   insetPadding: EdgeInsets.symmetric(horizontal: 10),
-    //   backgroundColor: AppColors.backgroundColor[1],
-    //   content:
-    // );
-    // showDialog(
-    //     context: ctx,
-    //     builder: (BuildContext context) {
-    //       return alert;
-    //     });
-    //
     return Container(
       padding: EdgeInsets.only(right: 39),
       width: MediaQuery.of(context).size.width - 40,
