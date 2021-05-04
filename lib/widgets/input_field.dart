@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -80,8 +78,7 @@ class _CustomInputState extends State<CustomInput> {
                         ? AppColors.offWhite2
                         : AppColors.grey4),
                 counterText: '',
-                hintText:
-                    widget.isRequired ? '${widget.label} \*' : widget.label,
+                hintText: widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
                 errorBorder: new OutlineInputBorder(
                   borderSide: new BorderSide(color: Colors.redAccent),
@@ -117,14 +114,6 @@ class _CustomInputState extends State<CustomInput> {
                         (widget.showSuffix && widget.controller.text != '')
                     ? widget.label
                     : '',
-                // suffixIcon: widget.showBiometric
-                //     ? IconButton(
-                //         icon: Icon(
-                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-                //         onPressed: () {
-                //           // widget.bioLogin;
-                //         })
-                //     : Container(),
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(
                     horizontal: 15, vertical: widget.padding),
@@ -133,8 +122,7 @@ class _CustomInputState extends State<CustomInput> {
                         ? AppColors.offWhite2
                         : AppColors.prayerTextColor),
                 counterText: '',
-                hintText:
-                    widget.isRequired ? '${widget.label} \*' : widget.label,
+                hintText: widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
                 errorBorder: new OutlineInputBorder(
                   borderSide: new BorderSide(color: Colors.redAccent),

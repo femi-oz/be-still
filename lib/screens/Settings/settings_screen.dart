@@ -15,6 +15,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -22,8 +23,6 @@ class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenPage createState() => _SettingsScreenPage();
 }
-
-bool _isSearchMode = false;
 
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
@@ -44,8 +43,6 @@ class _SettingsScreenPage extends State<SettingsScreen>
     tabController.dispose();
     super.dispose();
   }
-
-  void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
 
   void showInfoModal() {
     final dialogContent = AlertDialog(
@@ -147,33 +144,33 @@ class _SettingsScreenPage extends State<SettingsScreen>
               case 1:
                 showInfoModal();
                 break;
-              case 2:
-                Provider.of<MiscProvider>(context, listen: false)
-                    .setCurrentPage(index);
-                NavigationService.instance.navigateToReplacement(AddPrayer(
-                  isEdit: false,
-                  isGroup: false,
-                  showCancel: false,
-                ));
-                break;
-              case 3:
-                NavigationService.instance.navigateToReplacement(PrayerTime());
-                break;
               case 4:
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                _currentIndex = index;
-                _switchSearchMode(false);
+                Provider.of<MiscProvider>(context, listen: false)
+                    .setCurrentPage(index);
+                Navigator.pushReplacement(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.leftToRightWithFade,
+                      child: EntryScreen(),
+                    ));
                 break;
             }
           },
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          unselectedItemColor: AppColors.bottomNavIconColor,
+          selectedLabelStyle: AppTextStyles.boldText14
+              .copyWith(color: AppColors.bottomNavIconColor, height: 1.3),
+          unselectedLabelStyle: AppTextStyles.boldText14.copyWith(
+              color: AppColors.bottomNavIconColor.withOpacity(0.5),
+              height: 1.4),
+          unselectedItemColor: AppColors.bottomNavIconColor.withOpacity(0.5),
+          selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
             for (final tabItem in TabNavigationItem.items)
@@ -270,18 +267,9 @@ class SettingsTabState extends State<SettingsTab>
                   Tab(
                     text: "Set Reminder",
                   ),
-                  // Tab(
-                  //   text: "Notifications",
-                  // ),
-                  // Tab(
-                  //   text: "Alexa",
-                  // ),
                   Tab(
                     text: "Sharing",
                   ),
-                  // Tab(
-                  //   text: "Groups",
-                  // ),
                 ],
               ),
             ),
@@ -330,16 +318,16 @@ class TabNavigationItem {
           page: PrayerList(),
           icon: Icon(
             Icons.home,
-            size: 26,
+            size: 18,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "prayer",
+          title: "List",
         ),
         TabNavigationItem(
           page: GroupScreen(),
           icon: Icon(AppIcons.bestill_groups,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "group",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Group",
         ),
         TabNavigationItem(
           page: AddPrayer(
@@ -348,23 +336,23 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(AppIcons.bestill_add,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "add prayer",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Add",
         ),
         TabNavigationItem(
           page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "grow my prayer life",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Pray",
         ),
         TabNavigationItem(
           page: null,
           icon: Icon(
             AppIcons.bestill_main_menu,
-            size: 18,
+            size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "Main Menu",
+          title: "More",
         ),
       ];
 }

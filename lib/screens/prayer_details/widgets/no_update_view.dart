@@ -228,13 +228,6 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                 decoration: TextDecoration.underline))
                     ],
                   ),
-                  // Text(
-                  //   prayerData.prayer.description,
-                  //   style: AppTextStyles.regularText18b.copyWith(
-                  //     color: AppColors.prayerTextColor,
-                  //   ),
-                  //   textAlign: TextAlign.left,
-                  // ),
                 ),
               ),
             ),

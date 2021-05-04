@@ -7,7 +7,6 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -48,8 +47,6 @@ class _PrayerListState extends State<PrayerList> {
             '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle(heading);
-        final _user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
       });
       setState(() => _isInit = false);
     }

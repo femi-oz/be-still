@@ -131,12 +131,6 @@ class _EntryScreenState extends State<EntryScreen>
     );
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   void showInfoModal() {
     final dialogContent = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -255,12 +249,18 @@ class _EntryScreenState extends State<EntryScreen>
                 break;
             }
           },
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          unselectedItemColor: AppColors.bottomNavIconColor,
+          selectedLabelStyle: AppTextStyles.boldText14
+              .copyWith(color: AppColors.bottomNavIconColor, height: 1.3),
+          unselectedLabelStyle: AppTextStyles.boldText14.copyWith(
+              color: AppColors.bottomNavIconColor.withOpacity(0.5),
+              height: 1.4),
+          unselectedItemColor: AppColors.bottomNavIconColor.withOpacity(0.5),
+          selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
             for (final tabItem in TabNavigationItem.items)
@@ -288,16 +288,16 @@ class TabNavigationItem {
           page: PrayerList(),
           icon: Icon(
             Icons.home,
-            size: 26,
+            size: 18,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "prayer",
+          title: "List",
         ),
         TabNavigationItem(
           page: GroupScreen(),
           icon: Icon(AppIcons.bestill_groups,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "group",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Group",
         ),
         TabNavigationItem(
           page: AddPrayer(
@@ -306,23 +306,23 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(AppIcons.bestill_add,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "add prayer",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Add",
         ),
         TabNavigationItem(
           page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "grow my prayer life",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Pray",
         ),
         TabNavigationItem(
           page: null,
           icon: Icon(
             AppIcons.bestill_main_menu,
-            size: 18,
+            size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "Main Menu",
+          title: "More",
         ),
       ];
 }

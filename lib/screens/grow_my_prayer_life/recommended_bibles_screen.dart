@@ -9,11 +9,8 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../entry_screen.dart';
 
 class RecommenededBibles extends StatefulWidget {
   static const routeName = 'recommended-bible';

@@ -16,8 +16,6 @@ import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../entry_screen.dart';
-
 class GroupPrayers extends StatefulWidget {
   @override
   _GroupPrayersState createState() => _GroupPrayersState();

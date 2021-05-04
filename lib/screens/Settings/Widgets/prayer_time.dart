@@ -134,20 +134,21 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-            LocalNotification.localNotificationID,
-            userId,
-            notificationText,
-            userId,
-            userId,
-            title,
-            description,
-            frequency,
-            NotificationType.prayer_time,
-            scheduledDate,
-            selectedDay,
-            period,
-            selectedHour,
-            selectedMinute);
+      LocalNotification.localNotificationID,
+      userId,
+      notificationText,
+      userId,
+      userId,
+      title,
+      description,
+      frequency,
+      NotificationType.prayer_time,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+    );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     setState(() => _addPrayerTypeMode = false);
@@ -220,88 +221,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  // _deleteTimerModal(BuildContext context, String prayerTimeId) {
-  //   return Container(
-  //     width: double.infinity,
-  //     height: double.infinity,
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: <Widget>[
-  //         Container(
-  //           padding: EdgeInsets.symmetric(horizontal: 100),
-  //           child: Text(
-  //             'Are you sure you want to delete this prayer time?',
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //               color: AppColors.lightBlue4,
-  //               fontSize: 14,
-  //               fontWeight: FontWeight.w500,
-  //               height: 1.5,
-  //             ),
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           onTap: _deletePrayerTime(prayerTimeId),
-  //           child: Container(
-  //             height: 30,
-  //             width: double.infinity,
-  //             margin: EdgeInsets.all(40),
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 color: AppColors.red,
-  //                 width: 1,
-  //               ),
-  //               borderRadius: BorderRadius.circular(5),
-  //             ),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Text(
-  //                   'DELETE',
-  //                   style: TextStyle(
-  //                     color: AppColors.red,
-  //                     fontSize: 14,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           onTap: () {
-  //             Navigator.of(context).pop();
-  //           },
-  //           child: Container(
-  //             height: 30,
-  //             width: MediaQuery.of(context).size.width * .38,
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 color: AppColors.cardBorder,
-  //                 width: 1,
-  //               ),
-  //               borderRadius: BorderRadius.circular(5),
-  //             ),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Text(
-  //                   'CANCEL',
-  //                   style: TextStyle(
-  //                     color: AppColors.lightBlue4,
-  //                     fontSize: 14,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final prayerTimeList =
@@ -309,62 +228,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             .prayerTimeNotifications;
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    // final setingProvider = Provider.of<SettingsProvider>(context);
-    // final userId = Provider.of<UserProvider>(context).currentUser.id;
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          // SizedBox(height: 30),
-          // Column(
-          //   children: [
-          //     CustomSectionHeder('Preference'),
-          //     SizedBox(height: 20),
-          //     CustomToggle(
-          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //           key: SettingsKey.allowEmergencyCalls,
-          //           value: value,
-          //           settingsId: widget.prayerSettings.id),
-          //       title:
-          //           'Allow emergency calls (second call from the same number calls within 2 minutes)',
-          //       value: widget.prayerSettings.allowEmergencyCalls,
-          //     ),
-          //     CustomToggle(
-          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //           key: SettingsKey.doNotDisturb,
-          //           value: value,
-          //           settingsId: widget.prayerSettings.id),
-          //       title: 'Set to Do Not Disturb during Prayer Time?',
-          //       value: widget.prayerSettings.doNotDisturb,
-          //     ),
-          //     CustomToggle(
-          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //           key: SettingsKey.enableBackgroundMusic,
-          //           value: value,
-          //           settingsId: widget.prayerSettings.id),
-          //       title: 'Enable background music during Prayer Mode?',
-          //       value: widget.prayerSettings.enableBackgroundMusic,
-          //     ),
-          //     SizedBox(height: 20),
-          //     // CustomOutlineButton(
-          //     //   actionColor: AppColors.lightBlue4,
-          //     //   actionText: 'CONNECTED',
-          //     //   textIcon: 'assets/images/spotify.png',
-          //     //   onPressed: () => null,
-          //     //   value: 'Spotify',
-          //     // ),
-          //     // Container(
-          //     //   child: CustomPicker(songs, null, true, 3),
-          //     // ),
-          //     // CustomToggle(
-          //     //   title: 'Auto play music during prayer time?',
-          //     //   onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //     //       key: SettingsKey.autoPlayMusic,
-          //     //       value: value,
-          //     //       settingsId: widget.prayerSettings.id),
-          //     //   value: widget.prayerSettings.autoPlayMusic,
-          //     // ),
-          //   ],
-          // ),
           SizedBox(height: 15),
           CustomSectionHeder('My Prayer Time'),
           SizedBox(height: 35.0),

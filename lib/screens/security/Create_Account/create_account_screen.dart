@@ -14,7 +14,6 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/widgets/snackbar.dart';
@@ -58,13 +57,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-    // _isUnderAge =
-    //     (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
-    //                 .isAfter(DateTime.now())
-    //             ? DateTime.now().year - pickedDate.year - 1
-    //             : DateTime.now().year - pickedDate.year) <
-    //         18;
-
     if (pickedDate == null) {
       return null;
     }
@@ -137,10 +129,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: CreateAccountSuccess()),
             (Route<dynamic> route) => false,
           );
-          // Navigator.of(context).pushNamedAndRemoveUntil(
-          //   CreateAccountSuccess.routeName,
-          //   (Route<dynamic> route) => false,
-          // );
         }
       } on HttpException catch (e, s) {
         var message = '';
@@ -362,7 +350,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.transparent,
                 child: IgnorePointer(
                   child: CustomInput(
-                    label: 'Birthday',
+                    label: 'Date of Birth (optional)',
                     controller: _dobController,
                   ),
                 ),
