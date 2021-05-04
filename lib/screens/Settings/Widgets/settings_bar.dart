@@ -48,9 +48,9 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                AppIcons.bestill_notifications,
-                color: AppColors.grey,
-                size: 18,
+                Icons.notifications_none,
+                color: AppColors.white,
+                // size: 18,
               ),
               onPressed: () => null,
             );

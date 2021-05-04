@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -15,6 +17,7 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -66,12 +69,23 @@ class _PrayerListState extends State<PrayerList> {
       }
 
       BeStilDialog.hideLoading(context);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+      Isolate.current.addErrorListener(RawReceivePort((pair) async {
+        final List<dynamic> errorAndStacktrace = pair;
+        await FirebaseCrashlytics.instance.recordError(
+          errorAndStacktrace.first,
+          errorAndStacktrace.last,
+        );
+      }).sendPort);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.toString());
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -89,12 +103,16 @@ class _PrayerListState extends State<PrayerList> {
             child: PrayerDetails()),
       );
       // Navigator.of(context).pushNamed(PrayerDetails.routeName);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.toString());
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -123,10 +141,14 @@ class _PrayerListState extends State<PrayerList> {
           },
         ),
       );
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -140,8 +162,10 @@ class _PrayerListState extends State<PrayerList> {
         }
         Settings.isAppInit = false;
       }
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 

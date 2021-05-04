@@ -65,14 +65,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -87,14 +91,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -154,10 +162,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
           selectedHour,
           selectedMinute,
         );
-    } catch (e) {
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -234,14 +244,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -255,14 +269,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -276,10 +294,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } catch (e) {
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -298,10 +318,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
             type: PageTransitionType.leftToRightWithFade,
             child: EntryScreen(),
           ));
-    } catch (e) {
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -323,14 +345,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 

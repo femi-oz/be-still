@@ -36,7 +36,7 @@ class _GroupCardState extends State<GroupCard> {
       BeStilDialog.showSnackBar(_key, 'Request has been sent');
     } catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message.toString());
+      // BeStilDialog.showErrorDialog(context, e.message.toString());
     }
   }
 

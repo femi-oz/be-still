@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -42,12 +43,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
         setState(() => step += 1);
         BeStilDialog.hideLoading(context);
-      } on HttpException catch (e) {
+      } on HttpException catch (e, s) {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
-      } catch (e) {
+
+        BeStilDialog.showErrorDialog(context, e, null, s);
+      } catch (e, s) {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
+
+        BeStilDialog.showErrorDialog(context, e, null, s);
       }
     }
   }

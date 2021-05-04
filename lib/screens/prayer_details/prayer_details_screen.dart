@@ -132,10 +132,12 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         selectedHour,
         selectedMinute,
       );
-    } catch (e) {
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
