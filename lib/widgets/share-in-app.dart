@@ -51,11 +51,11 @@ class _ShareInAppState extends State<ShareInApp> {
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 

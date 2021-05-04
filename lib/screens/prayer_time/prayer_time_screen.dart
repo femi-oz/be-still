@@ -29,10 +29,14 @@ class _PrayerTimeState extends State<PrayerTime> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayerTimePrayers(_user.id);
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
