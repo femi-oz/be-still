@@ -41,7 +41,6 @@ class _PrayerCardState extends State<PrayerCard> {
     reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == widget.prayerData.userPrayer.id,
         orElse: () => null);
-
     if (reminder == null)
       return false;
     else {
@@ -156,6 +155,13 @@ class _PrayerCardState extends State<PrayerCard> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
+      var reminders = Provider.of<NotificationProvider>(context, listen: false)
+          .localNotifications
+          .where((e) => e.type == NotificationType.reminder)
+          .toList();
+      reminders.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
 
@@ -199,6 +205,21 @@ class _PrayerCardState extends State<PrayerCard> {
   void _onMarkAsAnswered() async {
     try {
       BeStilDialog.showLoading(context);
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == widget.prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      var reminders = Provider.of<NotificationProvider>(context, listen: false)
+          .localNotifications
+          .where((e) => e.type == NotificationType.reminder)
+          .toList();
+      reminders.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);

@@ -238,6 +238,21 @@ class _PrayerMenuState extends State<PrayerMenu> {
   void _onMarkAsAnswered(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(context);
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      var reminders = Provider.of<NotificationProvider>(context, listen: false)
+          .localNotifications
+          .where((e) => e.type == NotificationType.reminder)
+          .toList();
+      reminders.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
@@ -327,6 +342,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
+  void deleteNotifications(CombinePrayerStream prayerData) {}
+
   void _onArchive(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(context);
@@ -336,6 +353,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .where((e) => e.entityId == prayerData.prayer.id)
               .toList();
       notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      var reminders = Provider.of<NotificationProvider>(context, listen: false)
+          .localNotifications
+          .where((e) => e.type == NotificationType.reminder)
+          .toList();
+      reminders.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
