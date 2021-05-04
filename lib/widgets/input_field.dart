@@ -176,14 +176,8 @@ class _CustomInputState extends State<CustomInput> {
     Pattern emailPattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regExp = new RegExp(emailPattern);
-    if (widget.isRequired) {
-      if (value.isNotEmpty) {
-        Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
-      } else {
-        Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
-      }
-    }
-    if (value.contains(regExp) || value.contains(regex)) {
+
+    if (value.contains(regExp) || value.contains(regex) && value.isNotEmpty) {
       Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
     } else {
       Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
