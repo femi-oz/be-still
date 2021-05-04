@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
@@ -18,6 +20,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/snackbar.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -191,21 +194,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
         BeStilDialog.hideLoading(context);
         await setRouteDestination();
-      } on HttpException catch (e) {
+      } on HttpException catch (e, s) {
         needsVerification =
             Provider.of<AuthenticationProvider>(context, listen: false)
                 .needsVerification;
+
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
-      } catch (e) {
+        BeStilDialog.showErrorDialog(context, e, null, s);
+      } catch (e, s) {
         needsVerification =
             Provider.of<AuthenticationProvider>(context, listen: false)
                 .needsVerification;
+
         Provider.of<LogProvider>(context, listen: false).setErrorLog(
             e.toString(), _usernameController.text, 'LOGIN/screen/_login');
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(
-            context, 'An error occured. Please try again');
+        BeStilDialog.showErrorDialog(context, e, null, s);
       }
     }
   }

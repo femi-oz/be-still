@@ -7,6 +7,7 @@ import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SharingSettings extends StatefulWidget {
@@ -28,8 +29,13 @@ class _SharingSettingsState extends State<SharingSettings> {
 
   void _updateChurch() async {
     if (_churchName.text == null || _churchName.text.trim() == '') {
-      BeStilDialog.showErrorDialog(
-          context, 'Church name can not be empty, please enter a valid name');
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      PlatformException er = PlatformException(
+          code: 'custom',
+          message: 'Church name can not be empty, please enter a valid name');
+
+      BeStilDialog.showErrorDialog(context, er, user, null);
     } else {
       try {
         final settingProvider =
@@ -45,8 +51,10 @@ class _SharingSettingsState extends State<SharingSettings> {
           showChurchEditField = false;
         });
         // Navigator.pop(context);
-      } catch (e) {
-        BeStilDialog.showErrorDialog(context, e.toString());
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, s);
       }
     }
   }
@@ -65,8 +73,10 @@ class _SharingSettingsState extends State<SharingSettings> {
       setState(() {
         showEmailEditField = false;
       });
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -84,8 +94,10 @@ class _SharingSettingsState extends State<SharingSettings> {
       setState(() {
         showUrlEditField = false;
       });
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -103,8 +115,10 @@ class _SharingSettingsState extends State<SharingSettings> {
       setState(() {
         showPhoneEditField = false;
       });
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 

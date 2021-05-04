@@ -44,6 +44,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
     _searchPrayer('');
   }
 
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      setState(() {
+        if (searchQuery != '') {
+          _searchController.text = searchQuery;
+        }
+      });
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   _openFilter(bool isDark) {
     final dialog = Dialog(
         insetPadding: EdgeInsets.all(40),

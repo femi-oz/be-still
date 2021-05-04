@@ -12,6 +12,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,11 @@ class _AddUpdateState extends State<AddUpdate> {
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
+        PlatformException e = PlatformException(
+            code: 'custom', message: 'You can not save empty prayers');
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
@@ -50,14 +55,18 @@ class _AddUpdateState extends State<AddUpdate> {
         BeStilDialog.hideLoading(context);
         NavigationService.instance.goHome(0);
       }
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 

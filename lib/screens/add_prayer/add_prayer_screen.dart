@@ -63,7 +63,11 @@ class _AddPrayerState extends State<AddPrayer> {
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
+        PlatformException e = PlatformException(
+            code: 'custom', message: 'You can not save empty prayers');
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
         if (!widget.isEdit) {
           await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
@@ -103,12 +107,16 @@ class _AddPrayerState extends State<AddPrayer> {
           NavigationService.instance.goHome(0);
         }
       }
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 

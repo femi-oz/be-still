@@ -60,6 +60,8 @@ dependencies:
   page_transition: "^1.1.7+6"
   easy_rich_text: ^0.5.3
   validators: ^3.0.0
+  firebase_crashlytics: "^0.2.3+1"
+
 
 
 

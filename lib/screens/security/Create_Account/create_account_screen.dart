@@ -19,6 +19,7 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -81,8 +82,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   void _createAccount() async {
     if (!_enableSubmit) {
-      BeStilDialog.showErrorDialog(
-          context, 'You must accept terms to create an account.');
+      PlatformException e = PlatformException(
+          code: 'custom',
+          message: 'You must accept terms to create an account.');
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, null);
+
       return;
     }
     if (!disabled) {
@@ -136,7 +142,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           //   (Route<dynamic> route) => false,
           // );
         }
-      } on HttpException catch (e) {
+      } on HttpException catch (e, s) {
         var message = '';
 
         if (e.message ==
@@ -146,16 +152,22 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         } else {
           message = e.message;
         }
+
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, message);
-      } catch (e) {
+
+        PlatformException er =
+            PlatformException(code: 'custom', message: message);
+
+        BeStilDialog.showErrorDialog(context, er, null, s);
+      } catch (e, s) {
         Provider.of<LogProvider>(context, listen: false).setErrorLog(
             e.toString(),
             _emailController.text,
             'REGISTER/screen/_createAccount');
 
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, e.message);
+
+        BeStilDialog.showErrorDialog(context, e, null, s);
       }
     }
   }

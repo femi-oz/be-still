@@ -214,10 +214,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.showSuccessDialog(
           context, 'Your email has been updated successfully');
       _newEmail.clear();
-    } on HttpException catch (_) {
+    } on HttpException catch (e, s) {
       _newEmail.clear();
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       print(e.message);
       var message = '';
       if (e.message ==
@@ -227,13 +230,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       } else {
         message = e.message;
       }
-      BeStilDialog.showErrorDialog(context, message);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      PlatformException er =
+          PlatformException(code: 'custom', message: message);
+
+      BeStilDialog.showErrorDialog(context, er, user, s);
       _newEmail.clear();
     }
   }
 
   void _updatePassword() async {
-    print('got here');
     try {
       // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
@@ -244,14 +252,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       // Navigator.of(context).pop();
       BeStilDialog.showSuccessDialog(
           context, 'Your password has been updated successfully');
-    } on HttpException catch (_) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+
       _newPassword.clear();
       _newConfirmPassword.clear();
-    } catch (e) {
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -274,7 +287,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       });
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       _currentPassword.clear();
       var message = '';
       if (e.message == 'Username / Password is incorrect' ||
@@ -284,11 +297,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         message = e.message;
       }
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      PlatformException er =
+          PlatformException(code: 'custom', message: message);
+
+      BeStilDialog.showErrorDialog(context, er, user, s);
+    } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 

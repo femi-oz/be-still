@@ -362,7 +362,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
       _emailController.text = '';
     } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message.toString());
+      // BeStilDialog.showErrorDialog(context, e.message.toString());
     }
   }
 
