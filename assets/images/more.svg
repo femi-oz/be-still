@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{clip-path:url(#SVGID_2_);}
+	.st2{clip-path:url(#SVGID_4_);}
+	.st3{fill:#009FD0;}
+	.st4{clip-path:url(#SVGID_6_);}
+	.st5{clip-path:url(#SVGID_8_);}
+	.st6{fill:#F93549;}
+	.st7{fill-rule:evenodd;clip-rule:evenodd;fill:#009FD0;}
+	.st8{fill:#505050;}
+	.st9{fill:#C1C5C8;}
+</style>
+<g id="Icons">
+	<g id="bestill__x2F__prayer_time_1_" transform="translate(-541.502 -122.502)">
+		<g id="Group_328_1_" transform="translate(541.502 129.554)">
+			<g>
+				<defs>
+					<path id="SVGID_5_" d="M-7.4,3.7L-8,3.1c-0.6-0.6-1.6-0.6-2.1,0c0,0,0,0,0,0l-5.6,5.6c-0.7,0.7-1.7,0.7-2.4,0l-5.6-5.6
+						c-0.6-0.6-1.6-0.6-2.1,0l-0.6,0.6c-0.6,0.6-0.6,1.6,0,2.1c0,0,0,0,0,0l8.5,8.5c0.6,0.6,1.6,0.6,2.1,0l8.5-8.5
+						C-6.8,5.3-6.8,4.3-7.4,3.7C-7.4,3.7-7.4,3.7-7.4,3.7z"/>
+				</defs>
+				<use xlink:href="#SVGID_5_"  style="overflow:visible;fill:#009FD0;"/>
+				<clipPath id="SVGID_2_">
+					<use xlink:href="#SVGID_5_"  style="overflow:visible;"/>
+				</clipPath>
+				<g id="Group_327_1_" transform="translate(0 0)" class="st1">
+					<path id="Path_832_1_" class="st3" d="M-33.9-3.1v20.9H0.2V-3.1H-33.9z M-6.7,6.6l-9.1,9c-0.6,0.6-1.7,0.6-2.3,0l-9.1-9
+						c-0.6-0.6-0.6-1.6,0-2.3c0,0,0,0,0,0l0.6-0.6c0.6-0.6,1.7-0.6,2.3,0l6,6c0.7,0.7,1.8,0.7,2.5,0l6-6C-9,3-8,3-7.4,3.7l0.6,0.6
+						C-6.1,4.9-6.1,5.9-6.7,6.6C-6.7,6.6-6.7,6.6-6.7,6.6L-6.7,6.6z"/>
+				</g>
+			</g>
+		</g>
+	</g>
+	<g id="main_menu__x2F__more_1_" transform="translate(-316.395 -779.887)">
+		<circle id="Ellipse_367_2_" class="st3" cx="320.2" cy="791.9" r="2.8"/>
+		<circle id="Ellipse_368_2_" class="st3" cx="328.4" cy="791.9" r="2.8"/>
+		<circle id="Ellipse_369_2_" class="st3" cx="336.6" cy="791.9" r="2.8"/>
+	</g>
+</g>
+<g id="Sets_Labeling">
+</g>
+</svg>
