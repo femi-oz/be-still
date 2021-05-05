@@ -1,5 +1,6 @@
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
@@ -13,6 +14,7 @@ import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -248,12 +250,17 @@ class SettingsTabState extends State<SettingsTab>
                     blurRadius: 5.0,
                   ),
                 ],
-                color: AppColors.tabBackground,
+                color: !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                    ? Color(0xFFFFFFFF)
+                    : Color(0xFF005780),
               ),
               height: 50.0,
               child: new TabBar(
                 indicatorColor: Colors.transparent,
-                unselectedLabelColor: AppColors.inactveTabMenu,
+                unselectedLabelColor:
+                    !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                        ? Color(0xFF718B92)
+                        : Color(0xB3FFFFFF),
                 labelColor: AppColors.actveTabMenu,
                 labelStyle: AppTextStyles.boldText24,
                 isScrollable: true,

@@ -355,7 +355,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     CustomButtonGroup(
                       isSelected: _themeProvider.currentTheme == _themeModes[i],
                       length: _themeModes.length,
-                      onSelected: (value) => _themeProvider.changeTheme(value),
+                      onSelected: (value) {
+                        _themeProvider.changeTheme(value);
+                      },
                       title: _themeModes[i],
                       index: i,
                     ),
