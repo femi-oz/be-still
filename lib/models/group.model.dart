@@ -35,18 +35,18 @@ class GroupModel {
 
   GroupModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        name = snapshot.data()['Name'],
-        description = snapshot.data()['Description'],
-        status = snapshot.data()['Status'],
-        email = snapshot.data()['Email'],
-        organization = snapshot.data()['Organization'],
-        location = snapshot.data()['Location'],
-        isPrivate = snapshot.data()['IsPrivate'],
-        isFeed = snapshot.data()['IsFeed'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        name = snapshot['Name'],
+        description = snapshot['Description'],
+        status = snapshot['Status'],
+        email = snapshot['Email'],
+        organization = snapshot['Organization'],
+        location = snapshot['Location'],
+        isPrivate = snapshot['IsPrivate'],
+        isFeed = snapshot['IsFeed'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -99,15 +99,15 @@ class GroupInviteModel {
 
   GroupInviteModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        groupName = snapshot.data()['GroupName'],
-        groupId = snapshot.data()['GroupId'],
-        email = snapshot.data()['Email'],
-        sender = snapshot.data()['Sender'],
-        senderId = snapshot.data()['SenderId'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        groupName = snapshot['GroupName'],
+        groupId = snapshot['GroupId'],
+        email = snapshot['Email'],
+        sender = snapshot['Sender'],
+        senderId = snapshot['SenderId'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -151,15 +151,15 @@ class GroupPrayerModel {
 
   GroupPrayerModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        prayerId = snapshot.data()['PrayerId'],
-        groupId = snapshot.data()['GroupId'],
-        sequence = snapshot.data()['Sequence'],
-        isFavorite = snapshot.data()['IsFavourite'],
-        status = snapshot.data()['Status'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        prayerId = snapshot['PrayerId'],
+        groupId = snapshot['GroupId'],
+        sequence = snapshot['Sequence'],
+        isFavorite = snapshot['IsFavourite'],
+        status = snapshot['Status'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -205,16 +205,16 @@ class GroupUserModel {
 
   GroupUserModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
-        isAdmin = snapshot.data()['IsAdmin'],
-        isModerator = snapshot.data()['IsModerator'],
-        fullName = snapshot.data()['FullName'],
-        status = snapshot.data()['Status'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        userId = snapshot['UserId'],
+        groupId = snapshot['GroupId'],
+        isAdmin = snapshot['IsAdmin'],
+        isModerator = snapshot['IsModerator'],
+        fullName = snapshot['FullName'],
+        status = snapshot['Status'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

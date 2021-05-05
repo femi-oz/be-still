@@ -34,18 +34,18 @@ class SharingSettingsModel {
 
   SharingSettingsModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        userId = snapshot.data()["UserId"],
-        enableSharingViaEmail = snapshot.data()["EnableSharingViaEmail"],
-        enableSharingViaText = snapshot.data()["EnableSharingViaText"],
-        churchId = snapshot.data()["ChurchId"],
-        churchName = snapshot.data()["ChurchName"] ?? '',
-        churchPhone = snapshot.data()["ChurchPhone"] ?? '',
-        churchEmail = snapshot.data()["ChurchEmail"] ?? '',
-        webFormlink = snapshot.data()["WebFormLink"] ?? '',
-        createdBy = snapshot.data()["CreatedBy"],
-        createdOn = snapshot.data()["CreatedOn"].toDate(),
-        modifiedBy = snapshot.data()["ModifiedBy"],
-        modifiedOn = snapshot.data()["ModifiedOn"].toDate();
+        userId = snapshot["UserId"],
+        enableSharingViaEmail = snapshot["EnableSharingViaEmail"],
+        enableSharingViaText = snapshot["EnableSharingViaText"],
+        churchId = snapshot["ChurchId"],
+        churchName = snapshot["ChurchName"] ?? '',
+        churchPhone = snapshot["ChurchPhone"] ?? '',
+        churchEmail = snapshot["ChurchEmail"] ?? '',
+        webFormlink = snapshot["WebFormLink"] ?? '',
+        createdBy = snapshot["CreatedBy"],
+        createdOn = snapshot["CreatedOn"].toDate(),
+        modifiedBy = snapshot["ModifiedBy"],
+        modifiedOn = snapshot["ModifiedOn"].toDate();
 
   Map<String, dynamic> toJson() {
     return {

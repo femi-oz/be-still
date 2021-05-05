@@ -62,37 +62,34 @@ class SettingsModel {
 
   SettingsModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        deviceId = snapshot.data()['DeviceId'],
-        appearance = snapshot.data()['Appearance'],
-        pauseInterval = snapshot.data()['PauseInterval'],
-        defaultSortBy = snapshot.data()['DefaultSortBy'],
-        defaultSnoozeDuration = snapshot.data()['DefaultSnoozeDuration'],
-        defaultSnoozeDurationMins =
-            snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
-        archiveSortBy = snapshot.data()['ArchiveSortBy'],
-        archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
-        archiveAutoDeleteMins = snapshot.data()['ArchiveAutoDeleteMins'] ?? 30,
+        userId = snapshot['UserId'],
+        deviceId = snapshot['DeviceId'],
+        appearance = snapshot['Appearance'],
+        pauseInterval = snapshot['PauseInterval'],
+        defaultSortBy = snapshot['DefaultSortBy'],
+        defaultSnoozeDuration = snapshot['DefaultSnoozeDuration'],
+        defaultSnoozeDurationMins = snapshot['DefaultSnoozeDurationMins'] ?? 30,
+        archiveSortBy = snapshot['ArchiveSortBy'],
+        archiveAutoDelete = snapshot['ArchiveAutoDelete'],
+        archiveAutoDeleteMins = snapshot['ArchiveAutoDeleteMins'] ?? 30,
         includeAnsweredPrayerAutoDelete =
-            snapshot.data()['IncludeAnsweredPrayerAutoDelete'],
-        allowPushNotification = snapshot.data()['AllowPushNotification'],
-        allowTextNotification = snapshot.data()['AllowTextNotification'],
-        allowAlexaReadPrayer = snapshot.data()['AllowAlexaReadPrayer'],
-        // emailUpdateFrequency = snapshot.data()['EmailUpdateFrequency'],
-        emailUpdateFrequencyMins = snapshot.data()['EmailUpdateFrequencySecs'],
-        emailUpdateNotification = snapshot.data()['EmailUpdateNotification'],
-        notifyMeSomeonePostOnGroup =
-            snapshot.data()['NotifyMeSomeonePostOnGroup'],
+            snapshot['IncludeAnsweredPrayerAutoDelete'],
+        allowPushNotification = snapshot['AllowPushNotification'],
+        allowTextNotification = snapshot['AllowTextNotification'],
+        allowAlexaReadPrayer = snapshot['AllowAlexaReadPrayer'],
+        // emailUpdateFrequency = snapshot['EmailUpdateFrequency'],
+        emailUpdateFrequencyMins = snapshot['EmailUpdateFrequencySecs'],
+        emailUpdateNotification = snapshot['EmailUpdateNotification'],
+        notifyMeSomeonePostOnGroup = snapshot['NotifyMeSomeonePostOnGroup'],
         notifyMeSomeoneSharePrayerWithMe =
-            snapshot.data()['NotifyMeSomeoneSharePrayerWithMe'],
-        syncAlexa = snapshot.data()['SyncAlexa'],
-        allowPrayerTimeNotification =
-            snapshot.data()['AllowPrayerTimeNotification'],
-        status = snapshot.data()['Status'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+            snapshot['NotifyMeSomeoneSharePrayerWithMe'],
+        syncAlexa = snapshot['SyncAlexa'],
+        allowPrayerTimeNotification = snapshot['AllowPrayerTimeNotification'],
+        status = snapshot['Status'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

@@ -182,8 +182,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
@@ -220,8 +220,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
       NavigationService.instance.goHome(0);

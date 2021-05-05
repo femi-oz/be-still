@@ -112,8 +112,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Settings.userPassword =
             Settings.rememberMe ? _passwordController.text : '';
         BeStilDialog.hideLoading(context);
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .setDevice(user.id);
+        // await Provider.of<NotificationProvider>(context, listen: false)
+        //     .setDevice(user.id);
         Navigator.pushAndRemoveUntil(
           context,
           PageTransition(

@@ -15,9 +15,9 @@ class ContactModel {
   });
   ContactModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        email = snapshot.data()['Email'],
-        phoneNumber = snapshot.data()['PhoneNumber'],
-        displayName = snapshot.data()['DisplayName'];
+        email = snapshot['Email'],
+        phoneNumber = snapshot['PhoneNumber'],
+        displayName = snapshot['DisplayName'];
 
   Map<String, dynamic> toJson() {
     return {
