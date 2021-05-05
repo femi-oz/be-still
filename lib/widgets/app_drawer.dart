@@ -111,13 +111,13 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      rememberMe
-                          ? await Provider.of<MiscProvider>(context,
-                                  listen: false)
-                              .setVisibility(false)
-                          : await Provider.of<MiscProvider>(context,
-                                  listen: false)
-                              .setVisibility(true);
+                      // rememberMe
+                      //     ? await Provider.of<MiscProvider>(context,
+                      //             listen: false)
+                      //         .setVisibility(false)
+                      //     : await Provider.of<MiscProvider>(context,
+                      //             listen: false)
+                      //         .setVisibility(true);
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
                       Navigator.push(

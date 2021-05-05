@@ -146,18 +146,19 @@ class _CustomInputState extends State<CustomInput> {
               obscureText: widget.obScurePassword,
               validator: (value) => _validatorFn(value),
               onFieldSubmitted: (val) => {
-                    _searchPrayer(val),
-                    widget.unfocus
-                        ? FocusScope.of(context).unfocus()
-                        : FocusScope.of(context).nextFocus(),
-                    widget.unfocus ? widget.submitForm : null
-                  },
+                _searchPrayer(val),
+                widget.unfocus
+                    ? FocusScope.of(context).unfocus()
+                    : FocusScope.of(context).nextFocus(),
+                widget.unfocus ? widget.submitForm : null
+              },
               textInputAction: widget.textInputAction,
               onChanged: (val) {
-                setVisibilty(val);
+                // setVisibilty(val);
                 setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
                 if (widget.onTextchanged != null) widget.onTextchanged(val);
-              }),
+              },
+            ),
     );
   }
 
@@ -170,19 +171,19 @@ class _CustomInputState extends State<CustomInput> {
         .searchPrayers(value, userId);
   }
 
-  void setVisibilty(String value) {
-    Pattern passwordPattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
-    RegExp regex = new RegExp(passwordPattern);
-    Pattern emailPattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regExp = new RegExp(emailPattern);
+  // void setVisibilty(String value) {
+  //   Pattern passwordPattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
+  //   RegExp regex = new RegExp(passwordPattern);
+  //   Pattern emailPattern =
+  //       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  //   RegExp regExp = new RegExp(emailPattern);
 
-    if (value.contains(regExp) || value.contains(regex) && value.isNotEmpty) {
-      Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
-    } else {
-      Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
-    }
-  }
+  //   // if (value.contains(regExp) || value.contains(regex) && value.isNotEmpty) {
+  //   //   Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
+  //   // } else {
+  //   //   Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
+  //   // }
+  // }
 
   String _validatorFn(String value) {
     if (widget.isRequired) {

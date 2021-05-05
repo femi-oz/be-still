@@ -32,9 +32,7 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool disabled = false;
-
-  // bool _isUnderAge = false;
+  // bool disabled = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -67,9 +65,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   _agreeTerms(bool value) {
-    setState(() {
-      _enableSubmit = value;
-    });
+    setState(() => _enableSubmit = value);
   }
 
   void _createAccount() async {
@@ -77,93 +73,87 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       PlatformException e = PlatformException(
           code: 'custom',
           message: 'You must accept terms to create an account.');
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, null);
-
+      BeStilDialog.showErrorDialog(context, e, null, null);
       return;
     }
-    if (!disabled) {
-      setState(() => _autoValidate = true);
-      if (!_formKey.currentState.validate()) return null;
-      _formKey.currentState.save();
+    setState(() => _autoValidate = true);
+    if (!_formKey.currentState.validate()) return null;
+    _formKey.currentState.save();
 
-      try {
-        await BeStilDialog.showLoading(context, 'Registering...');
-        if (_firstnameController.text == null ||
-            _firstnameController.text.trim() == '') {
-          BeStilDialog.hideLoading(context);
-          BeStillSnackbar.showInSnackBar(
-              message: 'First Name is empty, please enter a valid name.',
-              key: _scaffoldKey);
-        } else if (_lastnameController.text == null ||
-            _lastnameController.text.trim() == '') {
-          BeStilDialog.hideLoading(context);
-          BeStillSnackbar.showInSnackBar(
-              message: 'Last Name is empty, please enter a valid name.',
-              key: _scaffoldKey);
-        } else {
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .registerUser(
-            password: _passwordController.text,
-            email: _emailController.text,
-            firstName: _firstnameController.text,
-            lastName: _lastnameController.text,
-            dob: _selectedDate,
-          );
-          await Provider.of<UserProvider>(context, listen: false)
-              .setCurrentUser(false);
-          final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
-          Settings.lastUser =
-              Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-          Settings.userPassword =
-              Settings.rememberMe ? _passwordController.text : '';
-          BeStilDialog.hideLoading(context);
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .setDevice(user.id);
-          Navigator.pushAndRemoveUntil(
-            context,
-            PageTransition(
-                type: PageTransitionType.leftToRightWithFade,
-                child: CreateAccountSuccess()),
-            (Route<dynamic> route) => false,
-          );
-        }
-      } on HttpException catch (e, s) {
-        var message = '';
-
-        if (e.message ==
-            'The email has already been registered. Please login or reset your password.') {
-          message =
-              'That email address is already in use. Please select another one.';
-        } else {
-          message = e.message;
-        }
-
+    try {
+      await BeStilDialog.showLoading(context, 'Registering...');
+      if (_firstnameController.text == null ||
+          _firstnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-
-        PlatformException er =
-            PlatformException(code: 'custom', message: message);
-
-        BeStilDialog.showErrorDialog(context, er, null, s);
-      } catch (e, s) {
-        Provider.of<LogProvider>(context, listen: false).setErrorLog(
-            e.toString(),
-            _emailController.text,
-            'REGISTER/screen/_createAccount');
-
+        BeStillSnackbar.showInSnackBar(
+            message: 'First Name is empty, please enter a valid name.',
+            key: _scaffoldKey);
+      } else if (_lastnameController.text == null ||
+          _lastnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-
-        BeStilDialog.showErrorDialog(context, e, null, s);
+        BeStillSnackbar.showInSnackBar(
+            message: 'Last Name is empty, please enter a valid name.',
+            key: _scaffoldKey);
+      } else {
+        await Provider.of<AuthenticationProvider>(context, listen: false)
+            .registerUser(
+          password: _passwordController.text,
+          email: _emailController.text,
+          firstName: _firstnameController.text,
+          lastName: _lastnameController.text,
+          dob: _selectedDate,
+        );
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUser(false);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        Settings.lastUser =
+            Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+        Settings.userPassword =
+            Settings.rememberMe ? _passwordController.text : '';
+        BeStilDialog.hideLoading(context);
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .setDevice(user.id);
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageTransition(
+              type: PageTransitionType.leftToRightWithFade,
+              child: CreateAccountSuccess()),
+          (Route<dynamic> route) => false,
+        );
       }
+    } on HttpException catch (e, s) {
+      var message = '';
+
+      if (e.message ==
+          'The email has already been registered. Please login or reset your password.') {
+        message =
+            'That email address is already in use. Please select another one.';
+      } else {
+        message = e.message;
+      }
+
+      BeStilDialog.hideLoading(context);
+
+      PlatformException er =
+          PlatformException(code: 'custom', message: message);
+
+      BeStilDialog.showErrorDialog(context, er, null, s);
+    } catch (e, s) {
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          _emailController.text, 'REGISTER/screen/_createAccount');
+
+      BeStilDialog.hideLoading(context);
+
+      BeStilDialog.showErrorDialog(context, e, null, s);
+      // }
     }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
-    disabled = Provider.of<MiscProvider>(context).disable;
+    // disabled = Provider.of<MiscProvider>(context).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -229,9 +219,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  _buildFooter() {
+  Widget _buildFooter() {
     return Column(
       children: <Widget>[
+        SizedBox(height: 10),
         Row(
           children: [
             Container(
@@ -249,7 +240,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   decoration: BoxDecoration(color: AppColors.grey),
                   margin: const EdgeInsets.all(0),
                   padding: EdgeInsets.symmetric(
-                    vertical: 20,
+                    vertical: 15,
                     horizontal: 10,
                   ),
                   child: Text('Cancel',
@@ -257,11 +248,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           .copyWith(color: AppColors.white)),
                 ),
                 onPressed: () {
-                  Settings.rememberMe
-                      ? Provider.of<MiscProvider>(context, listen: false)
-                          .setVisibility(false)
-                      : Provider.of<MiscProvider>(context, listen: false)
-                          .setVisibility(true);
+                  // Settings.rememberMe
+                  //     ? Provider.of<MiscProvider>(context, listen: false)
+                  //         .setVisibility(false)
+                  //     : Provider.of<MiscProvider>(context, listen: false)
+                  //         .setVisibility(true);
                   Navigator.pushAndRemoveUntil(
                     context,
                     PageTransition(
@@ -279,7 +270,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(AppColors.lightBlue3),
+                      MaterialStateProperty.all<Color>(Colors.transparent),
                   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       EdgeInsets.zero),
                   elevation: MaterialStateProperty.all<double>(0.0),
@@ -288,17 +279,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   width: MediaQuery.of(context).size.width * 0.42,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: !_enableSubmit
+                        ? AppColors.lightBlue4.withOpacity(0.5)
+                        : AppColors.lightBlue4,
                   ),
                   margin: const EdgeInsets.all(0),
                   padding: EdgeInsets.symmetric(
-                    vertical: 20,
+                    vertical: 15,
                     horizontal: 10,
                   ),
                   child: Text('Create',
-                      style: disabled
+                      style: !_enableSubmit
                           ? AppTextStyles.regularText16b
-                              .copyWith(color: AppColors.grey)
+                              .copyWith(color: AppColors.white)
                           : AppTextStyles.regularText16b
                               .copyWith(color: AppColors.white)),
                 ),
@@ -314,7 +307,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  _buildForm() {
+  Widget _buildForm() {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,

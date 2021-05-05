@@ -57,7 +57,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    disabled = Provider.of<MiscProvider>(context).disable;
+    // disabled = Provider.of<MiscProvider>(context).disable;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -150,19 +150,19 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                                                       .white)),
                                                     ),
                                                     onPressed: () {
-                                                      Settings.rememberMe
-                                                          ? Provider.of<
-                                                                      MiscProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setVisibility(
-                                                                  false)
-                                                          : Provider.of<
-                                                                      MiscProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setVisibility(
-                                                                  true);
+                                                      // Settings.rememberMe
+                                                      //     ? Provider.of<
+                                                      //                 MiscProvider>(
+                                                      //             context,
+                                                      //             listen: false)
+                                                      //         .setVisibility(
+                                                      //             false)
+                                                      //     : Provider.of<
+                                                      //                 MiscProvider>(
+                                                      //             context,
+                                                      //             listen: false)
+                                                      //         .setVisibility(
+                                                      //             true);
                                                       Navigator
                                                           .pushAndRemoveUntil(
                                                         context,

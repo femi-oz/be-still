@@ -10,8 +10,8 @@ class MiscProvider with ChangeNotifier {
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
 
-  bool _disable = Settings.rememberMe ? false : true;
-  bool get disable => _disable;
+  // bool _disable = Settings.rememberMe ? false : true;
+  // bool get disable => _disable;
 
   bool _search = false;
   bool get search => _search;
@@ -21,10 +21,10 @@ class MiscProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setVisibility(bool disable) {
-    _disable = disable;
-    notifyListeners();
-  }
+  // setVisibility(bool disable) {
+  //   _disable = disable;
+  //   notifyListeners();
+  // }
 
   setSearchMode(bool searchMode) {
     _search = searchMode;
