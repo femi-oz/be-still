@@ -86,12 +86,12 @@ class GroupService {
           //         (document) => GroupUserModel.fromData(document));
 
           Stream<GroupModel> group = _groupCollectionReference
-              .doc(f.data()['GroupId'])
+              .doc(f['GroupId'])
               .snapshots()
               .map<GroupModel>((document) => GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
               _groupUserCollectionReference
-                  .where('GroupId', isEqualTo: f.data()['GroupId'])
+                  .where('GroupId', isEqualTo: f['GroupId'])
                   .snapshots()
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))

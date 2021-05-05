@@ -19,7 +19,7 @@ class NotificationProvider with ChangeNotifier {
   factory NotificationProvider() => _instance;
 
   static final NotificationProvider _instance = NotificationProvider._();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -36,24 +36,6 @@ class NotificationProvider with ChangeNotifier {
   List<LocalNotificationModel> get localNotifications => _localNotifications;
   NotificationMessage _message;
   NotificationMessage get message => _message;
-
-  Future<void> init(BuildContext context) async {
-    _firebaseMessaging.configure(
-      // onMessage: (Map<String, dynamic> message) async {
-      //   print("onMessage: $message");
-      //   onRoute(message, context);
-      // },
-      onLaunch: (Map<String, dynamic> message) async {
-        _message = NotificationMessage.fromData(message);
-
-        print("onLaunch: $_message");
-      },
-      onResume: (Map<String, dynamic> message) async {
-        _message = NotificationMessage.fromData(message);
-        print("onResume: $_message");
-      },
-    );
-  }
 
   Future<void> initLocal(BuildContext context) async {
     tz.initializeTimeZones();
@@ -77,22 +59,6 @@ class NotificationProvider with ChangeNotifier {
 
   Future<void> clearMessage() async {
     _message = null;
-  }
-
-  Future<void> setDevice(String userId) async {
-    if (!_initialized) {
-      // For testing purposes print the Firebase Messaging token
-      _firebaseMessaging.requestNotificationPermissions(
-          const IosNotificationSettings(
-              sound: true, badge: true, alert: true, provisional: true));
-      _firebaseMessaging.onIosSettingsRegistered
-          .listen((IosNotificationSettings settings) {
-        print("Settings registered: $settings");
-      });
-      String token = await _firebaseMessaging.getToken();
-      await _notificationService.init(token, userId);
-      _initialized = true;
-    }
   }
 
   Future<void> setUserNotifications(String userId) async {

@@ -16,10 +16,10 @@ class BibleModel {
   });
   BibleModel.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        name = snapshot.data()['name'],
-        recommendedFor = snapshot.data()['recommendedFor'],
-        link = snapshot.data()['link'],
-        shortName = snapshot.data()['shortName'];
+        name = snapshot['name'],
+        recommendedFor = snapshot['recommendedFor'],
+        link = snapshot['link'],
+        shortName = snapshot['shortName'];
 
   Map<String, dynamic> toJson() {
     return {

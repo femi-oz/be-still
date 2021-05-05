@@ -32,20 +32,18 @@ class GroupSettings {
 
   GroupSettings.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
+        userId = snapshot['UserId'],
+        groupId = snapshot['GroupId'],
         enableNotificationFormNewPrayers =
-            snapshot.data()['EnableNotificationFormNewPrayers'],
-        enableNotificationForUpdates =
-            snapshot.data()['EnableNotificationForUpdates'],
-        notifyOfMembershipRequest =
-            snapshot.data()['NotifyOfMembershipRequest'],
-        notifyMeofFlaggedPrayers = snapshot.data()['NotifyMeofFlaggedPrayers'],
-        notifyWhenNewMemberJoins = snapshot.data()['NotifyWhenNewMemberJoins'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+            snapshot['EnableNotificationFormNewPrayers'],
+        enableNotificationForUpdates = snapshot['EnableNotificationForUpdates'],
+        notifyOfMembershipRequest = snapshot['NotifyOfMembershipRequest'],
+        notifyMeofFlaggedPrayers = snapshot['NotifyMeofFlaggedPrayers'],
+        notifyWhenNewMemberJoins = snapshot['NotifyWhenNewMemberJoins'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -77,9 +75,9 @@ class GroupPreferenceSettings {
 
   GroupPreferenceSettings.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
+        userId = snapshot['UserId'],
         enableNotificationForAllGroups =
-            snapshot.data()['EnableNotificationForAllGroups'];
+            snapshot['EnableNotificationForAllGroups'];
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,

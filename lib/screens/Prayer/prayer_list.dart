@@ -17,7 +17,6 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -74,13 +73,6 @@ class _PrayerListState extends State<PrayerList> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
-      Isolate.current.addErrorListener(RawReceivePort((pair) async {
-        final List<dynamic> errorAndStacktrace = pair;
-        await FirebaseCrashlytics.instance.recordError(
-          errorAndStacktrace.first,
-          errorAndStacktrace.last,
-        );
-      }).sendPort);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -155,11 +147,11 @@ class _PrayerListState extends State<PrayerList> {
   void _getPermissions() async {
     try {
       if (Settings.isAppInit) {
-        final status = await Permission.contacts.status;
-        if (status.isUndetermined) {
-          await Permission.contacts.request().then((p) => Settings
-              .enabledContactPermission = p == PermissionStatus.granted);
-        }
+        // final status = await Permission.contacts.status;
+        // if (status.) {
+        await Permission.contacts.request().then((p) =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
+        // }
         Settings.isAppInit = false;
       }
     } catch (e, s) {

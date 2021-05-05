@@ -50,20 +50,20 @@ class PrayerService {
               .map<UserPrayerModel>((doc) => UserPrayerModel.fromData(doc));
 
           Stream<PrayerModel> prayer = _prayerCollectionReference
-              .doc(f.data()['PrayerId'])
+              .doc(f['PrayerId'])
               .snapshots()
               .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
 
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+                  .where('PrayerId', isEqualTo: f['PrayerId'])
                   .snapshots()
                   .map<List<PrayerUpdateModel>>((list) => list.docs
                       .map((e) => PrayerUpdateModel.fromData(e))
                       .toList());
 
           Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-              .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+              .where('PrayerId', isEqualTo: f['PrayerId'])
               .snapshots()
               .map<List<PrayerTagModel>>((list) =>
                   list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
@@ -108,21 +108,20 @@ class PrayerService {
             .map<UserPrayerModel>((doc) => UserPrayerModel.fromData(doc));
 
         Stream<PrayerModel> prayer = _prayerCollectionReference
-            .doc(doc.data()['PrayerId'])
+            .doc(doc['PrayerId'])
             .snapshots()
             .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
 
         Stream<List<PrayerUpdateModel>> updates =
             _prayerUpdateCollectionReference
-                .where('PrayerId', isEqualTo: doc.data()['PrayerId'])
+                .where('PrayerId', isEqualTo: doc['PrayerId'])
                 .snapshots()
                 .map<List<PrayerUpdateModel>>((list) => list.docs
                     .map((e) => PrayerUpdateModel.fromData(e))
                     .toList());
 
         Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-            // .doc(doc.data()['PrayerId'])
-            .where('PrayerId', isEqualTo: doc.data()['PrayerId'])
+            .where('PrayerId', isEqualTo: doc['PrayerId'])
             .snapshots()
             .map<List<PrayerTagModel>>((list) =>
                 list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
@@ -605,12 +604,12 @@ class PrayerService {
               .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
 
           Stream<PrayerModel> prayer = _prayerCollectionReference
-              .doc(f.data()['PrayerId'])
+              .doc(f['PrayerId'])
               .snapshots()
               .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+                  .where('PrayerId', isEqualTo: f['PrayerId'])
                   .snapshots()
                   .map<List<PrayerUpdateModel>>((list) => list.docs
                       .map((e) => PrayerUpdateModel.fromData(e))

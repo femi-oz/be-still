@@ -22,12 +22,12 @@ class ErrorLog {
 
   ErrorLog.fromData(DocumentSnapshot snapshot)
       : id = snapshot.id,
-        message = snapshot.data()['Message'],
-        location = snapshot.data()['Location'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        message = snapshot['Message'],
+        location = snapshot['Location'],
+        createdBy = snapshot['CreatedBy'],
+        createdOn = snapshot['CreatedOn'].toDate(),
+        modifiedBy = snapshot['ModifiedBy'],
+        modifiedOn = snapshot['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
