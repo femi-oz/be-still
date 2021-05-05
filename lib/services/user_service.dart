@@ -11,7 +11,7 @@ import 'package:uuid/uuid.dart';
 import '../locator.dart';
 
 class UserService {
-  final CollectionReference _userCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 

@@ -11,11 +11,12 @@ import 'package:dio/dio.dart';
 import '../locator.dart';
 
 class GroupService {
-  final CollectionReference _groupCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
-  final CollectionReference _groupUserCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _groupUserCollectionReference =
       FirebaseFirestore.instance.collection("GroupUser");
-  final CollectionReference _userCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
 
   populateGroupUser(

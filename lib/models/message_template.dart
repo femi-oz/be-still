@@ -19,14 +19,14 @@ class MessageTemplate {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  MessageTemplate.fromData(DocumentSnapshot snapshot)
+  MessageTemplate.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        templateSubject = snapshot['TemplateSubject'],
-        templateBody = snapshot['TemplateBody'],
-        createdBy = snapshot['CreatedBy'],
-        createdOn = snapshot['CreatedOn'].toDate(),
-        modifiedBy = snapshot['ModifiedBy'],
-        modifiedOn = snapshot['ModifiedOn'].toDate();
+        templateSubject = snapshot.data()['TemplateSubject'],
+        templateBody = snapshot.data()['TemplateBody'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

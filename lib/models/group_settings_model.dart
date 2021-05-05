@@ -30,20 +30,22 @@ class GroupSettings {
     @required this.modifiedOn,
   });
 
-  GroupSettings.fromData(DocumentSnapshot snapshot)
+  GroupSettings.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        userId = snapshot['UserId'],
-        groupId = snapshot['GroupId'],
+        userId = snapshot.data()['UserId'],
+        groupId = snapshot.data()['GroupId'],
         enableNotificationFormNewPrayers =
-            snapshot['EnableNotificationFormNewPrayers'],
-        enableNotificationForUpdates = snapshot['EnableNotificationForUpdates'],
-        notifyOfMembershipRequest = snapshot['NotifyOfMembershipRequest'],
-        notifyMeofFlaggedPrayers = snapshot['NotifyMeofFlaggedPrayers'],
-        notifyWhenNewMemberJoins = snapshot['NotifyWhenNewMemberJoins'],
-        createdBy = snapshot['CreatedBy'],
-        createdOn = snapshot['CreatedOn'].toDate(),
-        modifiedBy = snapshot['ModifiedBy'],
-        modifiedOn = snapshot['ModifiedOn'].toDate();
+            snapshot.data()['EnableNotificationFormNewPrayers'],
+        enableNotificationForUpdates =
+            snapshot.data()['EnableNotificationForUpdates'],
+        notifyOfMembershipRequest =
+            snapshot.data()['NotifyOfMembershipRequest'],
+        notifyMeofFlaggedPrayers = snapshot.data()['NotifyMeofFlaggedPrayers'],
+        notifyWhenNewMemberJoins = snapshot.data()['NotifyWhenNewMemberJoins'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -73,11 +75,12 @@ class GroupPreferenceSettings {
     @required this.enableNotificationForAllGroups,
   });
 
-  GroupPreferenceSettings.fromData(DocumentSnapshot snapshot)
+  GroupPreferenceSettings.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        userId = snapshot['UserId'],
+        userId = snapshot.data()['UserId'],
         enableNotificationForAllGroups =
-            snapshot['EnableNotificationForAllGroups'];
+            snapshot.data()['EnableNotificationForAllGroups'];
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,

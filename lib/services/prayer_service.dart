@@ -18,21 +18,27 @@ import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PrayerService {
-  final CollectionReference _prayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _prayerCollectionReference =
       FirebaseFirestore.instance.collection("Prayer");
-  final CollectionReference _userPrayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _userPrayerCollectionReference =
       FirebaseFirestore.instance.collection("UserPrayer");
-  final CollectionReference _groupPrayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _groupPrayerCollectionReference =
       FirebaseFirestore.instance.collection("GroupPrayer");
-  final CollectionReference _prayerUpdateCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerUpdateCollectionReference =
       FirebaseFirestore.instance.collection("PrayerUpdate");
-  final CollectionReference _hiddenPrayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _hiddenPrayerCollectionReference =
       FirebaseFirestore.instance.collection("HiddenPrayer");
-  final CollectionReference _userCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
-  final CollectionReference _prayerTagCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerTagCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTag");
-  final CollectionReference _messageTemplateCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection("MessageTemplate");
 
   final _notificationService = locator<NotificationService>();
@@ -121,6 +127,7 @@ class PrayerService {
                     .toList());
 
         Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
+            // .doc(doc['PrayerId'])
             .where('PrayerId', isEqualTo: doc['PrayerId'])
             .snapshots()
             .map<List<PrayerTagModel>>((list) =>

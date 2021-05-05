@@ -6,9 +6,10 @@ import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DevotionalService {
-  final CollectionReference _bibleCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _bibleCollectionReference =
       FirebaseFirestore.instance.collection("Bible");
-  final CollectionReference _devotionalCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _devotionalCollectionReference =
       FirebaseFirestore.instance.collection("DevotionalAndPlan");
   Stream<List<BibleModel>> getBibles() {
     try {
