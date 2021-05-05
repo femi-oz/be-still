@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -13,11 +14,11 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,7 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  // bool _isUnderAge = false;
+  // bool disabled = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -55,13 +55,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
-    // _isUnderAge =
-    //     (DateTime(DateTime.now().year, pickedDate.month, pickedDate.day)
-    //                 .isAfter(DateTime.now())
-    //             ? DateTime.now().year - pickedDate.year - 1
-    //             : DateTime.now().year - pickedDate.year) <
-    //         18;
-
     if (pickedDate == null) {
       return null;
     }
@@ -72,12 +65,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   }
 
   _agreeTerms(bool value) {
-    setState(() {
-      _enableSubmit = value;
-    });
+    setState(() => _enableSubmit = value);
   }
 
   void _createAccount() async {
+    if (!_enableSubmit) {
+      PlatformException e = PlatformException(
+          code: 'custom',
+          message: 'You must accept terms to create an account.');
+      BeStilDialog.showErrorDialog(context, e, null, null);
+      return;
+    }
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
@@ -119,16 +117,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
+              type: PageTransitionType.leftToRightWithFade,
               child: CreateAccountSuccess()),
           (Route<dynamic> route) => false,
         );
-        // Navigator.of(context).pushNamedAndRemoveUntil(
-        //   CreateAccountSuccess.routeName,
-        //   (Route<dynamic> route) => false,
-        // );
       }
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       var message = '';
 
       if (e.message ==
@@ -138,20 +132,28 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       } else {
         message = e.message;
       }
+
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, message);
-    } catch (e) {
+
+      PlatformException er =
+          PlatformException(code: 'custom', message: message);
+
+      BeStilDialog.showErrorDialog(context, er, null, s);
+    } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
 
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+
+      BeStilDialog.showErrorDialog(context, e, null, s);
+      // }
     }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
+    // disabled = Provider.of<MiscProvider>(context).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -217,40 +219,95 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  _buildFooter() {
+  Widget _buildFooter() {
     return Column(
       children: <Widget>[
-        BsRaisedButton(
-            disabled: !_enableSubmit,
-            onPressed: () => !_enableSubmit
-                ? BeStilDialog.showErrorDialog(
+        SizedBox(height: 10),
+        Row(
+          children: [
+            Container(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(AppColors.lightBlue3),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
+                  elevation: MaterialStateProperty.all<double>(0.0),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.42,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: AppColors.grey),
+                  margin: const EdgeInsets.all(0),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 10,
+                  ),
+                  child: Text('Cancel',
+                      style: AppTextStyles.regularText16b
+                          .copyWith(color: AppColors.white)),
+                ),
+                onPressed: () {
+                  // Settings.rememberMe
+                  //     ? Provider.of<MiscProvider>(context, listen: false)
+                  //         .setVisibility(false)
+                  //     : Provider.of<MiscProvider>(context, listen: false)
+                  //         .setVisibility(true);
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    'You must accept terms to proceed',
-                  )
-                : _createAccount()),
-        SizedBox(height: 16),
-        InkWell(
-          child: Text(
-            StringUtils.backText,
-            style: AppTextStyles.regularText13,
-          ),
-          onTap: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              PageTransition(
-                  type: PageTransitionType.leftToRightWithFade,
-                  child: LoginScreen()),
-              (Route<dynamic> route) => false,
-            );
-            // Navigator.of(context).pop();
-          },
+                    PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: LoginScreen()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Container(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.transparent),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
+                  elevation: MaterialStateProperty.all<double>(0.0),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.42,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: !_enableSubmit
+                        ? AppColors.lightBlue4.withOpacity(0.5)
+                        : AppColors.lightBlue4,
+                  ),
+                  margin: const EdgeInsets.all(0),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 10,
+                  ),
+                  child: Text('Create',
+                      style: !_enableSubmit
+                          ? AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.white)
+                          : AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.white)),
+                ),
+                onPressed: () {
+                  _createAccount();
+                },
+              ),
+            )
+          ],
         ),
         SizedBox(height: 20.0),
       ],
     );
   }
 
-  _buildForm() {
+  Widget _buildForm() {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
@@ -286,15 +343,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.transparent,
                 child: IgnorePointer(
                   child: CustomInput(
-                    label: 'Birthday',
+                    label: 'Date of Birth (optional)',
                     controller: _dobController,
-                    // isRequired: true,
-                    // validator: (value) {
-                    //   if (_isUnderAge) {
-                    //     return 'You must be 18 or older to use this app';
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
               ),
@@ -310,7 +360,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              // isPassword: true,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,

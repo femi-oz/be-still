@@ -1,6 +1,6 @@
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -27,21 +27,15 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
       centerTitle: true,
       automaticallyImplyLeading: false,
       leading: Container(
-        child: Row(
-          children: <Widget>[
-            SizedBox(width: 15),
-            IconButton(
-              icon: Icon(
-                AppIcons.bestill_close,
-                color: AppColors.lightBlue1,
-                size: 20,
-              ),
-              onPressed: () {
-                Navigator.of(context)
-                    .pushReplacementNamed(EntryScreen.routeName);
-              },
-            ),
-          ],
+        child: IconButton(
+          icon: Icon(
+            AppIcons.bestill_close,
+            color: AppColors.lightBlue1,
+            size: 22,
+          ),
+          onPressed: () {
+            NavigationService.instance.goHome(0);
+          },
         ),
       ),
       leadingWidth: 80,
@@ -50,28 +44,9 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
         style:
             AppTextStyles.regularText13.copyWith(color: AppColors.lightBlue1),
       ),
-      // actions: <Widget>[
-      //   Row(
-      //     children: <Widget>[
-      //       Builder(
-      //         builder: (BuildContext context) {
-      //           return IconButton(
-      //             icon: Icon(
-      //               AppIcons.bestill_close,
-      //               color: AppColors.lightBlue1,
-      //               size: 20,
-      //             ),
-      //             onPressed: () {
-      //               Navigator.of(context)
-      //                   .pushReplacementNamed(EntryScreen.routeName);
-      //             },
-      //           );
-      //         },
-      //       ),
-      //       SizedBox(width: 15),
-      //     ],
-      //   ),
-      // ],
+      actions: <Widget>[
+        new Container(),
+      ],
     );
   }
 }

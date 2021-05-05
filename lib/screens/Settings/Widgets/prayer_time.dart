@@ -111,10 +111,12 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
           selectedHour.toString(),
           selectedMinute.toString(),
         );
-    } catch (e) {
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -132,20 +134,21 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   ) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
-            LocalNotification.localNotificationID,
-            userId,
-            notificationText,
-            userId,
-            userId,
-            title,
-            description,
-            frequency,
-            NotificationType.prayer_time,
-            scheduledDate,
-            selectedDay,
-            period,
-            selectedHour,
-            selectedMinute);
+      LocalNotification.localNotificationID,
+      userId,
+      notificationText,
+      userId,
+      userId,
+      title,
+      description,
+      frequency,
+      NotificationType.prayer_time,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+    );
     await Future.delayed(Duration(milliseconds: 300));
     BeStilDialog.hideLoading(context);
     setState(() => _addPrayerTypeMode = false);
@@ -173,14 +176,18 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       setState(() {});
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -214,88 +221,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     });
   }
 
-  // _deleteTimerModal(BuildContext context, String prayerTimeId) {
-  //   return Container(
-  //     width: double.infinity,
-  //     height: double.infinity,
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: <Widget>[
-  //         Container(
-  //           padding: EdgeInsets.symmetric(horizontal: 100),
-  //           child: Text(
-  //             'Are you sure you want to delete this prayer time?',
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //               color: AppColors.lightBlue4,
-  //               fontSize: 14,
-  //               fontWeight: FontWeight.w500,
-  //               height: 1.5,
-  //             ),
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           onTap: _deletePrayerTime(prayerTimeId),
-  //           child: Container(
-  //             height: 30,
-  //             width: double.infinity,
-  //             margin: EdgeInsets.all(40),
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 color: AppColors.red,
-  //                 width: 1,
-  //               ),
-  //               borderRadius: BorderRadius.circular(5),
-  //             ),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Text(
-  //                   'DELETE',
-  //                   style: TextStyle(
-  //                     color: AppColors.red,
-  //                     fontSize: 14,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           onTap: () {
-  //             Navigator.of(context).pop();
-  //           },
-  //           child: Container(
-  //             height: 30,
-  //             width: MediaQuery.of(context).size.width * .38,
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 color: AppColors.cardBorder,
-  //                 width: 1,
-  //               ),
-  //               borderRadius: BorderRadius.circular(5),
-  //             ),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Text(
-  //                   'CANCEL',
-  //                   style: TextStyle(
-  //                     color: AppColors.lightBlue4,
-  //                     fontSize: 14,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final prayerTimeList =
@@ -303,330 +228,268 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
             .prayerTimeNotifications;
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    // final setingProvider = Provider.of<SettingsProvider>(context);
-    // final userId = Provider.of<UserProvider>(context).currentUser.id;
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          // SizedBox(height: 30),
-          // Column(
-          //   children: [
-          //     CustomSectionHeder('Preference'),
-          //     SizedBox(height: 20),
-          //     CustomToggle(
-          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //           key: SettingsKey.allowEmergencyCalls,
-          //           value: value,
-          //           settingsId: widget.prayerSettings.id),
-          //       title:
-          //           'Allow emergency calls (second call from the same number calls within 2 minutes)',
-          //       value: widget.prayerSettings.allowEmergencyCalls,
-          //     ),
-          //     CustomToggle(
-          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //           key: SettingsKey.doNotDisturb,
-          //           value: value,
-          //           settingsId: widget.prayerSettings.id),
-          //       title: 'Set to Do Not Disturb during Prayer Time?',
-          //       value: widget.prayerSettings.doNotDisturb,
-          //     ),
-          //     CustomToggle(
-          //       onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //           key: SettingsKey.enableBackgroundMusic,
-          //           value: value,
-          //           settingsId: widget.prayerSettings.id),
-          //       title: 'Enable background music during Prayer Mode?',
-          //       value: widget.prayerSettings.enableBackgroundMusic,
-          //     ),
-          //     SizedBox(height: 20),
-          //     // CustomOutlineButton(
-          //     //   actionColor: AppColors.lightBlue4,
-          //     //   actionText: 'CONNECTED',
-          //     //   textIcon: 'assets/images/spotify.png',
-          //     //   onPressed: () => null,
-          //     //   value: 'Spotify',
-          //     // ),
-          //     // Container(
-          //     //   child: CustomPicker(songs, null, true, 3),
-          //     // ),
-          //     // CustomToggle(
-          //     //   title: 'Auto play music during prayer time?',
-          //     //   onChange: (value) => setingProvider.updatePrayerSettings(userId,
-          //     //       key: SettingsKey.autoPlayMusic,
-          //     //       value: value,
-          //     //       settingsId: widget.prayerSettings.id),
-          //     //   value: widget.prayerSettings.autoPlayMusic,
-          //     // ),
-          //   ],
-          // ),
-          SizedBox(height: 15),
-          CustomSectionHeder('My Prayer Time'),
-          SizedBox(height: 35.0),
-          Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                prayerTimeText,
-                style: AppTextStyles.regularText15
-                    .copyWith(color: AppColors.prayerTextColor),
-              )),
-          SizedBox(height: 35.0),
-          prayerTimeList.length > 0
-              ? SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      ...prayerTimeList.map(
-                        (data) => Column(
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0,
-                                      vertical: 10.0,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.backgroundColor,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 15),
+            CustomSectionHeder('My Prayer Time'),
+            SizedBox(height: 35.0),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  prayerTimeText,
+                  style: AppTextStyles.regularText15
+                      .copyWith(color: AppColors.prayerTextColor),
+                )),
+            SizedBox(height: 35.0),
+            prayerTimeList.length > 0
+                ? SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ...prayerTimeList.map(
+                          (data) => Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 15.0,
                                     ),
-                                    height: 40.0,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.75,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: AppColors.lightBlue6,
-                                        width: 1,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                        vertical: 10.0,
                                       ),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.15,
-                                          child: Text(
-                                            data.frequency,
+                                      height: 40.0,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.75,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: AppColors.lightBlue6,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.15,
+                                            child: Text(
+                                              data.frequency,
+                                              style: AppTextStyles.regularText15
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .prayerTextColor),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05),
+                                          data.frequency == Frequency.weekly
+                                              ? Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.15,
+                                                  child: Text(
+                                                    data.selectedDay,
+                                                    style: AppTextStyles
+                                                        .regularText15
+                                                        .copyWith(
+                                                            color: AppColors
+                                                                .prayerTextColor),
+                                                  ),
+                                                )
+                                              : SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.15),
+                                          SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05),
+                                          Text(
+                                            data.selectedHour,
                                             style: AppTextStyles.regularText15
                                                 .copyWith(
                                                     color: AppColors
                                                         .prayerTextColor),
                                           ),
-                                        ),
-                                        SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05),
-                                        data.frequency == Frequency.weekly
-                                            ? Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.15,
-                                                child: Text(
-                                                  data.selectedDay,
-                                                  style: AppTextStyles
-                                                      .regularText15
-                                                      .copyWith(
-                                                          color: AppColors
-                                                              .prayerTextColor),
-                                                ),
-                                              )
-                                            : SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.15),
-                                        SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05),
-                                        Text(
-                                          data.selectedHour,
-                                          style: AppTextStyles.regularText15
-                                              .copyWith(
-                                                  color: AppColors
-                                                      .prayerTextColor),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          ':',
-                                          style: AppTextStyles.regularText15
-                                              .copyWith(
-                                                  color: AppColors
-                                                      .prayerTextColor),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          data.selectedMinute,
-                                          style: AppTextStyles.regularText15
-                                              .copyWith(
-                                                  color: AppColors
-                                                      .prayerTextColor),
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          data.period,
-                                          style: AppTextStyles.regularText15
-                                              .copyWith(
-                                                  color: AppColors
-                                                      .prayerTextColor),
-                                        ),
-                                      ],
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            ':',
+                                            style: AppTextStyles.regularText15
+                                                .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            data.selectedMinute,
+                                            style: AppTextStyles.regularText15
+                                                .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor),
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            data.period,
+                                            style: AppTextStyles.regularText15
+                                                .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      child: GestureDetector(
-                                        child: Icon(
-                                          AppIcons.bestill_edit,
-                                          size: 16,
-                                          color: AppColors.lightBlue3,
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        child: GestureDetector(
+                                          child: Icon(
+                                            AppIcons.bestill_edit,
+                                            size: 16,
+                                            color: AppColors.lightBlue3,
+                                          ),
+                                          onTap: () {
+                                            notification = data;
+                                            setState(
+                                                () => showUpdateField = true);
+                                          },
                                         ),
-                                        onTap: () {
-                                          notification = data;
-                                          setState(
-                                              () => showUpdateField = true);
-                                        },
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    InkWell(
-                                      child: GestureDetector(
-                                        child: Icon(
-                                          AppIcons.bestill_delete,
-                                          size: 16,
-                                          color: AppColors.lightBlue3,
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      InkWell(
+                                        child: GestureDetector(
+                                          child: Icon(
+                                            AppIcons.bestill_close,
+                                            size: 18,
+                                            color: AppColors.lightBlue3,
+                                          ),
+                                          onTap: () {
+                                            _deletePrayerTime(
+                                                data.localNotificationId,
+                                                data.id);
+                                          },
                                         ),
-                                        onTap: () {
-                                          _deletePrayerTime(
-                                              data.localNotificationId,
-                                              data.id);
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 10.0),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 10.0),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
+            Column(
+              children: [
+                !_addPrayerTypeMode && !showUpdateField
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 30,
+                        ),
+                        child: Row(
+                          children: [
+                            CustomButtonGroup(
+                              title: 'ADD REMINDER',
+                              onSelected: (_) =>
+                                  setState(() => _addPrayerTypeMode = true),
+                            )
                           ],
                         ),
-                      ),
-
-                      // ...localNotifications.map((data) =>
-                      // // ReminderPicker(
-                      // //             hideActionuttons: false,
-                      // //             frequency: data.frequency,
-                      // //             reminderDays: LocalNotification.reminderDays,
-                      // //             onCancel: () =>
-                      // //                 setState(() => _addPrayerTypeMode = false),
-                      // //             onSave: (selectedFrequency, selectedHour,
-                      // //                     selectedMinute, selectedDay, selectedPeriod) =>
-                      // //                 _savePrayerTime(
-                      // //                     selectedDay,
-                      // //                     selectedFrequency,
-                      // //                     selectedPeriod,
-                      // //                     selectedHour,
-                      // //                     selectedMinute),
-                      // //           ),
-
-                      // )
-                    ],
-                  ),
-                )
-              : Container(),
-          Column(
-            children: [
-              !_addPrayerTypeMode && !showUpdateField
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 30,
-                      ),
-                      child: Row(
-                        children: [
-                          CustomButtonGroup(
-                            title: 'ADD REMINDER',
-                            onSelected: (_) =>
-                                setState(() => _addPrayerTypeMode = true),
-                          )
-                        ],
-                      ),
-                    )
-                  : Container(),
-              _addPrayerTypeMode
-                  ? Container(
-                      margin: EdgeInsets.only(bottom: 80.0),
-                      child: ReminderPicker(
-                        hideActionuttons: false,
-                        frequency: reminderInterval,
-                        reminderDays: LocalNotification.reminderDays,
-                        onCancel: () =>
-                            setState(() => _addPrayerTypeMode = false),
-                        onSave: (String selectedFrequency,
-                                String selectedHour,
-                                String selectedMinute,
-                                String selectedDay,
-                                String selectedPeriod) =>
-                            _savePrayerTime(selectedDay, selectedFrequency,
-                                selectedPeriod, selectedHour, selectedMinute),
-                      ),
-                    )
-                  : showUpdateField
-                      ? Container(
-                          margin: EdgeInsets.only(bottom: 80.0),
-                          child: ReminderPicker(
-                            hideActionuttons: false,
-                            frequency: reminderInterval,
-                            reminderDays: LocalNotification.reminderDays,
-                            onCancel: () =>
-                                setState(() => showUpdateField = false),
-                            onSave: (
-                              selectedFrequency,
-                              selectedHour,
-                              selectedMinute,
-                              selectedDay,
-                              selectedPeriod,
-                            ) =>
-                                setNotification(
-                              selectedHour,
-                              selectedFrequency,
-                              selectedMinute,
-                              selectedDay,
-                              selectedPeriod,
-                              user.id,
-                              true,
-                              notification.localNotificationId,
+                      )
+                    : Container(),
+                _addPrayerTypeMode
+                    ? Container(
+                        margin: EdgeInsets.only(bottom: 80.0),
+                        child: ReminderPicker(
+                          hideActionuttons: false,
+                          frequency: reminderInterval,
+                          reminderDays: LocalNotification.reminderDays,
+                          onCancel: () =>
+                              setState(() => _addPrayerTypeMode = false),
+                          onSave: (String selectedFrequency,
+                                  String selectedHour,
+                                  String selectedMinute,
+                                  String selectedDay,
+                                  String selectedPeriod) =>
+                              _savePrayerTime(selectedDay, selectedFrequency,
+                                  selectedPeriod, selectedHour, selectedMinute),
+                        ),
+                      )
+                    : showUpdateField
+                        ? Container(
+                            margin: EdgeInsets.only(bottom: 80.0),
+                            child: ReminderPicker(
+                              hideActionuttons: false,
+                              frequency: reminderInterval,
+                              reminderDays: LocalNotification.reminderDays,
+                              onCancel: () =>
+                                  setState(() => showUpdateField = false),
+                              onSave: (
+                                selectedFrequency,
+                                selectedHour,
+                                selectedMinute,
+                                selectedDay,
+                                selectedPeriod,
+                              ) =>
+                                  setNotification(
+                                selectedHour,
+                                selectedFrequency,
+                                selectedMinute,
+                                selectedDay,
+                                selectedPeriod,
+                                user.id,
+                                true,
+                                notification.localNotificationId,
+                              ),
+                              selectedDay: LocalNotification.reminderDays
+                                      .indexOf(notification.selectedDay) +
+                                  1,
+                              selectedFrequency: notification.frequency,
+                              selectedHour:
+                                  int.parse(notification.selectedHour),
+                              selectedMinute:
+                                  int.parse(notification.selectedMinute),
+                              selectedPeriod: notification.period,
                             ),
-                            selectedDay: LocalNotification.reminderDays
-                                    .indexOf(notification.selectedDay) +
-                                1,
-                            selectedFrequency: notification.frequency,
-                            selectedHour: int.parse(notification.selectedHour),
-                            selectedMinute:
-                                int.parse(notification.selectedMinute),
-                            selectedPeriod: notification.period,
-                          ),
-                        )
-                      : Container(),
-              SizedBox(height: 100),
-            ],
-          ),
-        ],
+                          )
+                        : Container(),
+                SizedBox(height: 100),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

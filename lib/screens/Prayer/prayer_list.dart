@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -5,7 +7,6 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -16,6 +17,7 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -56,16 +58,34 @@ class _PrayerListState extends State<PrayerList> {
     try {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayers(_user?.id);
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      if (searchQuery.isNotEmpty) {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers(searchQuery, _user.id);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayers(_user?.id);
+      }
 
       BeStilDialog.hideLoading(context);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+      Isolate.current.addErrorListener(RawReceivePort((pair) async {
+        final List<dynamic> errorAndStacktrace = pair;
+        await FirebaseCrashlytics.instance.recordError(
+          errorAndStacktrace.first,
+          errorAndStacktrace.last,
+        );
+      }).sendPort);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.toString());
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -83,12 +103,16 @@ class _PrayerListState extends State<PrayerList> {
             child: PrayerDetails()),
       );
       // Navigator.of(context).pushNamed(PrayerDetails.routeName);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.toString());
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -117,10 +141,14 @@ class _PrayerListState extends State<PrayerList> {
           },
         ),
       );
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -134,8 +162,10 @@ class _PrayerListState extends State<PrayerList> {
         }
         Settings.isAppInit = false;
       }
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -155,56 +185,61 @@ class _PrayerListState extends State<PrayerList> {
           ),
         ),
         child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(left: 20),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage(true)),
-                alignment: Alignment.bottomCenter,
-              ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.83,
             ),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20),
-                prayers.length == 0
-                    ? Container(
-                        padding: EdgeInsets.only(
-                            left: 60, right: 100, top: 60, bottom: 60),
-                        child: Opacity(
-                          opacity: 0.3,
-                          child: Text(
-                            'No Prayers in My List',
-                            style: AppTextStyles.demiboldText34,
-                            textAlign: TextAlign.center,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage(true)),
+                  alignment: Alignment.bottomCenter,
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 20),
+                  prayers.length == 0
+                      ? Container(
+                          padding: EdgeInsets.only(
+                              left: 60, right: 100, top: 60, bottom: 60),
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Text(
+                              'No Prayers in My List',
+                              style: AppTextStyles.demiboldText34,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            ...prayers.map((e) {
+                              final _timeago =
+                                  DateFormatter(e.prayer.modifiedOn).format();
+                              return GestureDetector(
+                                  onTap: () => onTapCard(e),
+                                  child: PrayerCard(
+                                      prayerData: e, timeago: _timeago));
+                            }).toList(),
+                          ],
                         ),
-                      )
-                    : Column(
-                        children: <Widget>[
-                          ...prayers.map((e) {
-                            final _timeago =
-                                DateFormatter(e.prayer.modifiedOn).format();
-                            return GestureDetector(
-                                onTap: () => onTapCard(e),
-                                child: PrayerCard(
-                                    prayerData: e, timeago: _timeago));
-                          }).toList(),
-                        ],
-                      ),
-                SizedBox(height: 5),
-                currentPrayerType == PrayerType.archived ||
-                        currentPrayerType == PrayerType.answered
-                    ? Container()
-                    : LongButton(
-                        onPress: () => NavigationService.instance.goHome(2),
-                        text: 'Add New Prayer',
-                        backgroundColor:
-                            AppColors.addprayerBgColor.withOpacity(0.9),
-                        textColor: AppColors.addprayerTextColor,
-                        icon: AppIcons.bestill_add_btn,
-                      ),
-                SizedBox(height: 80),
-              ],
+                  SizedBox(height: 5),
+                  currentPrayerType == PrayerType.archived ||
+                          currentPrayerType == PrayerType.answered
+                      ? Container()
+                      : LongButton(
+                          onPress: () => NavigationService.instance.goHome(2),
+                          text: 'Add New Prayer',
+                          backgroundColor:
+                              AppColors.addprayerBgColor.withOpacity(0.9),
+                          textColor: AppColors.addprayerTextColor,
+                          icon: AppIcons.bestill_add_btn,
+                        ),
+                  SizedBox(height: 80),
+                ],
+              ),
             ),
           ),
         ),

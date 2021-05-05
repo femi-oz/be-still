@@ -2,15 +2,14 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import '../../entry_screen.dart';
 
 class DeletePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;
@@ -36,10 +35,12 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } catch (e) {
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -62,14 +63,18 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -92,14 +97,18 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.hideLoading(context);
 
       NavigationService.instance.goHome(0);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -133,9 +142,9 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: double.infinity,
                     margin: EdgeInsets.all(40),
                     decoration: BoxDecoration(
-                      color: AppColors.grey,
+                      color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -162,9 +171,9 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     width: double.infinity,
                     margin: EdgeInsets.all(40),
                     decoration: BoxDecoration(
-                      color: AppColors.grey,
+                      color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -198,7 +207,7 @@ class _DeletePrayerState extends State<DeletePrayer> {
                     height: 30,
                     width: MediaQuery.of(context).size.width * .38,
                     decoration: BoxDecoration(
-                      color: AppColors.grey,
+                      color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
                         color: AppColors.cardBorder,
                         width: 1,

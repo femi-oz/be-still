@@ -36,7 +36,7 @@ class BsRaisedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(AppColors.lightBlue3),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
         elevation: MaterialStateProperty.all<double>(0.0),
       ),
@@ -45,7 +45,12 @@ class BsRaisedButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: AppColors.buttonGradient,
+            colors: disabled
+                ? [
+                    AppColors.buttonGradient[0].withOpacity(0.5),
+                    AppColors.buttonGradient[1].withOpacity(0.5)
+                  ]
+                : AppColors.buttonGradient,
           ),
         ),
         margin: const EdgeInsets.all(0),
@@ -54,7 +59,7 @@ class BsRaisedButton extends StatelessWidget {
           horizontal: size.horizontal,
         ),
         child: Icon(
-          disabled ? AppIcons.bestill_delete : AppIcons.bestill_next_arrow,
+          AppIcons.bestill_next_arrow,
           color: AppColors.white,
           size: 26,
         ),

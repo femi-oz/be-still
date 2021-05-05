@@ -1,10 +1,8 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -63,7 +61,11 @@ class _AddPrayerState extends State<AddPrayer> {
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
+        PlatformException e = PlatformException(
+            code: 'custom', message: 'You can not save empty prayers');
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
         if (!widget.isEdit) {
           await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
@@ -103,12 +105,16 @@ class _AddPrayerState extends State<AddPrayer> {
           NavigationService.instance.goHome(0);
         }
       }
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -226,22 +232,20 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      widget.isEdit
-                          ? Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: PrayerDetails(),
-                              ),
-                            )
-                          : NavigationService.instance.goHome(0);
-                    },
+                    onTap: () => widget.isEdit
+                        ? Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: PrayerDetails(),
+                            ),
+                          )
+                        : NavigationService.instance.goHome(0),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -337,9 +341,11 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Text('CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey)),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
+                          ),
                           onTap: () => isValid
                               ? onCancel()
                               : widget.isEdit
@@ -347,7 +353,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                       context,
                                       PageTransition(
                                         type: PageTransitionType
-                                            .leftToRightWithFade,
+                                            .rightToLeftWithFade,
                                         child: PrayerDetails(),
                                       ),
                                     )
@@ -375,15 +381,17 @@ class _AddPrayerState extends State<AddPrayer> {
                               // autovalidateMode: AutovalidateMode.onUserInteraction,
                               autovalidate: _autoValidate,
                               key: _formKey,
-                              child: CustomInput(
-                                label: 'Prayer description',
-                                controller: _descriptionController,
-                                maxLines: 23,
-                                isRequired: true,
-                                showSuffix: false,
-                                textInputAction: TextInputAction.newline,
-                                onTextchanged: (val) => _onTextChange(val),
-                                focusNode: _focusNode,
+                              child: Container(
+                                child: CustomInput(
+                                  label: 'Prayer description',
+                                  controller: _descriptionController,
+                                  maxLines: 23,
+                                  isRequired: true,
+                                  showSuffix: false,
+                                  textInputAction: TextInputAction.newline,
+                                  onTextchanged: (val) => _onTextChange(val),
+                                  focusNode: _focusNode,
+                                ),
                               ),
                             ),
                           ),

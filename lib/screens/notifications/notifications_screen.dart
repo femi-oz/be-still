@@ -70,9 +70,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(_user?.id);
     } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
+      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
+      // BeStilDialog.showErrorDialog(context, e.toString());
     }
   }
 

@@ -1,7 +1,11 @@
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
+import 'package:provider/provider.dart';
 
 class CustomInput extends StatefulWidget {
   final int maxLines;
@@ -66,14 +70,6 @@ class _CustomInputState extends State<CustomInput> {
                         (widget.showSuffix && widget.controller.text != '')
                     ? widget.label
                     : '',
-                // suffixIcon: widget.showBiometric
-                //     ? IconButton(
-                //         icon: Icon(
-                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-                //         onPressed: () {
-                //           // widget.bioLogin;
-                //         })
-                //     : Container(),
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(
                     horizontal: 15, vertical: widget.padding),
@@ -82,8 +78,7 @@ class _CustomInputState extends State<CustomInput> {
                         ? AppColors.offWhite2
                         : AppColors.grey4),
                 counterText: '',
-                hintText:
-                    widget.isRequired ? '${widget.label} \*' : widget.label,
+                hintText: widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
                 errorBorder: new OutlineInputBorder(
                   borderSide: new BorderSide(color: Colors.redAccent),
@@ -119,14 +114,6 @@ class _CustomInputState extends State<CustomInput> {
                         (widget.showSuffix && widget.controller.text != '')
                     ? widget.label
                     : '',
-                // suffixIcon: widget.showBiometric
-                //     ? IconButton(
-                //         icon: Icon(
-                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-                //         onPressed: () {
-                //           // widget.bioLogin;
-                //         })
-                //     : Container(),
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(
                     horizontal: 15, vertical: widget.padding),
@@ -135,8 +122,7 @@ class _CustomInputState extends State<CustomInput> {
                         ? AppColors.offWhite2
                         : AppColors.prayerTextColor),
                 counterText: '',
-                hintText:
-                    widget.isRequired ? '${widget.label} \*' : widget.label,
+                hintText: widget.label,
                 hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
                 errorBorder: new OutlineInputBorder(
                   borderSide: new BorderSide(color: Colors.redAccent),
@@ -159,23 +145,56 @@ class _CustomInputState extends State<CustomInput> {
               ),
               obscureText: widget.obScurePassword,
               validator: (value) => _validatorFn(value),
-              onFieldSubmitted: (_) => {
-                    widget.unfocus
-                        ? FocusScope.of(context).unfocus()
-                        : FocusScope.of(context).nextFocus(),
-                    widget.unfocus ? widget.submitForm : null
-                  },
+              onFieldSubmitted: (val) => {
+                _searchPrayer(val),
+                widget.unfocus
+                    ? FocusScope.of(context).unfocus()
+                    : FocusScope.of(context).nextFocus(),
+                widget.unfocus ? widget.submitForm : null
+              },
               textInputAction: widget.textInputAction,
               onChanged: (val) {
+                // setVisibilty(val);
                 setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
                 if (widget.onTextchanged != null) widget.onTextchanged(val);
-              }),
+              },
+            ),
     );
   }
 
+  void _searchPrayer(String value) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
+  }
+
+  // void setVisibilty(String value) {
+  //   Pattern passwordPattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
+  //   RegExp regex = new RegExp(passwordPattern);
+  //   Pattern emailPattern =
+  //       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  //   RegExp regExp = new RegExp(emailPattern);
+
+  //   // if (value.contains(regExp) || value.contains(regex) && value.isNotEmpty) {
+  //   //   Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
+  //   // } else {
+  //   //   Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
+  //   // }
+  // }
+
   String _validatorFn(String value) {
     if (widget.isRequired) {
-      if (value.isEmpty) {
+      //  if (value.isEmpty ) {
+      //   return '${widget.label} is required';
+      // }
+      if (value.isEmpty && widget.isEmail) {
+        return 'Email is required';
+      } else if (value.isEmpty && widget.isPassword) {
+        return 'Password is required';
+      } else if (value.isEmpty) {
         return '${widget.label} is required';
       }
     }
@@ -202,8 +221,9 @@ class _CustomInputState extends State<CustomInput> {
     if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(value))
+      if (!regex.hasMatch(value)) {
         return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
+      }
     }
     if (widget.isLink && value.isNotEmpty) {
       Pattern pattern =

@@ -1,6 +1,9 @@
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'essentials.dart';
@@ -49,12 +52,34 @@ class BeStilDialog {
     Navigator.pop(context);
   }
 
-  static Future showErrorDialog(BuildContext context, String message) async {
+  static Future showErrorDialog(BuildContext context, dynamic error,
+      UserModel user, StackTrace stackTrace) async {
     await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
+        confirmText: 'OK',
+        message: error.message,
+      ),
+    );
+    // FirebaseCrashlytics.instance
+    //     .setCustomKey('id', user == null ? 'N/A' : user.id);
+    // FirebaseCrashlytics.instance
+    //     .setCustomKey('email', user == null ? 'N/A' : user.email);
+
+    // FirebaseCrashlytics.instance.recordError(
+    //   error,
+    //   stackTrace,
+    // );
+  }
+
+  static Future showSuccessDialog(BuildContext context, String message) async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (_) => CustomAlertDialog(
+        type: AlertType.success,
         confirmText: 'OK',
         message: message,
       ),

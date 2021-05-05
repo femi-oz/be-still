@@ -2,10 +2,10 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -38,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  // bool disableButton = false;
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -48,6 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showFaceId = false;
   bool showSuffix = true;
   bool _autoValidate = false;
+  bool verificationSent = false;
+  String verificationSendMessage = 'Resend verification email';
+  bool needsVerification = false;
 
   Future<void> _isBiometricAvailable() async {
     try {
@@ -92,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       _isBiometricAvailable();
-
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -130,10 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  var verificationSent = false;
-  var verificationSendMessage = 'Resend verification email';
-  var needsVerification = false;
-
   void _resendVerification() async {
     try {
       await BeStilDialog.showLoading(context, '');
@@ -164,6 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
+    // if (!disableButton) {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
@@ -188,32 +188,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
               .needsVerification;
+
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      BeStilDialog.showErrorDialog(context, e, null, s);
+    } catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
               .needsVerification;
+
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(
-          context, 'An error occured. Please try again');
+      BeStilDialog.showErrorDialog(context, e, null, s);
     }
+    // }
   }
 
   void _biologin() async {
-    // if (!_formKey.currentState.validate()) return null;
-    // _formKey.currentState.save();
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
-      // await BeStilDialog.showLoading(context, 'Authenticating');
-
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
       final user =
@@ -333,8 +331,10 @@ class _LoginScreenState extends State<LoginScreen> {
         });
   }
 
+  bool isFormValid = false;
   @override
   Widget build(BuildContext context) {
+    // disableButton = Provider.of<MiscProvider>(context, listen: true).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -363,7 +363,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           (BuildContext context, BoxConstraints constraints) {
                         return Container(
                           decoration: BoxDecoration(
-                            // color: Colors.red,
                             image: DecorationImage(
                               image: AssetImage(StringUtils.backgroundImage()),
                               alignment: Alignment.bottomCenter,
@@ -375,7 +374,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: MediaQuery.of(context).size.height *
                                       0.43),
                               Container(
-                                // height: MediaQuery.of(context).size.height * 0.56,
                                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                                 width: double.infinity,
                                 child: Column(
@@ -390,8 +388,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         if (isBioMetricAvailable)
                                           InkWell(
                                             child: Container(
-                                                // padding: EdgeInsets.only(
-                                                //     left: 40, right: 60),
                                                 child: Text(
                                               !Settings.enableLocalAuth
                                                   ? 'Enable Face/Touch ID'
@@ -400,10 +396,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   AppTextStyles.regularText15,
                                             )),
                                             onTap: _toggleBiometrics,
-                                          )
-                                        // showFingerPrint || showFaceId
-                                        //     ? _bioButton()
-                                        //     : Container(),
+                                          ),
                                       ],
                                     ),
                                     SizedBox(height: 30),
@@ -475,10 +468,13 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             isEmail: true,
-            onTextchanged: () => _usernameController.text !=
-                    jsonDecode(Settings.lastUser)['email']
-                ? _setDefaults
-                : null,
+            onTextchanged: (_) {
+              setState(() => isFormValid =
+                  _usernameController.text.isNotEmpty &&
+                      _passwordController.text.isNotEmpty);
+              if (_usernameController.text !=
+                  jsonDecode(Settings.lastUser)['email']) _setDefaults();
+            },
           ),
           SizedBox(height: 15.0),
           Stack(
@@ -494,6 +490,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   unfocus: true,
                   submitForm: () => _login(),
                   showSuffix: showSuffix,
+                  onTextchanged: (_) => setState(() => isFormValid =
+                      _usernameController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty),
                 ),
               ),
               Align(
@@ -514,6 +513,8 @@ class _LoginScreenState extends State<LoginScreen> {
         InkWell(
           child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
+            // Provider.of<MiscProvider>(context, listen: false)
+            //     .setVisibility(true);
             Navigator.push(
               context,
               PageTransition(
@@ -555,7 +556,10 @@ class _LoginScreenState extends State<LoginScreen> {
             style: AppTextStyles.regularText15,
           ),
         // SizedBox(height: 20),
-        BsRaisedButton(onPressed: _login),
+        BsRaisedButton(
+          onPressed: _login,
+          disabled: !isFormValid,
+        ),
         // Settings.enableLocalAuth
         //     ? BsRaisedButton(
         //         onPressed: _biologin,
@@ -567,13 +571,15 @@ class _LoginScreenState extends State<LoginScreen> {
               "Forgot my Password",
               style: AppTextStyles.regularText15,
             ),
-            onTap: () => Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: ForgetPassword()))
-            // Navigator.of(context).pushNamed(ForgetPassword.routeName),
-            ),
+            onTap: () {
+              // Provider.of<MiscProvider>(context, listen: false)
+              //     .setVisibility(true);
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.leftToRightWithFade,
+                      child: ForgetPassword()));
+            }),
       ],
     );
   }

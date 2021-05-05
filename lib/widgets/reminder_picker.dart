@@ -122,7 +122,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.23,
                             child: selectedFrequency == Frequency.weekly
                                 ? CupertinoPicker(
                                     selectionOverlay:
@@ -148,7 +148,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 : Container(height: 31),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.12,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -158,7 +158,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               scrollController: hourController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(
-                                  () => selectedHour = minInTheHour[i]),
+                                  () => selectedHour = hoursOfTheDay[i]),
                               children: <Widget>[
                                 for (var i = 0; i < hoursOfTheDay.length; i++)
                                   Align(
@@ -183,7 +183,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.09,
+                            width: MediaQuery.of(context).size.width * 0.12,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -199,7 +199,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                   Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                        i < 9
+                                        i < 10
                                             ? '0${minInTheHour[i]}'
                                             : '${minInTheHour[i]}',
                                         style: AppTextStyles.regularText15),
@@ -267,8 +267,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               ? '0$selectedMinute'
                               : '$selectedMinute';
                           var hour = selectedHour < 10
-                              ? '0${selectedHour.toString()}'
-                              : '$selectedHour';
+                              ? '0$selectedHour'
+                              : '${selectedHour + 1} ';
                           // var date =
                           //     '$selectedHour:$selectedMinute $selectedPeriod';
                           widget.onSave(

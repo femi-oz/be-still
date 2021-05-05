@@ -1,4 +1,5 @@
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
@@ -6,6 +7,7 @@ import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
@@ -25,6 +27,7 @@ class CustomDrawer extends StatelessWidget {
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+    final rememberMe = Settings.rememberMe;
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -89,7 +92,7 @@ class CustomDrawer extends StatelessWidget {
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey,
+                        color: AppColors.grey.withOpacity(0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -108,9 +111,16 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      // rememberMe
+                      //     ? await Provider.of<MiscProvider>(context,
+                      //             listen: false)
+                      //         .setVisibility(false)
+                      //     : await Provider.of<MiscProvider>(context,
+                      //             listen: false)
+                      //         .setVisibility(true);
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
@@ -210,16 +220,6 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.of(context)
-                                  .pushReplacementNamed(EntryScreen.routeName),
-                              child: Text("MY LIST",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
                               onTap: () =>
                                   _launchURL('https://my.bible.com/bible'),
                               child: Text("BIBLE APP",
@@ -260,9 +260,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.of(context)
-                                  .pushReplacementNamed(
-                                      SettingsScreen.routeName),
+                              onTap: () => Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: SettingsScreen(),
+                                ),
+                              ),
                               child: Text("SETTINGS",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),

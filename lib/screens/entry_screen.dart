@@ -1,4 +1,3 @@
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -26,20 +25,24 @@ class EntryScreen extends StatefulWidget {
 
 bool _isSearchMode = false;
 
-class _EntryScreenState extends State<EntryScreen> {
+class _EntryScreenState extends State<EntryScreen>
+    with TickerProviderStateMixin {
   BuildContext bcontext;
   int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  AnimationController controller;
+  Animation<double> animation;
 
   void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
-
   @override
   void initState() {
     _currentIndex =
         Provider.of<MiscProvider>(context, listen: false).currentPage;
-    _switchSearchMode(false);
+    _isInit = false;
     super.initState();
   }
+
+  bool _isInit = true;
 
   final cron = Cron();
 
@@ -87,6 +90,9 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isSearchMode =
+        Provider.of<MiscProvider>(context, listen: false).search;
+    _switchSearchMode(isSearchMode);
     return Scaffold(
       key: _scaffoldKey,
       appBar: _currentIndex == 2 || _currentIndex == 3
@@ -100,12 +106,24 @@ class _EntryScreenState extends State<EntryScreen> {
         future: _preLoadData(),
         initialData: null,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Container(
-                height: double.infinity,
-                child: TabNavigationItem.items[_currentIndex].page);
-          } else
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _currentIndex == 0 &&
+              _isInit) {
             return BeStilDialog.getLoading();
+          }
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+            ),
+            child: Transform.translate(
+              offset: Offset(animation?.value ?? 0, 0),
+              child: TabNavigationItem.items[_currentIndex].page,
+            ),
+          );
         },
       ),
       bottomNavigationBar:
@@ -214,17 +232,36 @@ class _EntryScreenState extends State<EntryScreen> {
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
+                controller = new AnimationController(
+                    duration: Duration(milliseconds: 300), vsync: this)
+                  ..addListener(() => setState(() {}));
+                animation = _currentIndex > index
+                    ? Tween(begin: MediaQuery.of(context).size.width, end: 0.0)
+                        .animate(controller)
+                    : _currentIndex == index
+                        ? Tween(begin: 0.0, end: 0.0).animate(controller)
+                        : Tween(
+                                begin: -MediaQuery.of(context).size.width,
+                                end: 0.0)
+                            .animate(controller);
+                controller.forward();
                 _currentIndex = index;
                 _switchSearchMode(false);
                 break;
             }
           },
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          unselectedItemColor: AppColors.bottomNavIconColor,
+          selectedLabelStyle: AppTextStyles.boldText14
+              .copyWith(color: AppColors.bottomNavIconColor, height: 1.3),
+          unselectedLabelStyle: AppTextStyles.boldText14.copyWith(
+              color: AppColors.bottomNavIconColor.withOpacity(0.5),
+              height: 1.4),
+          unselectedItemColor: AppColors.bottomNavIconColor.withOpacity(0.5),
+          selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
             for (final tabItem in TabNavigationItem.items)
@@ -252,16 +289,16 @@ class TabNavigationItem {
           page: PrayerList(),
           icon: Icon(
             Icons.home,
-            size: 26,
+            size: 18,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "prayer",
+          title: "List",
         ),
         TabNavigationItem(
           page: GroupScreen(),
           icon: Icon(AppIcons.bestill_groups,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "group",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Groups",
         ),
         TabNavigationItem(
           page: AddPrayer(
@@ -270,23 +307,23 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(AppIcons.bestill_add,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "add prayer",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Add",
         ),
         TabNavigationItem(
           page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "grow my prayer life",
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Pray",
         ),
         TabNavigationItem(
           page: null,
           icon: Icon(
             AppIcons.bestill_main_menu,
-            size: 18,
+            size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "Main Menu",
+          title: "More",
         ),
       ];
 }
