@@ -1,3 +1,4 @@
+import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -13,12 +14,12 @@ class ForgetPasswordSucess extends StatefulWidget {
 class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback(
-    //   (_) => Future.delayed(
-    //     Duration(milliseconds: 10000),
-    //     () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
-    //   ),
-    // );
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => Future.delayed(
+        Duration(milliseconds: 10000),
+        () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
+      ),
+    );
   }
 
   @override
@@ -49,11 +50,6 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
               'New password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase and 1 number.',
               style: AppTextStyles.errorText,
             ),
-            // SizedBox(height: 20),
-            // Text(
-            //   'Login to your BesStill...',
-            //   style: AppTextStyles.regularText15,
-            // ),
           ],
         ),
       ),

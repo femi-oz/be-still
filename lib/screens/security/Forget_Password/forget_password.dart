@@ -29,29 +29,26 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var notificationType = NotificationType.email;
   bool emailSent = false;
   bool _autoValidate = false;
-  bool disabled = false;
 
   _forgotPassword() async {
-    if (!disabled) {
-      setState(() => _autoValidate = true);
-      if (!_formKey1.currentState.validate()) return;
-      _formKey1.currentState.save();
-      try {
-        await BeStilDialog.showLoading(context, 'Sending Mail');
-        await Provider.of<AuthenticationProvider>(context, listen: false)
-            .sendPasswordResetEmail(_emailController.text);
+    setState(() => _autoValidate = true);
+    if (!_formKey1.currentState.validate()) return;
+    _formKey1.currentState.save();
+    try {
+      await BeStilDialog.showLoading(context, 'Sending Mail');
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .sendPasswordResetEmail(_emailController.text);
 
-        setState(() => step += 1);
-        BeStilDialog.hideLoading(context);
-      } on HttpException catch (e, s) {
-        BeStilDialog.hideLoading(context);
+      setState(() => step += 1);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
 
-        BeStilDialog.showErrorDialog(context, e, null, s);
-      } catch (e, s) {
-        BeStilDialog.hideLoading(context);
+      BeStilDialog.showErrorDialog(context, e, null, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
 
-        BeStilDialog.showErrorDialog(context, e, null, s);
-      }
+      BeStilDialog.showErrorDialog(context, e, null, s);
     }
   }
 
@@ -139,7 +136,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                                               0),
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                        vertical: 20,
+                                                        vertical: 15,
                                                         horizontal: 10,
                                                       ),
                                                       child: Text('Cancel',
@@ -186,8 +183,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                                     style: ButtonStyle(
                                                       backgroundColor:
                                                           MaterialStateProperty
-                                                              .all<Color>(AppColors
-                                                                  .lightBlue3),
+                                                              .all<Color>(Colors
+                                                                  .transparent),
                                                       padding: MaterialStateProperty
                                                           .all<EdgeInsetsGeometry>(
                                                               EdgeInsets.zero),
@@ -204,29 +201,30 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                                       alignment:
                                                           Alignment.center,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.blue,
+                                                        color: _emailController
+                                                                .text.isEmpty
+                                                            ? AppColors
+                                                                .lightBlue4
+                                                                .withOpacity(
+                                                                    0.5)
+                                                            : AppColors
+                                                                .lightBlue4,
                                                       ),
                                                       margin:
                                                           const EdgeInsets.all(
                                                               0),
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                        vertical: 20,
+                                                        vertical: 15,
                                                         horizontal: 10,
                                                       ),
                                                       child: Text(
                                                           'Send Password',
-                                                          style: disabled
-                                                              ? AppTextStyles
-                                                                  .regularText16b
-                                                                  .copyWith(
-                                                                      color: AppColors
-                                                                          .grey)
-                                                              : AppTextStyles
-                                                                  .regularText16b
-                                                                  .copyWith(
-                                                                      color: AppColors
-                                                                          .white)),
+                                                          style: AppTextStyles
+                                                              .regularText16b
+                                                              .copyWith(
+                                                                  color: AppColors
+                                                                      .white)),
                                                     ),
                                                     onPressed: () {
                                                       _forgotPassword();
