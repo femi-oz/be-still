@@ -120,7 +120,7 @@ class CustomDrawer extends StatelessWidget {
                       //         .setVisibility(true);
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
