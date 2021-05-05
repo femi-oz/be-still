@@ -16,13 +16,13 @@ class DevotionalModel {
     this.description,
     this.period,
   });
-  DevotionalModel.fromData(DocumentSnapshot snapshot)
+  DevotionalModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        title = snapshot['title'],
-        type = snapshot['type'],
-        description = snapshot['description'],
-        period = snapshot['period'],
-        link = snapshot['link'];
+        title = snapshot.data()['title'],
+        type = snapshot.data()['type'],
+        description = snapshot.data()['description'],
+        period = snapshot.data()['period'],
+        link = snapshot.data()['link'];
 
   Map<String, dynamic> toJson() {
     return {

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 class LogService {
-  final CollectionReference _errorLogCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _errorLogCollectionReference =
       FirebaseFirestore.instance.collection("ErrorLog");
   Future createLog(String message, String userId, String location) async {
     final _logId = Uuid().v1();

@@ -14,19 +14,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
-  final CollectionReference _localNotificationCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("LocalNotification");
-  final CollectionReference _pushNotificationCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _pushNotificationCollectionReference =
       FirebaseFirestore.instance.collection("PushNotification");
-  final CollectionReference _smsCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _smsCollectionReference =
       FirebaseFirestore.instance.collection("SMSMessage");
-  final CollectionReference _emailCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _emailCollectionReference =
       FirebaseFirestore.instance.collection("MailMessage");
-  final CollectionReference _userDeviceCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _userDeviceCollectionReference =
       FirebaseFirestore.instance.collection("UserDevice");
-  final CollectionReference _deviceCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _deviceCollectionReference =
       FirebaseFirestore.instance.collection("Device");
-  final CollectionReference _prayerTimeCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerTimeCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTime");
 
   init(String token, String userId) async {
