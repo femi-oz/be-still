@@ -17,7 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
 import './utils/routes.dart' as rt;
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 final _kShouldTestAsyncErrorOnInit = false;
 
@@ -30,7 +29,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  Future<void> _initializeFlutterFireFuture;
+  // Future<void> _initi alizeFlutterFireFuture;
 
   Future<void> _testAsyncErrorOnInit() async {
     Future<void>.delayed(const Duration(seconds: 2), () {
@@ -49,34 +48,34 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     Provider.of<NotificationProvider>(context, listen: false)
         .initLocal(context);
     // FirebaseCrashlytics.instance.crash();
-    _initializeFlutterFireFuture = _initializeFlutterFire();
+    // _initializeFlutterFireFuture = _initializeFlutterFire();
 
     super.initState();
   }
 
-  Future<void> _initializeFlutterFire() async {
-    if (_kTestingCrashlytics) {
-      // Force enable crashlytics collection enabled if we're testing it.
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    } else {
-      // Else only enable it in non-debug builds.
-      // You could additionally extend this to allow users to opt-in.
-      await FirebaseCrashlytics.instance
-          .setCrashlyticsCollectionEnabled(true);
-    }
+  // Future<void> _initializeFlutterFire() async {
+  //   if (_kTestingCrashlytics) {
+  //     // Force enable crashlytics collection enabled if we're testing it.
+  //     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  //   } else {
+  //     // Else only enable it in non-debug builds.
+  //     // You could additionally extend this to allow users to opt-in.
+  //     await FirebaseCrashlytics.instance
+  //         .setCrashlyticsCollectionEnabled(true);
+  //   }
 
-    // Pass all uncaught errors to Crashlytics.
-    Function originalOnError = FlutterError.onError;
-    FlutterError.onError = (FlutterErrorDetails errorDetails) async {
-      await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-      // Forward to original handler.
-      originalOnError(errorDetails);
-    };
+  //   // Pass all uncaught errors to Crashlytics.
+  //   Function originalOnError = FlutterError.onError;
+  //   FlutterError.onError = (FlutterErrorDetails errorDetails) async {
+  //     await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+  //     // Forward to original handler.
+  //     originalOnError(errorDetails);
+  //   };
 
-    if (_kShouldTestAsyncErrorOnInit) {
-      await _testAsyncErrorOnInit();
-    }
-  }
+  //   if (_kShouldTestAsyncErrorOnInit) {
+  //     await _testAsyncErrorOnInit();
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -158,7 +157,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) => FutureBuilder(
-        future: _initializeFlutterFireFuture,
+        future: null,
         builder: (contect, snapshot) => MaterialApp(
           title: 'Be Still',
           debugShowCheckedModeBanner: false,

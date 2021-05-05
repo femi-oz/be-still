@@ -1,7 +1,7 @@
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -63,15 +63,15 @@ class BeStilDialog {
         message: error.message,
       ),
     );
-    FirebaseCrashlytics.instance
-        .setCustomKey('id', user == null ? 'N/A' : user.id);
-    FirebaseCrashlytics.instance
-        .setCustomKey('email', user == null ? 'N/A' : user.email);
+    // FirebaseCrashlytics.instance
+    //     .setCustomKey('id', user == null ? 'N/A' : user.id);
+    // FirebaseCrashlytics.instance
+    //     .setCustomKey('email', user == null ? 'N/A' : user.email);
 
-    FirebaseCrashlytics.instance.recordError(
-      error,
-      stackTrace,
-    );
+    // FirebaseCrashlytics.instance.recordError(
+    //   error,
+    //   stackTrace,
+    // );
   }
 
   static Future showSuccessDialog(BuildContext context, String message) async {

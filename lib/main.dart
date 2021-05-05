@@ -13,7 +13,7 @@ import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/settings.dart' as st;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
@@ -48,7 +48,7 @@ void main() async {
 //         .createLog(details.exceptionAsString(), 'onError', 'MAIN/main/onError');
 //     // if (kReleaseMode) exit(1);
 //   };
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   await runZonedGuarded(() async {
     // await SentryFlutter.init((options) {
@@ -73,7 +73,7 @@ void main() async {
       ),
     );
   }, (Object error, StackTrace stackTrace) async {
-    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+    // FirebaseCrashlytics.instance.recordError(error, stackTrace);
 
     // await Sentry.captureException(
     //   error,
