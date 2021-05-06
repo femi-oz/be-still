@@ -108,73 +108,26 @@ class _SharePrayerState extends State<SharePrayer> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: TextButton.icon(
-                //     onPressed: () => Navigator.of(context).pop(),
-                //     icon: Icon(
-                //       AppIcons.bestill_back_arrow,
-                //       color: AppColors.lightBlue3,
-                //       size: 20,
-                //     ),
-                //     label: Text(
-                //       'BACK',
-                //       style: AppTextStyles.boldText20.copyWith(
-                //         color: AppColors.lightBlue3,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                sharingSettings.enableSharingViaText
-                    ? MenuButton(
-                        icon: AppIcons.bestill_share,
-                        onPressed: () => _textLink(),
-                        text: 'Text Message',
-                      )
-                    : Container(),
-                sharingSettings.enableSharingViaEmail
-                    ? MenuButton(
-                        icon: AppIcons.bestill_share,
-                        onPressed: () => _emailLink(),
-                        text: 'Email',
-                      )
-                    : Container(),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => _textLink(),
+                  text: 'Text Message',
+                ),
+                MenuButton(
+                  icon: AppIcons.bestill_share,
+                  onPressed: () => _emailLink(),
+                  text: 'Email',
+                ),
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   onPressed: () => null,
                   isDisable: true,
-                  // onPressed: () => showModalBottomSheet(
-                  //   context: context,
-                  //   barrierColor:
-                  //       AppColors.detailBackgroundColor[1].withOpacity(0.7),
-                  //   backgroundColor:
-                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //   isScrollControlled: true,
-                  //   builder: (BuildContext context) {
-                  //     return ShareInApp();
-                  //   },
-                  // ),
                   text: 'Direct Message',
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   onPressed: () => null,
                   isDisable: true,
-                  // showModalBottomSheet(
-                  //   context: context,
-                  //   barrierColor:
-                  //       AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //   backgroundColor:
-                  //       AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //   isScrollControlled: true,
-                  //   builder: (BuildContext context) {
-                  //     return SharePrayerToGroups();
-                  //   },
-                  // ).then((value) {
-                  //   setState(() {
-                  //     groups = value;
-                  //   });
-                  // }),
                   text: 'Post to Group(s)',
                 ),
                 MenuButton(
