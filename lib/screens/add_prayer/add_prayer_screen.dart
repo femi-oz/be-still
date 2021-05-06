@@ -3,6 +3,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -357,7 +358,14 @@ class _AddPrayerState extends State<AddPrayer> {
                                         child: PrayerDetails(),
                                       ),
                                     )
-                                  : NavigationService.instance.goHome(0),
+                                  : Navigator.pushReplacement(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: EntryScreen(),
+                                      ),
+                                    ),
                         ),
                         InkWell(
                           child: Text('SAVE',

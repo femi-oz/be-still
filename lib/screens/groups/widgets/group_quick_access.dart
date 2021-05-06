@@ -172,11 +172,10 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return ReminderPicker(
+                                type: null,
                                 hideActionuttons: false,
-                                frequency: reminderInterval,
-                                reminderDays: reminderDays,
                                 onCancel: null,
-                                onSave: null,
+                                reminder: null,
                               );
                             },
                           );

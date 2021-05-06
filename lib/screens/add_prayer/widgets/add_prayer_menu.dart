@@ -88,11 +88,10 @@ class _AddPrayerMenuState extends State<AddPrayerMenu> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return ReminderPicker(
+                          type: null,
                           hideActionuttons: false,
-                          frequency: reminderInterval,
-                          reminderDays: reminderDays,
+                          reminder: null,
                           onCancel: null,
-                          onSave: null,
                         );
                       },
                     );

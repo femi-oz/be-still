@@ -9,7 +9,6 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/utils/local_notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../locator.dart';
 
@@ -19,11 +18,8 @@ class NotificationProvider with ChangeNotifier {
   factory NotificationProvider() => _instance;
 
   static final NotificationProvider _instance = NotificationProvider._();
-  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
-  bool _initialized = false;
 
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
@@ -116,22 +112,30 @@ class NotificationProvider with ChangeNotifier {
     String period,
     String selectedHour,
     String selectedMinute,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
   ) async {
     await _notificationService.addLocalNotification(
-        localId,
-        entityId,
-        notificationText,
-        userId,
-        payload,
-        title,
-        description,
-        frequency,
-        type,
-        scheduledDate,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute);
+      localId,
+      entityId,
+      notificationText,
+      userId,
+      payload,
+      title,
+      description,
+      frequency,
+      type,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      selectedYear,
+      selectedMonth,
+      selectedDayOfMonth,
+    );
+    notifyListeners();
   }
 
   Future<void> updateLocalNotification(
@@ -144,16 +148,23 @@ class NotificationProvider with ChangeNotifier {
     String notificationId,
     String userId,
     String notificationText,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
   ) async {
     await _notificationService.updateLocalNotification(
-        frequency,
-        scheduledDate,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-        notificationId,
-        notificationText);
+      frequency,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      notificationId,
+      notificationText,
+      selectedYear,
+      selectedMonth,
+      selectedDayOfMonth,
+    );
     await setLocalNotifications(userId);
     notifyListeners();
   }

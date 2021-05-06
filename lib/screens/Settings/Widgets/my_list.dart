@@ -47,7 +47,7 @@ class _MyListSettingsState extends State<MyListSettings> {
       default:
     }
 
-    var e = int.parse(selectedDuration) * minutes;
+    var e = int.parse(selectedDuration ?? '1') * minutes;
     try {
       BeStilDialog.showLoading(
         context,
@@ -115,6 +115,10 @@ class _MyListSettingsState extends State<MyListSettings> {
     "11",
     "12",
   ];
+
+  initState() {
+    super.initState();
+  }
 
   List<LookUp> autoDeleteInterval = [
     LookUp(text: IntervalRange.thirtyMinutes, value: 30),

@@ -23,7 +23,6 @@ import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 class PrayerDetails extends StatefulWidget {
   static const routeName = 'prayer-details';
@@ -47,9 +46,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Duration snoozeDurationinMinutes;
   String durationText;
   int snoozeDuration;
-  LocalNotificationModel reminder;
+  LocalNotificationModel _reminder;
   Widget _buildMenu() {
-    return PrayerMenu(context, hasReminder, reminder, () => updateUI());
+    return PrayerMenu(context, hasReminder, _reminder, () => updateUI());
   }
 
   String reminderString;
@@ -58,7 +57,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         .localNotifications;
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    reminder = reminders.firstWhere(
+    final reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.userPrayer.id,
         orElse: () => null);
     reminderString = reminder?.notificationText ?? '';
@@ -92,87 +91,15 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     super.didChangeDependencies();
   }
 
-  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, CombinePrayerStream prayerData) async {
-    try {
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final notificationText = selectedFrequency == Frequency.weekly
-          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-      final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer.description;
-      final scheduleDate = LocalNotification.scheduleDate(
-          int.parse(selectedHour),
-          int.parse(selectedMinute),
-          selectedDay,
-          period);
-      final payload = NotificationMessage(
-          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: reminder.localNotificationId,
-      );
-      await storeNotification(
-        notificationText,
-        userId,
-        title,
-        description,
-        selectedFrequency,
-        scheduleDate,
-        prayerData.userPrayer.id,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-      );
-    } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  storeNotification(
-      String notificationText,
-      String userId,
-      String title,
-      String description,
-      String frequency,
-      tz.TZDateTime scheduledDate,
-      String prayerid,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      reminder.id,
-      userId,
-      notificationText,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    Navigator.of(context).pop();
-    setState(() => reminderString = notificationText);
-  }
-
   @override
   Widget build(BuildContext context) {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    _reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.userPrayer.id,
+        orElse: () => null);
     return Scaffold(
       appBar: CustomAppBar(
         showPrayerActions: false,
@@ -222,29 +149,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return ReminderPicker(
+                                type: NotificationType.reminder,
+                                reminder: _reminder,
                                 hideActionuttons: false,
-                                frequency: LocalNotification.reminderInterval,
-                                reminderDays: LocalNotification.reminderDays,
                                 onCancel: () => Navigator.of(context).pop(),
-                                onSave: (selectedFrequency, selectedHour,
-                                        selectedMinute, selectedDay, period) =>
-                                    setNotification(
-                                        selectedHour,
-                                        selectedFrequency,
-                                        selectedMinute,
-                                        selectedDay,
-                                        period,
-                                        Provider.of<PrayerProvider>(context,
-                                                listen: false)
-                                            .currentPrayer),
-                                selectedDay: LocalNotification.reminderDays
-                                        .indexOf(reminder.selectedDay) +
-                                    1,
-                                selectedFrequency: reminder.frequency,
-                                selectedHour: int.parse(reminder.selectedHour),
-                                selectedMinute:
-                                    int.parse(reminder.selectedMinute),
-                                selectedPeriod: reminder.period,
                               );
                             },
                           ),

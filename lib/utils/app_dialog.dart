@@ -2,9 +2,7 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'essentials.dart';
@@ -61,7 +59,7 @@ class BeStilDialog {
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
         confirmText: 'OK',
-        message: error.message,
+        message: error?.message,
       ),
     );
     FirebaseCrashlytics.instance

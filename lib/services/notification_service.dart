@@ -223,40 +223,48 @@ class NotificationService {
   }
 
   addLocalNotification(
-      int localId,
-      String entityId,
-      String notificationText,
-      String userId,
-      String payload,
-      String title,
-      String description,
-      String frequency,
-      String type,
-      DateTime scheduledDate,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
+    int localId,
+    String entityId,
+    String notificationText,
+    String userId,
+    String payload,
+    String title,
+    String description,
+    String frequency,
+    String type,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
+  ) async {
     final _notificationId = Uuid().v1();
     String deviceId;
     try {
       _localNotificationCollectionReference.doc(_notificationId).set(
-          LocalNotificationModel(
-                  type: type,
-                  description: description,
-                  frequency: frequency,
-                  scheduledDate: scheduledDate,
-                  title: title,
-                  payload: payload,
-                  userId: userId,
-                  localNotificationId: localId,
-                  entityId: entityId,
-                  notificationText: notificationText,
-                  selectedDay: selectedDay,
-                  selectedHour: selectedHour,
-                  selectedMinute: selectedMinute,
-                  period: period)
-              .toJson());
+            LocalNotificationModel(
+              type: type,
+              description: description,
+              frequency: frequency,
+              scheduledDate: scheduledDate,
+              title: title,
+              payload: payload,
+              userId: userId,
+              localNotificationId: localId,
+              entityId: entityId,
+              notificationText: notificationText,
+              selectedDay: selectedDay,
+              selectedHour: selectedHour,
+              selectedMinute: selectedMinute,
+              period: period,
+              selectedYear: selectedYear,
+              selectedMonth: selectedMonth,
+              selectedDayOfMonth: selectedDayOfMonth,
+            ).toJson(),
+          );
     } catch (e) {
       locator<LogService>().createLog(
           e.message, deviceId, 'NOTIFICATION/service/addLocalNotification');
@@ -273,6 +281,9 @@ class NotificationService {
     String selectedMinute,
     String notificationId,
     String notificationText,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
   ) async {
     String deviceId;
     try {
@@ -284,6 +295,9 @@ class NotificationService {
         'SelectedMinute': selectedMinute,
         'ScheduledDate': scheduledDate,
         'NotificationText': notificationText,
+        'SelectedYear': selectedYear,
+        'SelectedMonth': selectedMonth,
+        'SelectedDayOfMonth': selectedDayOfMonth,
       });
     } catch (e) {
       locator<LogService>().createLog(

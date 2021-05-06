@@ -48,85 +48,6 @@ class _PrayerCardState extends State<PrayerCard> {
     }
   }
 
-  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, CombinePrayerStream prayerData) async {
-    try {
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final notificationText = selectedFrequency == Frequency.weekly
-          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-      final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer.description;
-      final scheduleDate = LocalNotification.scheduleDate(
-          int.parse(selectedHour),
-          int.parse(selectedMinute),
-          selectedDay,
-          period);
-      final payload = NotificationMessage(
-          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: reminder.localNotificationId,
-      );
-      await storeNotification(
-        notificationText,
-        userId,
-        title,
-        description,
-        selectedFrequency,
-        scheduleDate,
-        prayerData.userPrayer.id,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-      );
-    } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    String prayerid,
-    String selectedDay,
-    String period,
-    String selectedHour,
-    String selectedMinute,
-  ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      reminder.id,
-      userId,
-      notificationText,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    Navigator.of(context).pop();
-  }
-
   void _unArchive() async {
     try {
       BeStilDialog.showLoading(context);
@@ -348,41 +269,12 @@ class _PrayerCardState extends State<PrayerCard> {
                                                 builder:
                                                     (BuildContext context) {
                                                   return ReminderPicker(
+                                                    type: null,
                                                     hideActionuttons: false,
-                                                    frequency: LocalNotification
-                                                        .reminderInterval,
-                                                    reminderDays:
-                                                        LocalNotification
-                                                            .reminderDays,
                                                     onCancel: () =>
                                                         Navigator.of(context)
                                                             .pop(),
-                                                    onSave: (selectedFrequency,
-                                                            selectedHour,
-                                                            selectedMinute,
-                                                            selectedDay,
-                                                            period) =>
-                                                        setNotification(
-                                                            selectedHour,
-                                                            selectedFrequency,
-                                                            selectedMinute,
-                                                            selectedDay,
-                                                            period,
-                                                            widget.prayerData),
-                                                    selectedDay: LocalNotification
-                                                            .reminderDays
-                                                            .indexOf(reminder
-                                                                .selectedDay) +
-                                                        1,
-                                                    selectedFrequency:
-                                                        reminder.frequency,
-                                                    selectedHour: int.parse(
-                                                        reminder.selectedHour),
-                                                    selectedMinute: int.parse(
-                                                        reminder
-                                                            .selectedMinute),
-                                                    selectedPeriod:
-                                                        reminder.period,
+                                                    reminder: reminder,
                                                   );
                                                 },
                                               ),
