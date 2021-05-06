@@ -320,7 +320,7 @@ class TabNavigationItem {
           page: null,
           icon: Icon(
             Icons.more_horiz,
-            size: 16,
+            size: 20,
             color: AppColors.bottomNavIconColor,
           ),
           title: "More",
