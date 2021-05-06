@@ -196,9 +196,17 @@ class _ReminderPickerState extends State<ReminderPicker> {
         BeStilDialog.showLoading(context);
         final userId =
             Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        var suffix = "th";
+        var digit = selectedDayOfMonth % 10;
+        if ((digit > 0 && digit < 4) &&
+            (selectedDayOfMonth < 11 || selectedDayOfMonth > 13)) {
+          suffix = ["st", "nd", "rd"][digit - 1];
+        }
         final notificationText = selectedFrequency == Frequency.weekly
             ? '$selectedFrequency, $selectedDayOfWeek, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
-            : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
+            : selectedFrequency == Frequency.one_time
+                ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
+                : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
         final prayerData =
             Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
         final title = '$selectedFrequency reminder to pray';
