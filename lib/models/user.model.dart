@@ -28,18 +28,18 @@ class UserModel {
     @required this.modifiedOn,
   });
 
-  UserModel.fromData(DocumentSnapshot snapshot)
+  UserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        firstName = snapshot['FirstName'],
-        lastName = snapshot['LastName'],
-        email = snapshot['Email'],
-        keyReference = snapshot['KeyReference'],
-        churchId = snapshot['ChurchId'],
+        firstName = snapshot.data()['FirstName'],
+        lastName = snapshot.data()['LastName'],
+        email = snapshot.data()['Email'],
+        keyReference = snapshot.data()['KeyReference'],
+        churchId = snapshot.data()['ChurchId'],
         dateOfBirth = '',
-        createdBy = snapshot['CreatedBy'],
-        createdOn = snapshot['CreatedOn'].toDate(),
-        modifiedBy = snapshot['ModifiedBy'],
-        modifiedOn = snapshot['ModifiedOn'].toDate();
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

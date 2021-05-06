@@ -35,21 +35,22 @@ class PushNotificationModel {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  PushNotificationModel.fromData(DocumentSnapshot snapshot)
+  PushNotificationModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        title = snapshot['Title'],
-        tokens = snapshot['Tokens'],
-        message = snapshot['Message'],
-        messageType = snapshot['MessageType'] ?? NotificationType.prayer,
-        isSent = snapshot['IsSent'],
-        status = snapshot['Status'],
-        recieverId = snapshot['RecieverId'],
-        entityId = snapshot['EntityId'],
-        sender = snapshot['Sender'],
-        createdBy = snapshot['CreatedBy'],
-        createdOn = snapshot['CreatedOn'].toDate(),
-        modifiedBy = snapshot['ModifiedBy'],
-        modifiedOn = snapshot['ModifiedOn'].toDate();
+        title = snapshot.data()['Title'],
+        tokens = snapshot.data()['Tokens'],
+        message = snapshot.data()['Message'],
+        messageType = snapshot.data()['MessageType'] ?? NotificationType.prayer,
+        isSent = snapshot.data()['IsSent'],
+        status = snapshot.data()['Status'],
+        recieverId = snapshot.data()['RecieverId'],
+        entityId = snapshot.data()['EntityId'],
+        sender = snapshot.data()['Sender'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -104,26 +105,29 @@ class LocalNotificationModel {
     @required this.selectedHour,
     @required this.selectedMinute,
   });
-  LocalNotificationModel.fromData(DocumentSnapshot snapshot)
+  LocalNotificationModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        userId = snapshot['UserId'],
-        entityId = snapshot['EntityId'],
-        description = snapshot['Description'],
-        scheduledDate = snapshot['ScheduledDate'].toDate(),
-        title = snapshot['Title'],
-        type = snapshot['Type'],
-        frequency = snapshot['Frequency'],
-        payload = snapshot['Payload'],
-        notificationText = snapshot['NotificationText'],
-        localNotificationId = snapshot['LocalNotificationId'],
-        selectedDay = snapshot['SelectedDay'] != ''
-            ? snapshot['SelectedDay']
+        userId = snapshot.data()['UserId'],
+        entityId = snapshot.data()['EntityId'],
+        description = snapshot.data()['Description'],
+        scheduledDate = snapshot.data()['ScheduledDate'].toDate(),
+        title = snapshot.data()['Title'],
+        type = snapshot.data()['Type'],
+        frequency = snapshot.data()['Frequency'],
+        payload = snapshot.data()['Payload'],
+        notificationText = snapshot.data()['NotificationText'],
+        localNotificationId = snapshot.data()['LocalNotificationId'],
+        selectedDay = snapshot.data()['SelectedDay'] != ''
+            ? snapshot.data()['SelectedDay']
             : DaysOfWeek.wed,
-        period = snapshot['Period'] != '' ? snapshot['Period'] : 'pm',
-        selectedHour =
-            snapshot['SelectedHour'] != '' ? snapshot['SelectedHour'] : '06',
-        selectedMinute = snapshot['SelectedMinute'] != ''
-            ? snapshot['SelectedMinute']
+        period =
+            snapshot.data()['Period'] != '' ? snapshot.data()['Period'] : 'pm',
+        selectedHour = snapshot.data()['SelectedHour'] != ''
+            ? snapshot.data()['SelectedHour']
+            : '06',
+        selectedMinute = snapshot.data()['SelectedMinute'] != ''
+            ? snapshot.data()['SelectedMinute']
             : '40';
 
   Map<String, dynamic> toJson() {
@@ -180,22 +184,22 @@ class MessageModel {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  MessageModel.fromData(DocumentSnapshot snapshot)
+  MessageModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        title = snapshot['Title'],
-        message = snapshot['Message'],
-        isSent = snapshot['IsSent'],
-        sender = snapshot['Sender'],
-        country = snapshot['Country'],
-        subject = snapshot['Subject'],
-        receiver = snapshot['Receiver'],
-        phoneNumber = snapshot['PhoneNumber'],
-        email = snapshot['Email'],
-        senderId = snapshot['SenderId'],
-        createdBy = snapshot['CreatedBy'],
-        createdOn = snapshot['CreatedOn'].toDate(),
-        modifiedBy = snapshot['ModifiedBy'],
-        modifiedOn = snapshot['ModifiedOn'].toDate();
+        title = snapshot.data()['Title'],
+        message = snapshot.data()['Message'],
+        isSent = snapshot.data()['IsSent'],
+        sender = snapshot.data()['Sender'],
+        country = snapshot.data()['Country'],
+        subject = snapshot.data()['Subject'],
+        receiver = snapshot.data()['Receiver'],
+        phoneNumber = snapshot.data()['PhoneNumber'],
+        email = snapshot.data()['Email'],
+        senderId = snapshot.data()['SenderId'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {

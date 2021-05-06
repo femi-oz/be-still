@@ -13,11 +13,11 @@ class ContactModel {
     @required this.phoneNumber,
     @required this.displayName,
   });
-  ContactModel.fromData(DocumentSnapshot snapshot)
+  ContactModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        email = snapshot['Email'],
-        phoneNumber = snapshot['PhoneNumber'],
-        displayName = snapshot['DisplayName'];
+        email = snapshot.data()['Email'],
+        phoneNumber = snapshot.data()['PhoneNumber'],
+        displayName = snapshot.data()['DisplayName'];
 
   Map<String, dynamic> toJson() {
     return {

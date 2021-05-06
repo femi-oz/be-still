@@ -20,14 +20,14 @@ class ErrorLog {
     @required this.modifiedOn,
   });
 
-  ErrorLog.fromData(DocumentSnapshot snapshot)
+  ErrorLog.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        message = snapshot['Message'],
-        location = snapshot['Location'],
-        createdBy = snapshot['CreatedBy'],
-        createdOn = snapshot['CreatedOn'].toDate(),
-        modifiedBy = snapshot['ModifiedBy'],
-        modifiedOn = snapshot['ModifiedOn'].toDate();
+        message = snapshot.data()['Message'],
+        location = snapshot.data()['Location'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
 
   Map<String, dynamic> toJson() {
     return {
