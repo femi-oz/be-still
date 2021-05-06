@@ -288,7 +288,7 @@ class TabNavigationItem {
         TabNavigationItem(
           page: PrayerList(),
           icon: Icon(
-            Icons.home,
+            AppIcons.list,
             size: 18,
             color: AppColors.bottomNavIconColor,
           ),
@@ -296,7 +296,7 @@ class TabNavigationItem {
         ),
         TabNavigationItem(
           page: GroupScreen(),
-          icon: Icon(AppIcons.bestill_groups,
+          icon: Icon(AppIcons.groups,
               size: 16, color: AppColors.bottomNavIconColor),
           title: "Groups",
         ),
@@ -319,7 +319,7 @@ class TabNavigationItem {
         TabNavigationItem(
           page: null,
           icon: Icon(
-            AppIcons.bestill_main_menu,
+            Icons.more_horiz,
             size: 16,
             color: AppColors.bottomNavIconColor,
           ),
