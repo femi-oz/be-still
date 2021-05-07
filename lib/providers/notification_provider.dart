@@ -92,6 +92,7 @@ class NotificationProvider with ChangeNotifier {
     for (int i = 0; i < reminderToDelete.length; i++) {
       await deleteLocalNotification(reminderToDelete[i].id);
     }
+    notifyListeners();
   }
 
   Future<void> setPrayerTimeNotifications(userId) async {
