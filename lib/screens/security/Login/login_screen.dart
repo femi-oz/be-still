@@ -4,6 +4,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
@@ -360,7 +361,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         return Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage(StringUtils.backgroundImage()),
+                              image: AssetImage(StringUtils.backgroundImage(
+                                  Provider.of<ThemeProvider>(context)
+                                      .isDarkModeEnabled)),
                               alignment: Alignment.bottomCenter,
                             ),
                           ),

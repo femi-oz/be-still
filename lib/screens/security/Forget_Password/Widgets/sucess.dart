@@ -1,8 +1,10 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ForgetPasswordSucess extends StatefulWidget {
   static const routeName = 'forgot-password-success';
@@ -35,7 +37,8 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage(
+                Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),

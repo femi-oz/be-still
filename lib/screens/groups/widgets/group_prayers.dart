@@ -1,6 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_quick_access.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
@@ -47,8 +48,8 @@ class _GroupPrayersState extends State<GroupPrayers> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image:
-                  AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+              image: AssetImage(StringUtils.backgroundImage(
+                  Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
               alignment: Alignment.bottomCenter,
             ),
           ),

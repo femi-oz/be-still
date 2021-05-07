@@ -3,6 +3,7 @@ import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -204,7 +205,8 @@ class _DevotionPlansState extends State<DevotionPlans> {
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage()),
+                image: AssetImage(StringUtils.backgroundImage(
+                    Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
                 alignment: Alignment.bottomCenter,
               ),
             ),

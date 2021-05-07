@@ -277,7 +277,7 @@ class AppTextStyles {
   static const TextStyle demiboldText34 = const TextStyle(
     color: AppColors.offWhite2,
     fontSize: 34,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0.5,
   );
   static const TextStyle errorText = const TextStyle(

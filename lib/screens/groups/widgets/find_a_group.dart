@@ -1,8 +1,8 @@
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,8 @@ class _FindAGroupState extends State<FindAGroup> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage(
+                Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),

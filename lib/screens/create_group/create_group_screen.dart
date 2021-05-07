@@ -3,6 +3,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
@@ -74,7 +75,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(StringUtils.backgroundImage()),
+          image: AssetImage(StringUtils.backgroundImage(
+              Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
           alignment: Alignment.bottomCenter,
         ),
       ),

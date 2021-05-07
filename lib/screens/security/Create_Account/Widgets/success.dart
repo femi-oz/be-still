@@ -1,8 +1,10 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreateAccountSuccess extends StatefulWidget {
   static const routeName = 'create-account-success';
@@ -38,7 +40,8 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage(
+                Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),

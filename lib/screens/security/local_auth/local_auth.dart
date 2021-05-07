@@ -1,8 +1,10 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 login() {}
 
@@ -20,7 +22,8 @@ class LocalAuth extends StatelessWidget {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage(
+                Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
             alignment: Alignment.bottomCenter,
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
@@ -185,7 +186,8 @@ class _PrayerListState extends State<PrayerList> {
               padding: EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(StringUtils.backgroundImage(true)),
+                  image: AssetImage(StringUtils.backgroundImage(
+                      Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
                   alignment: Alignment.bottomCenter,
                 ),
               ),

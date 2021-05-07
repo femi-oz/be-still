@@ -21,7 +21,6 @@ class StringUtils {
         break;
       default:
         retVal = 'assets/images/bestill_arrows-bg-lt.png';
-
         break;
     }
     return retVal;

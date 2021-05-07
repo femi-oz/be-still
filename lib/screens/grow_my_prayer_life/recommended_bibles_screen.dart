@@ -1,6 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -79,7 +80,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage()),
+                image: AssetImage(StringUtils.backgroundImage(
+                    Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
                 alignment: Alignment.bottomCenter,
               ),
             ),
@@ -153,49 +155,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
       ),
     );
   }
-
-  // AppBar _buildAppBar() {
-  //   return AppBar(
-  //     backgroundColor: AppColors.backgroundColor[0],
-  //     elevation: 0,
-  //     centerTitle: true,
-  //     automaticallyImplyLeading: false,
-  //     leading: Container(
-  //       width: 30,
-  //       padding: EdgeInsets.all(20.0),
-  //       child: Row(
-  //         children: <Widget>[
-  //           TextButton.icon(
-  //             style: ButtonStyle(
-  //               padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-  //                   EdgeInsets.zero),
-  //             ),
-  //             icon: Icon(
-  //               AppIcons.bestill_back_arrow,
-  //               color: AppColors.lightBlue3,
-  //               size: 20,
-  //             ),
-  //             onPressed: () => Navigator.push(
-  //               context,
-  //               PageTransition(
-  //                   type: PageTransitionType.rightToLeftWithFade,
-  //                   child: EntryScreen(
-  //                     screenNumber: 0,
-  //                   )),
-  //             ),
-  //             label: Text(
-  //               'BACK',
-  //               style: AppTextStyles.boldText20.copyWith(
-  //                 color: AppColors.lightBlue3,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     leadingWidth: 150,
-  //   );
-  // }
 
   Widget _buildPanel() {
     final bibleData = Provider.of<DevotionalProvider>(context).bibles;
