@@ -1,6 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -66,136 +67,98 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppColors.backgroundColor,
-          ),
-        ),
         height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage()),
+                image: AssetImage(StringUtils.backgroundImage),
                 alignment: Alignment.bottomCenter,
               ),
             ),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    children: <Widget>[
-                      TextButton.icon(
-                        style: ButtonStyle(
-                          padding:
-                              MaterialStateProperty.all<EdgeInsetsGeometry>(
-                                  EdgeInsets.zero),
-                        ),
-                        icon: Icon(
-                          AppIcons.bestill_back_arrow,
-                          color: AppColors.lightBlue3,
-                          size: 20,
-                        ),
-                        onPressed: () => NavigationService.instance.goHome(0),
-                        label: Text(
-                          'BACK',
-                          style: AppTextStyles.boldText20.copyWith(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.backgroundColor[0].withOpacity(0.85),
+                    AppColors.backgroundColor[1].withOpacity(0.7),
+                  ],
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: Row(
+                      children: <Widget>[
+                        TextButton.icon(
+                          style: ButtonStyle(
+                            padding:
+                                MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                    EdgeInsets.zero),
+                          ),
+                          icon: Icon(
+                            AppIcons.bestill_back_arrow,
                             color: AppColors.lightBlue3,
+                            size: 20,
+                          ),
+                          onPressed: () => NavigationService.instance.goHome(0),
+                          label: Text(
+                            'BACK',
+                            style: AppTextStyles.boldText20.copyWith(
+                              color: AppColors.lightBlue3,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: Text(
-                    'Recommended Bibles',
-                    style: AppTextStyles.boldText24
-                        .copyWith(color: AppColors.blueTitle),
-                    textAlign: TextAlign.center,
+                  SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                    child: Text(
+                      'Recommended Bibles',
+                      style: AppTextStyles.boldText24
+                          .copyWith(color: AppColors.blueTitle),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: Text(
-                          'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
-                          style: AppTextStyles.regularText16b
-                              .copyWith(color: AppColors.prayerTextColor),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                            style: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.prayerTextColor),
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: Text(
-                          'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
-                          style: AppTextStyles.regularText16b
-                              .copyWith(color: AppColors.prayerTextColor),
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                            style: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.prayerTextColor),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 10),
-                _buildPanel(),
-              ],
+                  SizedBox(height: 10),
+                  _buildPanel(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
-  // AppBar _buildAppBar() {
-  //   return AppBar(
-  //     backgroundColor: AppColors.backgroundColor[0],
-  //     elevation: 0,
-  //     centerTitle: true,
-  //     automaticallyImplyLeading: false,
-  //     leading: Container(
-  //       width: 30,
-  //       padding: EdgeInsets.all(20.0),
-  //       child: Row(
-  //         children: <Widget>[
-  //           TextButton.icon(
-  //             style: ButtonStyle(
-  //               padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-  //                   EdgeInsets.zero),
-  //             ),
-  //             icon: Icon(
-  //               AppIcons.bestill_back_arrow,
-  //               color: AppColors.lightBlue3,
-  //               size: 20,
-  //             ),
-  //             onPressed: () => Navigator.push(
-  //               context,
-  //               PageTransition(
-  //                   type: PageTransitionType.rightToLeftWithFade,
-  //                   child: EntryScreen(
-  //                     screenNumber: 0,
-  //                   )),
-  //             ),
-  //             label: Text(
-  //               'BACK',
-  //               style: AppTextStyles.boldText20.copyWith(
-  //                 color: AppColors.lightBlue3,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     leadingWidth: 150,
-  //   );
-  // }
 
   Widget _buildPanel() {
     final bibleData = Provider.of<DevotionalProvider>(context).bibles;

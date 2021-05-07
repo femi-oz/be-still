@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -10,14 +7,11 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/widgets/snooze_prayer.dart';
 
 class PrayerCard extends StatefulWidget {
@@ -46,85 +40,6 @@ class _PrayerCardState extends State<PrayerCard> {
     else {
       return true;
     }
-  }
-
-  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, CombinePrayerStream prayerData) async {
-    try {
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final notificationText = selectedFrequency == Frequency.weekly
-          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-      final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer.description;
-      final scheduleDate = LocalNotification.scheduleDate(
-          int.parse(selectedHour),
-          int.parse(selectedMinute),
-          selectedDay,
-          period);
-      final payload = NotificationMessage(
-          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: reminder.localNotificationId,
-      );
-      await storeNotification(
-        notificationText,
-        userId,
-        title,
-        description,
-        selectedFrequency,
-        scheduleDate,
-        prayerData.userPrayer.id,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-      );
-    } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    String prayerid,
-    String selectedDay,
-    String period,
-    String selectedHour,
-    String selectedMinute,
-  ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      reminder.id,
-      userId,
-      notificationText,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    Navigator.of(context).pop();
   }
 
   void _unArchive() async {
@@ -336,53 +251,52 @@ class _PrayerCardState extends State<PrayerCard> {
                                       ? Row(
                                           children: <Widget>[
                                             InkWell(
-                                              onTap: () => showModalBottomSheet(
+                                              onTap: () => showDialog(
                                                 context: context,
                                                 barrierColor: AppColors
                                                     .detailBackgroundColor[1]
                                                     .withOpacity(0.5),
-                                                backgroundColor: AppColors
-                                                    .detailBackgroundColor[1]
-                                                    .withOpacity(0.9),
-                                                isScrollControlled: true,
                                                 builder:
                                                     (BuildContext context) {
-                                                  return ReminderPicker(
-                                                    hideActionuttons: false,
-                                                    frequency: LocalNotification
-                                                        .reminderInterval,
-                                                    reminderDays:
-                                                        LocalNotification
-                                                            .reminderDays,
-                                                    onCancel: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                    onSave: (selectedFrequency,
-                                                            selectedHour,
-                                                            selectedMinute,
-                                                            selectedDay,
-                                                            period) =>
-                                                        setNotification(
-                                                            selectedHour,
-                                                            selectedFrequency,
-                                                            selectedMinute,
-                                                            selectedDay,
-                                                            period,
-                                                            widget.prayerData),
-                                                    selectedDay: LocalNotification
-                                                            .reminderDays
-                                                            .indexOf(reminder
-                                                                .selectedDay) +
-                                                        1,
-                                                    selectedFrequency:
-                                                        reminder.frequency,
-                                                    selectedHour: int.parse(
-                                                        reminder.selectedHour),
-                                                    selectedMinute: int.parse(
-                                                        reminder
-                                                            .selectedMinute),
-                                                    selectedPeriod:
-                                                        reminder.period,
+                                                  return Dialog(
+                                                    insetPadding:
+                                                        EdgeInsets.all(20),
+                                                    backgroundColor: AppColors
+                                                        .prayerCardBgColor,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: AppColors
+                                                              .darkBlue),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(10.0),
+                                                      ),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 30),
+                                                          child: ReminderPicker(
+                                                            type:
+                                                                NotificationType
+                                                                    .reminder,
+                                                            hideActionuttons:
+                                                                false,
+                                                            onCancel: () =>
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(),
+                                                            reminder: reminder,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   );
                                                 },
                                               ),
@@ -491,7 +405,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 : _onMarkAsAnswered(),
           ),
           _buildSlideItem(
-            AppIcons.bestill_archive,
+            AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
             widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
             () => widget.prayerData.userPrayer.isArchived
                 ? _unArchive()

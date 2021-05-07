@@ -1,3 +1,4 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -5,6 +6,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class GrowMyPrayerLifeScreen extends StatefulWidget {
   static const routeName = 'grow-prayer';
@@ -28,7 +30,7 @@ class _GrowMyPrayerLifeScreenState extends State<GrowMyPrayerLifeScreen> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage()),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
           ),
         ),

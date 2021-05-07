@@ -248,7 +248,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                   ),
                   _buildAction(
                     35,
-                    AppIcons.bestill_archive,
+                    AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                     () => showModalBottomSheet(
                       context: context,
                       barrierColor:

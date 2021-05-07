@@ -5,9 +5,12 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_time/Widgets/prayer_time_app_bar.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' as math;
 
 class PrayerTime extends StatefulWidget {
   static const routeName = '/prayer-time';
@@ -62,10 +65,10 @@ class _PrayerTimeState extends State<PrayerTime> {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
     return Scaffold(
       backgroundColor: AppColors.prayeModeBg,
-      appBar: PrayModeAppBar(
-        current: currentPage,
-        totalPrayers: prayers.length,
-      ),
+      // appBar: PrayModeAppBar(
+      //   current: currentPage,
+      //   totalPrayers: prayers.length,
+      // ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -92,20 +95,24 @@ class _PrayerTimeState extends State<PrayerTime> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                InkWell(
-                  child: Icon(
-                    Icons.first_page,
-                    color:
-                        currentPage > 1 ? AppColors.lightBlue3 : AppColors.grey,
-                    size: 30,
+                Transform.rotate(
+                  angle: 180 * math.pi / 180,
+                  child: InkWell(
+                    child: Icon(
+                      Icons.keyboard_tab,
+                      color: currentPage > 1
+                          ? AppColors.lightBlue3
+                          : AppColors.grey,
+                      size: 30,
+                    ),
+                    onTap: () {
+                      if (currentPage > 1) {
+                        _controller.animateToPage(0,
+                            curve: Curves.easeIn,
+                            duration: Duration(milliseconds: 200));
+                      }
+                    },
                   ),
-                  onTap: () {
-                    if (currentPage > 1) {
-                      _controller.animateToPage(0,
-                          curve: Curves.easeIn,
-                          duration: Duration(milliseconds: 200));
-                    }
-                  },
                 ),
                 SizedBox(width: 30),
                 InkWell(
@@ -119,6 +126,17 @@ class _PrayerTimeState extends State<PrayerTime> {
                     if (currentPage > 1) {
                       _controller.jumpToPage(currentPage - 2);
                     }
+                  },
+                ),
+                SizedBox(width: 30),
+                InkWell(
+                  child: Icon(
+                    AppIcons.bestill_close,
+                    color: AppColors.lightBlue3,
+                    size: 30,
+                  ),
+                  onTap: () {
+                    NavigationService.instance.goHome(0);
                   },
                 ),
                 SizedBox(width: 30),
@@ -138,7 +156,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                 SizedBox(width: 30),
                 InkWell(
                   child: Icon(
-                    Icons.last_page,
+                    Icons.keyboard_tab,
                     color: currentPage < prayers.length
                         ? AppColors.lightBlue3
                         : AppColors.grey,
