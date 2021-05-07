@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -12,12 +8,9 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
@@ -140,19 +133,36 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   ),
                   hasReminder
                       ? InkWell(
-                          onTap: () => showModalBottomSheet(
+                          onTap: () => showDialog(
                             context: context,
                             barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
-                            isScrollControlled: true,
                             builder: (BuildContext context) {
-                              return ReminderPicker(
-                                type: NotificationType.reminder,
-                                reminder: _reminder,
-                                hideActionuttons: false,
-                                onCancel: () => Navigator.of(context).pop(),
+                              return Dialog(
+                                insetPadding: EdgeInsets.all(20),
+                                backgroundColor: AppColors.prayerCardBgColor,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: AppColors.darkBlue),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30),
+                                      child: ReminderPicker(
+                                        type: NotificationType.reminder,
+                                        reminder: _reminder,
+                                        hideActionuttons: false,
+                                        onCancel: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -184,11 +194,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  // gradient: LinearGradient(
-                  //   begin: Alignment.topCenter,
-                  //   end: Alignment.bottomCenter,
                   color: AppColors.prayerDetailsBgColor,
-                  // ),
                   border: Border.all(
                     color: AppColors.cardBorder,
                     width: 1,
@@ -222,9 +228,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
               ),
             ),
           ],
-          // ),
         ),
-        // endDrawer: CustomDrawer(),
       ),
     );
   }

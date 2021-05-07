@@ -173,7 +173,7 @@ class _PrayerListState extends State<PrayerList> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height * 0.83,
+              minHeight: MediaQuery.of(context).size.height * 0.85,
             ),
             child: Container(
               decoration: BoxDecoration(

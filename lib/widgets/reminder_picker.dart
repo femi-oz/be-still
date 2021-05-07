@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -47,7 +48,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
-  var minInTheHour = new List<int>.generate(60, (i) => i + 0);
+  var minInTheHour = [0, 15, 30, 45];
   var years = new List<int>.generate(10, (i) => i + DateTime.now().year);
 
   var daysOfMonth = new List<int>.generate(30, (i) => i + 1);
@@ -63,7 +64,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                 : DateTime.now().hour;
     selectedMinute = widget.reminder?.selectedMinute != null
         ? int.parse(widget.reminder?.selectedMinute)
-        : DateTime.now().minute;
+        : 15;
     selectedDayOfWeek = widget.reminder?.selectedDay != null
         ? LocalNotification.daysOfWeek.indexOf(widget.reminder?.selectedDay)
         : DateTime.now().weekday;
@@ -150,6 +151,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       setState(() {});
       if (widget.type == NotificationType.reminder)
         NavigationService.instance.goHome(0);
+      else
+        widget.onCancel();
       setState(() => null);
     }
 
@@ -185,6 +188,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       setState(() {});
       if (widget.type == NotificationType.reminder)
         NavigationService.instance.goHome(0);
+      else
+        widget.onCancel();
     }
 
     setNotification() async {
@@ -192,7 +197,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         var _selectedMinuteString =
             selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
         var _selectedHourString =
-            selectedHour < 10 ? '0$selectedHour' : '${selectedHour + 1} ';
+            selectedHour < 10 ? '0$selectedHour' : '$selectedHour ';
         BeStilDialog.showLoading(context);
         final userId =
             Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -260,6 +265,36 @@ class _ReminderPickerState extends State<ReminderPicker> {
             _selectedMinuteString,
             selectedYear.toString(),
           );
+      } on HttpException catch (e, s) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(context);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, s);
+      } catch (e, s) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(context);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, s);
+      }
+    }
+
+    _deleteReminder() async {
+      try {
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .deleteLocalNotification(widget.reminder.id);
+        setState(() {});
+        if (widget.type == NotificationType.reminder)
+          NavigationService.instance.goHome(0);
+        else
+          widget.onCancel();
+      } on HttpException catch (e, s) {
+        await Future.delayed(Duration(milliseconds: 300));
+        BeStilDialog.hideLoading(context);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, s);
       } catch (e, s) {
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
@@ -483,7 +518,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                   Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                        i < 10
+                                        minInTheHour[i] < 10
                                             ? '0${minInTheHour[i]}'
                                             : '${minInTheHour[i]}',
                                         style: AppTextStyles.regularText15),
@@ -534,29 +569,56 @@ class _ReminderPickerState extends State<ReminderPicker> {
           ),
           widget.hideActionuttons
               ? Container()
-              : Container(
-                  margin: EdgeInsets.symmetric(horizontal: 40),
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      CustomButtonGroup(
-                        title: 'CANCEL',
-                        onSelected: (_) => widget.onCancel(),
-                        length: 2,
-                        index: 0,
+              : Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          CustomButtonGroup(
+                            title: 'CANCEL',
+                            onSelected: (_) => widget.onCancel(),
+                            length: 2,
+                            index: 0,
+                          ),
+                          CustomButtonGroup(
+                            title: 'SAVE',
+                            onSelected: (_) {
+                              setNotification();
+                            },
+                            length: 2,
+                            index: 1,
+                          ),
+                        ],
                       ),
-                      CustomButtonGroup(
-                        title: 'SAVE',
-                        onSelected: (_) {
-                          setNotification();
-                        },
-                        length: 2,
-                        index: 1,
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 20),
+                    widget.reminder != null
+                        ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 40),
+                            child: Row(
+                              children: [
+                                CustomButtonGroup(
+                                  title: 'DELETE REMINDER',
+                                  onSelected: (_) {
+                                    _deleteReminder();
+                                  },
+                                  length: 1,
+                                  index: 1,
+                                  color: AppColors.red,
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
+          // Container(
+          //   margin: EdgeInsets.symmetric(horizontal: 40),
+          //   width: double.infinity,
+          //   child:
+          // ),
         ],
       ),
     );

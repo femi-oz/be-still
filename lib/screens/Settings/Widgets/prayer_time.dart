@@ -237,8 +237,52 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                           ),
                                           onTap: () {
                                             reminder = data;
-                                            setState(
-                                                () => showUpdateField = true);
+                                            showDialog(
+                                              context: context,
+                                              barrierColor: AppColors
+                                                  .detailBackgroundColor[1]
+                                                  .withOpacity(0.5),
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                  insetPadding:
+                                                      EdgeInsets.all(20),
+                                                  backgroundColor: AppColors
+                                                      .prayerCardBgColor,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color:
+                                                            AppColors.darkBlue),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(10.0),
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 30),
+                                                        child: ReminderPicker(
+                                                          type: NotificationType
+                                                              .prayer_time,
+                                                          reminder: data,
+                                                          hideActionuttons:
+                                                              false,
+                                                          onCancel: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
                                           },
                                         ),
                                       ),
@@ -273,46 +317,52 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 : Container(),
             Column(
               children: [
-                !_addPrayerTypeMode && !showUpdateField
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 30,
-                        ),
-                        child: Row(
-                          children: [
-                            CustomButtonGroup(
-                              title: 'ADD REMINDER',
-                              onSelected: (_) =>
-                                  setState(() => _addPrayerTypeMode = true),
-                            )
-                          ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 30,
+                  ),
+                  child: Row(
+                    children: [
+                      CustomButtonGroup(
+                        title: 'ADD REMINDER',
+                        onSelected: (_) => showDialog(
+                          context: context,
+                          barrierColor: AppColors.detailBackgroundColor[1]
+                              .withOpacity(0.5),
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              insetPadding: EdgeInsets.all(20),
+                              backgroundColor: AppColors.prayerCardBgColor,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: AppColors.darkBlue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 30),
+                                    child: ReminderPicker(
+                                      type: NotificationType.prayer_time,
+                                      reminder: null,
+                                      hideActionuttons: false,
+                                      onCancel: () =>
+                                          Navigator.of(context).pop(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       )
-                    : Container(),
-                _addPrayerTypeMode
-                    ? Container(
-                        margin: EdgeInsets.only(bottom: 80.0),
-                        child: ReminderPicker(
-                          type: NotificationType.prayer_time,
-                          hideActionuttons: false,
-                          reminder: null,
-                          onCancel: () =>
-                              setState(() => _addPrayerTypeMode = false),
-                        ),
-                      )
-                    : showUpdateField
-                        ? Container(
-                            margin: EdgeInsets.only(bottom: 80.0),
-                            child: ReminderPicker(
-                              type: NotificationType.prayer_time,
-                              reminder: reminder,
-                              hideActionuttons: false,
-                              onCancel: () =>
-                                  setState(() => showUpdateField = false),
-                            ),
-                          )
-                        : Container(),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 100),
               ],
             ),

@@ -720,7 +720,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     SizedBox(height: 15.0),
                     Container(
                       child: Text(
-                        "1.	Personal InformationThis is information that you voluntarily supply to us through the app when creating an account. We intentionally collect as little personally identifiable information as possible. If you post a prayer request or personal information about another person, it is solely your responsibility to obtain the 3rd party’s permission before posting. All personal information is kept confidential and is not distributed, sold, or shared with anyone. It is strictly used for the purposes of allowing Second Baptist Church to encourage you in your walk with Jesus Christ.",
+                        "1. Personal Information",
+                        style: AppTextStyles.regularText16b.copyWith(
+                            color: Settings.isDarkMode
+                                ? AppColors.offWhite4
+                                : AppColors.grey4),
+                      ),
+                    ),
+                    Container(
+                      child: Text(
+                        "This is information that you voluntarily supply to us through the app when creating an account. We intentionally collect as little personally identifiable information as possible. If you post a prayer request or personal information about another person, it is solely your responsibility to obtain the 3rd party’s permission before posting. All personal information is kept confidential and is not distributed, sold, or shared with anyone. It is strictly used for the purposes of allowing Second Baptist Church to encourage you in your walk with Jesus Christ.",
                         style: AppTextStyles.regularText16b.copyWith(
                             color: Settings.isDarkMode
                                 ? AppColors.offWhite4
@@ -730,7 +739,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     SizedBox(height: 15.0),
                     Container(
                       child: Text(
-                        "2.	Technical InformationThis is information that is exchanged between our computer and your phone when using the app. This information is anonymous and cannot personally identify you. This type of information includes, but is not limited to, your IP address, referring URL, type of phone, and whether you are a first-time visitor or returning visitor to the app. The technical information gathered from those utilizing our app allows us to improve the usability of the app and reduce the number of problems that may occur. If you have questions about the use of personal and technical information collected through our app, you may contact us by email at support@second.org.",
+                        "2. Technical Information",
+                        style: AppTextStyles.regularText16b.copyWith(
+                            color: Settings.isDarkMode
+                                ? AppColors.offWhite4
+                                : AppColors.grey4),
+                      ),
+                    ),
+                    Container(
+                      child: Text(
+                        "This is information that is exchanged between our computer and your phone when using the app. This information is anonymous and cannot personally identify you. This type of information includes, but is not limited to, your IP address, referring URL, type of phone, and whether you are a first-time visitor or returning visitor to the app. The technical information gathered from those utilizing our app allows us to improve the usability of the app and reduce the number of problems that may occur. If you have questions about the use of personal and technical information collected through our app, you may contact us by email at support@second.org.",
                         style: AppTextStyles.regularText16b.copyWith(
                             color: Settings.isDarkMode
                                 ? AppColors.offWhite4

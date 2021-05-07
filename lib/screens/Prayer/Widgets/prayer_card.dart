@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -10,14 +7,11 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/widgets/snooze_prayer.dart';
 
 class PrayerCard extends StatefulWidget {
@@ -257,24 +251,52 @@ class _PrayerCardState extends State<PrayerCard> {
                                       ? Row(
                                           children: <Widget>[
                                             InkWell(
-                                              onTap: () => showModalBottomSheet(
+                                              onTap: () => showDialog(
                                                 context: context,
                                                 barrierColor: AppColors
                                                     .detailBackgroundColor[1]
                                                     .withOpacity(0.5),
-                                                backgroundColor: AppColors
-                                                    .detailBackgroundColor[1]
-                                                    .withOpacity(0.9),
-                                                isScrollControlled: true,
                                                 builder:
                                                     (BuildContext context) {
-                                                  return ReminderPicker(
-                                                    type: null,
-                                                    hideActionuttons: false,
-                                                    onCancel: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                    reminder: reminder,
+                                                  return Dialog(
+                                                    insetPadding:
+                                                        EdgeInsets.all(20),
+                                                    backgroundColor: AppColors
+                                                        .prayerCardBgColor,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: AppColors
+                                                              .darkBlue),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(10.0),
+                                                      ),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 30),
+                                                          child: ReminderPicker(
+                                                            type:
+                                                                NotificationType
+                                                                    .reminder,
+                                                            hideActionuttons:
+                                                                false,
+                                                            onCancel: () =>
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(),
+                                                            reminder: reminder,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   );
                                                 },
                                               ),
