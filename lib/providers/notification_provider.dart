@@ -81,8 +81,17 @@ class NotificationProvider with ChangeNotifier {
         .asBroadcastStream()
         .listen((notifications) {
       _localNotifications = notifications;
+      _deletePastReminder(notifications);
       notifyListeners();
     });
+  }
+
+  Future<void> _deletePastReminder(List<LocalNotificationModel> data) async {
+    var reminderToDelete =
+        data.where((e) => e.scheduledDate.isBefore(DateTime.now())).toList();
+    for (int i = 0; i < reminderToDelete.length; i++) {
+      await deleteLocalNotification(reminderToDelete[i].id);
+    }
   }
 
   Future<void> setPrayerTimeNotifications(userId) async {
