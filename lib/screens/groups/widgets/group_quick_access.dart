@@ -193,7 +193,8 @@ class _GroupPrayerQuickAccessState extends State<GroupPrayerQuickAccess>
                       alignment: Alignment.center,
                       child: CircularButton(
                         icon: Icon(
-                          AppIcons.bestill_archive,
+                          AppIcons
+                              .bestill_icons_bestill_archived_icon_revised_drk,
                           color: AppColors.lightBlue4,
                         ),
                         onClick: () {

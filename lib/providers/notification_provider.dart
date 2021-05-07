@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -87,8 +88,11 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> _deletePastReminder(List<LocalNotificationModel> data) async {
-    var reminderToDelete =
-        data.where((e) => e.scheduledDate.isBefore(DateTime.now())).toList();
+    var reminderToDelete = data
+        .where((e) =>
+            e.scheduledDate.isBefore(DateTime.now()) &&
+            e.frequency == Frequency.one_time)
+        .toList();
     for (int i = 0; i < reminderToDelete.length; i++) {
       await deleteLocalNotification(reminderToDelete[i].id);
     }
@@ -145,6 +149,7 @@ class NotificationProvider with ChangeNotifier {
       selectedMonth,
       selectedDayOfMonth,
     );
+    await setLocalNotifications(userId);
     notifyListeners();
   }
 

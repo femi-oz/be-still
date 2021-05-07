@@ -130,7 +130,7 @@ class LocalNotification {
     tz.TZDateTime scheduledDate = tz.TZDateTime(
       tz.local,
       isOneTime ? selectedYear : now.year,
-      isOneTime ? months.indexOf(selectedMonth) : now.month,
+      isOneTime ? months.indexOf(selectedMonth) + 1 : now.month,
       isOneTime ? selectedDayOfMonth : _getExactDy(selectedDay),
       hour,
       selectedMinute,

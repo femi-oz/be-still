@@ -83,7 +83,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         : LocalNotification.months[DateTime.now().month - 1];
     selectedDayOfMonth = widget.reminder?.selectedDayOfMonth != null
         ? int.parse(widget.reminder?.selectedDayOfMonth)
-        : DateTime.now().month;
+        : DateTime.now().day;
     super.initState();
   }
 
@@ -211,6 +211,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
             Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
         final title = '$selectedFrequency reminder to pray';
         final description = prayerData?.prayer?.description ?? '';
+
         final scheduleDate = LocalNotification.scheduleDate(
           selectedHour,
           selectedMinute,

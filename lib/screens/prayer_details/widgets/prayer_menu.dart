@@ -558,7 +558,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       : 'Mark as Favorite ',
                 ),
                 MenuButton(
-                  icon: AppIcons.bestill_archive,
+                  icon:
+                      AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                   onPressed: () => prayerData.userPrayer.isArchived
                       ? _unArchive(prayerData)
                       : _onArchive(prayerData),
@@ -567,7 +568,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       : 'Archive',
                 ),
                 MenuButton(
-                  icon: AppIcons.bestill_delete,
+                  icon: Icons.close,
                   onPressed: () => _openDeleteConfirmation(context),
                   text: 'Delete',
                 ),

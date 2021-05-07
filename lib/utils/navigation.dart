@@ -21,8 +21,12 @@ class NavigationService {
   Future<dynamic> goHome(int index) async {
     await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
         .setCurrentPage(index);
-    return navigationKey.currentState.pushReplacement(PageTransition(
-        type: PageTransitionType.leftToRightWithFade, child: EntryScreen()));
+    return navigationKey.currentState.pushReplacement(
+      PageTransition(
+        type: PageTransitionType.leftToRightWithFade,
+        child: EntryScreen(),
+      ),
+    );
   }
 
   Future<dynamic> navigateTo(String _rn) {

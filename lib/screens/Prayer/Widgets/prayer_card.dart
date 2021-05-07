@@ -383,7 +383,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 : _onMarkAsAnswered(),
           ),
           _buildSlideItem(
-            AppIcons.bestill_archive,
+            AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
             widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
             () => widget.prayerData.userPrayer.isArchived
                 ? _unArchive()

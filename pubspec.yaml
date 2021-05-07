@@ -120,6 +120,9 @@ flutter:
   - family: AppIcons2
     fonts:
       - asset: assets/fonts/AppIcons2.ttf
+  - family: AppIcons3
+    fonts:
+      - asset: assets/fonts/AppIcons3.ttf
   - family: Avenir Next
     fonts:
       - asset: assets/fonts/avenir_next_medium.ttf
