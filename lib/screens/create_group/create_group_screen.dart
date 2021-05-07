@@ -75,8 +75,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(StringUtils.backgroundImage(
-              Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
+          image: AssetImage(StringUtils.backgroundImage),
           alignment: Alignment.bottomCenter,
         ),
       ),

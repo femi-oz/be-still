@@ -18,7 +18,7 @@ class BeStilDialog {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(true)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
           ),
         ),

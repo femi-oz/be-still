@@ -176,9 +176,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage(
-                            StringUtils.backgroundImage(Settings.isDarkMode)),
+                        image: AssetImage(StringUtils.backgroundImage),
                         alignment: Alignment.bottomCenter,
+                        colorFilter: new ColorFilter.mode(
+                            AppColors.backgroundColor[0].withOpacity(0.2),
+                            BlendMode.dstATop),
                       ),
                     ),
                     child: Column(

@@ -22,8 +22,7 @@ class LocalAuth extends StatelessWidget {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(
-                Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
           ),
         ),

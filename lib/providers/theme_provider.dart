@@ -43,7 +43,7 @@ class ThemeProvider with ChangeNotifier {
             Brightness.dark
         : _currentTheme == BsThemeMode.dark;
 
-    AppColors.darkMode = _isDarkMode;
+    AppColors.darkMode = false;
     Settings.themeMode = _currentTheme;
     notifyListeners();
   }

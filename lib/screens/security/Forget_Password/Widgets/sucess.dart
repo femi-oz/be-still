@@ -37,9 +37,11 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(
-                Provider.of<ThemeProvider>(context).isDarkModeEnabled)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            colorFilter: new ColorFilter.mode(
+                AppColors.backgroundColor[0].withOpacity(0.2),
+                BlendMode.dstATop),
           ),
         ),
         child: Column(

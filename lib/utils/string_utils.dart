@@ -10,21 +10,7 @@ class StringUtils {
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
       'You have to be recently logged in the perform this action. Please re-login';
-  static String backgroundImage([bool isDarkMode]) {
-    String retVal;
-    switch (Settings.isDarkMode) {
-      case true:
-        retVal = 'assets/images/background-pattern-dark.png';
-        break;
-      case false:
-        retVal = 'assets/images/bestill_arrows-bg-lt.png';
-        break;
-      default:
-        retVal = 'assets/images/bestill_arrows-bg-lt.png';
-        break;
-    }
-    return retVal;
-  }
+  static String backgroundImage = 'assets/images/bestill_arrows-bg-lt.png';
 
   static String drawerBackgroundImage([bool isDarkMode]) {
     String retVal;
