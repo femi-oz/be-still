@@ -19,7 +19,19 @@ class AppIcons {
   AppIcons._();
 
   static const _kFontFam = 'AppIcons';
+  static const _kFontFam2 = 'AppIcons2';
   static const String _kFontPkg = null;
+
+  static const IconData delete =
+      IconData(0xe800, fontFamily: _kFontFam2, fontPackage: _kFontPkg);
+  static const IconData groups =
+      IconData(0xe801, fontFamily: _kFontFam2, fontPackage: _kFontPkg);
+  static const IconData list =
+      IconData(0xe802, fontFamily: _kFontFam2, fontPackage: _kFontPkg);
+  static const IconData more =
+      IconData(0xe803, fontFamily: _kFontFam2, fontPackage: _kFontPkg);
+  static const IconData snooze =
+      IconData(0xe804, fontFamily: _kFontFam2, fontPackage: _kFontPkg);
 
   static const IconData bestill_delete =
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
