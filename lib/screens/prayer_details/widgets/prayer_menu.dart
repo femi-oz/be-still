@@ -568,22 +568,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       : 'Archive',
                 ),
                 MenuButton(
-                  icon: Icons.close,
+                  icon: AppIcons.bestill_close,
                   onPressed: () => _openDeleteConfirmation(context),
                   text: 'Delete',
                 ),
               ],
             ),
           ),
-          // IconButton(
-          //   icon: Icon(
-          //     AppIcons.bestill_close,
-          //   ),
-          //   onPressed: () {
-          //     Navigator.of(context).pop();
-          //   },
-          //   color: AppColors.textFieldText,
-          // ),
         ],
       ),
     );

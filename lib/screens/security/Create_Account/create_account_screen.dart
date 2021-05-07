@@ -689,16 +689,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     SizedBox(height: 30),
                     Container(
                       child: Text(
-                        "Random things here about how you use the app. What things,. app is willing to be responsible' for, and what things it spouts as being at Me users' own risk. Legal jargon and etc. such Mat it delineates and follows whatever parameters any and all lawyers are happy with to use here as a terms for service with or without a synopsis or conclusion. ",
-                        style: AppTextStyles.regularText16b.copyWith(
-                            color: Settings.isDarkMode
-                                ? AppColors.offWhite4
-                                : AppColors.grey4),
-                      ),
-                    ),
-                    SizedBox(height: 15.0),
-                    Container(
-                      child: Text(
                         "The Be Still App is a ministry of Second Baptist Church.  We understand the spiritual benefits of this application and the tremendous ministry opportunities afforded by its use. We also understand the importance of respecting and protecting your privacy.",
                         style: AppTextStyles.regularText16b.copyWith(
                             color: Settings.isDarkMode
