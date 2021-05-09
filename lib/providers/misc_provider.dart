@@ -1,4 +1,3 @@
-import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class MiscProvider with ChangeNotifier {

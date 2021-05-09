@@ -12,6 +12,7 @@ import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
@@ -20,7 +21,7 @@ import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -112,14 +113,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Settings.userPassword =
             Settings.rememberMe ? _passwordController.text : '';
         BeStilDialog.hideLoading(context);
-        // await Provider.of<NotificationProvider>(context, listen: false)
-        //     .setDevice(user.id);
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
-          PageTransition(
-              type: PageTransitionType.leftToRightWithFade,
-              child: CreateAccountSuccess()),
-          (Route<dynamic> route) => false,
+          SlideRightRoute(page: CreateAccountSuccess()),
         );
       }
     } on HttpException catch (e, s) {
@@ -250,18 +246,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           .copyWith(color: AppColors.white)),
                 ),
                 onPressed: () {
-                  // Settings.rememberMe
-                  //     ? Provider.of<MiscProvider>(context, listen: false)
-                  //         .setVisibility(false)
-                  //     : Provider.of<MiscProvider>(context, listen: false)
-                  //         .setVisibility(true);
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: LoginScreen()),
-                    (Route<dynamic> route) => false,
-                  );
+                  Navigator.of(context).pop();
                 },
               ),
             ),

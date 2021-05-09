@@ -1,17 +1,14 @@
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,7 +24,6 @@ class CustomDrawer extends StatelessWidget {
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
-    final rememberMe = Settings.rememberMe;
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -111,21 +107,11 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      // rememberMe
-                      //     ? await Provider.of<MiscProvider>(context,
-                      //             listen: false)
-                      //         .setVisibility(false)
-                      //     : await Provider.of<MiscProvider>(context,
-                      //             listen: false)
-                      //         .setVisibility(true);
                       await _authProvider.signOut();
                       await LocalNotification.clearAll();
                       Navigator.pushReplacement(
                         context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: LoginScreen(),
-                        ),
+                        SlideRightRoute(page: LoginScreen()),
                       );
                     },
                     child: Container(
@@ -232,10 +218,7 @@ class CustomDrawer extends StatelessWidget {
                             child: InkWell(
                               onTap: () => Navigator.pushReplacement(
                                 context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: RecommenededBibles(),
-                                ),
+                                SlideRightRoute(page: RecommenededBibles()),
                               ),
                               child: Text("RECOMMENDED BIBLES",
                                   style: AppTextStyles.drawerMenu.copyWith(
@@ -245,26 +228,21 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.pushReplacement(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: DevotionPlans(),
-                                ),
-                              ),
-                              child: Text("DEVOTIONALS AND READING PLANS",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
+                                onTap: () => Navigator.pushReplacement(
+                                      context,
+                                      SlideRightRoute(page: DevotionPlans()),
+                                    ),
+                                child: Text("DEVOTIONALS AND READING PLANS",
+                                    style: AppTextStyles.drawerMenu.copyWith(
+                                        color: AppColors.drawerMenuColor))),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () => Navigator.pushReplacement(
                                 context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: SettingsScreen(),
+                                SlideRightRoute(
+                                  page: SettingsScreen(),
                                 ),
                               ),
                               child: Text("SETTINGS",

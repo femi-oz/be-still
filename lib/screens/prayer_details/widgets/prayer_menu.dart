@@ -23,7 +23,7 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -369,12 +369,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(),
-          ));
+
+      NavigationService.instance.goHome(0);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

@@ -6,7 +6,6 @@ import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Create_Account/create_account_screen.dart';
 import 'package:be_still/screens/security/Forget_Password/forget_password.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
@@ -24,7 +23,6 @@ final routes = {
   PrayerDetails.routeName: (context) => PrayerDetails(),
   PrayerTime.routeName: (context) => PrayerTime(),
   AddUpdate.routeName: (context) => AddUpdate(),
-  GrowMyPrayerLifeScreen.routeName: (context) => GrowMyPrayerLifeScreen(),
   RecommenededBibles.routeName: (context) => RecommenededBibles(),
   DevotionPlans.routeName: (context) => DevotionPlans(),
   CreateGroupScreen.routeName: (context) => CreateGroupScreen(),

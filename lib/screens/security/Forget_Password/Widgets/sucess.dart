@@ -1,10 +1,8 @@
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ForgetPasswordSucess extends StatefulWidget {
   static const routeName = 'forgot-password-success';
@@ -19,7 +17,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
+        () => Navigator.of(context).pop(),
       ),
     );
   }

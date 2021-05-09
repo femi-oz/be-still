@@ -36,8 +36,6 @@ class _EntryScreenState extends State<EntryScreen>
   void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
   @override
   void initState() {
-    _currentIndex =
-        Provider.of<MiscProvider>(context, listen: false).currentPage;
     _isInit = false;
     super.initState();
   }
@@ -90,6 +88,7 @@ class _EntryScreenState extends State<EntryScreen>
 
   @override
   Widget build(BuildContext context) {
+    _currentIndex = Provider.of<MiscProvider>(context).currentPage;
     final isSearchMode =
         Provider.of<MiscProvider>(context, listen: false).search;
     _switchSearchMode(isSearchMode);
@@ -232,6 +231,8 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
+                Provider.of<MiscProvider>(context, listen: false)
+                    .setCurrentPage(index);
                 controller = new AnimationController(
                     duration: Duration(milliseconds: 300), vsync: this)
                   ..addListener(() => setState(() {}));

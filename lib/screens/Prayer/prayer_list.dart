@@ -1,11 +1,8 @@
-import 'dart:isolate';
-
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
@@ -19,7 +16,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
@@ -89,13 +86,7 @@ class _PrayerListState extends State<PrayerList> {
           .setPrayer(prayerData.userPrayer.id);
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      Navigator.push(
-        context,
-        PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: PrayerDetails()),
-      );
-      // Navigator.of(context).pushNamed(PrayerDetails.routeName);
+      Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -148,11 +139,8 @@ class _PrayerListState extends State<PrayerList> {
   void _getPermissions() async {
     try {
       if (Settings.isAppInit) {
-        // final status = await Permission.contacts.status;
-        // if (status.) {
         await Permission.contacts.request().then((p) =>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
-        // }
         Settings.isAppInit = false;
       }
     } catch (e, s) {
@@ -227,7 +215,9 @@ class _PrayerListState extends State<PrayerList> {
                             currentPrayerType == PrayerType.answered
                         ? Container()
                         : LongButton(
-                            onPress: () => NavigationService.instance.goHome(2),
+                            onPress: () => Provider.of<MiscProvider>(context,
+                                    listen: false)
+                                .setCurrentPage(2),
                             text: 'Add New Prayer',
                             backgroundColor:
                                 AppColors.addprayerBgColor.withOpacity(0.9),
