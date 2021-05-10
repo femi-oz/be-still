@@ -11,6 +11,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,9 +65,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
     selectedMinute = widget.reminder?.selectedMinute != null
         ? int.parse(widget.reminder?.selectedMinute)
         : 15;
-    selectedDayOfWeek = widget.reminder?.selectedDay != null
-        ? LocalNotification.daysOfWeek.indexOf(widget.reminder?.selectedDay)
-        : DateTime.now().weekday;
+    selectedDayOfWeek = widget.reminder?.frequency == Frequency.one_time
+        ? 1
+        : widget.reminder?.selectedDay != null
+            ? LocalNotification.daysOfWeek
+                .indexOf(widget.reminder?.selectedDay?.capitalize())
+            : DateTime.now().weekday;
     selectedPeriod = widget.reminder?.period != null
         ? widget.reminder?.period
         : DateTime.now().hour > 12
@@ -96,7 +100,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
     FixedExtentScrollController daysOfWeekController =
         FixedExtentScrollController(
             initialItem: LocalNotification.daysOfWeek
-                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek - 1]));
+                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
     FixedExtentScrollController hourController = FixedExtentScrollController(
@@ -207,7 +211,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           suffix = ["st", "nd", "rd"][digit - 1];
         }
         final notificationText = selectedFrequency == Frequency.weekly
-            ? '$selectedFrequency, $selectedDayOfWeek, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
+            ? '$selectedFrequency, ${LocalNotification.daysOfWeek[selectedDayOfWeek]}, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
             : selectedFrequency == Frequency.one_time
                 ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
                 : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
@@ -219,7 +223,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         final scheduleDate = LocalNotification.scheduleDate(
           selectedHour,
           selectedMinute,
-          selectedDayOfWeek,
+          selectedDayOfWeek + 1,
           selectedPeriod,
           selectedYear,
           selectedMonth,
@@ -239,7 +243,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         );
         if (widget.reminder != null)
           updatePrayerTime(
-            LocalNotification.daysOfWeek[selectedDayOfWeek - 1],
+            LocalNotification.daysOfWeek[selectedDayOfWeek],
             selectedPeriod,
             selectedFrequency,
             _selectedHourString,
@@ -258,7 +262,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
             selectedFrequency,
             scheduleDate,
             prayerData?.userPrayer?.id ?? '',
-            LocalNotification.daysOfWeek[selectedDayOfWeek - 1],
+            LocalNotification.daysOfWeek[selectedDayOfWeek],
             selectedPeriod,
             _selectedHourString,
             _selectedMinuteString,
@@ -387,7 +391,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                         scrollController: daysOfWeekController,
                                         itemExtent: itemExtent,
                                         onSelectedItemChanged: (i) => setState(
-                                            () => selectedDayOfWeek = i + 1),
+                                            () => selectedDayOfWeek = i),
                                         children: <Widget>[
                                           ...LocalNotification.daysOfWeek.map(
                                             (r) => Align(

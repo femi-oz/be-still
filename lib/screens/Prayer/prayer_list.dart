@@ -30,12 +30,14 @@ class PrayerList extends StatefulWidget {
 class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
   bool _canVibrate = true;
+  var key;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
       _setVibration();
       _getPermissions();
+      key = Provider.of<MiscProvider>(context).keyButton5;
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
@@ -67,55 +69,58 @@ class _PrayerListState extends State<PrayerList> {
       }
 
       BeStilDialog.hideLoading(context);
-      showModalBottomSheet(
-          backgroundColor: AppColors.backgroundColor[0].withOpacity(0.5),
-          isScrollControlled: true,
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 100, horizontal: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Welcome',
-                      style: AppTextStyles.boldText20
-                          .copyWith(color: AppColors.prayerTextColor)),
-                  Text(
-                      'Welcome to Be Still!  Here\'s aquick tour that will get you started.\n\nThe Be Still app can organize all your prayers and lead you through your own personal prayer time.\n\nTap Next to begin the tour, or Skip Tour to begin using Be Still right away',
-                      style: AppTextStyles.boldText16
-                          .copyWith(color: AppColors.prayerTextColor)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            final miscProvider = Provider.of<MiscProvider>(
-                                context,
-                                listen: false);
-                            TutorialTarget.showTutorial(
-                              context: context,
-                              keyButton2: miscProvider.keyButton2,
-                              keyButton3: miscProvider.keyButton3,
-                              keyButton: miscProvider.keyButton,
-                              keyButton4: miscProvider.keyButton4,
-                              keyButton5: miscProvider.keyButton5,
-                            );
-                          },
-                          child: Text('Next',
-                              style: AppTextStyles.boldText16
-                                  .copyWith(color: AppColors.prayerTextColor))),
-                      TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('Skip',
-                              style: AppTextStyles.boldText16
-                                  .copyWith(color: AppColors.prayerTextColor))),
-                    ],
-                  )
-                ],
-              ),
-            );
-          });
+      if (Settings.isAppInit)
+        showModalBottomSheet(
+            backgroundColor: AppColors.backgroundColor[0].withOpacity(0.5),
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 100, horizontal: 40),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Welcome',
+                                style: AppTextStyles.boldText20.copyWith(
+                                    color: AppColors.prayerTextColor)),
+                          ],
+                        ),
+                        SizedBox(height: 30),
+                        Text(
+                            'Welcome to Be Still!  Here\'s a quick tour that will get you started.\n\nThe Be Still app can organize all your prayers and lead you through your own personal prayer time.\n\nTap Next to begin the tour, or Skip Tour to begin using Be Still right away',
+                            style: AppTextStyles.boldText16
+                                .copyWith(color: AppColors.prayerTextColor)),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              TutorialTarget.showTutorial(
+                                context: context,
+                              );
+                            },
+                            child: Text('Next',
+                                style: AppTextStyles.boldText16.copyWith(
+                                    color: AppColors.prayerTextColor))),
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Skip',
+                                style: AppTextStyles.boldText16.copyWith(
+                                    color: AppColors.prayerTextColor))),
+                      ],
+                    )
+                  ],
+                ),
+              );
+            });
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -258,11 +263,10 @@ class _PrayerListState extends State<PrayerList> {
                                   child: PrayerCard(
                                     prayerData: e,
                                     timeago: _timeago,
-                                    keyButton: prayers.indexOf(e) == 0
-                                        ? Provider.of<MiscProvider>(context,
-                                                listen: false)
-                                            .keyButton5
-                                        : null,
+                                    keyButton: Settings.isAppInit &&
+                                            prayers.indexOf(e) == 0
+                                        ? key
+                                        : GlobalKey(),
                                   ),
                                 );
                               }).toList(),
