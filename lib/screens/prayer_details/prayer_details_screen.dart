@@ -62,9 +62,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   bool _isInit = true;
 
   updateUI() {
-    if (hasReminder) {
-      print('reminderString $reminderString');
-    }
     setState(() {});
   }
 

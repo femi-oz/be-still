@@ -4,6 +4,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -17,8 +18,10 @@ import 'package:be_still/widgets/snooze_prayer.dart';
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final String timeago;
+  final keyButton;
 
-  PrayerCard({@required this.prayerData, @required this.timeago});
+  PrayerCard(
+      {@required this.prayerData, @required this.timeago, this.keyButton});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
@@ -178,10 +181,15 @@ class _PrayerCardState extends State<PrayerCard> {
     }
   }
 
+  Widget _buildMenu() {
+    return PrayerMenu(context, hasReminder, reminder, null);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
+      key: widget.keyButton,
       color: AppColors.prayerCardBgColor,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
@@ -395,7 +403,22 @@ class _PrayerCardState extends State<PrayerCard> {
             ),
           ),
         ),
-        actions: <Widget>[],
+        actions: <Widget>[
+          _buildSlideItem(
+            AppIcons.bestill_alert,
+            'Options',
+            () => showModalBottomSheet(
+              context: context,
+              barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+              backgroundColor:
+                  AppColors.detailBackgroundColor[1].withOpacity(1),
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return _buildMenu();
+              },
+            ),
+          ),
+        ],
         secondaryActions: <Widget>[
           _buildSlideItem(
             AppIcons.bestill_answered,

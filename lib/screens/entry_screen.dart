@@ -5,7 +5,6 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
-import 'package:be_still/screens/prayer/prayer_list.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -13,9 +12,13 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
+import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+
+import 'Prayer/prayer_list.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
@@ -24,6 +27,8 @@ class EntryScreen extends StatefulWidget {
 }
 
 bool _isSearchMode = false;
+TutorialCoachMark tutorialCoachMark;
+var miscProvider;
 
 class _EntryScreenState extends State<EntryScreen>
     with TickerProviderStateMixin {
@@ -88,6 +93,7 @@ class _EntryScreenState extends State<EntryScreen>
 
   @override
   Widget build(BuildContext context) {
+    miscProvider = Provider.of<MiscProvider>(context);
     _currentIndex = Provider.of<MiscProvider>(context).currentPage;
     final isSearchMode =
         Provider.of<MiscProvider>(context, listen: false).search;
@@ -291,6 +297,7 @@ class TabNavigationItem {
           icon: Icon(
             AppIcons.list,
             size: 18,
+            key: miscProvider.keyButton,
             color: AppColors.bottomNavIconColor,
           ),
           title: "List",
@@ -308,19 +315,24 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(AppIcons.bestill_add,
-              size: 16, color: AppColors.bottomNavIconColor),
+              key: miscProvider.keyButton2,
+              size: 16,
+              color: AppColors.bottomNavIconColor),
           title: "Add",
         ),
         TabNavigationItem(
           page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 16, color: AppColors.bottomNavIconColor),
+              key: miscProvider.keyButton3,
+              size: 16,
+              color: AppColors.bottomNavIconColor),
           title: "Pray",
         ),
         TabNavigationItem(
           page: null,
           icon: Icon(
             Icons.more_horiz,
+            key: miscProvider.keyButton4,
             size: 20,
             color: AppColors.bottomNavIconColor,
           ),
