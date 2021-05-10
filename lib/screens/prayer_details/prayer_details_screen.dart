@@ -182,26 +182,23 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                           ),
                         )
                       : Container(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Transform.rotate(
-                      angle: 180 * math.pi,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.build,
-                          color: AppColors.lightBlue3,
-                        ),
-                        onPressed: () => showModalBottomSheet(
-                          context: context,
-                          barrierColor: AppColors.detailBackgroundColor[1]
-                              .withOpacity(0.5),
-                          backgroundColor:
-                              AppColors.detailBackgroundColor[1].withOpacity(1),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return _buildMenu();
-                          },
-                        ),
+                  Transform.rotate(
+                    angle: 90 * math.pi / 180,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.build,
+                        color: AppColors.lightBlue3,
+                      ),
+                      onPressed: () => showModalBottomSheet(
+                        context: context,
+                        barrierColor:
+                            AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                        backgroundColor:
+                            AppColors.detailBackgroundColor[1].withOpacity(1),
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return _buildMenu();
+                        },
                       ),
                     ),
                   ),
