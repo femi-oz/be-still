@@ -55,13 +55,12 @@ dependencies:
   geocoder: ^0.2.1
   vibrate: ^0.0.4
   cron: ^0.3.0
-  # sentry_flutter: ^4.0.6
   masked_text: ^0.0.6
-  page_transition: "^1.1.7+6"
   easy_rich_text: ^0.5.3
   validators: ^3.0.0
   firebase_crashlytics: ^2.0.2
   flutter_slidable: ^0.6.0
+  tutorial_coach_mark: ^1.0.0
 
 
 
@@ -87,9 +86,9 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/bestill_logo-for-icons_App-Store.png"
+  image_path: "assets/images/bestill-logo.png"
   adaptive_icon_background: "#191919"
-  adaptive_icon_foreground: "assets/images/bestill_logo-for-icons_App-Store.png"
+  adaptive_icon_foreground: "assets/images/bestill-logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -7,10 +7,12 @@ class MenuButton extends StatelessWidget {
   final String text;
   final bool isActive;
   final bool isDisable;
+  final String suffix;
   MenuButton({
     this.onPressed,
     this.text,
     this.icon,
+    this.suffix,
     this.isActive: false,
     this.isDisable: false,
   });
@@ -33,21 +35,36 @@ class MenuButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
-          children: <Widget>[
-            icon != null
-                ? Icon(
-                    icon,
-                    color:
-                        AppColors.lightBlue4.withOpacity(isDisable ? 0.5 : 1),
-                    size: 18,
-                  )
-                : Container(),
-            SizedBox(width: icon != null ? 10 : 0),
-            Text(
-              text,
-              style: AppTextStyles.boldText16.copyWith(
-                  color: AppColors.lightBlue4.withOpacity(isDisable ? 0.5 : 1)),
+          children: [
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  icon != null
+                      ? Icon(
+                          icon,
+                          color: AppColors.lightBlue4
+                              .withOpacity(isDisable ? 0.5 : 1),
+                          size: 18,
+                        )
+                      : Container(),
+                  SizedBox(width: icon != null ? 10 : 0),
+                  Text(
+                    text,
+                    style: AppTextStyles.boldText16.copyWith(
+                        color: AppColors.lightBlue4
+                            .withOpacity(isDisable ? 0.5 : 1)),
+                  ),
+                ],
+              ),
             ),
+            suffix != null
+                ? Text(
+                    suffix,
+                    style: AppTextStyles.boldText14.copyWith(
+                        color: AppColors.lightBlue4
+                            .withOpacity(isDisable ? 0.5 : 1)),
+                  )
+                : Container()
           ],
         ),
       ),

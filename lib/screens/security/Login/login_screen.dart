@@ -20,7 +20,7 @@ import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
@@ -218,8 +218,6 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      // await Provider.of<NotificationProvider>(context, listen: false)
-      //     .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
       NavigationService.instance.goHome(0);
@@ -512,15 +510,10 @@ class _LoginScreenState extends State<LoginScreen> {
         InkWell(
           child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
-            // Provider.of<MiscProvider>(context, listen: false)
-            //     .setVisibility(true);
             Navigator.push(
               context,
-              PageTransition(
-                  type: PageTransitionType.rightToLeftWithFade,
-                  child: CreateAccountScreen()),
+              SlideRightRoute(page: CreateAccountScreen()),
             );
-            // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
           },
         ),
         Row(
@@ -554,16 +547,10 @@ class _LoginScreenState extends State<LoginScreen> {
             verificationSendMessage,
             style: AppTextStyles.regularText15,
           ),
-        // SizedBox(height: 20),
         BsRaisedButton(
           onPressed: _login,
           disabled: !isFormValid,
         ),
-        // Settings.enableLocalAuth
-        //     ? BsRaisedButton(
-        //         onPressed: _biologin,
-        //       )
-        //     : Container(),
         SizedBox(height: 24),
         GestureDetector(
             child: Text(
@@ -571,13 +558,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: AppTextStyles.regularText15,
             ),
             onTap: () {
-              // Provider.of<MiscProvider>(context, listen: false)
-              //     .setVisibility(true);
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      type: PageTransitionType.leftToRightWithFade,
-                      child: ForgetPassword()));
+              Navigator.push(context, SlideRightRoute(page: ForgetPassword()));
             }),
       ],
     );

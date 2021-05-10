@@ -59,13 +59,6 @@ class _GroupScreenState extends State<GroupScreen> {
                 padding: EdgeInsets.only(left: 50),
                 child: LongButton(
                   onPress: () => null,
-                  // Navigator.push(
-                  //   context,
-                  //   new MaterialPageRoute(
-                  //     builder: (context) =>
-                  //     new FindAGroup(),
-                  //   ),
-                  // ),
                   text: 'FIND A GROUP',
                   backgroundColor:
                       AppColors.groupActionBgColor.withOpacity(0.9),

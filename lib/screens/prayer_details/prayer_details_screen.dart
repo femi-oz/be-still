@@ -10,11 +10,11 @@ import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 class PrayerDetails extends StatefulWidget {
@@ -25,8 +25,6 @@ class PrayerDetails extends StatefulWidget {
 }
 
 class _PrayerDetailsState extends State<PrayerDetails> {
-  // GroupUserModel groupUser;
-
   void getSettings() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<SettingsProvider>(context, listen: false)
@@ -64,9 +62,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   bool _isInit = true;
 
   updateUI() {
-    if (hasReminder) {
-      print('reminderString $reminderString');
-    }
     setState(() {});
   }
 
@@ -123,7 +118,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => NavigationService.instance.goHome(0),
+                    onPressed: () => Navigator.of(context).pop(),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

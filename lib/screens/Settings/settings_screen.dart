@@ -14,10 +14,9 @@ import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -149,15 +148,14 @@ class _SettingsScreenPage extends State<SettingsScreen>
               case 4:
                 Scaffold.of(context).openEndDrawer();
                 break;
+              case 3:
+                NavigationService.instance.goHome(3);
+                break;
+              case 2:
+                NavigationService.instance.goHome(2);
+                break;
               default:
-                Provider.of<MiscProvider>(context, listen: false)
-                    .setCurrentPage(index);
-                Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.leftToRightWithFade,
-                      child: EntryScreen(),
-                    ));
+                NavigationService.instance.goHome(0);
                 break;
             }
           },

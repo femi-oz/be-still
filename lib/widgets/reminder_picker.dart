@@ -14,7 +14,6 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:provider/provider.dart';
 
@@ -240,7 +239,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         );
         if (widget.reminder != null)
           updatePrayerTime(
-            LocalNotification.daysOfWeek[selectedDayOfWeek],
+            LocalNotification.daysOfWeek[selectedDayOfWeek - 1],
             selectedPeriod,
             selectedFrequency,
             _selectedHourString,
@@ -259,7 +258,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
             selectedFrequency,
             scheduleDate,
             prayerData?.userPrayer?.id ?? '',
-            LocalNotification.daysOfWeek[selectedDayOfWeek],
+            LocalNotification.daysOfWeek[selectedDayOfWeek - 1],
             selectedPeriod,
             _selectedHourString,
             _selectedMinuteString,

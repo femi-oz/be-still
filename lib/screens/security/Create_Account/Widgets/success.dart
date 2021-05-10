@@ -1,10 +1,8 @@
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CreateAccountSuccess extends StatefulWidget {
   static const routeName = 'create-account-success';
@@ -19,9 +17,10 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushNamedAndRemoveUntil(
-          LoginScreen.routeName,
-          (Route<dynamic> route) => false,
+        () => Navigator.of(context).pushReplacement(
+          SlideRightRoute(
+            page: LoginScreen(),
+          ),
         ),
       ),
     );
