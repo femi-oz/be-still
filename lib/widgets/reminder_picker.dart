@@ -65,10 +65,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
     selectedMinute = widget.reminder?.selectedMinute != null
         ? int.parse(widget.reminder?.selectedMinute)
         : 15;
-    selectedDayOfWeek = widget.reminder?.selectedDay != null
-        ? LocalNotification.daysOfWeek
-            .indexOf(widget.reminder?.selectedDay?.capitalize())
-        : DateTime.now().weekday;
+    selectedDayOfWeek = widget.reminder?.frequency == Frequency.one_time
+        ? 1
+        : widget.reminder?.selectedDay != null
+            ? LocalNotification.daysOfWeek
+                .indexOf(widget.reminder?.selectedDay?.capitalize())
+            : DateTime.now().weekday;
     selectedPeriod = widget.reminder?.period != null
         ? widget.reminder?.period
         : DateTime.now().hour > 12
@@ -221,7 +223,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         final scheduleDate = LocalNotification.scheduleDate(
           selectedHour,
           selectedMinute,
-          selectedDayOfWeek,
+          selectedDayOfWeek + 1,
           selectedPeriod,
           selectedYear,
           selectedMonth,
@@ -241,7 +243,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         );
         if (widget.reminder != null)
           updatePrayerTime(
-            LocalNotification.daysOfWeek[selectedDayOfWeek - 1],
+            LocalNotification.daysOfWeek[selectedDayOfWeek],
             selectedPeriod,
             selectedFrequency,
             _selectedHourString,
@@ -260,7 +262,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
             selectedFrequency,
             scheduleDate,
             prayerData?.userPrayer?.id ?? '',
-            LocalNotification.daysOfWeek[selectedDayOfWeek - 1],
+            LocalNotification.daysOfWeek[selectedDayOfWeek],
             selectedPeriod,
             _selectedHourString,
             _selectedMinuteString,

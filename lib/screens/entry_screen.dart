@@ -297,7 +297,7 @@ class TabNavigationItem {
           icon: Icon(
             AppIcons.list,
             size: 18,
-            key: miscProvider.keyButton,
+            key: Settings.isAppInit ? miscProvider.keyButton : null,
             color: AppColors.bottomNavIconColor,
           ),
           title: "List",
@@ -315,7 +315,7 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(AppIcons.bestill_add,
-              key: miscProvider.keyButton2,
+              key: Settings.isAppInit ? miscProvider.keyButton2 : null,
               size: 16,
               color: AppColors.bottomNavIconColor),
           title: "Add",
@@ -323,7 +323,7 @@ class TabNavigationItem {
         TabNavigationItem(
           page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
-              key: miscProvider.keyButton3,
+              key: Settings.isAppInit ? miscProvider.keyButton3 : null,
               size: 16,
               color: AppColors.bottomNavIconColor),
           title: "Pray",
@@ -332,7 +332,7 @@ class TabNavigationItem {
           page: null,
           icon: Icon(
             Icons.more_horiz,
-            key: miscProvider.keyButton4,
+            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
             size: 20,
             color: AppColors.bottomNavIconColor,
           ),
