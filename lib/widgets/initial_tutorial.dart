@@ -10,7 +10,10 @@ class TutorialTarget {
     targets.add(TargetFocus(identify: "more", keyTarget: keyButton4, contents: [
       TargetContent(
           align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(top: 100),
+          customPosition: CustomTargetContentPosition(
+            top: 0,
+            bottom: 0,
+          ),
           child: _buildBody(
               context,
               'Help',
@@ -20,7 +23,10 @@ class TutorialTarget {
     targets.add(TargetFocus(identify: "add", keyTarget: keyButton2, contents: [
       TargetContent(
           align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(top: 100),
+          customPosition: CustomTargetContentPosition(
+            top: 0,
+            bottom: 0,
+          ),
           child: _buildBody(
               context,
               'Add Prayer',
@@ -30,7 +36,10 @@ class TutorialTarget {
     targets.add(TargetFocus(identify: "list", keyTarget: keyButton, contents: [
       TargetContent(
           align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(top: 100),
+          customPosition: CustomTargetContentPosition(
+            top: 0,
+            bottom: 0,
+          ),
           child: _buildBody(
               context,
               'My Prayer List',
@@ -40,7 +49,10 @@ class TutorialTarget {
     targets.add(TargetFocus(identify: "pray", keyTarget: keyButton3, contents: [
       TargetContent(
           align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(top: 100),
+          customPosition: CustomTargetContentPosition(
+            top: 0,
+            bottom: 0,
+          ),
           child: _buildBody(
               context,
               'Prayer Time',
@@ -51,7 +63,10 @@ class TutorialTarget {
         .add(TargetFocus(identify: "options", keyTarget: keyButton5, contents: [
       TargetContent(
           align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(bottom: 100),
+          customPosition: CustomTargetContentPosition(
+            // top: 0,
+            bottom: 0,
+          ),
           child: _buildBody(
               context,
               'Prayer Actions',
@@ -85,54 +100,58 @@ class TutorialTarget {
   static Widget _buildBody(
       BuildContext context, String title, String content, int id) {
     return Container(
+        padding:
+            EdgeInsets.symmetric(vertical: id < 4 ? 100 : 0, horizontal: 40),
         child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          title,
-          style: AppTextStyles.boldText20
-              .copyWith(color: AppColors.prayerTextColor),
-        ),
-        SizedBox(height: 30),
-        Text(
-          content,
-          style: AppTextStyles.boldText16
-              .copyWith(color: AppColors.prayerTextColor),
-        ),
-        SizedBox(height: 50),
-        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            id > 0
-                ? TextButton(
-                    child: Text('Prev',
-                        style: AppTextStyles.boldText16
-                            .copyWith(color: AppColors.prayerTextColor)),
-                    onPressed: () => tutorialCoachMark.previous(),
-                  )
-                : Container(),
-            id < 4
-                ? TextButton(
-                    child: Text('Next',
-                        style: AppTextStyles.boldText16
-                            .copyWith(color: AppColors.prayerTextColor)),
-                    onPressed: () => tutorialCoachMark.next(),
-                  )
-                : Container(),
-            id == 4
-                ? TextButton(
-                    onPressed: () => tutorialCoachMark.skip(),
-                    child: Text(
-                      'End',
-                      style: AppTextStyles.boldText16
+          children: <Widget>[
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTextStyles.boldText20
                           .copyWith(color: AppColors.prayerTextColor),
                     ),
-                  )
-                : Container()
+                  ],
+                ),
+                SizedBox(height: 30),
+                Text(content,
+                    style: AppTextStyles.boldText16
+                        .copyWith(color: AppColors.prayerTextColor)),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                id > 0
+                    ? TextButton(
+                        child: Text('Prev',
+                            style: AppTextStyles.boldText16
+                                .copyWith(color: AppColors.prayerTextColor)),
+                        onPressed: () => tutorialCoachMark.previous(),
+                      )
+                    : Container(),
+                id < 4
+                    ? TextButton(
+                        child: Text('Next',
+                            style: AppTextStyles.boldText16
+                                .copyWith(color: AppColors.prayerTextColor)),
+                        onPressed: () => tutorialCoachMark.next(),
+                      )
+                    : TextButton(
+                        onPressed: () => tutorialCoachMark.skip(),
+                        child: Text(
+                          'End',
+                          style: AppTextStyles.boldText16
+                              .copyWith(color: AppColors.prayerTextColor),
+                        ),
+                      )
+              ],
+            ),
           ],
-        ),
-      ],
-    ));
+        ));
   }
 }

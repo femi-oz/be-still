@@ -11,6 +11,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         ? int.parse(widget.reminder?.selectedMinute)
         : 15;
     selectedDayOfWeek = widget.reminder?.selectedDay != null
-        ? LocalNotification.daysOfWeek.indexOf(widget.reminder?.selectedDay)
+        ? LocalNotification.daysOfWeek
+            .indexOf(widget.reminder?.selectedDay?.capitalize())
         : DateTime.now().weekday;
     selectedPeriod = widget.reminder?.period != null
         ? widget.reminder?.period
