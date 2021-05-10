@@ -98,7 +98,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
     FixedExtentScrollController daysOfWeekController =
         FixedExtentScrollController(
             initialItem: LocalNotification.daysOfWeek
-                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek - 1]));
+                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
     FixedExtentScrollController hourController = FixedExtentScrollController(
@@ -209,7 +209,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           suffix = ["st", "nd", "rd"][digit - 1];
         }
         final notificationText = selectedFrequency == Frequency.weekly
-            ? '$selectedFrequency, $selectedDayOfWeek, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
+            ? '$selectedFrequency, ${LocalNotification.daysOfWeek[selectedDayOfWeek]}, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
             : selectedFrequency == Frequency.one_time
                 ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
                 : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
@@ -389,7 +389,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                         scrollController: daysOfWeekController,
                                         itemExtent: itemExtent,
                                         onSelectedItemChanged: (i) => setState(
-                                            () => selectedDayOfWeek = i + 1),
+                                            () => selectedDayOfWeek = i),
                                         children: <Widget>[
                                           ...LocalNotification.daysOfWeek.map(
                                             (r) => Align(
