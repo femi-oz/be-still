@@ -86,9 +86,9 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/bestill_logo-for-icons_App-Store.png"
+  image_path: "assets/images/bestill-logo.png"
   adaptive_icon_background: "#191919"
-  adaptive_icon_foreground: "assets/images/bestill_logo-for-icons_App-Store.png"
+  adaptive_icon_foreground: "assets/images/bestill-logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
