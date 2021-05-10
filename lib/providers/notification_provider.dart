@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -9,7 +10,6 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/utils/local_notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../locator.dart';
 
@@ -19,11 +19,8 @@ class NotificationProvider with ChangeNotifier {
   factory NotificationProvider() => _instance;
 
   static final NotificationProvider _instance = NotificationProvider._();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
-  bool _initialized = false;
 
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
@@ -36,24 +33,6 @@ class NotificationProvider with ChangeNotifier {
   List<LocalNotificationModel> get localNotifications => _localNotifications;
   NotificationMessage _message;
   NotificationMessage get message => _message;
-
-  Future<void> init(BuildContext context) async {
-    _firebaseMessaging.configure(
-      // onMessage: (Map<String, dynamic> message) async {
-      //   print("onMessage: $message");
-      //   onRoute(message, context);
-      // },
-      onLaunch: (Map<String, dynamic> message) async {
-        _message = NotificationMessage.fromData(message);
-
-        print("onLaunch: $_message");
-      },
-      onResume: (Map<String, dynamic> message) async {
-        _message = NotificationMessage.fromData(message);
-        print("onResume: $_message");
-      },
-    );
-  }
 
   Future<void> initLocal(BuildContext context) async {
     tz.initializeTimeZones();
@@ -77,22 +56,6 @@ class NotificationProvider with ChangeNotifier {
 
   Future<void> clearMessage() async {
     _message = null;
-  }
-
-  Future<void> setDevice(String userId) async {
-    if (!_initialized) {
-      // For testing purposes print the Firebase Messaging token
-      _firebaseMessaging.requestNotificationPermissions(
-          const IosNotificationSettings(
-              sound: true, badge: true, alert: true, provisional: true));
-      _firebaseMessaging.onIosSettingsRegistered
-          .listen((IosNotificationSettings settings) {
-        print("Settings registered: $settings");
-      });
-      String token = await _firebaseMessaging.getToken();
-      await _notificationService.init(token, userId);
-      _initialized = true;
-    }
   }
 
   Future<void> setUserNotifications(String userId) async {
@@ -119,8 +82,21 @@ class NotificationProvider with ChangeNotifier {
         .asBroadcastStream()
         .listen((notifications) {
       _localNotifications = notifications;
+      _deletePastReminder(notifications);
       notifyListeners();
     });
+  }
+
+  Future<void> _deletePastReminder(List<LocalNotificationModel> data) async {
+    var reminderToDelete = data
+        .where((e) =>
+            e.scheduledDate.isBefore(DateTime.now()) &&
+            e.frequency == Frequency.one_time)
+        .toList();
+    for (int i = 0; i < reminderToDelete.length; i++) {
+      await deleteLocalNotification(reminderToDelete[i].id);
+    }
+    notifyListeners();
   }
 
   Future<void> setPrayerTimeNotifications(userId) async {
@@ -150,22 +126,31 @@ class NotificationProvider with ChangeNotifier {
     String period,
     String selectedHour,
     String selectedMinute,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
   ) async {
     await _notificationService.addLocalNotification(
-        localId,
-        entityId,
-        notificationText,
-        userId,
-        payload,
-        title,
-        description,
-        frequency,
-        type,
-        scheduledDate,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute);
+      localId,
+      entityId,
+      notificationText,
+      userId,
+      payload,
+      title,
+      description,
+      frequency,
+      type,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      selectedYear,
+      selectedMonth,
+      selectedDayOfMonth,
+    );
+    await setLocalNotifications(userId);
+    notifyListeners();
   }
 
   Future<void> updateLocalNotification(
@@ -178,16 +163,23 @@ class NotificationProvider with ChangeNotifier {
     String notificationId,
     String userId,
     String notificationText,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
   ) async {
     await _notificationService.updateLocalNotification(
-        frequency,
-        scheduledDate,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-        notificationId,
-        notificationText);
+      frequency,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      notificationId,
+      notificationText,
+      selectedYear,
+      selectedMonth,
+      selectedDayOfMonth,
+    );
     await setLocalNotifications(userId);
     notifyListeners();
   }

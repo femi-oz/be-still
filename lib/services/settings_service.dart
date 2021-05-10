@@ -14,15 +14,19 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class SettingsService {
-  final CollectionReference _settingsCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _settingsCollectionReference =
       FirebaseFirestore.instance.collection("Setting");
-  final CollectionReference _prayerSettingsCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerSettingsCollectionReference =
       FirebaseFirestore.instance.collection("PrayerSetting");
-  final CollectionReference _sharingSettingsCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _sharingSettingsCollectionReference =
       FirebaseFirestore.instance.collection("SharingSetting");
-  final CollectionReference _groupSettingsCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _groupSettingsCollectionReference =
       FirebaseFirestore.instance.collection("GroupSettings");
-  final CollectionReference _groupPrefernceSettingsCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _groupPrefernceSettingsCollectionReference =
       FirebaseFirestore.instance.collection("GroupPreferenceSettings");
 
   populateSettings(String deviceId, String userId, email) {

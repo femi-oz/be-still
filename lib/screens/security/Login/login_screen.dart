@@ -4,8 +4,8 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -48,6 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showFaceId = false;
   bool showSuffix = true;
   bool _autoValidate = false;
+  bool verificationSent = false;
+  String verificationSendMessage = 'Resend verification email';
+  bool needsVerification = false;
 
   Future<void> _isBiometricAvailable() async {
     try {
@@ -62,8 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
         : print('No biometrics available');
   }
 
-  // To retrieve the list of biometric types
-  // (if available).
   Future<void> _getListOfBiometricTypes() async {
     try {
       if (Settings.enableLocalAuth) {
@@ -94,7 +95,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       _isBiometricAvailable();
-
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -128,23 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //     EntryScreen.routeName, (Route<dynamic> route) => false);
+      NavigationService.instance.goHome(0);
     }
   }
-
-  var verificationSent = false;
-  var verificationSendMessage = 'Resend verification email';
-  var needsVerification = false;
 
   void _resendVerification() async {
     try {
@@ -194,38 +180,36 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
               .needsVerification;
+
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
-    } catch (e) {
+      BeStilDialog.showErrorDialog(context, e, null, s);
+    } catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
               .needsVerification;
+
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e, null, s);
     }
+    // }
   }
 
   void _biologin() async {
-    // if (!_formKey.currentState.validate()) return null;
-    // _formKey.currentState.save();
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .biometricSignin();
-      // await BeStilDialog.showLoading(context, 'Authenticating');
-
       await Provider.of<UserProvider>(context, listen: false)
           .setCurrentUser(true);
       final user =
@@ -234,38 +218,16 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setDevice(user.id);
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
-      // BeStilDialog.hideLoading(context);
-      // await setRouteDestination();
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(
-              screenNumber: 0,
-            )),
-        (Route<dynamic> route) => false,
-      );
-      // Navigator.of(context).pushNamedAndRemoveUntil(
-      //   EntryScreen.routeName,
-      //   (Route<dynamic> route) => false,
-      // );
+      NavigationService.instance.goHome(0);
     } on HttpException catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {
-      // needsVerification =
-      //     Provider.of<AuthenticationProvider>(context, listen: false)
-      //         .needsVerification;
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      // BeStilDialog.hideLoading(context);
       BeStillSnackbar.showInSnackBar(
           message: 'An error occured. Please try again', key: _scaffoldKey);
     }
@@ -367,6 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
   }
 
+  bool isFormValid = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -385,76 +348,69 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            height: MediaQuery.of(context).size.height,
             child: Stack(
               children: [
+                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
                 Align(
                   alignment: Alignment.topCenter,
                   child: SingleChildScrollView(
                     child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.backgroundColor[0],
-                            ...AppColors.backgroundColor,
-                            ...AppColors.backgroundColor,
-                          ],
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage(StringUtils.backgroundImage()),
-                          alignment: Alignment.bottomCenter,
-                        ),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.43),
-                          Container(
-                            // height: MediaQuery.of(context).size.height * 0.56,
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            width: double.infinity,
-                            child: Column(
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    SizedBox(height: 10),
-                                    _buildForm(),
-                                    SizedBox(height: 8),
-                                    _buildActions(),
-                                    SizedBox(height: 10),
-                                    if (isBioMetricAvailable)
-                                      InkWell(
-                                        child: Container(
-                                            // padding: EdgeInsets.only(
-                                            //     left: 40, right: 60),
-                                            child: Text(
-                                          !Settings.enableLocalAuth
-                                              ? 'Enable Face/Touch ID'
-                                              : 'Disable Face/Touch ID',
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue4),
-                                        )),
-                                        onTap: _toggleBiometrics,
-                                      )
-                                    // showFingerPrint || showFaceId
-                                    //     ? _bioButton()
-                                    //     : Container(),
-                                  ],
-                                ),
-                                SizedBox(height: 30),
-                                _buildFooter(),
-                              ],
+                      height: MediaQuery.of(context).size.height,
+                      child: new LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(StringUtils.backgroundImage),
+                              alignment: Alignment.bottomCenter,
+                              colorFilter: new ColorFilter.mode(
+                                  AppColors.backgroundColor[0].withOpacity(0.2),
+                                  BlendMode.dstATop),
                             ),
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.43),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                width: double.infinity,
+                                child: Column(
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        SizedBox(height: 10),
+                                        _buildForm(),
+                                        SizedBox(height: 8),
+                                        _buildActions(),
+                                        SizedBox(height: 10),
+                                        if (isBioMetricAvailable)
+                                          InkWell(
+                                            child: Container(
+                                                child: Text(
+                                              !Settings.enableLocalAuth
+                                                  ? 'Enable Face/Touch ID'
+                                                  : 'Disable Face/Touch ID',
+                                              style:
+                                                  AppTextStyles.regularText15,
+                                            )),
+                                            onTap: _toggleBiometrics,
+                                          ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 30),
+                                    _buildFooter(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ),
-                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
               ],
             ),
           )),
@@ -501,7 +457,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
-      // autovalidateMode: AutovalidateMode.onUserInteraction,
       autovalidate: _autoValidate,
       key: _formKey,
       child: Column(
@@ -512,10 +467,13 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             isEmail: true,
-            onTextchanged: () => _usernameController.text !=
-                    jsonDecode(Settings.lastUser)['email']
-                ? _setDefaults
-                : null,
+            onTextchanged: (_) {
+              setState(() => isFormValid =
+                  _usernameController.text.isNotEmpty &&
+                      _passwordController.text.isNotEmpty);
+              if (_usernameController.text !=
+                  jsonDecode(Settings.lastUser)['email']) _setDefaults();
+            },
           ),
           SizedBox(height: 15.0),
           Stack(
@@ -531,6 +489,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   unfocus: true,
                   submitForm: () => _login(),
                   showSuffix: showSuffix,
+                  onTextchanged: (_) => setState(() => isFormValid =
+                      _usernameController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty),
                 ),
               ),
               Align(
@@ -551,10 +512,12 @@ class _LoginScreenState extends State<LoginScreen> {
         InkWell(
           child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
+            // Provider.of<MiscProvider>(context, listen: false)
+            //     .setVisibility(true);
             Navigator.push(
               context,
               PageTransition(
-                  type: PageTransitionType.leftToRightWithFade,
+                  type: PageTransitionType.rightToLeftWithFade,
                   child: CreateAccountScreen()),
             );
             // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
@@ -583,16 +546,19 @@ class _LoginScreenState extends State<LoginScreen> {
             onTap: () => _resendVerification(),
             child: Text(
               verificationSendMessage,
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
           ),
         if (verificationSent)
           Text(
             verificationSendMessage,
-            style: AppTextStyles.regularText13,
+            style: AppTextStyles.regularText15,
           ),
         // SizedBox(height: 20),
-        BsRaisedButton(onPressed: _login),
+        BsRaisedButton(
+          onPressed: _login,
+          disabled: !isFormValid,
+        ),
         // Settings.enableLocalAuth
         //     ? BsRaisedButton(
         //         onPressed: _biologin,
@@ -602,15 +568,17 @@ class _LoginScreenState extends State<LoginScreen> {
         GestureDetector(
             child: Text(
               "Forgot my Password",
-              style: AppTextStyles.regularText13,
+              style: AppTextStyles.regularText15,
             ),
-            onTap: () => Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.leftToRightWithFade,
-                    child: ForgetPassword()))
-            // Navigator.of(context).pushNamed(ForgetPassword.routeName),
-            ),
+            onTap: () {
+              // Provider.of<MiscProvider>(context, listen: false)
+              //     .setVisibility(true);
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.leftToRightWithFade,
+                      child: ForgetPassword()));
+            }),
       ],
     );
   }

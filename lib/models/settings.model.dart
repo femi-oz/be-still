@@ -60,7 +60,7 @@ class SettingsModel {
     @required this.modifiedOn,
   });
 
-  SettingsModel.fromData(DocumentSnapshot snapshot)
+  SettingsModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         deviceId = snapshot.data()['DeviceId'],

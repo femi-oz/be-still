@@ -47,7 +47,7 @@ class _MyListSettingsState extends State<MyListSettings> {
       default:
     }
 
-    var e = int.parse(selectedDuration) * minutes;
+    var e = int.parse(selectedDuration ?? '1') * minutes;
     try {
       BeStilDialog.showLoading(
         context,
@@ -60,14 +60,18 @@ class _MyListSettingsState extends State<MyListSettings> {
               settingsId: widget.settings.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -112,6 +116,10 @@ class _MyListSettingsState extends State<MyListSettings> {
     "12",
   ];
 
+  initState() {
+    super.initState();
+  }
+
   List<LookUp> autoDeleteInterval = [
     LookUp(text: IntervalRange.thirtyMinutes, value: 30),
     LookUp(text: IntervalRange.thirtyDays, value: 43200),
@@ -127,194 +135,209 @@ class _MyListSettingsState extends State<MyListSettings> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final userId = Provider.of<UserProvider>(context).currentUser.id;
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 15),
-          // CustomSectionHeder('Default Sort By'),
-          // SizedBox(height: 35),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: <Widget>[
-          //       for (int i = 0; i < defaultSortBy.length; i++)
-          //         CustomButtonGroup(
-          //           isSelected:
-          //               widget.settings.defaultSortBy == defaultSortBy[i],
-          //           onSelected: (value) => settingsProvider.updateSettings(
-          //               userId,
-          //               key: SettingsKey.defaultSortBy,
-          //               value: value,
-          //               settingsId: widget.settings.id),
-          //           title: defaultSortBy[i],
-          //           length: defaultSortBy.length,
-          //           index: i,
-          //         ),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(height: 35),
-          CustomSectionHeder('Default Snooze Duration'),
-          // Container(
-          //   child: CustomPicker(snoozeInterval, _setDefaultSnooze, true,
-          //       widget.settings.defaultSnoozeDurationMins),
-          // ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.backgroundColor,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 15),
+            // CustomSectionHeder('Default Sort By'),
+            // SizedBox(height: 35),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: <Widget>[
+            //       for (int i = 0; i < defaultSortBy.length; i++)
+            //         CustomButtonGroup(
+            //           isSelected:
+            //               widget.settings.defaultSortBy == defaultSortBy[i],
+            //           onSelected: (value) => settingsProvider.updateSettings(
+            //               userId,
+            //               key: SettingsKey.defaultSortBy,
+            //               value: value,
+            //               settingsId: widget.settings.id),
+            //           title: defaultSortBy[i],
+            //           length: defaultSortBy.length,
+            //           index: i,
+            //         ),
+            //     ],
+            //   ),
+            // ),
+            // SizedBox(height: 35),
+            CustomSectionHeder('Default Snooze Duration'),
+            // Container(
+            //   child: CustomPicker(snoozeInterval, _setDefaultSnooze, true,
+            //       widget.settings.defaultSnoozeDurationMins),
+            // ),
 
-          // Container(
-          //   margin: EdgeInsets.only(bottom: 80.0),
-          //   child: ReminderPicker(
-          //     hideActionuttons: false,
-          //     frequency: snoozeInterval,
-          //     reminderDays: snoozeDuration,
-          //     onSave: (selectedFrequency, selectedDuration) =>
-          //         _setDefaultSnooze(
-          //       selectedFrequency,
-          //       selectedDuration,
-          //     ),
-          //   ),
-          // )
-          SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    height: MediaQuery.of(context).size.height * 0.25,
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.4,
-                                  child: CupertinoPicker(
-                                    scrollController:
-                                        FixedExtentScrollController(
-                                            initialItem: snoozeInterval.indexOf(
-                                                snoozeInterval[int.parse(
-                                                    Settings.snoozeInterval)])),
-                                    itemExtent: 30,
-                                    onSelectedItemChanged: (i) => setState(() {
-                                      selectedInterval = snoozeInterval[i];
-                                      selectedIntervalIndex = snoozeInterval
-                                          .indexOf(snoozeInterval[i]);
-                                      Settings.snoozeInterval =
-                                          selectedIntervalIndex.toString();
+            // Container(
+            //   margin: EdgeInsets.only(bottom: 80.0),
+            //   child: ReminderPicker(
+            //     hideActionuttons: false,
+            //     frequency: snoozeInterval,
+            //     reminderDays: snoozeDuration,
+            //     onSave: (selectedFrequency, selectedDuration) =>
+            //         _setDefaultSnooze(
+            //       selectedFrequency,
+            //       selectedDuration,
+            //     ),
+            //   ),
+            // )
+            SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      height: MediaQuery.of(context).size.height * 0.25,
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    child: CupertinoPicker(
+                                      scrollController:
+                                          FixedExtentScrollController(
+                                              initialItem: snoozeInterval
+                                                  .indexOf(snoozeInterval[
+                                                      int.parse(Settings
+                                                          .snoozeInterval)])),
+                                      itemExtent: 30,
+                                      onSelectedItemChanged: (i) =>
+                                          setState(() {
+                                        selectedInterval = snoozeInterval[i];
+                                        selectedIntervalIndex = snoozeInterval
+                                            .indexOf(snoozeInterval[i]);
+                                        Settings.snoozeInterval =
+                                            selectedIntervalIndex.toString();
 
-                                      // widget.onChange(selectedInterval.value);
-                                    }),
-                                    children: <Widget>[
-                                      ...snoozeInterval
-                                          .map(
-                                            (i) => Align(
-                                                alignment: Alignment.center,
-                                                child: Text(i,
-                                                    textAlign: TextAlign.center,
-                                                    style: AppTextStyles
-                                                        .regularText15)),
-                                          )
-                                          .toList(),
-                                    ],
+                                        // widget.onChange(selectedInterval.value);
+                                      }),
+                                      children: <Widget>[
+                                        ...snoozeInterval
+                                            .map(
+                                              (i) => Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(i,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: AppTextStyles
+                                                          .regularText15)),
+                                            )
+                                            .toList(),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.4,
-                                  child: CupertinoPicker(
-                                    scrollController:
-                                        FixedExtentScrollController(
-                                            initialItem: snoozeDuration.indexOf(
-                                                snoozeDuration[int.parse(
-                                                    Settings.snoozeDuration)])),
-                                    itemExtent: 30,
-                                    onSelectedItemChanged: (i) => setState(() {
-                                      selectedDuration = snoozeDuration[i];
-                                      selectedDurationIndex = snoozeDuration
-                                          .indexOf(selectedDuration);
-                                      Settings.snoozeDuration =
-                                          selectedDurationIndex.toString();
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    child: CupertinoPicker(
+                                      scrollController:
+                                          FixedExtentScrollController(
+                                              initialItem: snoozeDuration
+                                                  .indexOf(snoozeDuration[
+                                                      int.parse(Settings
+                                                          .snoozeDuration)])),
+                                      itemExtent: 30,
+                                      onSelectedItemChanged: (i) =>
+                                          setState(() {
+                                        selectedDuration = snoozeDuration[i];
+                                        selectedDurationIndex = snoozeDuration
+                                            .indexOf(selectedDuration);
+                                        Settings.snoozeDuration =
+                                            selectedDurationIndex.toString();
 
-                                      // widget.onChange(selectedInterval.value);
-                                    }),
-                                    children: <Widget>[
-                                      ...snoozeDuration
-                                          .map(
-                                            (i) => Align(
-                                                alignment: Alignment.center,
-                                                child: Text(i,
-                                                    textAlign: TextAlign.center,
-                                                    style: AppTextStyles
-                                                        .regularText15)),
-                                          )
-                                          .toList(),
-                                    ],
+                                        // widget.onChange(selectedInterval.value);
+                                      }),
+                                      children: <Widget>[
+                                        ...snoozeDuration
+                                            .map(
+                                              (i) => Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(i,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: AppTextStyles
+                                                          .regularText15)),
+                                            )
+                                            .toList(),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 10.0),
-          // CustomSectionHeder('Archive Default Sort By'),
-          // SizedBox(height: 35),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: <Widget>[
-          //       for (int i = 0; i < archiveSortBy.length; i++)
-          //         CustomButtonGroup(
-          //           isSelected:
-          //               widget.settings.archiveSortBy == archiveSortBy[i],
-          //           onSelected: (value) => settingsProvider.updateSettings(
-          //               userId,
-          //               key: SettingsKey.archiveSortBy,
-          //               value: value,
-          //               settingsId: widget.settings.id),
-          //           title: archiveSortBy[i],
-          //           length: archiveSortBy.length,
-          //           index: i,
-          //         ),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(height: 35),
-          CustomSectionHeder('Archive Auto Delete'),
-          SizedBox(height: 15),
-          Container(
-            child: CustomPicker(
-              autoDeleteInterval,
-              _setAutoDelete,
-              true,
-              widget.settings.archiveAutoDeleteMins,
+            SizedBox(height: 10.0),
+            // CustomSectionHeder('Archive Default Sort By'),
+            // SizedBox(height: 35),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: <Widget>[
+            //       for (int i = 0; i < archiveSortBy.length; i++)
+            //         CustomButtonGroup(
+            //           isSelected:
+            //               widget.settings.archiveSortBy == archiveSortBy[i],
+            //           onSelected: (value) => settingsProvider.updateSettings(
+            //               userId,
+            //               key: SettingsKey.archiveSortBy,
+            //               value: value,
+            //               settingsId: widget.settings.id),
+            //           title: archiveSortBy[i],
+            //           length: archiveSortBy.length,
+            //           index: i,
+            //         ),
+            //     ],
+            //   ),
+            // ),
+            // SizedBox(height: 35),
+            CustomSectionHeder('Archive Auto Delete'),
+            SizedBox(height: 15),
+            Container(
+              child: CustomPicker(
+                autoDeleteInterval,
+                _setAutoDelete,
+                true,
+                widget.settings.archiveAutoDeleteMins,
+              ),
             ),
-          ),
-          SizedBox(height: 15),
-          CustomToggle(
-            title: 'Include Answered Prayers in Auto Delete?',
-            onChange: (value) => settingsProvider.updateSettings(userId,
-                key: SettingsKey.includeAnsweredPrayerAutoDelete,
-                value: value,
-                settingsId: widget.settings.id),
-            value: widget.settings.includeAnsweredPrayerAutoDelete,
-          ),
-          SizedBox(height: 80),
-        ],
+            SizedBox(height: 15),
+            CustomToggle(
+              title: 'Include Answered Prayers in Auto Delete?',
+              onChange: (value) => settingsProvider.updateSettings(userId,
+                  key: SettingsKey.includeAnsweredPrayerAutoDelete,
+                  value: value,
+                  settingsId: widget.settings.id),
+              value: widget.settings.includeAnsweredPrayerAutoDelete,
+            ),
+            SizedBox(height: 80),
+          ],
+        ),
       ),
     );
   }

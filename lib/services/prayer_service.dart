@@ -18,21 +18,27 @@ import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PrayerService {
-  final CollectionReference _prayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _prayerCollectionReference =
       FirebaseFirestore.instance.collection("Prayer");
-  final CollectionReference _userPrayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _userPrayerCollectionReference =
       FirebaseFirestore.instance.collection("UserPrayer");
-  final CollectionReference _groupPrayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _groupPrayerCollectionReference =
       FirebaseFirestore.instance.collection("GroupPrayer");
-  final CollectionReference _prayerUpdateCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerUpdateCollectionReference =
       FirebaseFirestore.instance.collection("PrayerUpdate");
-  final CollectionReference _hiddenPrayerCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _hiddenPrayerCollectionReference =
       FirebaseFirestore.instance.collection("HiddenPrayer");
-  final CollectionReference _userCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
-  final CollectionReference _prayerTagCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerTagCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTag");
-  final CollectionReference _messageTemplateCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection("MessageTemplate");
 
   final _notificationService = locator<NotificationService>();
@@ -50,20 +56,20 @@ class PrayerService {
               .map<UserPrayerModel>((doc) => UserPrayerModel.fromData(doc));
 
           Stream<PrayerModel> prayer = _prayerCollectionReference
-              .doc(f.data()['PrayerId'])
+              .doc(f['PrayerId'])
               .snapshots()
               .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
 
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+                  .where('PrayerId', isEqualTo: f['PrayerId'])
                   .snapshots()
                   .map<List<PrayerUpdateModel>>((list) => list.docs
                       .map((e) => PrayerUpdateModel.fromData(e))
                       .toList());
 
           Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-              .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+              .where('PrayerId', isEqualTo: f['PrayerId'])
               .snapshots()
               .map<List<PrayerTagModel>>((list) =>
                   list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
@@ -108,21 +114,21 @@ class PrayerService {
             .map<UserPrayerModel>((doc) => UserPrayerModel.fromData(doc));
 
         Stream<PrayerModel> prayer = _prayerCollectionReference
-            .doc(doc.data()['PrayerId'])
+            .doc(doc['PrayerId'])
             .snapshots()
             .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
 
         Stream<List<PrayerUpdateModel>> updates =
             _prayerUpdateCollectionReference
-                .where('PrayerId', isEqualTo: doc.data()['PrayerId'])
+                .where('PrayerId', isEqualTo: doc['PrayerId'])
                 .snapshots()
                 .map<List<PrayerUpdateModel>>((list) => list.docs
                     .map((e) => PrayerUpdateModel.fromData(e))
                     .toList());
 
         Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-            // .doc(doc.data()['PrayerId'])
-            .where('PrayerId', isEqualTo: doc.data()['PrayerId'])
+            // .doc(doc['PrayerId'])
+            .where('PrayerId', isEqualTo: doc['PrayerId'])
             .snapshots()
             .map<List<PrayerTagModel>>((list) =>
                 list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
@@ -605,12 +611,12 @@ class PrayerService {
               .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
 
           Stream<PrayerModel> prayer = _prayerCollectionReference
-              .doc(f.data()['PrayerId'])
+              .doc(f['PrayerId'])
               .snapshots()
               .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
           Stream<List<PrayerUpdateModel>> updates =
               _prayerUpdateCollectionReference
-                  .where('PrayerId', isEqualTo: f.data()['PrayerId'])
+                  .where('PrayerId', isEqualTo: f['PrayerId'])
                   .snapshots()
                   .map<List<PrayerUpdateModel>>((list) => list.docs
                       .map((e) => PrayerUpdateModel.fromData(e))
@@ -690,7 +696,7 @@ class PrayerService {
           .get();
       if (user.docs.length == 0) {
         throw HttpException(
-            'This email is not registered on BeStill! Please try with a registered email');
+            'This email is not registered on Be Still! Please try with a registered email');
       }
       var data = {
         'recieverId': requestMessageModel.receiverId,

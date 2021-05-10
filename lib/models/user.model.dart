@@ -8,7 +8,7 @@ class UserModel {
   final String email;
   final String keyReference;
   final int churchId;
-  final DateTime dateOfBirth;
+  final String dateOfBirth;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -28,14 +28,14 @@ class UserModel {
     @required this.modifiedOn,
   });
 
-  UserModel.fromData(DocumentSnapshot snapshot)
+  UserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         firstName = snapshot.data()['FirstName'],
         lastName = snapshot.data()['LastName'],
         email = snapshot.data()['Email'],
         keyReference = snapshot.data()['KeyReference'],
         churchId = snapshot.data()['ChurchId'],
-        dateOfBirth = snapshot.data()['DOB'].toDate(),
+        dateOfBirth = '',
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],

@@ -108,7 +108,7 @@ class AuthenticationService {
       );
       await sendEmailVerification();
     } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      final message = StringUtils.generateExceptionMessage(e?.code ?? null);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/registerUser');
       throw HttpException(message);

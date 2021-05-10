@@ -16,7 +16,7 @@ class DevotionalModel {
     this.description,
     this.period,
   });
-  DevotionalModel.fromData(DocumentSnapshot snapshot)
+  DevotionalModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         title = snapshot.data()['title'],
         type = snapshot.data()['type'],

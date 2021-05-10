@@ -26,7 +26,7 @@
 //     @required this.modifiedOn,
 //   });
 
-//   UserPrayerModel.fromData(DocumentSnapshot snapshot)
+//   UserPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
 //       : id = snapshot.id,
 //         prayerId = snapshot.data()['PrayerId'],
 //         userId = snapshot.data()['UserId'],

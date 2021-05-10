@@ -33,7 +33,7 @@ class GroupModel {
     @required this.modifiedOn,
   });
 
-  GroupModel.fromData(DocumentSnapshot snapshot)
+  GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot.data()['Name'],
         description = snapshot.data()['Description'],
@@ -97,7 +97,7 @@ class GroupInviteModel {
     @required this.modifiedOn,
   });
 
-  GroupInviteModel.fromData(DocumentSnapshot snapshot)
+  GroupInviteModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         groupName = snapshot.data()['GroupName'],
         groupId = snapshot.data()['GroupId'],
@@ -149,7 +149,7 @@ class GroupPrayerModel {
     @required this.modifiedOn,
   });
 
-  GroupPrayerModel.fromData(DocumentSnapshot snapshot)
+  GroupPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         groupId = snapshot.data()['GroupId'],
@@ -203,7 +203,7 @@ class GroupUserModel {
     @required this.modifiedOn,
   });
 
-  GroupUserModel.fromData(DocumentSnapshot snapshot)
+  GroupUserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],

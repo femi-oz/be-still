@@ -5,12 +5,13 @@ import 'package:be_still/services/settings_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../locator.dart';
 
 class UserService {
-  final CollectionReference _userCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -38,7 +39,7 @@ class UserService {
       churchId: 0,
       createdBy: email.toUpperCase(),
       createdOn: DateTime.now(),
-      dateOfBirth: dob,
+      dateOfBirth: dob == null ? '' : DateFormat('MM/DD/YY').format(dob),
       email: email,
       firstName: firstName,
       keyReference: uid,

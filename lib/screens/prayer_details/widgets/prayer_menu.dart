@@ -11,22 +11,20 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
+import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import 'delete_prayer.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class PrayerMenu extends StatefulWidget {
@@ -43,41 +41,12 @@ class PrayerMenu extends StatefulWidget {
 }
 
 class _PrayerMenuState extends State<PrayerMenu> {
-  var selectedInterval;
-  var selectedDuration;
-  var selectedDurationIndex;
-  var selectedIntervalIndex;
-  int minutes;
   List<String> reminderInterval = [
     // 'Hourly',
     Frequency.daily,
     Frequency.weekly,
     // 'Monthly',
     // 'Yearly'
-  ];
-  // List<String> snoozeInterval = [
-  //   '7 Days',
-  //   '14 Days',
-  //   '30 Days',
-  //   '90 Days',
-  //   '1 Year'
-  // ];
-
-  List<String> snoozeInterval = ['Minutes', 'Days', 'Weeks', 'Months'];
-
-  List<String> snoozeDuration = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
   ];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -92,15 +61,20 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .favoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
-    } on HttpException catch (e) {
+
+      NavigationService.instance.goHome(0);
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -113,15 +87,57 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unfavoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
-    } on HttpException catch (e) {
+
+      NavigationService.instance.goHome(0);
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  _onDelete() async {
+    BeStilDialog.showLoading(
+      context,
+    );
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+
+    try {
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .deletePrayer(prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+
+      NavigationService.instance.goHome(0);
+    } on HttpException catch (e, s) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -130,185 +146,173 @@ class _PrayerMenuState extends State<PrayerMenu> {
     super.initState();
   }
 
-  // _setDefaultSnooze() async {
-  //   switch (selectedInterval) {
-  //     // case 'Minutes':
-  //     //   minutes = 1;
-  //     //   break;
-  //     case 'Days':
-  //       minutes = 1440;
-  //       break;
-  //     case 'Weeks':
-  //       minutes = 10080;
-  //       break;
-  //     case 'Months':
-  //       minutes = 43800;
-  //       break;
-  //     default:
-  //   }
+  _openDeleteConfirmation(BuildContext context) {
+    final dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 5.0),
+              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Text(
+                'DELETE PRAYER',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                'Are you sure you want to delete this prayer?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue4,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .28,
+                      decoration: BoxDecoration(
+                        color: AppColors.grey.withOpacity(0.5),
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'CANCEL',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: _onDelete,
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .28,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'DELETE',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
 
-  //   var settingsId =
-  //       Provider.of<SettingsProvider>(context, listen: false).settings.id;
-
-  //   var e = int.parse(selectedDuration) * minutes;
-  //   try {
-  //     BeStilDialog.showLoading(
-  //       context,
-  //     );
-  //     await Provider.of<SettingsProvider>(context, listen: false)
-  //         .updateSettings(
-  //             Provider.of<UserProvider>(context, listen: false).currentUser.id,
-  //             key: SettingsKey.defaultSnoozeDurationMins,
-  //             value: e,
-  //             settingsId: settingsId);
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     BeStilDialog.hideLoading(context);
-  //   } on HttpException catch (e) {
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     BeStilDialog.hideLoading(context);
-  //     BeStilDialog.showErrorDialog(context, e.message);
-  //   } catch (e) {
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     BeStilDialog.hideLoading(context);
-  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-  //   }
-  // }
-
-  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, CombinePrayerStream prayerData) async {
-    try {
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final notificationText = selectedFrequency == Frequency.weekly
-          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-      final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer.description;
-      final scheduleDate = LocalNotification.scheduleDate(
-          int.parse(selectedHour),
-          int.parse(selectedMinute),
-          selectedDay,
-          period);
-      final payload = NotificationMessage(
-          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
-      await LocalNotification.setLocalNotification(
+    showDialog(
         context: context,
-        title: title,
-        description: description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-      );
-      if (widget.hasReminder)
-        _updatePrayerTime(
-          selectedDay,
-          period,
-          selectedFrequency,
-          selectedHour,
-          selectedMinute,
-          scheduleDate,
-          userId,
-          notificationText,
-        );
-      else
-        await storeNotification(
-          notificationText,
-          userId,
-          title,
-          description,
-          selectedFrequency,
-          scheduleDate,
-          prayerData.userPrayer.id,
-          selectedDay,
-          period,
-          selectedHour,
-          selectedMinute,
-        );
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-    }
-  }
-
-  storeNotification(
-      String notificationText,
-      String userId,
-      String title,
-      String description,
-      String frequency,
-      tz.TZDateTime scheduledDate,
-      String prayerid,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .addLocalNotification(
-      LocalNotification.localNotificationID,
-      prayerid,
-      notificationText,
-      userId,
-      prayerid,
-      title,
-      description,
-      frequency,
-      NotificationType.reminder,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    _goToDetails();
-  }
-
-  _updatePrayerTime(
-    String selectedDay,
-    String selectedPeriod,
-    String selectedFrequency,
-    String selectedHour,
-    String selectedMinute,
-    tz.TZDateTime scheduledDate,
-    String userId,
-    String notificationText,
-  ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      selectedFrequency,
-      scheduledDate,
-      selectedDay,
-      selectedPeriod,
-      selectedHour,
-      selectedMinute,
-      widget.reminder.id,
-      userId,
-      notificationText,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    _goToDetails();
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   void _onMarkAsAnswered(CombinePrayerStream prayerData) async {
     try {
       BeStilDialog.showLoading(context);
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) => e.entityId == prayerData.prayer.id)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+
+      var reminders = notifications
+          .where((e) => e.type == NotificationType.reminder)
+          .toList();
+
+      reminders.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+
+      reminders.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
-    } on HttpException catch (e) {
+
+      NavigationService.instance.goHome(0);
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -320,15 +324,20 @@ class _PrayerMenuState extends State<PrayerMenu> {
               prayerData.prayer.id, prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
-    } on HttpException catch (e) {
+
+      NavigationService.instance.goHome(0);
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -340,55 +349,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
-    } catch (e) {
+
+      NavigationService.instance.goHome(0);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-    }
-  }
-
-  void _snoozePrayer(CombinePrayerStream prayerData) async {
-    if (selectedInterval == null) {
-      var selectedIntervalIndex = snoozeInterval
-          .indexOf(snoozeInterval[int.parse(Settings.snoozeInterval)]);
-      selectedInterval = snoozeInterval[selectedIntervalIndex];
-    }
-    if (selectedDuration == null) {
-      var selectedDurationindex = snoozeDuration
-          .indexOf(snoozeDuration[int.parse(Settings.snoozeDuration)]);
-      selectedDuration = snoozeDuration[selectedDurationindex];
-    }
-    BeStilDialog.showLoading(context);
-    switch (selectedInterval) {
-      case 'Minutes':
-        minutes = 1;
-        break;
-      case 'Days':
-        minutes = 1440;
-        break;
-      case 'Weeks':
-        minutes = 10080;
-        break;
-      case 'Months':
-        minutes = 43800;
-        break;
-      default:
-    }
-
-    var e = int.parse(selectedDuration) * minutes;
-    var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
-          prayerData.prayer.id, _snoozeEndDate, prayerData.userPrayer.id);
-
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -401,13 +369,22 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
-    } catch (e) {
+      Navigator.pushReplacement(
+          context,
+          PageTransition(
+            type: PageTransitionType.leftToRightWithFade,
+            child: EntryScreen(),
+          ));
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
+
+  void deleteNotifications(CombinePrayerStream prayerData) {}
 
   void _onArchive(CombinePrayerStream prayerData) async {
     try {
@@ -420,36 +397,57 @@ class _PrayerMenuState extends State<PrayerMenu> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
+      var reminders = Provider.of<NotificationProvider>(context, listen: false)
+          .localNotifications
+          .where((e) => e.type == NotificationType.reminder)
+          .toList();
+      reminders.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(prayerData.userPrayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      _goToDetails();
-    } on HttpException catch (e) {
+
+      NavigationService.instance.goHome(0);
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
-  _goToDetails() {
-    widget.updateUI();
-    Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
-  }
-
   Widget build(BuildContext context) {
-    CombinePrayerStream prayerData =
-        Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     return Container(
       width: double.infinity,
       height: double.infinity,
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(
+                  AppIcons.bestill_close,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                color: AppColors.textFieldText,
+              ),
+            ),
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -494,9 +492,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddUpdate(
-                        prayerData: prayerData,
-                      ),
+                      builder: (context) => AddUpdate(),
                     ),
                   ),
                   text: 'Add an Update',
@@ -505,39 +501,35 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   icon: AppIcons.bestill_reminder,
                   isDisable: prayerData.prayer.isAnswer ||
                       prayerData.userPrayer.isArchived,
-                  onPressed: () => showModalBottomSheet(
+                  onPressed: () => showDialog(
                     context: context,
                     barrierColor:
                         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
                     builder: (BuildContext context) {
-                      return ReminderPicker(
-                        hideActionuttons: false,
-                        frequency: LocalNotification.reminderInterval,
-                        reminderDays: LocalNotification.reminderDays,
-                        onCancel: () => Navigator.of(context).pop(),
-                        onSave: (selectedFrequency, selectedHour,
-                                selectedMinute, selectedDay, period) =>
-                            setNotification(
-                                selectedHour,
-                                selectedFrequency,
-                                selectedMinute,
-                                selectedDay,
-                                period,
-                                prayerData),
-                        selectedFrequency: widget.hasReminder
-                            ? widget.reminder.frequency
-                            : null,
-                        selectedHour: widget.hasReminder
-                            ? int.parse(widget.reminder.selectedHour)
-                            : null,
-                        selectedMinute: widget.hasReminder
-                            ? int.parse(widget.reminder.selectedMinute)
-                            : null,
-                        selectedPeriod:
-                            widget.hasReminder ? widget.reminder.period : null,
+                      return Dialog(
+                        insetPadding: EdgeInsets.all(20),
+                        backgroundColor: AppColors.prayerCardBgColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: AppColors.darkBlue),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 30),
+                              child: ReminderPicker(
+                                type: NotificationType.reminder,
+                                hideActionuttons: false,
+                                reminder:
+                                    widget.hasReminder ? widget.reminder : null,
+                                onCancel: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -556,158 +548,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           backgroundColor: AppColors.detailBackgroundColor[1]
                               .withOpacity(0.9),
                           isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: double.infinity,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Center(
-                                    child: Container(
-                                      padding: EdgeInsets.all(20),
-                                      height: 200,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text('Set Snooze Duration',
-                                              style:
-                                                  AppTextStyles.regularText15),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    child: CupertinoPicker(
-                                                      scrollController: FixedExtentScrollController(
-                                                          initialItem: snoozeInterval
-                                                              .indexOf(snoozeInterval[
-                                                                  int.parse(Settings
-                                                                      .snoozeInterval)])),
-                                                      itemExtent: 30,
-                                                      onSelectedItemChanged:
-                                                          (i) => setState(() {
-                                                        selectedInterval =
-                                                            snoozeInterval[i];
-                                                        selectedIntervalIndex =
-                                                            snoozeInterval.indexOf(
-                                                                snoozeInterval[
-                                                                    i]);
-                                                        Settings.snoozeInterval =
-                                                            selectedIntervalIndex
-                                                                .toString();
-
-                                                        // widget.onChange(selectedInterval.value);
-                                                      }),
-                                                      children: <Widget>[
-                                                        ...snoozeInterval
-                                                            .map(
-                                                              (i) => Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  child: Text(i,
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      style: AppTextStyles
-                                                                          .regularText15)),
-                                                            )
-                                                            .toList(),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.4,
-                                                    child: CupertinoPicker(
-                                                      scrollController: FixedExtentScrollController(
-                                                          initialItem: snoozeDuration
-                                                              .indexOf(snoozeDuration[
-                                                                  int.parse(Settings
-                                                                      .snoozeDuration)])),
-                                                      itemExtent: 30,
-                                                      onSelectedItemChanged:
-                                                          (i) => setState(() {
-                                                        selectedDuration =
-                                                            snoozeDuration[i];
-                                                        selectedDurationIndex =
-                                                            snoozeDuration.indexOf(
-                                                                selectedDuration);
-                                                        Settings.snoozeDuration =
-                                                            selectedDurationIndex
-                                                                .toString();
-
-                                                        // widget.onChange(selectedInterval.value);
-                                                      }),
-                                                      children: <Widget>[
-                                                        ...snoozeDuration
-                                                            .map(
-                                                              (i) => Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  child: Text(i,
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      style: AppTextStyles
-                                                                          .regularText15)),
-                                                            )
-                                                            .toList(),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 40),
-                                    width: double.infinity,
-                                    child: Row(
-                                      children: <Widget>[
-                                        CustomButtonGroup(
-                                          title: 'SNOOZE',
-                                          onSelected: (_) {
-                                            _snoozePrayer(prayerData);
-                                          },
-                                          length: 2,
-                                          index: 0,
-                                        ),
-                                        CustomButtonGroup(
-                                          title: 'CANCEL',
-                                          onSelected: (_) {
-                                            Navigator.of(context).pop();
-                                          },
-                                          length: 2,
-                                          index: 0,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
+                          builder: (BuildContext context) =>
+                              SnoozePrayer(prayerData),
                         ),
                   text: prayerData.userPrayer.isSnoozed ? 'Unsnooze' : 'Snooze',
                 ),
@@ -732,7 +574,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       : 'Mark as Favorite ',
                 ),
                 MenuButton(
-                  icon: AppIcons.bestill_archive,
+                  icon:
+                      AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                   onPressed: () => prayerData.userPrayer.isArchived
                       ? _unArchive(prayerData)
                       : _onArchive(prayerData),
@@ -741,31 +584,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       : 'Archive',
                 ),
                 MenuButton(
-                  icon: AppIcons.bestill_delete,
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return DeletePrayer(prayerData);
-                    },
-                  ),
+                  icon: AppIcons.bestill_close,
+                  onPressed: () => _openDeleteConfirmation(context),
                   text: 'Delete',
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              AppIcons.bestill_close,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            color: AppColors.textFieldText,
           ),
         ],
       ),

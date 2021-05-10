@@ -59,6 +59,15 @@ class AppColors {
   static Color get inactvePrayerMenu =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
 
+  static Color get tabBackground =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
+
+  static Color get inactveTabMenu =>
+      getColor(darkMode, light: 0xFF718B92, dark: 0xB3FFFFFF);
+
+  static Color get actveTabMenu =>
+      getColor(darkMode, light: 0xFF009FD0, dark: 0xFF009FD0);
+
   static Color get textFieldBackgroundColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF022F52);
   static Color get appBarColor =>
@@ -268,7 +277,7 @@ class AppTextStyles {
   static const TextStyle demiboldText34 = const TextStyle(
     color: AppColors.offWhite2,
     fontSize: 34,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0.5,
   );
   static const TextStyle errorText = const TextStyle(
@@ -326,7 +335,7 @@ class AppTextStyles {
     letterSpacing: 1,
   );
   static const TextStyle drawerMenu = const TextStyle(
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.bold,
     letterSpacing: 1,
   );

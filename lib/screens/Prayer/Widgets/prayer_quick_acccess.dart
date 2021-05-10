@@ -102,11 +102,11 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -122,11 +122,11 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -143,11 +143,11 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -164,11 +164,11 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
+      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -224,8 +224,8 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                         ? _unMarkPrayerAsFavorite()
                         : _markPrayerAsFavorite(),
                     widget.prayerData.userPrayer.isFavorite
-                        ? 'Unfavourite'
-                        : 'Favourite',
+                        ? 'Unfavorite'
+                        : 'Favorite',
                     false,
                   ),
                   _buildAction(
@@ -248,7 +248,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                   ),
                   _buildAction(
                     35,
-                    AppIcons.bestill_archive,
+                    AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                     () => showModalBottomSheet(
                       context: context,
                       barrierColor:

@@ -37,7 +37,7 @@ class PrayerModel {
     @required this.modifiedOn,
   });
 
-  PrayerModel.fromData(DocumentSnapshot snapshot)
+  PrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         groupId = snapshot.data()['GroupId'] ?? 'N/A',
         userId = snapshot.data()['UserId'] ?? 'N/A',
@@ -99,7 +99,7 @@ class PrayerUpdateModel {
     @required this.modifiedOn,
   });
 
-  PrayerUpdateModel.fromData(DocumentSnapshot snapshot)
+  PrayerUpdateModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.id,
         userId = snapshot.data()['UserId'],
@@ -161,7 +161,7 @@ class UserPrayerModel {
     @required this.modifiedOn,
   });
 
-  UserPrayerModel.fromData(DocumentSnapshot snapshot)
+  UserPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
@@ -230,7 +230,7 @@ class PrayerTagModel {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  PrayerTagModel.fromData(DocumentSnapshot snapshot)
+  PrayerTagModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
@@ -299,7 +299,8 @@ class PrayerRequestMessageModel {
       @required this.sender,
       @required this.receiver});
 
-  PrayerRequestMessageModel.fromData(DocumentSnapshot snapshot)
+  PrayerRequestMessageModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : senderId = snapshot.id,
         receiverId = snapshot.data()['ReceiverId'],
         message = snapshot.data()['Message'],
@@ -338,7 +339,7 @@ class HiddenPrayerModel {
     @required this.modifiedOn,
   });
 
-  HiddenPrayerModel.fromData(DocumentSnapshot snapshot)
+  HiddenPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],

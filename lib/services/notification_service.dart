@@ -14,19 +14,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
-  final CollectionReference _localNotificationCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("LocalNotification");
-  final CollectionReference _pushNotificationCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _pushNotificationCollectionReference =
       FirebaseFirestore.instance.collection("PushNotification");
-  final CollectionReference _smsCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _smsCollectionReference =
       FirebaseFirestore.instance.collection("SMSMessage");
-  final CollectionReference _emailCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _emailCollectionReference =
       FirebaseFirestore.instance.collection("MailMessage");
-  final CollectionReference _userDeviceCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _userDeviceCollectionReference =
       FirebaseFirestore.instance.collection("UserDevice");
-  final CollectionReference _deviceCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _deviceCollectionReference =
       FirebaseFirestore.instance.collection("Device");
-  final CollectionReference _prayerTimeCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _prayerTimeCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTime");
 
   init(String token, String userId) async {
@@ -219,40 +223,48 @@ class NotificationService {
   }
 
   addLocalNotification(
-      int localId,
-      String entityId,
-      String notificationText,
-      String userId,
-      String payload,
-      String title,
-      String description,
-      String frequency,
-      String type,
-      DateTime scheduledDate,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
+    int localId,
+    String entityId,
+    String notificationText,
+    String userId,
+    String payload,
+    String title,
+    String description,
+    String frequency,
+    String type,
+    DateTime scheduledDate,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
+  ) async {
     final _notificationId = Uuid().v1();
     String deviceId;
     try {
       _localNotificationCollectionReference.doc(_notificationId).set(
-          LocalNotificationModel(
-                  type: type,
-                  description: description,
-                  frequency: frequency,
-                  scheduledDate: scheduledDate,
-                  title: title,
-                  payload: payload,
-                  userId: userId,
-                  localNotificationId: localId,
-                  entityId: entityId,
-                  notificationText: notificationText,
-                  selectedDay: selectedDay,
-                  selectedHour: selectedHour,
-                  selectedMinute: selectedMinute,
-                  period: period)
-              .toJson());
+            LocalNotificationModel(
+              type: type,
+              description: description,
+              frequency: frequency,
+              scheduledDate: scheduledDate,
+              title: title,
+              payload: payload,
+              userId: userId,
+              localNotificationId: localId,
+              entityId: entityId,
+              notificationText: notificationText,
+              selectedDay: selectedDay,
+              selectedHour: selectedHour,
+              selectedMinute: selectedMinute,
+              period: period,
+              selectedYear: selectedYear,
+              selectedMonth: selectedMonth,
+              selectedDayOfMonth: selectedDayOfMonth,
+            ).toJson(),
+          );
     } catch (e) {
       locator<LogService>().createLog(
           e.message, deviceId, 'NOTIFICATION/service/addLocalNotification');
@@ -269,6 +281,9 @@ class NotificationService {
     String selectedMinute,
     String notificationId,
     String notificationText,
+    String selectedYear,
+    String selectedMonth,
+    String selectedDayOfMonth,
   ) async {
     String deviceId;
     try {
@@ -280,6 +295,9 @@ class NotificationService {
         'SelectedMinute': selectedMinute,
         'ScheduledDate': scheduledDate,
         'NotificationText': notificationText,
+        'SelectedYear': selectedYear,
+        'SelectedMonth': selectedMonth,
+        'SelectedDayOfMonth': selectedDayOfMonth,
       });
     } catch (e) {
       locator<LogService>().createLog(

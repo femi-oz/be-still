@@ -34,7 +34,7 @@ class PrayerSettingsModel {
     @required this.modifiedOn,
   });
 
-  PrayerSettingsModel.fromData(DocumentSnapshot snapshot)
+  PrayerSettingsModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()["UserId"],
         frequency = snapshot.data()["Frequency"],

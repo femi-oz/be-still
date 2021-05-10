@@ -24,7 +24,7 @@ class DeviceModel {
     @required this.modifiedOn,
   });
 
-  DeviceModel.fromData(DocumentSnapshot snapshot)
+  DeviceModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         deviceId = snapshot.data()['DeviceId'],
         name = snapshot.data()['Name'],

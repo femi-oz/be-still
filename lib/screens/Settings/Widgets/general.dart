@@ -1,17 +1,18 @@
+import 'dart:io';
+
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/widgets/snackbar.dart';
+import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
@@ -88,7 +89,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'You must deny access from your device\'s Settings',
+                'You must allow/deny access from your device\'s Settings',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -134,35 +135,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       ),
                     ),
                   ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.of(context).pop();
-                  //   },
-                  //   child: Container(
-                  //     height: 30,
-                  //     width: MediaQuery.of(context).size.width * .20,
-                  //     decoration: BoxDecoration(
-                  //       border: Border.all(
-                  //         color: AppColors.cardBorder,
-                  //         width: 1,
-                  //       ),
-                  //       borderRadius: BorderRadius.circular(5),
-                  //     ),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       children: <Widget>[
-                  //         Text(
-                  //           'CANCEL',
-                  //           style: TextStyle(
-                  //             color: AppColors.red,
-                  //             fontSize: 14,
-                  //             fontWeight: FontWeight.w500,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             )
@@ -179,82 +151,135 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<void> _setPermission() async {
-    if (Settings.enabledContactPermission)
+    var status = await Permission.contacts.request();
+    //disabled and alowed through popup
+    if (!Settings.enabledContactPermission && status.isGranted)
+      setState(() => Settings.enabledContactPermission = true);
+    //disabled and is permanently denied (iOS)
+    else if (!Settings.enabledContactPermission &&
+        (status.isPermanentlyDenied)) {
       _openContactConfirmation(context);
+      setState(() => Settings.enabledContactPermission = true);
+    }
+    //disabled and denied and it's iOS
+    else if (!Settings.enabledContactPermission &&
+        status.isDenied &&
+        Platform.isIOS) {
+      _openContactConfirmation(context);
+      setState(() => Settings.enabledContactPermission = false);
+    }
+    //disabled and denied through popup
+    else if (!Settings.enabledContactPermission && status.isDenied)
+      setState(() => Settings.enabledContactPermission = false);
+    //enabled and needs to be diabled
     else {
-      var status = await Permission.contacts.request();
-      setState(() => Settings.enabledContactPermission =
-          status == PermissionStatus.granted);
+      setState(() => Settings.enabledContactPermission = false);
+      _openContactConfirmation(context);
     }
   }
 
   void _updateEmail(UserModel user) async {
     try {
-      BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .updateEmail(_newEmail.text, user.id);
+      BeStilDialog.showSuccessDialog(
+          context, 'Your email has been updated successfully');
       _newEmail.clear();
-      BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
-      BeStillSnackbar.showInSnackBar(
-          type: 'success',
-          message: 'Your email has been updated successfully',
-          key: widget.scaffoldKey);
-    } on HttpException catch (_) {
+    } on HttpException catch (e, s) {
       _newEmail.clear();
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      print(e.message);
+      var message = '';
+      if (e.message ==
+          'The email address is already in use by another account.') {
+        message =
+            'That email address is already in use. Please select another email.';
+      } else {
+        message = e.message;
+      }
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      PlatformException er =
+          PlatformException(code: 'custom', message: message);
+
+      BeStilDialog.showErrorDialog(context, er, user, s);
       _newEmail.clear();
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
     }
   }
 
   void _updatePassword() async {
     try {
-      BeStilDialog.showLoading(context);
+      // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
+      // BeStilDialog.hideLoading(context);
+      // Navigator.of(context).pop();
+      BeStilDialog.showSuccessDialog(
+          context, 'Your password has been updated successfully');
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
-      BeStillSnackbar.showInSnackBar(
-          type: 'success',
-          message: 'Your password has been updated successfully',
-          key: widget.scaffoldKey);
-    } on HttpException catch (_) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+
       _newPassword.clear();
       _newConfirmPassword.clear();
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
-    } catch (e) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.reloginErrorOccured);
     }
   }
 
-  void _verifyPassword(String email, type, ctx) async {
+  void _verifyPassword(_user, type, ctx) async {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<AuthenticationProvider>(context, listen: false)
-          .signIn(email: email, password: _currentPassword.text);
+          .signIn(email: _user.email, password: _currentPassword.text);
       _currentPassword.clear();
-      setState(() => isVerified = true);
+      Future.delayed(Duration(milliseconds: 300), () async {
+        if (type == _ModalType.email) {
+          _updateEmail(_user);
+        }
+
+        if (type == _ModalType.password) {
+          _updatePassword();
+        }
+      });
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
-      _update(type, ctx);
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
+      _currentPassword.clear();
+      var message = '';
+      if (e.message == 'Username / Password is incorrect' ||
+          e.message == 'The application has encountered an error.') {
+        message = 'Password is incorrect.';
+      } else {
+        message = e.message;
+      }
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      PlatformException er =
+          PlatformException(code: 'custom', message: message);
+
+      BeStilDialog.showErrorDialog(context, er, user, s);
+    } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      _currentPassword.clear();
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
@@ -267,110 +292,93 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 30),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                ),
-                child: Text(
-                  '${_currentUser.firstName} ${_currentUser.lastName}',
-                  style: AppTextStyles.boldText30.copyWith(height: 1),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 30),
-          CustomOutlineButton(
-            actionColor: AppColors.lightBlue4,
-            actionText: 'UPDATE',
-            onPressed: () {
-              setState(() => isVerified = false);
-              _update(_ModalType.email, context);
-            },
-            value: _currentUser.email,
-          ),
-          SizedBox(height: 10),
-          CustomOutlineButton(
-            actionColor: AppColors.lightBlue4,
-            actionText: 'UPDATE',
-            onPressed: () {
-              setState(() => isVerified = false);
-              _update(_ModalType.password, context);
-            },
-            value: 'password',
-          ),
-          SizedBox(height: 15),
-          CustomToggle(
-            onChange: (value) => _setPermission(),
-            title: 'Allow BeStill to access Contacts?',
-            value: Settings.enabledContactPermission,
-          ),
-          SizedBox(height: 20),
-          CustomSectionHeder('App Appearance'),
-          SizedBox(height: 35),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                for (int i = 0; i < _themeModes.length; i++)
-                  CustomButtonGroup(
-                    isSelected: _themeProvider.currentTheme == _themeModes[i],
-                    length: _themeModes.length,
-                    onSelected: (value) => _themeProvider.changeTheme(value),
-                    title: _themeModes[i],
-                    index: i,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: AppColors.backgroundColor,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 30),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
                   ),
+                  child: Text(
+                    '${_currentUser.firstName} ${_currentUser.lastName}',
+                    style: AppTextStyles.boldText30.copyWith(height: 1),
+                  ),
+                ),
               ],
             ),
-          ),
-          SizedBox(height: 35),
-          CustomSectionHeder('App Version'),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       vertical: 40.0, horizontal: 20.0),
-          //   child: Row(
-          //     children: [
-          //       CustomButtonGroup(
-          //         onSelected: () => null,
-          //         title: 'EXPORT',
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          SizedBox(height: 30),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Text('App is running the latest version',
-                //     style: AppTextStyles.regularText15
-                //         .copyWith(color: AppColors.textFieldText)),
-                Text(_version, style: AppTextStyles.regularText15),
-              ],
+            SizedBox(height: 30),
+            CustomEditField(
+              value: _currentUser.email,
+              onPressed: () {
+                setState(() => isVerified = false);
+                _update(_ModalType.email, context);
+              },
+              showLabel: false,
+              label: 'Email',
             ),
-          ),
-          SizedBox(height: 30),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       vertical: 40.0, horizontal: 20.0),
-          //   child: Row(
-          //     children: [
-          //       CustomButtonGroup(
-          //         onSelected: () => null,
-          //         title: 'DELETE ACCOUNT & ALL DATA',
-          //         color: AppColors.red,
-          //       ),
-          //     ],
-          //   ),
-          // ),
-        ],
+            SizedBox(height: 10),
+            CustomEditField(
+              value: '',
+              onPressed: () {
+                setState(() => isVerified = false);
+                _update(_ModalType.password, context);
+              },
+              showLabel: true,
+              label: 'Password',
+            ),
+            SizedBox(height: 15),
+            CustomToggle(
+              onChange: (value) => _setPermission(),
+              title: 'Allow Be Still to access contacts?',
+              value: Settings.enabledContactPermission,
+            ),
+            SizedBox(height: 20),
+            CustomSectionHeder('App Appearance'),
+            SizedBox(height: 35),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  for (int i = 0; i < _themeModes.length; i++)
+                    CustomButtonGroup(
+                      isSelected: _themeProvider.currentTheme == _themeModes[i],
+                      length: _themeModes.length,
+                      onSelected: (value) {
+                        _themeProvider.changeTheme(value);
+                      },
+                      title: _themeModes[i],
+                      index: i,
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 35),
+            CustomSectionHeder('App Version'),
+            SizedBox(height: 30),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(_version, style: AppTextStyles.regularText15),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }
@@ -382,129 +390,133 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],
-      content: Container(
-        width: MediaQuery.of(context).size.width - 100,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isVerified)
-              Text(
-                'Verify existing password',
-                style: AppTextStyles.boldText20,
-              )
-            else if (isVerified && type == _ModalType.email)
-              Text(
-                'Update your email',
-                style: AppTextStyles.boldText20,
-              )
-            else if (isVerified && type == _ModalType.password)
-              Text(
-                'Update your password',
-                style: AppTextStyles.boldText20,
-              ),
-            SizedBox(height: 30.0),
-            Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!isVerified)
+      content: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width - 100,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (type == _ModalType.email)
+                Text(
+                  'Update your email',
+                  style: AppTextStyles.boldText20,
+                )
+              else if (type == _ModalType.password)
+                Text(
+                  'Update your password',
+                  style: AppTextStyles.boldText20,
+                ),
+              SizedBox(height: 10.0),
+              Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (type == _ModalType.email)
+                      CustomInput(
+                        showSuffix: false,
+                        isRequired: true,
+                        isEmail: true,
+                        label: 'New Email',
+                        controller: _newEmail,
+                      ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
                     CustomInput(
                       showSuffix: false,
                       isRequired: true,
                       obScurePassword: true,
-                      label: 'Password',
+                      isPassword: true,
+                      label: 'Current Password',
                       controller: _currentPassword,
-                    )
-                  else if (isVerified && type == _ModalType.email)
-                    CustomInput(
-                      showSuffix: false,
-                      isRequired: true,
-                      isEmail: true,
-                      label: 'Enter new email',
-                      controller: _newEmail,
-                    )
-                  else if (isVerified && type == _ModalType.password)
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomInput(
-                          obScurePassword: true,
-                          showSuffix: false,
-                          isRequired: true,
-                          isPassword: true,
-                          label: 'Enter new password',
-                          controller: _newPassword,
-                        ),
-                        SizedBox(height: 15.0),
-                        CustomInput(
-                          obScurePassword: true,
-                          showSuffix: false,
-                          isRequired: true,
-                          label: 'Confirm password',
-                          controller: _newConfirmPassword,
-                          validator: (value) {
-                            if (_newPassword.text != value) {
-                              return 'Password fields do not match';
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
                     ),
-                  SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.grey.withOpacity(0.5)),
-                        ),
-                        onPressed: () {
-                          _newPassword.clear();
-                          _newEmail.clear();
-                          _newConfirmPassword.clear();
-                          _currentPassword.clear();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          'Cancel',
-                          style: AppTextStyles.regularText15.copyWith(
-                            color: Colors.white,
-                          ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                    if (type == _ModalType.password)
+                      SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CustomInput(
+                              obScurePassword: true,
+                              showSuffix: false,
+                              isRequired: true,
+                              isPassword: true,
+                              label: 'New Password',
+                              controller: _newPassword,
+                            ),
+                            SizedBox(height: 15.0),
+                            CustomInput(
+                              obScurePassword: true,
+                              showSuffix: false,
+                              isRequired: true,
+                              label: 'Confirm Password',
+                              controller: _newConfirmPassword,
+                              validator: (value) {
+                                if (_newPassword.text != value) {
+                                  return 'Password fields do not match';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 5.0),
+                          ],
                         ),
                       ),
-                      TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              AppColors.lightBlue3),
-                        ),
-                        onPressed: () {
-                          if (!_formKey.currentState.validate()) return null;
-                          _formKey.currentState.save();
-
-                          if (!isVerified)
-                            _verifyPassword(_user.email, type, ctx);
-                          else if (isVerified && type == _ModalType.email)
-                            _updateEmail(_user);
-                          else if (isVerified && type == _ModalType.password)
-                            _updatePassword();
-                        },
-                        child: Text(
-                          !isVerified ? 'Proceed' : 'Submit',
-                          style: AppTextStyles.regularText15.copyWith(
-                            color: Colors.white,
+                    // SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.grey.withOpacity(0.5)),
+                          ),
+                          onPressed: () {
+                            _newPassword.clear();
+                            _newEmail.clear();
+                            _newConfirmPassword.clear();
+                            _currentPassword.clear();
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: AppTextStyles.regularText15.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      )
-                    ],
-                  )
-                ],
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                AppColors.lightBlue3),
+                          ),
+                          onPressed: () {
+                            if (!_formKey.currentState.validate()) return null;
+                            _formKey.currentState.save();
+                            _verifyPassword(
+                              _user,
+                              type,
+                              ctx,
+                            );
+                          },
+                          child: Text(
+                            'Submit',
+                            style: AppTextStyles.regularText15.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

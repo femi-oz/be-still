@@ -53,30 +53,33 @@ class CustomAlertDialog extends StatelessWidget {
           const SizedBox(height: 10.0),
           Text(
             title.isEmpty ? _getTitle(type) : title,
-            style: AppTextStyles.regularText13.copyWith(fontSize: 18),
+            style: AppTextStyles.regularText13
+                .copyWith(fontSize: 18, color: AppColors.lightBlue1),
             textAlign: TextAlign.center,
           ),
           Divider(),
           Text(
             message ?? 'An error occured!',
             style: AppTextStyles.regularText14
-                .copyWith(color: AppColors.lightBlue3),
+                .copyWith(color: AppColors.lightBlue1),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 20.0),
           SizedBox(
-            width: double.maxFinite,
+            width: MediaQuery.of(context).size.width * 0.4,
             child: Row(
               children: <Widget>[
                 Expanded(
                   child: TextButton(
-                    child: Text(confirmText),
+                    child: Text(confirmText,
+                        style: AppTextStyles.boldText16
+                            .copyWith(color: Colors.white)),
                     style: ButtonStyle(
                       textStyle: MaterialStateProperty.all<TextStyle>(
                           AppTextStyles.boldText16
                               .copyWith(color: Colors.white)),
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(_getColor(type)),
+                          MaterialStateProperty.all<Color>(Colors.blue),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                           EdgeInsets.all(5.0)),
                       elevation: MaterialStateProperty.all<double>(0.0),

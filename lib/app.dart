@@ -11,11 +11,18 @@ import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
 import './utils/routes.dart' as rt;
+
+final _kShouldTestAsyncErrorOnInit = false;
+
+// Toggle this for testing Crashlytics in your app locally.
+final _kTestingCrashlytics = true;
 
 class MyApp extends StatefulWidget {
   @override
@@ -23,21 +30,50 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  Future<void> _initializeFlutterFireFuture;
+
+  Future<void> _testAsyncErrorOnInit() async {
+    Future<void>.delayed(const Duration(seconds: 2), () {
+      final List<int> list = <int>[];
+      print(list[100]);
+    });
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
     });
-    print(
-        'message -- app before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
-    Provider.of<NotificationProvider>(context, listen: false).init(context);
     Provider.of<NotificationProvider>(context, listen: false)
         .initLocal(context);
-    print(
-        'message -- app after ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+    // FirebaseCrashlytics.instance.crash();
+    _initializeFlutterFireFuture = _initializeFlutterFire();
 
     super.initState();
+  }
+
+  Future<void> _initializeFlutterFire() async {
+    if (_kTestingCrashlytics) {
+      // Force enable crashlytics collection enabled if we're testing it.
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    } else {
+      // Else only enable it in non-debug builds.
+      // You could additionally extend this to allow users to opt-in.
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    }
+
+    // Pass all uncaught errors to Crashlytics.
+    Function originalOnError = FlutterError.onError;
+    FlutterError.onError = (FlutterErrorDetails errorDetails) async {
+      await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+      // Forward to original handler.
+      originalOnError(errorDetails);
+    };
+
+    if (_kShouldTestAsyncErrorOnInit) {
+      await _testAsyncErrorOnInit();
+    }
   }
 
   @override
@@ -67,8 +103,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               .checkPrayerValidity(userId);
         print(
             'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .init(context);
+
         await Provider.of<NotificationProvider>(context, listen: false)
             .initLocal(context);
         print(
@@ -119,18 +154,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     ]);
 
     return Consumer<ThemeProvider>(
-      builder: (ctx, theme, _) => MaterialApp(
-        title: 'Be Still',
-        debugShowCheckedModeBanner: false,
-        theme: theme.isDarkModeEnabled
-            ? appThemeData[AppTheme.DarkTheme]
-            : appThemeData[AppTheme.LightTheme],
-        initialRoute: '/',
-        routes: rt.routes,
-        navigatorKey: NavigationService.instance.navigationKey,
-        onUnknownRoute: (settings) {
-          return MaterialPageRoute(builder: (ctx) => SplashScreen());
-        },
+      builder: (ctx, theme, _) => FutureBuilder(
+        future: _initializeFlutterFireFuture,
+        builder: (contect, snapshot) => MaterialApp(
+          title: 'Be Still',
+          debugShowCheckedModeBanner: false,
+          theme: theme.isDarkModeEnabled
+              ? appThemeData[AppTheme.DarkTheme]
+              : appThemeData[AppTheme.LightTheme],
+          initialRoute: '/',
+          routes: rt.routes,
+          navigatorKey: NavigationService.instance.navigationKey,
+          onUnknownRoute: (settings) {
+            return MaterialPageRoute(builder: (ctx) => SplashScreen());
+          },
+        ),
       ),
     );
   }

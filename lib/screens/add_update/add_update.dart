@@ -1,29 +1,23 @@
 import 'dart:io';
 
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
-import '../entry_screen.dart';
-
 class AddUpdate extends StatefulWidget {
-  final CombinePrayerStream prayerData;
   static const routeName = 'update-prayer';
-
-  @override
-  AddUpdate({this.prayerData});
-
   @override
   _AddUpdateState createState() => _AddUpdateState();
 }
@@ -36,55 +30,45 @@ class _AddUpdateState extends State<AddUpdate> {
   FocusNode _focusNode = FocusNode();
   bool _autoValidate = false;
 
-  _save() async {
+  Future<void> _save(String prayerId) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
-      BeStilDialog.showLoading(bcontext);
+      BeStilDialog.showLoading(context);
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context, 'You can not save empty prayers');
+        PlatformException e = PlatformException(
+            code: 'custom', message: 'You can not save empty prayers');
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayerUpdate(_user.id, _descriptionController.text,
-                widget.prayerData.prayer.id);
+            .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
         await Future.delayed(Duration(milliseconds: 300));
-        BeStilDialog.hideLoading(bcontext);
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: PrayerDetails(),
-          ),
-        );
-        // Navigator.of(context).pushReplacementNamed(PrayerDetails.routeName);
+        BeStilDialog.hideLoading(context);
+        NavigationService.instance.goHome(0);
       }
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(bcontext);
-      BeStilDialog.showErrorDialog(bcontext, e.message);
-    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(bcontext);
-      BeStilDialog.showErrorDialog(bcontext, StringUtils.errorOccured);
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => EntryScreen(screenNumber: 0)))) ??
-        false;
+    return (NavigationService.instance.goHome(0)) ?? false;
   }
 
   Future<void> onCancel() async {
@@ -128,16 +112,15 @@ class _AddUpdateState extends State<AddUpdate> {
                     onTap: () => Navigator.push(
                       context,
                       PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
+                        type: PageTransitionType.leftToRightWithFade,
                         child: PrayerDetails(),
                       ),
                     ),
-                    // Navigator.of(context)
-                    //     .pushNamed(PrayerDetails.routeName),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -148,9 +131,9 @@ class _AddUpdateState extends State<AddUpdate> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'YES',
+                            'Discard Changes',
                             style: TextStyle(
-                              color: AppColors.lightBlue4,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -159,14 +142,16 @@ class _AddUpdateState extends State<AddUpdate> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: 20,
+                  ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+                    onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
+                      width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
+                        color: Colors.blue,
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
@@ -177,9 +162,9 @@ class _AddUpdateState extends State<AddUpdate> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            'NO',
+                            'Resume Editing',
                             style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -196,16 +181,13 @@ class _AddUpdateState extends State<AddUpdate> {
       ),
     );
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
+    showDialog(context: context, builder: (BuildContext context) => dialog);
   }
 
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final currentUser = Provider.of<UserProvider>(context).currentUser;
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -227,31 +209,22 @@ class _AddUpdateState extends State<AddUpdate> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       InkWell(
-                        child: Text(
-                          'CANCEL',
-                          style: TextStyle(
-                              color: AppColors.lightBlue5, fontSize: 16),
-                        ),
-                        onTap: () => _descriptionController.text.isNotEmpty
-                            ? onCancel()
-                            : Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: EntryScreen(screenNumber: 0),
-                                ),
-                              ),
-                        // Navigator.popUntil(context,
-                        //     ModalRoute.withName(PrayerDetails.routeName)),
-                      ),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
+                          ),
+                          onTap: () => _descriptionController.text.isNotEmpty
+                              ? onCancel()
+                              : NavigationService.instance.goHome(0)),
                       InkWell(
                         child: Text('SAVE',
-                            style: TextStyle(
-                                color: _descriptionController.text.isEmpty
+                            style: AppTextStyles.boldText18.copyWith(
+                                color: _descriptionController.text.isNotEmpty
                                     ? AppColors.lightBlue5.withOpacity(0.5)
-                                    : AppColors.lightBlue5)),
+                                    : Colors.blue)),
                         onTap: () => _descriptionController.text.isNotEmpty
-                            ? _save()
+                            ? _save(prayerData.prayer.id)
                             : null,
                       ),
                     ],
@@ -264,7 +237,6 @@ class _AddUpdateState extends State<AddUpdate> {
                       child: Column(
                         children: [
                           Form(
-                            // autovalidateMode: AutovalidateMode.onUserInteraction,
                             autovalidate: _autoValidate,
                             key: _formKey,
                             child: CustomInput(
@@ -291,12 +263,11 @@ class _AddUpdateState extends State<AddUpdate> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                widget.prayerData.prayer.userId !=
-                                        _currentUser.id
+                                prayerData.prayer.userId != currentUser.id
                                     ? Container(
                                         margin: EdgeInsets.only(bottom: 20),
                                         child: Text(
-                                          widget.prayerData.prayer.createdBy,
+                                          prayerData.prayer.createdBy,
                                           style: TextStyle(
                                               color: AppColors.lightBlue3,
                                               fontSize: 18,
@@ -305,7 +276,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                         ),
                                       )
                                     : Container(),
-                                ...widget.prayerData.updates.map(
+                                ...prayerData.updates.map(
                                   (u) => Container(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
@@ -383,7 +354,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                                 ),
                                                 Text(
                                                   DateFormat(' MM.dd.yyyy')
-                                                      .format(widget.prayerData
+                                                      .format(prayerData
                                                           .prayer.modifiedOn),
                                                   style: TextStyle(
                                                       fontSize: 12,
@@ -411,8 +382,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                               vertical: 20.0, horizontal: 20),
                                           child: Center(
                                             child: Text(
-                                              widget.prayerData.prayer
-                                                  .description,
+                                              prayerData.prayer.description,
                                               style: TextStyle(
                                                 color: AppColors.textFieldText,
                                                 fontSize: 14,

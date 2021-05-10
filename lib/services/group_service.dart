@@ -11,11 +11,12 @@ import 'package:dio/dio.dart';
 import '../locator.dart';
 
 class GroupService {
-  final CollectionReference _groupCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
-  final CollectionReference _groupUserCollectionReference =
+  final CollectionReference<Map<String, dynamic>>
+      _groupUserCollectionReference =
       FirebaseFirestore.instance.collection("GroupUser");
-  final CollectionReference _userCollectionReference =
+  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
 
   populateGroupUser(
@@ -86,12 +87,12 @@ class GroupService {
           //         (document) => GroupUserModel.fromData(document));
 
           Stream<GroupModel> group = _groupCollectionReference
-              .doc(f.data()['GroupId'])
+              .doc(f['GroupId'])
               .snapshots()
               .map<GroupModel>((document) => GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
               _groupUserCollectionReference
-                  .where('GroupId', isEqualTo: f.data()['GroupId'])
+                  .where('GroupId', isEqualTo: f['GroupId'])
                   .snapshots()
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))
@@ -200,7 +201,7 @@ class GroupService {
           .get();
       if (user.docs.length == 0) {
         var errorMessage =
-            'This email is not registered on BeStill! Please try with a registered email';
+            'This email is not registered on Be Still! Please try with a registered email';
         locator<LogService>()
             .createLog(errorMessage, senderId, 'GROUP/service/inviteMember');
         throw HttpException(errorMessage);
