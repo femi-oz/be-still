@@ -83,12 +83,12 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.8.0
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/bestill-logo.png"
-  adaptive_icon_background: "#191919"
-  adaptive_icon_foreground: "assets/images/bestill-logo.png"
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "assets/images/delete.png"
+#   adaptive_icon_background: "#191919"
+#   adaptive_icon_foreground: "assets/images/delete.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
