@@ -20,7 +20,11 @@ class AppIcons {
 
   static const _kFontFam = 'AppIcons';
   static const _kFontFam2 = 'AppIcons2';
+  static const _kFontFam3 = 'AppIcons3';
   static const String _kFontPkg = null;
+
+  static const IconData bestill_icons_bestill_archived_icon_revised_drk =
+      IconData(0xe805, fontFamily: _kFontFam3, fontPackage: _kFontPkg);
 
   static const IconData delete =
       IconData(0xe800, fontFamily: _kFontFam2, fontPackage: _kFontPkg);
@@ -83,8 +87,8 @@ class AppIcons {
       IconData(0xe81b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData bestill_approve =
       IconData(0xe81c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData bestill_archive =
-      IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  // static const IconData bestill_archive =
+  //     IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData bestill_aswered =
       IconData(0xe81e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData bestill_back_arrow =

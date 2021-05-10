@@ -1,6 +1,6 @@
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -17,9 +17,10 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushNamedAndRemoveUntil(
-          LoginScreen.routeName,
-          (Route<dynamic> route) => false,
+        () => Navigator.of(context).pushReplacement(
+          SlideRightRoute(
+            page: LoginScreen(),
+          ),
         ),
       ),
     );
@@ -38,8 +39,11 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            colorFilter: new ColorFilter.mode(
+                AppColors.backgroundColor[0].withOpacity(0.2),
+                BlendMode.dstATop),
           ),
         ),
         child: Center(

@@ -7,12 +7,13 @@ import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -54,8 +55,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    // disabled = Provider.of<MiscProvider>(context).disable;
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -69,9 +68,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   colors: AppColors.backgroundColor,
                 ),
                 image: DecorationImage(
-                  image: AssetImage(
-                      StringUtils.backgroundImage(Settings.isDarkMode)),
+                  image: AssetImage(StringUtils.backgroundImage),
                   alignment: Alignment.bottomCenter,
+                  colorFilter: new ColorFilter.mode(
+                      AppColors.backgroundColor[0].withOpacity(0.2),
+                      BlendMode.dstATop),
                 ),
               ),
               child: Column(
@@ -147,30 +148,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                                                       .white)),
                                                     ),
                                                     onPressed: () {
-                                                      // Settings.rememberMe
-                                                      //     ? Provider.of<
-                                                      //                 MiscProvider>(
-                                                      //             context,
-                                                      //             listen: false)
-                                                      //         .setVisibility(
-                                                      //             false)
-                                                      //     : Provider.of<
-                                                      //                 MiscProvider>(
-                                                      //             context,
-                                                      //             listen: false)
-                                                      //         .setVisibility(
-                                                      //             true);
-                                                      Navigator
-                                                          .pushAndRemoveUntil(
+                                                      Navigator.pop(
                                                         context,
-                                                        PageTransition(
-                                                            type: PageTransitionType
-                                                                .rightToLeftWithFade,
-                                                            child:
-                                                                LoginScreen()),
-                                                        (Route<dynamic>
-                                                                route) =>
-                                                            false,
+                                                        SlideRightRoute(
+                                                          page: LoginScreen(),
+                                                        ),
                                                       );
                                                     },
                                                   ),

@@ -1,6 +1,6 @@
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
-        () => Navigator.of(context).pushReplacementNamed(LoginScreen.routeName),
+        () => Navigator.of(context).pop(),
       ),
     );
   }
@@ -35,8 +35,11 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            colorFilter: new ColorFilter.mode(
+                AppColors.backgroundColor[0].withOpacity(0.2),
+                BlendMode.dstATop),
           ),
         ),
         child: Column(

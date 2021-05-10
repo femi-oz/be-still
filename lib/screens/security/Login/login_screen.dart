@@ -2,9 +2,9 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
@@ -20,7 +20,7 @@ import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 import '../../../widgets/input_field.dart';
 import '../Create_Account/create_account_screen.dart';
@@ -38,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  // bool disableButton = false;
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -163,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    // if (!disableButton) {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
@@ -220,8 +218,6 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      // await Provider.of<NotificationProvider>(context, listen: false)
-      //     .setDevice(user.id);
       LocalNotification.setNotificationsOnNewDevice(context);
 
       NavigationService.instance.goHome(0);
@@ -334,7 +330,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isFormValid = false;
   @override
   Widget build(BuildContext context) {
-    // disableButton = Provider.of<MiscProvider>(context, listen: true).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -364,8 +359,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         return Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage(StringUtils.backgroundImage()),
+                              image: AssetImage(StringUtils.backgroundImage),
                               alignment: Alignment.bottomCenter,
+                              colorFilter: new ColorFilter.mode(
+                                  AppColors.backgroundColor[0].withOpacity(0.2),
+                                  BlendMode.dstATop),
                             ),
                           ),
                           child: Column(
@@ -457,7 +455,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
-      // autovalidateMode: AutovalidateMode.onUserInteraction,
       autovalidate: _autoValidate,
       key: _formKey,
       child: Column(
@@ -513,15 +510,10 @@ class _LoginScreenState extends State<LoginScreen> {
         InkWell(
           child: Text("Create an Account", style: AppTextStyles.regularText15),
           onTap: () {
-            // Provider.of<MiscProvider>(context, listen: false)
-            //     .setVisibility(true);
             Navigator.push(
               context,
-              PageTransition(
-                  type: PageTransitionType.rightToLeftWithFade,
-                  child: CreateAccountScreen()),
+              SlideRightRoute(page: CreateAccountScreen()),
             );
-            // Navigator.of(context).pushNamed(CreateAccountScreen.routeName);
           },
         ),
         Row(
@@ -555,16 +547,10 @@ class _LoginScreenState extends State<LoginScreen> {
             verificationSendMessage,
             style: AppTextStyles.regularText15,
           ),
-        // SizedBox(height: 20),
         BsRaisedButton(
           onPressed: _login,
           disabled: !isFormValid,
         ),
-        // Settings.enableLocalAuth
-        //     ? BsRaisedButton(
-        //         onPressed: _biologin,
-        //       )
-        //     : Container(),
         SizedBox(height: 24),
         GestureDetector(
             child: Text(
@@ -572,13 +558,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: AppTextStyles.regularText15,
             ),
             onTap: () {
-              // Provider.of<MiscProvider>(context, listen: false)
-              //     .setVisibility(true);
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      type: PageTransitionType.leftToRightWithFade,
-                      child: ForgetPassword()));
+              Navigator.push(context, SlideRightRoute(page: ForgetPassword()));
             }),
       ],
     );

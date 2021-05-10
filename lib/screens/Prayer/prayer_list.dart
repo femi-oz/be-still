@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -17,8 +15,9 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
+import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
@@ -68,6 +67,55 @@ class _PrayerListState extends State<PrayerList> {
       }
 
       BeStilDialog.hideLoading(context);
+      showModalBottomSheet(
+          backgroundColor: AppColors.backgroundColor[0].withOpacity(0.5),
+          isScrollControlled: true,
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 100, horizontal: 40),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Welcome',
+                      style: AppTextStyles.boldText20
+                          .copyWith(color: AppColors.prayerTextColor)),
+                  Text(
+                      'Welcome to Be Still!  Here\'s aquick tour that will get you started.\n\nThe Be Still app can organize all your prayers and lead you through your own personal prayer time.\n\nTap Next to begin the tour, or Skip Tour to begin using Be Still right away',
+                      style: AppTextStyles.boldText16
+                          .copyWith(color: AppColors.prayerTextColor)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            final miscProvider = Provider.of<MiscProvider>(
+                                context,
+                                listen: false);
+                            TutorialTarget.showTutorial(
+                              context: context,
+                              keyButton2: miscProvider.keyButton2,
+                              keyButton3: miscProvider.keyButton3,
+                              keyButton: miscProvider.keyButton,
+                              keyButton4: miscProvider.keyButton4,
+                              keyButton5: miscProvider.keyButton5,
+                            );
+                          },
+                          child: Text('Next',
+                              style: AppTextStyles.boldText16
+                                  .copyWith(color: AppColors.prayerTextColor))),
+                      TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text('Skip',
+                              style: AppTextStyles.boldText16
+                                  .copyWith(color: AppColors.prayerTextColor))),
+                    ],
+                  )
+                ],
+              ),
+            );
+          });
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -88,13 +136,7 @@ class _PrayerListState extends State<PrayerList> {
           .setPrayer(prayerData.userPrayer.id);
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      Navigator.push(
-        context,
-        PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: PrayerDetails()),
-      );
-      // Navigator.of(context).pushNamed(PrayerDetails.routeName);
+      Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -147,11 +189,8 @@ class _PrayerListState extends State<PrayerList> {
   void _getPermissions() async {
     try {
       if (Settings.isAppInit) {
-        // final status = await Permission.contacts.status;
-        // if (status.) {
         await Permission.contacts.request().then((p) =>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
-        // }
         Settings.isAppInit = false;
       }
     } catch (e, s) {
@@ -169,68 +208,83 @@ class _PrayerListState extends State<PrayerList> {
     return WillPopScope(
       onWillPop: () => null,
       child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppColors.backgroundColor,
-          ),
-        ),
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height * 0.83,
+              minHeight: MediaQuery.of(context).size.height * 0.85,
             ),
             child: Container(
-              padding: EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(StringUtils.backgroundImage(true)),
+                  image: AssetImage(StringUtils.backgroundImage),
                   alignment: Alignment.bottomCenter,
                 ),
               ),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20),
-                  prayers.length == 0
-                      ? Container(
-                          padding: EdgeInsets.only(
-                              left: 60, right: 100, top: 60, bottom: 60),
-                          child: Opacity(
-                            opacity: 0.3,
-                            child: Text(
-                              'No Prayers in My List',
-                              style: AppTextStyles.demiboldText34,
-                              textAlign: TextAlign.center,
+              child: Container(
+                padding: EdgeInsets.only(left: 20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.backgroundColor[0].withOpacity(0.85),
+                      AppColors.backgroundColor[1].withOpacity(0.7),
+                    ],
+                  ),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    prayers.length == 0
+                        ? Container(
+                            padding: EdgeInsets.only(
+                                left: 60, right: 100, top: 60, bottom: 60),
+                            child: Opacity(
+                              opacity: 0.3,
+                              child: Text(
+                                'No Prayers in My List',
+                                style: AppTextStyles.demiboldText34,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ),
-                        )
-                      : Column(
-                          children: <Widget>[
-                            ...prayers.map((e) {
-                              final _timeago =
-                                  DateFormatter(e.prayer.modifiedOn).format();
-                              return GestureDetector(
+                          )
+                        : Column(
+                            children: <Widget>[
+                              ...prayers.map((e) {
+                                final _timeago =
+                                    DateFormatter(e.prayer.modifiedOn).format();
+                                return GestureDetector(
                                   onTap: () => onTapCard(e),
                                   child: PrayerCard(
-                                      prayerData: e, timeago: _timeago));
-                            }).toList(),
-                          ],
-                        ),
-                  SizedBox(height: 5),
-                  currentPrayerType == PrayerType.archived ||
-                          currentPrayerType == PrayerType.answered
-                      ? Container()
-                      : LongButton(
-                          onPress: () => NavigationService.instance.goHome(2),
-                          text: 'Add New Prayer',
-                          backgroundColor:
-                              AppColors.addprayerBgColor.withOpacity(0.9),
-                          textColor: AppColors.addprayerTextColor,
-                          icon: AppIcons.bestill_add_btn,
-                        ),
-                  SizedBox(height: 80),
-                ],
+                                    prayerData: e,
+                                    timeago: _timeago,
+                                    keyButton: prayers.indexOf(e) == 0
+                                        ? Provider.of<MiscProvider>(context,
+                                                listen: false)
+                                            .keyButton5
+                                        : null,
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                    SizedBox(height: 5),
+                    currentPrayerType == PrayerType.archived ||
+                            currentPrayerType == PrayerType.answered
+                        ? Container()
+                        : LongButton(
+                            onPress: () => Provider.of<MiscProvider>(context,
+                                    listen: false)
+                                .setCurrentPage(2),
+                            text: 'Add New Prayer',
+                            backgroundColor:
+                                AppColors.addprayerBgColor.withOpacity(0.9),
+                            textColor: AppColors.addprayerTextColor,
+                            icon: AppIcons.bestill_add_btn,
+                          ),
+                    SizedBox(height: 80),
+                  ],
+                ),
               ),
             ),
           ),

@@ -37,7 +37,6 @@ class LongButton extends StatelessWidget {
         ),
         child: Container(
           width: double.infinity,
-          // height: MediaQuery.of(context).size.height * 0.1,
           margin: EdgeInsetsDirectional.only(start: 0.5, bottom: 0.5, top: 0.5),
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
@@ -46,7 +45,6 @@ class LongButton extends StatelessWidget {
               bottomLeft: Radius.circular(9),
               topLeft: Radius.circular(9),
             ),
-            // border: Border.all(color: AppColors.lightBlue4, width: 1.0),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,18 +68,6 @@ class LongButton extends StatelessWidget {
                   : Container(),
             ],
           ),
-
-          // Align(
-          //   alignment: Alignment.centerLeft,
-          //   child: FlatButton.icon(
-          //     onPressed: null,
-          //     icon: Icon(Icons.add, color: textColor),
-          //     label: Text(
-          //       text,
-          //       style: AppTextStyles.boldText20.copyWith(color: textColor),
-          //     ),
-          //   ),
-          // ),
         ),
       ),
     );

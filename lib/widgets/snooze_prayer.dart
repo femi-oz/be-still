@@ -4,12 +4,12 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class SnoozePrayer extends StatefulWidget {
@@ -82,9 +82,8 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       BeStilDialog.hideLoading(context);
       Navigator.pushReplacement(
           context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(),
+          SlideRightRoute(
+            page: EntryScreen(),
           ));
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));

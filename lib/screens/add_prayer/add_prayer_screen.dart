@@ -1,8 +1,10 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -12,7 +14,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:validators/validators.dart';
@@ -81,7 +83,7 @@ class _AddPrayerState extends State<AddPrayer> {
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          NavigationService.instance.goHome(0);
+          Provider.of<MiscProvider>(context, listen: false).setCurrentPage(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -101,7 +103,6 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-
           NavigationService.instance.goHome(0);
         }
       }
@@ -233,14 +234,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => widget.isEdit
-                        ? Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              child: PrayerDetails(),
-                            ),
-                          )
-                        : NavigationService.instance.goHome(0),
+                        ? Navigator.pop(context)
+                        : Provider.of<MiscProvider>(context, listen: false)
+                            .setCurrentPage(0),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -341,24 +337,18 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Text(
-                            'CANCEL',
-                            style: AppTextStyles.boldText18
-                                .copyWith(color: AppColors.grey),
-                          ),
-                          onTap: () => isValid
-                              ? onCancel()
-                              : widget.isEdit
-                                  ? Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child: PrayerDetails(),
-                                      ),
-                                    )
-                                  : NavigationService.instance.goHome(0),
-                        ),
+                            child: Text(
+                              'CANCEL',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.grey),
+                            ),
+                            onTap: () => isValid
+                                ? onCancel()
+                                : widget.isEdit
+                                    ? Navigator.pop(context)
+                                    : Provider.of<MiscProvider>(context,
+                                            listen: false)
+                                        .setCurrentPage(0)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(

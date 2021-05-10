@@ -1,5 +1,6 @@
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
@@ -46,7 +47,7 @@ class _GroupScreenState extends State<GroupScreen> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -58,13 +59,6 @@ class _GroupScreenState extends State<GroupScreen> {
                 padding: EdgeInsets.only(left: 50),
                 child: LongButton(
                   onPress: () => null,
-                  // Navigator.push(
-                  //   context,
-                  //   new MaterialPageRoute(
-                  //     builder: (context) =>
-                  //     new FindAGroup(),
-                  //   ),
-                  // ),
                   text: 'FIND A GROUP',
                   backgroundColor:
                       AppColors.groupActionBgColor.withOpacity(0.9),

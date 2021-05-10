@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
@@ -133,9 +134,8 @@ class _PrayerTimeState extends State<PrayerTime> {
                     color: AppColors.lightBlue3,
                     size: 30,
                   ),
-                  onTap: () {
-                    NavigationService.instance.goHome(0);
-                  },
+                  onTap: () => Provider.of<MiscProvider>(context, listen: false)
+                      .setCurrentPage(0),
                 ),
                 SizedBox(width: 50),
                 InkWell(

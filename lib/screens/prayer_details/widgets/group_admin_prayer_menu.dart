@@ -8,9 +8,8 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class GroupAdminPrayerMenu extends StatefulWidget {
@@ -37,12 +36,12 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
           .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(),
-          ));
+      // Navigator.pushReplacement(
+      //     context,
+      //     PageTransition(
+      //       type: PageTransitionType.leftToRightWithFade,
+      //       child: EntryScreen(),
+      //     ));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -61,12 +60,12 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       );
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(),
-          ));
+      // Navigator.pushReplacement(
+      //     context,
+      //     PageTransition(
+      //       type: PageTransitionType.leftToRightWithFade,
+      //       child: EntryScreen(),
+      //     ));
     } on HttpException catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
