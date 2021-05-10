@@ -21,6 +21,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -268,6 +269,23 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                           ),
                         )
                       : Container(),
+                  IconButton(
+                    icon: Icon(
+                      CupertinoIcons.wrench_fill,
+                      color: AppColors.lightBlue3,
+                    ),
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      barrierColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                      backgroundColor:
+                          AppColors.detailBackgroundColor[1].withOpacity(1),
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return _buildMenu();
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -294,23 +312,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                         0
                     ? UpdateView()
                     : NoUpdateView(),
-              ),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: AppColors.lightBlue3,
-              ),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                barrierColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                backgroundColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(1),
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return _buildMenu();
-                },
               ),
             ),
           ],
