@@ -23,7 +23,8 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:intl/intl.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -369,12 +370,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-            type: PageTransitionType.leftToRightWithFade,
-            child: EntryScreen(),
-          ));
+
+      NavigationService.instance.goHome(0);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -434,7 +431,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: EdgeInsets.only(right: 10, left: 10),
             child: Align(
               alignment: Alignment.topLeft,
               child: IconButton(
@@ -501,6 +498,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   icon: AppIcons.bestill_reminder,
                   isDisable: prayerData.prayer.isAnswer ||
                       prayerData.userPrayer.isArchived,
+                  suffix: widget.hasReminder &&
+                          widget.reminder.frequency == Frequency.one_time
+                      ? DateFormat('dd MMM yyyy HH:mma').format(
+                          widget.reminder.scheduledDate) //'19 May 2021 11:45PM'
+                      : widget.hasReminder &&
+                              widget.reminder.frequency != Frequency.one_time
+                          ? widget.reminder.frequency
+                          : null,
                   onPressed: () => showDialog(
                     context: context,
                     barrierColor:
@@ -533,7 +538,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       );
                     },
                   ),
-                  text: widget.hasReminder ? 'Edit Reminder' : 'Set Reminder',
+                  text: 'Reminder',
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_snooze,

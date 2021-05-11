@@ -1,17 +1,27 @@
-import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class MiscProvider with ChangeNotifier {
   String _pageTitle = 'MY LIST';
   String get pageTitle => _pageTitle;
   int _currentPage = 0;
+  int _lastPage = 0;
   int get currentPage => _currentPage;
+  int get lastPage => _lastPage;
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
 
-  // bool _disable = Settings.rememberMe ? false : true;
-  // bool get disable => _disable;
+  GlobalKey _keyButton = GlobalKey();
+  GlobalKey _keyButton2 = GlobalKey();
+  GlobalKey _keyButton3 = GlobalKey();
+  GlobalKey _keyButton4 = GlobalKey();
+  GlobalKey _keyButton5 = GlobalKey();
+
+  GlobalKey get keyButton => _keyButton;
+  GlobalKey get keyButton2 => _keyButton2;
+  GlobalKey get keyButton3 => _keyButton3;
+  GlobalKey get keyButton4 => _keyButton4;
+  GlobalKey get keyButton5 => _keyButton5;
 
   bool _search = false;
   bool get search => _search;
@@ -20,11 +30,6 @@ class MiscProvider with ChangeNotifier {
     _pageTitle = title;
     notifyListeners();
   }
-
-  // setVisibility(bool disable) {
-  //   _disable = disable;
-  //   notifyListeners();
-  // }
 
   setSearchMode(bool searchMode) {
     _search = searchMode;
@@ -36,8 +41,9 @@ class MiscProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setCurrentPage(int index) {
+  setCurrentPage(int index, int last) {
     _currentPage = index;
+    _lastPage = last;
     notifyListeners();
   }
 }

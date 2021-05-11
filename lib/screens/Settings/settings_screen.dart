@@ -1,4 +1,5 @@
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
@@ -17,7 +18,7 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
     super.dispose();
   }
 
-  void showInfoModal() {
+  void showInfoModal(message) {
     final dialogContent = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -67,7 +68,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'This feature will be available soon.',
+                message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -123,7 +124,24 @@ class _SettingsScreenPage extends State<SettingsScreen>
         context: context, builder: (BuildContext context) => dialogContent);
   }
 
+  // void animateDirection(int index) {
+  //   controller = new AnimationController(
+  //       duration: Duration(milliseconds: 300), vsync: this)
+  //     ..addListener(() => setState(() {}));
+  //   animation = _currentIndex > index
+  //       ? Tween(begin: MediaQuery.of(context).size.width, end: 0.0)
+  //           .animate(controller)
+  //       : _currentIndex == index
+  //           ? Tween(begin: 0.0, end: 0.0).animate(controller)
+  //           : Tween(begin: -MediaQuery.of(context).size.width, end: 0.0)
+  //               .animate(controller);
+  //   controller.forward();
+  // }
+
   Widget _createBottomNavigationBar() {
+    var message = '';
+    var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
+
     return Builder(builder: (BuildContext context) {
       return Container(
         decoration: BoxDecoration(
@@ -138,26 +156,28 @@ class _SettingsScreenPage extends State<SettingsScreen>
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
-            print(index);
+            final miscProvider =
+                Provider.of<MiscProvider>(context, listen: false);
             switch (index) {
-              case 0:
-                NavigationService.instance.goHome(0);
+              case 2:
+                if (prayers.length == 0) {
+                  message =
+                      'You must have at least one active prayer to start prayer time.';
+                  showInfoModal(message);
+                } else {
+                  NavigationService.instance.goHome(2);
+                  _currentIndex = index;
+                }
                 break;
-              case 1:
-                showInfoModal();
+              case 3:
+                message = 'This feature will be available soon.';
+                showInfoModal(message);
                 break;
               case 4:
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                Provider.of<MiscProvider>(context, listen: false)
-                    .setCurrentPage(index);
-                Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.leftToRightWithFade,
-                      child: EntryScreen(),
-                    ));
+                NavigationService.instance.goHome(0);
                 break;
             }
           },
@@ -175,7 +195,8 @@ class _SettingsScreenPage extends State<SettingsScreen>
           selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
-            for (final tabItem in TabNavigationItem.items)
+            for (final tabItem
+                in getItems(Provider.of<MiscProvider>(context, listen: false)))
               BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
           ],
         ),
@@ -188,6 +209,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
     return new Scaffold(
       appBar: SettingsAppBar(),
       endDrawer: CustomDrawer(),
+      endDrawerEnableOpenDragGesture: false,
       body: SettingsTab(),
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(),
@@ -312,47 +334,62 @@ class TabNavigationItem {
     @required this.title,
     @required this.icon,
   });
-
-  static List<TabNavigationItem> get items => [
-        TabNavigationItem(
-          page: PrayerList(),
-          icon: Icon(
-            AppIcons.list,
-            size: 18,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "List",
-        ),
-        TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(AppIcons.groups,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Groups",
-        ),
-        TabNavigationItem(
-          page: AddPrayer(
-            isEdit: false,
-            isGroup: false,
-            showCancel: false,
-          ),
-          icon: Icon(AppIcons.bestill_add,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Add",
-        ),
-        TabNavigationItem(
-          page: PrayerTime(),
-          icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Pray",
-        ),
-        TabNavigationItem(
-          page: null,
-          icon: Icon(
-            Icons.more_horiz,
-            size: 20,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "More",
-        ),
-      ];
 }
+
+List<TabNavigationItem> getItems(miscProvider) => [
+      TabNavigationItem(
+        page: Container(
+          child: Center(child: Text('tetetette')),
+        ),
+        icon: Icon(
+          AppIcons.list,
+          size: 16,
+          key: Settings.isAppInit ? miscProvider.keyButton : null,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "List",
+      ),
+      TabNavigationItem(
+        page: AddPrayer(
+          isEdit: false,
+          isGroup: false,
+          showCancel: false,
+        ),
+        icon: Icon(
+          AppIcons.bestill_add,
+          key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Add",
+      ),
+      TabNavigationItem(
+        page: PrayerTime(),
+        icon: Icon(
+          AppIcons.bestill_menu_logo_lt,
+          key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Pray",
+      ),
+      TabNavigationItem(
+        page: GroupScreen(),
+        icon: Icon(
+          AppIcons.groups,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Groups",
+      ),
+      TabNavigationItem(
+        page: null,
+        icon: Icon(
+          Icons.more_horiz,
+          key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+          size: 20,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "More",
+      ),
+    ];

@@ -41,6 +41,7 @@
       "name": "Prod",
       "request": "launch",
       "type": "dart",
+      "flutterMode": "release",
       "program": "lib/main_prod.dart",
       "args": [
         "--flavor",
@@ -51,6 +52,7 @@
       "name": "Store",
       "request": "launch",
       "type": "dart",
+      "flutterMode": "release",
       "program": "lib/main_store.dart",
       "args": [
         "--flavor",

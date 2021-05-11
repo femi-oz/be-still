@@ -10,11 +10,12 @@ import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:provider/provider.dart';
 
 class PrayerDetails extends StatefulWidget {
@@ -25,8 +26,6 @@ class PrayerDetails extends StatefulWidget {
 }
 
 class _PrayerDetailsState extends State<PrayerDetails> {
-  // GroupUserModel groupUser;
-
   void getSettings() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<SettingsProvider>(context, listen: false)
@@ -64,9 +63,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   bool _isInit = true;
 
   updateUI() {
-    if (hasReminder) {
-      print('reminderString $reminderString');
-    }
     setState(() {});
   }
 
@@ -123,7 +119,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => NavigationService.instance.goHome(0),
+                    onPressed: () => Navigator.of(context).pop(),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(
@@ -131,61 +127,84 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       ),
                     ),
                   ),
-                  hasReminder
-                      ? InkWell(
-                          onTap: () => showDialog(
+                  Row(
+                    children: [
+                      hasReminder
+                          ? InkWell(
+                              onTap: () => showDialog(
+                                context: context,
+                                barrierColor: AppColors.detailBackgroundColor[1]
+                                    .withOpacity(0.5),
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    insetPadding: EdgeInsets.all(20),
+                                    backgroundColor:
+                                        AppColors.prayerCardBgColor,
+                                    shape: RoundedRectangleBorder(
+                                      side:
+                                          BorderSide(color: AppColors.darkBlue),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 30),
+                                          child: ReminderPicker(
+                                            type: NotificationType.reminder,
+                                            reminder: _reminder,
+                                            hideActionuttons: false,
+                                            onCancel: () =>
+                                                Navigator.of(context).pop(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    AppIcons.bestill_reminder,
+                                    size: 12,
+                                    color: AppColors.lightBlue5,
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 7),
+                                    child: Text(reminderString,
+                                        style: AppTextStyles.regularText12),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      Transform.rotate(
+                        angle: 90 * math.pi / 180,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.build,
+                            color: AppColors.lightBlue3,
+                          ),
+                          onPressed: () => showModalBottomSheet(
                             context: context,
                             barrierColor: AppColors.detailBackgroundColor[1]
                                 .withOpacity(0.5),
+                            backgroundColor: AppColors.detailBackgroundColor[1]
+                                .withOpacity(1),
+                            isScrollControlled: true,
                             builder: (BuildContext context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.all(20),
-                                backgroundColor: AppColors.prayerCardBgColor,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: AppColors.darkBlue),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 30),
-                                      child: ReminderPicker(
-                                        type: NotificationType.reminder,
-                                        reminder: _reminder,
-                                        hideActionuttons: false,
-                                        onCancel: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
+                              return _buildMenu();
                             },
                           ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_reminder,
-                                size: 14,
-                                color: AppColors.lightBlue5,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  reminderString,
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Container(),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
@@ -210,23 +229,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     : NoUpdateView(),
               ),
             ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: AppColors.lightBlue3,
-              ),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                barrierColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                backgroundColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(1),
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return _buildMenu();
-                },
-              ),
-            ),
+            SizedBox(
+              height: 30,
+            )
           ],
         ),
       ),

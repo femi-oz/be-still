@@ -135,7 +135,7 @@ class LocalNotification {
       hour,
       selectedMinute,
     );
-    if (scheduledDate.isBefore(now)) {
+    if (scheduledDate.isBefore(now) && !isOneTime) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;

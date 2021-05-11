@@ -1,22 +1,19 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:validators/validators.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -79,10 +76,11 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          await Future.delayed(Duration(milliseconds: 300));
+          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          NavigationService.instance.goHome(0);
+          Provider.of<MiscProvider>(context, listen: false)
+              .setCurrentPage(0, 1);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -100,9 +98,8 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          await Future.delayed(Duration(milliseconds: 300));
+          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-
           NavigationService.instance.goHome(0);
         }
       }
@@ -168,20 +165,24 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
-    tagText = '';
-    String tmpText =
-        s.displayName.substring(i + tmp.length, s.displayName.length);
+    // if (isUppercase(s.displayName.substring(0, 1))) {
+    //   tmp = tmp.toUpperCase();
+    //   print(tmp);
+    // } else {
+    //   print('no');
+    // }
 
-    _descriptionController.text += tmpText;
+    tagText = '';
+    String tmpText = s.displayName.substring(0, s.displayName.length);
+
+    String controllerText = _descriptionController.text
+        .substring(0, _descriptionController.text.indexOf('@'));
+    controllerText += tmpText;
+    print(controllerText);
+
     backupText = _descriptionController.text;
 
-    if (isLowercase(tmp)) {
-      _descriptionController.text = _descriptionController.text
-          .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
-    } else {
-      _descriptionController.text = _descriptionController.text
-          .replaceAll('@${s.displayName}', s.displayName);
-    }
+    _descriptionController.text = controllerText;
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
@@ -234,14 +235,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => widget.isEdit
-                        ? Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              child: PrayerDetails(),
-                            ),
-                          )
-                        : NavigationService.instance.goHome(0),
+                        ? Navigator.pop(context)
+                        : Provider.of<MiscProvider>(context, listen: false)
+                            .setCurrentPage(0, 1),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -342,31 +338,16 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Text(
-                            'CANCEL',
-                            style: AppTextStyles.boldText18
-                                .copyWith(color: AppColors.grey),
-                          ),
-                          onTap: () => isValid
-                              ? onCancel()
-                              : widget.isEdit
-                                  ? Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child: PrayerDetails(),
-                                      ),
-                                    )
-                                  : Navigator.pushReplacement(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child: EntryScreen(),
-                                      ),
-                                    ),
-                        ),
+                            child: Text(
+                              'CANCEL',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.grey),
+                            ),
+                            onTap: () => isValid
+                                ? onCancel()
+                                : widget.isEdit
+                                    ? Navigator.pop(context)
+                                    : NavigationService.instance.goHome(0)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(

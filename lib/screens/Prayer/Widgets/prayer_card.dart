@@ -4,6 +4,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -13,12 +14,15 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
+import 'dart:math' as math;
 
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final String timeago;
+  final keyButton;
 
-  PrayerCard({@required this.prayerData, @required this.timeago});
+  PrayerCard(
+      {@required this.prayerData, @required this.timeago, this.keyButton});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
@@ -178,10 +182,15 @@ class _PrayerCardState extends State<PrayerCard> {
     }
   }
 
+  Widget _buildMenu() {
+    return PrayerMenu(context, hasReminder, reminder, null);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
+      key: widget.keyButton,
       color: AppColors.prayerCardBgColor,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
@@ -395,7 +404,22 @@ class _PrayerCardState extends State<PrayerCard> {
             ),
           ),
         ),
-        actions: <Widget>[],
+        actions: <Widget>[
+          _buildSlideItem(
+            Icons.build,
+            'Options',
+            () => showModalBottomSheet(
+              context: context,
+              barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+              backgroundColor:
+                  AppColors.detailBackgroundColor[1].withOpacity(1),
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return _buildMenu();
+              },
+            ),
+          ),
+        ],
         secondaryActions: <Widget>[
           _buildSlideItem(
             AppIcons.bestill_answered,
@@ -446,11 +470,20 @@ class _PrayerCardState extends State<PrayerCard> {
         color: Colors.transparent,
         iconWidget: Container(
           margin: const EdgeInsets.all(10.0),
-          child: Icon(
-            icon,
-            color: AppColors.lightBlue3,
-            size: 18,
-          ),
+          child: label == 'Options'
+              ? Transform.rotate(
+                  angle: 90 * math.pi / 180,
+                  child: Icon(
+                    icon,
+                    color: AppColors.lightBlue3,
+                    size: 18,
+                  ),
+                )
+              : Icon(
+                  icon,
+                  color: AppColors.lightBlue3,
+                  size: 18,
+                ),
         ),
         foregroundColor: AppColors.lightBlue3,
         onTap: _onTap,

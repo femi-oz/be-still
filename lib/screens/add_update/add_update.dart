@@ -13,7 +13,7 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 
 class AddUpdate extends StatefulWidget {
@@ -109,13 +109,7 @@ class _AddUpdateState extends State<AddUpdate> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.leftToRightWithFade,
-                        child: PrayerDetails(),
-                      ),
-                    ),
+                    onTap: () => Navigator.pop(context),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
