@@ -568,7 +568,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     Container(
                       child: Text(
                         "DISCLAIMER OF WARRANTIES AND LIMITATION OF LIABILITY",
-                        style: AppTextStyles.boldText16.copyWith(
+                        style: AppTextStyles.regularText16b.copyWith(
                           color: Settings.isDarkMode
                               ? AppColors.offWhite4
                               : AppColors.grey4,
@@ -579,7 +579,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     Container(
                       child: Text(
                         "THIS APP IS PROVIDED BY SECOND BAPTIST CHURCH ON AN \"AS IS\" AND \"AS AVAILABLE\" BASIS. SECOND BAPTIST CHURCH MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, AS TO THE OPERATION OF THIS APP OR THE INFORMATION, CONTENT, MATERIALS, OR PRODUCTS INCLUDED IN THIS APP. YOU EXPRESSLY AGREE THAT YOUR USE OF THIS APP IS AT YOUR SOLE RISK. TO THE FULL EXTENT PERMISSIBLE BY APPLICABLE LAW, SECOND BAPTIST CHURCH DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. SECOND BAPTIST CHURCH DOES NOT WARRANT THAT THIS APP, ITS SERVERS, OR EMAIL SENT FROM SECOND BAPTIST CHURCH ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS. SECOND BAPTIST CHURCH WILL NOT BE LIABLE FOR ANY DAMAGES OF ANY KIND ARISING FROM THE USE OF THIS SITE, INCLUDING, BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, PUNITIVE, AND CONSEQUENTIAL DAMAGES. CERTAIN STATE LAWS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF THESE LAWS APPLY TO YOU, SOME OR ALL OF THE ABOVE DISCLAIMERS, EXCLUSIONS, OR LIMITATIONS MAY NOT APPLY TO YOU, AND YOU MIGHT HAVE ADDITIONAL RIGHTS.",
-                        style: AppTextStyles.boldText16.copyWith(
+                        style: AppTextStyles.regularText16b.copyWith(
                           color: Settings.isDarkMode
                               ? AppColors.offWhite4
                               : AppColors.grey4,
