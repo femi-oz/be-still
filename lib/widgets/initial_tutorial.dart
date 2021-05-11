@@ -149,7 +149,11 @@ class TutorialTarget {
                                 .copyWith(color: AppColors.prayerTextColor)),
                         onPressed: () => tutorialCoachMark.previous(),
                       )
-                    : Container(),
+                    : TextButton(
+                        onPressed: () => tutorialCoachMark.show(),
+                        child: Text('Skip',
+                            style: AppTextStyles.boldText16
+                                .copyWith(color: AppColors.prayerTextColor))),
                 id < 4
                     ? TextButton(
                         child: Text('Next',

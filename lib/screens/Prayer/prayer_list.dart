@@ -101,6 +101,11 @@ class _PrayerListState extends State<PrayerList> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Skip',
+                                style: AppTextStyles.boldText16.copyWith(
+                                    color: AppColors.prayerTextColor))),
+                        TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                               TutorialTarget.showTutorial(
@@ -108,11 +113,6 @@ class _PrayerListState extends State<PrayerList> {
                               );
                             },
                             child: Text('Next',
-                                style: AppTextStyles.boldText16.copyWith(
-                                    color: AppColors.prayerTextColor))),
-                        TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('Skip',
                                 style: AppTextStyles.boldText16.copyWith(
                                     color: AppColors.prayerTextColor))),
                       ],

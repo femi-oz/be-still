@@ -310,7 +310,7 @@ class TabNavigationItem {
           page: PrayerList(),
           icon: Icon(
             AppIcons.list,
-            size: 18,
+            size: 16,
             key: Settings.isAppInit ? miscProvider.keyButton : null,
             color: AppColors.bottomNavIconColor,
           ),
