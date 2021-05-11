@@ -350,9 +350,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 ? onCancel()
                                 : widget.isEdit
                                     ? Navigator.pop(context)
-                                    : Provider.of<MiscProvider>(context,
-                                            listen: false)
-                                        .setCurrentPage(0)),
+                                    : NavigationService.instance.goHome(0)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(
