@@ -232,18 +232,17 @@ class _EntryScreenState extends State<EntryScreen>
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
-            if (index == 3 && prayers.length == 0) {
+            if (index == 2 && prayers.length == 0) {
               message =
                   'You must have at least one active prayer to start prayer time.';
               showInfoModal(message);
               return;
             }
             switch (index) {
-              case 1:
+              case 3:
                 message = 'This feature will be available soon.';
                 showInfoModal(message);
                 break;
-
               case 4:
                 Scaffold.of(context).openEndDrawer();
                 break;
@@ -314,12 +313,6 @@ class TabNavigationItem {
           title: "List",
         ),
         TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(AppIcons.groups,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Groups",
-        ),
-        TabNavigationItem(
           page: AddPrayer(
             isEdit: false,
             isGroup: false,
@@ -338,6 +331,12 @@ class TabNavigationItem {
               size: 16,
               color: AppColors.bottomNavIconColor),
           title: "Pray",
+        ),
+        TabNavigationItem(
+          page: GroupScreen(),
+          icon: Icon(AppIcons.groups,
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Groups",
         ),
         TabNavigationItem(
           page: null,

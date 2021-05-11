@@ -1,4 +1,5 @@
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
@@ -14,6 +15,7 @@ import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +47,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
     super.dispose();
   }
 
-  void showInfoModal() {
+  void showInfoModal(message) {
     final dialogContent = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -66,7 +68,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'This feature will be available soon.',
+                message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -123,6 +125,9 @@ class _SettingsScreenPage extends State<SettingsScreen>
   }
 
   Widget _createBottomNavigationBar() {
+    var message = '';
+    var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
+
     return Builder(builder: (BuildContext context) {
       return Container(
         decoration: BoxDecoration(
@@ -137,22 +142,29 @@ class _SettingsScreenPage extends State<SettingsScreen>
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
-            print(index);
             switch (index) {
               case 0:
                 NavigationService.instance.goHome(0);
                 break;
               case 1:
-                showInfoModal();
+                NavigationService.instance.goHome(1);
                 break;
               case 4:
                 Scaffold.of(context).openEndDrawer();
                 break;
               case 3:
-                NavigationService.instance.goHome(3);
+                message = 'This feature will be available soon.';
+                showInfoModal(message);
                 break;
               case 2:
-                NavigationService.instance.goHome(2);
+                if (prayers.length == 0) {
+                  message =
+                      'You must have at least one active prayer to start prayer time.';
+                  showInfoModal(message);
+                } else {
+                  NavigationService.instance.goHome(2);
+                }
+
                 break;
               default:
                 NavigationService.instance.goHome(0);
@@ -317,15 +329,10 @@ class TabNavigationItem {
           icon: Icon(
             AppIcons.list,
             size: 18,
+            key: Settings.isAppInit ? miscProvider.keyButton : null,
             color: AppColors.bottomNavIconColor,
           ),
           title: "List",
-        ),
-        TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(AppIcons.groups,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Groups",
         ),
         TabNavigationItem(
           page: AddPrayer(
@@ -334,19 +341,30 @@ class TabNavigationItem {
             showCancel: false,
           ),
           icon: Icon(AppIcons.bestill_add,
-              size: 16, color: AppColors.bottomNavIconColor),
+              key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+              size: 16,
+              color: AppColors.bottomNavIconColor),
           title: "Add",
         ),
         TabNavigationItem(
           page: PrayerTime(),
           icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 16, color: AppColors.bottomNavIconColor),
+              key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+              size: 16,
+              color: AppColors.bottomNavIconColor),
           title: "Pray",
+        ),
+        TabNavigationItem(
+          page: GroupScreen(),
+          icon: Icon(AppIcons.groups,
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Groups",
         ),
         TabNavigationItem(
           page: null,
           icon: Icon(
             Icons.more_horiz,
+            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
             size: 20,
             color: AppColors.bottomNavIconColor,
           ),
