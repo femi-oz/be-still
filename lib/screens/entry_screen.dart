@@ -69,6 +69,9 @@ class _EntryScreenState extends State<EntryScreen>
       });
     }
 
+    //get Filtered Prayers
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .setPrayerTimePrayers(userId);
     //load settings
     await Provider.of<SettingsProvider>(context, listen: false)
         .setPrayerSettings(userId);
@@ -319,24 +322,31 @@ class TabNavigationItem {
             isGroup: false,
             showCancel: false,
           ),
-          icon: Icon(AppIcons.bestill_add,
-              key: Settings.isAppInit ? miscProvider.keyButton2 : null,
-              size: 16,
-              color: AppColors.bottomNavIconColor),
+          icon: Icon(
+            AppIcons.bestill_add,
+            key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
           title: "Add",
         ),
         TabNavigationItem(
           page: PrayerTime(),
-          icon: Icon(AppIcons.bestill_menu_logo_lt,
-              key: Settings.isAppInit ? miscProvider.keyButton3 : null,
-              size: 16,
-              color: AppColors.bottomNavIconColor),
+          icon: Icon(
+            AppIcons.bestill_menu_logo_lt,
+            key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
           title: "Pray",
         ),
         TabNavigationItem(
           page: GroupScreen(),
-          icon: Icon(AppIcons.groups,
-              size: 16, color: AppColors.bottomNavIconColor),
+          icon: Icon(
+            AppIcons.groups,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
           title: "Groups",
         ),
         TabNavigationItem(
