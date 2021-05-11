@@ -34,13 +34,7 @@ class _EntryScreenState extends State<EntryScreen>
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController controller;
   Animation<double> animation;
-
   void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
-  @override
-  void initState() {
-    _isInit = false;
-    super.initState();
-  }
 
   bool _isInit = true;
 
@@ -60,8 +54,6 @@ class _EntryScreenState extends State<EntryScreen>
             .checkPrayerValidity(userId);
       });
     }
-
-    //get Filtered Prayers
     await Provider.of<PrayerProvider>(context, listen: false)
         .setPrayerTimePrayers(userId);
     //load settings
@@ -82,8 +74,9 @@ class _EntryScreenState extends State<EntryScreen>
         .setUserNotifications(userId);
 
     // get all local notifications
-    Provider.of<NotificationProvider>(context, listen: false)
+    await Provider.of<NotificationProvider>(context, listen: false)
         .setLocalNotifications(userId);
+    _isInit = false;
   }
 
   @override
@@ -229,7 +222,6 @@ class _EntryScreenState extends State<EntryScreen>
 
   Widget _createBottomNavigationBar(int _currentIndex) {
     var message = '';
-    var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
 
     return Builder(builder: (BuildContext context) {
       return Container(
@@ -244,18 +236,21 @@ class _EntryScreenState extends State<EntryScreen>
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: (index) {
+          onTap: (index) async {
             final miscProvider =
                 Provider.of<MiscProvider>(context, listen: false);
             switch (index) {
               case 2:
+                final prayers =
+                    Provider.of<PrayerProvider>(context, listen: false)
+                        .filteredPrayerTimeList;
                 if (prayers.length == 0) {
                   message =
                       'You must have at least one active prayer to start prayer time.';
                   showInfoModal(message);
                 } else {
-                  miscProvider.setCurrentPage(index, _currentIndex);
                   _switchSearchMode(false);
+                  miscProvider.setCurrentPage(index, _currentIndex);
                 }
                 break;
               case 3:
@@ -266,8 +261,8 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                miscProvider.setCurrentPage(index, _currentIndex);
                 _switchSearchMode(false);
+                miscProvider.setCurrentPage(index, _currentIndex);
                 break;
             }
           },

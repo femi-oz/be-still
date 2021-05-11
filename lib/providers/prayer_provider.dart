@@ -73,7 +73,7 @@ class PrayerProvider with ChangeNotifier {
             }
           }
           _filteredPrayerTimeList = _distinct;
-          notifyListeners();
+          // notifyListeners();
         },
       );
 
