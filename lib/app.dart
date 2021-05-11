@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _initializeFlutterFireFuture;
 
   Future<void> _testAsyncErrorOnInit() async {
-    Future<void>.delayed(const Duration(seconds: 2), () {
+    Future<void>.delayed(const Duration(milliseconds: 2), () {
       final List<int> list = <int>[];
       print(list[100]);
     });
