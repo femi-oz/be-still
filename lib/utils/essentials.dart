@@ -180,6 +180,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w300,
     letterSpacing: 0.5,
   );
+  static const TextStyle regularText12 = const TextStyle(
+    color: AppColors.lightBlue5,
+    fontSize: 13,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0,
+  );
   static const TextStyle regularText13 = const TextStyle(
     color: AppColors.lightBlue4,
     fontSize: 13,

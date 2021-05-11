@@ -266,7 +266,7 @@ class _PrayerListState extends State<PrayerList> {
                                     keyButton: Settings.isAppInit &&
                                             prayers.indexOf(e) == 0
                                         ? key
-                                        : GlobalKey(),
+                                        : null,
                                   ),
                                 );
                               }).toList(),
