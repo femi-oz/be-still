@@ -134,6 +134,7 @@ class _EntryScreenState extends State<EntryScreen>
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
+      endDrawerEnableOpenDragGesture: false,
     );
   }
 

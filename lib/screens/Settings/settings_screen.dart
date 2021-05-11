@@ -198,6 +198,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
     return new Scaffold(
       appBar: SettingsAppBar(),
       endDrawer: CustomDrawer(),
+      endDrawerEnableOpenDragGesture: false,
       body: SettingsTab(),
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(),
