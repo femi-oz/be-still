@@ -168,20 +168,24 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
-    tagText = '';
-    String tmpText =
-        s.displayName.substring(i + tmp.length, s.displayName.length);
+    // if (isUppercase(s.displayName.substring(0, 1))) {
+    //   tmp = tmp.toUpperCase();
+    //   print(tmp);
+    // } else {
+    //   print('no');
+    // }
 
-    _descriptionController.text += tmpText;
+    tagText = '';
+    String tmpText = s.displayName.substring(0, s.displayName.length);
+
+    String controllerText = _descriptionController.text
+        .substring(0, _descriptionController.text.indexOf('@'));
+    controllerText += tmpText;
+    print(controllerText);
+
     backupText = _descriptionController.text;
 
-    if (isLowercase(tmp)) {
-      _descriptionController.text = _descriptionController.text
-          .replaceAll('@${s.displayName.toLowerCase()}', s.displayName);
-    } else {
-      _descriptionController.text = _descriptionController.text
-          .replaceAll('@${s.displayName}', s.displayName);
-    }
+    _descriptionController.text = controllerText;
 
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));

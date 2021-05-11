@@ -134,10 +134,11 @@ class _EntryScreenState extends State<EntryScreen>
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(),
       endDrawer: CustomDrawer(),
+      endDrawerEnableOpenDragGesture: false,
     );
   }
 
-  void showInfoModal() {
+  void showInfoModal(message) {
     final dialogContent = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -158,7 +159,7 @@ class _EntryScreenState extends State<EntryScreen>
               margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
-                'This feature will be available soon.',
+                message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.lightBlue4,
@@ -215,6 +216,9 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Widget _createBottomNavigationBar() {
+    var message = '';
+    var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
+
     return Builder(builder: (BuildContext context) {
       return Container(
         decoration: BoxDecoration(
@@ -229,9 +233,16 @@ class _EntryScreenState extends State<EntryScreen>
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
+            if (index == 2 && prayers.length == 0) {
+              message =
+                  'You must have at least one active prayer to start prayer time.';
+              showInfoModal(message);
+              return;
+            }
             switch (index) {
-              case 1:
-                showInfoModal();
+              case 3:
+                message = 'This feature will be available soon.';
+                showInfoModal(message);
                 break;
               case 4:
                 Scaffold.of(context).openEndDrawer();
@@ -303,12 +314,6 @@ class TabNavigationItem {
           title: "List",
         ),
         TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(AppIcons.groups,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Groups",
-        ),
-        TabNavigationItem(
           page: AddPrayer(
             isEdit: false,
             isGroup: false,
@@ -327,6 +332,12 @@ class TabNavigationItem {
               size: 16,
               color: AppColors.bottomNavIconColor),
           title: "Pray",
+        ),
+        TabNavigationItem(
+          page: GroupScreen(),
+          icon: Icon(AppIcons.groups,
+              size: 16, color: AppColors.bottomNavIconColor),
+          title: "Groups",
         ),
         TabNavigationItem(
           page: null,
