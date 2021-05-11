@@ -3,6 +3,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
@@ -12,13 +13,10 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
-import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-
-import 'Prayer/prayer_list.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
@@ -28,12 +26,11 @@ class EntryScreen extends StatefulWidget {
 
 bool _isSearchMode = false;
 TutorialCoachMark tutorialCoachMark;
-var miscProvider;
 
 class _EntryScreenState extends State<EntryScreen>
     with TickerProviderStateMixin {
   BuildContext bcontext;
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController controller;
   Animation<double> animation;
@@ -50,15 +47,10 @@ class _EntryScreenState extends State<EntryScreen>
   final cron = Cron();
 
   Future<void> _preLoadData() async {
-    if (Settings.setenableLocalAuth) {
-      setState(() {
-        Settings.enableLocalAuth = true;
-      });
-    } else {
-      setState(() {
-        Settings.enableLocalAuth = false;
-      });
-    }
+    if (Settings.setenableLocalAuth)
+      Settings.enableLocalAuth = true;
+    else
+      Settings.enableLocalAuth = false;
 
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser?.id;
@@ -96,11 +88,11 @@ class _EntryScreenState extends State<EntryScreen>
 
   @override
   Widget build(BuildContext context) {
-    miscProvider = Provider.of<MiscProvider>(context);
-    _currentIndex = Provider.of<MiscProvider>(context).currentPage;
-    final isSearchMode =
-        Provider.of<MiscProvider>(context, listen: false).search;
-    _switchSearchMode(isSearchMode);
+    final miscProvider = Provider.of<MiscProvider>(context);
+    _switchSearchMode(miscProvider.search);
+    final _currentIndex = miscProvider.currentPage;
+    final _lastIndex = miscProvider.lastPage;
+    animateDirection(_lastIndex, _currentIndex);
     return Scaffold(
       key: _scaffoldKey,
       appBar: _currentIndex == 2 || _currentIndex == 3
@@ -111,7 +103,7 @@ class _EntryScreenState extends State<EntryScreen>
               switchSearchMode: (bool val) => _switchSearchMode(val),
             ),
       body: FutureBuilder(
-        future: _preLoadData(),
+        future: _isInit ? _preLoadData() : null,
         initialData: null,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting &&
@@ -127,18 +119,35 @@ class _EntryScreenState extends State<EntryScreen>
                 colors: AppColors.backgroundColor,
               ),
             ),
-            child: Transform.translate(
-              offset: Offset(animation?.value ?? 0, 0),
-              child: TabNavigationItem.items[_currentIndex].page,
+            child: AnimatedBuilder(
+              animation: controller,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(animation?.value ?? 0, 0),
+                child: getItems(miscProvider)[_currentIndex].page,
+              ),
             ),
           );
         },
       ),
       bottomNavigationBar:
-          _currentIndex == 3 ? null : _createBottomNavigationBar(),
+          _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
       endDrawer: CustomDrawer(),
       endDrawerEnableOpenDragGesture: false,
     );
+  }
+
+  void animateDirection(int index, int _currentIndex) {
+    final miscProvider = Provider.of<MiscProvider>(context, listen: false);
+    final _currentIndex = miscProvider.currentPage;
+    final _lastIndex = miscProvider.lastPage;
+    controller = new AnimationController(
+        duration: Duration(milliseconds: 2), vsync: this);
+    animation = _currentIndex > _lastIndex
+        ? Tween(begin: 200.0, end: 0.0).animate(controller)
+        : _currentIndex == _lastIndex
+            ? Tween(begin: 0.0, end: 0.0).animate(controller)
+            : Tween(begin: -200.0, end: 0.0).animate(controller);
+    controller.forward(from: 0.0);
   }
 
   void showInfoModal(message) {
@@ -218,7 +227,7 @@ class _EntryScreenState extends State<EntryScreen>
         context: context, builder: (BuildContext context) => dialogContent);
   }
 
-  Widget _createBottomNavigationBar() {
+  Widget _createBottomNavigationBar(int _currentIndex) {
     var message = '';
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
 
@@ -236,13 +245,19 @@ class _EntryScreenState extends State<EntryScreen>
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
-            if (index == 2 && prayers.length == 0) {
-              message =
-                  'You must have at least one active prayer to start prayer time.';
-              showInfoModal(message);
-              return;
-            }
+            final miscProvider =
+                Provider.of<MiscProvider>(context, listen: false);
             switch (index) {
+              case 2:
+                if (prayers.length == 0) {
+                  message =
+                      'You must have at least one active prayer to start prayer time.';
+                  showInfoModal(message);
+                } else {
+                  miscProvider.setCurrentPage(index, _currentIndex);
+                  _switchSearchMode(false);
+                }
+                break;
               case 3:
                 message = 'This feature will be available soon.';
                 showInfoModal(message);
@@ -251,22 +266,7 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                Provider.of<MiscProvider>(context, listen: false)
-                    .setCurrentPage(index);
-                controller = new AnimationController(
-                    duration: Duration(milliseconds: 300), vsync: this)
-                  ..addListener(() => setState(() {}));
-                animation = _currentIndex > index
-                    ? Tween(begin: MediaQuery.of(context).size.width, end: 0.0)
-                        .animate(controller)
-                    : _currentIndex == index
-                        ? Tween(begin: 0.0, end: 0.0).animate(controller)
-                        : Tween(
-                                begin: -MediaQuery.of(context).size.width,
-                                end: 0.0)
-                            .animate(controller);
-                controller.forward();
-                _currentIndex = index;
+                miscProvider.setCurrentPage(index, _currentIndex);
                 _switchSearchMode(false);
                 break;
             }
@@ -285,7 +285,8 @@ class _EntryScreenState extends State<EntryScreen>
           selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
-            for (final tabItem in TabNavigationItem.items)
+            for (final tabItem
+                in getItems(Provider.of<MiscProvider>(context, listen: false)))
               BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
           ],
         ),
@@ -304,60 +305,60 @@ class TabNavigationItem {
     @required this.title,
     @required this.icon,
   });
-
-  static List<TabNavigationItem> get items => [
-        TabNavigationItem(
-          page: PrayerList(),
-          icon: Icon(
-            AppIcons.list,
-            size: 16,
-            key: Settings.isAppInit ? miscProvider.keyButton : null,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "List",
-        ),
-        TabNavigationItem(
-          page: AddPrayer(
-            isEdit: false,
-            isGroup: false,
-            showCancel: false,
-          ),
-          icon: Icon(
-            AppIcons.bestill_add,
-            key: Settings.isAppInit ? miscProvider.keyButton2 : null,
-            size: 16,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Add",
-        ),
-        TabNavigationItem(
-          page: PrayerTime(),
-          icon: Icon(
-            AppIcons.bestill_menu_logo_lt,
-            key: Settings.isAppInit ? miscProvider.keyButton3 : null,
-            size: 16,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Pray",
-        ),
-        TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(
-            AppIcons.groups,
-            size: 16,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Groups",
-        ),
-        TabNavigationItem(
-          page: null,
-          icon: Icon(
-            Icons.more_horiz,
-            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
-            size: 20,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "More",
-        ),
-      ];
 }
+
+List<TabNavigationItem> getItems(miscProvider) => [
+      TabNavigationItem(
+        page: PrayerList(),
+        icon: Icon(
+          AppIcons.list,
+          size: 16,
+          // key: Settings.isAppInit ? miscProvider.keyButton : null,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "List",
+      ),
+      TabNavigationItem(
+        page: AddPrayer(
+          isEdit: false,
+          isGroup: false,
+          showCancel: false,
+        ),
+        icon: Icon(
+          AppIcons.bestill_add,
+          // key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Add",
+      ),
+      TabNavigationItem(
+        page: PrayerTime(),
+        icon: Icon(
+          AppIcons.bestill_menu_logo_lt,
+          // key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Pray",
+      ),
+      TabNavigationItem(
+        page: GroupScreen(),
+        icon: Icon(
+          AppIcons.groups,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Groups",
+      ),
+      TabNavigationItem(
+        page: null,
+        icon: Icon(
+          Icons.more_horiz,
+          // key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+          size: 20,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "More",
+      ),
+    ];

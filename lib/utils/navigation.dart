@@ -72,7 +72,7 @@ class NavigationService {
 
   Future<dynamic> goHome(int index) async {
     await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
-        .setCurrentPage(index);
+        .setCurrentPage(index, 1);
     return navigationKey.currentState.pushReplacement(
         MaterialPageRoute(builder: (context) => EntryScreen()));
   }
