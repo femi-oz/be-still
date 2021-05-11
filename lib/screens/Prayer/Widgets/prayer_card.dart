@@ -14,6 +14,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
+import 'dart:math' as math;
 
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
@@ -405,7 +406,7 @@ class _PrayerCardState extends State<PrayerCard> {
         ),
         actions: <Widget>[
           _buildSlideItem(
-            AppIcons.bestill_alert,
+            Icons.build,
             'Options',
             () => showModalBottomSheet(
               context: context,
@@ -469,11 +470,20 @@ class _PrayerCardState extends State<PrayerCard> {
         color: Colors.transparent,
         iconWidget: Container(
           margin: const EdgeInsets.all(10.0),
-          child: Icon(
-            icon,
-            color: AppColors.lightBlue3,
-            size: 18,
-          ),
+          child: label == 'Options'
+              ? Transform.rotate(
+                  angle: 90 * math.pi / 180,
+                  child: Icon(
+                    icon,
+                    color: AppColors.lightBlue3,
+                    size: 18,
+                  ),
+                )
+              : Icon(
+                  icon,
+                  color: AppColors.lightBlue3,
+                  size: 18,
+                ),
         ),
         foregroundColor: AppColors.lightBlue3,
         onTap: _onTap,

@@ -30,12 +30,14 @@ class PrayerList extends StatefulWidget {
 class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
   bool _canVibrate = true;
+  var key;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
       _setVibration();
       _getPermissions();
+      key = Provider.of<MiscProvider>(context).keyButton5;
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
@@ -101,16 +103,8 @@ class _PrayerListState extends State<PrayerList> {
                         TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                              final miscProvider = Provider.of<MiscProvider>(
-                                  context,
-                                  listen: false);
                               TutorialTarget.showTutorial(
                                 context: context,
-                                keyButton2: miscProvider.keyButton2,
-                                keyButton3: miscProvider.keyButton3,
-                                keyButton: miscProvider.keyButton,
-                                keyButton4: miscProvider.keyButton4,
-                                keyButton5: miscProvider.keyButton5,
                               );
                             },
                             child: Text('Next',
@@ -271,10 +265,8 @@ class _PrayerListState extends State<PrayerList> {
                                     timeago: _timeago,
                                     keyButton: Settings.isAppInit &&
                                             prayers.indexOf(e) == 0
-                                        ? Provider.of<MiscProvider>(context,
-                                                listen: false)
-                                            .keyButton5
-                                        : null,
+                                        ? key
+                                        : GlobalKey(),
                                   ),
                                 );
                               }).toList(),

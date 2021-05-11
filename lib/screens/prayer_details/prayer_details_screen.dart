@@ -13,8 +13,9 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:math' as math;
 import 'package:provider/provider.dart';
 
 class PrayerDetails extends StatefulWidget {
@@ -181,6 +182,26 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                           ),
                         )
                       : Container(),
+                  Transform.rotate(
+                    angle: 90 * math.pi / 180,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.build,
+                        color: AppColors.lightBlue3,
+                      ),
+                      onPressed: () => showModalBottomSheet(
+                        context: context,
+                        barrierColor:
+                            AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                        backgroundColor:
+                            AppColors.detailBackgroundColor[1].withOpacity(1),
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return _buildMenu();
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -205,23 +226,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     : NoUpdateView(),
               ),
             ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: AppColors.lightBlue3,
-              ),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                barrierColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                backgroundColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(1),
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return _buildMenu();
-                },
-              ),
-            ),
+            SizedBox(
+              height: 30,
+            )
           ],
         ),
       ),

@@ -431,7 +431,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: EdgeInsets.only(right: 10, left: 10),
             child: Align(
               alignment: Alignment.topLeft,
               child: IconButton(
