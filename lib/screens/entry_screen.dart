@@ -313,7 +313,7 @@ List<TabNavigationItem> getItems(miscProvider) => [
         icon: Icon(
           AppIcons.list,
           size: 16,
-          // key: Settings.isAppInit ? miscProvider.keyButton : null,
+          key: Settings.isAppInit ? miscProvider.keyButton : null,
           color: AppColors.bottomNavIconColor,
         ),
         title: "List",
@@ -326,7 +326,7 @@ List<TabNavigationItem> getItems(miscProvider) => [
         ),
         icon: Icon(
           AppIcons.bestill_add,
-          // key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+          key: Settings.isAppInit ? miscProvider.keyButton2 : null,
           size: 16,
           color: AppColors.bottomNavIconColor,
         ),
@@ -336,7 +336,7 @@ List<TabNavigationItem> getItems(miscProvider) => [
         page: PrayerTime(),
         icon: Icon(
           AppIcons.bestill_menu_logo_lt,
-          // key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+          key: Settings.isAppInit ? miscProvider.keyButton3 : null,
           size: 16,
           color: AppColors.bottomNavIconColor,
         ),
@@ -355,7 +355,7 @@ List<TabNavigationItem> getItems(miscProvider) => [
         page: null,
         icon: Icon(
           Icons.more_horiz,
-          // key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+          key: Settings.isAppInit ? miscProvider.keyButton4 : null,
           size: 20,
           color: AppColors.bottomNavIconColor,
         ),
