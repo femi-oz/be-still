@@ -190,7 +190,7 @@ class _PrayerCardState extends State<PrayerCard> {
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
-      key: widget.keyButton,
+      key: null,
       color: AppColors.prayerCardBgColor,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
