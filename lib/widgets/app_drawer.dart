@@ -218,10 +218,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.push(
-                                context,
-                                SlideRightRoute(page: RecommenededBibles()),
-                              ),
+                              onTap: () async {
+                                if (tabController != null) {
+                                  setCurrentIndex(6);
+                                  tabController.animateTo(6);
+                                }
+                                Navigator.pop(context);
+                              },
                               child: Text("RECOMMENDED BIBLES",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
@@ -230,10 +233,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                                onTap: () => Navigator.push(
-                                      context,
-                                      SlideRightRoute(page: DevotionPlans()),
-                                    ),
+                                onTap: () async {
+                                  if (tabController != null) {
+                                    setCurrentIndex(5);
+                                    tabController.animateTo(5);
+                                  }
+                                  Navigator.pop(context);
+                                },
                                 child: Text("DEVOTIONALS AND READING PLANS",
                                     style: AppTextStyles.drawerMenu.copyWith(
                                         color: AppColors.drawerMenuColor))),

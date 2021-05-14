@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -9,8 +7,9 @@ import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
+import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
+import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -44,7 +43,7 @@ class _EntryScreenState extends State<EntryScreen>
   final cron = Cron();
 
   initState() {
-    _tabController = new TabController(length: 5, vsync: this);
+    _tabController = new TabController(length: 7, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _switchSearchMode(miscProvider.search);
     _currentIndex = miscProvider.currentPage;
@@ -126,6 +125,8 @@ class _EntryScreenState extends State<EntryScreen>
             getItems(miscProvider).map((e) => e.page).toList()[2],
             getItems(miscProvider).map((e) => e.page).toList()[3],
             getItems(miscProvider).map((e) => e.page).toList()[4],
+            getItems(miscProvider).map((e) => e.page).toList()[5],
+            getItems(miscProvider).map((e) => e.page).toList()[6],
           ],
         ),
       ),
@@ -228,7 +229,7 @@ class _EntryScreenState extends State<EntryScreen>
           ),
         ),
         child: BottomNavigationBar(
-          currentIndex: _currentIndex,
+          currentIndex: _currentIndex > 4 ? 4 : _currentIndex,
           onTap: (index) async {
             switch (index) {
               case 2:
@@ -272,7 +273,8 @@ class _EntryScreenState extends State<EntryScreen>
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
             for (final tabItem
-                in getItems(Provider.of<MiscProvider>(context, listen: false)))
+                in getItems(Provider.of<MiscProvider>(context, listen: false))
+                    .getRange(0, 5))
               BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
           ],
         ),
@@ -327,6 +329,26 @@ class _EntryScreenState extends State<EntryScreen>
         ),
         TabNavigationItem(
           page: SettingsScreen(),
+          icon: Icon(
+            Icons.more_horiz,
+            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+            size: 20,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "More",
+        ),
+        TabNavigationItem(
+          page: DevotionPlans(_setCurrentIndex),
+          icon: Icon(
+            Icons.more_horiz,
+            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+            size: 20,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "More",
+        ),
+        TabNavigationItem(
+          page: RecommenededBibles(_setCurrentIndex),
           icon: Icon(
             Icons.more_horiz,
             key: Settings.isAppInit ? miscProvider.keyButton4 : null,

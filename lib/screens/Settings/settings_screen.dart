@@ -123,7 +123,7 @@ class SettingsTabState extends State<SettingsTab>
                         ? Color(0xFF718B92)
                         : Color(0xB3FFFFFF),
                 labelColor: AppColors.actveTabMenu,
-                labelStyle: AppTextStyles.boldText24,
+                labelStyle: AppTextStyles.boldText16b,
                 isScrollable: true,
                 tabs: [
                   Tab(
