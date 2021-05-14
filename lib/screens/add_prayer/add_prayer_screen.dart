@@ -405,14 +405,9 @@ class _AddPrayerState extends State<AddPrayer> {
                                     children: [
                                       ...localContacts.map((s) {
                                         displayName = s.displayName ?? '';
-
-                                        if (('@' + displayName)
+                                        if (('@' + s.displayName)
                                             .toLowerCase()
                                             .contains(tagText.toLowerCase())) {
-                                          setState(() {
-                                            showNoContact = false;
-                                          });
-                                          print(showNoContact);
                                           return GestureDetector(
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -428,35 +423,26 @@ class _AddPrayerState extends State<AddPrayer> {
                                               ),
                                               onTap: () => _onTagSelected(s));
                                         } else {
-                                          setState(() {
-                                            showNoContact = true;
-                                          });
-                                          print(showNoContact);
-
                                           return SizedBox();
                                         }
                                       }).toList(),
-                                      if (showNoContact)
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 2.0),
-                                              child: Text(
-                                                'No matching contacts found.',
-                                                style: AppTextStyles
-                                                    .regularText14
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      else
-                                        SizedBox()
+                                      // Column(
+                                      //   crossAxisAlignment:
+                                      //       CrossAxisAlignment.start,
+                                      //   children: [
+                                      //     Padding(
+                                      //       padding: EdgeInsets.symmetric(
+                                      //           vertical: 2.0),
+                                      //       child: Text(
+                                      //         'No matching contacts found.',
+                                      //         style: AppTextStyles.regularText14
+                                      //             .copyWith(
+                                      //           color: AppColors.lightBlue4,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
                                     ],
                                   )),
                                 )
