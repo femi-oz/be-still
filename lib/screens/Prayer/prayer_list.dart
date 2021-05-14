@@ -23,6 +23,8 @@ import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class PrayerList extends StatefulWidget {
+  final Function setCurrentIndex;
+  PrayerList(this.setCurrentIndex);
   @override
   _PrayerListState createState() => _PrayerListState();
 }
@@ -279,9 +281,7 @@ class _PrayerListState extends State<PrayerList> {
                             currentPrayerType == PrayerType.answered
                         ? Container()
                         : LongButton(
-                            onPress: () => Provider.of<MiscProvider>(context,
-                                    listen: false)
-                                .setCurrentPage(2, 0),
+                            onPress: () => widget.setCurrentIndex(1),
                             text: 'Add New Prayer',
                             backgroundColor:
                                 AppColors.addprayerBgColor.withOpacity(0.9),

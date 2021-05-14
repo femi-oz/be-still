@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
 class PrayerTime extends StatefulWidget {
+  final Function setCurrentPage;
+  PrayerTime(this.setCurrentPage);
   static const routeName = '/prayer-time';
 
   @override
@@ -133,8 +135,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     color: AppColors.lightBlue3,
                     size: 30,
                   ),
-                  onTap: () => Provider.of<MiscProvider>(context, listen: false)
-                      .setCurrentPage(0, 2),
+                  onTap: () => widget.setCurrentPage(0),
                 ),
                 SizedBox(width: 40),
                 InkWell(

@@ -1,7 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -22,6 +21,7 @@ class AddPrayer extends StatefulWidget {
   final bool isEdit;
   final bool isGroup;
   final CombinePrayerStream prayerData;
+  final Function setCurrentIndex;
 
   @override
   AddPrayer({
@@ -29,6 +29,7 @@ class AddPrayer extends StatefulWidget {
     this.prayerData,
     this.isGroup,
     this.showCancel = true,
+    this.setCurrentIndex,
   });
   _AddPrayerState createState() => _AddPrayerState();
 }
@@ -74,11 +75,6 @@ class _AddPrayerState extends State<AddPrayer> {
             '${_user.firstName} ${_user.lastName}',
             backupText,
           );
-          contacts.forEach((element) {
-            if (_descriptionController.text.contains(element.displayName)) {
-              print(element.displayName);
-            }
-          });
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
@@ -86,8 +82,7 @@ class _AddPrayerState extends State<AddPrayer> {
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          Provider.of<MiscProvider>(context, listen: false)
-              .setCurrentPage(0, 1);
+          widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -241,14 +236,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-
-                      widget.isEdit
-                          ? NavigationService.instance.goHome(0)
-                          : Provider.of<MiscProvider>(context, listen: false)
-                              .setCurrentPage(0, 1);
-                    },
+                    onTap: () => widget.isEdit
+                        ? Navigator.pop(context)
+                        : widget.setCurrentIndex(0),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -358,7 +348,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 ? onCancel()
                                 : widget.isEdit
                                     ? Navigator.pop(context)
-                                    : NavigationService.instance.goHome(0)),
+                                    : widget.setCurrentIndex(0)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(

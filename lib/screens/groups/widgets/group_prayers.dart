@@ -12,7 +12,6 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +23,8 @@ class GroupPrayers extends StatefulWidget {
 
 class _GroupPrayersState extends State<GroupPrayers> {
   Future<bool> _onWillPop() async {
-    await Provider.of<MiscProvider>(context, listen: false)
-        .setCurrentPage(0, 3);
+    // await Provider.of<MiscProvider>(context, listen: false)
+    //     .setCurrentPage(0, 3);
     return (NavigationService.instance.goHome(0)) ?? false;
   }
 
@@ -38,7 +37,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: CustomAppBar(),
-        endDrawer: CustomDrawer(),
         body: Container(
           padding: EdgeInsets.only(left: 20),
           height: MediaQuery.of(context).size.height * 1,

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -69,7 +70,10 @@ class _SplashScreenState extends State<SplashScreen>
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerTime());
+          Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
+          // NavigationService.instance.navigateToReplacement(PrayerTime(null));
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)

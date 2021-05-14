@@ -4,9 +4,7 @@ class MiscProvider with ChangeNotifier {
   String _pageTitle = 'MY LIST';
   String get pageTitle => _pageTitle;
   int _currentPage = 0;
-  int _lastPage = 0;
   int get currentPage => _currentPage;
-  int get lastPage => _lastPage;
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
@@ -41,9 +39,8 @@ class MiscProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setCurrentPage(int index, int last) {
+  setCurrentPage(int index) {
     _currentPage = index;
-    _lastPage = last;
     notifyListeners();
   }
 }

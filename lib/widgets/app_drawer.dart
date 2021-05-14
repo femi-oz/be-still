@@ -8,11 +8,13 @@ import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomDrawer extends StatelessWidget {
+  final TabController tabController;
+  final Function setCurrentIndex;
+  CustomDrawer(this.tabController, this.setCurrentIndex);
   _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -216,10 +218,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.pushReplacement(
-                                context,
-                                SlideRightRoute(page: RecommenededBibles()),
-                              ),
+                              onTap: () async {
+                                if (tabController != null) {
+                                  setCurrentIndex(6);
+                                  tabController.animateTo(6);
+                                }
+                                Navigator.pop(context);
+                              },
                               child: Text("RECOMMENDED BIBLES",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
@@ -228,10 +233,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                                onTap: () => Navigator.pushReplacement(
-                                      context,
-                                      SlideRightRoute(page: DevotionPlans()),
-                                    ),
+                                onTap: () async {
+                                  if (tabController != null) {
+                                    setCurrentIndex(5);
+                                    tabController.animateTo(5);
+                                  }
+                                  Navigator.pop(context);
+                                },
                                 child: Text("DEVOTIONALS AND READING PLANS",
                                     style: AppTextStyles.drawerMenu.copyWith(
                                         color: AppColors.drawerMenuColor))),
@@ -239,12 +247,13 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () => Navigator.pushReplacement(
-                                context,
-                                SlideRightRoute(
-                                  page: SettingsScreen(),
-                                ),
-                              ),
+                              onTap: () async {
+                                if (tabController != null) {
+                                  setCurrentIndex(4);
+                                  tabController.animateTo(4);
+                                }
+                                Navigator.pop(context);
+                              },
                               child: Text("SETTINGS",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
