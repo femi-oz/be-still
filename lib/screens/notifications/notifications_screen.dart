@@ -242,7 +242,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             child: _buildPanel(),
           ),
         ),
-        endDrawer: CustomDrawer(),
+        // endDrawer: CustomDrawer(),
       ),
     );
   }

@@ -93,7 +93,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       appBar: CustomAppBar(
         showPrayerActions: false,
       ),
-      endDrawer: CustomDrawer(),
+      // endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
