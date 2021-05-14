@@ -30,7 +30,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   void _getPrayers() async {
     try {
-      UserModel _user =
+      final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayerTimePrayers(_user.id);
@@ -89,12 +89,11 @@ class _PrayerTimeState extends State<PrayerTime> {
                 },
               ),
             ),
-            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 30),
+                  padding: EdgeInsets.only(left: 55.0),
                   child: Transform.rotate(
                     angle: 180 * math.pi / 180,
                     child: InkWell(
@@ -115,7 +114,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     ),
                   ),
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                   child: Icon(
                     Icons.navigate_before,
@@ -129,7 +128,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     }
                   },
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                   child: Icon(
                     AppIcons.bestill_close,
@@ -138,7 +137,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                   ),
                   onTap: () => widget.setCurrentPage(0),
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                     child: Icon(
                       Icons.navigate_next,
@@ -152,7 +151,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                         _controller.jumpToPage(currentPage);
                       }
                     }),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                   child: Icon(
                     Icons.keyboard_tab,
@@ -171,7 +170,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
           ],
         ),
       ),

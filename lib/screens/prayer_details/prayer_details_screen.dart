@@ -40,7 +40,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   int snoozeDuration;
   LocalNotificationModel _reminder;
   Widget _buildMenu() {
-    return PrayerMenu(context, hasReminder, _reminder, () => updateUI());
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    return PrayerMenu(
+        context, hasReminder, _reminder, () => updateUI(), prayerData);
   }
 
   String reminderString;
