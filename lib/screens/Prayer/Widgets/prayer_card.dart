@@ -196,19 +196,19 @@ class _PrayerCardState extends State<PrayerCard> {
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
       key: widget.keyButton,
-      color: AppColors.prayerCardBgColor,
+      color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: Container(
           decoration: BoxDecoration(
-              color: AppColors.prayerCardBgColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                topLeft: Radius.circular(10),
-              ),
-              border: Border.all(color: AppColors.cardBorder)),
+            color: AppColors.cardBorder,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              topLeft: Radius.circular(10),
+            ),
+          ),
           child: Container(
             margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
