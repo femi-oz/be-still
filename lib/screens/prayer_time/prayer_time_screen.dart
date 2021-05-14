@@ -94,7 +94,8 @@ class _PrayerTimeState extends State<PrayerTime> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.12),
+                      left: MediaQuery.of(context).size.width * 0.12,
+                      right: MediaQuery.of(context).size.width * 0.005),
                   child: Transform.rotate(
                     angle: 180 * math.pi / 180,
                     child: InkWell(

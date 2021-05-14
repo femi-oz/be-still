@@ -14,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 
+import '../entry_screen.dart';
+
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
@@ -75,6 +77,7 @@ class _AddPrayerState extends State<AddPrayer> {
             '${_user.firstName} ${_user.lastName}',
             backupText,
           );
+
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
@@ -82,7 +85,7 @@ class _AddPrayerState extends State<AddPrayer> {
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          widget.setCurrentIndex(0);
+          // widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -167,25 +170,14 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
-    // if (isUppercase(s.displayName.substring(0, 1))) {
-    //   tmp = tmp.toUpperCase();
-    //   print(tmp);
-    // } else {
-    //   print('no');
-    // }
-
     tagText = '';
     String tmpText = s.displayName.substring(0, s.displayName.length);
 
     String controllerText = _descriptionController.text
         .substring(0, _descriptionController.text.indexOf('@'));
     controllerText += tmpText;
-    print(controllerText);
-
     backupText = _descriptionController.text;
-
     _descriptionController.text = controllerText;
-
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
 
@@ -193,6 +185,8 @@ class _AddPrayerState extends State<AddPrayer> {
       _descriptionController.selection =
           TextSelection.collapsed(offset: _descriptionController.text.length);
     });
+
+    print(backupText);
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
     }
@@ -236,9 +230,17 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => widget.isEdit
-                        ? Navigator.pop(context)
-                        : widget.setCurrentIndex(0),
+                    onTap: () {
+                      if (widget.isEdit) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            EntryScreen.routeName,
+                            (Route<dynamic> route) => false);
+                      } else {
+                        widget.setCurrentIndex(0);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
+                      }
+                    },
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -399,54 +401,61 @@ class _AddPrayerState extends State<AddPrayer> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...localContacts.map((s) {
-                                        displayName = s.displayName ?? '';
-                                        if (('@' + s.displayName)
-                                            .toLowerCase()
-                                            .contains(tagText.toLowerCase())) {
-                                          return GestureDetector(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10.0),
-                                                child: Text(
-                                                  displayName,
-                                                  style: AppTextStyles
-                                                      .regularText14
-                                                      .copyWith(
-                                                    color: AppColors.lightBlue4,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ...localContacts.map((s) {
+                                          displayName = s.displayName ?? '';
+                                          if (('@' + s.displayName)
+                                              .toLowerCase()
+                                              .contains(
+                                                  tagText.toLowerCase())) {
+                                            return GestureDetector(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.0),
+                                                  child: Text(
+                                                    displayName,
+                                                    style: AppTextStyles
+                                                        .regularText14
+                                                        .copyWith(
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              onTap: () => _onTagSelected(s));
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      }).toList(),
-                                      // Column(
-                                      //   crossAxisAlignment:
-                                      //       CrossAxisAlignment.start,
-                                      //   children: [
-                                      //     Padding(
-                                      //       padding: EdgeInsets.symmetric(
-                                      //           vertical: 2.0),
-                                      //       child: Text(
-                                      //         'No matching contacts found.',
-                                      //         style: AppTextStyles.regularText14
-                                      //             .copyWith(
-                                      //           color: AppColors.lightBlue4,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ),
-                                    ],
-                                  )),
+                                                onTap: () => _onTagSelected(s));
+                                          } else {
+                                            setState(() {
+                                              showNoContact = true;
+                                            });
+                                            return SizedBox();
+                                          }
+                                        }).toList(),
+                                      ],
+                                    ),
+                                  ),
                                 )
                               : SizedBox(),
+                          // showNoContact
+                          //     ? Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           Padding(
+                          //             padding:
+                          //                 EdgeInsets.symmetric(vertical: 2.0),
+                          //             child: Text(
+                          //               'No matching contacts found.',
+                          //               style: AppTextStyles.regularText14
+                          //                   .copyWith(
+                          //                 color: AppColors.lightBlue4,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       )
+                          //     : Container(),
                         ],
                       ),
                     ),
