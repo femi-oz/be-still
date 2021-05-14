@@ -32,30 +32,10 @@ void main() async {
     FirebaseFirestore.instance.settings = Settings(
         host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
   }
-//   FlutterError.onError = (FlutterErrorDetails details) async {
-//     FlutterError.dumpErrorToConsole(details);
-//     await Sentry.captureException(
-//       details.exception,
-//       stackTrace: details.stack,
-//     );
-//     await FirebaseCrashlytics.instance.recordError(
-//   details.exception,
-//   details.stack,
-//   reason: 'a fatal error',
-//   // Pass in 'fatal' argument
-//   // fatal: true
-// );
-//     await locator<LogService>()
-//         .createLog(details.exceptionAsString(), 'onError', 'MAIN/main/onError');
-//     // if (kReleaseMode) exit(1);
-//   };
+
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   await runZonedGuarded(() async {
-    // await SentryFlutter.init((options) {
-    //   options.dsn =
-    //       'https://6a3b3509ae7e44ef8a8437960e2a7a14@o554552.ingest.sentry.io/5683235';
-    // },
     runApp(
       MultiProvider(
         providers: [
@@ -76,10 +56,6 @@ void main() async {
   }, (Object error, StackTrace stackTrace) async {
     FirebaseCrashlytics.instance.recordError(error, stackTrace);
 
-    // await Sentry.captureException(
-    //   error,
-    //   stackTrace: stackTrace,
-    // );
     await locator<LogService>().createLog(
         '${error.toString()}===${stackTrace.toString()}',
         'runZonedGuarded',

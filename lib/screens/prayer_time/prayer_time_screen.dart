@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
 class PrayerTime extends StatefulWidget {
+  final Function setCurrentPage;
+  PrayerTime(this.setCurrentPage);
   static const routeName = '/prayer-time';
 
   @override
@@ -28,7 +30,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   void _getPrayers() async {
     try {
-      UserModel _user =
+      final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayerTimePrayers(_user.id);
@@ -87,12 +89,13 @@ class _PrayerTimeState extends State<PrayerTime> {
                 },
               ),
             ),
-            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 30),
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.12,
+                      right: MediaQuery.of(context).size.width * 0.005),
                   child: Transform.rotate(
                     angle: 180 * math.pi / 180,
                     child: InkWell(
@@ -113,7 +116,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     ),
                   ),
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                   child: Icon(
                     Icons.navigate_before,
@@ -127,17 +130,16 @@ class _PrayerTimeState extends State<PrayerTime> {
                     }
                   },
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                   child: Icon(
                     AppIcons.bestill_close,
                     color: AppColors.lightBlue3,
                     size: 30,
                   ),
-                  onTap: () => Provider.of<MiscProvider>(context, listen: false)
-                      .setCurrentPage(0, 2),
+                  onTap: () => widget.setCurrentPage(0),
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                     child: Icon(
                       Icons.navigate_next,
@@ -151,7 +153,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                         _controller.jumpToPage(currentPage);
                       }
                     }),
-                SizedBox(width: 50),
+                SizedBox(width: 40),
                 InkWell(
                   child: Icon(
                     Icons.keyboard_tab,
@@ -170,7 +172,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
           ],
         ),
       ),

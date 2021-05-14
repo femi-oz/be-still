@@ -1,7 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -15,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 
+import '../entry_screen.dart';
+
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
@@ -22,6 +23,7 @@ class AddPrayer extends StatefulWidget {
   final bool isEdit;
   final bool isGroup;
   final CombinePrayerStream prayerData;
+  final Function setCurrentIndex;
 
   @override
   AddPrayer({
@@ -29,6 +31,7 @@ class AddPrayer extends StatefulWidget {
     this.prayerData,
     this.isGroup,
     this.showCancel = true,
+    this.setCurrentIndex,
   });
   _AddPrayerState createState() => _AddPrayerState();
 }
@@ -47,6 +50,8 @@ class _AddPrayerState extends State<AddPrayer> {
   String backupText;
   String _oldDescription = '';
   TextPainter painter;
+  bool showNoContact = false;
+  String displayName = '';
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -72,6 +77,7 @@ class _AddPrayerState extends State<AddPrayer> {
             '${_user.firstName} ${_user.lastName}',
             backupText,
           );
+
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
@@ -79,8 +85,7 @@ class _AddPrayerState extends State<AddPrayer> {
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          Provider.of<MiscProvider>(context, listen: false)
-              .setCurrentPage(0, 1);
+          // widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -165,25 +170,14 @@ class _AddPrayerState extends State<AddPrayer> {
     String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
-    // if (isUppercase(s.displayName.substring(0, 1))) {
-    //   tmp = tmp.toUpperCase();
-    //   print(tmp);
-    // } else {
-    //   print('no');
-    // }
-
     tagText = '';
     String tmpText = s.displayName.substring(0, s.displayName.length);
 
     String controllerText = _descriptionController.text
         .substring(0, _descriptionController.text.indexOf('@'));
     controllerText += tmpText;
-    print(controllerText);
-
     backupText = _descriptionController.text;
-
     _descriptionController.text = controllerText;
-
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
 
@@ -191,6 +185,8 @@ class _AddPrayerState extends State<AddPrayer> {
       _descriptionController.selection =
           TextSelection.collapsed(offset: _descriptionController.text.length);
     });
+
+    print(backupText);
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
     }
@@ -234,10 +230,17 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => widget.isEdit
-                        ? Navigator.pop(context)
-                        : Provider.of<MiscProvider>(context, listen: false)
-                            .setCurrentPage(0, 1),
+                    onTap: () {
+                      if (widget.isEdit) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            EntryScreen.routeName,
+                            (Route<dynamic> route) => false);
+                      } else {
+                        widget.setCurrentIndex(0);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
+                      }
+                    },
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -347,7 +350,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 ? onCancel()
                                 : widget.isEdit
                                     ? Navigator.pop(context)
-                                    : NavigationService.instance.goHome(0)),
+                                    : widget.setCurrentIndex(0)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(
@@ -359,7 +362,6 @@ class _AddPrayerState extends State<AddPrayer> {
                       ],
                     ),
                   ),
-
                   Expanded(
                     child: SingleChildScrollView(
                       child: Stack(
@@ -397,18 +399,18 @@ class _AddPrayerState extends State<AddPrayer> {
                                   left: _focusNode.offset.dx,
 
                                   height:
-                                      MediaQuery.of(context).size.height * 0.4,
+                                      MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         ...localContacts.map((s) {
-                                          final displayName =
-                                              s.displayName ?? '';
-                                          if (('@' + displayName)
+                                          displayName = s.displayName ?? '';
+                                          if (('@' + s.displayName)
                                               .toLowerCase()
-                                              .contains(tagText.toLowerCase()))
+                                              .contains(
+                                                  tagText.toLowerCase())) {
                                             return GestureDetector(
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -424,41 +426,40 @@ class _AddPrayerState extends State<AddPrayer> {
                                                   ),
                                                 ),
                                                 onTap: () => _onTagSelected(s));
-                                          else
+                                          } else {
+                                            setState(() {
+                                              showNoContact = true;
+                                            });
                                             return SizedBox();
-                                        }).toList()
+                                          }
+                                        }).toList(),
                                       ],
                                     ),
                                   ),
                                 )
                               : SizedBox(),
+                          // showNoContact
+                          //     ? Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           Padding(
+                          //             padding:
+                          //                 EdgeInsets.symmetric(vertical: 2.0),
+                          //             child: Text(
+                          //               'No matching contacts found.',
+                          //               style: AppTextStyles.regularText14
+                          //                   .copyWith(
+                          //                 color: AppColors.lightBlue4,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       )
+                          //     : Container(),
                         ],
                       ),
                     ),
                   ),
-
-                  // IconButton(
-                  //   icon: Icon(
-                  //     Icons.more_horiz,
-                  //     color: AppColors.lightBlue4,
-                  //   ),
-                  //   onPressed: () => showModalBottomSheet(
-                  //     context: context,
-                  //     barrierColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //     backgroundColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //     isScrollControlled: true,
-                  //     builder: (BuildContext context) {
-                  //       return AddPrayerMenu(
-                  //           prayer: _descriptionController.text);
-                  //     },
-                  //   ).then((value) {
-                  //     setState(() {
-                  //       groups = value;
-                  //     });
-                  //   }),
-                  // ),
                 ],
               ),
             ),
@@ -469,13 +470,3 @@ class _AddPrayerState extends State<AddPrayer> {
     );
   }
 }
-
-// class RouteArguments {
-//   final String id;
-//   // final String groupId;
-
-//   RouteArguments(
-//     this.id,
-//     // this.groupId,
-//   );
-// }

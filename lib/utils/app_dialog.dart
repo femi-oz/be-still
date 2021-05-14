@@ -62,12 +62,12 @@ class BeStilDialog {
         message: error?.message,
       ),
     );
-    FirebaseCrashlytics.instance
+    await FirebaseCrashlytics.instance
         .setCustomKey('id', user == null ? 'N/A' : user.id);
-    FirebaseCrashlytics.instance
+    await FirebaseCrashlytics.instance
         .setCustomKey('email', user == null ? 'N/A' : user.email);
 
-    FirebaseCrashlytics.instance.recordError(
+    await FirebaseCrashlytics.instance.recordError(
       error,
       stackTrace,
     );

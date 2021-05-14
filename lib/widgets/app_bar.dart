@@ -173,7 +173,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             )
           : Text(
-              pageTitle,
+              widget.showPrayerActions ? pageTitle : '',
               style: TextStyle(
                 color: AppColors.bottomNavIconColor,
                 fontSize: 32,

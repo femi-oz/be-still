@@ -3,7 +3,7 @@ import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -15,6 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DevotionPlans extends StatefulWidget {
+  final Function setCurrentIndex;
+  DevotionPlans(this.setCurrentIndex);
   static const routeName = 'devotion-plan';
 
   @override
@@ -28,13 +30,29 @@ class _DevotionPlansState extends State<DevotionPlans> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
+        _getPrayers();
         await _getDevotionals();
       });
       setState(() => _isInit = false);
     }
     super.didChangeDependencies();
+  }
+
+  void _getPrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   Future<void> _getDevotionals() async {
@@ -230,7 +248,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                             color: AppColors.lightBlue3,
                             size: 20,
                           ),
-                          onPressed: () => NavigationService.instance.goHome(0),
+                          onPressed: () => widget.setCurrentIndex(0),
                           label: Text(
                             'BACK',
                             style: AppTextStyles.boldText20.copyWith(
