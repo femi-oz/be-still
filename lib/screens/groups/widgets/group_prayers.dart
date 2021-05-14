@@ -24,7 +24,8 @@ class GroupPrayers extends StatefulWidget {
 
 class _GroupPrayersState extends State<GroupPrayers> {
   Future<bool> _onWillPop() async {
-    await Provider.of<MiscProvider>(context, listen: false).setCurrentPage(1);
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setCurrentPage(0, 3);
     return (NavigationService.instance.goHome(0)) ?? false;
   }
 

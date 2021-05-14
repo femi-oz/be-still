@@ -134,7 +134,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     size: 30,
                   ),
                   onTap: () => Provider.of<MiscProvider>(context, listen: false)
-                      .setCurrentPage(0),
+                      .setCurrentPage(0, 2),
                 ),
                 SizedBox(width: 40),
                 InkWell(

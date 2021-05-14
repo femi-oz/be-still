@@ -4,20 +4,16 @@ import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:validators/validators.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -85,10 +81,11 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          await Future.delayed(Duration(milliseconds: 300));
+          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          Provider.of<MiscProvider>(context, listen: false).setCurrentPage(0);
+          Provider.of<MiscProvider>(context, listen: false)
+              .setCurrentPage(0, 1);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -106,7 +103,7 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          await Future.delayed(Duration(milliseconds: 300));
+          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
           NavigationService.instance.goHome(0);
         }
@@ -242,11 +239,10 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      Provider.of<MiscProvider>(context, listen: false)
-                          .setCurrentPage(0);
-                      NavigationService.instance.goHome(0);
-                    },
+                    onTap: () => widget.isEdit
+                        ? Navigator.pop(context)
+                        : Provider.of<MiscProvider>(context, listen: false)
+                            .setCurrentPage(0, 1),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
@@ -356,9 +352,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 ? onCancel()
                                 : widget.isEdit
                                     ? Navigator.pop(context)
-                                    : Provider.of<MiscProvider>(context,
-                                            listen: false)
-                                        .setCurrentPage(0)),
+                                    : NavigationService.instance.goHome(0)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(

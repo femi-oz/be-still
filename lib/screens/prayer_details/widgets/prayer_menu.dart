@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -10,13 +9,10 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -32,10 +28,11 @@ class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
   final Function updateUI;
+  final prayerData;
   final LocalNotificationModel reminder;
   @override
-  PrayerMenu(
-      this.parentcontext, this.hasReminder, this.reminder, this.updateUI);
+  PrayerMenu(this.parentcontext, this.hasReminder, this.reminder, this.updateUI,
+      this.prayerData);
 
   @override
   _PrayerMenuState createState() => _PrayerMenuState();
@@ -49,6 +46,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     // 'Monthly',
     // 'Yearly'
   ];
+  bool _isInit = true;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -424,9 +422,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    final prayerData =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    print(prayerData.prayer.isAnswer);
+    // final prayerData =
+    //     Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -454,8 +451,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 MenuButton(
                   icon: AppIcons.bestill_share,
                   text: 'Share',
-                  isDisable: prayerData.prayer.isAnswer ||
-                      prayerData.userPrayer.isArchived,
+                  isDisable: widget.prayerData.prayer.isAnswer ||
+                      widget.prayerData.userPrayer.isArchived,
                   onPressed: () => showModalBottomSheet(
                       context: context,
                       barrierColor:
@@ -465,20 +462,20 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return SharePrayer(
-                          prayerData: prayerData,
+                          prayerData: widget.prayerData,
                         );
                       }),
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_edit,
-                  isDisable: prayerData.prayer.isAnswer ||
-                      prayerData.userPrayer.isArchived,
+                  isDisable: widget.prayerData.prayer.isAnswer ||
+                      widget.prayerData.userPrayer.isArchived,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPrayer(
                         isEdit: true,
-                        prayerData: prayerData,
+                        prayerData: widget.prayerData,
                       ),
                     ),
                   ),
@@ -486,8 +483,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_update,
-                  isDisable: prayerData.prayer.isAnswer ||
-                      prayerData.userPrayer.isArchived,
+                  isDisable: widget.prayerData.prayer.isAnswer ||
+                      widget.prayerData.userPrayer.isArchived,
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -498,8 +495,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_reminder,
-                  isDisable: prayerData.prayer.isAnswer ||
-                      prayerData.userPrayer.isArchived,
+                  isDisable: widget.prayerData.prayer.isAnswer ||
+                      widget.prayerData.userPrayer.isArchived,
                   suffix: widget.hasReminder &&
                           widget.reminder.frequency == Frequency.one_time
                       ? DateFormat('dd MMM yyyy HH:mma').format(
@@ -544,10 +541,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_snooze,
-                  isDisable: prayerData.prayer.isAnswer ||
-                      prayerData.userPrayer.isArchived,
-                  onPressed: () => prayerData.userPrayer.isSnoozed
-                      ? _unSnoozePrayer(prayerData)
+                  isDisable: widget.prayerData.prayer.isAnswer ||
+                      widget.prayerData.userPrayer.isArchived,
+                  onPressed: () => widget.prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer(widget.prayerData)
                       : showModalBottomSheet(
                           context: context,
                           barrierColor: AppColors.detailBackgroundColor[1]
@@ -556,37 +553,39 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               .withOpacity(0.9),
                           isScrollControlled: true,
                           builder: (BuildContext context) =>
-                              SnoozePrayer(prayerData),
+                              SnoozePrayer(widget.prayerData),
                         ),
-                  text: prayerData.userPrayer.isSnoozed ? 'Unsnooze' : 'Snooze',
+                  text: widget.prayerData.userPrayer.isSnoozed
+                      ? 'Unsnooze'
+                      : 'Snooze',
                 ),
                 MenuButton(
                   icon: AppIcons.bestill_answered,
-                  onPressed: () => prayerData.prayer.isAnswer
-                      ? _unMarkAsAnswered(prayerData)
-                      : _onMarkAsAnswered(prayerData),
-                  text: prayerData.prayer.isAnswer
+                  onPressed: () => widget.prayerData.prayer.isAnswer
+                      ? _unMarkAsAnswered(widget.prayerData)
+                      : _onMarkAsAnswered(widget.prayerData),
+                  text: widget.prayerData.prayer.isAnswer
                       ? 'Unmark as Answered'
                       : 'Mark as Answered',
                 ),
                 MenuButton(
-                  icon: prayerData.userPrayer.isFavorite
+                  icon: widget.prayerData.userPrayer.isFavorite
                       ? Icons.favorite_border_outlined
                       : Icons.favorite,
-                  onPressed: () => prayerData.userPrayer.isFavorite
-                      ? _unMarkPrayerAsFavorite(prayerData)
-                      : _markPrayerAsFavorite(prayerData),
-                  text: prayerData.userPrayer.isFavorite
+                  onPressed: () => widget.prayerData.userPrayer.isFavorite
+                      ? _unMarkPrayerAsFavorite(widget.prayerData)
+                      : _markPrayerAsFavorite(widget.prayerData),
+                  text: widget.prayerData.userPrayer.isFavorite
                       ? 'Unmark as Favorite '
                       : 'Mark as Favorite ',
                 ),
                 MenuButton(
                   icon:
                       AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
-                  onPressed: () => prayerData.userPrayer.isArchived
-                      ? _unArchive(prayerData)
-                      : _onArchive(prayerData),
-                  text: prayerData.userPrayer.isArchived
+                  onPressed: () => widget.prayerData.userPrayer.isArchived
+                      ? _unArchive(widget.prayerData)
+                      : _onArchive(widget.prayerData),
+                  text: widget.prayerData.userPrayer.isArchived
                       ? 'Unarchive'
                       : 'Archive',
                 ),

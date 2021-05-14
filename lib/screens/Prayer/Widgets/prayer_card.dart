@@ -183,7 +183,8 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   Widget _buildMenu() {
-    return PrayerMenu(context, hasReminder, reminder, () => updateUI());
+    return PrayerMenu(
+        context, hasReminder, reminder, () => updateUI(), widget.prayerData);
   }
 
   updateUI() {

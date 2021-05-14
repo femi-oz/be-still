@@ -37,7 +37,7 @@ class _PrayerListState extends State<PrayerList> {
     if (_isInit) {
       _setVibration();
       _getPermissions();
-      key = Provider.of<MiscProvider>(context).keyButton5;
+      key = Provider.of<MiscProvider>(context, listen: false).keyButton5;
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
@@ -47,8 +47,8 @@ class _PrayerListState extends State<PrayerList> {
             '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle(heading);
+        setState(() => _isInit = false);
       });
-      setState(() => _isInit = false);
     }
     super.didChangeDependencies();
   }
@@ -103,6 +103,11 @@ class _PrayerListState extends State<PrayerList> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Skip',
+                                style: AppTextStyles.boldText16.copyWith(
+                                    color: AppColors.prayerTextColor))),
+                        TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                               TutorialTarget.showTutorial(
@@ -110,11 +115,6 @@ class _PrayerListState extends State<PrayerList> {
                               );
                             },
                             child: Text('Next',
-                                style: AppTextStyles.boldText16.copyWith(
-                                    color: AppColors.prayerTextColor))),
-                        TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('Skip',
                                 style: AppTextStyles.boldText16.copyWith(
                                     color: AppColors.prayerTextColor))),
                       ],
@@ -268,7 +268,7 @@ class _PrayerListState extends State<PrayerList> {
                                     keyButton: Settings.isAppInit &&
                                             prayers.indexOf(e) == 0
                                         ? key
-                                        : GlobalKey(),
+                                        : null,
                                   ),
                                 );
                               }).toList(),
@@ -281,7 +281,7 @@ class _PrayerListState extends State<PrayerList> {
                         : LongButton(
                             onPress: () => Provider.of<MiscProvider>(context,
                                     listen: false)
-                                .setCurrentPage(2),
+                                .setCurrentPage(2, 0),
                             text: 'Add New Prayer',
                             backgroundColor:
                                 AppColors.addprayerBgColor.withOpacity(0.9),

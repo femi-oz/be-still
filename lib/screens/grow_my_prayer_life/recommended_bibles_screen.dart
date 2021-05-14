@@ -2,11 +2,9 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -326,7 +324,8 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
           selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
-            for (final tabItem in TabNavigationItem.items)
+            for (final tabItem
+                in getItems(Provider.of<MiscProvider>(context, listen: false)))
               BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
           ],
         ),
@@ -423,53 +422,62 @@ class TabNavigationItem {
     @required this.title,
     @required this.icon,
   });
-
-  static List<TabNavigationItem> get items => [
-        TabNavigationItem(
-          page: PrayerList(),
-          icon: Icon(
-            AppIcons.list,
-            size: 18,
-            key: Settings.isAppInit ? miscProvider.keyButton : null,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "List",
-        ),
-        TabNavigationItem(
-          page: AddPrayer(
-            isEdit: false,
-            isGroup: false,
-            showCancel: false,
-          ),
-          icon: Icon(AppIcons.bestill_add,
-              key: Settings.isAppInit ? miscProvider.keyButton2 : null,
-              size: 16,
-              color: AppColors.bottomNavIconColor),
-          title: "Add",
-        ),
-        TabNavigationItem(
-          page: PrayerTime(),
-          icon: Icon(AppIcons.bestill_menu_logo_lt,
-              key: Settings.isAppInit ? miscProvider.keyButton3 : null,
-              size: 16,
-              color: AppColors.bottomNavIconColor),
-          title: "Pray",
-        ),
-        TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(AppIcons.groups,
-              size: 16, color: AppColors.bottomNavIconColor),
-          title: "Groups",
-        ),
-        TabNavigationItem(
-          page: null,
-          icon: Icon(
-            Icons.more_horiz,
-            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
-            size: 20,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "More",
-        ),
-      ];
 }
+
+List<TabNavigationItem> getItems(miscProvider) => [
+      TabNavigationItem(
+        page: Container(
+          child: Center(child: Text('tetetette')),
+        ),
+        icon: Icon(
+          AppIcons.list,
+          size: 16,
+          key: Settings.isAppInit ? miscProvider.keyButton : null,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "List",
+      ),
+      TabNavigationItem(
+        page: AddPrayer(
+          isEdit: false,
+          isGroup: false,
+          showCancel: false,
+        ),
+        icon: Icon(
+          AppIcons.bestill_add,
+          key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Add",
+      ),
+      TabNavigationItem(
+        page: PrayerTime(),
+        icon: Icon(
+          AppIcons.bestill_menu_logo_lt,
+          key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Pray",
+      ),
+      TabNavigationItem(
+        page: GroupScreen(),
+        icon: Icon(
+          AppIcons.groups,
+          size: 16,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "Groups",
+      ),
+      TabNavigationItem(
+        page: null,
+        icon: Icon(
+          Icons.more_horiz,
+          key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+          size: 20,
+          color: AppColors.bottomNavIconColor,
+        ),
+        title: "More",
+      ),
+    ];
