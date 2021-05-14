@@ -73,8 +73,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
         getSettings();
       });
       _isInit = false;

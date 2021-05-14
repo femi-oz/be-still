@@ -30,8 +30,6 @@ class _DevotionPlansState extends State<DevotionPlans> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
         _getPrayers();
         await _getDevotionals();
       });
