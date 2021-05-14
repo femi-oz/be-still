@@ -262,6 +262,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     letterSpacing: 0.5,
   );
+  static const TextStyle boldText16b = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 16.8,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
   static const TextStyle boldText28 = const TextStyle(
     color: AppColors.grey3,
     fontSize: 28,

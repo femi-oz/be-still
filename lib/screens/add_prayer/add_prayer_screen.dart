@@ -76,6 +76,11 @@ class _AddPrayerState extends State<AddPrayer> {
             '${_user.firstName} ${_user.lastName}',
             backupText,
           );
+          contacts.forEach((element) {
+            if (_descriptionController.text.contains(element.displayName)) {
+              print(element.displayName);
+            }
+          });
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
@@ -237,10 +242,11 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => widget.isEdit
-                        ? Navigator.pop(context)
-                        : Provider.of<MiscProvider>(context, listen: false)
-                            .setCurrentPage(0),
+                    onTap: () {
+                      Provider.of<MiscProvider>(context, listen: false)
+                          .setCurrentPage(0);
+                      NavigationService.instance.goHome(0);
+                    },
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,

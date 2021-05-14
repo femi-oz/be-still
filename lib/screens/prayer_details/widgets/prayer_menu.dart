@@ -424,7 +424,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    print(prayerData.prayer.isAnswer);
     return Container(
       width: double.infinity,
       height: double.infinity,
