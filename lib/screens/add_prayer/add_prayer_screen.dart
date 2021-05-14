@@ -47,6 +47,8 @@ class _AddPrayerState extends State<AddPrayer> {
   String backupText;
   String _oldDescription = '';
   TextPainter painter;
+  bool showNoContact = false;
+  String displayName = '';
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -368,7 +370,6 @@ class _AddPrayerState extends State<AddPrayer> {
                       ],
                     ),
                   ),
-
                   Expanded(
                     child: SingleChildScrollView(
                       child: Stack(
@@ -406,68 +407,74 @@ class _AddPrayerState extends State<AddPrayer> {
                                   left: _focusNode.offset.dx,
 
                                   height:
-                                      MediaQuery.of(context).size.height * 0.4,
+                                      MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ...localContacts.map((s) {
-                                          final displayName =
-                                              s.displayName ?? '';
-                                          if (('@' + displayName)
-                                              .toLowerCase()
-                                              .contains(tagText.toLowerCase()))
-                                            return GestureDetector(
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 10.0),
-                                                  child: Text(
-                                                    displayName,
-                                                    style: AppTextStyles
-                                                        .regularText14
-                                                        .copyWith(
-                                                      color:
-                                                          AppColors.lightBlue4,
-                                                    ),
+                                      child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ...localContacts.map((s) {
+                                        displayName = s.displayName ?? '';
+
+                                        if (('@' + displayName)
+                                            .toLowerCase()
+                                            .contains(tagText.toLowerCase())) {
+                                          setState(() {
+                                            showNoContact = false;
+                                          });
+                                          print(showNoContact);
+                                          return GestureDetector(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                                child: Text(
+                                                  displayName,
+                                                  style: AppTextStyles
+                                                      .regularText14
+                                                      .copyWith(
+                                                    color: AppColors.lightBlue4,
                                                   ),
                                                 ),
-                                                onTap: () => _onTagSelected(s));
-                                          else
-                                            return SizedBox();
-                                        }).toList()
-                                      ],
-                                    ),
-                                  ),
+                                              ),
+                                              onTap: () => _onTagSelected(s));
+                                        } else {
+                                          setState(() {
+                                            showNoContact = true;
+                                          });
+                                          print(showNoContact);
+
+                                          return SizedBox();
+                                        }
+                                      }).toList(),
+                                      if (showNoContact)
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 2.0),
+                                              child: Text(
+                                                'No matching contacts found.',
+                                                style: AppTextStyles
+                                                    .regularText14
+                                                    .copyWith(
+                                                  color: AppColors.lightBlue4,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      else
+                                        SizedBox()
+                                    ],
+                                  )),
                                 )
                               : SizedBox(),
                         ],
                       ),
                     ),
                   ),
-
-                  // IconButton(
-                  //   icon: Icon(
-                  //     Icons.more_horiz,
-                  //     color: AppColors.lightBlue4,
-                  //   ),
-                  //   onPressed: () => showModalBottomSheet(
-                  //     context: context,
-                  //     barrierColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                  //     backgroundColor:
-                  //         AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                  //     isScrollControlled: true,
-                  //     builder: (BuildContext context) {
-                  //       return AddPrayerMenu(
-                  //           prayer: _descriptionController.text);
-                  //     },
-                  //   ).then((value) {
-                  //     setState(() {
-                  //       groups = value;
-                  //     });
-                  //   }),
-                  // ),
                 ],
               ),
             ),
@@ -478,13 +485,3 @@ class _AddPrayerState extends State<AddPrayer> {
     );
   }
 }
-
-// class RouteArguments {
-//   final String id;
-//   // final String groupId;
-
-//   RouteArguments(
-//     this.id,
-//     // this.groupId,
-//   );
-// }
