@@ -239,10 +239,14 @@ class _AddPrayerState extends State<AddPrayer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => widget.isEdit
-                        ? Navigator.pop(context)
-                        : Provider.of<MiscProvider>(context, listen: false)
-                            .setCurrentPage(0, 1),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      widget.isEdit
+                          ? NavigationService.instance.goHome(0)
+                          : Provider.of<MiscProvider>(context, listen: false)
+                              .setCurrentPage(0, 1);
+                    },
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
