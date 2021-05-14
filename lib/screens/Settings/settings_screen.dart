@@ -1,17 +1,19 @@
+import 'dart:io';
+
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/Prayer/prayer_list.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -30,6 +32,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  bool _isInit = true;
 
   TabController tabController;
 
@@ -42,9 +45,37 @@ class _SettingsScreenPage extends State<SettingsScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        _getPrayers();
+      });
+      setState(() => _isInit = false);
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     tabController.dispose();
     super.dispose();
+  }
+
+  void _getPrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   void showInfoModal(message) {
@@ -284,7 +315,7 @@ class SettingsTabState extends State<SettingsTab>
                         ? Color(0xFF718B92)
                         : Color(0xB3FFFFFF),
                 labelColor: AppColors.actveTabMenu,
-                labelStyle: AppTextStyles.boldText24,
+                labelStyle: AppTextStyles.boldText16b,
                 isScrollable: true,
                 tabs: [
                   Tab(

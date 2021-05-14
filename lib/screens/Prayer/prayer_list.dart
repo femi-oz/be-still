@@ -60,6 +60,8 @@ class _PrayerListState extends State<PrayerList> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProvider>(context, listen: false)
             .searchPrayers(searchQuery, _user.id);
