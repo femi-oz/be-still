@@ -3,11 +3,13 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -415,9 +417,15 @@ class _PrayerCardState extends State<PrayerCard> {
             'Options',
             () => showModalBottomSheet(
               context: context,
-              barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+                      .isDarkModeEnabled
+                  ? AppColors.backgroundColor[0].withOpacity(0.5)
+                  : Color(0xFF021D3C).withOpacity(0.7),
               backgroundColor:
-                  AppColors.detailBackgroundColor[1].withOpacity(1),
+                  Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? AppColors.backgroundColor[0].withOpacity(0.5)
+                      : Color(0xFF021D3C).withOpacity(0.7),
               isScrollControlled: true,
               builder: (BuildContext context) {
                 return _buildMenu();
