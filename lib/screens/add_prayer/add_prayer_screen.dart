@@ -56,12 +56,12 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
 
   Future<void> _save() async {
+    setState(() => _autoValidate = true);
+    if (!_formKey.currentState.validate()) return;
+    _formKey.currentState.save();
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     BeStilDialog.showLoading(context);
 
-    // setState(() => _autoValidate = true);
-    // if (!_formKey.currentState.validate()) return;
-    // _formKey.currentState.save();
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
