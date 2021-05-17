@@ -14,9 +14,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
-import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
@@ -49,7 +47,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     // 'Monthly',
     // 'Yearly'
   ];
-  bool _isInit = true;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();

@@ -1,8 +1,5 @@
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'package:provider/provider.dart';
 
 class SlideRightRoute extends PageRouteBuilder {
   final Widget page;

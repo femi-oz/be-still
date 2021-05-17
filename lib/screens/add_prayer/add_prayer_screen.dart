@@ -164,8 +164,8 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<void> _onTagSelected(s) async {
-    String tmp = tagText.substring(1, tagText.length);
-    var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
+    // String tmp = tagText.substring(1, tagText.length);
+    // var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
 
     // if (isUppercase(s.displayName.substring(0, 1))) {
     //   tmp = tmp.toUpperCase();

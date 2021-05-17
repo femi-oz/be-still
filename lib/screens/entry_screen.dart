@@ -38,7 +38,7 @@ class _EntryScreenState extends State<EntryScreen>
   Animation<double> animation;
   void _switchSearchMode(bool value) => _isSearchMode = value;
   TabController _tabController;
-  bool _isInit = true;
+  // bool _isInit = true;
 
   final cron = Cron();
 
@@ -93,7 +93,7 @@ class _EntryScreenState extends State<EntryScreen>
     // get all local notifications
     await Provider.of<NotificationProvider>(context, listen: false)
         .setLocalNotifications(userId);
-    _isInit = false;
+    // _isInit = false;
   }
 
   @override
@@ -275,7 +275,12 @@ class _EntryScreenState extends State<EntryScreen>
             for (final tabItem
                 in getItems(Provider.of<MiscProvider>(context, listen: false))
                     .getRange(0, 5))
-              BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
+              BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(bottom: tabItem.padding, top: 5),
+                    child: tabItem.icon,
+                  ),
+                  label: tabItem.title)
           ],
         ),
       );
@@ -284,79 +289,79 @@ class _EntryScreenState extends State<EntryScreen>
 
   List<TabNavigationItem> getItems(miscProvider) => [
         TabNavigationItem(
-          page: PrayerList(_setCurrentIndex),
-          icon: Icon(
-            AppIcons.list,
-            size: 16,
-            key: Settings.isAppInit ? miscProvider.keyButton : null,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "List",
-        ),
+            page: PrayerList(_setCurrentIndex),
+            icon: Icon(
+              AppIcons.list,
+              size: 16,
+              key: Settings.isAppInit ? miscProvider.keyButton : null,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "List",
+            padding: 5),
         TabNavigationItem(
-          page: AddPrayer(
-            setCurrentIndex: _setCurrentIndex,
-            isEdit: false,
-            isGroup: false,
-            showCancel: false,
-          ),
-          icon: Icon(
-            AppIcons.bestill_add,
-            key: Settings.isAppInit ? miscProvider.keyButton2 : null,
-            size: 16,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Add",
-        ),
+            page: AddPrayer(
+              setCurrentIndex: _setCurrentIndex,
+              isEdit: false,
+              isGroup: false,
+              showCancel: false,
+            ),
+            icon: Icon(
+              AppIcons.bestill_add,
+              key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+              size: 16,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "Add",
+            padding: 6),
         TabNavigationItem(
-          page: PrayerTime(_setCurrentIndex),
-          icon: Icon(
-            AppIcons.bestill_menu_logo_lt,
-            key: Settings.isAppInit ? miscProvider.keyButton3 : null,
-            size: 16,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Pray",
-        ),
+            page: PrayerTime(_setCurrentIndex),
+            icon: Icon(
+              AppIcons.bestill_menu_logo_lt,
+              key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+              size: 16,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "Pray",
+            padding: 5),
         TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(
-            AppIcons.groups,
-            size: 16,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Groups",
-        ),
+            page: GroupScreen(),
+            icon: Icon(
+              AppIcons.groups,
+              size: 18,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "Groups",
+            padding: 2),
         TabNavigationItem(
-          page: SettingsScreen(),
-          icon: Icon(
-            Icons.more_horiz,
-            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
-            size: 20,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "More",
-        ),
+            page: SettingsScreen(),
+            icon: Icon(
+              Icons.more_horiz,
+              key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+              size: 22,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 0),
         TabNavigationItem(
-          page: DevotionPlans(_setCurrentIndex),
-          icon: Icon(
-            Icons.more_horiz,
-            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
-            size: 20,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "More",
-        ),
+            page: DevotionPlans(_setCurrentIndex),
+            icon: Icon(
+              Icons.more_horiz,
+              key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 5),
         TabNavigationItem(
-          page: RecommenededBibles(_setCurrentIndex),
-          icon: Icon(
-            Icons.more_horiz,
-            key: Settings.isAppInit ? miscProvider.keyButton4 : null,
-            size: 20,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "More",
-        ),
+            page: RecommenededBibles(_setCurrentIndex),
+            icon: Icon(
+              Icons.more_horiz,
+              key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 5),
       ];
 }
 
@@ -364,10 +369,12 @@ class TabNavigationItem {
   final Widget page;
   final String title;
   final Icon icon;
+  final double padding;
 
   TabNavigationItem({
     @required this.page,
     @required this.title,
     @required this.icon,
+    @required this.padding,
   });
 }

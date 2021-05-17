@@ -16,10 +16,11 @@ class AuthenticationService {
   Future<void> biometricAuthentication() async {
     if (Settings.enableLocalAuth) {
       try {
-        isAuthenticated = await _localAuth.authenticateWithBiometrics(
+        isAuthenticated = await _localAuth.authenticate(
           localizedReason: 'authenticate to access',
           useErrorDialogs: true,
           stickyAuth: true,
+          biometricOnly: true,
         );
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
@@ -27,7 +28,7 @@ class AuthenticationService {
               'Authentication Cancelled',
               _firebaseAuth.currentUser.email,
               'AUTHENTICATION/service/biometricAuthentication');
-          throw HttpException('Authentication Cancelled');
+          // throw HttpException('Authentication Cancelled');
         }
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();

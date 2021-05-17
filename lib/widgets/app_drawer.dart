@@ -1,6 +1,4 @@
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
