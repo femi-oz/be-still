@@ -93,7 +93,8 @@ class _AddPrayerState extends State<AddPrayer> {
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
 
-          NavigationService.instance.goHome(0);
+          // NavigationService.instance.goHome(0);
+          widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -113,7 +114,9 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          NavigationService.instance.goHome(0);
+          // NavigationService.instance.goHome(0);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
         }
       }
     } on HttpException catch (e, s) {
