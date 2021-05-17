@@ -72,7 +72,7 @@ class _PrayerListState extends State<PrayerList> {
       }
 
       BeStilDialog.hideLoading(context);
-      if (Settings.isAppInit) TutorialTarget.showTutorial(context);
+      if (!Settings.isAppInit) TutorialTarget.showTutorial(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

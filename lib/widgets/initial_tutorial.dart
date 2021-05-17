@@ -62,7 +62,7 @@ class TutorialTarget {
                   context,
                   'PRAYER QUICK ACTIONS',
                   3,
-                  "assets/images/quick_access.png",
+                  "assets/images/quick-access.png",
                   '',
                   StringUtils.quickTipQuickAccess,
                   ''))
