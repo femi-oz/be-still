@@ -1,5 +1,4 @@
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';

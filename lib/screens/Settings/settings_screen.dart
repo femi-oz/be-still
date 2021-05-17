@@ -1,21 +1,12 @@
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
-import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/groups/groups_screen.dart';
-import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
-import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 

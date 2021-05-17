@@ -12,7 +12,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
@@ -403,7 +402,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 )
               else if (type == _ModalType.password)
                 Text(
-                  'Update your password',
+                  'Update your Password',
                   style: AppTextStyles.boldText20,
                 ),
               SizedBox(height: 10.0),
@@ -453,7 +452,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               obScurePassword: true,
                               showSuffix: false,
                               isRequired: true,
-                              label: 'Confirm Password',
+                              label: 'Confirm New Password',
                               controller: _newConfirmPassword,
                               validator: (value) {
                                 if (_newPassword.text != value) {

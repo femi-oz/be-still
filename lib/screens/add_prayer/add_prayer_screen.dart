@@ -8,6 +8,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -90,11 +91,9 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
+          widget.setCurrentIndex(0);
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-
-          // NavigationService.instance.goHome(0);
-          widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -105,6 +104,7 @@ class _AddPrayerState extends State<AddPrayer> {
               textList.add(element);
             }
           });
+          print('got here');
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
@@ -112,11 +112,11 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          // await Future.delayed(Duration(milliseconds: 300));
+          await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          // NavigationService.instance.goHome(0);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
+          Navigator.of(context)
+              .popUntil(ModalRoute.withName(EntryScreen.routeName));
+          // widget.setCurrentIndex(0);
         }
       }
     } on HttpException catch (e, s) {
@@ -239,9 +239,11 @@ class _AddPrayerState extends State<AddPrayer> {
                   GestureDetector(
                     onTap: () {
                       if (widget.isEdit) {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        Navigator.of(context).popUntil(
+                            ModalRoute.withName(EntryScreen.routeName));
+                        // Navigator.of(context).pushNamedAndRemoveUntil(
+                        //     EntryScreen.routeName,
+                        //     (Route<dynamic> route) => false);
                       } else {
                         widget.setCurrentIndex(0);
                         Navigator.pop(context);

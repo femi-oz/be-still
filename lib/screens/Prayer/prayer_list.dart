@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -32,14 +34,11 @@ class PrayerList extends StatefulWidget {
 class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
   bool _canVibrate = true;
-  var key;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
       _setVibration();
-      _getPermissions();
-      key = Provider.of<MiscProvider>(context, listen: false).keyButton5;
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
@@ -73,58 +72,7 @@ class _PrayerListState extends State<PrayerList> {
       }
 
       BeStilDialog.hideLoading(context);
-      if (Settings.isAppInit)
-        showModalBottomSheet(
-            backgroundColor: AppColors.backgroundColor[0].withOpacity(0.5),
-            isScrollControlled: true,
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                padding: EdgeInsets.symmetric(vertical: 100, horizontal: 40),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Welcome',
-                                style: AppTextStyles.boldText20.copyWith(
-                                    color: AppColors.prayerTextColor)),
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Text(
-                            'Welcome to Be Still!  Here\'s a quick tour that will get you started.\n\nThe Be Still app can organize all your prayers and lead you through your own personal prayer time.\n\nTap Next to begin the tour, or Skip Tour to begin using Be Still right away',
-                            style: AppTextStyles.boldText16
-                                .copyWith(color: AppColors.prayerTextColor)),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('Skip',
-                                style: AppTextStyles.boldText16.copyWith(
-                                    color: AppColors.prayerTextColor))),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              TutorialTarget.showTutorial(
-                                context: context,
-                              );
-                            },
-                            child: Text('Next',
-                                style: AppTextStyles.boldText16.copyWith(
-                                    color: AppColors.prayerTextColor))),
-                      ],
-                    )
-                  ],
-                ),
-              );
-            });
+      if (!Settings.isAppInit) TutorialTarget.showTutorial(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -195,20 +143,6 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  void _getPermissions() async {
-    try {
-      if (Settings.isAppInit) {
-        await Permission.contacts.request().then((p) =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
-        Settings.isAppInit = false;
-      }
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
@@ -267,10 +201,6 @@ class _PrayerListState extends State<PrayerList> {
                                   child: PrayerCard(
                                     prayerData: e,
                                     timeago: _timeago,
-                                    keyButton: Settings.isAppInit &&
-                                            prayers.indexOf(e) == 0
-                                        ? key
-                                        : null,
                                   ),
                                 );
                               }).toList(),

@@ -42,7 +42,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       //       type: PageTransitionType.leftToRightWithFade,
       //       child: EntryScreen(),
       //     ));
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       // BeStilDialog.showErrorDialog(context, e.message);
@@ -66,7 +66,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       //       type: PageTransitionType.leftToRightWithFade,
       //       child: EntryScreen(),
       //     ));
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       // BeStilDialog.showErrorDialog(context, e.message);

@@ -341,39 +341,4 @@ class _SharingSettingsState extends State<SharingSettings> {
       ),
     );
   }
-
-  Widget _button(
-      {final String actionText, final String value, final Function onPressed}) {
-    return GestureDetector(
-      onTap: () => onPressed(),
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.textFieldBorder,
-            ),
-            borderRadius: BorderRadius.circular(3.0),
-            color: AppColors.textFieldBackgroundColor),
-        margin: EdgeInsets.only(left: 20.0, right: 20.0),
-        padding: const EdgeInsets.all(15),
-        width: double.infinity,
-        child: Row(children: [
-          Expanded(
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: false,
-              style: AppTextStyles.regularText18b
-                  .copyWith(color: AppColors.lightBlue4),
-            ),
-          ),
-          SizedBox(width: 15),
-          Text(actionText,
-              textAlign: TextAlign.end,
-              style: AppTextStyles.regularText18b
-                  .copyWith(color: AppColors.prayerTextColor)),
-        ]),
-      ),
-    );
-  }
 }
