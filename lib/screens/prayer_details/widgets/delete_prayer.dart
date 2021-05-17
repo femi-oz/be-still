@@ -3,6 +3,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -33,7 +34,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -61,7 +63,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -95,7 +98,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

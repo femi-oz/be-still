@@ -10,6 +10,7 @@ import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -17,6 +18,7 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -43,6 +45,7 @@ class _EntryScreenState extends State<EntryScreen>
   final cron = Cron();
 
   initState() {
+    _getPermissions();
     _tabController = new TabController(length: 7, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _switchSearchMode(miscProvider.search);
@@ -55,6 +58,20 @@ class _EntryScreenState extends State<EntryScreen>
     _tabController.animateTo(index);
     setState(() => _currentIndex = index);
     Provider.of<MiscProvider>(context, listen: false).setCurrentPage(index);
+  }
+
+  void _getPermissions() async {
+    try {
+      if (Settings.isAppInit) {
+        await Permission.contacts.request().then((p) =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
+        Settings.isAppInit = false;
+      }
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   Future<void> _preLoadData() async {

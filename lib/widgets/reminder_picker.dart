@@ -7,6 +7,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -153,7 +154,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       setState(() {});
       if (widget.type == NotificationType.reminder)
-        NavigationService.instance.goHome(0);
+        Navigator.of(context)
+            .popUntil(ModalRoute.withName(EntryScreen.routeName));
       else
         widget.onCancel();
       setState(() => null);
@@ -190,7 +192,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
       setState(() {});
       if (widget.type == NotificationType.reminder)
-        NavigationService.instance.goHome(0);
+        Navigator.of(context)
+            .popUntil(ModalRoute.withName(EntryScreen.routeName));
       else
         widget.onCancel();
     }
@@ -289,7 +292,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
             .deleteLocalNotification(widget.reminder.id);
         setState(() {});
         if (widget.type == NotificationType.reminder)
-          NavigationService.instance.goHome(0);
+          Navigator.of(context)
+              .popUntil(ModalRoute.withName(EntryScreen.routeName));
         else
           widget.onCancel();
       } on HttpException catch (e, s) {

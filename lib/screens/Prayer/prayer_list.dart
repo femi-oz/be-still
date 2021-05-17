@@ -39,7 +39,6 @@ class _PrayerListState extends State<PrayerList> {
   void didChangeDependencies() {
     if (_isInit) {
       _setVibration();
-      _getPermissions();
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _getPrayers();
@@ -137,20 +136,6 @@ class _PrayerListState extends State<PrayerList> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _getPermissions() async {
-    try {
-      if (Settings.isAppInit) {
-        await Permission.contacts.request().then((p) =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
-        Settings.isAppInit = false;
-      }
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;

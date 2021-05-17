@@ -69,7 +69,9 @@ class NavigationService {
 
   Future<dynamic> goHome(int index) async {
     // await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
-    //     .setCurrentPage(index, 1);
+    //     .setCurrentPage(index, 1);EntryScreen.routeName
+    // return navigationKey.currentState
+    //     .popUntil(ModalRoute.withName(EntryScreen.routeName));
     return navigationKey.currentState
         .pushReplacement(SlideLeftRoute(page: EntryScreen()));
   }

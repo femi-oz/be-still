@@ -3,6 +3,8 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
+import '../../entry_screen.dart';
+
 class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final current;
   final totalPrayers;
@@ -34,7 +36,8 @@ class _PrayModeAppBarState extends State<PrayModeAppBar> {
             size: 22,
           ),
           onPressed: () {
-            NavigationService.instance.goHome(0);
+            Navigator.of(context)
+                .popUntil(ModalRoute.withName(EntryScreen.routeName));
           },
         ),
       ),

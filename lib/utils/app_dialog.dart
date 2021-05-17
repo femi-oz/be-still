@@ -59,7 +59,7 @@ class BeStilDialog {
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
         confirmText: 'OK',
-        message: error?.message,
+        message: error.message == null ? error.toString() : error.message,
       ),
     );
     await FirebaseCrashlytics.instance

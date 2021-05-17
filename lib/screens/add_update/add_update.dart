@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -48,7 +49,8 @@ class _AddUpdateState extends State<AddUpdate> {
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
-        NavigationService.instance.goHome(0);
+        Navigator.of(context)
+            .popUntil(ModalRoute.withName(EntryScreen.routeName));
       }
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -208,7 +210,8 @@ class _AddUpdateState extends State<AddUpdate> {
                           ),
                           onTap: () => _descriptionController.text.isNotEmpty
                               ? onCancel()
-                              : NavigationService.instance.goHome(0)),
+                              : Navigator.of(context).popUntil(
+                                  ModalRoute.withName(EntryScreen.routeName))),
                       InkWell(
                         child: Text('SAVE',
                             style: AppTextStyles.boldText18.copyWith(
