@@ -475,8 +475,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
             ),
           ),
           SizedBox(height: 10),
-          Expanded(
+          SingleChildScrollView(
             child: Container(
+              width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(left: 50),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

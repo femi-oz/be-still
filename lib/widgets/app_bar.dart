@@ -126,12 +126,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.showPrayerActions && !widget.isSearchMode
               ? GestureDetector(
                   onTap: () => _openFilter(Settings.isDarkMode),
-                  child: Icon(
-                    AppIcons.bestill_tools,
-                    key: Provider.of<MiscProvider>(context, listen: false)
-                        .keyButton5,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
+                  child: Container(
+                    child: Icon(
+                      AppIcons.bestill_tools,
+                      key: Provider.of<MiscProvider>(context, listen: false)
+                          .keyButton5,
+                      color: AppColors.bottomNavIconColor,
+                      size: 18,
+                    ),
                   ),
                 )
               : Container(),

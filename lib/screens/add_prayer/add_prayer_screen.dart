@@ -57,11 +57,12 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
 
   Future<void> _save() async {
+    BeStilDialog.showLoading(context);
+
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    BeStilDialog.showLoading(context);
 
     try {
       if (_descriptionController.text == null ||
@@ -91,9 +92,14 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          widget.setCurrentIndex(0);
-          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
+
+          widget.setCurrentIndex(0);
+          FocusManager.instance.primaryFocus.unfocus();
+
+          // Navigator.of(context)
+          //     .popUntil(ModalRoute.withName(EntryScreen.routeName));
+          // await Future.delayed(Duration(milliseconds: 300));
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
