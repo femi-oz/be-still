@@ -128,6 +128,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onTap: () => _openFilter(Settings.isDarkMode),
                   child: Icon(
                     AppIcons.bestill_tools,
+                    key: Provider.of<MiscProvider>(context, listen: false)
+                        .keyButton5,
                     color: AppColors.bottomNavIconColor,
                     size: 18,
                   ),

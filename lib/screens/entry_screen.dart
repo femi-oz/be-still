@@ -293,7 +293,7 @@ class _EntryScreenState extends State<EntryScreen>
             icon: Icon(
               AppIcons.list,
               size: 16,
-              key: Settings.isAppInit ? miscProvider.keyButton : null,
+              key: miscProvider.keyButton,
               color: AppColors.bottomNavIconColor,
             ),
             title: "List",
@@ -307,7 +307,7 @@ class _EntryScreenState extends State<EntryScreen>
             ),
             icon: Icon(
               AppIcons.bestill_add,
-              key: Settings.isAppInit ? miscProvider.keyButton2 : null,
+              key: miscProvider.keyButton2,
               size: 16,
               color: AppColors.bottomNavIconColor,
             ),
@@ -317,7 +317,7 @@ class _EntryScreenState extends State<EntryScreen>
             page: PrayerTime(_setCurrentIndex),
             icon: Icon(
               AppIcons.bestill_menu_logo_lt,
-              key: Settings.isAppInit ? miscProvider.keyButton3 : null,
+              key: miscProvider.keyButton3,
               size: 16,
               color: AppColors.bottomNavIconColor,
             ),
@@ -336,7 +336,7 @@ class _EntryScreenState extends State<EntryScreen>
             page: SettingsScreen(),
             icon: Icon(
               Icons.more_horiz,
-              key: Settings.isAppInit ? miscProvider.keyButton4 : null,
+              key: miscProvider.keyButton4,
               size: 22,
               color: AppColors.bottomNavIconColor,
             ),
@@ -346,7 +346,6 @@ class _EntryScreenState extends State<EntryScreen>
             page: DevotionPlans(_setCurrentIndex),
             icon: Icon(
               Icons.more_horiz,
-              key: Settings.isAppInit ? miscProvider.keyButton4 : null,
               size: 20,
               color: AppColors.bottomNavIconColor,
             ),
@@ -356,7 +355,6 @@ class _EntryScreenState extends State<EntryScreen>
             page: RecommenededBibles(_setCurrentIndex),
             icon: Icon(
               Icons.more_horiz,
-              key: Settings.isAppInit ? miscProvider.keyButton4 : null,
               size: 20,
               color: AppColors.bottomNavIconColor,
             ),
