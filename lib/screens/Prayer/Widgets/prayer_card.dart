@@ -239,9 +239,11 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
+                                  widget.prayerData.prayer.userId != _user.id
+                                      ? SizedBox(
+                                          width: 5,
+                                        )
+                                      : SizedBox(),
                                   widget.prayerData.userPrayer.isFavorite
                                       ? Icon(
                                           Icons.favorite,
