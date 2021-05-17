@@ -52,6 +52,7 @@ class _AddPrayerState extends State<AddPrayer> {
   TextPainter painter;
   bool showNoContact = false;
   String displayName = '';
+  List<String> tagList = [];
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
@@ -167,16 +168,29 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<void> _onTagSelected(s) async {
+    // backupText = _descriptionController.text
+    //     .substring(_descriptionController.text.indexOf('@'));
     String tmp = tagText.substring(1, tagText.length);
     var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
+    // String tmpText2 =
+    //     s.displayName.substring(i + tmp.length, s.displayName.length);
+    // backupText += tmpText2;
+    // var currentTagList = [];
+    // if (tagList.length > 0) {
+    // } else {
+    //   setState(() {
+    //     tagList = [...tagList, backupText];
+    //     print(tagList.length);
+    //   });
+    // }
 
     tagText = '';
     String tmpText = s.displayName.substring(0, s.displayName.length);
 
     String controllerText = _descriptionController.text
         .substring(0, _descriptionController.text.indexOf('@'));
+
     controllerText += tmpText;
-    backupText = _descriptionController.text;
     _descriptionController.text = controllerText;
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
@@ -186,7 +200,6 @@ class _AddPrayerState extends State<AddPrayer> {
           TextSelection.collapsed(offset: _descriptionController.text.length);
     });
 
-    print(backupText);
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
     }

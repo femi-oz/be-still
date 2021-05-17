@@ -92,27 +92,29 @@ class _PrayerTimeState extends State<PrayerTime> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.12,
-                      right: MediaQuery.of(context).size.width * 0.005),
-                  child: Transform.rotate(
-                    angle: 180 * math.pi / 180,
-                    child: InkWell(
-                      child: Icon(
-                        Icons.keyboard_tab,
-                        color: currentPage > 1
-                            ? AppColors.lightBlue3
-                            : AppColors.grey,
-                        size: 30,
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.12,
+                        right: MediaQuery.of(context).size.width * 0.005),
+                    child: Transform.rotate(
+                      angle: 180 * math.pi / 180,
+                      child: InkWell(
+                        child: Icon(
+                          Icons.keyboard_tab,
+                          color: currentPage > 1
+                              ? AppColors.lightBlue3
+                              : AppColors.grey,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          if (currentPage > 1) {
+                            _controller.animateToPage(0,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 200));
+                          }
+                        },
                       ),
-                      onTap: () {
-                        if (currentPage > 1) {
-                          _controller.animateToPage(0,
-                              curve: Curves.easeIn,
-                              duration: Duration(milliseconds: 200));
-                        }
-                      },
                     ),
                   ),
                 ),
