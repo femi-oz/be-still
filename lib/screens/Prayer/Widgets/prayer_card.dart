@@ -9,7 +9,6 @@ import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -21,10 +20,8 @@ import 'dart:math' as math;
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final String timeago;
-  final keyButton;
 
-  PrayerCard(
-      {@required this.prayerData, @required this.timeago, this.keyButton});
+  PrayerCard({@required this.prayerData, @required this.timeago});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
@@ -197,7 +194,6 @@ class _PrayerCardState extends State<PrayerCard> {
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
-      key: widget.keyButton,
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(

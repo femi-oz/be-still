@@ -1,12 +1,11 @@
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
-import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -179,7 +178,6 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  // color: AppColors.drawerTopColor,
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: Row(
@@ -265,6 +263,18 @@ class CustomDrawer extends StatelessWidget {
                               onTap: () =>
                                   _launchURL('https://www.bestillapp.com'),
                               child: Text("HELP",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                                TutorialTarget.showTutorial(context);
+                              },
+                              child: Text("QUICK TIPS",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
                             ),

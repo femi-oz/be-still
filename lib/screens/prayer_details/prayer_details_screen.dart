@@ -1,6 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';

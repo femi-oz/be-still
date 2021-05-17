@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';

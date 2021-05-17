@@ -10,13 +10,12 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/add_update/add_update.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
-import 'package:be_still/widgets/menu-button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
@@ -49,7 +48,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     // 'Monthly',
     // 'Yearly'
   ];
-  bool _isInit = true;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -64,7 +62,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -90,7 +89,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -110,24 +110,25 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(
       context,
     );
-    final prayerData =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    // final prayerData =
+    //     Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
 
     try {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == prayerData.prayer.id)
+              .where((e) => e.entityId == widget.prayerData.prayer.id)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
-          .deletePrayer(prayerData.userPrayer.id);
+          .deletePrayer(widget.prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -302,7 +303,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -327,7 +329,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -352,7 +355,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -372,7 +376,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -408,7 +413,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
-      NavigationService.instance.goHome(0);
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(EntryScreen.routeName));
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

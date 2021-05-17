@@ -3,11 +3,9 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -36,7 +34,7 @@ class _GroupToolsState extends State<GroupTools> {
         data.group.id,
         data.groupUsers.firstWhere((e) => e.userId == _user.id).isAdmin,
       );
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       // BeStilDialog.showErrorDialog(context, e.toString());

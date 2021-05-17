@@ -8,6 +8,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -52,15 +53,17 @@ class _AddPrayerState extends State<AddPrayer> {
   TextPainter painter;
   bool showNoContact = false;
   String displayName = '';
+  List<String> tagList = [];
+  var displayname = [];
 
   Future<void> _save() async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    try {
-      BeStilDialog.showLoading(context);
+    BeStilDialog.showLoading(context);
 
+    try {
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
@@ -78,14 +81,19 @@ class _AddPrayerState extends State<AddPrayer> {
             backupText,
           );
 
+          contacts.forEach((element) {
+            if (!_descriptionController.text.contains(element.displayName)) {
+              element.displayName = '';
+            }
+          });
+
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
+          widget.setCurrentIndex(0);
           // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-
-          // widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -96,6 +104,7 @@ class _AddPrayerState extends State<AddPrayer> {
               textList.add(element);
             }
           });
+          print('got here');
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
@@ -103,9 +112,11 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          // await Future.delayed(Duration(milliseconds: 300));
+          await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          NavigationService.instance.goHome(0);
+          Navigator.of(context)
+              .popUntil(ModalRoute.withName(EntryScreen.routeName));
+          // widget.setCurrentIndex(0);
         }
       }
     } on HttpException catch (e, s) {
@@ -167,16 +178,13 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<void> _onTagSelected(s) async {
-    String tmp = tagText.substring(1, tagText.length);
-    var i = s.displayName.toLowerCase().indexOf(tmp.toLowerCase());
-
     tagText = '';
     String tmpText = s.displayName.substring(0, s.displayName.length);
 
     String controllerText = _descriptionController.text
         .substring(0, _descriptionController.text.indexOf('@'));
+
     controllerText += tmpText;
-    backupText = _descriptionController.text;
     _descriptionController.text = controllerText;
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
@@ -186,7 +194,6 @@ class _AddPrayerState extends State<AddPrayer> {
           TextSelection.collapsed(offset: _descriptionController.text.length);
     });
 
-    print(backupText);
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
       contacts = [...contacts, s];
     }
@@ -232,9 +239,11 @@ class _AddPrayerState extends State<AddPrayer> {
                   GestureDetector(
                     onTap: () {
                       if (widget.isEdit) {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        Navigator.of(context).popUntil(
+                            ModalRoute.withName(EntryScreen.routeName));
+                        // Navigator.of(context).pushNamedAndRemoveUntil(
+                        //     EntryScreen.routeName,
+                        //     (Route<dynamic> route) => false);
                       } else {
                         widget.setCurrentIndex(0);
                         Navigator.pop(context);
@@ -317,6 +326,7 @@ class _AddPrayerState extends State<AddPrayer> {
   Widget build(BuildContext context) {
     bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
         (widget.isEdit && _oldDescription != _descriptionController.text);
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -407,10 +417,12 @@ class _AddPrayerState extends State<AddPrayer> {
                                       children: [
                                         ...localContacts.map((s) {
                                           displayName = s.displayName ?? '';
+
                                           if (('@' + s.displayName)
                                               .toLowerCase()
                                               .contains(
                                                   tagText.toLowerCase())) {
+                                            showNoContact = false;
                                             return GestureDetector(
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -427,35 +439,31 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 ),
                                                 onTap: () => _onTagSelected(s));
                                           } else {
-                                            setState(() {
-                                              showNoContact = true;
-                                            });
+                                            showNoContact = true;
+
                                             return SizedBox();
                                           }
                                         }).toList(),
+                                        showNoContact
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10.0),
+                                                child: Text(
+                                                  'No matching contacts found.',
+                                                  style: AppTextStyles
+                                                      .regularText14
+                                                      .copyWith(
+                                                    color: AppColors.lightBlue4,
+                                                  ),
+                                                ),
+                                              )
+                                            : Container()
                                       ],
                                     ),
                                   ),
                                 )
                               : SizedBox(),
-                          // showNoContact
-                          //     ? Column(
-                          //         crossAxisAlignment: CrossAxisAlignment.start,
-                          //         children: [
-                          //           Padding(
-                          //             padding:
-                          //                 EdgeInsets.symmetric(vertical: 2.0),
-                          //             child: Text(
-                          //               'No matching contacts found.',
-                          //               style: AppTextStyles.regularText14
-                          //                   .copyWith(
-                          //                 color: AppColors.lightBlue4,
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       )
-                          //     : Container(),
                         ],
                       ),
                     ),

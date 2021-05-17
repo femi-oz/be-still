@@ -1,13 +1,10 @@
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
@@ -92,27 +89,29 @@ class _PrayerTimeState extends State<PrayerTime> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.12,
-                      right: MediaQuery.of(context).size.width * 0.005),
-                  child: Transform.rotate(
-                    angle: 180 * math.pi / 180,
-                    child: InkWell(
-                      child: Icon(
-                        Icons.keyboard_tab,
-                        color: currentPage > 1
-                            ? AppColors.lightBlue3
-                            : AppColors.grey,
-                        size: 30,
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.12,
+                        right: MediaQuery.of(context).size.width * 0.005),
+                    child: Transform.rotate(
+                      angle: 180 * math.pi / 180,
+                      child: InkWell(
+                        child: Icon(
+                          Icons.keyboard_tab,
+                          color: currentPage > 1
+                              ? AppColors.lightBlue3
+                              : AppColors.grey,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          if (currentPage > 1) {
+                            _controller.animateToPage(0,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 200));
+                          }
+                        },
                       ),
-                      onTap: () {
-                        if (currentPage > 1) {
-                          _controller.animateToPage(0,
-                              curve: Curves.easeIn,
-                              duration: Duration(milliseconds: 200));
-                        }
-                      },
                     ),
                   ),
                 ),
