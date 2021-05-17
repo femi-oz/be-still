@@ -65,6 +65,7 @@ class _PrayerTimeState extends State<PrayerTime> {
     return Scaffold(
       backgroundColor: AppColors.prayeModeBg,
       body: Container(
+        padding: EdgeInsets.only(top: 40),
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient: LinearGradient(

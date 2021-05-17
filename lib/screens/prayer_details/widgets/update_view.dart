@@ -209,28 +209,26 @@ class UpdateView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(right: 15),
+                margin: EdgeInsets.only(right: 30),
                 child: Row(
                   children: <Widget>[
                     Text(
-                      time,
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: AppColors.lightBlue4,
-                      ),
-                    ),
-                    Text(
-                      DateFormat(' MM.dd.yyyy').format(modifiedOn),
-                      style: AppTextStyles.regularText15.copyWith(
-                        color: AppColors.lightBlue4,
-                      ),
+                      DateFormat('hh:mma | MM.dd.yyyy')
+                          .format(modifiedOn)
+                          .toLowerCase(),
+                      style: AppTextStyles.regularText18b
+                          .copyWith(color: AppColors.prayeModeBorder),
                     ),
                   ],
                 ),
               ),
               Expanded(
-                child: Divider(
-                  color: AppColors.lightBlue4,
-                  thickness: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Divider(
+                    color: AppColors.lightBlue4,
+                    thickness: 1,
+                  ),
                 ),
               ),
             ],
