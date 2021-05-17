@@ -432,8 +432,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      height: double.infinity,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       child: Column(
         children: <Widget>[
           SizedBox(height: 30),
