@@ -3,11 +3,13 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -196,19 +198,19 @@ class _PrayerCardState extends State<PrayerCard> {
     final _user = Provider.of<UserProvider>(context).currentUser;
     return Container(
       key: widget.keyButton,
-      color: AppColors.prayerCardBgColor,
+      color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: Container(
           decoration: BoxDecoration(
-              color: AppColors.prayerCardBgColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                topLeft: Radius.circular(10),
-              ),
-              border: Border.all(color: AppColors.cardBorder)),
+            color: AppColors.cardBorder,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              topLeft: Radius.circular(10),
+            ),
+          ),
           child: Container(
             margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -415,9 +417,15 @@ class _PrayerCardState extends State<PrayerCard> {
             'Options',
             () => showModalBottomSheet(
               context: context,
-              barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+                      .isDarkModeEnabled
+                  ? AppColors.backgroundColor[0].withOpacity(0.5)
+                  : Color(0xFF021D3C).withOpacity(0.7),
               backgroundColor:
-                  AppColors.detailBackgroundColor[1].withOpacity(1),
+                  Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? AppColors.backgroundColor[0].withOpacity(0.5)
+                      : Color(0xFF021D3C).withOpacity(0.7),
               isScrollControlled: true,
               builder: (BuildContext context) {
                 return _buildMenu();

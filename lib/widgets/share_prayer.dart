@@ -1,8 +1,10 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
@@ -82,60 +84,114 @@ class _SharePrayerState extends State<SharePrayer> {
 
   @override
   Widget build(BuildContext context) {
-    final sharingSettings =
-        Provider.of<SettingsProvider>(context, listen: false).sharingSettings;
     return Container(
       width: double.infinity,
       height: double.infinity,
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
+          SizedBox(height: 30),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                color: Provider.of<ThemeProvider>(context, listen: false)
+                        .isDarkModeEnabled
+                    ? Colors.transparent
+                    : AppColors.white,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(7),
+                  topRight: Radius.circular(7),
+                ),
+              ),
+              child: TextButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Provider.of<ThemeProvider>(context, listen: false)
+                            .isDarkModeEnabled
+                        ? Colors.transparent
+                        : AppColors.white,
+                  ),
+                ),
                 icon: Icon(
-                  AppIcons.bestill_close,
+                  AppIcons.bestill_back_arrow,
+                  size: 20,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                color: AppColors.textFieldText,
+                label: Text(
+                  'CLOSE',
+                  style: AppTextStyles.boldText20,
+                ),
               ),
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _textLink(),
-                  text: 'Text Message',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _emailLink(),
-                  text: 'Email',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => null,
-                  isDisable: true,
-                  text: 'Direct Message',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => null,
-                  isDisable: true,
-                  text: 'Post to Group(s)',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _emailLink(true),
-                  text: 'To my Church',
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 50.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => _textLink(),
+                    text: 'Text Message',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => _emailLink(),
+                    text: 'Email',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => null,
+                    isDisabled: true,
+                    text: 'Direct Message',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => null,
+                    isDisabled: true,
+                    text: 'Post to Group(s)',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => _emailLink(true),
+                    text: 'To my Church',
+                  ),
+                ],
+              ),
             ),
           ),
         ],

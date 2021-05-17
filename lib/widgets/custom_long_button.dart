@@ -9,17 +9,21 @@ class LongButton extends StatelessWidget {
   final Color textColor;
   final bool hasIcon;
   final bool hasMore;
+  final bool isDisabled;
   final IconData icon;
+  final String suffix;
 
   LongButton({
     this.onPress,
     this.onPressMore,
     this.text,
     this.backgroundColor,
-    this.textColor,
+    @required this.textColor,
     this.hasIcon = true,
     this.hasMore = false,
+    this.isDisabled = false,
     this.icon,
+    this.suffix,
   });
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class LongButton extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          color: AppColors.cardBorder,
+          color: AppColors.cardBorder.withOpacity(isDisabled ? 0.5 : 1),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -37,7 +41,7 @@ class LongButton extends StatelessWidget {
         ),
         child: Container(
           width: double.infinity,
-          margin: EdgeInsetsDirectional.only(start: 0.5, bottom: 0.5, top: 0.5),
+          margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             color: backgroundColor,
@@ -57,15 +61,23 @@ class LongButton extends StatelessWidget {
                   SizedBox(width: 10),
                   Text(
                     text,
-                    style: AppTextStyles.boldText18.copyWith(color: textColor),
+                    style: AppTextStyles.boldText18.copyWith(
+                        color: textColor.withOpacity(isDisabled ? 0.5 : 1.0)),
                   ),
                 ],
               ),
-              hasMore
-                  ? InkWell(
-                      onTap: () => onPressMore(),
-                      child: Icon(Icons.more_vert, color: textColor))
-                  : Container(),
+              suffix != null
+                  ? Text(
+                      suffix,
+                      style: AppTextStyles.boldText14.copyWith(
+                          color: AppColors.lightBlue4
+                              .withOpacity(isDisabled ? 0.5 : 1)),
+                    )
+                  : hasMore
+                      ? InkWell(
+                          onTap: () => onPressMore(),
+                          child: Icon(Icons.more_vert, color: textColor))
+                      : Container(),
             ],
           ),
         ),

@@ -30,8 +30,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
         _getBibles();
         _getPrayers();
       });

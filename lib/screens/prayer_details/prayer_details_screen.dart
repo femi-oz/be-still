@@ -4,6 +4,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
@@ -73,8 +74,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
         getSettings();
       });
       _isInit = false;
@@ -188,16 +187,19 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       Transform.rotate(
                         angle: 90 * math.pi / 180,
                         child: IconButton(
-                          icon: Icon(
-                            Icons.build,
-                            color: AppColors.lightBlue3,
-                          ),
+                          icon: Icon(Icons.build, color: AppColors.lightBlue3),
                           onPressed: () => showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(1),
+                            barrierColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.5)
+                                : Color(0xFF021D3C).withOpacity(0.7),
+                            backgroundColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.5)
+                                : Color(0xFF021D3C).withOpacity(0.7),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return _buildMenu();
