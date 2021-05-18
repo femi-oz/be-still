@@ -131,6 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
+// Navigator.of(context).pushNamedAndRemoveUntil(
+//               EntryScreen.routeName, (Route<dynamic> route) => false);
       NavigationService.instance.goHome(0);
     }
   }

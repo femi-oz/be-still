@@ -10,6 +10,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
@@ -82,9 +83,12 @@ class _AddPrayerState extends State<AddPrayer> {
             backupText,
           );
 
-          contacts.forEach((element) {
-            if (!_descriptionController.text.contains(element.displayName)) {
-              element.displayName = '';
+          contacts.forEach((s) {
+            if (!_descriptionController.text.contains(s.displayName)) {
+              s.displayName = '';
+            }
+            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+              contacts = [...contacts, s];
             }
           });
 
@@ -120,8 +124,10 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
+
           Navigator.of(context)
               .popUntil(ModalRoute.withName(EntryScreen.routeName));
+
           // widget.setCurrentIndex(0);
         }
       }
