@@ -1,16 +1,14 @@
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
   static List<TargetFocus> targets = [];
   static TutorialCoachMark tutorialCoachMark;
-  static void showTutorial(context) {
-    final miscProvider = Provider.of<MiscProvider>(context, listen: false);
+  static void showTutorial(
+      context, _keyButton, _keyButton2, _keyButton3, _keyButton4, _keyButton5) {
     targets.add(TargetFocus(
         identify: "welcome",
         targetPosition: TargetPosition(Size.zero, Offset.zero),
@@ -30,25 +28,22 @@ class TutorialTarget {
                 StringUtils.quickTipWelcome2,
               ))
         ]));
-    targets.add(TargetFocus(
-        identify: "list",
-        keyTarget: miscProvider.keyButton,
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                bottom: 100,
-              ),
-              child: _buildBody(
-                context,
-                'MY LIST',
-                2,
-                null,
-                " List",
-                "Tap",
-                StringUtils.quickTipList,
-              ))
-        ]));
+    targets.add(TargetFocus(identify: "list", keyTarget: _keyButton, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'MY LIST',
+            2,
+            null,
+            " List",
+            "Tap",
+            StringUtils.quickTipList,
+          ))
+    ]));
     targets.add(TargetFocus(
         identify: "quick_actions",
         targetPosition: TargetPosition(Size.zero, Offset.zero),
@@ -67,68 +62,60 @@ class TutorialTarget {
                   StringUtils.quickTipQuickAccess,
                   ''))
         ]));
-    targets.add(TargetFocus(
-        identify: "filters",
-        keyTarget: miscProvider.keyButton5,
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                top: 70,
-              ),
-              child: _buildBody(
-                context,
-                'FILTERS',
-                4,
-                null,
-                " Filters",
-                "Use",
-                StringUtils.quickTipFilters,
-              ))
-        ]));
-    targets.add(TargetFocus(
-        identify: "add_prayer",
-        keyTarget: miscProvider.keyButton2,
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                bottom: 100,
-              ),
-              child: _buildBody(
-                context,
-                'ADD A PRAYER',
-                5,
-                null,
-                " Add",
-                "Tap",
-                StringUtils.quickTipAdd,
-              ))
-        ]));
-    targets.add(TargetFocus(
-        identify: "pray_mode",
-        keyTarget: miscProvider.keyButton3,
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                bottom: 100,
-              ),
-              child: _buildBody(context, 'PRAYER MODE', 6, null, '',
-                  StringUtils.quickTipPray, ''))
-        ]));
-    targets.add(TargetFocus(
-        identify: "more",
-        keyTarget: miscProvider.keyButton4,
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                bottom: 100,
-              ),
-              child: _buildBody(context, 'MORE', 7, null, ' More', 'Tap the',
-                  StringUtils.quickTipMore))
-        ]));
+    targets.add(
+        TargetFocus(identify: "filters", keyTarget: _keyButton5, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            top: 70,
+          ),
+          child: _buildBody(
+            context,
+            'FILTERS',
+            4,
+            null,
+            " Filters",
+            "Use",
+            StringUtils.quickTipFilters,
+          ))
+    ]));
+    targets.add(
+        TargetFocus(identify: "add_prayer", keyTarget: _keyButton2, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'ADD A PRAYER',
+            5,
+            null,
+            " Add",
+            "Tap",
+            StringUtils.quickTipAdd,
+          ))
+    ]));
+    targets.add(
+        TargetFocus(identify: "pray_mode", keyTarget: _keyButton3, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(context, 'PRAYER MODE', 6, null, '',
+              StringUtils.quickTipPray, ''))
+    ]));
+    targets
+        .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(context, 'MORE', 7, null, ' More', 'Tap the',
+              StringUtils.quickTipMore))
+    ]));
 
     tutorialCoachMark = TutorialCoachMark(
       context,

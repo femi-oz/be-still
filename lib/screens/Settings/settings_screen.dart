@@ -7,7 +7,6 @@ import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -40,7 +39,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: SettingsAppBar(),
-      endDrawer: CustomDrawer(null, null),
+      endDrawer: null,
       endDrawerEnableOpenDragGesture: false,
       body: SettingsTab(),
     );

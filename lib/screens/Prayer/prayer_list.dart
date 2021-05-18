@@ -19,14 +19,24 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
-
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class PrayerList extends StatefulWidget {
   final Function setCurrentIndex;
-  PrayerList(this.setCurrentIndex);
+  final GlobalKey keyButton;
+  final GlobalKey keyButton2;
+  final GlobalKey keyButton3;
+  final GlobalKey keyButton4;
+  final GlobalKey keyButton5;
+  PrayerList(
+    this.setCurrentIndex,
+    this.keyButton,
+    this.keyButton2,
+    this.keyButton3,
+    this.keyButton4,
+    this.keyButton5,
+  );
   @override
   _PrayerListState createState() => _PrayerListState();
 }
@@ -72,7 +82,15 @@ class _PrayerListState extends State<PrayerList> {
       }
 
       BeStilDialog.hideLoading(context);
-      if (Settings.isAppInit) TutorialTarget.showTutorial(context);
+      if (Settings.isAppInit)
+        TutorialTarget.showTutorial(
+          context,
+          widget.keyButton,
+          widget.keyButton2,
+          widget.keyButton3,
+          widget.keyButton4,
+          widget.keyButton5,
+        );
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
