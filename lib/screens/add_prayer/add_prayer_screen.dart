@@ -98,7 +98,9 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           BeStilDialog.hideLoading(context);
 
-          widget.setCurrentIndex(0);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
+          // widget.setCurrentIndex(0);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
