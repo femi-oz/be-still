@@ -181,22 +181,27 @@ class _NoUpdateViewState extends State<NoUpdateView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    DateFormat('hh:mma | MM.dd.yyyy')
-                        .format(prayerData.prayer.createdOn)
-                        .toLowerCase(),
-                    style: AppTextStyles.regularText13.copyWith(
-                      color: AppColors.lightBlue4,
+              Container(
+                margin: EdgeInsets.only(right: 30),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      DateFormat('hh:mma | MM.dd.yyyy')
+                          .format(prayerData.prayer.createdOn)
+                          .toLowerCase(),
+                      style: AppTextStyles.regularText18b
+                          .copyWith(color: AppColors.prayeModeBorder),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Expanded(
-                child: Divider(
-                  color: AppColors.lightBlue4,
-                  thickness: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Divider(
+                    color: AppColors.lightBlue4,
+                    thickness: 1,
+                  ),
                 ),
               ),
             ],

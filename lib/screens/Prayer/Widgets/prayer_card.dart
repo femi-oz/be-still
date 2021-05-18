@@ -256,9 +256,11 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
+                                  widget.prayerData.prayer.userId != _user.id
+                                      ? SizedBox(
+                                          width: 5,
+                                        )
+                                      : SizedBox(),
                                   widget.prayerData.userPrayer.isFavorite
                                       ? Icon(
                                           Icons.favorite,
@@ -489,7 +491,7 @@ class _PrayerCardState extends State<PrayerCard> {
             bottomRight: Radius.circular(10),
             topRight: Radius.circular(10),
           ),
-          border: Border.all(color: AppColors.cardBorder)),
+          border: Border.all(color: AppColors.slideBorder)),
       child: IconSlideAction(
         caption: label,
         color: Colors.transparent,
