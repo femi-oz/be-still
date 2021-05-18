@@ -154,8 +154,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       setState(() {});
       if (widget.type == NotificationType.reminder)
-        Navigator.of(context)
-            .popUntil(ModalRoute.withName(EntryScreen.routeName));
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
       else
         widget.onCancel();
       setState(() => null);
@@ -192,8 +192,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
       setState(() {});
       if (widget.type == NotificationType.reminder)
-        Navigator.of(context)
-            .popUntil(ModalRoute.withName(EntryScreen.routeName));
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
       else
         widget.onCancel();
     }

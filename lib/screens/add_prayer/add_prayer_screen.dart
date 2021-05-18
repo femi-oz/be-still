@@ -92,7 +92,6 @@ class _AddPrayerState extends State<AddPrayer> {
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
           widget.setCurrentIndex(0);
-          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
@@ -104,7 +103,6 @@ class _AddPrayerState extends State<AddPrayer> {
               textList.add(element);
             }
           });
-          print('got here');
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
@@ -114,9 +112,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.of(context)
-              .popUntil(ModalRoute.withName(EntryScreen.routeName));
-          // widget.setCurrentIndex(0);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
         }
       }
     } on HttpException catch (e, s) {

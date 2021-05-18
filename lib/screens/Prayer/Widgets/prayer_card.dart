@@ -190,6 +190,23 @@ class _PrayerCardState extends State<PrayerCard> {
     setState(() {});
   }
 
+  Future<void> _setCurrentPrayer() async {
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(widget.prayerData.userPrayer.id);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
@@ -408,10 +425,9 @@ class _PrayerCardState extends State<PrayerCard> {
           ),
         ),
         actions: <Widget>[
-          _buildSlideItem(
-            Icons.build,
-            'Options',
-            () => showModalBottomSheet(
+          _buildSlideItem(Icons.build, 'Options', () async {
+            await _setCurrentPrayer();
+            showModalBottomSheet(
               context: context,
               barrierColor: Provider.of<ThemeProvider>(context, listen: false)
                       .isDarkModeEnabled
@@ -426,8 +442,8 @@ class _PrayerCardState extends State<PrayerCard> {
               builder: (BuildContext context) {
                 return _buildMenu();
               },
-            ),
-          ),
+            );
+          })
         ],
         secondaryActions: <Widget>[
           _buildSlideItem(
