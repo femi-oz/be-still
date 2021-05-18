@@ -65,6 +65,8 @@ class _PrayerTimeState extends State<PrayerTime> {
     return Scaffold(
       backgroundColor: AppColors.prayeModeBg,
       body: Container(
+        padding: EdgeInsets.only(top: 40),
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -115,7 +117,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     ),
                   ),
                 ),
-                SizedBox(width: 40),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                 InkWell(
                   child: Icon(
                     Icons.navigate_before,
@@ -129,7 +131,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     }
                   },
                 ),
-                SizedBox(width: 40),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                 InkWell(
                   child: Icon(
                     AppIcons.bestill_close,
@@ -138,7 +140,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                   ),
                   onTap: () => widget.setCurrentPage(0),
                 ),
-                SizedBox(width: 40),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                 InkWell(
                     child: Icon(
                       Icons.navigate_next,
@@ -152,7 +154,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                         _controller.jumpToPage(currentPage);
                       }
                     }),
-                SizedBox(width: 40),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                 InkWell(
                   child: Icon(
                     Icons.keyboard_tab,

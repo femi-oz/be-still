@@ -13,11 +13,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function switchSearchMode;
   final bool isSearchMode;
   final bool showPrayerActions;
+  final GlobalKey globalKey;
   CustomAppBar({
     Key key,
     this.switchSearchMode,
     this.isSearchMode = false,
     this.showPrayerActions = true,
+    this.globalKey,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -128,8 +130,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onTap: () => _openFilter(Settings.isDarkMode),
                   child: Icon(
                     AppIcons.bestill_tools,
-                    key: Provider.of<MiscProvider>(context, listen: false)
-                        .keyButton5,
+                    key: widget.globalKey,
                     color: AppColors.bottomNavIconColor,
                     size: 18,
                   ),

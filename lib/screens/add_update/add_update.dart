@@ -49,8 +49,9 @@ class _AddUpdateState extends State<AddUpdate> {
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
         await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
-        Navigator.of(context)
-            .popUntil(ModalRoute.withName(EntryScreen.routeName));
+
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
       }
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
@@ -210,8 +211,9 @@ class _AddUpdateState extends State<AddUpdate> {
                           ),
                           onTap: () => _descriptionController.text.isNotEmpty
                               ? onCancel()
-                              : Navigator.of(context).popUntil(
-                                  ModalRoute.withName(EntryScreen.routeName))),
+                              : Navigator.of(context).pushNamedAndRemoveUntil(
+                                  EntryScreen.routeName,
+                                  (Route<dynamic> route) => false)),
                       InkWell(
                         child: Text('SAVE',
                             style: AppTextStyles.boldText18.copyWith(

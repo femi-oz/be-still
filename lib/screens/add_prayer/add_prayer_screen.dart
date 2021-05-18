@@ -57,11 +57,12 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
 
   Future<void> _save() async {
+    BeStilDialog.showLoading(context);
+
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    BeStilDialog.showLoading(context);
 
     try {
       if (_descriptionController.text == null ||
@@ -92,8 +93,11 @@ class _AddPrayerState extends State<AddPrayer> {
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
           widget.setCurrentIndex(0);
-          // await Future.delayed(Duration(milliseconds: 300));
+          Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
+
+          // Navigator.of(context).pushNamedAndRemoveUntil(
+          //     EntryScreen.routeName, (Route<dynamic> route) => false);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
@@ -104,7 +108,6 @@ class _AddPrayerState extends State<AddPrayer> {
               textList.add(element);
             }
           });
-          print('got here');
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
@@ -114,9 +117,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          Navigator.of(context)
-              .popUntil(ModalRoute.withName(EntryScreen.routeName));
-          // widget.setCurrentIndex(0);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
         }
       }
     } on HttpException catch (e, s) {
@@ -239,11 +241,9 @@ class _AddPrayerState extends State<AddPrayer> {
                   GestureDetector(
                     onTap: () {
                       if (widget.isEdit) {
-                        Navigator.of(context).popUntil(
-                            ModalRoute.withName(EntryScreen.routeName));
-                        // Navigator.of(context).pushNamedAndRemoveUntil(
-                        //     EntryScreen.routeName,
-                        //     (Route<dynamic> route) => false);
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            EntryScreen.routeName,
+                            (Route<dynamic> route) => false);
                       } else {
                         widget.setCurrentIndex(0);
                         Navigator.pop(context);

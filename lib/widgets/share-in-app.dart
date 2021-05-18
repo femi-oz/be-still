@@ -46,15 +46,14 @@ class _ShareInAppState extends State<ShareInApp> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.popUntil(context, ModalRoute.withName(EntryScreen.routeName));
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
     } on HttpException {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 

@@ -59,15 +59,17 @@ class NoUpdateView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      data.prayer.description,
-                      style: AppTextStyles.regularText18b
-                          .copyWith(color: AppColors.prayerTextColor),
-                      textAlign: TextAlign.left,
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        data.prayer.description,
+                        style: AppTextStyles.regularText18b
+                            .copyWith(color: AppColors.prayerTextColor),
+                        textAlign: TextAlign.left,
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ],

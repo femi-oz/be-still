@@ -85,6 +85,8 @@ class AppColors {
       getColor(darkMode, light: 0xFF9BD4E5, dark: 0xFF025584);
   static Color get cardBorder =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF004E75);
+  static Color get slideBorder =>
+      getColor(darkMode, light: 0xFFAFBAC4, dark: 0xFF004E75);
   static Color get divider =>
       getColor(darkMode, light: 0xFF0D1319, dark: 0xFF005780);
   static Color get textFieldText =>

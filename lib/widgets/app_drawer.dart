@@ -13,7 +13,20 @@ import 'package:url_launcher/url_launcher.dart';
 class CustomDrawer extends StatelessWidget {
   final TabController tabController;
   final Function setCurrentIndex;
-  CustomDrawer(this.tabController, this.setCurrentIndex);
+  final GlobalKey keyButton;
+  final GlobalKey keyButton2;
+  final GlobalKey keyButton3;
+  final GlobalKey keyButton4;
+  final GlobalKey keyButton5;
+  CustomDrawer(
+    this.tabController,
+    this.setCurrentIndex,
+    this.keyButton,
+    this.keyButton2,
+    this.keyButton3,
+    this.keyButton4,
+    this.keyButton5,
+  );
   _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -272,7 +285,14 @@ class CustomDrawer extends StatelessWidget {
                             child: InkWell(
                               onTap: () {
                                 Navigator.pop(context);
-                                TutorialTarget.showTutorial(context);
+                                TutorialTarget.showTutorial(
+                                  context,
+                                  keyButton,
+                                  keyButton2,
+                                  keyButton3,
+                                  keyButton4,
+                                  keyButton5,
+                                );
                               },
                               child: Text("QUICK TIPS",
                                   style: AppTextStyles.drawerMenu.copyWith(

@@ -113,6 +113,12 @@ class _EntryScreenState extends State<EntryScreen>
     // _isInit = false;
   }
 
+  GlobalKey _keyButton = GlobalKey();
+  GlobalKey _keyButton2 = GlobalKey();
+  GlobalKey _keyButton3 = GlobalKey();
+  GlobalKey _keyButton4 = GlobalKey();
+  GlobalKey _keyButton5 = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final miscProvider = Provider.of<MiscProvider>(context);
@@ -124,7 +130,7 @@ class _EntryScreenState extends State<EntryScreen>
               showPrayerActions: _currentIndex == 0,
               isSearchMode: _isSearchMode,
               switchSearchMode: (bool val) => _switchSearchMode(val),
-            ),
+              globalKey: _keyButton5),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -149,7 +155,15 @@ class _EntryScreenState extends State<EntryScreen>
       ),
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
-      endDrawer: CustomDrawer(_tabController, _setCurrentIndex),
+      endDrawer: CustomDrawer(
+        _tabController,
+        _setCurrentIndex,
+        _keyButton,
+        _keyButton2,
+        _keyButton3,
+        _keyButton4,
+        _keyButton5,
+      ),
       endDrawerEnableOpenDragGesture: false,
     );
   }
@@ -306,11 +320,12 @@ class _EntryScreenState extends State<EntryScreen>
 
   List<TabNavigationItem> getItems(miscProvider) => [
         TabNavigationItem(
-            page: PrayerList(_setCurrentIndex),
+            page: PrayerList(_setCurrentIndex, _keyButton, _keyButton2,
+                _keyButton3, _keyButton4, _keyButton5),
             icon: Icon(
               AppIcons.list,
               size: 16,
-              key: miscProvider.keyButton,
+              key: _keyButton,
               color: AppColors.bottomNavIconColor,
             ),
             title: "List",
@@ -324,7 +339,7 @@ class _EntryScreenState extends State<EntryScreen>
             ),
             icon: Icon(
               AppIcons.bestill_add,
-              key: miscProvider.keyButton2,
+              key: _keyButton2,
               size: 16,
               color: AppColors.bottomNavIconColor,
             ),
@@ -334,7 +349,7 @@ class _EntryScreenState extends State<EntryScreen>
             page: PrayerTime(_setCurrentIndex),
             icon: Icon(
               AppIcons.bestill_menu_logo_lt,
-              key: miscProvider.keyButton3,
+              key: _keyButton3,
               size: 16,
               color: AppColors.bottomNavIconColor,
             ),
@@ -353,7 +368,7 @@ class _EntryScreenState extends State<EntryScreen>
             page: SettingsScreen(),
             icon: Icon(
               Icons.more_horiz,
-              key: miscProvider.keyButton4,
+              key: _keyButton4,
               size: 22,
               color: AppColors.bottomNavIconColor,
             ),
