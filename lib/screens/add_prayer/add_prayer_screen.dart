@@ -241,11 +241,9 @@ class _AddPrayerState extends State<AddPrayer> {
                   GestureDetector(
                     onTap: () {
                       if (widget.isEdit) {
-                        Navigator.of(context).popUntil(
-                            ModalRoute.withName(EntryScreen.routeName));
-                        // Navigator.of(context).pushNamedAndRemoveUntil(
-                        //     EntryScreen.routeName,
-                        //     (Route<dynamic> route) => false);
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            EntryScreen.routeName,
+                            (Route<dynamic> route) => false);
                       } else {
                         widget.setCurrentIndex(0);
                         Navigator.pop(context);
