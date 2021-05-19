@@ -1,5 +1,6 @@
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'essentials.dart';
 
 class BeStilDialog {
-  static Widget getLoading([String message = '']) {
+  static Widget getLoading(context, [String message = '']) {
+    precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
+      appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

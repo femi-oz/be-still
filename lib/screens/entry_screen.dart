@@ -1,3 +1,5 @@
+import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -14,7 +16,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/widgets/app_bar.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
@@ -38,15 +40,21 @@ class _EntryScreenState extends State<EntryScreen>
   AnimationController controller;
   Animation<double> animation;
   TabController _tabController;
+  bool showLoading = false;
 
   final cron = Cron();
 
   initState() {
+    setState(() {
+      showLoading = true;
+    });
     _getPermissions();
     _tabController = new TabController(length: 7, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _currentIndex = miscProvider.currentPage;
-    _preLoadData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _preLoadData();
+    });
     super.initState();
   }
 
@@ -71,42 +79,141 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Future<void> _preLoadData() async {
-    if (Settings.setenableLocalAuth)
-      Settings.enableLocalAuth = true;
-    else
-      Settings.enableLocalAuth = false;
+    try {
+      if (Settings.setenableLocalAuth)
+        Settings.enableLocalAuth = true;
+      else
+        Settings.enableLocalAuth = false;
 
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-    if (userId != null) {
-      cron.schedule(Schedule.parse('*/10 * * * *'), () async {
-        Provider.of<PrayerProvider>(context, listen: false)
-            .checkPrayerValidity(userId);
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+      if (userId != null) {
+        cron.schedule(Schedule.parse('*/10 * * * *'), () async {
+          Provider.of<PrayerProvider>(context, listen: false)
+              .checkPrayerValidity(userId);
+        });
+      }
+      await _getPrayers();
+      await _getActivePrayers();
+      await _getDevotionals();
+      await _getBibles();
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(userId);
+      //load settings
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setPrayerSettings(userId);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(userId);
+      Provider.of<SettingsProvider>(context, listen: false)
+          .setSharingSettings(userId);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setPrayerTimeNotifications(userId);
+
+      //set all users
+      Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
+
+      // get all push notifications
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setUserNotifications(userId);
+
+      // get all local notifications
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications(userId);
+      setState(() {
+        showLoading = false;
       });
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayerTimePrayers(userId);
-    //load settings
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setPrayerSettings(userId);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(userId);
-    Provider.of<SettingsProvider>(context, listen: false)
-        .setSharingSettings(userId);
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setPrayerTimeNotifications(userId);
+  }
 
-    //set all users
-    Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
+  Future<void> _getActivePrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
 
-    // get all push notifications
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setUserNotifications(userId);
+  Future<void> _getPrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+      if (searchQuery.isNotEmpty) {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers(searchQuery, _user.id);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayers(_user?.id);
+      }
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
 
-    // get all local notifications
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setLocalNotifications(userId);
-    // _isInit = false;
+  Future<void> _getDevotionals() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false)
+          .getDevotionals();
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      await Future.delayed(Duration(milliseconds: 300));
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  Future<void> _getBibles() async {
+    await BeStilDialog.showLoading(context, '');
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   GlobalKey _keyButton = GlobalKey();
@@ -128,19 +235,21 @@ class _EntryScreenState extends State<EntryScreen>
             colors: AppColors.backgroundColor,
           ),
         ),
-        child: new TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _tabController,
-          children: [
-            getItems(miscProvider).map((e) => e.page).toList()[0],
-            getItems(miscProvider).map((e) => e.page).toList()[1],
-            getItems(miscProvider).map((e) => e.page).toList()[2],
-            getItems(miscProvider).map((e) => e.page).toList()[3],
-            getItems(miscProvider).map((e) => e.page).toList()[4],
-            getItems(miscProvider).map((e) => e.page).toList()[5],
-            getItems(miscProvider).map((e) => e.page).toList()[6],
-          ],
-        ),
+        child: showLoading
+            ? BeStilDialog.getLoading(context)
+            : new TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: [
+                  getItems(miscProvider).map((e) => e.page).toList()[0],
+                  getItems(miscProvider).map((e) => e.page).toList()[1],
+                  getItems(miscProvider).map((e) => e.page).toList()[2],
+                  getItems(miscProvider).map((e) => e.page).toList()[3],
+                  getItems(miscProvider).map((e) => e.page).toList()[4],
+                  getItems(miscProvider).map((e) => e.page).toList()[5],
+                  getItems(miscProvider).map((e) => e.page).toList()[6],
+                ],
+              ),
       ),
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
