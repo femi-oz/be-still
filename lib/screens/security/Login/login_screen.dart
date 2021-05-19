@@ -41,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _passwordKey = GlobalKey();
+  final _usernameKey = GlobalKey();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
   bool isBioMetricAvailable = false;
   List<BiometricType> listOfBiometrics;
@@ -94,6 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      setState(() => isFormValid = _usernameController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty);
       _isBiometricAvailable();
       _isInit = false;
     }
@@ -332,6 +336,12 @@ class _LoginScreenState extends State<LoginScreen> {
         });
   }
 
+  Future<bool> _onWillPop() async {
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            LoginScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
+  }
+
   bool isFormValid = false;
 
   @override
@@ -342,88 +352,94 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       isFormValid = false;
     }
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-      child: Scaffold(
-          key: _scaffoldKey,
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.backgroundColor[0],
-                  ...AppColors.backgroundColor,
-                  ...AppColors.backgroundColor,
-                ],
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+        child: Scaffold(
+            key: _scaffoldKey,
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.backgroundColor[0],
+                    ...AppColors.backgroundColor,
+                    ...AppColors.backgroundColor,
+                  ],
+                ),
               ),
-            ),
-            child: Stack(
-              children: [
-                Align(alignment: Alignment.topCenter, child: CustomLogoShape()),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: SingleChildScrollView(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      child: new LayoutBuilder(builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(StringUtils.backgroundImage),
-                              alignment: Alignment.bottomCenter,
-                              colorFilter: new ColorFilter.mode(
-                                  AppColors.backgroundColor[0].withOpacity(0.2),
-                                  BlendMode.dstATop),
-                            ),
-                          ),
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.43),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                width: double.infinity,
-                                child: Column(
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        SizedBox(height: 10),
-                                        _buildForm(),
-                                        SizedBox(height: 8),
-                                        _buildActions(),
-                                        SizedBox(height: 10),
-                                        if (isBioMetricAvailable)
-                                          InkWell(
-                                            child: Container(
-                                                child: Text(
-                                              !Settings.enableLocalAuth
-                                                  ? 'Enable Face/Touch ID'
-                                                  : 'Disable Face/Touch ID',
-                                              style:
-                                                  AppTextStyles.regularText15,
-                                            )),
-                                            onTap: _toggleBiometrics,
-                                          ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 30),
-                                    _buildFooter(),
-                                  ],
-                                ),
+              child: Stack(
+                children: [
+                  Align(
+                      alignment: Alignment.topCenter, child: CustomLogoShape()),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: SingleChildScrollView(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height,
+                        child: new LayoutBuilder(builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(StringUtils.backgroundImage),
+                                alignment: Alignment.bottomCenter,
+                                colorFilter: new ColorFilter.mode(
+                                    AppColors.backgroundColor[0]
+                                        .withOpacity(0.2),
+                                    BlendMode.dstATop),
                               ),
-                            ],
-                          ),
-                        );
-                      }),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.43),
+                                Container(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 20.0),
+                                  width: double.infinity,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          SizedBox(height: 10),
+                                          _buildForm(),
+                                          SizedBox(height: 8),
+                                          _buildActions(),
+                                          SizedBox(height: 10),
+                                          if (isBioMetricAvailable)
+                                            InkWell(
+                                              child: Container(
+                                                  child: Text(
+                                                !Settings.enableLocalAuth
+                                                    ? 'Enable Face/Touch ID'
+                                                    : 'Disable Face/Touch ID',
+                                                style:
+                                                    AppTextStyles.regularText15,
+                                              )),
+                                              onTap: _toggleBiometrics,
+                                            ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 30),
+                                      _buildFooter(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          )),
+                ],
+              ),
+            )),
+      ),
     );
   }
 
@@ -472,12 +488,14 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         children: <Widget>[
           CustomInput(
+            textkey: _usernameKey,
             label: 'Username',
             controller: _usernameController,
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             isEmail: true,
-            onTextchanged: (_) {
+            isSearch: false,
+            onTextchanged: (i) {
               setState(() => isFormValid =
                   _usernameController.text.isNotEmpty &&
                       _passwordController.text.isNotEmpty);
@@ -490,17 +508,18 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Align(
                 child: CustomInput(
+                  textkey: _passwordKey,
+                  isSearch: false,
                   obScurePassword: true,
                   label: 'Password',
                   controller: _passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   isRequired: true,
-                  isSearch: false,
                   textInputAction: TextInputAction.done,
                   unfocus: true,
                   submitForm: () => _login(),
                   showSuffix: showSuffix,
-                  onTextchanged: (_) => setState(() => isFormValid =
+                  onTextchanged: (i) => setState(() => isFormValid =
                       _usernameController.text.isNotEmpty &&
                           _passwordController.text.isNotEmpty),
                 ),

@@ -1,5 +1,7 @@
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SlideRightRoute extends PageRouteBuilder {
   final Widget page;
@@ -68,10 +70,8 @@ class NavigationService {
   }
 
   Future<dynamic> goHome(int index) async {
-    // await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
-    //     .setCurrentPage(index, 1);EntryScreen.routeName
-    // return navigationKey.currentState
-    //     .popUntil(ModalRoute.withName(EntryScreen.routeName));
+    await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
+        .setCurrentPage(index);
     return navigationKey.currentState
         .pushReplacement(SlideLeftRoute(page: EntryScreen()));
   }

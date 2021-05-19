@@ -69,7 +69,9 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   Future<bool> _onWillPop() async {
-    return (NavigationService.instance.goHome(0)) ?? false;
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
   }
 
   Future<void> onCancel() async {

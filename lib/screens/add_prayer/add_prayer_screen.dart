@@ -41,6 +41,7 @@ class AddPrayer extends StatefulWidget {
 class _AddPrayerState extends State<AddPrayer> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _prayerKey = GlobalKey<FormFieldState>();
   List groups = [];
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
@@ -58,8 +59,8 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
 
   Future<void> _save() async {
+    FocusScope.of(context).unfocus();
     BeStilDialog.showLoading(context);
-
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -180,7 +181,10 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    return (NavigationService.instance.goHome(0)) ?? false;
+    widget.setCurrentIndex(0);
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
   }
 
   Future<void> _onTagSelected(s) async {
@@ -388,6 +392,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               key: _formKey,
                               child: Container(
                                 child: CustomInput(
+                                  textkey: _prayerKey,
                                   label: 'Prayer description',
                                   controller: _descriptionController,
                                   maxLines: 23,
@@ -421,12 +426,17 @@ class _AddPrayerState extends State<AddPrayer> {
                                       children: [
                                         ...localContacts.map((s) {
                                           displayName = s.displayName ?? '';
+                                          var tagsList = [];
 
                                           if (('@' + s.displayName)
                                               .toLowerCase()
                                               .contains(
                                                   tagText.toLowerCase())) {
                                             showNoContact = false;
+                                            tagsList = [
+                                              ...tagsList,
+                                              displayName
+                                            ];
                                             return GestureDetector(
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -444,11 +454,12 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 onTap: () => _onTagSelected(s));
                                           } else {
                                             showNoContact = true;
+                                            tagsList = [];
 
                                             return SizedBox();
                                           }
                                         }).toList(),
-                                        showNoContact
+                                        tagList.length == 0
                                             ? Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
