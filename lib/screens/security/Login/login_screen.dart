@@ -133,6 +133,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
+// Navigator.of(context).pushNamedAndRemoveUntil(
+//               EntryScreen.routeName, (Route<dynamic> route) => false);
       NavigationService.instance.goHome(0);
     }
   }
@@ -500,6 +502,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   isRequired: true,
+                  isSearch: false,
                   textInputAction: TextInputAction.done,
                   unfocus: true,
                   submitForm: () => _login(),
