@@ -96,9 +96,9 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          widget.setCurrentIndex(0);
           Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
+          widget.setCurrentIndex(0);
 
           // Navigator.of(context).pushNamedAndRemoveUntil(
           //     EntryScreen.routeName, (Route<dynamic> route) => false);
