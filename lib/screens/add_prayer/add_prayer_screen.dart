@@ -57,8 +57,8 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
 
   Future<void> _save() async {
+    FocusScope.of(context).unfocus();
     BeStilDialog.showLoading(context);
-
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -176,7 +176,10 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    return (NavigationService.instance.goHome(0)) ?? false;
+    widget.setCurrentIndex(0);
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
   }
 
   Future<void> _onTagSelected(s) async {
