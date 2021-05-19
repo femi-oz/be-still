@@ -28,7 +28,6 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-bool _isSearchMode = false;
 TutorialCoachMark tutorialCoachMark;
 
 class _EntryScreenState extends State<EntryScreen>
@@ -38,9 +37,7 @@ class _EntryScreenState extends State<EntryScreen>
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AnimationController controller;
   Animation<double> animation;
-  void _switchSearchMode(bool value) => _isSearchMode = value;
   TabController _tabController;
-  // bool _isInit = true;
 
   final cron = Cron();
 
@@ -48,7 +45,6 @@ class _EntryScreenState extends State<EntryScreen>
     _getPermissions();
     _tabController = new TabController(length: 7, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
-    _switchSearchMode(miscProvider.search);
     _currentIndex = miscProvider.currentPage;
     _preLoadData();
     super.initState();
@@ -124,13 +120,6 @@ class _EntryScreenState extends State<EntryScreen>
     final miscProvider = Provider.of<MiscProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
-      appBar: _currentIndex != 0
-          ? null
-          : CustomAppBar(
-              showPrayerActions: _currentIndex == 0,
-              isSearchMode: _isSearchMode,
-              switchSearchMode: (bool val) => _switchSearchMode(val),
-              globalKey: _keyButton5),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -272,7 +261,6 @@ class _EntryScreenState extends State<EntryScreen>
                       'You must have at least one active prayer to start prayer time.';
                   showInfoModal(message);
                 } else {
-                  _switchSearchMode(false);
                   _setCurrentIndex(index);
                 }
                 break;
@@ -284,7 +272,6 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                _switchSearchMode(false);
                 _setCurrentIndex(index);
                 break;
             }
