@@ -425,6 +425,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    var isDisable = widget.prayerData.prayer.isAnswer ||
+        widget.prayerData.userPrayer.isArchived;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -463,7 +465,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     Navigator.of(context).pop();
                   },
                   label: Text(
-                    'CLOSE',
+                    'BACK',
                     style: AppTextStyles.boldText20,
                   ),
                 ),
@@ -486,26 +488,30 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_share,
                       text: 'Share',
-                      isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived,
-                      onPress: () => showModalBottomSheet(
-                          context: context,
-                          barrierColor: Provider.of<ThemeProvider>(context,
-                                      listen: false)
-                                  .isDarkModeEnabled
-                              ? AppColors.backgroundColor[0].withOpacity(0.5)
-                              : Color(0xFF021D3C).withOpacity(0.7),
-                          backgroundColor: Provider.of<ThemeProvider>(context,
-                                      listen: false)
-                                  .isDarkModeEnabled
-                              ? AppColors.backgroundColor[0].withOpacity(0.5)
-                              : Color(0xFF021D3C).withOpacity(0.7),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return SharePrayer(
-                              prayerData: widget.prayerData,
-                            );
-                          }),
+                      isDisabled: isDisable,
+                      onPress: () => isDisable
+                          ? null
+                          : showModalBottomSheet(
+                              context: context,
+                              barrierColor: Provider.of<ThemeProvider>(context,
+                                          listen: false)
+                                      .isDarkModeEnabled
+                                  ? AppColors.backgroundColor[0]
+                                      .withOpacity(0.5)
+                                  : Color(0xFF021D3C).withOpacity(0.7),
+                              backgroundColor: Provider.of<ThemeProvider>(
+                                          context,
+                                          listen: false)
+                                      .isDarkModeEnabled
+                                  ? AppColors.backgroundColor[0]
+                                      .withOpacity(0.5)
+                                  : Color(0xFF021D3C).withOpacity(0.7),
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return SharePrayer(
+                                  prayerData: widget.prayerData,
+                                );
+                              }),
                     ),
                     LongButton(
                       textColor: AppColors.lightBlue3,
@@ -515,17 +521,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived,
-                      onPress: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddPrayer(
-                            isEdit: true,
-                            prayerData: widget.prayerData,
-                          ),
-                        ),
-                      ),
+                      isDisabled: isDisable,
+                      onPress: () => isDisable
+                          ? null
+                          : Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddPrayer(
+                                  isEdit: true,
+                                  prayerData: widget.prayerData,
+                                ),
+                              ),
+                            ),
                       text: 'Edit',
                     ),
                     LongButton(
@@ -536,14 +543,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
-                      isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived,
-                      onPress: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddUpdate(),
-                        ),
-                      ),
+                      isDisabled: isDisable,
+                      onPress: () => isDisable
+                          ? null
+                          : Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddUpdate(),
+                              ),
+                            ),
                       text: 'Add an Update',
                     ),
                     LongButton(
@@ -554,8 +562,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_reminder,
-                      isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived,
+                      isDisabled: isDisable,
                       suffix: widget.hasReminder &&
                               widget.reminder.frequency == Frequency.one_time
                           ? DateFormat('dd MMM yyyy HH:mma').format(widget
@@ -565,40 +572,43 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                       Frequency.one_time
                               ? widget.reminder.frequency
                               : null,
-                      onPress: () => showDialog(
-                        context: context,
-                        barrierColor:
-                            AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            insetPadding: EdgeInsets.all(20),
-                            backgroundColor: AppColors.prayerCardBgColor,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(color: AppColors.darkBlue),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10.0),
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 30),
-                                  child: ReminderPicker(
-                                    type: NotificationType.reminder,
-                                    hideActionuttons: false,
-                                    reminder: widget.hasReminder
-                                        ? widget.reminder
-                                        : null,
-                                    onCancel: () => Navigator.of(context).pop(),
+                      onPress: () => isDisable
+                          ? null
+                          : showDialog(
+                              context: context,
+                              barrierColor: AppColors.detailBackgroundColor[1]
+                                  .withOpacity(0.5),
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  insetPadding: EdgeInsets.all(20),
+                                  backgroundColor: AppColors.prayerCardBgColor,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: AppColors.darkBlue),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10.0),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 30),
+                                        child: ReminderPicker(
+                                          type: NotificationType.reminder,
+                                          hideActionuttons: false,
+                                          reminder: widget.hasReminder
+                                              ? widget.reminder
+                                              : null,
+                                          onCancel: () =>
+                                              Navigator.of(context).pop(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                       text: 'Reminder',
                     ),
                     LongButton(
@@ -609,21 +619,23 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_snooze,
-                      isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived,
-                      onPress: () => widget.prayerData.userPrayer.isSnoozed
-                          ? _unSnoozePrayer(widget.prayerData)
-                          : showModalBottomSheet(
-                              context: context,
-                              barrierColor: AppColors.detailBackgroundColor[1]
-                                  .withOpacity(0.5),
-                              backgroundColor: AppColors
-                                  .detailBackgroundColor[1]
-                                  .withOpacity(0.9),
-                              isScrollControlled: true,
-                              builder: (BuildContext context) =>
-                                  SnoozePrayer(widget.prayerData),
-                            ),
+                      isDisabled: isDisable,
+                      onPress: () => isDisable
+                          ? null
+                          : widget.prayerData.userPrayer.isSnoozed
+                              ? _unSnoozePrayer(widget.prayerData)
+                              : showModalBottomSheet(
+                                  context: context,
+                                  barrierColor: AppColors
+                                      .detailBackgroundColor[1]
+                                      .withOpacity(0.5),
+                                  backgroundColor: AppColors
+                                      .detailBackgroundColor[1]
+                                      .withOpacity(0.9),
+                                  isScrollControlled: true,
+                                  builder: (BuildContext context) =>
+                                      SnoozePrayer(widget.prayerData),
+                                ),
                       text: widget.prayerData.userPrayer.isSnoozed
                           ? 'Unsnooze'
                           : 'Snooze',

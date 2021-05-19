@@ -94,6 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      setState(() => isFormValid = _usernameController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty);
       _isBiometricAvailable();
       _isInit = false;
     }
@@ -468,7 +470,7 @@ class _LoginScreenState extends State<LoginScreen> {
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             isEmail: true,
-            onTextchanged: (_) {
+            onTextchanged: (i) {
               setState(() => isFormValid =
                   _usernameController.text.isNotEmpty &&
                       _passwordController.text.isNotEmpty);
@@ -490,7 +492,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   unfocus: true,
                   submitForm: () => _login(),
                   showSuffix: showSuffix,
-                  onTextchanged: (_) => setState(() => isFormValid =
+                  onTextchanged: (i) => setState(() => isFormValid =
                       _usernameController.text.isNotEmpty &&
                           _passwordController.text.isNotEmpty),
                 ),
