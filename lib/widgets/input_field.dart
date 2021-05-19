@@ -27,6 +27,7 @@ class CustomInput extends StatefulWidget {
   final bool isLink;
   final bool unfocus;
   final FocusNode focusNode;
+  final bool isSearch;
 
   CustomInput(
       {this.maxLines = 1,
@@ -47,6 +48,7 @@ class CustomInput extends StatefulWidget {
       this.isEmail = false,
       this.isLink = false,
       this.unfocus = false,
+      this.isSearch = false,
       this.focusNode});
 
   @override
@@ -146,7 +148,7 @@ class _CustomInputState extends State<CustomInput> {
               obscureText: widget.obScurePassword,
               validator: (value) => _validatorFn(value),
               onFieldSubmitted: (val) => {
-                _searchPrayer(val),
+                widget.isSearch ? _searchPrayer(val) : null,
                 widget.unfocus
                     ? FocusScope.of(context).unfocus()
                     : FocusScope.of(context).nextFocus(),
@@ -164,7 +166,7 @@ class _CustomInputState extends State<CustomInput> {
 
   void _searchPrayer(String value) async {
     final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)

@@ -488,6 +488,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   isRequired: true,
+                  isSearch: false,
                   textInputAction: TextInputAction.done,
                   unfocus: true,
                   submitForm: () => _login(),

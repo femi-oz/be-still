@@ -150,6 +150,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       padding: 5.0,
                       showSuffix: false,
                       textInputAction: TextInputAction.done,
+                      isSearch: true,
                     ),
                   ),
                   SizedBox(width: 10),
