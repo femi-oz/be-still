@@ -333,8 +333,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool isFormValid = false;
+
   @override
   Widget build(BuildContext context) {
+    if (_usernameController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      isFormValid = true;
+    } else {
+      isFormValid = false;
+    }
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
