@@ -113,7 +113,8 @@ class _AddUpdateState extends State<AddUpdate> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                        EntryScreen.routeName, (Route<dynamic> route) => false),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,

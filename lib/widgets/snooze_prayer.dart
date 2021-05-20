@@ -21,26 +21,19 @@ class SnoozePrayer extends StatefulWidget {
 
 class _SnoozePrayerState extends State<SnoozePrayer> {
   List<String> snoozeInterval = ['Minutes', 'Days', 'Weeks', 'Months'];
+  List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
+  List<int> snoozeDuration = new List<int>.generate(31, (i) => i + 1);
 
-  List<String> snoozeDuration = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-  ];
   var selectedInterval;
-  var selectedDuration;
-  var selectedDurationIndex;
-  var selectedIntervalIndex;
-  int minutes;
+  int selectedDuration;
+
+  @override
+  void initState() {
+    selectedInterval = snoozeInterval[0];
+    selectedDuration =
+        selectedInterval == "Minutes" ? snoozeDuration[0] : snoozeMins[0];
+    super.initState();
+  }
 
   void _snoozePrayer() async {
     if (selectedInterval == null) {
@@ -54,6 +47,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       selectedDuration = snoozeDuration[selectedDurationindex];
     }
     BeStilDialog.showLoading(context);
+    var minutes = 0;
     switch (selectedInterval) {
       case 'Minutes':
         minutes = 1;
@@ -70,7 +64,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       default:
     }
 
-    var e = int.parse(selectedDuration) * minutes;
+    var e = selectedDuration * minutes;
     var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
     try {
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
@@ -80,11 +74,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.pushReplacement(
-          context,
-          SlideRightRoute(
-            page: EntryScreen(),
-          ));
+      Navigator.pushReplacement(context, SlideRightRoute(page: EntryScreen()));
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -129,17 +119,11 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                                 background: Colors.transparent,
                               ),
                               scrollController: FixedExtentScrollController(
-                                  initialItem: snoozeInterval.indexOf(
-                                      snoozeInterval[
-                                          int.parse(Settings.snoozeInterval)])),
+                                  initialItem:
+                                      snoozeInterval.indexOf(selectedInterval)),
                               itemExtent: 30,
-                              onSelectedItemChanged: (i) => setState(() {
-                                selectedInterval = snoozeInterval[i];
-                                selectedIntervalIndex =
-                                    snoozeInterval.indexOf(snoozeInterval[i]);
-                                Settings.snoozeInterval =
-                                    selectedIntervalIndex.toString();
-                              }),
+                              onSelectedItemChanged: (i) => setState(
+                                  () => selectedInterval = snoozeInterval[i]),
                               children: <Widget>[
                                 ...snoozeInterval
                                     .map(
@@ -161,41 +145,74 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.4,
-                            child: CupertinoPicker(
-                              selectionOverlay:
-                                  CupertinoPickerDefaultSelectionOverlay(
-                                background: Colors.transparent,
-                              ),
-                              scrollController: FixedExtentScrollController(
-                                  initialItem: snoozeDuration.indexOf(
-                                      snoozeDuration[
-                                          int.parse(Settings.snoozeDuration)])),
-                              itemExtent: 30,
-                              onSelectedItemChanged: (i) => setState(() {
-                                selectedDuration = snoozeDuration[i];
-                                selectedDurationIndex =
-                                    snoozeDuration.indexOf(selectedDuration);
-                                Settings.snoozeDuration =
-                                    selectedDurationIndex.toString();
-                              }),
-                              children: <Widget>[
-                                ...snoozeDuration
-                                    .map(
-                                      (i) => Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          i,
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyles.regularText15
-                                              .copyWith(
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
+                            child: selectedInterval == "Minutes"
+                                ? CupertinoPicker(
+                                    selectionOverlay:
+                                        CupertinoPickerDefaultSelectionOverlay(
+                                      background: Colors.transparent,
+                                    ),
+                                    scrollController:
+                                        FixedExtentScrollController(
+                                            initialItem: snoozeMins
+                                                .indexOf(selectedDuration)),
+                                    itemExtent: 30,
+                                    onSelectedItemChanged: (i) => setState(
+                                        () => selectedDuration = snoozeMins[i]),
+                                    children: <Widget>[
+                                      ...snoozeMins
+                                          .map(
+                                            (i) => Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                i.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: AppTextStyles
+                                                    .regularText15
+                                                    .copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    ],
+                                  )
+                                : Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    child: CupertinoPicker(
+                                      selectionOverlay:
+                                          CupertinoPickerDefaultSelectionOverlay(
+                                        background: Colors.transparent,
                                       ),
-                                    )
-                                    .toList(),
-                              ],
-                            ),
+                                      scrollController:
+                                          FixedExtentScrollController(
+                                              initialItem: snoozeDuration
+                                                  .indexOf(selectedDuration)),
+                                      itemExtent: 30,
+                                      onSelectedItemChanged: (i) => setState(
+                                          () => selectedDuration =
+                                              snoozeDuration[i]),
+                                      children: <Widget>[
+                                        ...snoozeDuration
+                                            .map(
+                                              (i) => Align(
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  i.toString(),
+                                                  textAlign: TextAlign.center,
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ],
+                                    ),
+                                  ),
                           ),
                         ],
                       ),

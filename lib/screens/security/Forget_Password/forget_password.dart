@@ -68,6 +68,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 image: DecorationImage(
                   image: AssetImage(StringUtils.backgroundImage),
                   alignment: Alignment.bottomCenter,
+                  fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(
                       AppColors.backgroundColor[0].withOpacity(0.2),
                       BlendMode.dstATop),
@@ -238,6 +239,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       child: Column(
         children: <Widget>[
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             label: 'Email Address',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,

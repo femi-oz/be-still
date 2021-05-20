@@ -939,6 +939,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             child: Column(
                                               children: [
                                                 CustomInput(
+                                                  textkey: GlobalKey<
+                                                      FormFieldState>(),
                                                   label: 'Email Address',
                                                   controller: _emailController,
                                                   isEmail: true,

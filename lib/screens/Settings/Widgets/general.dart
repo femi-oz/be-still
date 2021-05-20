@@ -416,6 +416,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   children: [
                     if (type == _ModalType.email)
                       CustomInput(
+                        textkey: GlobalKey<FormFieldState>(),
                         showSuffix: false,
                         isRequired: true,
                         isEmail: true,
@@ -426,6 +427,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       height: 15.0,
                     ),
                     CustomInput(
+                      textkey: GlobalKey<FormFieldState>(),
                       showSuffix: false,
                       isRequired: false,
                       obScurePassword: true,
@@ -442,6 +444,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomInput(
+                              textkey: GlobalKey<FormFieldState>(),
                               obScurePassword: true,
                               showSuffix: false,
                               isRequired: true,
@@ -451,6 +454,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             ),
                             SizedBox(height: 15.0),
                             CustomInput(
+                              textkey: GlobalKey<FormFieldState>(),
                               obScurePassword: true,
                               showSuffix: false,
                               isRequired: true,

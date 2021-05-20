@@ -171,6 +171,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       image: DecorationImage(
                         image: AssetImage(StringUtils.backgroundImage),
                         alignment: Alignment.bottomCenter,
+                        fit: BoxFit.cover,
                         colorFilter: new ColorFilter.mode(
                             AppColors.backgroundColor[0].withOpacity(0.2),
                             BlendMode.dstATop),
@@ -300,6 +301,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         child: Column(
           children: <Widget>[
             CustomInput(
+              textkey: GlobalKey<FormFieldState>(),
               label: 'First Name',
               controller: _firstnameController,
               keyboardType: TextInputType.text,
@@ -307,6 +309,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: GlobalKey<FormFieldState>(),
               label: 'Last Name',
               controller: _lastnameController,
               keyboardType: TextInputType.text,
@@ -314,6 +317,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: GlobalKey<FormFieldState>(),
               label: 'Email',
               isEmail: true,
               controller: _emailController,
@@ -327,6 +331,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.transparent,
                 child: IgnorePointer(
                   child: CustomInput(
+                    textkey: GlobalKey<FormFieldState>(),
                     label: 'Date of Birth (optional)',
                     controller: _dobController,
                   ),
@@ -335,6 +340,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: GlobalKey<FormFieldState>(),
               isPassword: true,
               obScurePassword: true,
               label: 'Password',
@@ -344,6 +350,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: GlobalKey<FormFieldState>(),
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,
