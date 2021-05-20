@@ -106,10 +106,21 @@ class _AddPrayerState extends State<AddPrayer> {
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (!_descriptionController.text.contains(element.displayName)) {
+            if (!_descriptionController.text
+                .toLowerCase()
+                .contains(element.displayName.toLowerCase())) {
               textList.add(element);
             }
           });
+          contacts.forEach((s) {
+            if (!_descriptionController.text.contains(s.displayName)) {
+              s.displayName = '';
+            }
+            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+              contacts = [...contacts, s];
+            }
+          });
+
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
@@ -158,10 +169,20 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
+
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
             : '';
+      });
+      tagList.clear();
+      localContacts.forEach((s) {
+        if (('@' + s.displayName)
+            .trim()
+            .toLowerCase()
+            .contains(tagText.trim().toLowerCase())) {
+          tagList.add(s.displayName);
+        }
       });
 
       painter = TextPainter(
@@ -402,7 +423,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               ),
                             ),
                           ),
-                          tagText.length > 1
+                          tagText.length > 0
                               ? Positioned(
                                   // padding: EdgeInsets.only(
                                   //     top: _focusNode.offset.dy * 0.5 +
@@ -423,17 +444,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                       children: [
                                         ...localContacts.map((s) {
                                           displayName = s.displayName ?? '';
-                                          var tagsList = [];
 
                                           if (('@' + s.displayName)
                                               .toLowerCase()
                                               .contains(
                                                   tagText.toLowerCase())) {
-                                            showNoContact = false;
-                                            tagsList = [
-                                              ...tagsList,
-                                              displayName
-                                            ];
                                             return GestureDetector(
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -450,9 +465,6 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 ),
                                                 onTap: () => _onTagSelected(s));
                                           } else {
-                                            showNoContact = true;
-                                            tagsList = [];
-
                                             return SizedBox();
                                           }
                                         }).toList(),
