@@ -26,13 +26,12 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
 
   var selectedInterval;
   int selectedDuration;
-  int selectedMins;
 
   @override
   void initState() {
     selectedInterval = snoozeInterval[0];
-    selectedDuration = snoozeDuration[0];
-    selectedMins = snoozeMins[0];
+    selectedDuration =
+        selectedInterval == "Minutes" ? snoozeDuration[0] : snoozeMins[0];
     super.initState();
   }
 
@@ -155,10 +154,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                                     scrollController:
                                         FixedExtentScrollController(
                                             initialItem: snoozeMins
-                                                .indexOf(selectedMins)),
+                                                .indexOf(selectedDuration)),
                                     itemExtent: 30,
                                     onSelectedItemChanged: (i) => setState(
-                                        () => selectedMins = snoozeMins[i]),
+                                        () => selectedDuration = snoozeMins[i]),
                                     children: <Widget>[
                                       ...snoozeMins
                                           .map(
