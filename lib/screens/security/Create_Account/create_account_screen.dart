@@ -79,7 +79,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _formKey.currentState.save();
 
     try {
-      await BeStilDialog.showLoading(context, 'Registering...');
+      BeStilDialog.showLoading(context, 'Registering...');
       if (_firstnameController.text == null ||
           _firstnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
