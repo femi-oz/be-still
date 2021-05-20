@@ -18,6 +18,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
@@ -74,13 +75,17 @@ class _PrayerListState extends State<PrayerList> {
   }
 
   Future<void> onTapCard(prayerData) async {
-    await BeStilDialog.showLoading(context, '');
+    BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(prayerData.userPrayer.id);
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
+      // Navigator.pushNamed(context, PrayerDetails.routeName);
+      // BeStilDialog.hideLoading(context);
+      // Navigator.push(
+      //     context, CupertinoPageRoute(builder: (context) => PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
