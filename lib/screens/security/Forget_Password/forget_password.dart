@@ -239,6 +239,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       child: Column(
         children: <Widget>[
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             label: 'Email Address',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,

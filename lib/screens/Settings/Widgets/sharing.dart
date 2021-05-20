@@ -258,12 +258,14 @@ class _SharingSettingsState extends State<SharingSettings> {
           children: [
             type == _ModalType.church
                 ? CustomInput(
+                    textkey: GlobalKey<FormFieldState>(),
                     isRequired: true,
                     showSuffix: false,
                     label: 'Enter Church Name',
                     controller: _churchName)
                 : type == _ModalType.email
                     ? CustomInput(
+                        textkey: GlobalKey<FormFieldState>(),
                         isRequired: true,
                         showSuffix: false,
                         keyboardType: TextInputType.emailAddress,
@@ -272,6 +274,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                         controller: _churchEmail)
                     : type == _ModalType.phone
                         ? CustomInput(
+                            textkey: GlobalKey<FormFieldState>(),
                             isRequired: true,
                             showSuffix: false,
                             keyboardType: TextInputType.phone,
@@ -280,6 +283,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                             controller: _churchPhone)
                         : type == _ModalType.link
                             ? CustomInput(
+                                textkey: GlobalKey<FormFieldState>(),
                                 isLink: true,
                                 isRequired: true,
                                 showSuffix: false,

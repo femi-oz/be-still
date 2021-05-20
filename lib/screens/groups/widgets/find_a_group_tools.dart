@@ -59,6 +59,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   height: 20.0,
                 ),
                 CustomInput(
+                  textkey: GlobalKey<FormFieldState>(),
                   controller: _groupNameController,
                   label: 'Group Name',
                   isRequired: false,
@@ -66,6 +67,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 ),
                 SizedBox(height: 12.0),
                 CustomInput(
+                  textkey: GlobalKey<FormFieldState>(),
                   controller: _cityController,
                   label: 'City Name',
                   isRequired: false,
@@ -73,6 +75,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 ),
                 SizedBox(height: 12.0),
                 CustomInput(
+                  textkey: GlobalKey<FormFieldState>(),
                   controller: _stateController,
                   label: 'State*',
                   isRequired: false,
@@ -80,6 +83,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 ),
                 SizedBox(height: 12.0),
                 CustomInput(
+                  textkey: GlobalKey<FormFieldState>(),
                   controller: _organizationController,
                   label: 'Organization / Church Association',
                   isRequired: false,
@@ -87,6 +91,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 ),
                 SizedBox(height: 12.0),
                 CustomInput(
+                  textkey: GlobalKey<FormFieldState>(),
                   controller: _adminNameController,
                   label: 'Admin Name',
                   isRequired: false,
@@ -94,6 +99,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 ),
                 SizedBox(height: 12.0),
                 CustomInput(
+                  textkey: GlobalKey<FormFieldState>(),
                   controller: _descriptionController,
                   label: 'Description',
                   isRequired: false,
