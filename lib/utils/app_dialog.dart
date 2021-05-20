@@ -47,7 +47,7 @@ class BeStilDialog {
 
   static Future<void> showLoading(BuildContext context,
       [String message = '']) async {
-    Navigator.of(context).push(Loader(message));
+    await Navigator.of(context).push(Loader(message));
   }
 
   static hideLoading(BuildContext context) {

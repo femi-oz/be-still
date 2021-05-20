@@ -177,7 +177,7 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    widget.setCurrentIndex(0);
+    widget.setCurrentIndex(0, true);
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;
@@ -249,7 +249,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             EntryScreen.routeName,
                             (Route<dynamic> route) => false);
                       } else {
-                        widget.setCurrentIndex(0);
+                        widget.setCurrentIndex(0, true);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus.unfocus();
                       }
@@ -364,7 +364,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 ? onCancel()
                                 : widget.isEdit
                                     ? Navigator.pop(context)
-                                    : widget.setCurrentIndex(0)),
+                                    : widget.setCurrentIndex(0, true)),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(

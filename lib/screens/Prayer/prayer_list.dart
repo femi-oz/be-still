@@ -209,8 +209,8 @@ class _PrayerListState extends State<PrayerList> {
                                                     PrayerType.answered
                                             ? Container()
                                             : LongButton(
-                                                onPress: () =>
-                                                    widget.setCurrentIndex(1),
+                                                onPress: () => widget
+                                                    .setCurrentIndex(1, true),
                                                 text: 'Add New Prayer',
                                                 backgroundColor: AppColors
                                                     .addprayerBgColor

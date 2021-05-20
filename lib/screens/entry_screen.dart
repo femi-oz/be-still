@@ -37,8 +37,6 @@ class _EntryScreenState extends State<EntryScreen>
   BuildContext bcontext;
   int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  AnimationController controller;
-  Animation<double> animation;
   TabController _tabController;
 
   final cron = Cron();
@@ -57,10 +55,14 @@ class _EntryScreenState extends State<EntryScreen>
     super.initState();
   }
 
-  _setCurrentIndex(index) {
-    _tabController.animateTo(index);
+  Future<void> _setCurrentIndex(int index, bool animate) async {
+    if (animate)
+      _tabController.animateTo(index);
+    else
+      _tabController.index = index;
     setState(() => _currentIndex = index);
-    Provider.of<MiscProvider>(context, listen: false).setCurrentPage(index);
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setCurrentPage(index);
   }
 
   void _getPermissions() async {
@@ -253,13 +255,13 @@ class _EntryScreenState extends State<EntryScreen>
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
       endDrawer: CustomDrawer(
-        _tabController,
         _setCurrentIndex,
         _keyButton,
         _keyButton2,
         _keyButton3,
         _keyButton4,
         _keyButton5,
+        _scaffoldKey,
       ),
       endDrawerEnableOpenDragGesture: false,
     );
@@ -369,7 +371,7 @@ class _EntryScreenState extends State<EntryScreen>
                       'You must have at least one active prayer to start prayer time.';
                   showInfoModal(message);
                 } else {
-                  _setCurrentIndex(index);
+                  _setCurrentIndex(index, true);
                 }
                 break;
               case 3:
@@ -380,7 +382,7 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                _setCurrentIndex(index);
+                _setCurrentIndex(index, true);
                 break;
             }
           },

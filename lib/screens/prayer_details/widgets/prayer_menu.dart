@@ -54,9 +54,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(
-        context,
-      );
+      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
@@ -81,9 +79,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   _unMarkPrayerAsFavorite(CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(
-        context,
-      );
+      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .unfavoritePrayer(prayerData.userPrayer.id);
       await Future.delayed(Duration(milliseconds: 300));
@@ -108,7 +104,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   _onDelete() async {
     BeStilDialog.showLoading(context);
-
     try {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
@@ -120,6 +115,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.userPrayer.id);
+      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
