@@ -133,8 +133,10 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-      NavigationService.instance.goHome(0);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setLoadStatus(true);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
     }
   }
 
@@ -172,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState.validate()) return null;
     _formKey.currentState.save();
 
-    await BeStilDialog.showLoading(context, 'Authenticating');
+    BeStilDialog.showLoading(context, 'Authenticating');
     try {
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: _usernameController.text,
@@ -186,8 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword =
           Settings.rememberMe ? _passwordController.text : '';
-      // await Provider.of<NotificationProvider>(context, listen: false)
-      //     .setDevice(user.id);
+
       LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
@@ -209,7 +210,6 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(context, e, null, s);
     }
-    // }
   }
 
   void _biologin() async {

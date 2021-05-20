@@ -98,14 +98,12 @@ class _EntryScreenState extends State<EntryScreen>
       await _getActivePrayers();
       await _getDevotionals();
       await _getBibles();
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(userId);
       //load settings
       await Provider.of<SettingsProvider>(context, listen: false)
           .setPrayerSettings(userId);
       await Provider.of<SettingsProvider>(context, listen: false)
           .setSettings(userId);
-      Provider.of<SettingsProvider>(context, listen: false)
+      await Provider.of<SettingsProvider>(context, listen: false)
           .setSharingSettings(userId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setPrayerTimeNotifications(userId);
@@ -114,15 +112,12 @@ class _EntryScreenState extends State<EntryScreen>
       Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
 
       // get all push notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(userId);
 
       // get all local notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications(userId);
-      // setState(() {
-      //   showLoading = false;
-      // });
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -178,21 +173,17 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Future<void> _getDevotionals() async {
-    await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false)
           .getDevotionals();
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -200,17 +191,13 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Future<void> _getBibles() async {
-    await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
-      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
