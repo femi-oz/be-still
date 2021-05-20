@@ -5,17 +5,13 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-
 import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
@@ -98,7 +94,7 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
-          widget.setCurrentIndex(0);
+          widget.setCurrentIndex(0, true);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
