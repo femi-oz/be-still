@@ -28,6 +28,7 @@ class _AddUpdateState extends State<AddUpdate> {
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
   bool _autoValidate = false;
+  final _prayerKey = GlobalKey();
 
   Future<void> _save(String prayerId) async {
     setState(() => _autoValidate = true);
@@ -239,6 +240,7 @@ class _AddUpdateState extends State<AddUpdate> {
                             autovalidate: _autoValidate,
                             key: _formKey,
                             child: CustomInput(
+                              textkey: _prayerKey,
                               label: "Enter your text here",
                               controller: _descriptionController,
                               maxLines: 23,
@@ -246,12 +248,13 @@ class _AddUpdateState extends State<AddUpdate> {
                               showSuffix: false,
                               textInputAction: TextInputAction.newline,
                               focusNode: _focusNode,
+                              isSearch: false,
                             ),
                           ),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: AppColors.darkBlue2,
+                                color: AppColors.lightBlue3,
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.circular(5),
@@ -267,10 +270,9 @@ class _AddUpdateState extends State<AddUpdate> {
                                         margin: EdgeInsets.only(bottom: 20),
                                         child: Text(
                                           prayerData.prayer.createdBy,
-                                          style: TextStyle(
-                                              color: AppColors.lightBlue3,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500),
+                                          style: AppTextStyles.regularText16b
+                                              .copyWith(
+                                                  color: AppColors.lightBlue4),
                                           textAlign: TextAlign.center,
                                         ),
                                       )
@@ -294,8 +296,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                                             'hh:mma | MM.dd.yyyy')
                                                         .format(u.modifiedOn),
                                                     style: TextStyle(
-                                                        color:
-                                                            AppColors.dimBlue,
+                                                        color: AppColors
+                                                            .lightBlue3,
                                                         fontWeight:
                                                             FontWeight.w500),
                                                   ),
@@ -304,7 +306,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                             ),
                                             Expanded(
                                               child: Divider(
-                                                color: AppColors.darkBlue2,
+                                                color: AppColors.lightBlue3,
                                                 thickness: 1,
                                               ),
                                             ),
@@ -316,13 +318,11 @@ class _AddUpdateState extends State<AddUpdate> {
                                             child: Center(
                                               child: Text(
                                                 u.description,
-                                                style: TextStyle(
-                                                  color:
-                                                      AppColors.textFieldText,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w300,
-                                                  height: 2,
-                                                ),
+                                                style: AppTextStyles
+                                                    .regularText16b
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .lightBlue3),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
@@ -346,7 +346,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                                 Text(
                                                   'Initial Prayer |',
                                                   style: TextStyle(
-                                                      color: AppColors.dimBlue,
+                                                      color:
+                                                          AppColors.lightBlue3,
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.w500),
@@ -357,7 +358,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                                           .prayer.modifiedOn),
                                                   style: TextStyle(
                                                       fontSize: 12,
-                                                      color: AppColors.dimBlue,
+                                                      color:
+                                                          AppColors.lightBlue3,
                                                       fontWeight:
                                                           FontWeight.w500),
                                                 ),
@@ -366,7 +368,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                           ),
                                           Expanded(
                                             child: Divider(
-                                              color: AppColors.darkBlue2,
+                                              color: AppColors.lightBlue3,
                                               thickness: 1,
                                             ),
                                           ),
@@ -383,7 +385,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                             child: Text(
                                               prayerData.prayer.description,
                                               style: TextStyle(
-                                                color: AppColors.textFieldText,
+                                                color: AppColors.lightBlue3,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w300,
                                                 height: 2,
