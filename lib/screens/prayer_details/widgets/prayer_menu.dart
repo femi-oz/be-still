@@ -419,6 +419,28 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
+  _share() {
+    Navigator.pop(context);
+    showModalBottomSheet(
+        context: context,
+        barrierColor:
+            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
+                ? AppColors.backgroundColor[0].withOpacity(0.5)
+                : Color(0xFF021D3C).withOpacity(0.7),
+        backgroundColor:
+            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
+                ? AppColors.backgroundColor[0].withOpacity(0.5)
+                : Color(0xFF021D3C).withOpacity(0.7),
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return SharePrayer(
+            prayerData: widget.prayerData,
+            hasReminder: widget.hasReminder,
+            reminder: widget.reminder,
+          );
+        });
+  }
+
   Widget build(BuildContext context) {
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived;
@@ -475,39 +497,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
-                                  .isDarkModeEnabled
-                              ? AppColors.backgroundColor[0].withOpacity(0.7)
-                              : AppColors.white,
-                      icon: AppIcons.bestill_share,
-                      text: 'Share',
-                      isDisabled: isDisable,
-                      onPress: () => isDisable
-                          ? null
-                          : showModalBottomSheet(
-                              context: context,
-                              barrierColor: Provider.of<ThemeProvider>(context,
-                                          listen: false)
-                                      .isDarkModeEnabled
-                                  ? AppColors.backgroundColor[0]
-                                      .withOpacity(0.5)
-                                  : Color(0xFF021D3C).withOpacity(0.7),
-                              backgroundColor: Provider.of<ThemeProvider>(
-                                          context,
-                                          listen: false)
-                                      .isDarkModeEnabled
-                                  ? AppColors.backgroundColor[0]
-                                      .withOpacity(0.5)
-                                  : Color(0xFF021D3C).withOpacity(0.7),
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return SharePrayer(
-                                  prayerData: widget.prayerData,
-                                );
-                              }),
-                    ),
+                        textColor: AppColors.lightBlue3,
+                        backgroundColor:
+                            Provider.of<ThemeProvider>(context, listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.7)
+                                : AppColors.white,
+                        icon: AppIcons.bestill_share,
+                        text: 'Share',
+                        isDisabled: isDisable,
+                        onPress: () => isDisable ? null : _share()),
                     LongButton(
                       textColor: AppColors.lightBlue3,
                       backgroundColor:
@@ -619,17 +618,34 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           ? null
                           : widget.prayerData.userPrayer.isSnoozed
                               ? _unSnoozePrayer(widget.prayerData)
-                              : showModalBottomSheet(
+                              : showDialog(
                                   context: context,
                                   barrierColor: AppColors
                                       .detailBackgroundColor[1]
                                       .withOpacity(0.5),
-                                  backgroundColor: AppColors
-                                      .detailBackgroundColor[1]
-                                      .withOpacity(0.9),
-                                  isScrollControlled: true,
-                                  builder: (BuildContext context) =>
-                                      SnoozePrayer(widget.prayerData),
+                                  builder: (BuildContext context) => Dialog(
+                                    insetPadding: EdgeInsets.all(20),
+                                    backgroundColor:
+                                        AppColors.prayerCardBgColor,
+                                    shape: RoundedRectangleBorder(
+                                      side:
+                                          BorderSide(color: AppColors.darkBlue),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 30),
+                                          child:
+                                              SnoozePrayer(widget.prayerData),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                       text: widget.prayerData.userPrayer.isSnoozed
                           ? 'Unsnooze'

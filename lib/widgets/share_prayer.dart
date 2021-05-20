@@ -2,6 +2,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
@@ -13,7 +14,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SharePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;
-  SharePrayer({this.prayerData});
+  final bool hasReminder;
+  final reminder;
+  SharePrayer({this.prayerData, this.hasReminder, this.reminder});
 
   _SharePrayerState createState() => _SharePrayerState();
 }
@@ -118,9 +121,27 @@ class _SharePrayerState extends State<SharePrayer> {
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.5)
+                            : Color(0xFF021D3C).withOpacity(0.7),
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.5)
+                            : Color(0xFF021D3C).withOpacity(0.7),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return PrayerMenu(context, widget.hasReminder,
+                          widget.reminder, null, widget.prayerData);
+                    },
+                  );
                 },
                 label: Text(
-                  'CLOSE',
+                  'BACK',
                   style: AppTextStyles.boldText20,
                 ),
               ),
