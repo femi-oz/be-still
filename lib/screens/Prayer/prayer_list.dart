@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -16,6 +15,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +44,7 @@ class PrayerList extends StatefulWidget {
 class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
   bool _canVibrate = true;
+  final refreshKey = new GlobalKey<RefreshIndicatorState>();
 
   @override
   void didChangeDependencies() {
@@ -51,57 +52,25 @@ class _PrayerListState extends State<PrayerList> {
       _setVibration();
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await _getPrayers();
         var status =
             Provider.of<PrayerProvider>(context, listen: false).filterOption;
         String heading =
             '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle(heading);
+        if (Settings.isAppInit)
+          TutorialTarget.showTutorial(
+            context,
+            widget.keyButton,
+            widget.keyButton2,
+            widget.keyButton3,
+            widget.keyButton4,
+            widget.keyButton5,
+          );
         setState(() => _isInit = false);
       });
     }
     super.didChangeDependencies();
-  }
-
-  Future<void> _getPrayers() async {
-    await BeStilDialog.showLoading(context);
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      final searchQuery =
-          Provider.of<MiscProvider>(context, listen: false).searchQuery;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
-      if (searchQuery.isNotEmpty) {
-        Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers(searchQuery, _user.id);
-      } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user?.id);
-      }
-
-      BeStilDialog.hideLoading(context);
-      if (Settings.isAppInit)
-        TutorialTarget.showTutorial(
-          context,
-          widget.keyButton,
-          widget.keyButton2,
-          widget.keyButton3,
-          widget.keyButton4,
-          widget.keyButton5,
-        );
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
   }
 
   Future<void> onTapCard(prayerData) async {
@@ -161,6 +130,13 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
+  bool _isSearchMode = false;
+  void _switchSearchMode(bool value) => _isSearchMode = value;
+
+  Future<void> refresh() async {
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
@@ -168,8 +144,14 @@ class _PrayerListState extends State<PrayerList> {
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
       onWillPop: () => null,
-      child: Container(
-        child: SingleChildScrollView(
+      child: Scaffold(
+        appBar: CustomAppBar(
+          showPrayerActions: true,
+          isSearchMode: _isSearchMode,
+          switchSearchMode: (bool val) => _switchSearchMode(val),
+          globalKey: widget.keyButton5,
+        ),
+        body: Container(
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: MediaQuery.of(context).size.height * 0.85,
@@ -194,6 +176,7 @@ class _PrayerListState extends State<PrayerList> {
                   ),
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     SizedBox(height: 20),
                     prayers.length == 0
@@ -209,34 +192,75 @@ class _PrayerListState extends State<PrayerList> {
                               ),
                             ),
                           )
-                        : Column(
-                            children: <Widget>[
-                              ...prayers.map((e) {
-                                final _timeago =
-                                    DateFormatter(e.prayer.modifiedOn).format();
-                                return GestureDetector(
-                                  onTap: () => onTapCard(e),
-                                  child: PrayerCard(
-                                    prayerData: e,
-                                    timeago: _timeago,
-                                  ),
-                                );
-                              }).toList(),
-                            ],
+                        : Expanded(
+                            child: RefreshIndicator(
+                              key: refreshKey,
+                              onRefresh: () => refresh(),
+                              child: ListView.builder(
+                                itemCount: prayers.length + 1,
+                                itemBuilder: (context, i) {
+                                  if (i == prayers.length)
+                                    return Column(
+                                      children: [
+                                        SizedBox(height: 5),
+                                        currentPrayerType ==
+                                                    PrayerType.archived ||
+                                                currentPrayerType ==
+                                                    PrayerType.answered
+                                            ? Container()
+                                            : LongButton(
+                                                onPress: () =>
+                                                    widget.setCurrentIndex(1),
+                                                text: 'Add New Prayer',
+                                                backgroundColor: AppColors
+                                                    .addprayerBgColor
+                                                    .withOpacity(0.9),
+                                                textColor: AppColors
+                                                    .addprayerTextColor,
+                                                icon: AppIcons.bestill_add_btn,
+                                              ),
+                                        SizedBox(height: 80),
+                                      ],
+                                    );
+                                  else
+                                    return PrayerCard(
+                                      prayerData: prayers[i],
+                                      timeago: DateFormatter(
+                                              prayers[i].prayer.modifiedOn)
+                                          .format(),
+                                    );
+                                },
+                              ),
+                            ),
                           ),
-                    SizedBox(height: 5),
-                    currentPrayerType == PrayerType.archived ||
-                            currentPrayerType == PrayerType.answered
-                        ? Container()
-                        : LongButton(
-                            onPress: () => widget.setCurrentIndex(1),
-                            text: 'Add New Prayer',
-                            backgroundColor:
-                                AppColors.addprayerBgColor.withOpacity(0.9),
-                            textColor: AppColors.addprayerTextColor,
-                            icon: AppIcons.bestill_add_btn,
-                          ),
-                    SizedBox(height: 80),
+                    // Column(
+                    //     children: <Widget>[
+                    //       ...prayers.map((e) {
+                    //         final _timeago =
+                    //             DateFormatter(e.prayer.modifiedOn)
+                    //                 .format();
+                    //         return GestureDetector(
+                    //           onTap: () => onTapCard(e),
+                    //           child: PrayerCard(
+                    //             prayerData: e,
+                    //             timeago: _timeago,
+                    //           ),
+                    //         );
+                    //       }).toList(),
+                    //     ],
+                    //   ),
+                    // SizedBox(height: 5),
+                    // currentPrayerType == PrayerType.archived ||
+                    //         currentPrayerType == PrayerType.answered
+                    //     ? Container()
+                    //     : LongButton(
+                    //         onPress: () => widget.setCurrentIndex(1),
+                    //         text: 'Add New Prayer',
+                    //         backgroundColor:
+                    //             AppColors.addprayerBgColor.withOpacity(0.9),
+                    //         textColor: AppColors.addprayerTextColor,
+                    //         icon: AppIcons.bestill_add_btn,
+                    //       ),
                   ],
                 ),
               ),

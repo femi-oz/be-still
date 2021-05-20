@@ -25,34 +25,6 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   var currentPage = 1;
 
-  void _getPrayers() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _getPrayers();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
   @override
   void dispose() {
     _controller.dispose();

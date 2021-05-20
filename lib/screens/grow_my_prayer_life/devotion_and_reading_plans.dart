@@ -22,59 +22,6 @@ class DevotionPlans extends StatefulWidget {
 }
 
 class _DevotionPlansState extends State<DevotionPlans> {
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _getPrayers();
-        await _getDevotionals();
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
-  }
-
-  void _getPrayers() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  Future<void> _getDevotionals() async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      await Provider.of<DevotionalProvider>(context, listen: false)
-          .getDevotionals();
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   void _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);

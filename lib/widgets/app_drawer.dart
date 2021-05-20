@@ -284,6 +284,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () {
+                                setCurrentIndex(0);
                                 Navigator.pop(context);
                                 TutorialTarget.showTutorial(
                                   context,

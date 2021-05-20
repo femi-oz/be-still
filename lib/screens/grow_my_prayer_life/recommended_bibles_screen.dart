@@ -21,55 +21,7 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
-  bool _isInit = true;
   final _scrollController = new ScrollController();
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _getBibles();
-        _getPrayers();
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
-  }
-
-  void _getPrayers() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  Future<void> _getBibles() async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
 
   Future<void> _launchURL(url) async {
     if (await canLaunch(url)) {

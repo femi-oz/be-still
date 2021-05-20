@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
-  static List<TargetFocus> targets = [];
   static TutorialCoachMark tutorialCoachMark;
   static void showTutorial(
       context, _keyButton, _keyButton2, _keyButton3, _keyButton4, _keyButton5) {
+    List<TargetFocus> targets = [];
     targets.add(TargetFocus(
         identify: "welcome",
         targetPosition: TargetPosition(Size.zero, Offset.zero),
