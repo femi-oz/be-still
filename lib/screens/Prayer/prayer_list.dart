@@ -167,21 +167,19 @@ class _PrayerListState extends State<PrayerList> {
                   ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.only(left: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        AppColors.backgroundColor[0].withOpacity(0.85),
-                        AppColors.backgroundColor[1].withOpacity(0.7),
+                        AppColors.backgroundColor[0].withOpacity(0.9),
+                        AppColors.backgroundColor[1].withOpacity(0.8),
                       ],
                     ),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      SizedBox(height: 20),
                       prayers.length == 0
                           ? Container(
                               padding: EdgeInsets.only(
@@ -200,12 +198,13 @@ class _PrayerListState extends State<PrayerList> {
                                 key: refreshKey,
                                 onRefresh: () => refresh(),
                                 child: ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      top: 20.0, bottom: 100.0, left: 20.0),
                                   itemCount: prayers.length + 1,
                                   itemBuilder: (context, i) {
                                     if (i == prayers.length)
                                       return Column(
                                         children: [
-                                          SizedBox(height: 5),
                                           currentPrayerType ==
                                                       PrayerType.archived ||
                                                   currentPrayerType ==
@@ -223,7 +222,6 @@ class _PrayerListState extends State<PrayerList> {
                                                   icon:
                                                       AppIcons.bestill_add_btn,
                                                 ),
-                                          SizedBox(height: 80),
                                         ],
                                       );
                                     else
