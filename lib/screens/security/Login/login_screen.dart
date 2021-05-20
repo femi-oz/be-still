@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _resendVerification() async {
     try {
-      await BeStilDialog.showLoading(context, '');
+      BeStilDialog.showLoading(context, '');
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .sendEmailVerification();
       verificationSent = true;

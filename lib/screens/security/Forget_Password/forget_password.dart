@@ -34,7 +34,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
     try {
-      await BeStilDialog.showLoading(context, 'Sending Mail');
+      BeStilDialog.showLoading(context, 'Sending Mail');
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .sendPasswordResetEmail(_emailController.text);
 

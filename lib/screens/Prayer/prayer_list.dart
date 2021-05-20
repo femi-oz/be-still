@@ -74,7 +74,7 @@ class _PrayerListState extends State<PrayerList> {
   }
 
   Future<void> onTapCard(prayerData) async {
-    await BeStilDialog.showLoading(context, '');
+    BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(prayerData.userPrayer.id);

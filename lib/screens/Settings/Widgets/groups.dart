@@ -1107,7 +1107,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   orElse: () => null)
                               .id;
                           if (id != null) {
-                            await BeStilDialog.showLoading(context, '');
+                            BeStilDialog.showLoading(context, '');
 
                             await Provider.of<GroupProvider>(context,
                                     listen: false)
@@ -1148,7 +1148,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         orElse: () => null)
                                     .id;
                                 if (id != null) {
-                                  await BeStilDialog.showLoading(context, '');
+                                  BeStilDialog.showLoading(context, '');
                                   Provider.of<GroupProvider>(context,
                                           listen: false)
                                       .deleteGroup(id, data.group.id);
