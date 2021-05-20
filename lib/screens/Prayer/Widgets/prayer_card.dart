@@ -445,7 +445,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 return _buildMenu();
               },
             );
-          })
+          }, Colors.grey)
         ],
         secondaryActions: <Widget>[
           _buildSlideItem(
@@ -454,6 +454,7 @@ class _PrayerCardState extends State<PrayerCard> {
             () => widget.prayerData.prayer.isAnswer
                 ? _unMarkAsAnswered()
                 : _onMarkAsAnswered(),
+            Colors.green,
           ),
           _buildSlideItem(
             AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
@@ -461,6 +462,7 @@ class _PrayerCardState extends State<PrayerCard> {
             () => widget.prayerData.userPrayer.isArchived
                 ? _unArchive()
                 : _onArchive(),
+            Colors.purple,
           ),
           _buildSlideItem(
             AppIcons.bestill_snooze,
@@ -477,21 +479,18 @@ class _PrayerCardState extends State<PrayerCard> {
                     builder: (BuildContext context) =>
                         SnoozePrayer(widget.prayerData),
                   ),
+            Colors.blue,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSlideItem(IconData icon, String label, Function _onTap) {
+  Widget _buildSlideItem(
+      IconData icon, String label, Function _onTap, Color color) {
     return Container(
       decoration: BoxDecoration(
-          color: AppColors.prayerCardBgColor,
-          borderRadius: BorderRadius.only(
-            bottomRight: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-          border: Border.all(color: AppColors.slideBorder)),
+          color: color, border: Border.all(color: AppColors.slideBorder)),
       child: IconSlideAction(
         caption: label,
         color: Colors.transparent,
@@ -502,17 +501,17 @@ class _PrayerCardState extends State<PrayerCard> {
                   angle: 90 * math.pi / 180,
                   child: Icon(
                     icon,
-                    color: AppColors.lightBlue3,
+                    color: AppColors.white,
                     size: 18,
                   ),
                 )
               : Icon(
                   icon,
-                  color: AppColors.lightBlue3,
+                  color: AppColors.white,
                   size: 18,
                 ),
         ),
-        foregroundColor: AppColors.lightBlue3,
+        foregroundColor: AppColors.white,
         onTap: _onTap,
       ),
     );
