@@ -44,6 +44,24 @@ class TutorialTarget {
             StringUtils.quickTipList,
           ))
     ]));
+    targets.add(TargetFocus(
+        identify: "quick_actions",
+        targetPosition: TargetPosition(Size.zero, Offset.zero),
+        contents: [
+          TargetContent(
+              align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                top: 70,
+              ),
+              child: _buildBody(
+                  context,
+                  'PRAYER QUICK ACTIONS',
+                  3,
+                  "assets/images/quick-access.png",
+                  '',
+                  StringUtils.quickTipQuickAccess,
+                  ''))
+        ]));
     targets.add(
         TargetFocus(identify: "filters", keyTarget: _keyButton5, contents: [
       TargetContent(
@@ -54,7 +72,7 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'FILTERS',
-            3,
+            4,
             null,
             " Filters",
             "Use",
@@ -71,7 +89,7 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'ADD A PRAYER',
-            4,
+            5,
             null,
             " Add",
             "Tap",
@@ -85,7 +103,7 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'PRAYER MODE', 5, null, '',
+          child: _buildBody(context, 'PRAYER MODE', 6, null, '',
               StringUtils.quickTipPray, ''))
     ]));
     targets
@@ -95,27 +113,9 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'MORE', 6, null, ' More', 'Tap the',
+          child: _buildBody(context, 'MORE', 7, null, ' More', 'Tap the',
               StringUtils.quickTipMore))
     ]));
-    targets.add(TargetFocus(
-        identify: "quick_actions",
-        targetPosition: TargetPosition(Size.zero, Offset.zero),
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                top: 70,
-              ),
-              child: _buildBody(
-                  context,
-                  'PRAYER QUICK ACTIONS',
-                  7,
-                  "assets/images/quick-access.png",
-                  '',
-                  StringUtils.quickTipQuickAccess,
-                  ''))
-        ]));
 
     tutorialCoachMark = TutorialCoachMark(
       context,
