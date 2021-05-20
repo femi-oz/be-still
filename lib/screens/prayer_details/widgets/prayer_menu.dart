@@ -14,7 +14,6 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -30,7 +29,7 @@ class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
   final Function updateUI;
-  final prayerData;
+  final CombinePrayerStream prayerData;
   final LocalNotificationModel reminder;
   @override
   PrayerMenu(this.parentcontext, this.hasReminder, this.reminder, this.updateUI,
@@ -443,7 +442,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   Widget build(BuildContext context) {
     var isDisable = widget.prayerData.prayer.isAnswer ||
-        widget.prayerData.userPrayer.isArchived;
+        widget.prayerData.userPrayer.isArchived ||
+        widget.prayerData.userPrayer.isSnoozed;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
