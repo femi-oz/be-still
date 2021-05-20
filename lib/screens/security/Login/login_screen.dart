@@ -41,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _passwordKey = GlobalKey();
+  final _usernameKey = GlobalKey();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
   bool isBioMetricAvailable = false;
   List<BiometricType> listOfBiometrics;
@@ -340,8 +342,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool isFormValid = false;
+
   @override
   Widget build(BuildContext context) {
+    if (_usernameController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      isFormValid = true;
+    } else {
+      isFormValid = false;
+    }
     return WillPopScope(
       onWillPop: _onWillPop,
       child: GestureDetector(
@@ -479,11 +488,13 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         children: <Widget>[
           CustomInput(
+            textkey: _usernameKey,
             label: 'Username',
             controller: _usernameController,
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             isEmail: true,
+            isSearch: false,
             onTextchanged: (i) {
               setState(() => isFormValid =
                   _usernameController.text.isNotEmpty &&
@@ -497,12 +508,13 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Align(
                 child: CustomInput(
+                  textkey: _passwordKey,
+                  isSearch: false,
                   obScurePassword: true,
                   label: 'Password',
                   controller: _passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   isRequired: true,
-                  isSearch: false,
                   textInputAction: TextInputAction.done,
                   unfocus: true,
                   submitForm: () => _login(),

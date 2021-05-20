@@ -28,6 +28,7 @@ class CustomInput extends StatefulWidget {
   final bool unfocus;
   final FocusNode focusNode;
   final bool isSearch;
+  final GlobalKey textkey;
 
   CustomInput(
       {this.maxLines = 1,
@@ -35,6 +36,7 @@ class CustomInput extends StatefulWidget {
       this.color,
       this.isPassword = false,
       @required this.controller,
+      @required this.textkey,
       this.showSuffix = true,
       this.textInputAction = TextInputAction.done,
       this.submitForm,
@@ -103,6 +105,7 @@ class _CustomInputState extends State<CustomInput> {
               ),
             )
           : TextFormField(
+              key: widget.textkey,
               controller: widget.controller,
               keyboardType: widget.keyboardType,
               textCapitalization: TextCapitalization.sentences,
