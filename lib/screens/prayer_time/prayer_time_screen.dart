@@ -1,8 +1,5 @@
-import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -110,7 +107,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                     color: AppColors.lightBlue3,
                     size: 30,
                   ),
-                  onTap: () => widget.setCurrentPage(0),
+                  onTap: () => widget.setCurrentPage(0, true),
                 ),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                 InkWell(

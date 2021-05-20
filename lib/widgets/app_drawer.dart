@@ -11,21 +11,21 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomDrawer extends StatelessWidget {
-  final TabController tabController;
   final Function setCurrentIndex;
   final GlobalKey keyButton;
   final GlobalKey keyButton2;
   final GlobalKey keyButton3;
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
+  final scaffoldKey;
   CustomDrawer(
-    this.tabController,
     this.setCurrentIndex,
     this.keyButton,
     this.keyButton2,
     this.keyButton3,
     this.keyButton4,
     this.keyButton5,
+    this.scaffoldKey,
   );
   _launchURL(url) async {
     if (await canLaunch(url)) {
@@ -230,10 +230,9 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () async {
-                                if (tabController != null) {
-                                  setCurrentIndex(6);
-                                  tabController.animateTo(6);
-                                }
+                                await setCurrentIndex(6, false);
+                                await Future.delayed(
+                                    Duration(milliseconds: 300));
                                 Navigator.pop(context);
                               },
                               child: Text("RECOMMENDED BIBLES",
@@ -245,10 +244,9 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                                 onTap: () async {
-                                  if (tabController != null) {
-                                    setCurrentIndex(5);
-                                    tabController.animateTo(5);
-                                  }
+                                  await setCurrentIndex(5, false);
+                                  await Future.delayed(
+                                      Duration(milliseconds: 300));
                                   Navigator.pop(context);
                                 },
                                 child: Text("DEVOTIONALS AND READING PLANS",
@@ -259,10 +257,9 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () async {
-                                if (tabController != null) {
-                                  setCurrentIndex(4);
-                                  tabController.animateTo(4);
-                                }
+                                await setCurrentIndex(4, false);
+                                await Future.delayed(
+                                    Duration(milliseconds: 300));
                                 Navigator.pop(context);
                               },
                               child: Text("SETTINGS",
@@ -284,7 +281,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () {
-                                setCurrentIndex(0);
+                                setCurrentIndex(0, true);
                                 Navigator.pop(context);
                                 TutorialTarget.showTutorial(
                                   context,

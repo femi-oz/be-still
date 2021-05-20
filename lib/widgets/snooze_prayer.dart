@@ -107,8 +107,11 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
               height: 200,
               child: Column(
                 children: <Widget>[
-                  Text('Set Snooze Duration',
-                      style: AppTextStyles.regularText15),
+                  Text(
+                    'Set Snooze Duration',
+                    style: AppTextStyles.regularText15
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -121,6 +124,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
                               scrollController: FixedExtentScrollController(
                                   initialItem: snoozeInterval.indexOf(
                                       snoozeInterval[
@@ -132,18 +139,21 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                                     snoozeInterval.indexOf(snoozeInterval[i]);
                                 Settings.snoozeInterval =
                                     selectedIntervalIndex.toString();
-
-                                // widget.onChange(selectedInterval.value);
                               }),
                               children: <Widget>[
                                 ...snoozeInterval
                                     .map(
                                       (i) => Align(
-                                          alignment: Alignment.center,
-                                          child: Text(i,
-                                              textAlign: TextAlign.center,
-                                              style:
-                                                  AppTextStyles.regularText15)),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          i,
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
                                     )
                                     .toList(),
                               ],
@@ -152,6 +162,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
                               scrollController: FixedExtentScrollController(
                                   initialItem: snoozeDuration.indexOf(
                                       snoozeDuration[
@@ -163,18 +177,21 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                                     snoozeDuration.indexOf(selectedDuration);
                                 Settings.snoozeDuration =
                                     selectedDurationIndex.toString();
-
-                                // widget.onChange(selectedInterval.value);
                               }),
                               children: <Widget>[
                                 ...snoozeDuration
                                     .map(
                                       (i) => Align(
-                                          alignment: Alignment.center,
-                                          child: Text(i,
-                                              textAlign: TextAlign.center,
-                                              style:
-                                                  AppTextStyles.regularText15)),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          i,
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
                                     )
                                     .toList(),
                               ],

@@ -37,31 +37,32 @@ class _EntryScreenState extends State<EntryScreen>
   BuildContext bcontext;
   int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  AnimationController controller;
-  Animation<double> animation;
   TabController _tabController;
-  bool showLoading = false;
 
   final cron = Cron();
 
   initState() {
-    setState(() {
-      showLoading = true;
-    });
     _getPermissions();
     _tabController = new TabController(length: 7, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _currentIndex = miscProvider.currentPage;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _preLoadData();
+      if (miscProvider.initialLoad) {
+        await _preLoadData();
+        miscProvider.setLoadStatus(false);
+      }
     });
     super.initState();
   }
 
-  _setCurrentIndex(index) {
-    _tabController.animateTo(index);
+  Future<void> _setCurrentIndex(int index, bool animate) async {
+    if (animate)
+      _tabController.animateTo(index);
+    else
+      _tabController.index = index;
     setState(() => _currentIndex = index);
-    Provider.of<MiscProvider>(context, listen: false).setCurrentPage(index);
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setCurrentPage(index);
   }
 
   void _getPermissions() async {
@@ -97,14 +98,12 @@ class _EntryScreenState extends State<EntryScreen>
       await _getActivePrayers();
       await _getDevotionals();
       await _getBibles();
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(userId);
       //load settings
       await Provider.of<SettingsProvider>(context, listen: false)
           .setPrayerSettings(userId);
       await Provider.of<SettingsProvider>(context, listen: false)
           .setSettings(userId);
-      Provider.of<SettingsProvider>(context, listen: false)
+      await Provider.of<SettingsProvider>(context, listen: false)
           .setSharingSettings(userId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .setPrayerTimeNotifications(userId);
@@ -113,15 +112,12 @@ class _EntryScreenState extends State<EntryScreen>
       Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
 
       // get all push notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(userId);
 
       // get all local notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications(userId);
-      setState(() {
-        showLoading = false;
-      });
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -177,21 +173,17 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Future<void> _getDevotionals() async {
-    await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false)
           .getDevotionals();
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -199,17 +191,13 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Future<void> _getBibles() async {
-    await BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
-      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -235,7 +223,7 @@ class _EntryScreenState extends State<EntryScreen>
             colors: AppColors.backgroundColor,
           ),
         ),
-        child: showLoading
+        child: miscProvider.initialLoad
             ? BeStilDialog.getLoading(context)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),
@@ -254,13 +242,13 @@ class _EntryScreenState extends State<EntryScreen>
       bottomNavigationBar:
           _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
       endDrawer: CustomDrawer(
-        _tabController,
         _setCurrentIndex,
         _keyButton,
         _keyButton2,
         _keyButton3,
         _keyButton4,
         _keyButton5,
+        _scaffoldKey,
       ),
       endDrawerEnableOpenDragGesture: false,
     );
@@ -370,7 +358,7 @@ class _EntryScreenState extends State<EntryScreen>
                       'You must have at least one active prayer to start prayer time.';
                   showInfoModal(message);
                 } else {
-                  _setCurrentIndex(index);
+                  _setCurrentIndex(index, true);
                 }
                 break;
               case 3:
@@ -381,7 +369,7 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                _setCurrentIndex(index);
+                _setCurrentIndex(index, true);
                 break;
             }
           },

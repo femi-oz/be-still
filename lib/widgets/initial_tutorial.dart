@@ -44,24 +44,6 @@ class TutorialTarget {
             StringUtils.quickTipList,
           ))
     ]));
-    targets.add(TargetFocus(
-        identify: "quick_actions",
-        targetPosition: TargetPosition(Size.zero, Offset.zero),
-        contents: [
-          TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                top: 70,
-              ),
-              child: _buildBody(
-                  context,
-                  'PRAYER QUICK ACTIONS',
-                  3,
-                  "assets/images/quick-access.png",
-                  '',
-                  StringUtils.quickTipQuickAccess,
-                  ''))
-        ]));
     targets.add(
         TargetFocus(identify: "filters", keyTarget: _keyButton5, contents: [
       TargetContent(
@@ -72,7 +54,7 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'FILTERS',
-            4,
+            3,
             null,
             " Filters",
             "Use",
@@ -89,7 +71,7 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'ADD A PRAYER',
-            5,
+            4,
             null,
             " Add",
             "Tap",
@@ -103,7 +85,7 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'PRAYER MODE', 6, null, '',
+          child: _buildBody(context, 'PRAYER MODE', 5, null, '',
               StringUtils.quickTipPray, ''))
     ]));
     targets
@@ -113,9 +95,27 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'MORE', 7, null, ' More', 'Tap the',
+          child: _buildBody(context, 'MORE', 6, null, ' More', 'Tap the',
               StringUtils.quickTipMore))
     ]));
+    targets.add(TargetFocus(
+        identify: "quick_actions",
+        targetPosition: TargetPosition(Size.zero, Offset.zero),
+        contents: [
+          TargetContent(
+              align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                top: 70,
+              ),
+              child: _buildBody(
+                  context,
+                  'PRAYER QUICK ACTIONS',
+                  7,
+                  "assets/images/quick-access.png",
+                  '',
+                  StringUtils.quickTipQuickAccess,
+                  ''))
+        ]));
 
     tutorialCoachMark = TutorialCoachMark(
       context,
@@ -142,112 +142,122 @@ class TutorialTarget {
 
   static Widget _buildBody(BuildContext context, String title, int id,
       String image, String boldText, String suffix, String prefix) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () => tutorialCoachMark.skip(),
-                  icon: Icon(
-                    AppIcons.bestill_close,
-                    color: AppColors.grey4,
-                  ),
-                )
-              ],
-            ),
-            id == 1
-                ? Column(
-                    children: [
-                      Container(
-                          height: 100,
-                          width: 100,
-                          child: Image.asset(StringUtils.logo)),
-                      SizedBox(height: 10),
-                    ],
+    return GestureDetector(
+      onHorizontalDragUpdate: (details) {
+        int sensitivity = 8;
+        if (details.delta.dx > sensitivity) {
+          if (id > 1) tutorialCoachMark.previous();
+        } else if (details.delta.dx < -sensitivity) {
+          if (id < 7) tutorialCoachMark.next();
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => tutorialCoachMark.skip(),
+                    icon: Icon(
+                      AppIcons.bestill_close,
+                      color: AppColors.grey4,
+                    ),
                   )
-                : Container(),
-            Text(
-              title,
-              style: AppTextStyles.boldText18
-                  .copyWith(color: AppColors.lightBlue3),
-            ),
-            Container(
-              padding: EdgeInsets.all(25),
-              child: new RichText(
-                textAlign: TextAlign.center,
-                text: new TextSpan(
-                  children: <TextSpan>[
-                    new TextSpan(
-                        text: suffix,
-                        style: AppTextStyles.regularText14.copyWith(
-                            color: AppColors.darkBlue,
-                            fontWeight: FontWeight.w400)),
-                    new TextSpan(
-                        text: boldText,
-                        style: AppTextStyles.regularText14.copyWith(
-                            color: AppColors.darkBlue,
-                            fontWeight: FontWeight.bold)),
-                    new TextSpan(
-                        text: prefix,
-                        style: AppTextStyles.regularText14.copyWith(
-                            color: AppColors.darkBlue,
-                            fontWeight: FontWeight.w400))
-                  ],
+                ],
+              ),
+              id == 1
+                  ? Column(
+                      children: [
+                        Container(
+                            height: 100,
+                            width: 100,
+                            child: Image.asset(StringUtils.logo)),
+                        SizedBox(height: 10),
+                      ],
+                    )
+                  : Container(),
+              Text(
+                title,
+                style: AppTextStyles.boldText18
+                    .copyWith(color: AppColors.lightBlue3),
+              ),
+              Container(
+                padding: EdgeInsets.all(25),
+                child: new RichText(
+                  textAlign: TextAlign.center,
+                  text: new TextSpan(
+                    children: <TextSpan>[
+                      new TextSpan(
+                          text: suffix,
+                          style: AppTextStyles.regularText14.copyWith(
+                              color: AppColors.darkBlue,
+                              fontWeight: FontWeight.w400)),
+                      new TextSpan(
+                          text: boldText,
+                          style: AppTextStyles.regularText14.copyWith(
+                              color: AppColors.darkBlue,
+                              fontWeight: FontWeight.bold)),
+                      new TextSpan(
+                          text: prefix,
+                          style: AppTextStyles.regularText14.copyWith(
+                              color: AppColors.darkBlue,
+                              fontWeight: FontWeight.w400))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            image != null ? Image.asset(image) : Container(),
-            SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              child: InkWell(
-                onTap: () => id == 7
-                    ? tutorialCoachMark.skip()
-                    : tutorialCoachMark.next(),
-                child: Container(
-                  padding: EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        AppColors.lightBlue2,
-                        AppColors.lightBlue3,
+              image != null ? Image.asset(image) : Container(),
+              SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                child: InkWell(
+                  onTap: () => id == 7
+                      ? tutorialCoachMark.skip()
+                      : tutorialCoachMark.next(),
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          AppColors.lightBlue2,
+                          AppColors.lightBlue3,
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          id == 7 ? 'LET\'S GO' : 'NEXT TIP',
+                          style: AppTextStyles.boldText24
+                              .copyWith(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        )
                       ],
                     ),
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        id == 7 ? 'LET\'S GO' : 'NEXT TIP',
-                        style: AppTextStyles.boldText24
-                            .copyWith(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Text(
-                '$id/7',
-                style: AppTextStyles.regularText12.copyWith(
-                    color: AppColors.darkBlue, height: 1, fontSize: 10),
-              ),
-            )
-          ],
+              Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  '$id/7',
+                  style: AppTextStyles.regularText12.copyWith(
+                      color: AppColors.darkBlue, height: 1, fontSize: 10),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

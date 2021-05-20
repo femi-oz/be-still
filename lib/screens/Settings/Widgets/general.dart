@@ -385,6 +385,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   void _update(_ModalType type, ctx) {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
+    bool _autoValidate = false;
     _newEmail.text = _user.email;
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
@@ -407,7 +408,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 ),
               SizedBox(height: 10.0),
               Form(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+                // autovalidateMode: AutovalidateMode.onUserInteraction,
+                autovalidate: _autoValidate,
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -425,9 +427,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     ),
                     CustomInput(
                       showSuffix: false,
-                      isRequired: true,
+                      isRequired: false,
                       obScurePassword: true,
-                      isPassword: true,
+                      isPassword: false,
                       label: 'Current Password',
                       controller: _currentPassword,
                     ),
@@ -465,7 +467,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ],
                         ),
                       ),
-                    // SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -494,6 +495,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                 AppColors.lightBlue3),
                           ),
                           onPressed: () {
+                            setState(() => _autoValidate = true);
                             if (!_formKey.currentState.validate()) return null;
                             _formKey.currentState.save();
                             _verifyPassword(
