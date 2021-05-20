@@ -163,6 +163,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage),
                 alignment: Alignment.bottomCenter,
+                fit: BoxFit.cover,
               ),
             ),
             child: Container(

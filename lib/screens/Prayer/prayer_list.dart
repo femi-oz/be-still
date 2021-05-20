@@ -144,98 +144,104 @@ class _PrayerListState extends State<PrayerList> {
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
       onWillPop: () => null,
-      child: Scaffold(
-        appBar: CustomAppBar(
-          showPrayerActions: true,
-          isSearchMode: _isSearchMode,
-          switchSearchMode: (bool val) => _switchSearchMode(val),
-          globalKey: widget.keyButton5,
-        ),
-        body: Container(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height * 0.85,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(StringUtils.backgroundImage),
-                  alignment: Alignment.bottomCenter,
-                ),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+        child: Scaffold(
+          appBar: CustomAppBar(
+            showPrayerActions: true,
+            isSearchMode: _isSearchMode,
+            switchSearchMode: (bool val) => _switchSearchMode(val),
+            globalKey: widget.keyButton5,
+          ),
+          body: Container(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height * 0.85,
               ),
               child: Container(
-                padding: EdgeInsets.only(left: 20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.backgroundColor[0].withOpacity(0.85),
-                      AppColors.backgroundColor[1].withOpacity(0.7),
-                    ],
+                  image: DecorationImage(
+                    image: AssetImage(StringUtils.backgroundImage),
+                    alignment: Alignment.bottomCenter,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    SizedBox(height: 20),
-                    prayers.length == 0
-                        ? Container(
-                            padding: EdgeInsets.only(
-                                left: 60, right: 100, top: 60, bottom: 60),
-                            child: Opacity(
-                              opacity: 0.3,
-                              child: Text(
-                                'No Prayers in My List',
-                                style: AppTextStyles.demiboldText34,
-                                textAlign: TextAlign.center,
+                child: Container(
+                  padding: EdgeInsets.only(left: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.backgroundColor[0].withOpacity(0.85),
+                        AppColors.backgroundColor[1].withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(height: 20),
+                      prayers.length == 0
+                          ? Container(
+                              padding: EdgeInsets.only(
+                                  left: 60, right: 100, top: 60, bottom: 60),
+                              child: Opacity(
+                                opacity: 0.3,
+                                child: Text(
+                                  'No Prayers in My List',
+                                  style: AppTextStyles.demiboldText34,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                              child: RefreshIndicator(
+                                key: refreshKey,
+                                onRefresh: () => refresh(),
+                                child: ListView.builder(
+                                  itemCount: prayers.length + 1,
+                                  itemBuilder: (context, i) {
+                                    if (i == prayers.length)
+                                      return Column(
+                                        children: [
+                                          SizedBox(height: 5),
+                                          currentPrayerType ==
+                                                      PrayerType.archived ||
+                                                  currentPrayerType ==
+                                                      PrayerType.answered
+                                              ? Container()
+                                              : LongButton(
+                                                  onPress: () => widget
+                                                      .setCurrentIndex(1, true),
+                                                  text: 'Add New Prayer',
+                                                  backgroundColor: AppColors
+                                                      .addprayerBgColor
+                                                      .withOpacity(0.9),
+                                                  textColor: AppColors
+                                                      .addprayerTextColor,
+                                                  icon:
+                                                      AppIcons.bestill_add_btn,
+                                                ),
+                                          SizedBox(height: 80),
+                                        ],
+                                      );
+                                    else
+                                      return GestureDetector(
+                                          onTap: () => onTapCard(prayers[i]),
+                                          child: PrayerCard(
+                                            prayerData: prayers[i],
+                                            timeago: DateFormatter(prayers[i]
+                                                    .prayer
+                                                    .modifiedOn)
+                                                .format(),
+                                          ));
+                                  },
+                                ),
                               ),
                             ),
-                          )
-                        : Expanded(
-                            child: RefreshIndicator(
-                              key: refreshKey,
-                              onRefresh: () => refresh(),
-                              child: ListView.builder(
-                                itemCount: prayers.length + 1,
-                                itemBuilder: (context, i) {
-                                  if (i == prayers.length)
-                                    return Column(
-                                      children: [
-                                        SizedBox(height: 5),
-                                        currentPrayerType ==
-                                                    PrayerType.archived ||
-                                                currentPrayerType ==
-                                                    PrayerType.answered
-                                            ? Container()
-                                            : LongButton(
-                                                onPress: () => widget
-                                                    .setCurrentIndex(1, true),
-                                                text: 'Add New Prayer',
-                                                backgroundColor: AppColors
-                                                    .addprayerBgColor
-                                                    .withOpacity(0.9),
-                                                textColor: AppColors
-                                                    .addprayerTextColor,
-                                                icon: AppIcons.bestill_add_btn,
-                                              ),
-                                        SizedBox(height: 80),
-                                      ],
-                                    );
-                                  else
-                                    return GestureDetector(
-                                        onTap: () => onTapCard(prayers[i]),
-                                        child: PrayerCard(
-                                          prayerData: prayers[i],
-                                          timeago: DateFormatter(
-                                                  prayers[i].prayer.modifiedOn)
-                                              .format(),
-                                        ));
-                                },
-                              ),
-                            ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
