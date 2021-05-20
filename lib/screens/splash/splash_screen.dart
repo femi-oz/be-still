@@ -70,6 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
           Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
           // NavigationService.instance.navigateToReplacement(PrayerTime(null));
@@ -82,6 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
+      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     }

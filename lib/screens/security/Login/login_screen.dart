@@ -121,9 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
           Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
-          // NavigationService.instance.navigateToReplacement(PrayerTime());
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
@@ -133,8 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
-// Navigator.of(context).pushNamedAndRemoveUntil(
-//               EntryScreen.routeName, (Route<dynamic> route) => false);
+      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
       NavigationService.instance.goHome(0);
     }
   }

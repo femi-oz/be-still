@@ -40,20 +40,19 @@ class _EntryScreenState extends State<EntryScreen>
   AnimationController controller;
   Animation<double> animation;
   TabController _tabController;
-  bool showLoading = false;
 
   final cron = Cron();
 
   initState() {
-    setState(() {
-      showLoading = true;
-    });
     _getPermissions();
     _tabController = new TabController(length: 7, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _currentIndex = miscProvider.currentPage;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _preLoadData();
+      if (miscProvider.initialLoad) {
+        await _preLoadData();
+        miscProvider.setLoadStatus(false);
+      }
     });
     super.initState();
   }
@@ -119,9 +118,9 @@ class _EntryScreenState extends State<EntryScreen>
       // get all local notifications
       await Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications(userId);
-      setState(() {
-        showLoading = false;
-      });
+      // setState(() {
+      //   showLoading = false;
+      // });
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -235,7 +234,7 @@ class _EntryScreenState extends State<EntryScreen>
             colors: AppColors.backgroundColor,
           ),
         ),
-        child: showLoading
+        child: miscProvider.initialLoad
             ? BeStilDialog.getLoading(context)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),

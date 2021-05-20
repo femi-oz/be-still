@@ -223,44 +223,18 @@ class _PrayerListState extends State<PrayerList> {
                                       ],
                                     );
                                   else
-                                    return PrayerCard(
-                                      prayerData: prayers[i],
-                                      timeago: DateFormatter(
-                                              prayers[i].prayer.modifiedOn)
-                                          .format(),
-                                    );
+                                    return GestureDetector(
+                                        onTap: () => onTapCard(prayers[i]),
+                                        child: PrayerCard(
+                                          prayerData: prayers[i],
+                                          timeago: DateFormatter(
+                                                  prayers[i].prayer.modifiedOn)
+                                              .format(),
+                                        ));
                                 },
                               ),
                             ),
                           ),
-                    // Column(
-                    //     children: <Widget>[
-                    //       ...prayers.map((e) {
-                    //         final _timeago =
-                    //             DateFormatter(e.prayer.modifiedOn)
-                    //                 .format();
-                    //         return GestureDetector(
-                    //           onTap: () => onTapCard(e),
-                    //           child: PrayerCard(
-                    //             prayerData: e,
-                    //             timeago: _timeago,
-                    //           ),
-                    //         );
-                    //       }).toList(),
-                    //     ],
-                    //   ),
-                    // SizedBox(height: 5),
-                    // currentPrayerType == PrayerType.archived ||
-                    //         currentPrayerType == PrayerType.answered
-                    //     ? Container()
-                    //     : LongButton(
-                    //         onPress: () => widget.setCurrentIndex(1),
-                    //         text: 'Add New Prayer',
-                    //         backgroundColor:
-                    //             AppColors.addprayerBgColor.withOpacity(0.9),
-                    //         textColor: AppColors.addprayerTextColor,
-                    //         icon: AppIcons.bestill_add_btn,
-                    //       ),
                   ],
                 ),
               ),
