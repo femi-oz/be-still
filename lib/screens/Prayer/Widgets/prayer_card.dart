@@ -210,6 +210,10 @@ class _PrayerCardState extends State<PrayerCard> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
+    var tags = '';
+    widget.prayerData.tags.forEach((element) {
+      tags += ' ' + element.displayName;
+    });
     return Container(
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
@@ -356,25 +360,31 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ],
                                         )
                                       : Container(),
-                                  Container(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children:
-                                            widget.prayerData.tags.map((tag) {
-                                          return Text(
-                                            ' ${tag.displayName}',
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4,
+                                          child: Text(
+                                            tags,
                                             style: TextStyle(
                                               color: AppColors.red,
                                               fontSize: 10,
                                             ),
-                                          );
-                                        }).toList(),
-                                      ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: false,
+                                            textAlign: TextAlign.end,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   widget.prayerData.tags.length > 0
