@@ -26,6 +26,8 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<String> snoozeInterval = ['Minutes', 'Days', 'Weeks', 'Months'];
   List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
   List<int> snoozeDuration = new List<int>.generate(31, (i) => i + 1);
+  List<int> snoozeMonths = new List<int>.generate(12, (i) => i + 1);
+  List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
 
   String selectedInterval;
   int selectedDuration;
@@ -42,16 +44,6 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   void _snoozePrayer() async {
     BeStilDialog.showLoading(context);
 
-    if (selectedInterval == null) {
-      var selectedIntervalIndex = snoozeInterval
-          .indexOf(snoozeInterval[int.parse(Settings.snoozeInterval)]);
-      selectedInterval = snoozeInterval[selectedIntervalIndex];
-    }
-    if (selectedDuration == null) {
-      var selectedDurationindex = snoozeDuration
-          .indexOf(snoozeDuration[int.parse(Settings.snoozeDuration)]);
-      selectedDuration = snoozeDuration[selectedDurationindex];
-    }
     var minutes = 0;
     switch (selectedInterval) {
       case 'Minutes':
@@ -192,42 +184,121 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                                           .toList(),
                                     ],
                                   )
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.4,
-                                    child: CupertinoPicker(
-                                      selectionOverlay:
-                                          CupertinoPickerDefaultSelectionOverlay(
-                                        background: Colors.transparent,
-                                      ),
-                                      scrollController:
-                                          FixedExtentScrollController(
-                                              initialItem: snoozeDuration
-                                                  .indexOf(selectedDuration)),
-                                      itemExtent: 30,
-                                      onSelectedItemChanged: (i) => setState(
-                                          () => selectedDuration =
-                                              snoozeDuration[i]),
-                                      children: <Widget>[
-                                        ...snoozeDuration
-                                            .map(
-                                              (i) => Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  i.toString(),
-                                                  textAlign: TextAlign.center,
-                                                  style: AppTextStyles
-                                                      .regularText15
-                                                      .copyWith(
-                                                    fontWeight: FontWeight.w500,
+                                : selectedInterval == "Weeks"
+                                    ? CupertinoPicker(
+                                        selectionOverlay:
+                                            CupertinoPickerDefaultSelectionOverlay(
+                                          background: Colors.transparent,
+                                        ),
+                                        scrollController:
+                                            FixedExtentScrollController(
+                                                initialItem: snoozeWeeks
+                                                    .indexOf(selectedDuration)),
+                                        itemExtent: 30,
+                                        onSelectedItemChanged: (i) => setState(
+                                            () => selectedDuration =
+                                                snoozeWeeks[i]),
+                                        children: <Widget>[
+                                          ...snoozeWeeks
+                                              .map(
+                                                (i) => Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    i.toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: AppTextStyles
+                                                        .regularText15
+                                                        .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
                                                   ),
                                                 ),
+                                              )
+                                              .toList(),
+                                        ],
+                                      )
+                                    : selectedInterval == "Months"
+                                        ? CupertinoPicker(
+                                            selectionOverlay:
+                                                CupertinoPickerDefaultSelectionOverlay(
+                                              background: Colors.transparent,
+                                            ),
+                                            scrollController:
+                                                FixedExtentScrollController(
+                                                    initialItem:
+                                                        snoozeMonths.indexOf(
+                                                            selectedDuration)),
+                                            itemExtent: 30,
+                                            onSelectedItemChanged: (i) =>
+                                                setState(() =>
+                                                    selectedDuration =
+                                                        snoozeMonths[i]),
+                                            children: <Widget>[
+                                              ...snoozeMonths
+                                                  .map(
+                                                    (i) => Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        i.toString(),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: AppTextStyles
+                                                            .regularText15
+                                                            .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            ],
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            child: CupertinoPicker(
+                                              selectionOverlay:
+                                                  CupertinoPickerDefaultSelectionOverlay(
+                                                background: Colors.transparent,
                                               ),
-                                            )
-                                            .toList(),
-                                      ],
-                                    ),
-                                  ),
+                                              scrollController:
+                                                  FixedExtentScrollController(
+                                                      initialItem:
+                                                          snoozeDuration.indexOf(
+                                                              selectedDuration)),
+                                              itemExtent: 30,
+                                              onSelectedItemChanged: (i) =>
+                                                  setState(() =>
+                                                      selectedDuration =
+                                                          snoozeDuration[i]),
+                                              children: <Widget>[
+                                                ...snoozeDuration
+                                                    .map(
+                                                      (i) => Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          i.toString(),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: AppTextStyles
+                                                              .regularText15
+                                                              .copyWith(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                    .toList(),
+                                              ],
+                                            ),
+                                          ),
                           ),
                         ],
                       ),
