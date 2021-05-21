@@ -225,9 +225,6 @@ class PrayerProvider with ChangeNotifier {
   Future<void> snoozePrayer(
       String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
     await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
-    // var duration = snoozeEndDate.difference(DateTime.now());
-    // Future.delayed(duration.);
-    // setPrayers(userPrayerID, '');
   }
 
   Future<void> unSnoozePrayer(
