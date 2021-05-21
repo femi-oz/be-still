@@ -2,6 +2,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -26,14 +27,15 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
   List<int> snoozeDuration = new List<int>.generate(31, (i) => i + 1);
 
-  var selectedInterval;
+  String selectedInterval;
   int selectedDuration;
 
   @override
   void initState() {
-    selectedInterval = snoozeInterval[0];
-    selectedDuration =
-        selectedInterval == "Minutes" ? snoozeDuration[0] : snoozeMins[0];
+    final settings =
+        Provider.of<SettingsProvider>(context, listen: false).settings;
+    selectedInterval = settings.defaultSnoozeFrequency;
+    selectedDuration = settings.defaultSnoozeDuration;
     super.initState();
   }
 

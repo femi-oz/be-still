@@ -1,10 +1,10 @@
 class SettingsKey {
   static const defaultSortBy = 'DefaultSortBy';
-  static const defaultSnoozeDuration = 'DefaultSnoozeDuration';
   static const archiveSortBy = 'ArchiveSortBy';
   static const archiveAutoDelete = 'ArchiveAutoDelete';
   static const archiveAutoDeleteMins = 'ArchiveAutoDeleteMins';
-  static const defaultSnoozeDurationMins = 'DefaultSnoozeDurationMins';
+  static const defaultSnoozeDuration = 'DefaultSnoozeDurationValue';
+  static const defaultSnoozeFrequency = 'DefaultSnoozeFrequency';
   static const includeAnsweredPrayerAutoDelete =
       'IncludeAnsweredPrayerAutoDelete';
   static const allowPushNotification = 'AllowPushNotification';
