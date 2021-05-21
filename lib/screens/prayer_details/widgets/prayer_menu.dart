@@ -613,8 +613,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_snooze,
-                      isDisabled: isDisable,
-                      onPress: () => isDisable
+                      isDisabled: widget.prayerData.prayer.isAnswer ||
+                          widget.prayerData.userPrayer.isArchived,
+                      onPress: () => widget.prayerData.prayer.isAnswer ||
+                              widget.prayerData.userPrayer.isArchived
                           ? null
                           : widget.prayerData.userPrayer.isSnoozed
                               ? _unSnoozePrayer(widget.prayerData)

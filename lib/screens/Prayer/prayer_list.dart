@@ -187,17 +187,36 @@ class _PrayerListState extends State<PrayerList> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       prayers.length == 0
-                          ? Container(
-                              padding: EdgeInsets.only(
-                                  left: 60, right: 100, top: 60, bottom: 60),
-                              child: Opacity(
-                                opacity: 0.3,
-                                child: Text(
-                                  'No Prayers in My List',
-                                  style: AppTextStyles.demiboldText34,
-                                  textAlign: TextAlign.center,
+                          ? Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(
+                                      left: 60,
+                                      right: 100,
+                                      top: 60,
+                                      bottom: 60),
+                                  child: Opacity(
+                                    opacity: 0.3,
+                                    child: Text(
+                                      'No Prayers in My List',
+                                      style: AppTextStyles.demiboldText34,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 20.0),
+                                  child: LongButton(
+                                    onPress: () =>
+                                        widget.setCurrentIndex(1, true),
+                                    text: 'Add New Prayer',
+                                    backgroundColor: AppColors.addprayerBgColor
+                                        .withOpacity(0.9),
+                                    textColor: AppColors.addprayerTextColor,
+                                    icon: AppIcons.bestill_add_btn,
+                                  ),
+                                ),
+                              ],
                             )
                           : Expanded(
                               child: RefreshIndicator(

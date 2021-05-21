@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MiscProvider with ChangeNotifier {
-  String _pageTitle = 'MY LIST';
+  String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
 
   int _currentPage = 0;
