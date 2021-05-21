@@ -9,7 +9,9 @@ import 'dart:math' as math;
 
 class PrayerTime extends StatefulWidget {
   final Function setCurrentIndex;
-  PrayerTime(this.setCurrentIndex);
+  final ValueNotifier<double> notifier;
+
+  PrayerTime(this.setCurrentIndex, this.notifier);
   static const routeName = '/prayer-time';
 
   @override
@@ -20,6 +22,7 @@ class _PrayerTimeState extends State<PrayerTime> {
   PageController _controller = PageController(
     initialPage: 0,
   );
+  int _previousPage;
 
   var currentPage = 1;
 
@@ -27,6 +30,29 @@ class _PrayerTimeState extends State<PrayerTime> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    // Consider the page changed when the end of the scroll is reached
+    // Using onPageChanged callback from PageView causes the page to change when
+    // the half of the next card hits the center of the viewport, which is not
+    // what I want
+
+    if (_controller.page.toInt() == _controller.page) {
+      _previousPage = _controller.page.toInt();
+    }
+    widget.notifier?.value = _controller.page - _previousPage;
+  }
+
+  @override
+  void initState() {
+    _controller = PageController(
+      initialPage: 0,
+      viewportFraction: 0.9,
+    )..addListener(_onScroll);
+
+    _previousPage = _controller.initialPage;
+    super.initState();
   }
 
   Future<bool> _onWillPop() async {
@@ -39,6 +65,9 @@ class _PrayerTimeState extends State<PrayerTime> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
+    List<Widget> _pages = List.generate(prayers.length, (index) {
+      return PrayerView(prayers[currentPage - 1]);
+    });
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -56,74 +85,82 @@ class _PrayerTimeState extends State<PrayerTime> {
           child: Column(
             children: [
               Expanded(
-                child: PageView.builder(
+                child: PageView(
                   controller: _controller,
-                  itemBuilder: (context, index) {
-                    return PrayerView(prayers[currentPage - 1]);
-                  },
-                  itemCount: prayers.length,
+                  children: _pages,
+
+                  // itemCount: prayers.length,
                   onPageChanged: (value) => {
                     setState(() => currentPage = value + 1),
                   },
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.12,
-                          right: MediaQuery.of(context).size.width * 0.005),
-                      child: Transform.rotate(
-                        angle: 180 * math.pi / 180,
-                        child: InkWell(
-                          child: Icon(
-                            Icons.keyboard_tab,
-                            color: currentPage > 1
-                                ? AppColors.lightBlue3
-                                : AppColors.grey,
-                            size: 30,
-                          ),
-                          onTap: () {
-                            if (currentPage > 1) {
-                              _controller.animateToPage(0,
-                                  curve: Curves.easeIn,
-                                  duration: Duration(milliseconds: 200));
-                            }
-                          },
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Transform.rotate(
+                      angle: 180 * math.pi / 180,
+                      child: InkWell(
+                        child: Icon(
+                          Icons.keyboard_tab,
+                          color: currentPage > 1
+                              ? AppColors.lightBlue3
+                              : AppColors.grey,
+                          size: 30,
                         ),
+                        onTap: () {
+                          if (currentPage > 1) {
+                            _controller.animateToPage(0,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 200));
+                          }
+                        },
                       ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.095),
-                  InkWell(
-                    child: Icon(
-                      Icons.navigate_before,
-                      color: currentPage > 1
-                          ? AppColors.lightBlue3
-                          : AppColors.grey,
-                      size: 30,
-                    ),
-                    onTap: () {
-                      if (currentPage > 1) {
-                        _controller.jumpToPage(currentPage - 2);
-                      }
-                    },
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.095),
-                  InkWell(
-                    child: Icon(
-                      AppIcons.bestill_close,
-                      color: AppColors.lightBlue3,
-                      size: 30,
-                    ),
-                    onTap: () => widget.setCurrentIndex(0, true),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.095),
-                  InkWell(
+                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
+                    InkWell(
                       child: Icon(
-                        Icons.navigate_next,
+                        Icons.navigate_before,
+                        color: currentPage > 1
+                            ? AppColors.lightBlue3
+                            : AppColors.grey,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        if (currentPage > 1) {
+                          _controller.jumpToPage(currentPage - 2);
+                        }
+                      },
+                    ),
+                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
+                    InkWell(
+                      child: Icon(
+                        AppIcons.bestill_close,
+                        color: AppColors.lightBlue3,
+                        size: 30,
+                      ),
+                      onTap: () => widget.setCurrentIndex(0, true),
+                    ),
+                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
+                    InkWell(
+                        child: Icon(
+                          Icons.navigate_next,
+                          color: currentPage < prayers.length
+                              ? AppColors.lightBlue3
+                              : AppColors.grey,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          if (currentPage < prayers.length) {
+                            _controller.jumpToPage(currentPage);
+                          }
+                        }),
+                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
+                    InkWell(
+                      child: Icon(
+                        Icons.keyboard_tab,
                         color: currentPage < prayers.length
                             ? AppColors.lightBlue3
                             : AppColors.grey,
@@ -131,27 +168,14 @@ class _PrayerTimeState extends State<PrayerTime> {
                       ),
                       onTap: () {
                         if (currentPage < prayers.length) {
-                          _controller.jumpToPage(currentPage);
+                          _controller.animateToPage(prayers.length - 1,
+                              curve: Curves.easeIn,
+                              duration: Duration(milliseconds: 200));
                         }
-                      }),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.095),
-                  InkWell(
-                    child: Icon(
-                      Icons.keyboard_tab,
-                      color: currentPage < prayers.length
-                          ? AppColors.lightBlue3
-                          : AppColors.grey,
-                      size: 30,
+                      },
                     ),
-                    onTap: () {
-                      if (currentPage < prayers.length) {
-                        _controller.animateToPage(prayers.length - 1,
-                            curve: Curves.easeIn,
-                            duration: Duration(milliseconds: 200));
-                      }
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
               SizedBox(height: 20),
             ],

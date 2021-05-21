@@ -34,6 +34,8 @@ TutorialCoachMark tutorialCoachMark;
 
 class _EntryScreenState extends State<EntryScreen>
     with TickerProviderStateMixin {
+  ValueNotifier<double> _notifier;
+
   BuildContext bcontext;
   int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -52,7 +54,15 @@ class _EntryScreenState extends State<EntryScreen>
         miscProvider.setLoadStatus(false);
       }
     });
+    _notifier = ValueNotifier<double>(0);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notifier?.dispose();
+    super.dispose();
   }
 
   Future<void> _setCurrentIndex(int index, bool animate) async {
@@ -429,7 +439,7 @@ class _EntryScreenState extends State<EntryScreen>
             title: "Add",
             padding: 6),
         TabNavigationItem(
-            page: PrayerTime(_setCurrentIndex),
+            page: PrayerTime(_setCurrentIndex, _notifier),
             icon: Icon(
               AppIcons.bestill_menu_logo_lt,
               key: _keyButton3,
