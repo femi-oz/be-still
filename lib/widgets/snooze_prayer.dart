@@ -1,4 +1,6 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -36,6 +38,8 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   }
 
   void _snoozePrayer() async {
+    BeStilDialog.showLoading(context);
+
     if (selectedInterval == null) {
       var selectedIntervalIndex = snoozeInterval
           .indexOf(snoozeInterval[int.parse(Settings.snoozeInterval)]);
@@ -46,7 +50,6 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           .indexOf(snoozeDuration[int.parse(Settings.snoozeDuration)]);
       selectedDuration = snoozeDuration[selectedDurationindex];
     }
-    BeStilDialog.showLoading(context);
     var minutes = 0;
     switch (selectedInterval) {
       case 'Minutes':
@@ -67,17 +70,27 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
     var e = selectedDuration * minutes;
     var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
     try {
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
           widget.prayerData.prayer.id,
           _snoozeEndDate,
           widget.prayerData.userPrayer.id);
 
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      await Future.delayed(Duration(milliseconds: 300),
+          () => {BeStilDialog.hideLoading(context)});
       Navigator.pushReplacement(context, SlideRightRoute(page: EntryScreen()));
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      await Future.delayed(Duration(milliseconds: 300),
+          () => {BeStilDialog.hideLoading(context)});
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
