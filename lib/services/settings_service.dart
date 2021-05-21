@@ -32,14 +32,14 @@ class SettingsService {
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
         archiveAutoDeleteMins: 43200,
-        defaultSnoozeDurationMins: 30,
         allowAlexaReadPrayer: false,
         archiveSortBy: SortType.date,
         userId: userId,
         deviceId: deviceId,
         appearance: '',
         defaultSortBy: SortType.date,
-        defaultSnoozeDuration: IntervalRange.thirtyMinutes,
+        defaultSnoozeDuration: 15,
+        defaultSnoozeFrequency: IntervalRange.thirtyMinutes,
         archiveAutoDelete: IntervalRange.oneYear,
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,

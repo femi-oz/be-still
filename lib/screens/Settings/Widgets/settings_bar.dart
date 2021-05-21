@@ -22,6 +22,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
     // List<PushNotificationModel> notifications =
     //     Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
+      leading: Container(),
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
