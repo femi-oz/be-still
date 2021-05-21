@@ -70,7 +70,6 @@ class _EntryScreenState extends State<EntryScreen>
       if (Settings.isAppInit) {
         await Permission.contacts.request().then((p) =>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
-        Settings.isAppInit = false;
       }
     } catch (e, s) {
       final user =

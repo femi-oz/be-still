@@ -68,6 +68,7 @@ class _PrayerListState extends State<PrayerList> {
             widget.keyButton4,
             widget.keyButton5,
           );
+        Settings.isAppInit = false;
         setState(() => _isInit = false);
       });
     }
