@@ -64,6 +64,10 @@ class StringUtils {
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";
         break;
+      case ErrorType.notAvailable:
+        errorMessage =
+            "Finger Print / Face ID is not supported on ypour device.";
+        break;
       case ErrorType.userNotFound:
         errorMessage = "User with this email doesn't exist.";
         break;

@@ -216,19 +216,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _biologin() async {
     try {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .biometricSignin();
-      await Provider.of<UserProvider>(context, listen: false)
-          .setCurrentUser(true);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      var isAuthenticated =
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .biometricSignin(_usernameController.text);
+      if (isAuthenticated) {
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUser(true);
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      Settings.lastUser = jsonEncode(user.toJson2());
-      Settings.userPassword =
-          Settings.rememberMe ? _passwordController.text : '';
-      LocalNotification.setNotificationsOnNewDevice(context);
+        Settings.lastUser = jsonEncode(user.toJson2());
+        Settings.userPassword =
+            Settings.rememberMe ? _passwordController.text : '';
+        LocalNotification.setNotificationsOnNewDevice(context);
 
-      NavigationService.instance.goHome(0);
+        NavigationService.instance.goHome(0);
+      }
     } on HttpException catch (e) {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
     } catch (e) {

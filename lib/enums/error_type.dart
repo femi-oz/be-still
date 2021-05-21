@@ -10,5 +10,5 @@ class ErrorType {
   static const unavailable = 'unavailable';
   static const not_found = 'NOT_FOUND';
   static const userNotVerified = 'not-verified';
-  // static const userDisabled = 'user-disabled';
+  static const notAvailable = 'NotAvailable';
 }
