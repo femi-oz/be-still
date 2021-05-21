@@ -301,7 +301,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         child: Column(
           children: <Widget>[
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              // textkey: GlobalKey<FormFieldState>(),
               label: 'First Name',
               controller: _firstnameController,
               keyboardType: TextInputType.text,
@@ -309,7 +309,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              // textkey: GlobalKey<FormFieldState>(),
               label: 'Last Name',
               controller: _lastnameController,
               keyboardType: TextInputType.text,
@@ -317,7 +317,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              // textkey: GlobalKey<FormFieldState>(),
               label: 'Email',
               isEmail: true,
               controller: _emailController,
@@ -340,7 +340,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              // textkey: GlobalKey<FormFieldState>(),
               isPassword: true,
               obScurePassword: true,
               label: 'Password',
@@ -350,7 +350,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              // textkey: GlobalKey<FormFieldState>(),
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,
