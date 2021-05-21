@@ -6,12 +6,11 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
+import 'package:preload_page_view/preload_page_view.dart';
 
 class PrayerTime extends StatefulWidget {
   final Function setCurrentIndex;
-  final ValueNotifier<double> notifier;
-
-  PrayerTime(this.setCurrentIndex, this.notifier);
+  PrayerTime(this.setCurrentIndex);
   static const routeName = '/prayer-time';
 
   @override
@@ -19,10 +18,7 @@ class PrayerTime extends StatefulWidget {
 }
 
 class _PrayerTimeState extends State<PrayerTime> {
-  PageController _controller = PageController(
-    initialPage: 0,
-  );
-  int _previousPage;
+  final _controller = PreloadPageController(initialPage: 0);
 
   var currentPage = 1;
 
@@ -30,29 +26,6 @@ class _PrayerTimeState extends State<PrayerTime> {
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    // Consider the page changed when the end of the scroll is reached
-    // Using onPageChanged callback from PageView causes the page to change when
-    // the half of the next card hits the center of the viewport, which is not
-    // what I want
-
-    if (_controller.page.toInt() == _controller.page) {
-      _previousPage = _controller.page.toInt();
-    }
-    widget.notifier?.value = _controller.page - _previousPage;
-  }
-
-  @override
-  void initState() {
-    _controller = PageController(
-      initialPage: 0,
-      viewportFraction: 0.9,
-    )..addListener(_onScroll);
-
-    _previousPage = _controller.initialPage;
-    super.initState();
   }
 
   Future<bool> _onWillPop() async {
@@ -65,9 +38,6 @@ class _PrayerTimeState extends State<PrayerTime> {
   @override
   Widget build(BuildContext context) {
     var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
-    List<Widget> _pages = List.generate(prayers.length, (index) {
-      return PrayerView(prayers[currentPage - 1]);
-    });
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -85,18 +55,20 @@ class _PrayerTimeState extends State<PrayerTime> {
           child: Column(
             children: [
               Expanded(
-                child: PageView(
+                child: PreloadPageView.builder(
                   controller: _controller,
-                  children: _pages,
-
-                  // itemCount: prayers.length,
+                  itemBuilder: (context, index) {
+                    return PrayerView(prayers[currentPage - 1]);
+                  },
+                  itemCount: prayers.length,
+                  preloadPagesCount: prayers.length,
                   onPageChanged: (value) => {
                     setState(() => currentPage = value + 1),
                   },
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -119,7 +91,6 @@ class _PrayerTimeState extends State<PrayerTime> {
                         },
                       ),
                     ),
-                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                     InkWell(
                       child: Icon(
                         Icons.navigate_before,
@@ -134,7 +105,6 @@ class _PrayerTimeState extends State<PrayerTime> {
                         }
                       },
                     ),
-                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                     InkWell(
                       child: Icon(
                         AppIcons.bestill_close,
@@ -143,7 +113,6 @@ class _PrayerTimeState extends State<PrayerTime> {
                       ),
                       onTap: () => widget.setCurrentIndex(0, true),
                     ),
-                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                     InkWell(
                         child: Icon(
                           Icons.navigate_next,
@@ -157,7 +126,6 @@ class _PrayerTimeState extends State<PrayerTime> {
                             _controller.jumpToPage(currentPage);
                           }
                         }),
-                    // SizedBox(width: MediaQuery.of(context).size.width * 0.095),
                     InkWell(
                       child: Icon(
                         Icons.keyboard_tab,
