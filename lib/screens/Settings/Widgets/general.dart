@@ -98,7 +98,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 ),
               ),
             ),
-            // GestureDetector(
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
@@ -106,9 +105,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      openAppSettings();
-                    },
+                    onTap: () => openAppSettings(),
                     child: Container(
                       height: 30,
                       width: MediaQuery.of(context).size.width * .30,
@@ -158,21 +155,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     else if (!Settings.enabledContactPermission &&
         (status.isPermanentlyDenied)) {
       _openContactConfirmation(context);
-      setState(() => Settings.enabledContactPermission = true);
     }
     //disabled and denied and it's iOS
     else if (!Settings.enabledContactPermission &&
         status.isDenied &&
         Platform.isIOS) {
       _openContactConfirmation(context);
-      setState(() => Settings.enabledContactPermission = false);
     }
     //disabled and denied through popup
     else if (!Settings.enabledContactPermission && status.isDenied)
       setState(() => Settings.enabledContactPermission = false);
     //enabled and needs to be diabled
     else {
-      setState(() => Settings.enabledContactPermission = false);
       _openContactConfirmation(context);
     }
   }
