@@ -19,7 +19,7 @@ class PrayerTime extends StatefulWidget {
 }
 
 class _PrayerTimeState extends State<PrayerTime> {
-  final _controller = PageController(initialPage: 0, keepPage: true);
+  final _controller = PageController(initialPage: 0);
 
   var currentPage = 0;
 
@@ -58,13 +58,8 @@ class _PrayerTimeState extends State<PrayerTime> {
               Expanded(
                 child: PageView.builder(
                   controller: _controller,
-                  // : prayers.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return KeepAlive(
-                      keepAlive: true,
-                      child: PrayerView(prayers[index]),
-                      key: ValueKey<String>(prayers[index].id),
-                    );
+                    return PrayerView(prayers[index]);
                   },
                   itemCount: prayers.length,
                   onPageChanged: (index) {
