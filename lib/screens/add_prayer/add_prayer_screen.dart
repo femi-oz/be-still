@@ -195,10 +195,16 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    widget.setCurrentIndex(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    if ((!widget.isEdit && _descriptionController.text.isNotEmpty) ||
+        (widget.isEdit && _oldDescription != _descriptionController.text)) {
+      onCancel();
+      return true;
+    } else {
+      widget.setCurrentIndex(0, true);
+      return (Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+          false;
+    }
   }
 
   Future<void> _onTagSelected(s) async {
