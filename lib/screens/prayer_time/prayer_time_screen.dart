@@ -1,3 +1,4 @@
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
@@ -55,15 +56,28 @@ class _PrayerTimeState extends State<PrayerTime> {
           child: Column(
             children: [
               Expanded(
-                child: PreloadPageView.builder(
+                child: PreloadPageView.custom(
                   controller: _controller,
-                  itemBuilder: (context, index) {
-                    return PrayerView(prayers[currentPage - 1]);
-                  },
-                  itemCount: prayers.length,
                   preloadPagesCount: prayers.length,
+                  childrenDelegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return KeepAlive(
+                        keepAlive: true,
+                        child: IndexedSemantics(
+                          child: PrayerView(prayers[index]),
+                          index: index,
+                        ),
+                        key: ValueKey<String>(prayers[index].id),
+                      );
+                    },
+                    childCount: prayers.length,
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    addSemanticIndexes: false,
+                  ),
                   onPageChanged: (value) => {
-                    setState(() => currentPage = value + 1),
+                    currentPage = value + 1,
+                    // setState(() {}),
                   },
                 ),
               ),
@@ -77,9 +91,10 @@ class _PrayerTimeState extends State<PrayerTime> {
                       child: InkWell(
                         child: Icon(
                           Icons.keyboard_tab,
-                          color: currentPage > 1
-                              ? AppColors.lightBlue3
-                              : AppColors.grey,
+                          color: AppColors.lightBlue3,
+                          // currentPage > 1
+                          //     ? AppColors.lightBlue3
+                          //     : AppColors.grey,
                           size: 30,
                         ),
                         onTap: () {
@@ -94,9 +109,10 @@ class _PrayerTimeState extends State<PrayerTime> {
                     InkWell(
                       child: Icon(
                         Icons.navigate_before,
-                        color: currentPage > 1
-                            ? AppColors.lightBlue3
-                            : AppColors.grey,
+                        color: AppColors.lightBlue3,
+                        // currentPage > 1
+                        //     ? AppColors.lightBlue3
+                        //     : AppColors.grey,
                         size: 30,
                       ),
                       onTap: () {
