@@ -333,7 +333,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Expanded(
-                                      child: widget.prayerData.tags.length == 0
+                                      child: widget.prayerData.tags.length > 0
                                           ? Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
