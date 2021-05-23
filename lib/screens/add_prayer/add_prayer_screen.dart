@@ -362,7 +362,6 @@ class _AddPrayerState extends State<AddPrayer> {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Container(
-              // height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -379,16 +378,25 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                            child: Text(
-                              'CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey),
-                            ),
-                            onTap: () => isValid
-                                ? onCancel()
-                                : widget.isEdit
-                                    ? Navigator.pop(context)
-                                    : widget.setCurrentIndex(0, true)),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
+                          ),
+                          onTap: isValid
+                              ? () => onCancel()
+                              : widget.isEdit
+                                  ? () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      Navigator.pop(context);
+                                    }
+                                  : () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      widget.setCurrentIndex(0, true);
+                                    },
+                        ),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(
