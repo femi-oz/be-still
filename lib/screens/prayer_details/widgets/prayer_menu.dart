@@ -333,7 +333,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(prayerData.userPrayer.id);
+          .unArchivePrayer(prayerData.userPrayer.id, prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});

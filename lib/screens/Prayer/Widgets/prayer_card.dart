@@ -49,8 +49,8 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayerData.userPrayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
+          widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
