@@ -1,4 +1,3 @@
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
@@ -7,7 +6,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
-import 'package:preload_page_view/preload_page_view.dart';
 
 class PrayerTime extends StatefulWidget {
   final Function setCurrentIndex;
@@ -115,7 +113,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                         color: AppColors.lightBlue3,
                         size: 30,
                       ),
-                      onTap: () => widget.setCurrentIndex(0),
+                      onTap: () => widget.setCurrentIndex(0, true),
                     ),
                     InkWell(
                         child: Icon(
