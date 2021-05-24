@@ -51,7 +51,7 @@ class UpdateView extends StatelessWidget {
                                   DateFormat('hh:mma | MM.dd.yyyy')
                                       .format(updates[i].createdOn)
                                       .toLowerCase(),
-                                  style: AppTextStyles.boldText16.copyWith(
+                                  style: AppTextStyles.regularText18b.copyWith(
                                       color: AppColors.prayeModeBorder),
                                 ),
                               ],
@@ -74,7 +74,7 @@ class UpdateView extends StatelessWidget {
                                   Flexible(
                                     child: Text(
                                       updates[i].description,
-                                      style: AppTextStyles.regularText18b
+                                      style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.prayerTextColor),
                                       textAlign: TextAlign.left,

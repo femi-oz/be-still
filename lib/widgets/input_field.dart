@@ -65,8 +65,8 @@ class _CustomInputState extends State<CustomInput> {
     return Container(
       child: TextFormField(
         key: widget.textkey,
-        maxLength: widget.isPhone ? 10 : null,
-        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        inputFormatters:
+            widget.isPhone ? [LengthLimitingTextInputFormatter(10)] : null,
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         textCapitalization: TextCapitalization.sentences,

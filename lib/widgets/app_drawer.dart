@@ -271,7 +271,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () =>
-                                  _launchURL('https://www.bestillapp.com'),
+                                  _launchURL('https://www.bestillapp.com/help'),
                               child: Text("HELP",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),

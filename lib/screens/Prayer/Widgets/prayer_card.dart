@@ -29,6 +29,11 @@ class PrayerCard extends StatefulWidget {
 
 class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
+  final SlidableController slidableController = SlidableController();
+
+  initState() {
+    super.initState();
+  }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
@@ -213,6 +218,7 @@ class _PrayerCardState extends State<PrayerCard> {
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
+        controller: slidableController,
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: Container(
@@ -414,6 +420,7 @@ class _PrayerCardState extends State<PrayerCard> {
             ),
           ),
         ),
+        closeOnScroll: true,
         actions: <Widget>[
           _buildSlideItem(Icons.build, 'Options', () async {
             await _setCurrentPrayer();
@@ -452,23 +459,33 @@ class _PrayerCardState extends State<PrayerCard> {
                 : _onArchive(),
             Colors.purple,
           ),
-          _buildSlideItem(
-            AppIcons.bestill_snooze,
-            widget.prayerData.userPrayer.isSnoozed ? 'Unsnooze' : 'Snooze',
-            () => widget.prayerData.userPrayer.isSnoozed
-                ? _unSnoozePrayer()
-                : showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) =>
-                        SnoozePrayer(widget.prayerData),
-                  ),
-            Colors.blue,
-          ),
+          widget.prayerData.userPrayer.isArchived ||
+                  widget.prayerData.prayer.isAnswer
+              ? _buildSlideItem(
+                  AppIcons.bestill_snooze,
+                  'Snooze',
+                  () => null,
+                  Colors.blueGrey.withOpacity(0.5),
+                )
+              : _buildSlideItem(
+                  AppIcons.bestill_snooze,
+                  widget.prayerData.userPrayer.isSnoozed
+                      ? 'Unsnooze'
+                      : 'Snooze',
+                  () => widget.prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer()
+                      : showModalBottomSheet(
+                          context: context,
+                          barrierColor: AppColors.detailBackgroundColor[1]
+                              .withOpacity(0.5),
+                          backgroundColor: AppColors.detailBackgroundColor[1]
+                              .withOpacity(0.9),
+                          isScrollControlled: true,
+                          builder: (BuildContext context) =>
+                              SnoozePrayer(widget.prayerData),
+                        ),
+                  Colors.blue,
+                ),
         ],
       ),
     );
@@ -480,6 +497,7 @@ class _PrayerCardState extends State<PrayerCard> {
       decoration: BoxDecoration(
           color: color, border: Border.all(color: AppColors.slideBorder)),
       child: IconSlideAction(
+        closeOnTap: true,
         caption: label,
         color: Colors.transparent,
         iconWidget: Container(
