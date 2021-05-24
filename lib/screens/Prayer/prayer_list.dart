@@ -83,10 +83,6 @@ class _PrayerListState extends State<PrayerList> {
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
-      // Navigator.pushNamed(context, PrayerDetails.routeName);
-      // BeStilDialog.hideLoading(context);
-      // Navigator.push(
-      //     context, CupertinoPageRoute(builder: (context) => PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -145,6 +141,10 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    Provider.of<PrayerProvider>(context, listen: false)
+        .checkPrayerValidity(userId);
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
