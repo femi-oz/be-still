@@ -29,6 +29,11 @@ class PrayerCard extends StatefulWidget {
 
 class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
+  final SlidableController slidableController = SlidableController();
+
+  initState() {
+    super.initState();
+  }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
@@ -213,6 +218,7 @@ class _PrayerCardState extends State<PrayerCard> {
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
+        controller: slidableController,
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: Container(
@@ -414,6 +420,7 @@ class _PrayerCardState extends State<PrayerCard> {
             ),
           ),
         ),
+        closeOnScroll: true,
         actions: <Widget>[
           _buildSlideItem(Icons.build, 'Options', () async {
             await _setCurrentPrayer();
@@ -480,6 +487,7 @@ class _PrayerCardState extends State<PrayerCard> {
       decoration: BoxDecoration(
           color: color, border: Border.all(color: AppColors.slideBorder)),
       child: IconSlideAction(
+        closeOnTap: true,
         caption: label,
         color: Colors.transparent,
         iconWidget: Container(
