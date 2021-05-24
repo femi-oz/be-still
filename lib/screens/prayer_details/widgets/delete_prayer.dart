@@ -7,7 +7,6 @@ import 'package:be_still/screens/entry_screen.dart';
 
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +27,8 @@ class _DeletePrayerState extends State<DeletePrayer> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayerData.userPrayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
+          widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

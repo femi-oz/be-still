@@ -49,8 +49,8 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayerData.userPrayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
+          widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
 
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
@@ -328,54 +328,62 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : Container(),
                                 ],
                               ),
-                              Row(
-                                children: <Widget>[
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4,
-                                          child: Text(
-                                            tags,
-                                            style: TextStyle(
-                                              color: AppColors.red,
-                                              fontSize: 10,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            softWrap: false,
-                                            textAlign: TextAlign.end,
-                                          ),
-                                        ),
-                                      ],
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: widget.prayerData.tags.length > 0
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                SizedBox(width: 10),
+                                                Expanded(
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    reverse: true,
+                                                    child: Text(
+                                                      tags,
+                                                      style: TextStyle(
+                                                        color: AppColors.red,
+                                                        fontSize: 10,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                      textAlign: TextAlign.end,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                  ),
+                                                  child: Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .prayerTextColor),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          : Container(),
                                     ),
-                                  ),
-                                  widget.prayerData.tags.length > 0
-                                      ? Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                          ),
-                                          child: Text(
-                                            '|',
-                                            style: TextStyle(
+                                    Container(
+                                      child: Text(
+                                        widget.timeago,
+                                        style: AppTextStyles.regularText13
+                                            .copyWith(
                                                 color:
                                                     AppColors.prayerTextColor),
-                                          ),
-                                        )
-                                      : Container(),
-                                  Text(
-                                    widget.timeago,
-                                    style: AppTextStyles.regularText13.copyWith(
-                                        color: AppColors.prayerTextColor),
-                                  ),
-                                ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           ),

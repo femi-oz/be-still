@@ -5,7 +5,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:masked_text/masked_text.dart';
 import 'package:provider/provider.dart';
 
 class CustomInput extends StatefulWidget {

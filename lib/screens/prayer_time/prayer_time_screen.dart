@@ -1,4 +1,3 @@
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
@@ -7,7 +6,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
-import 'package:preload_page_view/preload_page_view.dart';
 
 class PrayerTime extends StatefulWidget {
   final Function setCurrentIndex;
@@ -19,9 +17,9 @@ class PrayerTime extends StatefulWidget {
 }
 
 class _PrayerTimeState extends State<PrayerTime> {
-  final _controller = PreloadPageController(initialPage: 0);
+  final _controller = PageController(initialPage: 0);
 
-  var currentPage = 1;
+  var currentPage = 0;
 
   @override
   void dispose() {
@@ -43,126 +41,120 @@ class _PrayerTimeState extends State<PrayerTime> {
       onWillPop: _onWillPop,
       child: Scaffold(
         backgroundColor: AppColors.prayeModeBg,
-        body: Container(
-          padding: EdgeInsets.only(top: 40),
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
-            ),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: PreloadPageView.custom(
-                  controller: _controller,
-                  preloadPagesCount: prayers.length,
-                  childrenDelegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return KeepAlive(
-                        keepAlive: true,
-                        child: IndexedSemantics(
-                          child: PrayerView(prayers[index]),
-                          index: index,
-                        ),
-                        key: ValueKey<String>(prayers[index].id),
-                      );
-                    },
-                    childCount: prayers.length,
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    addSemanticIndexes: false,
-                  ),
-                  onPageChanged: (value) => {
-                    currentPage = value + 1,
-                    // setState(() {}),
-                  },
-                ),
+        body: SafeArea(
+          child: Container(
+            padding: EdgeInsets.only(top: 40),
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Transform.rotate(
-                      angle: 180 * math.pi / 180,
-                      child: InkWell(
-                        child: Icon(
-                          Icons.keyboard_tab,
-                          color: AppColors.lightBlue3,
-                          // currentPage > 1
-                          //     ? AppColors.lightBlue3
-                          //     : AppColors.grey,
-                          size: 30,
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView.builder(
+                    controller: _controller,
+                    itemBuilder: (BuildContext context, int index) {
+                      return PrayerView(prayers[index]);
+                    },
+                    itemCount: prayers.length,
+                    onPageChanged: (index) {
+                      setState(() => currentPage = index);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Transform.rotate(
+                        angle: 180 * math.pi / 180,
+                        child: InkWell(
+                          child: Icon(
+                            Icons.keyboard_tab,
+                            color: currentPage > 0
+                                ? AppColors.lightBlue3
+                                : AppColors.grey,
+                            size: 30,
+                          ),
+                          onTap: () {
+                            if (currentPage > 0) {
+                              _controller.animateToPage(0,
+                                  curve: Curves.easeIn,
+                                  duration: Duration(milliseconds: 200));
+                              setState(() => currentPage = 0);
+                            }
+                          },
                         ),
-                        onTap: () {
-                          if (currentPage > 1) {
-                            _controller.animateToPage(0,
-                                curve: Curves.easeIn,
-                                duration: Duration(milliseconds: 200));
-                          }
-                        },
                       ),
-                    ),
-                    InkWell(
-                      child: Icon(
-                        Icons.navigate_before,
-                        color: AppColors.lightBlue3,
-                        // currentPage > 1
-                        //     ? AppColors.lightBlue3
-                        //     : AppColors.grey,
-                        size: 30,
-                      ),
-                      onTap: () {
-                        if (currentPage > 1) {
-                          _controller.jumpToPage(currentPage - 2);
-                        }
-                      },
-                    ),
-                    InkWell(
-                      child: Icon(
-                        AppIcons.bestill_close,
-                        color: AppColors.lightBlue3,
-                        size: 30,
-                      ),
-                      onTap: () => widget.setCurrentIndex(0, true),
-                    ),
-                    InkWell(
+                      InkWell(
                         child: Icon(
-                          Icons.navigate_next,
-                          color: currentPage < prayers.length
+                          Icons.navigate_before,
+                          color: currentPage > 0
                               ? AppColors.lightBlue3
                               : AppColors.grey,
                           size: 30,
                         ),
                         onTap: () {
-                          if (currentPage < prayers.length) {
-                            _controller.jumpToPage(currentPage);
+                          if (currentPage > 0) {
+                            _controller.animateToPage(currentPage - 1,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 200));
+                            setState(() => currentPage -= 1);
                           }
-                        }),
-                    InkWell(
-                      child: Icon(
-                        Icons.keyboard_tab,
-                        color: currentPage < prayers.length
-                            ? AppColors.lightBlue3
-                            : AppColors.grey,
-                        size: 30,
+                        },
                       ),
-                      onTap: () {
-                        if (currentPage < prayers.length) {
-                          _controller.animateToPage(prayers.length - 1,
-                              curve: Curves.easeIn,
-                              duration: Duration(milliseconds: 200));
-                        }
-                      },
-                    ),
-                  ],
+                      InkWell(
+                        child: Icon(
+                          AppIcons.bestill_close,
+                          color: AppColors.lightBlue3,
+                          size: 30,
+                        ),
+                        onTap: () => widget.setCurrentIndex(0, true),
+                      ),
+                      InkWell(
+                          child: Icon(
+                            Icons.navigate_next,
+                            color: currentPage < prayers.length - 1
+                                ? AppColors.lightBlue3
+                                : AppColors.grey,
+                            size: 30,
+                          ),
+                          onTap: () {
+                            if (currentPage < prayers.length - 1) {
+                              _controller.animateToPage(currentPage + 1,
+                                  curve: Curves.easeIn,
+                                  duration: Duration(milliseconds: 200));
+                              setState(() => currentPage += 1);
+                            }
+                          }),
+                      InkWell(
+                        child: Icon(
+                          Icons.keyboard_tab,
+                          color: currentPage < prayers.length - 1
+                              ? AppColors.lightBlue3
+                              : AppColors.grey,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          if (currentPage < prayers.length - 1) {
+                            _controller.animateToPage(prayers.length - 1,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: 200));
+                            setState(() => currentPage = prayers.length - 1);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-            ],
+                SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

@@ -223,6 +223,7 @@ class _PrayerListState extends State<PrayerList> {
                                 key: refreshKey,
                                 onRefresh: () => refresh(),
                                 child: ListView.builder(
+                                  key: new PageStorageKey('prayerList'),
                                   padding: EdgeInsets.only(
                                       top: 20.0, bottom: 100.0, left: 20.0),
                                   itemCount: prayers.length + 1,

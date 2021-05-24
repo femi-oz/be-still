@@ -219,8 +219,8 @@ class PrayerProvider with ChangeNotifier {
   Future<void> archivePrayer(String userPrayerId) async =>
       await _prayerService.archivePrayer(userPrayerId);
 
-  Future<void> unArchivePrayer(String userPrayerId) async =>
-      await _prayerService.unArchivePrayer(userPrayerId);
+  Future<void> unArchivePrayer(String userPrayerId, String prayerID) async =>
+      await _prayerService.unArchivePrayer(userPrayerId, prayerID);
 
   Future<void> snoozePrayer(
       String prayerID, DateTime snoozeEndDate, String userPrayerID) async {

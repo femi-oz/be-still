@@ -93,7 +93,7 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          Future.delayed(Duration(milliseconds: 300));
+          await Future.delayed(Duration(milliseconds: 1000));
           BeStilDialog.hideLoading(context);
           widget.setCurrentIndex(0, true);
         } else {
@@ -195,10 +195,16 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    widget.setCurrentIndex(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    if ((!widget.isEdit && _descriptionController.text.isNotEmpty) ||
+        (widget.isEdit && _oldDescription != _descriptionController.text)) {
+      onCancel();
+      return true;
+    } else {
+      widget.setCurrentIndex(0, true);
+      return (Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+          false;
+    }
   }
 
   Future<void> _onTagSelected(s) async {
@@ -356,7 +362,6 @@ class _AddPrayerState extends State<AddPrayer> {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Container(
-              // height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -373,16 +378,25 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                            child: Text(
-                              'CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey),
-                            ),
-                            onTap: () => isValid
-                                ? onCancel()
-                                : widget.isEdit
-                                    ? Navigator.pop(context)
-                                    : widget.setCurrentIndex(0, true)),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
+                          ),
+                          onTap: isValid
+                              ? () => onCancel()
+                              : widget.isEdit
+                                  ? () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      Navigator.pop(context);
+                                    }
+                                  : () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      widget.setCurrentIndex(0, true);
+                                    },
+                        ),
                         InkWell(
                           child: Text('SAVE',
                               style: AppTextStyles.boldText18.copyWith(
