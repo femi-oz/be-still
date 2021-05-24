@@ -230,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Settings.rememberMe ? _passwordController.text : '';
         LocalNotification.setNotificationsOnNewDevice(context);
 
-        NavigationService.instance.goHome(0);
+        await setRouteDestination();
       }
     } on HttpException catch (e) {
       BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);

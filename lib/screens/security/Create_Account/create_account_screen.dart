@@ -45,6 +45,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   var termsAccepted = false;
 
+  final key = GlobalKey<FormFieldState>();
+  final key2 = GlobalKey<FormFieldState>();
+  final key3 = GlobalKey<FormFieldState>();
+  final key4 = GlobalKey<FormFieldState>();
+  final key5 = GlobalKey<FormFieldState>();
+  final key6 = GlobalKey<FormFieldState>();
+
   _selectDob() async {
     FocusScope.of(context).unfocus();
     var pickedDate = await showDatePicker(
@@ -301,7 +308,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         child: Column(
           children: <Widget>[
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              textkey: key,
               label: 'First Name',
               controller: _firstnameController,
               keyboardType: TextInputType.text,
@@ -309,7 +316,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              textkey: key2,
               label: 'Last Name',
               controller: _lastnameController,
               keyboardType: TextInputType.text,
@@ -317,7 +324,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              textkey: key3,
               label: 'Email',
               isEmail: true,
               controller: _emailController,
@@ -331,7 +338,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.transparent,
                 child: IgnorePointer(
                   child: CustomInput(
-                    textkey: GlobalKey<FormFieldState>(),
+                    textkey: key4,
                     label: 'Date of Birth (optional)',
                     controller: _dobController,
                   ),
@@ -340,7 +347,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              textkey: key5,
               isPassword: true,
               obScurePassword: true,
               label: 'Password',
@@ -350,7 +357,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
-              textkey: GlobalKey<FormFieldState>(),
+              textkey: key6,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,
