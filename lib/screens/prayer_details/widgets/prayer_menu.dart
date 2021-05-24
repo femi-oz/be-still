@@ -308,8 +308,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               prayerData.prayer.id, prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      await Future.delayed(Duration(milliseconds: 300),
+          () => {BeStilDialog.hideLoading(context)});
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
