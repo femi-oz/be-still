@@ -459,23 +459,33 @@ class _PrayerCardState extends State<PrayerCard> {
                 : _onArchive(),
             Colors.purple,
           ),
-          _buildSlideItem(
-            AppIcons.bestill_snooze,
-            widget.prayerData.userPrayer.isSnoozed ? 'Unsnooze' : 'Snooze',
-            () => widget.prayerData.userPrayer.isSnoozed
-                ? _unSnoozePrayer()
-                : showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) =>
-                        SnoozePrayer(widget.prayerData),
-                  ),
-            Colors.blue,
-          ),
+          widget.prayerData.userPrayer.isArchived ||
+                  widget.prayerData.prayer.isAnswer
+              ? _buildSlideItem(
+                  AppIcons.bestill_snooze,
+                  'Snooze',
+                  () => null,
+                  Colors.blueGrey.withOpacity(0.5),
+                )
+              : _buildSlideItem(
+                  AppIcons.bestill_snooze,
+                  widget.prayerData.userPrayer.isSnoozed
+                      ? 'Unsnooze'
+                      : 'Snooze',
+                  () => widget.prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer()
+                      : showModalBottomSheet(
+                          context: context,
+                          barrierColor: AppColors.detailBackgroundColor[1]
+                              .withOpacity(0.5),
+                          backgroundColor: AppColors.detailBackgroundColor[1]
+                              .withOpacity(0.9),
+                          isScrollControlled: true,
+                          builder: (BuildContext context) =>
+                              SnoozePrayer(widget.prayerData),
+                        ),
+                  Colors.blue,
+                ),
         ],
       ),
     );
