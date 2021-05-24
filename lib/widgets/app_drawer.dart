@@ -56,7 +56,6 @@ class CustomDrawer extends StatelessWidget {
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(bottom: 5.0),
-              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
                 'LOGOUT',
                 textAlign: TextAlign.center,
@@ -70,7 +69,6 @@ class CustomDrawer extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(bottom: 20),
-              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
                 'Are you sure you want to logout?',
                 textAlign: TextAlign.center,
@@ -82,7 +80,6 @@ class CustomDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            // GestureDetector(
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,

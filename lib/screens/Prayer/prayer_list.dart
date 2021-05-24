@@ -83,10 +83,6 @@ class _PrayerListState extends State<PrayerList> {
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
-      // Navigator.pushNamed(context, PrayerDetails.routeName);
-      // BeStilDialog.hideLoading(context);
-      // Navigator.push(
-      //     context, CupertinoPageRoute(builder: (context) => PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -139,12 +135,38 @@ class _PrayerListState extends State<PrayerList> {
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
 
-  Future<void> refresh() async {
-    return true;
+  Future<void> _getPrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+      if (searchQuery.isNotEmpty) {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers(searchQuery, _user.id);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayers(_user?.id);
+      }
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    Provider.of<PrayerProvider>(context, listen: false)
+        .checkPrayerValidity(userId);
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
@@ -221,7 +243,7 @@ class _PrayerListState extends State<PrayerList> {
                           : Expanded(
                               child: RefreshIndicator(
                                 key: refreshKey,
-                                onRefresh: () => refresh(),
+                                onRefresh: () => _getPrayers(),
                                 child: ListView.builder(
                                   key: new PageStorageKey('prayerList'),
                                   padding: EdgeInsets.only(
