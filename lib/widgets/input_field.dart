@@ -4,6 +4,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class CustomInput extends StatefulWidget {
@@ -64,6 +65,8 @@ class _CustomInputState extends State<CustomInput> {
     return Container(
       child: TextFormField(
         key: widget.textkey,
+        inputFormatters:
+            widget.isPhone ? [LengthLimitingTextInputFormatter(10)] : null,
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         textCapitalization: TextCapitalization.sentences,

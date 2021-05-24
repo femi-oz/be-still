@@ -154,6 +154,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       textInputAction: TextInputAction.done,
                       isSearch: true,
                       textkey: _searchKey,
+                      unfocus: true,
                     ),
                   ),
                   SizedBox(width: 10),
