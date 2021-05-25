@@ -443,13 +443,6 @@ class PrayerService {
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': false},
       );
-      final data = {
-        'IsArchived': true,
-        'Status': Status.inactive,
-        'IsFavourite': false,
-        'ArchivedDate': DateTime.now()
-      };
-      _userPrayerCollectionReference.doc(userPrayerId).update(data);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, prayerID, 'PRAYER/service/unMarkPrayerAsAnswered');

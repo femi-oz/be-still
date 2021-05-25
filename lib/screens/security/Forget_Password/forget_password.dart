@@ -28,6 +28,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var notificationType = NotificationType.email;
   bool emailSent = false;
   bool _autoValidate = false;
+  final _key = GlobalKey<FormFieldState>();
 
   _forgotPassword() async {
     setState(() => _autoValidate = true);
@@ -239,7 +240,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       child: Column(
         children: <Widget>[
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
+            textkey: _key,
             label: 'Email Address',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,

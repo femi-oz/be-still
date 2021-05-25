@@ -1,6 +1,7 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -9,6 +10,7 @@ import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -259,14 +261,21 @@ class _PrayerCardState extends State<PrayerCard> {
                                           color: AppColors.lightBlue3,
                                           size: 13,
                                         )
-                                      : SizedBox(width: 13),
+                                      : SizedBox(),
                                   widget.prayerData.prayer.isAnswer
                                       ? Icon(
                                           AppIcons.bestill_answered,
                                           size: 12,
                                           color: AppColors.lightBlue3,
                                         )
-                                      : SizedBox(width: 12),
+                                      : SizedBox(),
+                                  widget.prayerData.userPrayer.isSnoozed
+                                      ? Icon(
+                                          AppIcons.snooze,
+                                          size: 14,
+                                          color: AppColors.lightBlue3,
+                                        )
+                                      : SizedBox(width: 13),
                                   hasReminder
                                       ? InkWell(
                                           onTap: () => showDialog(
@@ -502,7 +511,8 @@ class _PrayerCardState extends State<PrayerCard> {
       IconData icon, String label, Function _onTap, Color color) {
     return Container(
       decoration: BoxDecoration(
-          color: color, border: Border.all(color: AppColors.slideBorder)),
+          color: AppColors.prayerCardBgColor,
+          border: Border.all(color: AppColors.slideBorder)),
       child: IconSlideAction(
         closeOnTap: true,
         caption: label,
@@ -514,17 +524,26 @@ class _PrayerCardState extends State<PrayerCard> {
                   angle: 90 * math.pi / 180,
                   child: Icon(
                     icon,
-                    color: AppColors.white,
+                    color: Provider.of<ThemeProvider>(context, listen: false)
+                            .isDarkModeEnabled
+                        ? AppColors.white
+                        : AppColors.lightBlue3,
                     size: 18,
                   ),
                 )
               : Icon(
                   icon,
-                  color: AppColors.white,
+                  color: Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? AppColors.white
+                      : AppColors.lightBlue3,
                   size: 18,
                 ),
         ),
-        foregroundColor: AppColors.white,
+        foregroundColor:
+            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
+                ? AppColors.white
+                : AppColors.lightBlue3,
         onTap: _onTap,
       ),
     );
