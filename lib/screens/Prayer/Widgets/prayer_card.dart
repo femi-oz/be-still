@@ -261,14 +261,21 @@ class _PrayerCardState extends State<PrayerCard> {
                                           color: AppColors.lightBlue3,
                                           size: 13,
                                         )
-                                      : SizedBox(width: 13),
+                                      : SizedBox(),
                                   widget.prayerData.prayer.isAnswer
                                       ? Icon(
                                           AppIcons.bestill_answered,
                                           size: 12,
                                           color: AppColors.lightBlue3,
                                         )
-                                      : SizedBox(width: 12),
+                                      : SizedBox(),
+                                  widget.prayerData.userPrayer.isSnoozed
+                                      ? Icon(
+                                          AppIcons.snooze,
+                                          size: 14,
+                                          color: AppColors.lightBlue3,
+                                        )
+                                      : SizedBox(width: 13),
                                   hasReminder
                                       ? InkWell(
                                           onTap: () => showDialog(
