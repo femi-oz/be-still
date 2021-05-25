@@ -345,23 +345,21 @@ class _AddUpdateState extends State<AddUpdate> {
                                               children: <Widget>[
                                                 Text(
                                                   'Initial Prayer |',
-                                                  style: TextStyle(
-                                                      color:
-                                                          AppColors.lightBlue3,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500),
+                                                  style: AppTextStyles
+                                                      .regularText18b
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .prayeModeBorder),
                                                 ),
                                                 Text(
                                                   DateFormat(' MM.dd.yyyy')
                                                       .format(prayerData
                                                           .prayer.modifiedOn),
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color:
-                                                          AppColors.lightBlue3,
-                                                      fontWeight:
-                                                          FontWeight.w500),
+                                                  style: AppTextStyles
+                                                      .regularText18b
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .prayeModeBorder),
                                                 ),
                                               ],
                                             ),
@@ -384,12 +382,11 @@ class _AddUpdateState extends State<AddUpdate> {
                                           child: Center(
                                             child: Text(
                                               prayerData.prayer.description,
-                                              style: TextStyle(
-                                                color: AppColors.lightBlue3,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w300,
-                                                height: 2,
-                                              ),
+                                              style: AppTextStyles
+                                                  .regularText16b
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .prayerTextColor),
                                               textAlign: TextAlign.center,
                                             ),
                                           ),

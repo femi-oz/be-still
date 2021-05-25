@@ -64,7 +64,7 @@ class NoUpdateView extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         data.prayer.description,
-                        style: AppTextStyles.regularText18b
+                        style: AppTextStyles.regularText16b
                             .copyWith(color: AppColors.prayerTextColor),
                         textAlign: TextAlign.left,
                       ),
