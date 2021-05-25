@@ -264,11 +264,15 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.unFavoritePrayer(prayerID);
 
   Future<void> markPrayerAsAnswered(
-          String prayerId, String userPrayerId) async =>
+    String prayerId,
+    String userPrayerId,
+  ) async =>
       await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> unMarkPrayerAsAnswered(
-          String prayerId, String userPrayerId) async =>
+    String prayerId,
+    String userPrayerId,
+  ) async =>
       await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> deletePrayer(String userPrayeId) async {
@@ -287,9 +291,6 @@ class PrayerProvider with ChangeNotifier {
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((data) {
-        // if (!isGroupAdmin) {
-        //   _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
-        // }
         _filteredPrayers = _prayers;
 
         _filteredPrayers
