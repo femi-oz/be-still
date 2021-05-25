@@ -433,6 +433,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         widget.prayerData.userPrayer.isArchived ||
         widget.prayerData.userPrayer.isSnoozed;
     return Container(
+      padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: SingleChildScrollView(

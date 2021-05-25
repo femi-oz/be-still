@@ -350,17 +350,24 @@ class _PrayerCardState extends State<PrayerCard> {
                                                     scrollDirection:
                                                         Axis.horizontal,
                                                     reverse: true,
-                                                    child: Text(
-                                                      tags,
-                                                      style: TextStyle(
-                                                        color: AppColors.red,
-                                                        fontSize: 10,
+                                                    child: Container(
+                                                      height: 15,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 3),
+                                                      child: Text(
+                                                        tags,
+                                                        style: TextStyle(
+                                                          color: AppColors.red,
+                                                          fontSize: 10,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        softWrap: false,
+                                                        textAlign:
+                                                            TextAlign.end,
                                                       ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      softWrap: false,
-                                                      textAlign: TextAlign.end,
                                                     ),
                                                   ),
                                                 ),
