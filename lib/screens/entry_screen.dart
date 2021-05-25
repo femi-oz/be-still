@@ -38,6 +38,9 @@ class _EntryScreenState extends State<EntryScreen>
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
 
+  bool _isSearchMode = false;
+  void _switchSearchMode(bool value) => _isSearchMode = value;
+
   final cron = Cron();
 
   initState() {
@@ -397,8 +400,16 @@ class _EntryScreenState extends State<EntryScreen>
 
   List<TabNavigationItem> getItems(miscProvider) => [
         TabNavigationItem(
-            page: PrayerList(_setCurrentIndex, _keyButton, _keyButton2,
-                _keyButton3, _keyButton4, _keyButton5),
+            page: PrayerList(
+              _setCurrentIndex,
+              _keyButton,
+              _keyButton2,
+              _keyButton3,
+              _keyButton4,
+              _keyButton5,
+              _isSearchMode,
+              _switchSearchMode,
+            ),
             icon: Icon(
               AppIcons.list,
               size: 16,
