@@ -437,8 +437,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
       height: MediaQuery.of(context).size.height,
       child: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 30),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Align(
               alignment: Alignment.topLeft,
               child: Container(

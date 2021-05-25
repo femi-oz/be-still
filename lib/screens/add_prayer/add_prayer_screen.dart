@@ -378,10 +378,13 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Text(
-                            'CANCEL',
-                            style: AppTextStyles.boldText18
-                                .copyWith(color: AppColors.grey),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'CANCEL',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.grey),
+                            ),
                           ),
                           onTap: isValid
                               ? () => onCancel()
@@ -398,11 +401,14 @@ class _AddPrayerState extends State<AddPrayer> {
                                     },
                         ),
                         InkWell(
-                          child: Text('SAVE',
-                              style: AppTextStyles.boldText18.copyWith(
-                                  color: !isValid
-                                      ? AppColors.lightBlue5.withOpacity(0.5)
-                                      : Colors.blue)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('SAVE',
+                                style: AppTextStyles.boldText18.copyWith(
+                                    color: !isValid
+                                        ? AppColors.lightBlue5.withOpacity(0.5)
+                                        : Colors.blue)),
+                          ),
                           onTap: () => isValid ? _save() : null,
                         ),
                       ],

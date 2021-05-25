@@ -207,34 +207,41 @@ class _NoUpdateViewState extends State<NoUpdateView> {
             ],
           ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-              child: SingleChildScrollView(
-                child: Center(
-                  child: EasyRichText(
-                    prayerData.prayer.description,
-                    defaultStyle: AppTextStyles.regularText16b.copyWith(
-                      color: AppColors.prayerTextColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                    child: SingleChildScrollView(
+                      child: EasyRichText(
+                        prayerData.prayer.description,
+                        defaultStyle: AppTextStyles.regularText16b.copyWith(
+                          color: AppColors.prayerTextColor,
+                        ),
+                        textAlign: TextAlign.left,
+                        patternList: [
+                          for (var i = 0; i < prayerData.tags.length; i++)
+                            EasyRichTextPattern(
+                                targetString: prayerData.tags[i].displayName,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _openShareModal(
+                                        context,
+                                        prayerData.tags[i].phoneNumber,
+                                        prayerData.tags[i].email);
+                                  },
+                                style: AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.lightBlue2,
+                                    decoration: TextDecoration.underline))
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.left,
-                    patternList: [
-                      for (var i = 0; i < prayerData.tags.length; i++)
-                        EasyRichTextPattern(
-                            targetString: prayerData.tags[i].displayName,
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                _openShareModal(
-                                    context,
-                                    prayerData.tags[i].phoneNumber,
-                                    prayerData.tags[i].email);
-                              },
-                            style: AppTextStyles.regularText15.copyWith(
-                                color: AppColors.lightBlue2,
-                                decoration: TextDecoration.underline))
-                    ],
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
