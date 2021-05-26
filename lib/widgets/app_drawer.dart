@@ -11,21 +11,21 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomDrawer extends StatelessWidget {
-  final TabController tabController;
   final Function setCurrentIndex;
   final GlobalKey keyButton;
   final GlobalKey keyButton2;
   final GlobalKey keyButton3;
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
+  final scaffoldKey;
   CustomDrawer(
-    this.tabController,
     this.setCurrentIndex,
     this.keyButton,
     this.keyButton2,
     this.keyButton3,
     this.keyButton4,
     this.keyButton5,
+    this.scaffoldKey,
   );
   _launchURL(url) async {
     if (await canLaunch(url)) {
@@ -50,13 +50,12 @@ class CustomDrawer extends StatelessWidget {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(bottom: 5.0),
-              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
                 'LOGOUT',
                 textAlign: TextAlign.center,
@@ -68,21 +67,18 @@ class CustomDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(bottom: 20),
-              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Text(
-                'Are you sure you want to logout?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  'Are you sure you want to logout?',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
                 ),
               ),
             ),
-            // GestureDetector(
+            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
@@ -119,10 +115,13 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: 20,
+                  ),
                   GestureDetector(
                     onTap: () async {
                       await _authProvider.signOut();
-                      await LocalNotification.clearAll();
+                      // await LocalNotification.clearAll();
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),
@@ -230,10 +229,9 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () async {
-                                if (tabController != null) {
-                                  setCurrentIndex(6);
-                                  tabController.animateTo(6);
-                                }
+                                await setCurrentIndex(6, false);
+                                await Future.delayed(
+                                    Duration(milliseconds: 300));
                                 Navigator.pop(context);
                               },
                               child: Text("RECOMMENDED BIBLES",
@@ -245,10 +243,9 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                                 onTap: () async {
-                                  if (tabController != null) {
-                                    setCurrentIndex(5);
-                                    tabController.animateTo(5);
-                                  }
+                                  await setCurrentIndex(5, false);
+                                  await Future.delayed(
+                                      Duration(milliseconds: 300));
                                   Navigator.pop(context);
                                 },
                                 child: Text("DEVOTIONALS AND READING PLANS",
@@ -259,10 +256,9 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () async {
-                                if (tabController != null) {
-                                  setCurrentIndex(4);
-                                  tabController.animateTo(4);
-                                }
+                                await setCurrentIndex(4, false);
+                                await Future.delayed(
+                                    Duration(milliseconds: 300));
                                 Navigator.pop(context);
                               },
                               child: Text("SETTINGS",
@@ -274,7 +270,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () =>
-                                  _launchURL('https://www.bestillapp.com'),
+                                  _launchURL('https://www.bestillapp.com/help'),
                               child: Text("HELP",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
@@ -284,6 +280,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () {
+                                setCurrentIndex(0, true);
                                 Navigator.pop(context);
                                 TutorialTarget.showTutorial(
                                   context,

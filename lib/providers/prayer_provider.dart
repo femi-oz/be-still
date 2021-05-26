@@ -219,15 +219,12 @@ class PrayerProvider with ChangeNotifier {
   Future<void> archivePrayer(String userPrayerId) async =>
       await _prayerService.archivePrayer(userPrayerId);
 
-  Future<void> unArchivePrayer(String userPrayerId) async =>
-      await _prayerService.unArchivePrayer(userPrayerId);
+  Future<void> unArchivePrayer(String userPrayerId, String prayerID) async =>
+      await _prayerService.unArchivePrayer(userPrayerId, prayerID);
 
   Future<void> snoozePrayer(
       String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
     await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
-    // var duration = snoozeEndDate.difference(DateTime.now());
-    // Future.delayed(duration.);
-    // setPrayers(userPrayerID, '');
   }
 
   Future<void> unSnoozePrayer(
@@ -241,7 +238,7 @@ class PrayerProvider with ChangeNotifier {
         .toList();
     final settings = await locator<SettingsService>().getSettings(userId);
     final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
-    final autoDeleteDuration = settings.defaultSnoozeDurationMins;
+    final autoDeleteDuration = settings.defaultSnoozeDuration;
     List<CombinePrayerStream> toDelete = archivedPrayers;
     if (!autoDeleteAnswered) {
       toDelete = archivedPrayers
@@ -267,11 +264,15 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.unFavoritePrayer(prayerID);
 
   Future<void> markPrayerAsAnswered(
-          String prayerId, String userPrayerId) async =>
+    String prayerId,
+    String userPrayerId,
+  ) async =>
       await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> unMarkPrayerAsAnswered(
-          String prayerId, String userPrayerId) async =>
+    String prayerId,
+    String userPrayerId,
+  ) async =>
       await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> deletePrayer(String userPrayeId) async {
@@ -290,9 +291,6 @@ class PrayerProvider with ChangeNotifier {
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((data) {
-        // if (!isGroupAdmin) {
-        //   _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
-        // }
         _filteredPrayers = _prayers;
 
         _filteredPrayers

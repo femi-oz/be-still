@@ -40,7 +40,7 @@ class StringUtils {
   static String quickTipWelcome2 =
       " to begin the tour, or close this window to begin using Be Still right away.";
   static String quickTipList =
-      " icon at anytime to view all your prayers in your current prayer list";
+      " at any time to view all the prayers in your current prayer list.";
   static String quickTipQuickAccess =
       "You can swipe right or left on any prayer in your prayer list to display common actions.";
   static String quickTipFilters =
@@ -63,6 +63,10 @@ class StringUtils {
         break;
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";
+        break;
+      case ErrorType.notAvailable:
+        errorMessage =
+            "Finger Print / Face ID is not supported on ypour device.";
         break;
       case ErrorType.userNotFound:
         errorMessage = "User with this email doesn't exist.";

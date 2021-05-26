@@ -399,12 +399,16 @@ class PrayerService {
     }
   }
 
-  Future unArchivePrayer(
-    String userPrayerId,
-  ) async {
+  Future unArchivePrayer(String userPrayerId, String prayerID) async {
     try {
-      _userPrayerCollectionReference.doc(userPrayerId).update(
-          {'IsArchived': false, 'Status': Status.active, 'ArchivedDate': null});
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsAnswer': false},
+      );
+      _userPrayerCollectionReference.doc(userPrayerId).update({
+        'IsArchived': false,
+        'Status': Status.active,
+        'ArchivedDate': null,
+      });
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -439,13 +443,6 @@ class PrayerService {
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': false},
       );
-      final data = {
-        'IsArchived': true,
-        'Status': Status.inactive,
-        'IsFavourite': false,
-        'ArchivedDate': DateTime.now()
-      };
-      _userPrayerCollectionReference.doc(userPrayerId).update(data);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, prayerID, 'PRAYER/service/unMarkPrayerAsAnswered');

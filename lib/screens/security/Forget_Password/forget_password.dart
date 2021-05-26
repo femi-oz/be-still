@@ -28,13 +28,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   var notificationType = NotificationType.email;
   bool emailSent = false;
   bool _autoValidate = false;
+  final _key = GlobalKey<FormFieldState>();
 
   _forgotPassword() async {
     setState(() => _autoValidate = true);
     if (!_formKey1.currentState.validate()) return;
     _formKey1.currentState.save();
     try {
-      await BeStilDialog.showLoading(context, 'Sending Mail');
+      BeStilDialog.showLoading(context, 'Sending Mail');
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .sendPasswordResetEmail(_emailController.text);
 
@@ -68,6 +69,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 image: DecorationImage(
                   image: AssetImage(StringUtils.backgroundImage),
                   alignment: Alignment.bottomCenter,
+                  fit: BoxFit.cover,
                   colorFilter: new ColorFilter.mode(
                       AppColors.backgroundColor[0].withOpacity(0.2),
                       BlendMode.dstATop),
@@ -238,6 +240,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       child: Column(
         children: <Widget>[
           CustomInput(
+            textkey: _key,
             label: 'Email Address',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,

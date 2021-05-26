@@ -1,8 +1,5 @@
-import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -21,55 +18,7 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
-  bool _isInit = true;
   final _scrollController = new ScrollController();
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        _getBibles();
-        _getPrayers();
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
-  }
-
-  void _getPrayers() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  Future<void> _getBibles() async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
 
   Future<void> _launchURL(url) async {
     if (await canLaunch(url)) {
@@ -79,95 +28,106 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    widget.setCurrentIndex(0, true);
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage),
-                alignment: Alignment.bottomCenter,
-              ),
-            ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: _scrollController,
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.backgroundColor[0].withOpacity(0.85),
-                    AppColors.backgroundColor[1].withOpacity(0.7),
-                  ],
+                image: DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage),
+                  alignment: Alignment.bottomCenter,
+                  fit: BoxFit.cover,
                 ),
               ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: <Widget>[
-                        TextButton.icon(
-                          style: ButtonStyle(
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                                    EdgeInsets.zero),
-                          ),
-                          icon: Icon(
-                            AppIcons.bestill_back_arrow,
-                            color: AppColors.lightBlue3,
-                            size: 20,
-                          ),
-                          onPressed: () => widget.setCurrentIndex(0),
-                          label: Text(
-                            'BACK',
-                            style: AppTextStyles.boldText20.copyWith(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.backgroundColor[0].withOpacity(0.85),
+                      AppColors.backgroundColor[1].withOpacity(0.7),
+                    ],
+                  ),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: <Widget>[
+                          TextButton.icon(
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                      EdgeInsets.zero),
+                            ),
+                            icon: Icon(
+                              AppIcons.bestill_back_arrow,
                               color: AppColors.lightBlue3,
+                              size: 20,
+                            ),
+                            onPressed: () => widget.setCurrentIndex(0, true),
+                            label: Text(
+                              'BACK',
+                              style: AppTextStyles.boldText20.copyWith(
+                                color: AppColors.lightBlue3,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                    child: Text(
-                      'Recommended Bibles',
-                      style: AppTextStyles.boldText24
-                          .copyWith(color: AppColors.blueTitle),
-                      textAlign: TextAlign.center,
+                    SizedBox(height: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                      child: Text(
+                        'Recommended Bibles',
+                        style: AppTextStyles.boldText24
+                            .copyWith(color: AppColors.blueTitle),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: Text(
-                            'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
-                            style: AppTextStyles.regularText16b
-                                .copyWith(color: AppColors.prayerTextColor),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                              style: AppTextStyles.regularText16b
+                                  .copyWith(color: AppColors.prayerTextColor),
+                            ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: Text(
-                            'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
-                            style: AppTextStyles.regularText16b
-                                .copyWith(color: AppColors.prayerTextColor),
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                              style: AppTextStyles.regularText16b
+                                  .copyWith(color: AppColors.prayerTextColor),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  _buildPanel(),
-                ],
+                    SizedBox(height: 10),
+                    _buildPanel(),
+                  ],
+                ),
               ),
             ),
           ),

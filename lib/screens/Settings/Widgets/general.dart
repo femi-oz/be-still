@@ -80,57 +80,95 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              margin: EdgeInsets.only(bottom: 7.0),
               child: Text(
-                'You must allow/deny access from your device\'s Settings',
+                'CONTACT SETTINGS',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                   height: 1.5,
                 ),
               ),
             ),
-            // GestureDetector(
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.55,
+                child: Text(
+                  'You must allow/deny access from your device\'s Settings',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 25,
+            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      openAppSettings();
+                      Navigator.of(context).pop();
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .30,
+                      width: MediaQuery.of(context).size.width * .28,
                       decoration: BoxDecoration(
+                        color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'GO TO SETTINGS',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'CANCEL',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () => openAppSettings(),
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .30,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'GO TO SETTINGS',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -158,21 +196,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     else if (!Settings.enabledContactPermission &&
         (status.isPermanentlyDenied)) {
       _openContactConfirmation(context);
-      setState(() => Settings.enabledContactPermission = true);
     }
     //disabled and denied and it's iOS
     else if (!Settings.enabledContactPermission &&
         status.isDenied &&
         Platform.isIOS) {
       _openContactConfirmation(context);
-      setState(() => Settings.enabledContactPermission = false);
     }
     //disabled and denied through popup
     else if (!Settings.enabledContactPermission && status.isDenied)
       setState(() => Settings.enabledContactPermission = false);
     //enabled and needs to be diabled
     else {
-      setState(() => Settings.enabledContactPermission = false);
       _openContactConfirmation(context);
     }
   }
@@ -385,6 +420,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   void _update(_ModalType type, ctx) {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
+    bool _autoValidate = false;
     _newEmail.text = _user.email;
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
@@ -407,13 +443,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 ),
               SizedBox(height: 10.0),
               Form(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+                // autovalidateMode: AutovalidateMode.onUserInteraction,
+                autovalidate: _autoValidate,
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (type == _ModalType.email)
                       CustomInput(
+                        textkey: GlobalKey<FormFieldState>(),
                         showSuffix: false,
                         isRequired: true,
                         isEmail: true,
@@ -424,10 +462,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       height: 15.0,
                     ),
                     CustomInput(
+                      textkey: GlobalKey<FormFieldState>(),
                       showSuffix: false,
-                      isRequired: true,
+                      isRequired: false,
                       obScurePassword: true,
-                      isPassword: true,
+                      isPassword: false,
                       label: 'Current Password',
                       controller: _currentPassword,
                     ),
@@ -440,6 +479,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomInput(
+                              textkey: GlobalKey<FormFieldState>(),
                               obScurePassword: true,
                               showSuffix: false,
                               isRequired: true,
@@ -449,6 +489,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             ),
                             SizedBox(height: 15.0),
                             CustomInput(
+                              textkey: GlobalKey<FormFieldState>(),
                               obScurePassword: true,
                               showSuffix: false,
                               isRequired: true,
@@ -465,7 +506,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ],
                         ),
                       ),
-                    // SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -494,6 +534,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                 AppColors.lightBlue3),
                           ),
                           onPressed: () {
+                            setState(() => _autoValidate = true);
                             if (!_formKey.currentState.validate()) return null;
                             _formKey.currentState.save();
                             _verifyPassword(

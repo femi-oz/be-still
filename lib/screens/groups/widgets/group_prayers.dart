@@ -1,12 +1,12 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_quick_access.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -21,9 +21,9 @@ class GroupPrayers extends StatefulWidget {
 
 class _GroupPrayersState extends State<GroupPrayers> {
   Future<bool> _onWillPop() async {
-    // await Provider.of<MiscProvider>(context, listen: false)
-    //     .setCurrentPage(0, 3);
-    return (NavigationService.instance.goHome(0)) ?? false;
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
   }
 
   @override

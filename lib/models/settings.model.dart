@@ -7,8 +7,8 @@ class SettingsModel {
   final String deviceId;
   final String appearance;
   final String defaultSortBy;
-  final String defaultSnoozeDuration;
-  final int defaultSnoozeDurationMins;
+  final String defaultSnoozeFrequency;
+  final int defaultSnoozeDuration;
   final String archiveSortBy;
   final String archiveAutoDelete;
   final int archiveAutoDeleteMins;
@@ -36,8 +36,8 @@ class SettingsModel {
     @required this.deviceId,
     @required this.appearance,
     @required this.defaultSortBy,
+    @required this.defaultSnoozeFrequency,
     @required this.defaultSnoozeDuration,
-    @required this.defaultSnoozeDurationMins,
     @required this.pauseInterval,
     @required this.archiveSortBy,
     @required this.archiveAutoDelete,
@@ -67,9 +67,9 @@ class SettingsModel {
         appearance = snapshot.data()['Appearance'],
         pauseInterval = snapshot.data()['PauseInterval'],
         defaultSortBy = snapshot.data()['DefaultSortBy'],
-        defaultSnoozeDuration = snapshot.data()['DefaultSnoozeDuration'],
-        defaultSnoozeDurationMins =
-            snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
+        defaultSnoozeFrequency = snapshot.data()['DefaultSnoozeFrequency'],
+        defaultSnoozeDuration =
+            snapshot.data()['DefaultSnoozeDurationValue'] ?? 15,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
         archiveAutoDeleteMins = snapshot.data()['ArchiveAutoDeleteMins'] ?? 30,
@@ -101,8 +101,8 @@ class SettingsModel {
       'Appearance': appearance,
       'DefaultSortBy': defaultSortBy,
       'PauseInterval': pauseInterval,
-      'DefaultSnoozeDuration': defaultSnoozeDuration,
-      'DefaultSnoozeDurationMins': defaultSnoozeDurationMins,
+      'DefaultSnoozeFrequency': defaultSnoozeFrequency,
+      'DefaultSnoozeDurationValue': defaultSnoozeDuration,
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
       'ArchiveAutoDeleteMins': archiveAutoDeleteMins,

@@ -5,16 +5,13 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-
 import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
@@ -40,6 +37,7 @@ class AddPrayer extends StatefulWidget {
 class _AddPrayerState extends State<AddPrayer> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _prayerKey = GlobalKey<FormFieldState>();
   List groups = [];
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
@@ -57,8 +55,8 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
 
   Future<void> _save() async {
+    FocusScope.of(context).unfocus();
     BeStilDialog.showLoading(context);
-
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -82,9 +80,12 @@ class _AddPrayerState extends State<AddPrayer> {
             backupText,
           );
 
-          contacts.forEach((element) {
-            if (!_descriptionController.text.contains(element.displayName)) {
-              element.displayName = '';
+          contacts.forEach((s) {
+            if (!_descriptionController.text.contains(s.displayName)) {
+              s.displayName = '';
+            }
+            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+              contacts = [...contacts, s];
             }
           });
 
@@ -92,22 +93,30 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text);
           }
-          widget.setCurrentIndex(0);
-          Future.delayed(Duration(milliseconds: 300));
+          await Future.delayed(Duration(milliseconds: 1000));
           BeStilDialog.hideLoading(context);
-
-          // Navigator.of(context).pushNamedAndRemoveUntil(
-          //     EntryScreen.routeName, (Route<dynamic> route) => false);
+          widget.setCurrentIndex(0, true);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (!_descriptionController.text.contains(element.displayName)) {
+            if (!_descriptionController.text
+                .toLowerCase()
+                .contains(element.displayName.toLowerCase())) {
               textList.add(element);
             }
           });
+          contacts.forEach((s) {
+            if (!_descriptionController.text.contains(s.displayName)) {
+              s.displayName = '';
+            }
+            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+              contacts = [...contacts, s];
+            }
+          });
+
           for (int i = 0; i < textList.length; i++)
             await Provider.of<PrayerProvider>(context, listen: false)
                 .removePrayerTag(textList[i].id);
@@ -156,10 +165,20 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
+
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
             : '';
+      });
+      tagList.clear();
+      localContacts.forEach((s) {
+        if (('@' + s.displayName)
+            .trim()
+            .toLowerCase()
+            .contains(tagText.trim().toLowerCase())) {
+          tagList.add(s.displayName);
+        }
       });
 
       painter = TextPainter(
@@ -176,7 +195,16 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    return (NavigationService.instance.goHome(0)) ?? false;
+    if ((!widget.isEdit && _descriptionController.text.isNotEmpty) ||
+        (widget.isEdit && _oldDescription != _descriptionController.text)) {
+      onCancel();
+      return true;
+    } else {
+      widget.setCurrentIndex(0, true);
+      return (Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+          false;
+    }
   }
 
   Future<void> _onTagSelected(s) async {
@@ -214,24 +242,35 @@ class _AddPrayerState extends State<AddPrayer> {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.3,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              margin: EdgeInsets.only(bottom: 5.0),
               child: Text(
-                'Are you sure you want to cancel?',
+                'CANCEL',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                   height: 1.5,
                 ),
               ),
             ),
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  'Are you sure you want to cancel?',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
@@ -245,7 +284,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             EntryScreen.routeName,
                             (Route<dynamic> route) => false);
                       } else {
-                        widget.setCurrentIndex(0);
+                        widget.setCurrentIndex(0, true);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus.unfocus();
                       }
@@ -254,12 +293,12 @@ class _AddPrayerState extends State<AddPrayer> {
                       height: 30,
                       width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
-                        color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
                           color: AppColors.cardBorder,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
+                        color: AppColors.grey.withOpacity(0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -334,7 +373,6 @@ class _AddPrayerState extends State<AddPrayer> {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Container(
-              height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -351,22 +389,37 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               'CANCEL',
                               style: AppTextStyles.boldText18
                                   .copyWith(color: AppColors.grey),
                             ),
-                            onTap: () => isValid
-                                ? onCancel()
-                                : widget.isEdit
-                                    ? Navigator.pop(context)
-                                    : widget.setCurrentIndex(0)),
+                          ),
+                          onTap: isValid
+                              ? () => onCancel()
+                              : widget.isEdit
+                                  ? () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      Navigator.pop(context);
+                                    }
+                                  : () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      widget.setCurrentIndex(0, true);
+                                    },
+                        ),
                         InkWell(
-                          child: Text('SAVE',
-                              style: AppTextStyles.boldText18.copyWith(
-                                  color: !isValid
-                                      ? AppColors.lightBlue5.withOpacity(0.5)
-                                      : Colors.blue)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('SAVE',
+                                style: AppTextStyles.boldText18.copyWith(
+                                    color: !isValid
+                                        ? AppColors.lightBlue5.withOpacity(0.5)
+                                        : Colors.blue)),
+                          ),
                           onTap: () => isValid ? _save() : null,
                         ),
                       ],
@@ -384,6 +437,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               key: _formKey,
                               child: Container(
                                 child: CustomInput(
+                                  textkey: _prayerKey,
                                   label: 'Prayer description',
                                   controller: _descriptionController,
                                   maxLines: 23,
@@ -396,7 +450,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               ),
                             ),
                           ),
-                          tagText.length > 1
+                          tagText.length > 0
                               ? Positioned(
                                   // padding: EdgeInsets.only(
                                   //     top: _focusNode.offset.dy * 0.5 +
@@ -422,7 +476,6 @@ class _AddPrayerState extends State<AddPrayer> {
                                               .toLowerCase()
                                               .contains(
                                                   tagText.toLowerCase())) {
-                                            showNoContact = false;
                                             return GestureDetector(
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -439,12 +492,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 ),
                                                 onTap: () => _onTagSelected(s));
                                           } else {
-                                            showNoContact = true;
-
                                             return SizedBox();
                                           }
                                         }).toList(),
-                                        showNoContact
+                                        tagList.length == 0
                                             ? Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(

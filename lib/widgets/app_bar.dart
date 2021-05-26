@@ -32,6 +32,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   TextEditingController _searchController = TextEditingController();
+  final _searchKey = GlobalKey();
+
   void _searchPrayer(String value) async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -150,6 +152,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       padding: 5.0,
                       showSuffix: false,
                       textInputAction: TextInputAction.done,
+                      isSearch: true,
+                      textkey: _searchKey,
+                      unfocus: true,
                     ),
                   ),
                   SizedBox(width: 10),

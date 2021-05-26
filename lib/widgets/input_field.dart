@@ -4,7 +4,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:masked_text/masked_text.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class CustomInput extends StatefulWidget {
@@ -27,6 +27,8 @@ class CustomInput extends StatefulWidget {
   final bool isLink;
   final bool unfocus;
   final FocusNode focusNode;
+  final bool isSearch;
+  final GlobalKey textkey;
 
   CustomInput(
       {this.maxLines = 1,
@@ -34,6 +36,7 @@ class CustomInput extends StatefulWidget {
       this.color,
       this.isPassword = false,
       @required this.controller,
+      this.textkey,
       this.showSuffix = true,
       this.textInputAction = TextInputAction.done,
       this.submitForm,
@@ -47,6 +50,7 @@ class CustomInput extends StatefulWidget {
       this.isEmail = false,
       this.isLink = false,
       this.unfocus = false,
+      this.isSearch = false,
       this.focusNode});
 
   @override
@@ -59,112 +63,72 @@ class _CustomInputState extends State<CustomInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: widget.isPhone
-          ? MaskedTextField(
-              maskedTextFieldController: widget.controller,
-              mask: "(xxx) xxx-xxxx",
-              maxLength: 14,
-              keyboardType: TextInputType.number,
-              inputDecoration: InputDecoration(
-                suffixText: (widget.showSuffix && _isTextNotEmpty) ||
-                        (widget.showSuffix && widget.controller.text != '')
-                    ? widget.label
-                    : '',
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 15, vertical: widget.padding),
-                suffixStyle: AppTextStyles.regularText14.copyWith(
-                    color: Settings.isDarkMode
-                        ? AppColors.offWhite2
-                        : AppColors.grey4),
-                counterText: '',
-                hintText: widget.label,
-                hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
-                errorBorder: new OutlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.redAccent),
-                ),
-                errorMaxLines: 5,
-                errorStyle: AppTextStyles.errorText,
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.lightBlue4.withOpacity(0.5),
-                    width: 1.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppColors.lightBlue4, width: 1.0),
-                ),
-                fillColor: AppColors.textFieldBackgroundColor,
-                filled: true,
-              ),
-            )
-          : TextFormField(
-              controller: widget.controller,
-              keyboardType: widget.keyboardType,
-              textCapitalization: TextCapitalization.sentences,
-              style: AppTextStyles.regularText15,
-              focusNode: widget.focusNode,
-              cursorColor:
-                  widget.color == null ? AppColors.lightBlue4 : widget.color,
-              maxLines: widget.maxLines,
-              decoration: InputDecoration(
-                suffixText: (widget.showSuffix && _isTextNotEmpty) ||
-                        (widget.showSuffix && widget.controller.text != '')
-                    ? widget.label
-                    : '',
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 15, vertical: widget.padding),
-                suffixStyle: AppTextStyles.regularText14.copyWith(
-                    color: Settings.isDarkMode
-                        ? AppColors.offWhite2
-                        : AppColors.prayerTextColor),
-                counterText: '',
-                hintText: widget.label,
-                hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
-                errorBorder: new OutlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.redAccent),
-                ),
-                errorMaxLines: 5,
-                errorStyle: AppTextStyles.errorText,
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.lightBlue4.withOpacity(0.5),
-                    width: 1.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppColors.lightBlue4, width: 1.0),
-                ),
-                fillColor: AppColors.textFieldBackgroundColor,
-                filled: true,
-              ),
-              obscureText: widget.obScurePassword,
-              validator: (value) => _validatorFn(value),
-              onFieldSubmitted: (val) => {
-                _searchPrayer(val),
-                widget.unfocus
-                    ? FocusScope.of(context).unfocus()
-                    : FocusScope.of(context).nextFocus(),
-                widget.unfocus ? widget.submitForm : null
-              },
-              textInputAction: widget.textInputAction,
-              onChanged: (val) {
-                // setVisibilty(val);
-                setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
-                if (widget.onTextchanged != null) widget.onTextchanged(val);
-              },
+      child: TextFormField(
+        key: widget.textkey,
+        inputFormatters:
+            widget.isPhone ? [LengthLimitingTextInputFormatter(10)] : null,
+        controller: widget.controller,
+        keyboardType: widget.keyboardType,
+        textCapitalization: TextCapitalization.sentences,
+        style: AppTextStyles.regularText15,
+        focusNode: widget.focusNode,
+        cursorColor: widget.color == null ? AppColors.lightBlue4 : widget.color,
+        maxLines: widget.maxLines,
+        decoration: InputDecoration(
+          suffixText: (widget.showSuffix && _isTextNotEmpty) ||
+                  (widget.showSuffix && widget.controller.text != '')
+              ? widget.label
+              : '',
+          isDense: true,
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
+          suffixStyle: AppTextStyles.regularText14.copyWith(
+              color: Settings.isDarkMode
+                  ? AppColors.offWhite2
+                  : AppColors.prayerTextColor),
+          counterText: '',
+          hintText: widget.label,
+          hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
+          errorBorder: new OutlineInputBorder(
+            borderSide: new BorderSide(color: Colors.redAccent),
+          ),
+          errorMaxLines: 5,
+          errorStyle: AppTextStyles.errorText,
+          border: OutlineInputBorder(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: AppColors.lightBlue4.withOpacity(0.5),
+              width: 1.0,
             ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.lightBlue4, width: 1.0),
+          ),
+          fillColor: AppColors.textFieldBackgroundColor,
+          filled: true,
+        ),
+        obscureText: widget.obScurePassword,
+        validator: (value) => _validatorFn(value),
+        onFieldSubmitted: (val) => {
+          widget.isSearch ? _searchPrayer(val) : null,
+          widget.unfocus
+              ? FocusScope.of(context).unfocus()
+              : FocusScope.of(context).nextFocus(),
+          widget.unfocus ? widget.submitForm : null
+        },
+        textInputAction: widget.textInputAction,
+        onChanged: (val) {
+          // setVisibilty(val);
+          setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
+          if (widget.onTextchanged != null) widget.onTextchanged(val);
+        },
+      ),
     );
   }
 
   void _searchPrayer(String value) async {
     final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
@@ -212,9 +176,11 @@ class _CustomInputState extends State<CustomInput> {
       }
     }
     if (widget.isPhone && value.isNotEmpty) {
-      String p = r'(^(?:[+234])?[0-9]{6,}$)';
-      RegExp regExp = new RegExp(p);
-      if (value.length < 6 || value.length > 15 || !regExp.hasMatch(value)) {
+      // String p = r'(^(?:[+234])?[0-9]{6,}$)';
+      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+
+      RegExp regExp = new RegExp(pattern);
+      if (value.length != 10 || !regExp.hasMatch(value)) {
         return 'Enter a valid phone number';
       }
     }

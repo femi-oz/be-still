@@ -1,12 +1,16 @@
+import 'package:be_still/enums/settings_key.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -19,8 +23,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
-  // int _currentIndex = 5;
-
   TabController tabController;
 
   @override
@@ -71,6 +73,33 @@ class SettingsTabState extends State<SettingsTab>
     super.didChangeDependencies();
   }
 
+  _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
+    try {
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeDuration,
+        value: selectedDuration,
+        settingsId: settingsId,
+      );
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeFrequency,
+        value: selectedInterval,
+        settingsId: settingsId,
+      );
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   @override
   void dispose() {
     tabController.dispose();
@@ -78,7 +107,9 @@ class SettingsTabState extends State<SettingsTab>
   }
 
   Future<bool> _onWillPop() async {
-    return (NavigationService.instance.goHome(0)) ?? false;
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
   }
 
   @override
@@ -137,7 +168,7 @@ class SettingsTabState extends State<SettingsTab>
               physics: NeverScrollableScrollPhysics(),
               children: [
                 GeneralSettings(_settingsProvider.settings, _scaffoldKey),
-                MyListSettings(_settingsProvider.settings),
+                MyListSettings(_settingsProvider.settings, _setDefaultSnooze),
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
                 // NotificationsSettings(_settingsProvider.settings),

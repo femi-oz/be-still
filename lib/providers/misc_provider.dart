@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MiscProvider with ChangeNotifier {
-  String _pageTitle = 'MY LIST';
+  String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
+
   int _currentPage = 0;
   int get currentPage => _currentPage;
+
+  bool _initialLoad = false;
+  bool get initialLoad => _initialLoad;
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
@@ -29,6 +33,11 @@ class MiscProvider with ChangeNotifier {
 
   setCurrentPage(int index) {
     _currentPage = index;
+    notifyListeners();
+  }
+
+  setLoadStatus(bool value) {
+    _initialLoad = value;
     notifyListeners();
   }
 }

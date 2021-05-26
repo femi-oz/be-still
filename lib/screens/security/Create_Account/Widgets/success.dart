@@ -41,6 +41,7 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
           image: DecorationImage(
             image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            fit: BoxFit.cover,
             colorFilter: new ColorFilter.mode(
                 AppColors.backgroundColor[0].withOpacity(0.2),
                 BlendMode.dstATop),
