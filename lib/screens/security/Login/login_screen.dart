@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e, null, null);
     } catch (e) {
       verificationSent = false;
       setState(() => verificationSendMessage =
@@ -166,8 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _usernameController.text, 'LOGIN/screen/_resendVerification');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      PlatformException err = PlatformException(
+          code: 'custom', message: 'An error occured. Please try again.');
+      BeStilDialog.showErrorDialog(context, err, null, null);
     }
   }
 
@@ -233,12 +234,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await setRouteDestination();
       }
     } on HttpException catch (e) {
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e, null, null);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      PlatformException er = PlatformException(
+          code: 'custom', message: 'An error occured. Please try again');
+      BeStilDialog.showErrorDialog(context, er, null, null);
     }
   }
 
@@ -277,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Text(
-                'Biometrics will be enabled after you login in.',
+                'Biometrics will be enabled after you log in.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.regularText16b
                     .copyWith(color: AppColors.lightBlue1),

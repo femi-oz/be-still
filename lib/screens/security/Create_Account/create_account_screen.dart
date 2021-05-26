@@ -91,14 +91,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       if (_firstnameController.text == null ||
           _firstnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'First Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
+        PlatformException e = PlatformException(
+            code: 'custom',
+            message: 'First Name is empty, please enter a valid name.');
+        BeStilDialog.showErrorDialog(context, e, null, null);
       } else if (_lastnameController.text == null ||
           _lastnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStilDialog.showErrorDialog(context,
-            'Last Name is empty, please enter a valid name.', null, null);
+        PlatformException e = PlatformException(
+            code: 'custom',
+            message: 'Last Name is empty, please enter a valid name.');
+        BeStilDialog.showErrorDialog(context, e, null, null);
       } else {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .registerUser(
