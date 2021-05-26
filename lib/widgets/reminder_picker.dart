@@ -313,12 +313,25 @@ class _ReminderPickerState extends State<ReminderPicker> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Text(
+            'SET PRAYER TIME',
+            style: TextStyle(
+              color: AppColors.lightBlue1,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              height: 1.5,
+            ),
+          ),
           Center(
             child: Container(
               padding: EdgeInsets.all(20),
               height: 200,
               child: Column(
                 children: <Widget>[
+                  // SizedBox(
+                  //   height: 40,
+                  // ),
+
                   Expanded(
                     child: Container(
                       child: Row(
@@ -575,44 +588,108 @@ class _ReminderPickerState extends State<ReminderPicker> {
                   children: [
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 40),
+                      width: double.infinity,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          CustomButtonGroup(
-                            title: 'CANCEL',
-                            onSelected: (_) => widget.onCancel(),
-                            length: 2,
-                            index: 0,
+                          GestureDetector(
+                            onTap: () {
+                              widget.onCancel();
+                            },
+                            child: Container(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * .35,
+                              decoration: BoxDecoration(
+                                color: AppColors.grey.withOpacity(0.5),
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('CANCEL',
+                                      style: AppTextStyles.boldText20.copyWith(
+                                          color: AppColors.white, height: 1.5)),
+                                ],
+                              ),
+                            ),
                           ),
-                          CustomButtonGroup(
-                            title: 'SAVE',
-                            onSelected: (_) {
+                          GestureDetector(
+                            onTap: () {
                               setNotification();
                             },
-                            length: 2,
-                            index: 1,
+                            child: Container(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * .35,
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('SAVE',
+                                      style: AppTextStyles.boldText20.copyWith(
+                                          color: AppColors.white, height: 1.5)),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 20),
                     widget.reminder != null
-                        ? Container(
-                            margin: EdgeInsets.symmetric(horizontal: 40),
-                            child: Row(
-                              children: [
-                                CustomButtonGroup(
-                                  title: 'DELETE REMINDER',
-                                  onSelected: (_) {
-                                    _deleteReminder();
-                                  },
-                                  length: 1,
-                                  index: 1,
-                                  color: AppColors.red,
+                        ? GestureDetector(
+                            onTap: () {
+                              setNotification();
+                            },
+                            child: Container(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * 0.71,
+                              decoration: BoxDecoration(
+                                color: AppColors.red,
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
                                 ),
-                              ],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('DELETE REMINDER',
+                                      style: AppTextStyles.boldText20.copyWith(
+                                          color: AppColors.white, height: 1.5)),
+                                ],
+                              ),
                             ),
                           )
+                        // Container(
+                        //     margin: EdgeInsets.symmetric(horizontal: 40),
+                        //     child: Row(
+                        //       children: [
+                        //         CustomButtonGroup(
+                        //           title: 'DELETE REMINDER',
+                        //           onSelected: (_) {
+                        //             _deleteReminder();
+                        //           },
+                        //           length: 1,
+                        //           index: 1,
+                        //           color: AppColors.red,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   )
                         : Container(),
                   ],
                 ),

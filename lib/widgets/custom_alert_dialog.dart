@@ -51,18 +51,22 @@ class CustomAlertDialog extends StatelessWidget {
             size: 50,
           ),
           const SizedBox(height: 10.0),
-          Text(
-            title.isEmpty ? _getTitle(type) : title,
-            style: AppTextStyles.regularText13
-                .copyWith(fontSize: 18, color: AppColors.lightBlue1),
-            textAlign: TextAlign.center,
-          ),
+          title.isNotEmpty
+              ? Text(
+                  title.isEmpty ? _getTitle(type) : title,
+                  style: AppTextStyles.regularText13
+                      .copyWith(fontSize: 18, color: AppColors.lightBlue4),
+                  textAlign: TextAlign.center,
+                )
+              : Container(),
           Divider(),
-          Text(
-            message ?? 'An error occured!',
-            style: AppTextStyles.regularText14
-                .copyWith(color: AppColors.lightBlue1),
-            textAlign: TextAlign.center,
+          Flexible(
+            child: Text(
+              message ?? 'An error occured!',
+              style: AppTextStyles.regularText16b
+                  .copyWith(color: AppColors.lightBlue4),
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(height: 20.0),
           SizedBox(
@@ -151,7 +155,7 @@ class CustomAlertDialog extends StatelessWidget {
       case AlertType.success:
         return 'Success';
       case AlertType.error:
-        return 'Oops!';
+        return '';
       case AlertType.info:
       default:
         return '';

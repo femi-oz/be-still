@@ -116,9 +116,13 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Set Snooze Duration',
-                    style: AppTextStyles.regularText15
-                        .copyWith(fontWeight: FontWeight.bold),
+                    'SET SNOOZE DURATION',
+                    style: TextStyle(
+                      color: AppColors.lightBlue1,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      height: 1.5,
+                    ),
                   ),
                   SizedBox(
                     height: 20,
@@ -224,21 +228,55 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
             width: double.infinity,
             child: Row(
               children: <Widget>[
-                CustomButtonGroup(
-                  title: 'SNOOZE',
-                  onSelected: (_) {
-                    _snoozePrayer();
-                  },
-                  length: 2,
-                  index: 0,
-                ),
-                CustomButtonGroup(
-                  title: 'CANCEL',
-                  onSelected: (_) {
+                GestureDetector(
+                  onTap: () {
                     Navigator.of(context).pop();
                   },
-                  length: 2,
-                  index: 0,
+                  child: Container(
+                    height: 38.0,
+                    width: MediaQuery.of(context).size.width * .35,
+                    decoration: BoxDecoration(
+                      color: AppColors.grey.withOpacity(0.5),
+                      border: Border.all(
+                        color: AppColors.cardBorder,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('CANCEL',
+                            style: AppTextStyles.boldText20
+                                .copyWith(color: AppColors.white, height: 1.5)),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: _snoozePrayer,
+                  child: Container(
+                    height: 38.0,
+                    width: MediaQuery.of(context).size.width * .35,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      border: Border.all(
+                        color: AppColors.cardBorder,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('SNOOZE',
+                            style: AppTextStyles.boldText20
+                                .copyWith(color: AppColors.white, height: 1.5)),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
