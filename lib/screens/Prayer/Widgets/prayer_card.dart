@@ -532,8 +532,7 @@ class _PrayerCardState extends State<PrayerCard> {
                             );
                           },
                         ),
-                  Colors.blue,
-                ),
+                  Colors.blue),
         ],
       ),
     );
