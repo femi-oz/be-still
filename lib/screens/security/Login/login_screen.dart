@@ -482,8 +482,10 @@ class _LoginScreenState extends State<LoginScreen> {
               setState(() => isFormValid =
                   _usernameController.text.isNotEmpty &&
                       _passwordController.text.isNotEmpty);
-              if (_usernameController.text !=
-                  jsonDecode(Settings.lastUser)['email']) _setDefaults();
+              if (Settings.lastUser.isNotEmpty) {
+                if (_usernameController.text !=
+                    jsonDecode(Settings.lastUser)['email']) _setDefaults();
+              }
             },
           ),
           SizedBox(height: 15.0),

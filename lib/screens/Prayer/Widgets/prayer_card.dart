@@ -1,7 +1,6 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -10,7 +9,6 @@ import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -160,23 +158,23 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _unMarkAsAnswered() async {
-    BeStilDialog.showLoading(context);
+    // BeStilDialog.showLoading(context);
 
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      // await Future.delayed(Duration(milliseconds: 300),
+      //     () => {BeStilDialog.hideLoading(context)});
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      // await Future.delayed(Duration(milliseconds: 300));
+      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      // await Future.delayed(Duration(milliseconds: 300));
+      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -256,78 +254,97 @@ class _PrayerCardState extends State<PrayerCard> {
                                 children: [
                                   SizedBox(width: 5),
                                   widget.prayerData.userPrayer.isFavorite
-                                      ? Icon(
-                                          Icons.favorite,
-                                          color: AppColors.lightBlue3,
-                                          size: 13,
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: Icon(
+                                            Icons.favorite,
+                                            color: AppColors.lightBlue3,
+                                            size: 13,
+                                          ),
                                         )
                                       : SizedBox(),
                                   widget.prayerData.prayer.isAnswer
-                                      ? Icon(
-                                          AppIcons.bestill_answered,
-                                          size: 12,
-                                          color: AppColors.lightBlue3,
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: Icon(
+                                            AppIcons.bestill_answered,
+                                            size: 12,
+                                            color: AppColors.lightBlue3,
+                                          ),
                                         )
                                       : SizedBox(),
                                   widget.prayerData.userPrayer.isSnoozed
-                                      ? Icon(
-                                          AppIcons.snooze,
-                                          size: 14,
-                                          color: AppColors.lightBlue3,
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: Icon(
+                                            AppIcons.snooze,
+                                            size: 14,
+                                            color: AppColors.lightBlue3,
+                                          ),
                                         )
                                       : SizedBox(width: 13),
                                   hasReminder
-                                      ? InkWell(
-                                          onTap: () => showDialog(
-                                            context: context,
-                                            barrierColor: AppColors
-                                                .detailBackgroundColor[1]
-                                                .withOpacity(0.5),
-                                            builder: (BuildContext context) {
-                                              return Dialog(
-                                                insetPadding:
-                                                    EdgeInsets.all(20),
-                                                backgroundColor:
-                                                    AppColors.prayerCardBgColor,
-                                                shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      color:
-                                                          AppColors.darkBlue),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(10.0),
-                                                  ),
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 30),
-                                                      child: ReminderPicker(
-                                                        type: NotificationType
-                                                            .reminder,
-                                                        hideActionuttons: false,
-                                                        onCancel: () =>
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(),
-                                                        reminder: reminder,
-                                                      ),
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: InkWell(
+                                            onTap: () => showDialog(
+                                              context: context,
+                                              barrierColor: AppColors
+                                                  .detailBackgroundColor[1]
+                                                  .withOpacity(0.5),
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                  insetPadding:
+                                                      EdgeInsets.all(20),
+                                                  backgroundColor: AppColors
+                                                      .prayerCardBgColor,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color:
+                                                            AppColors.darkBlue),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(10.0),
                                                     ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Icon(
-                                              AppIcons.bestill_reminder,
-                                              size: 12,
-                                              color: AppColors.lightBlue3,
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 30),
+                                                        child: ReminderPicker(
+                                                          type: NotificationType
+                                                              .reminder,
+                                                          hideActionuttons:
+                                                              false,
+                                                          onCancel: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                          reminder: reminder,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                AppIcons.bestill_reminder,
+                                                size: 12,
+                                                color: AppColors.lightBlue3,
+                                              ),
                                             ),
                                           ),
                                         )

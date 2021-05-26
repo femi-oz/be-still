@@ -303,13 +303,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _unMarkAsAnswered(CombinePrayerStream prayerData) async {
     // BeStilDialog.showLoading(context);
-
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
-        prayerData.prayer.id,
-        prayerData.userPrayer.id,
-      );
+              prayerData.prayer.id, prayerData.userPrayer.id);
       // await Future.delayed(Duration(milliseconds: 300),
       //     () => {BeStilDialog.hideLoading(context)});
 

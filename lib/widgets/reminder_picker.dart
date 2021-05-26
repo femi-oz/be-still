@@ -339,7 +339,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.15,
+                            width: MediaQuery.of(context).size.width * 0.18,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -371,7 +371,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           ),
                           Container(
                             width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.145
+                                ? MediaQuery.of(context).size.width * 0.13
                                 : MediaQuery.of(context).size.width * 0.2,
                             child: selectedFrequency == Frequency.one_time
                                 ? CupertinoPicker(
@@ -383,7 +383,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     scrollController: yearController,
                                     itemExtent: itemExtent,
                                     onSelectedItemChanged: (i) =>
-                                        setState(() => selectedYear = i + 1),
+                                        setState(() => selectedYear = years[i]),
                                     children: <Widget>[
                                       ...years.map(
                                         (r) => Align(
@@ -452,7 +452,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           selectedFrequency == Frequency.one_time
                               ? Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.09,
+                                      MediaQuery.of(context).size.width * 0.085,
                                   child: CupertinoPicker(
                                     selectionOverlay:
                                         CupertinoPickerDefaultSelectionOverlay(
@@ -479,7 +479,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               : Container(),
                           Container(
                             width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.09
+                                ? MediaQuery.of(context).size.width * 0.085
                                 : MediaQuery.of(context).size.width * 0.12,
                             child: CupertinoPicker(
                               selectionOverlay:
@@ -507,7 +507,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           Container(
                             height: 31,
                             width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.02
+                                ? MediaQuery.of(context).size.width * 0.015
                                 : MediaQuery.of(context).size.width * 0.1,
                             child: Align(
                               alignment: Alignment.center,

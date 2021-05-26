@@ -30,6 +30,8 @@ class PrayerList extends StatefulWidget {
   final GlobalKey keyButton3;
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
+  final bool isSearchMode;
+  final Function switchSearchMode;
   PrayerList(
     this.setCurrentIndex,
     this.keyButton,
@@ -37,6 +39,8 @@ class PrayerList extends StatefulWidget {
     this.keyButton3,
     this.keyButton4,
     this.keyButton5,
+    this.isSearchMode,
+    this.switchSearchMode,
   );
   @override
   _PrayerListState createState() => _PrayerListState();
@@ -132,9 +136,6 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  bool _isSearchMode = false;
-  void _switchSearchMode(bool value) => _isSearchMode = value;
-
   Future<void> _getPrayers() async {
     try {
       final _user =
@@ -177,8 +178,8 @@ class _PrayerListState extends State<PrayerList> {
         child: Scaffold(
           appBar: CustomAppBar(
             showPrayerActions: true,
-            isSearchMode: _isSearchMode,
-            switchSearchMode: (bool val) => _switchSearchMode(val),
+            isSearchMode: widget.isSearchMode,
+            switchSearchMode: (bool val) => widget.switchSearchMode(val),
             globalKey: widget.keyButton5,
           ),
           body: Container(
