@@ -256,7 +256,7 @@ class _PrayerQuickAccessState extends State<PrayerQuickAccess>
                           AppColors.detailBackgroundColor[1].withOpacity(0.9),
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return DeletePrayer(widget.prayerData);
+                        // return DeletePrayer(widget.prayerData);
                       },
                     ),
                     'Delete',
