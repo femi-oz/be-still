@@ -440,6 +440,7 @@ class _PrayerCardState extends State<PrayerCard> {
         actions: <Widget>[
           _buildSlideItem(Icons.build, 'Options', () async {
             await _setCurrentPrayer();
+
             showModalBottomSheet(
               context: context,
               barrierColor: Provider.of<ThemeProvider>(context, listen: false)
@@ -490,15 +491,29 @@ class _PrayerCardState extends State<PrayerCard> {
                       : 'Snooze',
                   () => widget.prayerData.userPrayer.isSnoozed
                       ? _unSnoozePrayer()
-                      : showModalBottomSheet(
+                      : showDialog(
                           context: context,
-                          barrierColor: AppColors.detailBackgroundColor[1]
-                              .withOpacity(0.5),
-                          backgroundColor: AppColors.detailBackgroundColor[1]
-                              .withOpacity(0.9),
-                          isScrollControlled: true,
-                          builder: (BuildContext context) =>
-                              SnoozePrayer(widget.prayerData),
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              insetPadding: EdgeInsets.all(20),
+                              backgroundColor: AppColors.prayerCardBgColor,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: AppColors.darkBlue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30),
+                                      child: SnoozePrayer(widget.prayerData)),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                   Colors.blue,
                 ),
