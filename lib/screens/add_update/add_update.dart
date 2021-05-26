@@ -323,7 +323,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                                     .copyWith(
                                                         color: AppColors
                                                             .lightBlue3),
-                                                textAlign: TextAlign.center,
+                                                textAlign: TextAlign.left,
                                               ),
                                             ),
                                           ),
@@ -345,21 +345,21 @@ class _AddUpdateState extends State<AddUpdate> {
                                               children: <Widget>[
                                                 Text(
                                                   'Initial Prayer |',
-                                                  style: AppTextStyles
-                                                      .regularText18b
-                                                      .copyWith(
-                                                          color: AppColors
-                                                              .prayeModeBorder),
+                                                  style: TextStyle(
+                                                      color:
+                                                          AppColors.lightBlue3,
+                                                      fontWeight:
+                                                          FontWeight.w500),
                                                 ),
                                                 Text(
                                                   DateFormat(' MM.dd.yyyy')
                                                       .format(prayerData
                                                           .prayer.modifiedOn),
-                                                  style: AppTextStyles
-                                                      .regularText18b
-                                                      .copyWith(
-                                                          color: AppColors
-                                                              .prayeModeBorder),
+                                                  style: TextStyle(
+                                                      color:
+                                                          AppColors.lightBlue3,
+                                                      fontWeight:
+                                                          FontWeight.w500),
                                                 ),
                                               ],
                                             ),
@@ -373,9 +373,6 @@ class _AddUpdateState extends State<AddUpdate> {
                                         ],
                                       ),
                                       Container(
-                                        constraints: BoxConstraints(
-                                          minHeight: 200,
-                                        ),
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
                                               vertical: 20.0, horizontal: 20),
@@ -385,9 +382,9 @@ class _AddUpdateState extends State<AddUpdate> {
                                               style: AppTextStyles
                                                   .regularText16b
                                                   .copyWith(
-                                                      color: AppColors
-                                                          .prayerTextColor),
-                                              textAlign: TextAlign.center,
+                                                      color:
+                                                          AppColors.lightBlue3),
+                                              textAlign: TextAlign.left,
                                             ),
                                           ),
                                         ),
