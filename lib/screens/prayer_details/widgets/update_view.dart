@@ -1,4 +1,5 @@
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/utils/app_icons.dart';
 
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
@@ -17,7 +18,7 @@ class UpdateView extends StatelessWidget {
 
   @override
   UpdateView();
-  _emailLink([bool isChurch = false]) async {
+  _emailLink([String email]) async {
     final Uri params = Uri(scheme: 'mailto', path: '', query: "");
 
     var url = params.toString();
@@ -28,24 +29,15 @@ class UpdateView extends StatelessWidget {
     }
   }
 
-  _textLink([bool isChurch = false]) async {
-    String _result =
-        await sendSMS(message: '', recipients: []).catchError((onError) {
+  _textLink([String phoneNumber]) async {
+    String _result = await sendSMS(message: '', recipients: [phoneNumber])
+        .catchError((onError) {
       print(onError);
     });
     print(_result);
-
-    // final uri =
-    //     "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
-
-    // if (await canLaunch(uri)) {
-    //   await launch(uri);
-    // } else {
-    //   throw 'Could not launch $uri';
-    // }
   }
 
-  _openShareModal(BuildContext context) {
+  _openShareModal(BuildContext context, String phoneNumber, String email) {
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -67,10 +59,12 @@ class UpdateView extends StatelessWidget {
                 child: Container(
                   margin: EdgeInsets.only(top: 5, right: 5),
                   alignment: Alignment.topRight,
-                  child: Icon(
-                    Icons.cancel,
-                    color: AppColors.red,
-                    size: 20,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(
+                      AppIcons.bestill_close,
+                      color: AppColors.grey4,
+                    ),
                   ),
                 ),
               ),
@@ -79,6 +73,25 @@ class UpdateView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 5.0),
+                      child: Text(
+                        'SELECT CONTACT METHOD',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.lightBlue1,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 40),
                       width: double.infinity,
@@ -87,59 +100,55 @@ class UpdateView extends StatelessWidget {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              _emailLink(false);
+                              _emailLink(email);
                             },
                             child: Container(
                               height: 30,
                               width: MediaQuery.of(context).size.width * .20,
                               decoration: BoxDecoration(
+                                color: Colors.blue,
                                 border: Border.all(
                                   color: AppColors.cardBorder,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'EMAIL',
-                                    style: TextStyle(
-                                      color: AppColors.lightBlue4,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                              child: Center(
+                                child: Text(
+                                  'EMAIL',
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                           GestureDetector(
                             onTap: () {
-                              _textLink(false);
+                              _textLink(phoneNumber);
                             },
                             child: Container(
                               height: 30,
                               width: MediaQuery.of(context).size.width * .20,
                               decoration: BoxDecoration(
+                                color: Colors.blue,
                                 border: Border.all(
                                   color: AppColors.cardBorder,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'SMS',
-                                    style: TextStyle(
-                                      color: AppColors.lightBlue4,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                              child: Center(
+                                child: Text(
+                                  'SMS',
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
@@ -249,7 +258,8 @@ class UpdateView extends StatelessWidget {
                               targetString: tags[i].displayName,
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  _openShareModal(context);
+                                  _openShareModal(context, tags[i].phoneNumber,
+                                      tags[i].email);
                                 },
                               style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.lightBlue2,

@@ -44,6 +44,10 @@ class _CustomPickerState extends State<CustomPicker> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.85,
                             child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
                               scrollController: scrollController,
                               itemExtent: itemExtent,
                               onSelectedItemChanged: (i) => setState(() {

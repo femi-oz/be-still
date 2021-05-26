@@ -6,6 +6,7 @@ import 'package:be_still/providers/log_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -90,15 +91,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       if (_firstnameController.text == null ||
           _firstnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'First Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
+        PlatformException e = PlatformException(
+            code: 'custom',
+            message: 'First Name is empty, please enter a valid name.');
+        BeStilDialog.showErrorDialog(context, e, null, null);
       } else if (_lastnameController.text == null ||
           _lastnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'Last Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
+        PlatformException e = PlatformException(
+            code: 'custom',
+            message: 'Last Name is empty, please enter a valid name.');
+        BeStilDialog.showErrorDialog(context, e, null, null);
       } else {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .registerUser(
@@ -117,10 +120,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Settings.userPassword =
             Settings.rememberMe ? _passwordController.text : '';
         BeStilDialog.hideLoading(context);
-        Navigator.push(
-          context,
-          SlideRightRoute(page: CreateAccountSuccess()),
-        );
+        showInfoDialog(context);
+        // Navigator.push(
+        //   context,
+        //   SlideRightRoute(page: CreateAccountSuccess()),
+        // );
       }
     } on HttpException catch (e, s) {
       var message = '';
@@ -148,6 +152,71 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       BeStilDialog.showErrorDialog(context, e, null, s);
       // }
     }
+  }
+
+  showInfoDialog(BuildContext context) {
+    AlertDialog dialog = AlertDialog(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20.0),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      elevation: 5,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(height: 10.0),
+          Flexible(
+            child: Text(
+              'Your account registration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration',
+              style: AppTextStyles.regularText16b
+                  .copyWith(color: AppColors.lightBlue4),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 20.0),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextButton(
+                    child: Text('OK',
+                        style: AppTextStyles.boldText16
+                            .copyWith(color: Colors.white)),
+                    style: ButtonStyle(
+                      textStyle: MaterialStateProperty.all<TextStyle>(
+                          AppTextStyles.boldText16
+                              .copyWith(color: Colors.white)),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.all(5.0)),
+                      elevation: MaterialStateProperty.all<double>(0.0),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        SlideRightRoute(
+                          page: LoginScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();

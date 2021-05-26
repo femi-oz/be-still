@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e, null, null);
     } catch (e) {
       verificationSent = false;
       setState(() => verificationSendMessage =
@@ -166,8 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _usernameController.text, 'LOGIN/screen/_resendVerification');
       BeStilDialog.hideLoading(context);
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      PlatformException err = PlatformException(
+          code: 'custom', message: 'An error occured. Please try again.');
+      BeStilDialog.showErrorDialog(context, err, null, null);
     }
   }
 
@@ -233,12 +234,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await setRouteDestination();
       }
     } on HttpException catch (e) {
-      BeStillSnackbar.showInSnackBar(message: e.message, key: _scaffoldKey);
+      BeStilDialog.showErrorDialog(context, e, null, null);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      BeStillSnackbar.showInSnackBar(
-          message: 'An error occured. Please try again', key: _scaffoldKey);
+      PlatformException er = PlatformException(
+          code: 'custom', message: 'An error occured. Please try again');
+      BeStilDialog.showErrorDialog(context, er, null, null);
     }
   }
 
@@ -274,56 +276,34 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              // margin: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Text(
-                'Please login with your password to enable biometrics.',
+                'Biometrics will be enabled after you log in.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
-                ),
+                style: AppTextStyles.regularText16b
+                    .copyWith(color: AppColors.lightBlue1),
               ),
             ),
             // GestureDetector(
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .50,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'OK',
-                            style: TextStyle(
-                              color: AppColors.red,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+              width: MediaQuery.of(context).size.width * 0.4,
+              child: TextButton(
+                child: Text('OK',
+                    style:
+                        AppTextStyles.boldText16.copyWith(color: Colors.white)),
+                style: ButtonStyle(
+                  textStyle: MaterialStateProperty.all<TextStyle>(
+                      AppTextStyles.boldText16.copyWith(color: Colors.white)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.blue),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.all(5.0)),
+                  elevation: MaterialStateProperty.all<double>(0.0),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             )
           ],

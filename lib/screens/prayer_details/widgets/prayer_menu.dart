@@ -152,13 +152,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(bottom: 5.0),
-              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Text(
                 'DELETE PRAYER',
                 textAlign: TextAlign.center,
@@ -170,21 +169,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 30),
-              child: Text(
-                'Are you sure you want to delete this prayer?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  'Are you sure you want to delete this prayer?',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
                 ),
               ),
             ),
             SizedBox(
-              height: 30,
+              height: 20,
             ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
@@ -221,6 +218,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ],
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    width: 20,
                   ),
                   GestureDetector(
                     onTap: _onDelete,
@@ -432,6 +432,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         widget.prayerData.userPrayer.isArchived ||
         widget.prayerData.userPrayer.isSnoozed;
     return Container(
+      padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: SingleChildScrollView(
