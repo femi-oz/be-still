@@ -42,7 +42,7 @@ class PrayerService {
       FirebaseFirestore.instance.collection("MessageTemplate");
 
   final _notificationService = locator<NotificationService>();
-  var prayerId;
+  var newPrayerId;
 
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
@@ -167,19 +167,19 @@ class PrayerService {
     String prayerDescBackup,
   ) async {
     // Generate uuid
-    prayerId = Uuid().v1();
+    newPrayerId = Uuid().v1();
     final userPrayerID = Uuid().v1();
 
     try {
       // store prayer
-      _prayerCollectionReference.doc(prayerId).set(
+      _prayerCollectionReference.doc(newPrayerId).set(
           populatePrayer(userId, prayerDesc, creatorName, prayerDescBackup)
               .toJson());
 
       //store user prayer
       _userPrayerCollectionReference
           .doc(userPrayerID)
-          .set(populateUserPrayer(userId, prayerId, userId).toJson());
+          .set(populateUserPrayer(userId, newPrayerId, userId).toJson());
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -217,11 +217,8 @@ class PrayerService {
     }
   }
 
-  Future addPrayerTag(
-    List<Contact> contactData,
-    UserModel user,
-    String message,
-  ) async {
+  Future addPrayerTag(List<Contact> contactData, UserModel user, String message,
+      String prayerId) async {
     try {
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
@@ -230,7 +227,7 @@ class PrayerService {
         final _prayerTagID = Uuid().v1();
         if (contactData[i] != null) {
           _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
-                  contactData[i], user.id, user.firstName, message)
+                  contactData[i], user.id, user.firstName, message, prayerId)
               .toJson());
           final template = await _messageTemplateCollectionReference
               .doc(MessageTemplateType.tagPrayer)
@@ -285,7 +282,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
-      prayerId = prayerID;
+      newPrayerId = prayerID;
       _prayerCollectionReference.doc(prayerID).update(
         {"Description": description, "ModifiedOn": DateTime.now()},
       );
@@ -312,6 +309,7 @@ class PrayerService {
     );
     try {
       final updateId = Uuid().v1();
+      prayerId = prayerId;
       await _prayerCollectionReference
           .doc(prayerId)
           .update({'ModifiedOn': DateTime.now()});
@@ -795,11 +793,11 @@ class PrayerService {
     return notificationId;
   }
 
-  PrayerTagModel populatePrayerTag(
-      Contact contact, String userId, String sender, String message) {
+  PrayerTagModel populatePrayerTag(Contact contact, String userId,
+      String sender, String message, String prayerId) {
     PrayerTagModel prayerTag = PrayerTagModel(
       userId: userId,
-      prayerId: prayerId,
+      prayerId: prayerId == '' ? newPrayerId : prayerId,
       displayName: contact.displayName,
       identifier: contact.identifier,
       phoneNumber:

@@ -169,6 +169,7 @@ class _PrayerListState extends State<PrayerList> {
     Provider.of<PrayerProvider>(context, listen: false)
         .checkPrayerValidity(userId);
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
