@@ -474,33 +474,27 @@ class _PrayerCardState extends State<PrayerCard> {
                 return _buildMenu();
               },
             );
-          }, Colors.grey)
+          }, false)
         ],
         secondaryActions: <Widget>[
           _buildSlideItem(
-            AppIcons.bestill_answered,
-            widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
-            () => widget.prayerData.prayer.isAnswer
-                ? _unMarkAsAnswered()
-                : _onMarkAsAnswered(),
-            Colors.green,
-          ),
+              AppIcons.bestill_answered,
+              widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
+              () => widget.prayerData.prayer.isAnswer
+                  ? _unMarkAsAnswered()
+                  : _onMarkAsAnswered(),
+              false),
           _buildSlideItem(
-            AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
-            widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
-            () => widget.prayerData.userPrayer.isArchived
-                ? _unArchive()
-                : _onArchive(),
-            Colors.purple,
-          ),
+              AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
+              widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
+              () => widget.prayerData.userPrayer.isArchived
+                  ? _unArchive()
+                  : _onArchive(),
+              false),
           widget.prayerData.userPrayer.isArchived ||
                   widget.prayerData.prayer.isAnswer
               ? _buildSlideItem(
-                  AppIcons.bestill_snooze,
-                  'Snooze',
-                  () => null,
-                  Colors.blueGrey.withOpacity(0.5),
-                )
+                  AppIcons.bestill_snooze, 'Snooze', () => null, true)
               : _buildSlideItem(
                   AppIcons.bestill_snooze,
                   widget.prayerData.userPrayer.isSnoozed
@@ -532,14 +526,14 @@ class _PrayerCardState extends State<PrayerCard> {
                             );
                           },
                         ),
-                  Colors.blue),
+                  false),
         ],
       ),
     );
   }
 
   Widget _buildSlideItem(
-      IconData icon, String label, Function _onTap, Color color) {
+      IconData icon, String label, Function _onTap, bool isDisabled) {
     return Container(
       decoration: BoxDecoration(
           color: AppColors.prayerCardBgColor,
@@ -557,8 +551,12 @@ class _PrayerCardState extends State<PrayerCard> {
                     icon,
                     color: Provider.of<ThemeProvider>(context, listen: false)
                             .isDarkModeEnabled
-                        ? AppColors.white
-                        : AppColors.lightBlue3,
+                        ? isDisabled
+                            ? AppColors.white.withOpacity(0.4)
+                            : AppColors.white
+                        : isDisabled
+                            ? AppColors.lightBlue3.withOpacity(0.4)
+                            : AppColors.lightBlue3,
                     size: 18,
                   ),
                 )
@@ -566,15 +564,23 @@ class _PrayerCardState extends State<PrayerCard> {
                   icon,
                   color: Provider.of<ThemeProvider>(context, listen: false)
                           .isDarkModeEnabled
-                      ? AppColors.white
-                      : AppColors.lightBlue3,
+                      ? isDisabled
+                          ? AppColors.white.withOpacity(0.4)
+                          : AppColors.white
+                      : isDisabled
+                          ? AppColors.lightBlue3.withOpacity(0.4)
+                          : AppColors.lightBlue3,
                   size: 18,
                 ),
         ),
         foregroundColor:
             Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.white
-                : AppColors.lightBlue3,
+                ? isDisabled
+                    ? AppColors.white.withOpacity(0.4)
+                    : AppColors.white
+                : isDisabled
+                    ? AppColors.lightBlue3.withOpacity(0.4)
+                    : AppColors.lightBlue3,
         onTap: _onTap,
       ),
     );
