@@ -174,6 +174,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                 ),
               ),
               child: Container(
+                padding: EdgeInsets.only(top: 40),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -212,7 +213,6 @@ class _DevotionPlansState extends State<DevotionPlans> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Text(

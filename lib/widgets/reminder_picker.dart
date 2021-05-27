@@ -339,7 +339,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.18,
+                            width: MediaQuery.of(context).size.width * 0.15,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -650,7 +650,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                     widget.reminder != null
                         ? GestureDetector(
                             onTap: () {
-                              setNotification();
+                              _deleteReminder();
                             },
                             child: Container(
                               height: 38.0,
