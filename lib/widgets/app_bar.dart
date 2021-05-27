@@ -105,39 +105,51 @@ class _CustomAppBarState extends State<CustomAppBar> {
         children: <Widget>[
           SizedBox(width: 20),
           widget.showPrayerActions
-              ? Container(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      if (_searchController.text.isEmpty) {
-                        widget.switchSearchMode(true);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchMode(true);
-                        setState(() {});
-                      } else {
-                        _searchPrayer(_searchController.text);
-                      }
-                    },
-                    child: Icon(
-                      AppIcons.bestill_search,
-                      color: AppColors.bottomNavIconColor,
-                      size: 18,
+              ? InkWell(
+                  onTap: () {
+                    if (_searchController.text.isEmpty) {
+                      widget.switchSearchMode(true);
+                      Provider.of<MiscProvider>(context, listen: false)
+                          .setSearchMode(true);
+                      setState(() {});
+                    } else {
+                      _searchPrayer(_searchController.text);
+                    }
+                  },
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: Center(
+                      child: Icon(
+                        AppIcons.bestill_search,
+                        color: AppColors.bottomNavIconColor,
+                        size: 18,
+                      ),
                     ),
                   ),
                 )
               : Container(),
-          SizedBox(width: 10),
           widget.showPrayerActions && !widget.isSearchMode
-              ? GestureDetector(
+              ? SizedBox(width: 5)
+              : Container(),
+          widget.showPrayerActions && !widget.isSearchMode
+              ? InkWell(
                   onTap: () => _openFilter(Settings.isDarkMode),
-                  child: Icon(
-                    AppIcons.bestill_tools,
-                    key: widget.globalKey,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: Center(
+                      child: Icon(
+                        AppIcons.bestill_tools,
+                        key: widget.globalKey,
+                        color: AppColors.bottomNavIconColor,
+                        size: 18,
+                      ),
+                    ),
                   ),
                 )
               : Container(),
+          // SizedBox(width: 20),
         ],
       ),
       title: widget.isSearchMode
@@ -159,10 +171,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   ),
                   SizedBox(width: 10),
                   InkWell(
-                    child: Icon(
-                      AppIcons.bestill_close,
-                      color: AppColors.bottomNavIconColor,
-                      size: 18,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: Center(
+                        child: Icon(
+                          AppIcons.bestill_close,
+                          color: AppColors.bottomNavIconColor,
+                          size: 18,
+                        ),
+                      ),
                     ),
                     onTap: () => setState(
                       () {

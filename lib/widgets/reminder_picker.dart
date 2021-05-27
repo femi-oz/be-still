@@ -652,7 +652,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                     widget.reminder != null
                         ? GestureDetector(
                             onTap: () {
-                              setNotification();
+                              _deleteReminder();
                             },
                             child: Container(
                               height: 38.0,

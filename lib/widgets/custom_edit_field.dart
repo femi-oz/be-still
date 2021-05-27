@@ -56,13 +56,18 @@ class CustomEditField extends StatelessWidget {
             ),
           ),
           InkWell(
-            child: GestureDetector(
-              child: Icon(
-                AppIcons.bestill_edit,
-                size: 16,
-                color: AppColors.lightBlue3,
+            onTap: () => onPressed(),
+            child: Container(
+              height: 30,
+              width: 30,
+              padding: EdgeInsets.only(right: 5),
+              child: Center(
+                child: Icon(
+                  AppIcons.bestill_edit,
+                  size: 16,
+                  color: AppColors.lightBlue3,
+                ),
               ),
-              onTap: () => onPressed(),
             ),
           ),
         ],

@@ -142,7 +142,7 @@ class CustomAlertDialog extends StatelessWidget {
         return Icons.check_circle;
       case AlertType.error:
         return Icons.error;
-      case AlertType.info:
+      case AlertType.warning:
       default:
         return Icons.info_outline;
     }
