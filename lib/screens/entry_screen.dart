@@ -1,3 +1,4 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -189,6 +190,33 @@ class _EntryScreenState extends State<EntryScreen>
   Future<void> _getBibles() async {
     try {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
+    try {
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeDuration,
+        value: selectedDuration,
+        settingsId: settingsId,
+      );
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeFrequency,
+        value: selectedInterval,
+        settingsId: settingsId,
+      );
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -467,7 +495,7 @@ class _EntryScreenState extends State<EntryScreen>
             title: "Groups",
             padding: 4),
         TabNavigationItem(
-          page: SettingsScreen(),
+          page: SettingsScreen(_setDefaultSnooze),
           icon: Icon(
             Icons.more_horiz,
             size: 22,

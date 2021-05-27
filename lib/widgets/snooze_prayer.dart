@@ -177,44 +177,45 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                             ),
                           ),
                           Container(
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              child: CupertinoPicker(
-                                selectionOverlay:
-                                    CupertinoPickerDefaultSelectionOverlay(
-                                  background: Colors.transparent,
-                                ),
-                                scrollController: snoozeDurationController,
-                                itemExtent: 30,
-                                onSelectedItemChanged: (i) {
-                                  print(snoozeDuration
-                                      .asMap()
-                                      .containsKey(selectedDuration));
-                                  var index = snoozeDuration
-                                          .asMap()
-                                          .containsKey(selectedDuration)
-                                      ? i
-                                      : 0;
-                                  setState(() =>
-                                      selectedDuration = snoozeDuration[index]);
-                                },
-                                children: <Widget>[
-                                  ...snoozeDuration
-                                      .map(
-                                        (i) => Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            i.toString(),
-                                            textAlign: TextAlign.center,
-                                            style: AppTextStyles.regularText15
-                                                .copyWith(
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background: Colors.transparent,
+                              ),
+                              scrollController: snoozeDurationController,
+                              itemExtent: 30,
+                              onSelectedItemChanged: (i) {
+                                print(snoozeDuration
+                                    .asMap()
+                                    .containsKey(selectedDuration));
+                                var index = snoozeDuration
+                                        .asMap()
+                                        .containsKey(selectedDuration)
+                                    ? i
+                                    : 0;
+                                setState(() =>
+                                    selectedDuration = snoozeDuration[index]);
+                              },
+                              children: <Widget>[
+                                ...snoozeDuration
+                                    .map(
+                                      (i) => Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          i.toString(),
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.regularText15
+                                              .copyWith(
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                      )
-                                      .toList(),
-                                ],
-                              )),
+                                      ),
+                                    )
+                                    .toList(),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),

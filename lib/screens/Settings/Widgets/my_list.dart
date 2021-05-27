@@ -40,9 +40,9 @@ class _MyListSettingsState extends State<MyListSettings> {
   }
 
   @override
-  dispose() {
+  deactivate() {
     widget.onDispose(selectedDuration, selectedInterval, widget.settings.id);
-    super.dispose();
+    super.deactivate();
   }
 
   initState() {
@@ -74,7 +74,9 @@ class _MyListSettingsState extends State<MyListSettings> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final userId = Provider.of<UserProvider>(context).currentUser.id;
     final snoozeDurationController = FixedExtentScrollController(
-        initialItem: snoozeInterval.indexOf(selectedInterval));
+        initialItem: snoozeDuration.asMap().containsKey(selectedDuration)
+            ? snoozeDuration.indexOf(selectedDuration)
+            : snoozeDuration[0]);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -154,39 +156,48 @@ class _MyListSettingsState extends State<MyListSettings> {
                                     ),
                                   ),
                                   Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.4,
-                                      child: CupertinoPicker(
-                                        selectionOverlay:
-                                            CupertinoPickerDefaultSelectionOverlay(
-                                          background: Colors.transparent,
-                                        ),
-                                        scrollController:
-                                            snoozeDurationController,
-                                        itemExtent: 30,
-                                        onSelectedItemChanged: (i) => setState(
-                                            () => selectedDuration =
-                                                snoozeDuration[i]),
-                                        children: <Widget>[
-                                          ...snoozeDuration
-                                              .map(
-                                                (i) => Align(
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    i.toString(),
-                                                    textAlign: TextAlign.center,
-                                                    style: AppTextStyles
-                                                        .regularText15
-                                                        .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    child: CupertinoPicker(
+                                      selectionOverlay:
+                                          CupertinoPickerDefaultSelectionOverlay(
+                                        background: Colors.transparent,
+                                      ),
+                                      scrollController:
+                                          snoozeDurationController,
+                                      itemExtent: 30,
+                                      onSelectedItemChanged: (i) {
+                                        print(snoozeDuration
+                                            .asMap()
+                                            .containsKey(selectedDuration));
+                                        var index = snoozeDuration
+                                                .asMap()
+                                                .containsKey(selectedDuration)
+                                            ? i
+                                            : 0;
+                                        setState(() => selectedDuration =
+                                            snoozeDuration[index]);
+                                      },
+                                      children: <Widget>[
+                                        ...snoozeDuration
+                                            .map(
+                                              (i) => Align(
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  i.toString(),
+                                                  textAlign: TextAlign.center,
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
-                                              )
-                                              .toList(),
-                                        ],
-                                      )),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

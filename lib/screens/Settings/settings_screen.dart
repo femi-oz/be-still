@@ -1,15 +1,11 @@
-import 'package:be_still/enums/settings_key.dart';
-import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +13,8 @@ import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = 'settings';
+  final Function setDefaultSnooze;
+  SettingsScreen(this.setDefaultSnooze);
   @override
   _SettingsScreenPage createState() => _SettingsScreenPage();
 }
@@ -43,12 +41,15 @@ class _SettingsScreenPage extends State<SettingsScreen>
       appBar: SettingsAppBar(),
       endDrawer: null,
       endDrawerEnableOpenDragGesture: false,
-      body: SettingsTab(),
+      body: SettingsTab(widget.setDefaultSnooze),
     );
   }
 }
 
 class SettingsTab extends StatefulWidget {
+  final Function setDefaultSnooze;
+  SettingsTab(this.setDefaultSnooze);
+
   @override
   SettingsTabState createState() => SettingsTabState();
 }
@@ -71,33 +72,6 @@ class SettingsTabState extends State<SettingsTab>
       _isInit = false;
     }
     super.didChangeDependencies();
-  }
-
-  _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
-    try {
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
-        key: SettingsKey.defaultSnoozeDuration,
-        value: selectedDuration,
-        settingsId: settingsId,
-      );
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
-        key: SettingsKey.defaultSnoozeFrequency,
-        value: selectedInterval,
-        settingsId: settingsId,
-      );
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
   }
 
   @override
@@ -168,7 +142,8 @@ class SettingsTabState extends State<SettingsTab>
               physics: NeverScrollableScrollPhysics(),
               children: [
                 GeneralSettings(_settingsProvider.settings, _scaffoldKey),
-                MyListSettings(_settingsProvider.settings, _setDefaultSnooze),
+                MyListSettings(
+                    _settingsProvider.settings, widget.setDefaultSnooze),
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
                 // NotificationsSettings(_settingsProvider.settings),
