@@ -482,11 +482,11 @@ class _AddUpdateState extends State<AddUpdate> {
                                                   intl.DateFormat(
                                                           'hh:mma | MM.dd.yyyy')
                                                       .format(u.modifiedOn),
-                                                  style: TextStyle(
-                                                      color:
-                                                          AppColors.lightBlue3,
-                                                      fontWeight:
-                                                          FontWeight.w500),
+                                                  style: AppTextStyles
+                                                      .regularText18b
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .prayeModeBorder),
                                                 ),
                                               ],
                                             ),

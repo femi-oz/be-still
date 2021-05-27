@@ -51,7 +51,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   var minInTheHour = [0, 15, 30, 45];
   var years = new List<int>.generate(10, (i) => i + DateTime.now().year);
 
-  var daysOfMonth = new List<int>.generate(30, (i) => i + 1);
+  var daysOfMonth = new List<int>.generate(31, (i) => i + 1);
 
   @override
   void initState() {
@@ -478,9 +478,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 )
                               : Container(),
                           Container(
-                            width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.085
-                                : MediaQuery.of(context).size.width * 0.12,
+                            width: MediaQuery.of(context).size.width * 0.085,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(

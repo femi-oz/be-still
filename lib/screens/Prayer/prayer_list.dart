@@ -6,7 +6,6 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
-import 'package:be_still/screens/prayer/widgets/prayer_quick_acccess.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -48,14 +47,11 @@ class PrayerList extends StatefulWidget {
 
 class _PrayerListState extends State<PrayerList> {
   bool _isInit = true;
-  bool _canVibrate = true;
   final refreshKey = new GlobalKey<RefreshIndicatorState>();
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      _setVibration();
-
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         var status =
             Provider.of<PrayerProvider>(context, listen: false).filterOption;
@@ -94,42 +90,6 @@ class _PrayerListState extends State<PrayerList> {
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  Future<void> _setVibration() async => _canVibrate = await Vibrate.canVibrate;
-
-  void _vibrate() => _canVibrate ? Vibrate.feedback(FeedbackType.medium) : null;
-
-  Future<void> onLongPressCard(prayerData, details) async {
-    _vibrate();
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(prayerData.userPrayer.id);
-      final y = details.globalPosition.dy;
-      await Future.delayed(
-        const Duration(milliseconds: 300),
-        () => showModalBottomSheet(
-          context: context,
-          barrierColor: AppColors.addPrayerBg.withOpacity(0.5),
-          backgroundColor: AppColors.addPrayerBg.withOpacity(0.5),
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return PrayerQuickAccess(
-              y: y,
-              prayerData: prayerData,
-            );
-          },
-        ),
-      );
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);

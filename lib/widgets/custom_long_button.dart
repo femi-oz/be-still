@@ -52,8 +52,10 @@ class LongButton extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   hasIcon
                       ? Icon(icon, color: textColor, size: 18)
@@ -62,7 +64,9 @@ class LongButton extends StatelessWidget {
                   Text(
                     text,
                     style: AppTextStyles.boldText18.copyWith(
-                        color: textColor.withOpacity(isDisabled ? 0.5 : 1.0)),
+                      color: textColor.withOpacity(isDisabled ? 0.5 : 1.0),
+                      height: 1,
+                    ),
                   ),
                 ],
               ),
@@ -70,8 +74,10 @@ class LongButton extends StatelessWidget {
                   ? Text(
                       suffix,
                       style: AppTextStyles.boldText14.copyWith(
-                          color: AppColors.lightBlue4
-                              .withOpacity(isDisabled ? 0.5 : 1)),
+                        color: AppColors.lightBlue4
+                            .withOpacity(isDisabled ? 0.5 : 1),
+                        height: 1,
+                      ),
                     )
                   : hasMore
                       ? InkWell(
