@@ -252,11 +252,10 @@ class _PrayerCardState extends State<PrayerCard> {
                             children: <Widget>[
                               Row(
                                 children: [
-                                  SizedBox(width: 5),
                                   widget.prayerData.userPrayer.isFavorite
                                       ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
                                           child: Icon(
                                             Icons.favorite,
                                             color: AppColors.lightBlue3,
@@ -266,8 +265,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : SizedBox(),
                                   widget.prayerData.prayer.isAnswer
                                       ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
                                           child: Icon(
                                             AppIcons.bestill_answered,
                                             size: 12,
@@ -277,15 +276,15 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : SizedBox(),
                                   widget.prayerData.userPrayer.isSnoozed
                                       ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
                                           child: Icon(
                                             AppIcons.snooze,
                                             size: 14,
                                             color: AppColors.lightBlue3,
                                           ),
                                         )
-                                      : SizedBox(width: 13),
+                                      : SizedBox(),
                                   hasReminder
                                       ? Padding(
                                           padding:
@@ -337,9 +336,11 @@ class _PrayerCardState extends State<PrayerCard> {
                                                 );
                                               },
                                             ),
-                                            child: Container(
+                                            child: Padding(
                                               padding:
-                                                  const EdgeInsets.all(8.0),
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 5),
                                               child: Icon(
                                                 AppIcons.bestill_reminder,
                                                 size: 12,
@@ -348,7 +349,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                             ),
                                           ),
                                         )
-                                      : Container(),
+                                      : SizedBox(),
                                   widget.prayerData.prayer.userId != _user.id
                                       ? Text(
                                           widget.prayerData.prayer.creatorName,
