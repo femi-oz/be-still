@@ -49,43 +49,35 @@ class _NoUpdateViewState extends State<NoUpdateView> {
           ),
         ),
         content: Container(
-          height: MediaQuery.of(context).size.height * 0.2,
+          height: MediaQuery.of(context).size.height * 0.35,
           child: Stack(
             children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Container(
-                  margin: EdgeInsets.only(top: 5, right: 5),
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(
-                      AppIcons.bestill_close,
-                      color: AppColors.grey4,
-                    ),
-                  ),
-                ),
-              ),
               Container(
                 width: double.infinity,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                      height: 20,
-                    ),
                     Container(
                       margin: EdgeInsets.only(bottom: 5.0),
                       child: Text(
-                        'SELECT CONTACT METHOD',
+                        'CONTACT METHOD',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: AppColors.lightBlue1,
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                           height: 1.5,
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Text(
+                          'Please select a method to share this prayer.',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.regularText16b
+                              .copyWith(color: AppColors.lightBlue4),
                         ),
                       ),
                     ),
@@ -103,8 +95,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                               _emailLink(email);
                             },
                             child: Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * .20,
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * .22,
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 border: Border.all(
@@ -130,8 +122,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                               _textLink(phoneNumber);
                             },
                             child: Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * .20,
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * .22,
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 border: Border.all(
@@ -142,7 +134,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'SMS',
+                                  'TEXT',
                                   style: TextStyle(
                                     color: AppColors.white,
                                     fontSize: 14,
@@ -153,6 +145,43 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 37),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: 38.0,
+                          width: MediaQuery.of(context).size.width * 0.71,
+                          decoration: BoxDecoration(
+                            color: AppColors.grey.withOpacity(0.5),
+                            border: Border.all(
+                              color: AppColors.cardBorder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'CANCEL',
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     )
                   ],

@@ -111,13 +111,13 @@ class UpdateView extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'Initial Prayer | ',
-                                style: AppTextStyles.boldText16
+                                style: AppTextStyles.regularText18b
                                     .copyWith(color: AppColors.prayeModeBorder),
                               ),
                               Text(
                                 DateFormat('MM.dd.yyyy')
                                     .format(data.prayer.createdOn),
-                                style: AppTextStyles.boldText16
+                                style: AppTextStyles.regularText18b
                                     .copyWith(color: AppColors.prayeModeBorder),
                               ),
                             ],

@@ -91,7 +91,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text);
+                .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
           await Future.delayed(Duration(milliseconds: 1000));
           BeStilDialog.hideLoading(context);
@@ -122,7 +122,7 @@ class _AddPrayerState extends State<AddPrayer> {
                 .removePrayerTag(textList[i].id);
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text);
+                .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
@@ -452,16 +452,10 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                           tagText.length > 0
                               ? Positioned(
-                                  // padding: EdgeInsets.only(
-                                  //     top: _focusNode.offset.dy * 0.5 +
-                                  //         painter.height,
-                                  //     left: _focusNode.offset.dx * 0.5 +
-                                  //         painter.width),
                                   top: _focusNode.offset.dy +
                                       painter.height -
                                       46,
                                   left: _focusNode.offset.dx,
-
                                   height:
                                       MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(

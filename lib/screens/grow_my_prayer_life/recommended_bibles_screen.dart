@@ -53,6 +53,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                 ),
               ),
               child: Container(
+                padding: EdgeInsets.only(top: 40),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -91,7 +92,6 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40.0),
                       child: Text(
