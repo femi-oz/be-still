@@ -299,7 +299,7 @@ class _EntryScreenState extends State<EntryScreen>
           children: <Widget>[
             SizedBox(height: 10.0),
             Icon(
-              Icons.info,
+              Icons.error,
               color: AppColors.red,
               size: 50,
             ),
