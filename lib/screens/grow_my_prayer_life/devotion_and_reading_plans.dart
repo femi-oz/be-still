@@ -203,10 +203,13 @@ class _DevotionPlansState extends State<DevotionPlans> {
                               size: 20,
                             ),
                             onPressed: () => widget.setCurrentIndex(0, true),
-                            label: Text(
-                              'BACK',
-                              style: AppTextStyles.boldText20.copyWith(
-                                color: AppColors.lightBlue3,
+                            label: Container(
+                              width: 70,
+                              child: Text(
+                                'BACK',
+                                style: AppTextStyles.boldText20.copyWith(
+                                  color: AppColors.lightBlue3,
+                                ),
                               ),
                             ),
                           ),
