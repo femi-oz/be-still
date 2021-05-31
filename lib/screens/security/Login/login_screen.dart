@@ -189,8 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
       Settings.lastUser = jsonEncode(user.toJson2());
-      Settings.userPassword =
-          Settings.rememberMe ? _passwordController.text : '';
+      Settings.userPassword = _passwordController.text;
 
       LocalNotification.setNotificationsOnNewDevice(context);
 
@@ -217,22 +216,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _biologin() async {
     try {
-      var isAuthenticated =
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .biometricSignin(_usernameController.text);
-      if (isAuthenticated) {
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(true);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+      var userInfo = jsonDecode(Settings.lastUser);
+      var usernname = userInfo['email'];
+      var password = Settings.userPassword;
+      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
+        email: usernname,
+        password: password,
+      );
+      await Provider.of<AuthenticationProvider>(context, listen: false)
+          .biometricSignin(_usernameController.text);
 
-        Settings.lastUser = jsonEncode(user.toJson2());
-        Settings.userPassword =
-            Settings.rememberMe ? _passwordController.text : '';
-        LocalNotification.setNotificationsOnNewDevice(context);
+      await Provider.of<UserProvider>(context, listen: false)
+          .setCurrentUser(false);
 
-        await setRouteDestination();
-      }
+      await setRouteDestination();
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e, null, null);
     } catch (e) {

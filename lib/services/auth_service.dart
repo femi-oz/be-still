@@ -24,11 +24,13 @@ class AuthenticationService {
         );
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
+          signOut();
           return false;
         } else
           return true;
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
+        signOut();
         final message = StringUtils.generateExceptionMessage(e.code ?? null);
         await locator<LogService>().createLog(
             message, email, 'AUTHENTICATION/service/biometricAuthentication');

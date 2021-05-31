@@ -26,7 +26,7 @@ class _GroupScreenState extends State<GroupScreen> {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('MY  GROUPS');
+            .setPageTitle('MY GROUPS');
       });
       _isInit = false;
     }
