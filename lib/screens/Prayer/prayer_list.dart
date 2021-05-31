@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -124,10 +125,10 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    Provider.of<PrayerProvider>(context, listen: false)
-        .checkPrayerValidity(userId);
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    if (user != null)
+      Provider.of<PrayerProvider>(context, listen: false)
+          .checkPrayerValidity(user.id);
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
 
     final currentPrayerType =
