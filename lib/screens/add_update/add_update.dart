@@ -67,7 +67,7 @@ class _AddUpdateState extends State<AddUpdate> {
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
-            : ' ';
+            : '';
       });
 
       tagList.clear();
@@ -137,9 +137,6 @@ class _AddUpdateState extends State<AddUpdate> {
         contacts.forEach((s) {
           if (!_descriptionController.text.contains(s.displayName)) {
             s.displayName = '';
-          }
-          if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
-            contacts = [...contacts, s];
           }
         });
 
