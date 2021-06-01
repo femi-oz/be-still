@@ -137,12 +137,12 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             barrierColor: Provider.of<ThemeProvider>(context,
                                         listen: false)
                                     .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.5)
+                                ? AppColors.backgroundColor[0].withOpacity(0.8)
                                 : Color(0xFF021D3C).withOpacity(0.7),
                             backgroundColor: Provider.of<ThemeProvider>(context,
                                         listen: false)
                                     .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.5)
+                                ? AppColors.backgroundColor[0].withOpacity(0.8)
                                 : Color(0xFF021D3C).withOpacity(0.7),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
