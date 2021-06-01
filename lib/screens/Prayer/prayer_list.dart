@@ -176,7 +176,8 @@ class _PrayerListState extends State<PrayerList> {
                               child: Column(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(60),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 100, vertical: 60),
                                     child: Opacity(
                                       opacity: 0.3,
                                       child: Text(
