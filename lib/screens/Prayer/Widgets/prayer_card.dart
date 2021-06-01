@@ -211,6 +211,8 @@ class _PrayerCardState extends State<PrayerCard> {
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
     var tags = '';
+    final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
+    widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
     widget.prayerData.tags.forEach((element) {
       tags += ' ' + element.displayName;
     });
