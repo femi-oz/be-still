@@ -188,9 +188,6 @@ class _AddPrayerState extends State<AddPrayer> {
         ),
       );
       painter.layout();
-      print(_descriptionController.selection);
-      print(_focusNode.offset.dy);
-      print(_focusNode.offset.dx);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -456,9 +453,10 @@ class _AddPrayerState extends State<AddPrayer> {
                           tagText.length > 0
                               ? Positioned(
                                   top: _focusNode.offset.dy +
-                                      painter.height * 0.3,
-                                  left: _focusNode.offset.dy +
-                                      painter.width * 0.02,
+                                      _descriptionController
+                                              .selection.baseOffset *
+                                          1.2,
+                                  left: _focusNode.offset.dx,
                                   height:
                                       MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(

@@ -371,16 +371,11 @@ class _AddUpdateState extends State<AddUpdate> {
                             ),
                             tagText.length > 0
                                 ? Positioned(
-                                    // padding: EdgeInsets.only(
-                                    //     top: _focusNode.offset.dy * 0.5 +
-                                    //         painter.height,
-                                    //     left: _focusNode.offset.dx * 0.5 +
-                                    //         painter.width),
                                     top: _focusNode.offset.dy +
-                                        painter.height -
-                                        46,
+                                        _descriptionController
+                                                .selection.baseOffset *
+                                            1.2,
                                     left: _focusNode.offset.dx,
-
                                     height: MediaQuery.of(context).size.height *
                                         0.2,
                                     child: SingleChildScrollView(
