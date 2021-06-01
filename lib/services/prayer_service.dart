@@ -13,6 +13,7 @@ import 'package:be_still/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
@@ -40,6 +41,7 @@ class PrayerService {
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection("MessageTemplate");
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final _notificationService = locator<NotificationService>();
   var newPrayerId;
@@ -47,6 +49,7 @@ class PrayerService {
   Stream<List<CombinePrayerStream>> _combineStream;
   Stream<List<CombinePrayerStream>> getPrayers(String userId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _combineStream = _userPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
@@ -107,6 +110,7 @@ class PrayerService {
 
   Stream<CombinePrayerStream> getPrayer(String prayerID) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var data = _userPrayerCollectionReference.doc(prayerID).snapshots();
 
       var _combineStream = data.map((doc) {
@@ -171,6 +175,7 @@ class PrayerService {
     final userPrayerID = Uuid().v1();
 
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       // store prayer
       _prayerCollectionReference.doc(newPrayerId).set(
           populatePrayer(userId, prayerDesc, creatorName, prayerDescBackup)
@@ -194,6 +199,7 @@ class PrayerService {
     // Generate uuid
     final _userPrayerID = Uuid().v1();
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       //store user prayer
       _userPrayerCollectionReference
           .doc(_userPrayerID)
@@ -220,6 +226,7 @@ class PrayerService {
   Future addPrayerTag(List<Contact> contactData, UserModel user, String message,
       String prayerId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
         ///b70b8540-9860-11eb-8da1-dfaaff472e96
@@ -267,6 +274,7 @@ class PrayerService {
 
   Future removePrayerTag(String tagId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerTagCollectionReference.doc(tagId).delete();
     } catch (e) {
       locator<LogService>().createLog(
@@ -282,6 +290,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       newPrayerId = prayerID;
       _prayerCollectionReference.doc(prayerID).update(
         {"Description": description, "ModifiedOn": DateTime.now()},
@@ -308,6 +317,7 @@ class PrayerService {
       descriptionBackup: '',
     );
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       final updateId = Uuid().v1();
       prayerId = prayerId;
       await _prayerCollectionReference
@@ -328,6 +338,7 @@ class PrayerService {
     String prayerId,
   ) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       return _prayerUpdateCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
           .snapshots()
@@ -344,6 +355,7 @@ class PrayerService {
 
   Future snoozePrayer(DateTime endDate, String userPrayerID) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(userPrayerID).update(
         {
           'IsFavourite': false,
@@ -363,6 +375,7 @@ class PrayerService {
 
   Future unSnoozePrayer(DateTime endDate, String userPrayerID) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(userPrayerID).update(
         {'IsSnoozed': false, 'Status': Status.active, 'SnoozeEndDate': endDate},
       );
@@ -379,6 +392,7 @@ class PrayerService {
     String userPrayerId,
   ) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(userPrayerId).update(
         {
           'IsArchived': true,
@@ -399,6 +413,7 @@ class PrayerService {
 
   Future unArchivePrayer(String userPrayerId, String prayerID) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': false},
       );
@@ -418,6 +433,7 @@ class PrayerService {
 
   Future markPrayerAsAnswered(String prayerID, String userPrayerId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': true},
       );
@@ -438,6 +454,7 @@ class PrayerService {
 
   Future unMarkPrayerAsAnswered(String prayerID, String userPrayerId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerCollectionReference.doc(prayerID).update(
         {'IsAnswer': false},
       );
@@ -452,6 +469,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(prayerID).update(
         {'IsFavourite': true},
       );
@@ -468,6 +486,7 @@ class PrayerService {
     String prayerID,
   ) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(prayerID).update(
         {'IsFavourite': false},
       );
@@ -482,6 +501,7 @@ class PrayerService {
 
   Future deletePrayer(String userPrayeId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference
           .doc(userPrayeId)
           .update({'DeleteStatus': -1});
@@ -506,6 +526,7 @@ class PrayerService {
       modifiedOn: DateTime.now(),
     );
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _hiddenPrayerCollectionReference
           .doc(hiddenPrayerId)
           .set(hiddenPrayer.toJson());
@@ -529,6 +550,7 @@ class PrayerService {
     final _userPrayerID = Uuid().v1();
 
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var batch = FirebaseFirestore.instance.batch();
       // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
@@ -557,6 +579,7 @@ class PrayerService {
     final _prayerID = Uuid().v1();
     final groupPrayerId = Uuid().v1();
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var batch = FirebaseFirestore.instance.batch();
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
@@ -579,6 +602,7 @@ class PrayerService {
     final _prayerID = Uuid().v1();
     final groupPrayerId = Uuid().v1();
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var batch = FirebaseFirestore.instance.batch();
       // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
@@ -597,6 +621,7 @@ class PrayerService {
   Stream<List<CombinePrayerStream>> _combineGroupStream;
   Stream<List<CombinePrayerStream>> getGroupPrayers(String groupId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _combineGroupStream = _groupPrayerCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .snapshots()
@@ -649,6 +674,7 @@ class PrayerService {
     String userId,
   ) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       return _hiddenPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
@@ -665,6 +691,7 @@ class PrayerService {
 
   hideFromAllMembers(String prayerId, bool value) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       // _prayerCollectionReference
       //     .where('GroupId', isEqualTo: groupId)
       //     .snapshots()
@@ -684,6 +711,7 @@ class PrayerService {
 
   messageRequestor(PrayerRequestMessageModel requestMessageModel) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var dio = Dio(BaseOptions(followRedirects: false));
       var user = await _userCollectionReference
           .where('Email', isEqualTo: requestMessageModel.email)
@@ -716,6 +744,7 @@ class PrayerService {
 
   Future addPrayerToMyList(UserPrayerModel userPrayer) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       final userPrayerId = Uuid().v1();
       return await _userPrayerCollectionReference
           .doc(userPrayerId)
@@ -729,6 +758,7 @@ class PrayerService {
 
   flagAsInappropriate(String prayerId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerCollectionReference
           .doc(prayerId)
           .update({'IsInappropriate': true});
