@@ -102,11 +102,16 @@ class _AddPrayerState extends State<AddPrayer> {
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (!_descriptionController.text
-                .toLowerCase()
-                .contains(element.displayName.toLowerCase())) {
-              textList.add(element);
-            }
+            widget.prayerData.updates.forEach((update) {
+              if (!_descriptionController.text
+                      .toLowerCase()
+                      .contains(element.displayName.toLowerCase()) &&
+                  !update.description
+                      .toLowerCase()
+                      .contains(element.displayName.toLowerCase())) {
+                textList.add(element);
+              }
+            });
           });
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
@@ -171,6 +176,7 @@ class _AddPrayerState extends State<AddPrayer> {
             ? tags[tags.length - 1]
             : '';
       });
+
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -451,14 +457,20 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 0
-                              ? Positioned(
-                                  top: _focusNode.offset.dy +
-                                      _descriptionController
-                                              .selection.baseOffset *
-                                          1.2,
-                                  left: _focusNode.offset.dx,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                      top: _focusNode.offset.dy +
+                                          _descriptionController
+                                              .selection.baseOffset -
+                                          80,
+                                      left: _focusNode.offset.dx),
+                                  // top: _focusNode.offset.dy +
+                                  //     _descriptionController
+                                  //         .selection.baseOffset -
+                                  //     80,
+                                  // left: _focusNode.offset.dx,
+                                  // height:
+                                  //     MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
