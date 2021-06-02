@@ -189,8 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
       Settings.lastUser = jsonEncode(user.toJson2());
-      Settings.userPassword =
-          Settings.rememberMe ? _passwordController.text : '';
+      Settings.userPassword = _passwordController.text;
 
       LocalNotification.setNotificationsOnNewDevice(context);
 
@@ -217,19 +216,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _biologin() async {
     try {
-      var isAuthenticated =
+      var userInfo = jsonDecode(Settings.lastUser);
+      var usernname = userInfo['email'];
+      var password = Settings.userPassword;
+      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
+        email: usernname,
+        password: password,
+      );
+      var isAuth =
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .biometricSignin(_usernameController.text);
-      if (isAuthenticated) {
+      if (isAuth) {
         await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(true);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-
-        Settings.lastUser = jsonEncode(user.toJson2());
-        Settings.userPassword =
-            Settings.rememberMe ? _passwordController.text : '';
-        LocalNotification.setNotificationsOnNewDevice(context);
+            .setCurrentUser(false);
 
         await setRouteDestination();
       }
@@ -277,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Container(
               // margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 60, vertical: 10),
               child: Text(
                 'Biometrics will be enabled after you log in.',
                 textAlign: TextAlign.center,

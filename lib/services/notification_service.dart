@@ -10,6 +10,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user_device.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
@@ -32,12 +33,14 @@ class NotificationService {
   final CollectionReference<Map<String, dynamic>>
       _prayerTimeCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTime");
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   init(String token, String userId) async {
     final deviceId = Uuid().v1();
     final userDeviceID = Uuid().v1();
     //store device
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var tokens = await getNotificationToken(userId);
       print(tokens);
       if (tokens.contains(token)) return;
@@ -84,6 +87,7 @@ class NotificationService {
         userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
     List<DeviceModel> devices = [];
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       for (int i = 0; i < userDevicesDocs.length; i++) {
         var dev = await _deviceCollectionReference
             .doc(userDevicesDocs[i].deviceId)
@@ -124,6 +128,7 @@ class NotificationService {
       entityId: entityId,
     );
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _pushNotificationCollectionReference
           .doc(_notificationId)
           .set(data.toJson());
@@ -167,6 +172,7 @@ class NotificationService {
         subject: '',
         country: FlavorConfig.instance.values.country);
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
       locator<LogService>().createLog(
@@ -212,6 +218,7 @@ class NotificationService {
         subject: templateSubject,
         country: '');
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
       locator<LogService>().createLog(
@@ -244,6 +251,7 @@ class NotificationService {
     final _notificationId = Uuid().v1();
     String deviceId;
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _localNotificationCollectionReference.doc(_notificationId).set(
             LocalNotificationModel(
               type: type,
@@ -287,6 +295,7 @@ class NotificationService {
   ) async {
     String deviceId;
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _localNotificationCollectionReference.doc(notificationId).update({
         'Frequency': frequency,
         'Period': period,
@@ -308,6 +317,7 @@ class NotificationService {
 
   Future deletePrayerTime(String prayerTimeId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerTimeCollectionReference.doc(prayerTimeId).delete();
     } catch (e) {
       locator<LogService>().createLog(
@@ -320,6 +330,7 @@ class NotificationService {
 
   removeLocalNotification(String notificationId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
       locator<LogService>().createLog(
@@ -332,6 +343,7 @@ class NotificationService {
 
   Stream<List<LocalNotificationModel>> getLocalNotifications(String userId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       return _localNotificationCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
@@ -347,6 +359,7 @@ class NotificationService {
 
   Stream<List<PushNotificationModel>> getUserNotifications(String userId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       return _pushNotificationCollectionReference
           .where('RecieverId', isEqualTo: userId)
           .snapshots()
@@ -362,6 +375,7 @@ class NotificationService {
 
   Future clearNotification(List<String> ids) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       for (int i = 0; i < ids.length; i++) {
         await _pushNotificationCollectionReference
             .doc(ids[i])
@@ -375,40 +389,4 @@ class NotificationService {
       throw HttpException(e.message);
     }
   }
-
-  // acceptGroupInvite(
-  //     String groupId, String userId, String name, String email) async {
-  //   try {
-  //     var dio = Dio(BaseOptions(followRedirects: false));
-  //     var data = {
-  //       'groupId': groupId,
-  //       'userId': userId,
-  //       'name': name,
-  //       'email': email
-  //     };
-  //     print(data);
-
-  //     await dio.post(
-  //       'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
-  //       data: data,
-  //     );
-  //   } catch (e) {
-  //     throw HttpException(e.message);
-  //   }
-  // }
-
-  // newPrayerGroupNotification(String prayerId, String groupId) async {
-  //   try {
-  //     var dio = Dio(BaseOptions(followRedirects: false));
-  //     var data = {'groupId': groupId, 'prayerId': prayerId};
-  //     print(data);
-
-  //     await dio.post(
-  //       'https://us-central1-bestill-app.cloudfunctions.net/NewPrayer',
-  //       data: data,
-  //     );
-  //   } catch (e) {
-  //     throw HttpException(e.message);
-  //   }
-  // }
 }

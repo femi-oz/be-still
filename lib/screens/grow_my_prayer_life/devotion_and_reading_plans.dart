@@ -174,6 +174,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                 ),
               ),
               child: Container(
+                padding: EdgeInsets.only(top: 40),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -202,17 +203,19 @@ class _DevotionPlansState extends State<DevotionPlans> {
                               size: 20,
                             ),
                             onPressed: () => widget.setCurrentIndex(0, true),
-                            label: Text(
-                              'BACK',
-                              style: AppTextStyles.boldText20.copyWith(
-                                color: AppColors.lightBlue3,
+                            label: Container(
+                              width: 70,
+                              child: Text(
+                                'BACK',
+                                style: AppTextStyles.boldText20.copyWith(
+                                  color: AppColors.lightBlue3,
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Text(

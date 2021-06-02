@@ -7,14 +7,12 @@ import 'package:be_still/screens/security/Create_Account/create_account_screen.d
 import 'package:be_still/screens/security/Forget_Password/forget_password.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
-import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/security/local_auth/local_auth.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 
 final routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   LoginScreen.routeName: (context) => LoginScreen(),
-  SettingsScreen.routeName: (context) => SettingsScreen(),
   CreateAccountScreen.routeName: (context) => CreateAccountScreen(),
   ForgetPassword.routeName: (context) => ForgetPassword(),
   PrayerDetails.routeName: (context) => PrayerDetails(),

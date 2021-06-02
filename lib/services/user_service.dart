@@ -51,6 +51,7 @@ class UserService {
     // Generate uuid
     final userId = Uuid().v1();
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       // store user details
       await _userCollectionReference.doc(userId).set(
             _userData.toJson(),
@@ -70,6 +71,7 @@ class UserService {
 
   Future getCurrentUser(String keyReference) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       final userRes = await _userCollectionReference
           .where('KeyReference', isEqualTo: keyReference)
           .limit(1)
@@ -86,6 +88,7 @@ class UserService {
 
   Future<List<UserModel>> getAllUsers() async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var users = await _userCollectionReference.get();
       return users.docs.map((e) => UserModel.fromData(e)).toList();
     } catch (e) {
@@ -100,6 +103,7 @@ class UserService {
   Future updateEmail(String newEmail, String userId) async {
     User user = _firebaseAuth.currentUser;
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       await user.updateEmail(newEmail);
       await _userCollectionReference.doc(userId).update({'Email': newEmail});
     } catch (e) {
@@ -114,6 +118,7 @@ class UserService {
   Future updatePassword(String newPassword) async {
     User user = _firebaseAuth.currentUser;
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       await user.updatePassword(newPassword);
     } catch (e) {
       locator<LogService>().createLog(

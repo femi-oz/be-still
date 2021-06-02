@@ -211,6 +211,8 @@ class _PrayerCardState extends State<PrayerCard> {
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
     var tags = '';
+    final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
+    widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
     widget.prayerData.tags.forEach((element) {
       tags += ' ' + element.displayName;
     });
@@ -252,11 +254,10 @@ class _PrayerCardState extends State<PrayerCard> {
                             children: <Widget>[
                               Row(
                                 children: [
-                                  SizedBox(width: 5),
                                   widget.prayerData.userPrayer.isFavorite
                                       ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
                                           child: Icon(
                                             Icons.favorite,
                                             color: AppColors.lightBlue3,
@@ -266,8 +267,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : SizedBox(),
                                   widget.prayerData.prayer.isAnswer
                                       ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
                                           child: Icon(
                                             AppIcons.bestill_answered,
                                             size: 12,
@@ -277,15 +278,15 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : SizedBox(),
                                   widget.prayerData.userPrayer.isSnoozed
                                       ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
                                           child: Icon(
                                             AppIcons.snooze,
                                             size: 14,
                                             color: AppColors.lightBlue3,
                                           ),
                                         )
-                                      : SizedBox(width: 13),
+                                      : SizedBox(),
                                   hasReminder
                                       ? Padding(
                                           padding:
@@ -337,9 +338,11 @@ class _PrayerCardState extends State<PrayerCard> {
                                                 );
                                               },
                                             ),
-                                            child: Container(
+                                            child: Padding(
                                               padding:
-                                                  const EdgeInsets.all(8.0),
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 5),
                                               child: Icon(
                                                 AppIcons.bestill_reminder,
                                                 size: 12,
@@ -348,8 +351,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                             ),
                                           ),
                                         )
-                                      : Container(),
-                                  widget.prayerData.prayer.userId != _user.id
+                                      : SizedBox(),
+                                  widget.prayerData.prayer.userId != _user?.id
                                       ? Text(
                                           widget.prayerData.prayer.creatorName,
                                           style:
@@ -474,33 +477,27 @@ class _PrayerCardState extends State<PrayerCard> {
                 return _buildMenu();
               },
             );
-          }, Colors.grey)
+          }, false)
         ],
         secondaryActions: <Widget>[
           _buildSlideItem(
-            AppIcons.bestill_answered,
-            widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
-            () => widget.prayerData.prayer.isAnswer
-                ? _unMarkAsAnswered()
-                : _onMarkAsAnswered(),
-            Colors.green,
-          ),
+              AppIcons.bestill_answered,
+              widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
+              () => widget.prayerData.prayer.isAnswer
+                  ? _unMarkAsAnswered()
+                  : _onMarkAsAnswered(),
+              false),
           _buildSlideItem(
-            AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
-            widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
-            () => widget.prayerData.userPrayer.isArchived
-                ? _unArchive()
-                : _onArchive(),
-            Colors.purple,
-          ),
+              AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
+              widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
+              () => widget.prayerData.userPrayer.isArchived
+                  ? _unArchive()
+                  : _onArchive(),
+              false),
           widget.prayerData.userPrayer.isArchived ||
                   widget.prayerData.prayer.isAnswer
               ? _buildSlideItem(
-                  AppIcons.bestill_snooze,
-                  'Snooze',
-                  () => null,
-                  Colors.blueGrey.withOpacity(0.5),
-                )
+                  AppIcons.bestill_snooze, 'Snooze', () => null, true)
               : _buildSlideItem(
                   AppIcons.bestill_snooze,
                   widget.prayerData.userPrayer.isSnoozed
@@ -532,14 +529,14 @@ class _PrayerCardState extends State<PrayerCard> {
                             );
                           },
                         ),
-                  Colors.blue),
+                  false),
         ],
       ),
     );
   }
 
   Widget _buildSlideItem(
-      IconData icon, String label, Function _onTap, Color color) {
+      IconData icon, String label, Function _onTap, bool isDisabled) {
     return Container(
       decoration: BoxDecoration(
           color: AppColors.prayerCardBgColor,
@@ -557,8 +554,12 @@ class _PrayerCardState extends State<PrayerCard> {
                     icon,
                     color: Provider.of<ThemeProvider>(context, listen: false)
                             .isDarkModeEnabled
-                        ? AppColors.white
-                        : AppColors.lightBlue3,
+                        ? isDisabled
+                            ? AppColors.white.withOpacity(0.4)
+                            : AppColors.white
+                        : isDisabled
+                            ? AppColors.lightBlue3.withOpacity(0.4)
+                            : AppColors.lightBlue3,
                     size: 18,
                   ),
                 )
@@ -566,15 +567,23 @@ class _PrayerCardState extends State<PrayerCard> {
                   icon,
                   color: Provider.of<ThemeProvider>(context, listen: false)
                           .isDarkModeEnabled
-                      ? AppColors.white
-                      : AppColors.lightBlue3,
+                      ? isDisabled
+                          ? AppColors.white.withOpacity(0.4)
+                          : AppColors.white
+                      : isDisabled
+                          ? AppColors.lightBlue3.withOpacity(0.4)
+                          : AppColors.lightBlue3,
                   size: 18,
                 ),
         ),
         foregroundColor:
             Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.white
-                : AppColors.lightBlue3,
+                ? isDisabled
+                    ? AppColors.white.withOpacity(0.4)
+                    : AppColors.white
+                : isDisabled
+                    ? AppColors.lightBlue3.withOpacity(0.4)
+                    : AppColors.lightBlue3,
         onTap: _onTap,
       ),
     );

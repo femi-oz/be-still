@@ -4,6 +4,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -15,6 +16,7 @@ import '../locator.dart';
 
 class NotificationProvider with ChangeNotifier {
   NotificationService _notificationService = locator<NotificationService>();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   NotificationProvider._();
   factory NotificationProvider() => _instance;
 
@@ -59,6 +61,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> setUserNotifications(String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _notificationService
         .getUserNotifications(userId)
         .asBroadcastStream()
@@ -77,6 +80,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> setLocalNotifications(userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _notificationService
         .getLocalNotifications(userId)
         .asBroadcastStream()
@@ -88,6 +92,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> _deletePastReminder(List<LocalNotificationModel> data) async {
+    if (_firebaseAuth.currentUser == null) return null;
     var reminderToDelete = data
         .where((e) =>
             e.scheduledDate.isBefore(DateTime.now()) &&
@@ -100,6 +105,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> setPrayerTimeNotifications(userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _notificationService
         .getLocalNotifications(userId)
         .asBroadcastStream()
@@ -130,6 +136,7 @@ class NotificationProvider with ChangeNotifier {
     String selectedMonth,
     String selectedDayOfMonth,
   ) async {
+    if (_firebaseAuth.currentUser == null) return null;
     await _notificationService.addLocalNotification(
       localId,
       entityId,
@@ -167,6 +174,7 @@ class NotificationProvider with ChangeNotifier {
     String selectedMonth,
     String selectedDayOfMonth,
   ) async {
+    if (_firebaseAuth.currentUser == null) return null;
     await _notificationService.updateLocalNotification(
       frequency,
       scheduledDate,
@@ -185,12 +193,15 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> deleteLocalNotification(String notificationId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     var notification =
         _localNotifications.firstWhere((e) => e.id == notificationId);
     await LocalNotification.unschedule(notification.localNotificationId);
     await _notificationService.removeLocalNotification(notificationId);
   }
 
-  Future<void> deletePrayerTime(String prayerTimeId) async =>
-      await _notificationService.deletePrayerTime(prayerTimeId);
+  Future<void> deletePrayerTime(String prayerTimeId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    await _notificationService.deletePrayerTime(prayerTimeId);
+  }
 }

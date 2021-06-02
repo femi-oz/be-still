@@ -66,7 +66,7 @@ class StringUtils {
         break;
       case ErrorType.notAvailable:
         errorMessage =
-            "Finger Print / Face ID is not supported on ypour device.";
+            "Finger Print / Face ID is not supported on your device.";
         break;
       case ErrorType.userNotFound:
         errorMessage = "User with this email doesn't exist.";

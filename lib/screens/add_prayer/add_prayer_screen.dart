@@ -91,7 +91,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text);
+                .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
           await Future.delayed(Duration(milliseconds: 1000));
           BeStilDialog.hideLoading(context);
@@ -107,6 +107,13 @@ class _AddPrayerState extends State<AddPrayer> {
                 .contains(element.displayName.toLowerCase())) {
               textList.add(element);
             }
+            widget.prayerData.updates.forEach((update) {
+              if (!update.description
+                  .toLowerCase()
+                  .contains(element.displayName.toLowerCase())) {
+                textList.add(element);
+              }
+            });
           });
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
@@ -122,7 +129,7 @@ class _AddPrayerState extends State<AddPrayer> {
                 .removePrayerTag(textList[i].id);
           if (contacts.length > 0) {
             await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text);
+                .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
           await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
@@ -171,6 +178,7 @@ class _AddPrayerState extends State<AddPrayer> {
             ? tags[tags.length - 1]
             : '';
       });
+
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -451,19 +459,22 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 0
-                              ? Positioned(
-                                  // padding: EdgeInsets.only(
-                                  //     top: _focusNode.offset.dy * 0.5 +
-                                  //         painter.height,
-                                  //     left: _focusNode.offset.dx * 0.5 +
-                                  //         painter.width),
-                                  top: _focusNode.offset.dy +
-                                      painter.height -
-                                      46,
-                                  left: _focusNode.offset.dx,
-
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                      top: _focusNode.offset.dy +
+                                          _descriptionController
+                                              .selection.baseOffset -
+                                          80,
+                                      left: _focusNode.offset.dx),
                                   height:
-                                      MediaQuery.of(context).size.height * 0.2,
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  // top: _focusNode.offset.dy +
+                                  //     _descriptionController
+                                  //         .selection.baseOffset -
+                                  //     80,
+                                  // left: _focusNode.offset.dx,
+                                  // height:
+                                  //     MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:

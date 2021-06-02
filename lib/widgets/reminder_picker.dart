@@ -314,7 +314,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            'SET PRAYER TIME',
+            widget.type == NotificationType.reminder
+                ? 'SET REMINDER'
+                : 'SET PRAYER TIME',
             style: TextStyle(
               color: AppColors.lightBlue1,
               fontSize: 18,
@@ -339,7 +341,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.18,
+                            width: MediaQuery.of(context).size.width * 0.15,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -650,7 +652,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                     widget.reminder != null
                         ? GestureDetector(
                             onTap: () {
-                              setNotification();
+                              _deleteReminder();
                             },
                             child: Container(
                               height: 38.0,

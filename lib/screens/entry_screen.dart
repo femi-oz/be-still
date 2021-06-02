@@ -1,3 +1,4 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -200,6 +201,33 @@ class _EntryScreenState extends State<EntryScreen>
     }
   }
 
+  void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
+    try {
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeDuration,
+        value: selectedDuration,
+        settingsId: settingsId,
+      );
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeFrequency,
+        value: selectedInterval,
+        settingsId: settingsId,
+      );
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   GlobalKey _keyButton = GlobalKey();
   GlobalKey _keyButton2 = GlobalKey();
   GlobalKey _keyButton3 = GlobalKey();
@@ -271,7 +299,7 @@ class _EntryScreenState extends State<EntryScreen>
           children: <Widget>[
             SizedBox(height: 10.0),
             Icon(
-              Icons.info,
+              Icons.error,
               color: AppColors.red,
               size: 50,
             ),
@@ -366,8 +394,8 @@ class _EntryScreenState extends State<EntryScreen>
                 break;
             }
           },
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
@@ -384,11 +412,25 @@ class _EntryScreenState extends State<EntryScreen>
                 in getItems(Provider.of<MiscProvider>(context, listen: false))
                     .getRange(0, 5))
               BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: EdgeInsets.only(bottom: tabItem.padding, top: 5),
-                    child: tabItem.icon,
+                icon: Container(
+                  key: tabItem.key,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      tabItem.icon,
+                      SizedBox(height: tabItem.padding),
+                      Text(
+                        tabItem.title,
+                        style: AppTextStyles.boldText14.copyWith(
+                          color: AppColors.bottomNavIconColor.withOpacity(0.5),
+                          height: 1,
+                        ),
+                      )
+                    ],
                   ),
-                  label: tabItem.title)
+                ),
+                label: '',
+              )
           ],
         ),
       );
@@ -397,49 +439,52 @@ class _EntryScreenState extends State<EntryScreen>
 
   List<TabNavigationItem> getItems(miscProvider) => [
         TabNavigationItem(
-            page: PrayerList(
-              _setCurrentIndex,
-              _keyButton,
-              _keyButton2,
-              _keyButton3,
-              _keyButton4,
-              _keyButton5,
-              _isSearchMode,
-              _switchSearchMode,
-            ),
-            icon: Icon(
-              AppIcons.list,
-              size: 16,
-              key: _keyButton,
-              color: AppColors.bottomNavIconColor,
-            ),
-            title: "List",
-            padding: 5),
+          page: PrayerList(
+            _setCurrentIndex,
+            _keyButton,
+            _keyButton2,
+            _keyButton3,
+            _keyButton4,
+            _keyButton5,
+            _isSearchMode,
+            _switchSearchMode,
+          ),
+          icon: Icon(
+            AppIcons.list,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "List",
+          padding: 7,
+          key: _keyButton,
+        ),
         TabNavigationItem(
-            page: AddPrayer(
-              setCurrentIndex: _setCurrentIndex,
-              isEdit: false,
-              isGroup: false,
-              showCancel: false,
-            ),
-            icon: Icon(
-              AppIcons.bestill_add,
-              key: _keyButton2,
-              size: 16,
-              color: AppColors.bottomNavIconColor,
-            ),
-            title: "Add",
-            padding: 6),
+          page: AddPrayer(
+            setCurrentIndex: _setCurrentIndex,
+            isEdit: false,
+            isGroup: false,
+            showCancel: false,
+          ),
+          icon: Icon(
+            AppIcons.bestill_add,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "Add",
+          padding: 8,
+          key: _keyButton2,
+        ),
         TabNavigationItem(
-            page: PrayerTime(_setCurrentIndex),
-            icon: Icon(
-              AppIcons.bestill_menu_logo_lt,
-              key: _keyButton3,
-              size: 16,
-              color: AppColors.bottomNavIconColor,
-            ),
-            title: "Pray",
-            padding: 5),
+          page: PrayerTime(_setCurrentIndex),
+          icon: Icon(
+            AppIcons.bestill_menu_logo_lt,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "Pray",
+          padding: 7,
+          key: _keyButton3,
+        ),
         TabNavigationItem(
             page: GroupScreen(),
             icon: Icon(
@@ -448,17 +493,18 @@ class _EntryScreenState extends State<EntryScreen>
               color: AppColors.bottomNavIconColor,
             ),
             title: "Groups",
-            padding: 2),
+            padding: 4),
         TabNavigationItem(
-            page: SettingsScreen(),
-            icon: Icon(
-              Icons.more_horiz,
-              key: _keyButton4,
-              size: 22,
-              color: AppColors.bottomNavIconColor,
-            ),
-            title: "More",
-            padding: 0),
+          page: SettingsScreen(_setDefaultSnooze),
+          icon: Icon(
+            Icons.more_horiz,
+            size: 22,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "More",
+          padding: 2,
+          key: _keyButton4,
+        ),
         TabNavigationItem(
             page: DevotionPlans(_setCurrentIndex),
             icon: Icon(
@@ -467,7 +513,7 @@ class _EntryScreenState extends State<EntryScreen>
               color: AppColors.bottomNavIconColor,
             ),
             title: "More",
-            padding: 5),
+            padding: 7),
         TabNavigationItem(
             page: RecommenededBibles(_setCurrentIndex),
             icon: Icon(
@@ -476,7 +522,7 @@ class _EntryScreenState extends State<EntryScreen>
               color: AppColors.bottomNavIconColor,
             ),
             title: "More",
-            padding: 5),
+            padding: 7),
       ];
 }
 
@@ -485,11 +531,13 @@ class TabNavigationItem {
   final String title;
   final Icon icon;
   final double padding;
+  final GlobalKey key;
 
   TabNavigationItem({
     @required this.page,
     @required this.title,
     @required this.icon,
     @required this.padding,
+    this.key,
   });
 }

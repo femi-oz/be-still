@@ -1,4 +1,5 @@
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -121,7 +122,8 @@ class CustomDrawer extends StatelessWidget {
                   GestureDetector(
                     onTap: () async {
                       await _authProvider.signOut();
-                      // await LocalNotification.clearAll();
+                      // await Provider.of<UserProvider>(context, listen: false)
+                      //     .clearCurrentUser();
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),
