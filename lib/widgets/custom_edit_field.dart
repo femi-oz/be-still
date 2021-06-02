@@ -58,8 +58,8 @@ class CustomEditField extends StatelessWidget {
           InkWell(
             onTap: () => onPressed(),
             child: Container(
-              height: 30,
-              width: 40,
+              height: 70,
+              width: 50,
               padding: EdgeInsets.only(right: 5),
               child: Icon(
                 AppIcons.bestill_edit,

@@ -274,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Container(
               // margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 60, vertical: 10),
               child: Text(
                 'Biometrics will be enabled after you log in.',
                 textAlign: TextAlign.center,
