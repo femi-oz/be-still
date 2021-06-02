@@ -314,7 +314,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            'SET PRAYER TIME',
+            widget.type == NotificationType.reminder
+                ? 'SET REMINDER'
+                : 'SET PRAYER TIME',
             style: TextStyle(
               color: AppColors.lightBlue1,
               fontSize: 18,

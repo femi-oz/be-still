@@ -102,13 +102,15 @@ class _AddPrayerState extends State<AddPrayer> {
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
+            if (!_descriptionController.text
+                .toLowerCase()
+                .contains(element.displayName.toLowerCase())) {
+              textList.add(element);
+            }
             widget.prayerData.updates.forEach((update) {
-              if (!_descriptionController.text
-                      .toLowerCase()
-                      .contains(element.displayName.toLowerCase()) &&
-                  !update.description
-                      .toLowerCase()
-                      .contains(element.displayName.toLowerCase())) {
+              if (!update.description
+                  .toLowerCase()
+                  .contains(element.displayName.toLowerCase())) {
                 textList.add(element);
               }
             });
@@ -457,13 +459,15 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 0
-                              ? Padding(
+                              ? Container(
                                   padding: EdgeInsets.only(
                                       top: _focusNode.offset.dy +
                                           _descriptionController
                                               .selection.baseOffset -
                                           80,
                                       left: _focusNode.offset.dx),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
                                   // top: _focusNode.offset.dy +
                                   //     _descriptionController
                                   //         .selection.baseOffset -

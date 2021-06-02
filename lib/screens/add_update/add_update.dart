@@ -368,20 +368,15 @@ class _AddUpdateState extends State<AddUpdate> {
                               ),
                             ),
                             tagText.length > 0
-                                ? Padding(
+                                ? Container(
                                     padding: EdgeInsets.only(
                                         top: _focusNode.offset.dy +
                                             _descriptionController
                                                 .selection.baseOffset -
                                             80,
                                         left: _focusNode.offset.dx),
-                                    // top: _focusNode.offset.dy +
-                                    //     _descriptionController
-                                    //             .selection.baseOffset *
-                                    //         1.2,
-                                    // left: _focusNode.offset.dx,
-                                    // height: MediaQuery.of(context).size.height *
-                                    // 0.2,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.4,
                                     child: SingleChildScrollView(
                                       child: Column(
                                         crossAxisAlignment:
