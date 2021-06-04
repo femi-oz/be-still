@@ -56,9 +56,9 @@ class _PrayerCardState extends State<PrayerCard> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
           widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
-
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
+      // await Future.delayed(Duration(milliseconds: 300),
+      //     () => {BeStilDialog.hideLoading(context)});
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

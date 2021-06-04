@@ -102,25 +102,33 @@ class _AddPrayerState extends State<AddPrayer> {
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (!_descriptionController.text
-                .toLowerCase()
-                .contains(element.displayName.toLowerCase())) {
-              textList.add(element);
-            }
-            widget.prayerData.updates.forEach((update) {
-              if (!update.description
+            if (widget.prayerData.updates.length == 0) {
+              if (!_descriptionController.text
                   .toLowerCase()
                   .contains(element.displayName.toLowerCase())) {
                 textList.add(element);
               }
-            });
+            } else {
+              widget.prayerData.updates.forEach((update) {
+                if (!_descriptionController.text
+                        .toLowerCase()
+                        .contains(element.displayName.toLowerCase()) &&
+                    !update.description
+                        .toLowerCase()
+                        .contains(element.displayName.toLowerCase())) {
+                  textList.add(element);
+                }
+                if (update.description
+                    .toLowerCase()
+                    .contains(element.displayName.toLowerCase())) {
+                  textList.remove(element);
+                }
+              });
+            }
           });
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
-            }
-            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
-              contacts = [...contacts, s];
             }
           });
 
