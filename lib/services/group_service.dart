@@ -4,6 +4,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
@@ -18,6 +19,7 @@ class GroupService {
       FirebaseFirestore.instance.collection("GroupUser");
   final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   populateGroupUser(
     GroupModel groupData,
@@ -43,6 +45,7 @@ class GroupService {
   Stream<List<CombineGroupUserStream>> _combineAllGroupsStream;
   Stream<List<CombineGroupUserStream>> getAllGroups(String userId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _combineAllGroupsStream =
           _groupCollectionReference.snapshots().map((convert) {
         return convert.docs.map((g) {
@@ -77,6 +80,7 @@ class GroupService {
   Stream<List<CombineGroupUserStream>> _combineUserGroupStream;
   Stream<List<CombineGroupUserStream>> getUserGroups(String userId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _combineUserGroupStream = _groupUserCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
@@ -122,6 +126,7 @@ class GroupService {
     final _groupID = Uuid().v1();
     final _groupUserId = Uuid().v1();
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var batch = FirebaseFirestore.instance.batch();
       // return FirebaseFirestore.instance.runTransaction(
       //   (transaction) async {
@@ -153,6 +158,7 @@ class GroupService {
 
   Stream<QuerySnapshot> getGroupUsers(String groupId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var users = _groupUserCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .snapshots();
@@ -168,6 +174,7 @@ class GroupService {
 
   leaveGroup(String userGroupId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _groupUserCollectionReference.doc(userGroupId).delete();
     } catch (e) {
       locator<LogService>().createLog(
@@ -180,6 +187,7 @@ class GroupService {
 
   deleteGroup(String userGroupId, String groupId) {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _groupUserCollectionReference.doc(userGroupId).delete();
       _groupCollectionReference.doc(groupId).delete();
     } catch (e) {
@@ -194,6 +202,7 @@ class GroupService {
   inviteMember(String groupName, String groupId, String email, String sender,
       String senderId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var dio = Dio(BaseOptions(followRedirects: false));
       var user = await _userCollectionReference
           .where('Email', isEqualTo: email)
@@ -229,6 +238,7 @@ class GroupService {
 
   joinRequest(String groupId, String userId, String userName) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var dio = Dio(BaseOptions(followRedirects: false));
       var data = {
         'groupId': groupId,
@@ -266,6 +276,7 @@ class GroupService {
 
   acceptInvite(String groupId, String userId, String email, String name) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var dio = Dio();
       await dio.post(
         'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',

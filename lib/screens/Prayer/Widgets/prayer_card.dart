@@ -352,7 +352,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  widget.prayerData.prayer.userId != _user.id
+                                  widget.prayerData.prayer.userId != _user?.id
                                       ? Text(
                                           widget.prayerData.prayer.creatorName,
                                           style:

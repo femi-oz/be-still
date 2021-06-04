@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/services/group_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   List<CombineGroupUserStream> _userGroups = [];
   List<CombineGroupUserStream> _allGroups = [];
@@ -18,6 +20,7 @@ class GroupProvider with ChangeNotifier {
   CombineGroupUserStream get currentGroup => _currentGroup;
 
   Future setUserGroups(String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _groupService.getUserGroups(userId).asBroadcastStream().listen((groups) {
       _userGroups = groups;
       notifyListeners();
@@ -25,6 +28,7 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future setAllGroups(String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
       _allGroups = groups;
       _filteredAllGroups = groups;
@@ -33,6 +37,7 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future searchAllGroups(String searchQuery) async {
+    if (_firebaseAuth.currentUser == null) return null;
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
             data.group.name.toLowerCase().contains(searchQuery.toLowerCase()))
@@ -43,18 +48,22 @@ class GroupProvider with ChangeNotifier {
 
   Future addGroup(GroupModel groupData, String userID, String fullName,
       String email) async {
+    if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.addGroup(userID, groupData, fullName, email);
   }
 
   Future leaveGroup(String userGroupId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.leaveGroup(userGroupId);
   }
 
   Future deleteGroup(String userGroupId, String groupId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.deleteGroup(userGroupId, groupId);
   }
 
   Future setCurrentGroup(CombineGroupUserStream group) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _currentGroup = group;
     notifyListeners();
   }
@@ -66,23 +75,13 @@ class GroupProvider with ChangeNotifier {
     String sender,
     String senderId,
   ) async {
+    if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.inviteMember(
         groupName, groupId, email, sender, senderId);
   }
 
   Future joinRequest(String groupId, String userId, String userName) async {
+    if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.joinRequest(groupId, userId, userName);
   }
-
-  // Future updateMemberType(String userId, String groupId) async {
-  //   return await _groupService.updateMemberType(userId, groupId);
-  // }
-
-  // Future removeMemberFromGroup(String userId, String groupId) async {
-  //   return await _groupService.removeMemberFromGroup(userId, groupId);
-  // }
-
-  // Future acceptInvite(String userId, String groupId, String status) async {
-  //   return await _groupService.acceptInvite(groupId, userId, status);
-  // }
 }

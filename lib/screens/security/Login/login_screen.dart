@@ -223,13 +223,15 @@ class _LoginScreenState extends State<LoginScreen> {
         email: usernname,
         password: password,
       );
-      await Provider.of<AuthenticationProvider>(context, listen: false)
-          .biometricSignin(_usernameController.text);
+      var isAuth =
+          await Provider.of<AuthenticationProvider>(context, listen: false)
+              .biometricSignin(_usernameController.text);
+      if (isAuth) {
+        await Provider.of<UserProvider>(context, listen: false)
+            .setCurrentUser(false);
 
-      await Provider.of<UserProvider>(context, listen: false)
-          .setCurrentUser(false);
-
-      await setRouteDestination();
+        await setRouteDestination();
+      }
     } on HttpException catch (e) {
       BeStilDialog.showErrorDialog(context, e, null, null);
     } catch (e) {
