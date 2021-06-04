@@ -102,23 +102,33 @@ class _AddPrayerState extends State<AddPrayer> {
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            widget.prayerData.updates.forEach((update) {
+            if (widget.prayerData.updates.length == 0) {
               if (!_descriptionController.text
-                      .toLowerCase()
-                      .contains(element.displayName.toLowerCase()) &&
-                  !update.description
-                      .toLowerCase()
-                      .contains(element.displayName.toLowerCase())) {
+                  .toLowerCase()
+                  .contains(element.displayName.toLowerCase())) {
                 textList.add(element);
               }
-            });
+            } else {
+              widget.prayerData.updates.forEach((update) {
+                if (!_descriptionController.text
+                        .toLowerCase()
+                        .contains(element.displayName.toLowerCase()) &&
+                    !update.description
+                        .toLowerCase()
+                        .contains(element.displayName.toLowerCase())) {
+                  textList.add(element);
+                }
+                if (update.description
+                    .toLowerCase()
+                    .contains(element.displayName.toLowerCase())) {
+                  textList.remove(element);
+                }
+              });
+            }
           });
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
-            }
-            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
-              contacts = [...contacts, s];
             }
           });
 
@@ -457,13 +467,15 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 0
-                              ? Padding(
+                              ? Container(
                                   padding: EdgeInsets.only(
                                       top: _focusNode.offset.dy +
                                           _descriptionController
                                               .selection.baseOffset -
                                           80,
                                       left: _focusNode.offset.dx),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
                                   // top: _focusNode.offset.dy +
                                   //     _descriptionController
                                   //         .selection.baseOffset -

@@ -222,15 +222,9 @@ class UpdateView extends StatelessWidget {
                     )
                   : Container(),
               for (int i = 0; i < updates.length; i++)
-                _buildDetail(
-                    DateFormat('hh:mma |')
-                        .format(updates[i].modifiedOn)
-                        .toLowerCase(),
-                    updates[i].modifiedOn,
-                    updates[i].description,
-                    prayerData.tags,
-                    context),
-              _buildDetail('Initial Prayer |', prayerData.prayer.createdOn,
+                _buildDetail('', updates[i].modifiedOn, updates[i].description,
+                    prayerData.tags, context),
+              _buildDetail('Initial Prayer | ', prayerData.prayer.createdOn,
                   prayerData.prayer.description, prayerData.tags, context),
             ],
           ),
@@ -247,16 +241,30 @@ class UpdateView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(right: 30),
+                // margin: EdgeInsets.only(right: 30),
                 child: Row(
                   children: <Widget>[
                     Text(
-                      DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(modifiedOn)
-                          .toLowerCase(),
+                      time,
                       style: AppTextStyles.regularText18b
                           .copyWith(color: AppColors.prayeModeBorder),
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    time != ''
+                        ? Text(
+                            DateFormat('MM.dd.yyyy')
+                                .format(modifiedOn)
+                                .toLowerCase(),
+                            style: AppTextStyles.regularText18b
+                                .copyWith(color: AppColors.prayeModeBorder),
+                          )
+                        : Text(
+                            DateFormat('hh:mma | MM.dd.yyyy')
+                                .format(modifiedOn)
+                                .toLowerCase(),
+                            style: AppTextStyles.regularText18b
+                                .copyWith(color: AppColors.prayeModeBorder),
+                          ),
                   ],
                 ),
               ),
