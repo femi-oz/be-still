@@ -254,17 +254,6 @@ class _PrayerCardState extends State<PrayerCard> {
                             children: <Widget>[
                               Row(
                                 children: [
-                                  widget.prayerData.userPrayer.isFavorite
-                                      ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 5),
-                                          child: Icon(
-                                            Icons.favorite,
-                                            color: AppColors.lightBlue3,
-                                            size: 13,
-                                          ),
-                                        )
-                                      : SizedBox(),
                                   widget.prayerData.prayer.isAnswer
                                       ? Padding(
                                           padding: const EdgeInsets.symmetric(
@@ -361,6 +350,17 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
+                                  widget.prayerData.userPrayer.isFavorite
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 5),
+                                          child: Icon(
+                                            Icons.favorite,
+                                            color: AppColors.lightBlue3,
+                                            size: 13,
+                                          ),
+                                        )
+                                      : SizedBox(),
                                 ],
                               ),
                               Expanded(
