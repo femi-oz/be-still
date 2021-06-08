@@ -93,7 +93,6 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          await Future.delayed(Duration(milliseconds: 1000));
           BeStilDialog.hideLoading(context);
           widget.setCurrentIndex(0, true);
         } else {
@@ -102,25 +101,33 @@ class _AddPrayerState extends State<AddPrayer> {
           List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (!_descriptionController.text
-                .toLowerCase()
-                .contains(element.displayName.toLowerCase())) {
-              textList.add(element);
-            }
-            widget.prayerData.updates.forEach((update) {
-              if (!update.description
+            if (widget.prayerData.updates.length == 0) {
+              if (!_descriptionController.text
                   .toLowerCase()
                   .contains(element.displayName.toLowerCase())) {
                 textList.add(element);
               }
-            });
+            } else {
+              widget.prayerData.updates.forEach((update) {
+                if (!_descriptionController.text
+                        .toLowerCase()
+                        .contains(element.displayName.toLowerCase()) &&
+                    !update.description
+                        .toLowerCase()
+                        .contains(element.displayName.toLowerCase())) {
+                  textList.add(element);
+                }
+                if (update.description
+                    .toLowerCase()
+                    .contains(element.displayName.toLowerCase())) {
+                  textList.remove(element);
+                }
+              });
+            }
           });
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
-            }
-            if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
-              contacts = [...contacts, s];
             }
           });
 
@@ -131,7 +138,6 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -440,7 +446,6 @@ class _AddPrayerState extends State<AddPrayer> {
                           Padding(
                             padding: const EdgeInsets.only(top: 30.0),
                             child: Form(
-                              // autovalidateMode: AutovalidateMode.onUserInteraction,
                               autovalidate: _autoValidate,
                               key: _formKey,
                               child: Container(
@@ -468,13 +473,6 @@ class _AddPrayerState extends State<AddPrayer> {
                                       left: _focusNode.offset.dx),
                                   height:
                                       MediaQuery.of(context).size.height * 0.4,
-                                  // top: _focusNode.offset.dy +
-                                  //     _descriptionController
-                                  //         .selection.baseOffset -
-                                  //     80,
-                                  // left: _focusNode.offset.dx,
-                                  // height:
-                                  //     MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:

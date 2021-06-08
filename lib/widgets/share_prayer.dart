@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -27,6 +29,7 @@ class _SharePrayerState extends State<SharePrayer> {
   String _textUpdatesToString;
 
   _emailLink([bool isChurch = false]) async {
+    final _break = '</br>';
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
@@ -36,12 +39,13 @@ class _SharePrayerState extends State<SharePrayer> {
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
     var _footerText =
-        'This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. \n\n%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
+        "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends.  $_break$_break%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E";
+
     final Uri params = Uri(
         scheme: 'mailto',
         path: isChurch ? _churchEmail : '',
         query:
-            "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} \n$_prayer \n\n${_emailUpdatesToString != '' ? ' $_emailUpdatesToString \n\n\n' : ''}$_footerText");
+            "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
 
     var url = params.toString();
     if (await canLaunch(url)) {
@@ -72,14 +76,15 @@ class _SharePrayerState extends State<SharePrayer> {
   }
 
   initState() {
+    final _break = '</br>';
     var emailUpdates = [];
     widget.prayerData.updates.forEach((u) => emailUpdates.add(
-        '${DateFormat('dd MMMM yyyy').format(u.createdOn)}\n${u.description}'));
+        '${DateFormat('dd MMMM yyyy').format(u.createdOn)}$_break${u.description}'));
     var textUpdates = [];
     widget.prayerData.updates.forEach((u) => textUpdates.add(
         '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn)})'));
 
-    _emailUpdatesToString = emailUpdates.join("\n\n");
+    _emailUpdatesToString = emailUpdates.join("$_break$_break");
     _textUpdatesToString = textUpdates.join(" ");
     super.initState();
   }
