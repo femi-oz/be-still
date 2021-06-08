@@ -411,13 +411,10 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey),
-                            ),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
                           ),
                           onTap: isValid
                               ? () => onCancel()
@@ -434,27 +431,26 @@ class _AddPrayerState extends State<AddPrayer> {
                                     },
                         ),
                         InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('SAVE',
-                                style: AppTextStyles.boldText18.copyWith(
-                                    color: !isValid
-                                        ? AppColors.lightBlue5.withOpacity(0.5)
-                                        : Colors.blue)),
-                          ),
+                          child: Text('SAVE',
+                              style: AppTextStyles.boldText18.copyWith(
+                                  color: !isValid
+                                      ? AppColors.lightBlue5.withOpacity(0.5)
+                                      : Colors.blue)),
                           onTap: () => isValid ? _save() : null,
                         ),
                       ],
                     ),
                   ),
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Stack(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 30.0),
+                      decoration: BoxDecoration(
+                          color: AppColors.textFieldBackgroundColor,
+                          border: Border.all(color: AppColors.lightBlue4),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 30.0,
-                            ),
+                          Expanded(
                             child: Form(
                               // autovalidateMode: AutovalidateMode.onUserInteraction,
                               autovalidate: _autoValidate,
@@ -470,24 +466,24 @@ class _AddPrayerState extends State<AddPrayer> {
                                   textInputAction: TextInputAction.newline,
                                   onTextchanged: (val) => _onTextChange(val),
                                   focusNode: _focusNode,
+                                  hasBorder: false,
                                 ),
                               ),
                             ),
                           ),
                           tagText.length > 0
                               ? Container(
-                                  margin: EdgeInsets.only(
-                                      top: _focusNode.offset.dy * numberOfLines,
-                                      left: _focusNode.offset.dx),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          width: 2.0,
+                                          color: AppColors.textFieldBorder),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.only(
+                                      top: 10, left: 20, right: 20),
                                   height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                  // top: _focusNode.offset.dy +
-                                  //     _descriptionController
-                                  //         .selection.baseOffset -
-                                  //     80,
-                                  // left: _focusNode.offset.dx,
-                                  // height:
-                                  //     MediaQuery.of(context).size.height * 0.2,
+                                      MediaQuery.of(context).size.height * 0.2,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
@@ -501,7 +497,16 @@ class _AddPrayerState extends State<AddPrayer> {
                                               .contains(
                                                   tagText.toLowerCase())) {
                                             return GestureDetector(
-                                                child: Padding(
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                          width: 1.0,
+                                                          color: AppColors
+                                                              .textFieldBorder),
+                                                    ),
+                                                  ),
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.0),
                                                   child: Text(
@@ -509,9 +514,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                                     style: AppTextStyles
                                                         .regularText14
                                                         .copyWith(
-                                                      color:
-                                                          AppColors.lightBlue4,
-                                                    ),
+                                                            color: AppColors
+                                                                .lightBlue4,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
                                                   ),
                                                 ),
                                                 onTap: () => _onTagSelected(s));
@@ -547,7 +554,6 @@ class _AddPrayerState extends State<AddPrayer> {
               ),
             ),
           ),
-          // ),
         ),
       ),
     );
