@@ -57,10 +57,7 @@ class _PrayerCardState extends State<PrayerCard> {
       await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
           widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
-      // await Future.delayed(Duration(milliseconds: 300),
-      //     () => {BeStilDialog.hideLoading(context)});
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -85,17 +82,13 @@ class _PrayerCardState extends State<PrayerCard> {
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
-
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -112,10 +105,7 @@ class _PrayerCardState extends State<PrayerCard> {
           DateTime.now(),
           widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
-      // await Future.delayed(Duration(milliseconds: 300),
-      //     () => {BeStilDialog.hideLoading(context)});
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -140,16 +130,13 @@ class _PrayerCardState extends State<PrayerCard> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -164,16 +151,12 @@ class _PrayerCardState extends State<PrayerCard> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-      // await Future.delayed(Duration(milliseconds: 300),
-      //     () => {BeStilDialog.hideLoading(context)});
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;

@@ -145,20 +145,17 @@ class _AddUpdateState extends State<AddUpdate> {
               .addPrayerTag(
                   contacts, user, _descriptionController.text, prayerId);
         }
-        // await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
 
         Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false);
       }
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;

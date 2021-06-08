@@ -53,6 +53,7 @@ class _AddPrayerState extends State<AddPrayer> {
   String displayName = '';
   List<String> tagList = [];
   var displayname = [];
+  double numberOfLines = 5.0;
 
   Future<void> _save() async {
     FocusScope.of(context).unfocus();
@@ -139,7 +140,6 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          // await Future.delayed(Duration(milliseconds: 300));
           BeStilDialog.hideLoading(context);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -203,7 +203,13 @@ class _AddPrayerState extends State<AddPrayer> {
           text: val,
         ),
       );
+
       painter.layout();
+      var lines = painter.computeLineMetrics();
+      setState(() {
+        numberOfLines = lines.length.toDouble();
+      });
+      print(numberOfLines);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -446,7 +452,9 @@ class _AddPrayerState extends State<AddPrayer> {
                       child: Stack(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(top: 30.0),
+                            padding: const EdgeInsets.only(
+                              top: 30.0,
+                            ),
                             child: Form(
                               // autovalidateMode: AutovalidateMode.onUserInteraction,
                               autovalidate: _autoValidate,
@@ -468,11 +476,8 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                           tagText.length > 0
                               ? Container(
-                                  padding: EdgeInsets.only(
-                                      top: _focusNode.offset.dy +
-                                          _descriptionController
-                                              .selection.baseOffset -
-                                          80,
+                                  margin: EdgeInsets.only(
+                                      top: _focusNode.offset.dy * numberOfLines,
                                       left: _focusNode.offset.dx),
                                   height:
                                       MediaQuery.of(context).size.height * 0.4,
