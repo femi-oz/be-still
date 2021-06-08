@@ -29,29 +29,32 @@ class CustomInput extends StatefulWidget {
   final FocusNode focusNode;
   final bool isSearch;
   final GlobalKey textkey;
+  final bool hasBorder;
 
-  CustomInput(
-      {this.maxLines = 1,
-      @required this.label,
-      this.color,
-      this.isPassword = false,
-      @required this.controller,
-      this.textkey,
-      this.showSuffix = true,
-      this.textInputAction = TextInputAction.done,
-      this.submitForm,
-      this.onTextchanged,
-      this.keyboardType,
-      this.isRequired = false,
-      this.validator,
-      this.obScurePassword = false,
-      this.padding = 20.0,
-      this.isPhone = false,
-      this.isEmail = false,
-      this.isLink = false,
-      this.unfocus = false,
-      this.isSearch = false,
-      this.focusNode});
+  CustomInput({
+    this.maxLines = 1,
+    @required this.label,
+    this.color,
+    this.isPassword = false,
+    @required this.controller,
+    this.textkey,
+    this.showSuffix = true,
+    this.textInputAction = TextInputAction.done,
+    this.submitForm,
+    this.onTextchanged,
+    this.keyboardType,
+    this.isRequired = false,
+    this.validator,
+    this.obScurePassword = false,
+    this.padding = 20.0,
+    this.isPhone = false,
+    this.isEmail = false,
+    this.isLink = false,
+    this.unfocus = false,
+    this.isSearch = false,
+    this.hasBorder = true,
+    this.focusNode,
+  });
 
   @override
   _CustomInputState createState() => _CustomInputState();
@@ -97,12 +100,18 @@ class _CustomInputState extends State<CustomInput> {
           border: OutlineInputBorder(),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppColors.lightBlue4.withOpacity(0.5),
+              color: widget.hasBorder
+                  ? AppColors.lightBlue4.withOpacity(0.5)
+                  : Colors.transparent,
               width: 1.0,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.lightBlue4, width: 1.0),
+            borderSide: BorderSide(
+                color: widget.hasBorder
+                    ? AppColors.lightBlue4
+                    : Colors.transparent,
+                width: 1.0),
           ),
           fillColor: AppColors.textFieldBackgroundColor,
           filled: true,
