@@ -147,7 +147,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       setState(() {});
       if (widget.type == NotificationType.reminder)
@@ -184,7 +184,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-      await Future.delayed(Duration(milliseconds: 300));
+      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
       setState(() {});
@@ -269,13 +269,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
             selectedYear.toString(),
           );
       } on HttpException catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
+        // await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(context, e, user, s);
       } catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
+        // await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -294,13 +294,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
         else
           widget.onCancel();
       } on HttpException catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
+        // await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(context, e, user, s);
       } catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
+        // await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
