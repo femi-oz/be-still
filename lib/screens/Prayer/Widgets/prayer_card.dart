@@ -60,7 +60,6 @@ class _PrayerCardState extends State<PrayerCard> {
       // await Future.delayed(Duration(milliseconds: 300),
       //     () => {BeStilDialog.hideLoading(context)});
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -89,13 +88,11 @@ class _PrayerCardState extends State<PrayerCard> {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -115,7 +112,6 @@ class _PrayerCardState extends State<PrayerCard> {
       // await Future.delayed(Duration(milliseconds: 300),
       //     () => {BeStilDialog.hideLoading(context)});
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -143,13 +139,11 @@ class _PrayerCardState extends State<PrayerCard> {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -167,13 +161,11 @@ class _PrayerCardState extends State<PrayerCard> {
       // await Future.delayed(Duration(milliseconds: 300),
       //     () => {BeStilDialog.hideLoading(context)});
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -256,8 +248,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                 children: [
                                   widget.prayerData.prayer.isAnswer
                                       ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 5),
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5, right: 8),
                                           child: Icon(
                                             AppIcons.bestill_answered,
                                             size: 12,
@@ -267,8 +259,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : SizedBox(),
                                   widget.prayerData.userPrayer.isSnoozed
                                       ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 5),
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5, right: 8),
                                           child: Icon(
                                             AppIcons.snooze,
                                             size: 14,
@@ -328,10 +320,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                               },
                                             ),
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 5),
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, bottom: 5, right: 8),
                                               child: Icon(
                                                 AppIcons.bestill_reminder,
                                                 size: 12,
@@ -352,12 +342,12 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : Container(),
                                   widget.prayerData.userPrayer.isFavorite
                                       ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 5),
+                                          padding: const EdgeInsets.only(
+                                              top: 3, bottom: 3, right: 8),
                                           child: Icon(
                                             Icons.favorite,
                                             color: AppColors.lightBlue3,
-                                            size: 13,
+                                            size: 14,
                                           ),
                                         )
                                       : SizedBox(),

@@ -173,14 +173,11 @@ class _EntryScreenState extends State<EntryScreen>
     try {
       await Provider.of<DevotionalProvider>(context, listen: false)
           .getDevotionals();
-      // await Future.delayed(Duration(milliseconds: 300));
     } on HttpException catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // await Future.delayed(Duration(milliseconds: 300));
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
