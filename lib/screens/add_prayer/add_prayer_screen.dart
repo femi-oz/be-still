@@ -179,8 +179,9 @@ class _AddPrayerState extends State<AddPrayer> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(new RegExp(r"\s"));
-
+      // tags = val.split(new RegExp(r"\s"));
+      tags = val.split(' ');
+      print(tags);
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
@@ -209,7 +210,6 @@ class _AddPrayerState extends State<AddPrayer> {
       setState(() {
         numberOfLines = lines.length.toDouble();
       });
-      print(numberOfLines);
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -387,6 +387,8 @@ class _AddPrayerState extends State<AddPrayer> {
   Widget build(BuildContext context) {
     bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
         (widget.isEdit && _oldDescription != _descriptionController.text);
+
+    print(_descriptionController.selection.base.offset);
 
     return WillPopScope(
       onWillPop: _onWillPop,
