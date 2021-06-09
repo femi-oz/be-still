@@ -39,15 +39,17 @@ class _SharePrayerState extends State<SharePrayer> {
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
     var _footerText =
-        "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends.  $_break$_break%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E";
-
-    final Uri params = Uri(
-        scheme: 'mailto',
-        path: isChurch ? _churchEmail : '',
-        query:
-            "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
-
-    var url = params.toString();
+        "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends.  $_break$_break"; //
+    //%3Ca%20href=https://www.bestillapp.com%3ELearn%20More%3C/a%3E
+    // final Uri params = Uri(
+    //     scheme: 'mailto',
+    //     path: isChurch ? _churchEmail : '',
+    //     query:
+    //         "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+    var params = Uri.encodeFull(
+        "mailto: ${isChurch ? _churchEmail : ''}?subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+    var url = params.toString() +
+        '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
