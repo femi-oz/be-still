@@ -503,7 +503,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      0.3,
+                                                      0.5,
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.0),
                                                   child: Text(

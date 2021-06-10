@@ -403,7 +403,12 @@ class _AddUpdateState extends State<AddUpdate> {
                                                 .contains(
                                                     tagText.toLowerCase())) {
                                               return GestureDetector(
-                                                  child: Padding(
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.5,
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             vertical: 10.0),
