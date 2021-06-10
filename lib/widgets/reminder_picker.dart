@@ -146,7 +146,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-
       BeStilDialog.hideLoading(context);
       setState(() {});
       if (widget.type == NotificationType.reminder)
@@ -183,7 +182,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-
       BeStilDialog.hideLoading(context);
 
       setState(() {});

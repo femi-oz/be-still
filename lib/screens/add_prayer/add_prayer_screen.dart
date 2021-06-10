@@ -53,6 +53,7 @@ class _AddPrayerState extends State<AddPrayer> {
   String displayName = '';
   List<String> tagList = [];
   var displayname = [];
+  double numberOfLines = 5.0;
 
   Future<void> _save() async {
     FocusScope.of(context).unfocus();
@@ -178,7 +179,6 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
-
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
@@ -201,7 +201,12 @@ class _AddPrayerState extends State<AddPrayer> {
           text: val,
         ),
       );
+
       painter.layout();
+      var lines = painter.computeLineMetrics();
+      setState(() {
+        numberOfLines = lines.length.toDouble();
+      });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
@@ -379,6 +384,20 @@ class _AddPrayerState extends State<AddPrayer> {
   Widget build(BuildContext context) {
     bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
         (widget.isEdit && _oldDescription != _descriptionController.text);
+    var positionOffset = 3.0;
+    var positionOffset2 = 0.0;
+
+    if (numberOfLines == 1.0) {
+      positionOffset2 = 25;
+    } else if (numberOfLines == 2.0) {
+      positionOffset2 = 15;
+    } else if (numberOfLines == 3.0) {
+      positionOffset2 = 12;
+    } else if (numberOfLines > 8) {
+      positionOffset2 = 8;
+    } else {
+      positionOffset2 = 10;
+    }
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -403,13 +422,10 @@ class _AddPrayerState extends State<AddPrayer> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey),
-                            ),
+                          child: Text(
+                            'CANCEL',
+                            style: AppTextStyles.boldText18
+                                .copyWith(color: AppColors.grey),
                           ),
                           onTap: isValid
                               ? () => onCancel()
@@ -426,14 +442,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                     },
                         ),
                         InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('SAVE',
-                                style: AppTextStyles.boldText18.copyWith(
-                                    color: !isValid
-                                        ? AppColors.lightBlue5.withOpacity(0.5)
-                                        : Colors.blue)),
-                          ),
+                          child: Text('SAVE',
+                              style: AppTextStyles.boldText18.copyWith(
+                                  color: !isValid
+                                      ? AppColors.lightBlue5.withOpacity(0.5)
+                                      : Colors.blue)),
                           onTap: () => isValid ? _save() : null,
                         ),
                       ],
@@ -464,13 +477,13 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                           tagText.length > 0
-                              ? Container(
-                                  padding: EdgeInsets.only(
-                                      top: _focusNode.offset.dy +
-                                          _descriptionController
-                                              .selection.baseOffset -
-                                          80,
-                                      left: _focusNode.offset.dx),
+                              ? Positioned(
+                                  top: ((numberOfLines * positionOffset) *
+                                          positionOffset2) +
+                                      (_descriptionController
+                                              .selection.baseOffset /
+                                          3),
+                                  left: _focusNode.offset.dx,
                                   height:
                                       MediaQuery.of(context).size.height * 0.4,
                                   child: SingleChildScrollView(
@@ -486,7 +499,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                               .contains(
                                                   tagText.toLowerCase())) {
                                             return GestureDetector(
-                                                child: Padding(
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.5,
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.0),
                                                   child: Text(

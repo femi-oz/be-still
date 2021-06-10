@@ -62,7 +62,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       await LocalNotification.unschedule(localNotificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .deleteLocalNotification(notificationId);
-
       BeStilDialog.hideLoading(context);
       setState(() {});
     } on HttpException catch (e, s) {

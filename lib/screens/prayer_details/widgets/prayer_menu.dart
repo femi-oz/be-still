@@ -56,20 +56,18 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -82,7 +80,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unfavoritePrayer(prayerData.userPrayer.id);
-
       BeStilDialog.hideLoading(context);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
@@ -90,16 +87,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // await Future.delayed(Duration(milliseconds: 300),
-      //     () => {BeStilDialog.hideLoading(context)});
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // await Future.delayed(Duration(milliseconds: 300),
-      //     () => {BeStilDialog.hideLoading(context)});
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -119,19 +112,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
+
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -285,8 +276,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+
+      BeStilDialog.hideLoading(context);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -304,13 +295,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   void _unMarkAsAnswered(CombinePrayerStream prayerData) async {
-    // BeStilDialog.showLoading(context);
+    BeStilDialog.showLoading(context);
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               prayerData.prayer.id, prayerData.userPrayer.id);
-      // await Future.delayed(Duration(milliseconds: 300),
-      //     () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -333,9 +323,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unArchivePrayer(prayerData.userPrayer.id, prayerData.prayer.id);
+      BeStilDialog.hideLoading(context);
 
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     } catch (e, s) {
@@ -352,9 +341,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
           prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
-
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
+      BeStilDialog.hideLoading(context);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -383,9 +370,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
 
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     } on HttpException catch (e, s) {

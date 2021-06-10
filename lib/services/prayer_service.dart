@@ -440,7 +440,7 @@ class PrayerService {
       final data = {
         'IsArchived': true,
         'Status': Status.inactive,
-        'IsFavourite': false,
+        'IsFavourite': true,
         'ArchivedDate': DateTime.now(),
         'IsSnoozed': false
       };

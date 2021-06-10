@@ -42,6 +42,7 @@ class _AddUpdateState extends State<AddUpdate> {
   bool showNoContact = false;
   String displayName = '';
   List<String> tagList = [];
+  double numberOfLines = 5.0;
 
   @override
   void initState() {
@@ -87,6 +88,10 @@ class _AddUpdateState extends State<AddUpdate> {
         ),
       );
       painter.layout();
+      var lines = painter.computeLineMetrics();
+      setState(() {
+        numberOfLines = lines.length.toDouble();
+      });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
@@ -145,7 +150,6 @@ class _AddUpdateState extends State<AddUpdate> {
               .addPrayerTag(
                   contacts, user, _descriptionController.text, prayerId);
         }
-
         BeStilDialog.hideLoading(context);
 
         Navigator.of(context).pushNamedAndRemoveUntil(
@@ -295,9 +299,20 @@ class _AddUpdateState extends State<AddUpdate> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    // _descriptionController.selection = TextSelection.fromPosition(
-    //     TextPosition(offset: _descriptionController.text.length));
-    // print(_descriptionController.selection.toString());
+    var positionOffset = 3.0;
+    var positionOffset2 = 0.0;
+
+    if (numberOfLines == 1.0) {
+      positionOffset2 = 25;
+    } else if (numberOfLines == 2.0) {
+      positionOffset2 = 15;
+    } else if (numberOfLines == 3.0) {
+      positionOffset2 = 12;
+    } else if (numberOfLines > 8) {
+      positionOffset2 = 8;
+    } else {
+      positionOffset2 = 10;
+    }
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -366,13 +381,13 @@ class _AddUpdateState extends State<AddUpdate> {
                               ),
                             ),
                             tagText.length > 0
-                                ? Container(
-                                    padding: EdgeInsets.only(
-                                        top: _focusNode.offset.dy +
-                                            _descriptionController
-                                                .selection.baseOffset -
-                                            80,
-                                        left: _focusNode.offset.dx),
+                                ? Positioned(
+                                    top: ((numberOfLines * positionOffset) *
+                                            positionOffset2) +
+                                        (_descriptionController
+                                                .selection.baseOffset /
+                                            3),
+                                    left: _focusNode.offset.dx,
                                     height: MediaQuery.of(context).size.height *
                                         0.4,
                                     child: SingleChildScrollView(
@@ -388,7 +403,12 @@ class _AddUpdateState extends State<AddUpdate> {
                                                 .contains(
                                                     tagText.toLowerCase())) {
                                               return GestureDetector(
-                                                  child: Padding(
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.5,
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             vertical: 10.0),
