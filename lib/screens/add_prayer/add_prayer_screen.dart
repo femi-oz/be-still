@@ -94,7 +94,6 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          // await Future.delayed(Duration(milliseconds: 1000));
           BeStilDialog.hideLoading(context);
           widget.setCurrentIndex(0, true);
         } else {
@@ -179,8 +178,7 @@ class _AddPrayerState extends State<AddPrayer> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      // tags = val.split(new RegExp(r"\s"));
-      tags = val.split(' ');
+      tags = val.split(new RegExp(r"\s"));
       print(tags);
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
@@ -388,8 +386,6 @@ class _AddPrayerState extends State<AddPrayer> {
     bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
         (widget.isEdit && _oldDescription != _descriptionController.text);
 
-    print(_descriptionController.selection.base.offset);
-
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -444,17 +440,12 @@ class _AddPrayerState extends State<AddPrayer> {
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 30.0),
-                      decoration: BoxDecoration(
-                          color: AppColors.textFieldBackgroundColor,
-                          border: Border.all(color: AppColors.lightBlue4),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Column(
+                    child: SingleChildScrollView(
+                      child: Stack(
                         children: [
-                          Expanded(
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
                             child: Form(
-                              // autovalidateMode: AutovalidateMode.onUserInteraction,
                               autovalidate: _autoValidate,
                               key: _formKey,
                               child: Container(
@@ -468,24 +459,19 @@ class _AddPrayerState extends State<AddPrayer> {
                                   textInputAction: TextInputAction.newline,
                                   onTextchanged: (val) => _onTextChange(val),
                                   focusNode: _focusNode,
-                                  hasBorder: false,
                                 ),
                               ),
                             ),
                           ),
                           tagText.length > 0
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      top: BorderSide(
-                                          width: 2.0,
-                                          color: AppColors.textFieldBorder),
-                                    ),
-                                  ),
-                                  padding: EdgeInsets.only(
-                                      top: 10, left: 20, right: 20),
+                              ? Positioned(
+                                  top: _focusNode.offset.dy +
+                                      _descriptionController
+                                          .selection.baseOffset -
+                                      60,
+                                  left: _focusNode.offset.dx,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.2,
+                                      MediaQuery.of(context).size.height * 0.4,
                                   child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
@@ -499,16 +485,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                               .contains(
                                                   tagText.toLowerCase())) {
                                             return GestureDetector(
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      bottom: BorderSide(
-                                                          width: 1.0,
-                                                          color: AppColors
-                                                              .textFieldBorder),
-                                                    ),
-                                                  ),
+                                                child: Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.0),
                                                   child: Text(
@@ -516,11 +493,9 @@ class _AddPrayerState extends State<AddPrayer> {
                                                     style: AppTextStyles
                                                         .regularText14
                                                         .copyWith(
-                                                            color: AppColors
-                                                                .lightBlue4,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                    ),
                                                   ),
                                                 ),
                                                 onTap: () => _onTagSelected(s));
@@ -556,6 +531,7 @@ class _AddPrayerState extends State<AddPrayer> {
               ),
             ),
           ),
+          // ),
         ),
       ),
     );

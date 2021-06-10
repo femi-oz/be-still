@@ -348,10 +348,10 @@ class _AddUpdateState extends State<AddUpdate> {
                     decoration: BoxDecoration(
                         color: AppColors.textFieldBackgroundColor,
                         border: Border.all(
-                            color: tagText.length > 0
-                                ? AppColors.lightBlue4
-                                : AppColors.white,
-                            ),
+                          color: tagText.length > 0
+                              ? AppColors.lightBlue4
+                              : AppColors.white,
+                        ),
                         borderRadius: BorderRadius.circular(5)),
                     child: Column(
                       children: [
