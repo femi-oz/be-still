@@ -42,6 +42,7 @@ class _AddUpdateState extends State<AddUpdate> {
   bool showNoContact = false;
   String displayName = '';
   List<String> tagList = [];
+  double numberOfLines = 5.0;
 
   @override
   void initState() {
@@ -87,6 +88,10 @@ class _AddUpdateState extends State<AddUpdate> {
         ),
       );
       painter.layout();
+      var lines = painter.computeLineMetrics();
+      setState(() {
+        numberOfLines = lines.length.toDouble();
+      });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
@@ -294,9 +299,20 @@ class _AddUpdateState extends State<AddUpdate> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    // _descriptionController.selection = TextSelection.fromPosition(
-    //     TextPosition(offset: _descriptionController.text.length));
-    // print(_descriptionController.selection.toString());
+    var positionOffset = 3.0;
+    var positionOffset2 = 0.0;
+
+    if (numberOfLines == 1.0) {
+      positionOffset2 = 25;
+    } else if (numberOfLines == 2.0) {
+      positionOffset2 = 15;
+    } else if (numberOfLines == 3.0) {
+      positionOffset2 = 12;
+    } else if (numberOfLines > 8) {
+      positionOffset2 = 8;
+    } else {
+      positionOffset2 = 10;
+    }
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -343,23 +359,14 @@ class _AddUpdateState extends State<AddUpdate> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 30.0),
-                    decoration: BoxDecoration(
-                        color: AppColors.textFieldBackgroundColor,
-                        border: Border.all(
-                          color: tagText.length > 0
-                              ? AppColors.lightBlue4
-                              : AppColors.white,
-                        ),
-                        borderRadius: BorderRadius.circular(5)),
+                  child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Expanded(
-                          child: Form(
-                            autovalidate: _autoValidate,
-                            key: _formKey,
-                            child: Container(
+                        Stack(
+                          children: [
+                            Form(
+                              autovalidate: _autoValidate,
+                              key: _formKey,
                               child: CustomInput(
                                 textkey: _prayerKey,
                                 label: "Enter your prayer update here",
@@ -371,251 +378,219 @@ class _AddUpdateState extends State<AddUpdate> {
                                 focusNode: _focusNode,
                                 onTextchanged: (val) => _onTextChange(val),
                                 isSearch: false,
-                                hasBorder: tagText.length > 0 ? false : true,
                               ),
                             ),
-                          ),
-                        ),
-                        tagText.length > 0
-                            ? Container(
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                  top: BorderSide(
-                                      width: 2.0,
-                                      color: AppColors.textFieldBorder),
-                                )),
-                                padding: EdgeInsets.only(
-                                    top: 10, left: 20, right: 20, bottom: 20),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.2,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...localContacts.map((s) {
-                                        displayName = s.displayName ?? '';
+                            tagText.length > 0
+                                ? Positioned(
+                                    top: ((numberOfLines * positionOffset) *
+                                            positionOffset2) +
+                                        (_descriptionController
+                                                .selection.baseOffset /
+                                            3),
+                                    left: _focusNode.offset.dx,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.4,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ...localContacts.map((s) {
+                                            displayName = s.displayName ?? '';
 
-                                        if (('@' + s.displayName)
-                                            .toLowerCase()
-                                            .contains(tagText.toLowerCase())) {
-                                          return GestureDetector(
-                                              child: Container(
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                        width: 1.0,
+                                            if (('@' + s.displayName)
+                                                .toLowerCase()
+                                                .contains(
+                                                    tagText.toLowerCase())) {
+                                              return GestureDetector(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10.0),
+                                                    child: Text(
+                                                      displayName,
+                                                      style: AppTextStyles
+                                                          .regularText14
+                                                          .copyWith(
                                                         color: AppColors
-                                                            .textFieldBorder),
+                                                            .lightBlue4,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10.0),
-                                                child: Text(
-                                                  displayName,
-                                                  style: AppTextStyles
-                                                      .regularText14
-                                                      .copyWith(
-                                                    color: AppColors.lightBlue4,
-                                                  ),
-                                                ),
-                                              ),
-                                              onTap: () => _onTagSelected(s));
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      }).toList(),
-                                      tagList.length == 0
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                                  onTap: () =>
+                                                      _onTagSelected(s));
+                                            } else {
+                                              return SizedBox();
+                                            }
+                                          }).toList(),
+                                          tagList.length == 0
+                                              ? Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       vertical: 10.0),
-                                              child: Text(
-                                                'No matching contacts found.',
-                                                style: AppTextStyles
-                                                    .regularText14
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : SizedBox(),
-                        tagText.length > 0
-                            ? Container()
-                            : Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: AppColors.lightBlue3,
-                                      width: 0.8,
+                                                  child: Text(
+                                                    'No matching contacts found.',
+                                                    style: AppTextStyles
+                                                        .regularText14
+                                                        .copyWith(
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container()
+                                        ],
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  margin: EdgeInsets.only(top: 20),
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(20),
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        prayerData.prayer.userId !=
-                                                currentUser.id
-                                            ? Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 20),
-                                                child: Text(
-                                                  prayerData.prayer.createdBy,
+                                  )
+                                : SizedBox(),
+                          ],
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.lightBlue3,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          margin: EdgeInsets.only(top: 20),
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              prayerData.prayer.userId != currentUser.id
+                                  ? Container(
+                                      margin: EdgeInsets.only(bottom: 20),
+                                      child: Text(
+                                        prayerData.prayer.createdBy,
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                                color: AppColors.lightBlue4),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  : Container(),
+                              ...prayerData.updates.map(
+                                (u) => Container(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.only(right: 30),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  intl.DateFormat(
+                                                          'hh:mma | MM.dd.yyyy')
+                                                      .format(u.modifiedOn),
                                                   style: AppTextStyles
-                                                      .regularText16b
+                                                      .regularText18b
                                                       .copyWith(
                                                           color: AppColors
-                                                              .lightBlue4),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              )
-                                            : Container(),
-                                        ...prayerData.updates.map(
-                                          (u) => Container(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          right: 30),
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            intl.DateFormat(
-                                                                    'hh:mma | MM.dd.yyyy')
-                                                                .format(u
-                                                                    .modifiedOn),
-                                                            style: AppTextStyles
-                                                                .regularText18b
-                                                                .copyWith(
-                                                                    color: AppColors
-                                                                        .prayeModeBorder),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Divider(
-                                                        color: AppColors
-                                                            .lightBlue3,
-                                                        thickness: 1,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Container(
-                                                  child: Padding(
-                                                    padding: EdgeInsets.all(20),
-                                                    child: Center(
-                                                      child: Text(
-                                                        u.description,
-                                                        style: AppTextStyles
-                                                            .regularText16b
-                                                            .copyWith(
-                                                                color: AppColors
-                                                                    .lightBlue3),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                              .prayeModeBorder),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        right: 30),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          'Initial Prayer |',
-                                                          style: AppTextStyles
-                                                              .regularText18b
-                                                              .copyWith(
-                                                                  color: AppColors
-                                                                      .prayeModeBorder),
-                                                        ),
-                                                        Text(
-                                                          intl.DateFormat(
-                                                                  ' MM.dd.yyyy')
-                                                              .format(prayerData
-                                                                  .prayer
-                                                                  .modifiedOn),
-                                                          style: AppTextStyles
-                                                              .regularText18b
-                                                              .copyWith(
-                                                                  color: AppColors
-                                                                      .prayeModeBorder),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Divider(
+                                          Expanded(
+                                            child: Divider(
+                                              color: AppColors.lightBlue3,
+                                              thickness: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(20),
+                                          child: Center(
+                                            child: Text(
+                                              u.description,
+                                              style: AppTextStyles
+                                                  .regularText16b
+                                                  .copyWith(
                                                       color:
-                                                          AppColors.lightBlue3,
-                                                      thickness: 1,
-                                                    ),
-                                                  ),
-                                                ],
+                                                          AppColors.lightBlue3),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(right: 30),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                'Initial Prayer |',
+                                                style: AppTextStyles
+                                                    .regularText18b
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .prayeModeBorder),
                                               ),
-                                              Container(
-                                                constraints: BoxConstraints(
-                                                  minHeight: 200,
-                                                ),
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 20.0,
-                                                      horizontal: 20),
-                                                  child: Center(
-                                                    child: Text(
-                                                      prayerData
-                                                          .prayer.description,
-                                                      style: AppTextStyles
-                                                          .regularText16b
-                                                          .copyWith(
-                                                              color: AppColors
-                                                                  .prayerTextColor),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
+                                              Text(
+                                                intl.DateFormat(' MM.dd.yyyy')
+                                                    .format(prayerData
+                                                        .prayer.modifiedOn),
+                                                style: AppTextStyles
+                                                    .regularText18b
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .prayeModeBorder),
                                               ),
                                             ],
                                           ),
                                         ),
+                                        Expanded(
+                                          child: Divider(
+                                            color: AppColors.lightBlue3,
+                                            thickness: 1,
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
+                                    Container(
+                                      constraints: BoxConstraints(
+                                        minHeight: 200,
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 20.0, horizontal: 20),
+                                        child: Center(
+                                          child: Text(
+                                            prayerData.prayer.description,
+                                            style: AppTextStyles.regularText16b
+                                                .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

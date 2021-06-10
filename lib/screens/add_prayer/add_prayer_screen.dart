@@ -179,7 +179,6 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
-      print(tags);
       setState(() {
         tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
             ? tags[tags.length - 1]
@@ -385,6 +384,20 @@ class _AddPrayerState extends State<AddPrayer> {
   Widget build(BuildContext context) {
     bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
         (widget.isEdit && _oldDescription != _descriptionController.text);
+    var positionOffset = 3.0;
+    var positionOffset2 = 0.0;
+
+    if (numberOfLines == 1.0) {
+      positionOffset2 = 25;
+    } else if (numberOfLines == 2.0) {
+      positionOffset2 = 15;
+    } else if (numberOfLines == 3.0) {
+      positionOffset2 = 12;
+    } else if (numberOfLines > 8) {
+      positionOffset2 = 8;
+    } else {
+      positionOffset2 = 10;
+    }
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -465,10 +478,11 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                           tagText.length > 0
                               ? Positioned(
-                                  top: _focusNode.offset.dy +
-                                      _descriptionController
-                                          .selection.baseOffset -
-                                      60,
+                                  top: ((numberOfLines * positionOffset) *
+                                          positionOffset2) +
+                                      (_descriptionController
+                                              .selection.baseOffset /
+                                          3),
                                   left: _focusNode.offset.dx,
                                   height:
                                       MediaQuery.of(context).size.height * 0.4,
@@ -485,7 +499,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                               .contains(
                                                   tagText.toLowerCase())) {
                                             return GestureDetector(
-                                                child: Padding(
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.3,
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.0),
                                                   child: Text(
