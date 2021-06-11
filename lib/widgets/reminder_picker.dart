@@ -12,7 +12,6 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -147,7 +146,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-
       BeStilDialog.hideLoading(context);
       setState(() {});
       if (widget.type == NotificationType.reminder)
@@ -184,7 +182,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-
       BeStilDialog.hideLoading(context);
 
       setState(() {});
@@ -235,7 +232,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
         await LocalNotification.setLocalNotification(
           context: context,
           title: title,
-          description: description,
+          description: widget.type == NotificationType.prayer_time
+              ? 'It is time to pray!'
+              : description,
           scheduledDate: scheduleDate,
           payload: jsonEncode(payload.toJson()),
           frequency: selectedFrequency,

@@ -9,6 +9,7 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,7 @@ class _SharePrayerState extends State<SharePrayer> {
   String _textUpdatesToString;
 
   _emailLink([bool isChurch = false]) async {
-    final _break = '</br>';
+    final _break = '';
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
@@ -39,20 +40,37 @@ class _SharePrayerState extends State<SharePrayer> {
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
     var _footerText =
-        "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends.  $_break$_break%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E";
+        '''This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. 
+        
+Click https://www.bestillapp.com to learn more!'''; //
+    //%3Ca%20href=https://www.bestillapp.com%3ELearn%20More%3C/a%3E
+    // final Uri params = Uri(
+    //     scheme: 'mailto',
+    //     path: isChurch ? _churchEmail : '',
+    //     query:
+    //         "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+    // // var params = Uri.encodeFull(
+    // //     "mailto: ${isChurch ? _churchEmail : ''}?subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+    // var url = params.toString() +
+    //     '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
+    final Email email = Email(
+      body:
+          '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+$_prayer   
 
-    final Uri params = Uri(
-        scheme: 'mailto',
-        path: isChurch ? _churchEmail : '',
-        query:
-            "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
+$_footerText''',
+      subject: '$name shared a prayer with you',
+      recipients: isChurch ? [_churchEmail] : [],
+      isHTML: false,
+    );
 
-    var url = params.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+    await FlutterEmailSender.send(email);
   }
 
   _textLink([bool isChurch = false]) async {
@@ -76,15 +94,17 @@ class _SharePrayerState extends State<SharePrayer> {
   }
 
   initState() {
-    final _break = '</br>';
+    // final _break = ' ';
     var emailUpdates = [];
-    widget.prayerData.updates.forEach((u) => emailUpdates.add(
-        '${DateFormat('dd MMMM yyyy').format(u.createdOn)}$_break${u.description}'));
+    widget.prayerData.updates.forEach((u) =>
+        emailUpdates.add('''${DateFormat('dd MMMM yyyy').format(u.createdOn)}
+${u.description}
+'''));
     var textUpdates = [];
     widget.prayerData.updates.forEach((u) => textUpdates.add(
         '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn)})'));
 
-    _emailUpdatesToString = emailUpdates.join("$_break$_break");
+    _emailUpdatesToString = emailUpdates.join(" ");
     _textUpdatesToString = textUpdates.join(" ");
     super.initState();
   }
