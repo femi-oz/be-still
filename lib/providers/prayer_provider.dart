@@ -247,7 +247,7 @@ class PrayerProvider with ChangeNotifier {
         .toList();
     final settings = await locator<SettingsService>().getSettings(userId);
     final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
-    final autoDeleteDuration = settings.defaultSnoozeDuration;
+    final autoDeleteDuration = settings.archiveAutoDeleteMins;
     List<CombinePrayerStream> toDelete = archivedPrayers;
     if (!autoDeleteAnswered) {
       toDelete = archivedPrayers
@@ -261,6 +261,8 @@ class PrayerProvider with ChangeNotifier {
               .add(Duration(minutes: autoDeleteDuration))
               .isBefore(DateTime.now()) &&
           autoDeleteDuration != 0) {
+        print(toDelete[i].userPrayer.id);
+
         deletePrayer(toDelete[i].userPrayer.id);
       }
     }
