@@ -42,7 +42,7 @@ class _SharePrayerState extends State<SharePrayer> {
     var _footerText =
         '''This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. 
         
-<a href="https://www.bestillapp.com">Learn More</a>'''; //
+Click https://www.bestillapp.com to learn more!'''; //
     //%3Ca%20href=https://www.bestillapp.com%3ELearn%20More%3C/a%3E
     // final Uri params = Uri(
     //     scheme: 'mailto',
@@ -61,12 +61,9 @@ class _SharePrayerState extends State<SharePrayer> {
     final Email email = Email(
       body:
           '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
-$_prayer 
-          
-          
+$_prayer   
+
 ${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
-          
-          
 $_footerText''',
       subject: '$name shared a prayer with you',
       recipients: isChurch ? [_churchEmail] : [],
@@ -101,7 +98,8 @@ $_footerText''',
     var emailUpdates = [];
     widget.prayerData.updates.forEach((u) =>
         emailUpdates.add('''${DateFormat('dd MMMM yyyy').format(u.createdOn)}
-${u.description}'''));
+${u.description}
+'''));
     var textUpdates = [];
     widget.prayerData.updates.forEach((u) => textUpdates.add(
         '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn)})'));
