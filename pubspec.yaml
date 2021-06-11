@@ -58,6 +58,7 @@ dependencies:
   firebase_crashlytics: ^2.0.2
   flutter_slidable: ^0.6.0
   tutorial_coach_mark: ^1.0.0
+  flutter_email_sender: ^5.0.0
 
 
 
