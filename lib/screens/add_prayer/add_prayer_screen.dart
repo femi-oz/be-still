@@ -184,7 +184,18 @@ class _AddPrayerState extends State<AddPrayer> {
             ? tags[tags.length - 1]
             : '';
       });
+      // String text = val;
+      // // print(text);
+      String text = val;
 
+      print(text.substring(text.lastIndexOf('@')));
+      // var newText = text.substring(text.indexOf('@'), text.indexOf(' '));
+      // if (newText.contains('@')) {
+      //   tagText = newText;
+      // } else {
+      //   tagText = '';
+      // }
+      // // print(tagText);
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
