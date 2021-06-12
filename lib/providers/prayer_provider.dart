@@ -250,7 +250,7 @@ class PrayerProvider with ChangeNotifier {
     final autoDeleteDuration = settings.archiveAutoDeleteMins;
     List<CombinePrayerStream> toDelete = archivedPrayers;
     if (!autoDeleteAnswered) {
-      toDelete = archivedPrayers
+      toDelete = toDelete
           .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
           .toList();
     }
@@ -261,8 +261,6 @@ class PrayerProvider with ChangeNotifier {
               .add(Duration(minutes: autoDeleteDuration))
               .isBefore(DateTime.now()) &&
           autoDeleteDuration != 0) {
-        print(toDelete[i].userPrayer.id);
-
         deletePrayer(toDelete[i].userPrayer.id);
       }
     }
