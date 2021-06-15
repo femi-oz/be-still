@@ -5,7 +5,6 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
@@ -13,7 +12,6 @@ import 'package:be_still/utils/local_notification.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
