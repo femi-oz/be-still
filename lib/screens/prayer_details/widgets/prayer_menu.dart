@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';

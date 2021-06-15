@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -13,7 +11,6 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SharePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;
@@ -30,7 +27,6 @@ class _SharePrayerState extends State<SharePrayer> {
   String _textUpdatesToString;
 
   _emailLink([bool isChurch = false]) async {
-    final _break = '';
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings

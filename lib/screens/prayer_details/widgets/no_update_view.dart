@@ -1,5 +1,4 @@
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

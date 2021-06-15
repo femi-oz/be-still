@@ -2,13 +2,18 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
@@ -41,10 +46,11 @@ class PrayerProvider with ChangeNotifier {
     );
   }
 
-  Future<void> checkPrayerValidity(String userId) async {
+  Future<void> checkPrayerValidity(
+      String userId, List<LocalNotificationModel> notifications) async {
     if (_firebaseAuth.currentUser == null) return null;
     if (prayers.length > 0) {
-      await _autoDeleteArchivePrayers(userId, prayers);
+      await _autoDeleteArchivePrayers(userId, prayers, notifications);
       await _unSnoozePrayerPast(prayers);
     }
   }
@@ -240,7 +246,9 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.unSnoozePrayer(snoozeEndDate, userPrayerID);
 
   Future<void> _autoDeleteArchivePrayers(
-      String userId, List<CombinePrayerStream> data) async {
+      String userId,
+      List<CombinePrayerStream> data,
+      List<LocalNotificationModel> notifications) async {
     if (_firebaseAuth.currentUser == null) return null;
     final archivedPrayers = data
         .where((CombinePrayerStream data) => data.userPrayer.isArchived == true)
@@ -254,6 +262,7 @@ class PrayerProvider with ChangeNotifier {
           .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
           .toList();
     }
+
     for (int i = 0; i < toDelete.length; i++) {
       if (toDelete[i]
               .userPrayer
@@ -261,6 +270,15 @@ class PrayerProvider with ChangeNotifier {
               .add(Duration(minutes: autoDeleteDuration))
               .isBefore(DateTime.now()) &&
           autoDeleteDuration != 0) {
+        final _notifications = notifications
+            .where((e) => e.entityId == toDelete[i].userPrayer.id)
+            .toList();
+
+        _notifications.forEach((e) async {
+          final notification = _notifications.firstWhere((e) => e.id == e.id);
+          await LocalNotification.unschedule(notification.localNotificationId);
+          await locator<NotificationService>().removeLocalNotification(e.id);
+        });
         deletePrayer(toDelete[i].userPrayer.id);
       }
     }

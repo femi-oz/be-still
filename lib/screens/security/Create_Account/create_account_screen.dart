@@ -5,7 +5,6 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -15,7 +14,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -372,7 +370,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
-        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        // ignore: deprecated_member_use
         autovalidate: _autoValidate,
         child: Column(
           children: <Widget>[

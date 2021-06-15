@@ -16,7 +16,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
-import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -465,6 +464,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
+      // ignore: deprecated_member_use
       autovalidate: _autoValidate,
       key: _formKey,
       child: Column(
