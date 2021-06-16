@@ -362,6 +362,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
+        // ignore: deprecated_member_use
         autovalidate: _autoValidate,
         child: Column(
           children: <Widget>[
