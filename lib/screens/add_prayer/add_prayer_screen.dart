@@ -550,7 +550,6 @@ class _AddPrayerState extends State<AddPrayer> {
               ),
             ),
           ),
-          // ),
         ),
       ),
     );

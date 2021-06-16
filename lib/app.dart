@@ -52,7 +52,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
     Provider.of<NotificationProvider>(context, listen: false)
         .initLocal(context);
-    // FirebaseCrashlytics.instance.crash();
     _initializeFlutterFireFuture = _initializeFlutterFire();
 
     super.initState();
@@ -95,7 +94,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
-          // await LocalNotification.clearAll();
           Navigator.of(context).pushNamedAndRemoveUntil(
             LoginScreen.routeName,
             (Route<dynamic> route) => false,

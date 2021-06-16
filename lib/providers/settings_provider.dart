@@ -59,10 +59,6 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future getGroupSettings(String groupId) async {
-  //   _settingsService.getGroupSettings(groupId);
-  // }
-
   Future updateSettings(
     String userId, {
     String key,

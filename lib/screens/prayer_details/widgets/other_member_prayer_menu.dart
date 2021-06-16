@@ -34,20 +34,12 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
           .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.pushReplacement(
-      //     context,
-      //     PageTransition(
-      //       type: PageTransitionType.leftToRightWithFade,
-      //       child: EntryScreen(),
-      //     ));
     } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 

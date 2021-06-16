@@ -81,7 +81,6 @@ class PrayerProvider with ChangeNotifier {
             }
           }
           _filteredPrayerTimeList = _distinct;
-          // notifyListeners();
         },
       );
 
@@ -170,7 +169,6 @@ class PrayerProvider with ChangeNotifier {
       ...snoozedPrayers,
       ...answeredPrayers
     ];
-    // await _sortBySettings();
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];

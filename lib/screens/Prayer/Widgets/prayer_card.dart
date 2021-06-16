@@ -145,19 +145,15 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _unMarkAsAnswered() async {
-    // BeStilDialog.showLoading(context);
-
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
     } on HttpException catch (e, s) {
-      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);

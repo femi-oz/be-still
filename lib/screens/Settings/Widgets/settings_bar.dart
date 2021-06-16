@@ -19,8 +19,6 @@ class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
-    // List<PushNotificationModel> notifications =
-    //     Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
       leading: Container(),
       flexibleSpace: Container(
@@ -49,7 +47,6 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
               icon: Icon(
                 Icons.notifications_none,
                 color: AppColors.white,
-                // size: 18,
               ),
               onPressed: () => null,
             );

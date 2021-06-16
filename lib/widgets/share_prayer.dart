@@ -40,20 +40,7 @@ class _SharePrayerState extends State<SharePrayer> {
         
 Click https://www.bestillapp.com to learn more!'''; //
     //%3Ca%20href=https://www.bestillapp.com%3ELearn%20More%3C/a%3E
-    // final Uri params = Uri(
-    //     scheme: 'mailto',
-    //     path: isChurch ? _churchEmail : '',
-    //     query:
-    //         "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
-    // // var params = Uri.encodeFull(
-    // //     "mailto: ${isChurch ? _churchEmail : ''}?subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
-    // var url = params.toString() +
-    //     '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
-    // if (await canLaunch(url)) {
-    //   await launch(url);
-    // } else {
-    //   throw 'Could not launch $url';
-    // }
+
     final Email email = Email(
       body:
           '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
@@ -90,7 +77,6 @@ $_footerText''',
   }
 
   initState() {
-    // final _break = ' ';
     var emailUpdates = [];
     widget.prayerData.updates.forEach((u) =>
         emailUpdates.add('''${DateFormat('dd MMMM yyyy').format(u.createdOn)}

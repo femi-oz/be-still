@@ -248,13 +248,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _updatePassword() async {
     try {
-      // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
-      // BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pop();
+
       BeStilDialog.showSuccessDialog(
           context, 'Your password has been updated successfully');
     } on HttpException catch (e, s) {

@@ -120,8 +120,7 @@ class CustomDrawer extends StatelessWidget {
                   GestureDetector(
                     onTap: () async {
                       await _authProvider.signOut();
-                      // await Provider.of<UserProvider>(context, listen: false)
-                      //     .clearCurrentUser();
+
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),

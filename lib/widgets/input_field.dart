@@ -127,7 +127,6 @@ class _CustomInputState extends State<CustomInput> {
         },
         textInputAction: widget.textInputAction,
         onChanged: (val) {
-          // setVisibilty(val);
           setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
           if (widget.onTextchanged != null) widget.onTextchanged(val);
         },
@@ -144,25 +143,8 @@ class _CustomInputState extends State<CustomInput> {
         .searchPrayers(value, userId);
   }
 
-  // void setVisibilty(String value) {
-  //   Pattern passwordPattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
-  //   RegExp regex = new RegExp(passwordPattern);
-  //   Pattern emailPattern =
-  //       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  //   RegExp regExp = new RegExp(emailPattern);
-
-  //   // if (value.contains(regExp) || value.contains(regex) && value.isNotEmpty) {
-  //   //   Provider.of<MiscProvider>(context, listen: false).setVisibility(false);
-  //   // } else {
-  //   //   Provider.of<MiscProvider>(context, listen: false).setVisibility(true);
-  //   // }
-  // }
-
   String _validatorFn(String value) {
     if (widget.isRequired) {
-      //  if (value.isEmpty ) {
-      //   return '${widget.label} is required';
-      // }
       if (value.isEmpty && widget.isEmail) {
         return 'Email is required';
       } else if (value.isEmpty && widget.isPassword) {
@@ -185,7 +167,6 @@ class _CustomInputState extends State<CustomInput> {
       }
     }
     if (widget.isPhone && value.isNotEmpty) {
-      // String p = r'(^(?:[+234])?[0-9]{6,}$)';
       String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
 
       RegExp regExp = new RegExp(pattern);

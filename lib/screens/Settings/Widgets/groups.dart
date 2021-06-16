@@ -48,7 +48,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       ),
       content: Container(
         width: double.infinity,
-        // height: MediaQuery.of(context).size.height * 0.6,
         margin: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
