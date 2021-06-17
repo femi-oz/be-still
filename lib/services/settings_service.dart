@@ -10,6 +10,7 @@ import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,18 +29,19 @@ class SettingsService {
   final CollectionReference<Map<String, dynamic>>
       _groupPrefernceSettingsCollectionReference =
       FirebaseFirestore.instance.collection("GroupPreferenceSettings");
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   populateSettings(String deviceId, String userId, email) {
     SettingsModel settings = SettingsModel(
         archiveAutoDeleteMins: 43200,
-        defaultSnoozeDurationMins: 30,
         allowAlexaReadPrayer: false,
         archiveSortBy: SortType.date,
         userId: userId,
         deviceId: deviceId,
         appearance: '',
         defaultSortBy: SortType.date,
-        defaultSnoozeDuration: IntervalRange.thirtyMinutes,
+        defaultSnoozeDuration: 15,
+        defaultSnoozeFrequency: IntervalRange.thirtyMinutes,
         archiveAutoDelete: IntervalRange.oneYear,
         includeAnsweredPrayerAutoDelete: false,
         allowPushNotification: false,
@@ -125,6 +127,7 @@ class SettingsService {
     final prayerSettingsId = Uuid().v1();
 
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       // store settings
       await _settingsCollectionReference
           .doc(settingsId)
@@ -152,6 +155,7 @@ class SettingsService {
     final groupSettingsId = Uuid().v1();
 
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       await _groupSettingsCollectionReference
           .doc(groupSettingsId)
           .set(populateGroupSettings(userId, email, groupId).toJson());
@@ -167,6 +171,7 @@ class SettingsService {
   addGroupPreferenceSettings(String userId) async {
     final groupPreferenceSettingsId = Uuid().v1();
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       await _groupPrefernceSettingsCollectionReference
           .doc(groupPreferenceSettingsId)
           .set(populateGroupPreferenceSettings(userId).toJson());
@@ -179,6 +184,7 @@ class SettingsService {
 
   Future<SettingsModel> getSettings(String userId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var settings = await _settingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
@@ -194,6 +200,7 @@ class SettingsService {
 
   Future<PrayerSettingsModel> getPrayerSettings(String userId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var settings = await _prayerSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
@@ -211,6 +218,7 @@ class SettingsService {
 
   Future<SharingSettingsModel> getSharingSettings(String userId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var settings = await _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
@@ -228,6 +236,7 @@ class SettingsService {
 
   Future<List<GroupSettings>> getGroupSettings(String userId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var settings = await _sharingSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
@@ -244,6 +253,7 @@ class SettingsService {
   Future<GroupPreferenceSettings> getGroupPreferenceSettings(
       String userId) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       var settings = await _groupPrefernceSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
@@ -259,6 +269,7 @@ class SettingsService {
 
   Future updateSettings({String key, dynamic value, String settingsId}) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _settingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
@@ -274,6 +285,7 @@ class SettingsService {
   Future updatePrayerSettings(
       {String key, dynamic value, String settingsId}) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _prayerSettingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
@@ -287,6 +299,7 @@ class SettingsService {
   Future updateSharingSettings(
       {String key, dynamic value, String settingsId}) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _sharingSettingsCollectionReference.doc(settingsId).update(
         {key: value},
       );
@@ -300,6 +313,7 @@ class SettingsService {
   Future updateGroupSettings(
       {String key, dynamic value, String groupSettingsId}) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _groupSettingsCollectionReference.doc(groupSettingsId).update(
         {key: value},
       );
@@ -313,6 +327,7 @@ class SettingsService {
   Future updateGroupPreferenceSettings(
       {String key, dynamic value, String groupPreferenceSettingsId}) async {
     try {
+      if (_firebaseAuth.currentUser == null) return null;
       _groupPrefernceSettingsCollectionReference
           .doc(groupPreferenceSettingsId)
           .update(

@@ -3,6 +3,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -19,10 +20,8 @@ import 'dart:math' as math;
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final String timeago;
-  final keyButton;
 
-  PrayerCard(
-      {@required this.prayerData, @required this.timeago, this.keyButton});
+  PrayerCard({@required this.prayerData, @required this.timeago});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
@@ -30,6 +29,11 @@ class PrayerCard extends StatefulWidget {
 
 class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
+  final SlidableController slidableController = SlidableController();
+
+  initState() {
+    super.initState();
+  }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
@@ -47,15 +51,13 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _unArchive() async {
-    try {
-      BeStilDialog.showLoading(context);
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(widget.prayerData.userPrayer.id);
+    BeStilDialog.showLoading(context);
 
-      await Future.delayed(Duration(milliseconds: 300));
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
+          widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -64,36 +66,29 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _onArchive() async {
+    BeStilDialog.showLoading(context);
+
     try {
-      BeStilDialog.showLoading(context);
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData.prayer.id)
+              .where((e) =>
+                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
-      var reminders = Provider.of<NotificationProvider>(context, listen: false)
-          .localNotifications
-          .where((e) => e.type == NotificationType.reminder)
-          .toList();
-      reminders.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
-
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -109,11 +104,8 @@ class _PrayerCardState extends State<PrayerCard> {
           widget.prayerData.prayer.id,
           DateTime.now(),
           widget.prayerData.userPrayer.id);
-
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -122,36 +114,29 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _onMarkAsAnswered() async {
+    BeStilDialog.showLoading(context);
+
     try {
-      BeStilDialog.showLoading(context);
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData.prayer.id)
+              .where((e) =>
+                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
-      var reminders = Provider.of<NotificationProvider>(context, listen: false)
-          .localNotifications
-          .where((e) => e.type == NotificationType.reminder)
-          .toList();
-      reminders.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -160,22 +145,19 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _unMarkAsAnswered() async {
+    // BeStilDialog.showLoading(context);
+
     try {
-      BeStilDialog.showLoading(context);
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
+      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -183,27 +165,55 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   Widget _buildMenu() {
-    return PrayerMenu(context, hasReminder, reminder, null);
+    return PrayerMenu(
+        context, hasReminder, reminder, () => updateUI(), widget.prayerData);
+  }
+
+  updateUI() {
+    setState(() {});
+  }
+
+  Future<void> _setCurrentPrayer() async {
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(widget.prayerData.userPrayer.id);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
+    var tags = '';
+    final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
+    widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
+    widget.prayerData.tags.forEach((element) {
+      tags += ' ' + element.displayName;
+    });
     return Container(
-      key: null,
-      color: AppColors.prayerCardBgColor,
+      color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
       child: Slidable(
+        controller: slidableController,
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: Container(
           decoration: BoxDecoration(
-              color: AppColors.prayerCardBgColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                topLeft: Radius.circular(10),
-              ),
-              border: Border.all(color: AppColors.cardBorder)),
+            color: AppColors.cardBorder,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              topLeft: Radius.circular(10),
+            ),
+          ),
           child: Container(
             margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -227,7 +237,92 @@ class _PrayerCardState extends State<PrayerCard> {
                             children: <Widget>[
                               Row(
                                 children: [
-                                  widget.prayerData.prayer.userId != _user.id
+                                  widget.prayerData.prayer.isAnswer
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5, right: 8),
+                                          child: Icon(
+                                            AppIcons.bestill_answered,
+                                            size: 12,
+                                            color: AppColors.lightBlue3,
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                  widget.prayerData.userPrayer.isSnoozed
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5, right: 8),
+                                          child: Icon(
+                                            AppIcons.snooze,
+                                            size: 14,
+                                            color: AppColors.lightBlue3,
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                  hasReminder
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: InkWell(
+                                            onTap: () => showDialog(
+                                              context: context,
+                                              barrierColor: AppColors
+                                                  .detailBackgroundColor[1]
+                                                  .withOpacity(0.5),
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                  insetPadding:
+                                                      EdgeInsets.all(20),
+                                                  backgroundColor: AppColors
+                                                      .prayerCardBgColor,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color:
+                                                            AppColors.darkBlue),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(10.0),
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 30),
+                                                        child: ReminderPicker(
+                                                          type: NotificationType
+                                                              .reminder,
+                                                          hideActionuttons:
+                                                              false,
+                                                          onCancel: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                          reminder: reminder,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, bottom: 5, right: 8),
+                                              child: Icon(
+                                                AppIcons.bestill_reminder,
+                                                size: 12,
+                                                color: AppColors.lightBlue3,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                  widget.prayerData.prayer.userId != _user?.id
                                       ? Text(
                                           widget.prayerData.prayer.creatorName,
                                           style:
@@ -236,144 +331,82 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
                                   widget.prayerData.userPrayer.isFavorite
-                                      ? Icon(
-                                          Icons.favorite,
-                                          color: AppColors.lightBlue3,
-                                          size: 13,
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 3, bottom: 3, right: 8),
+                                          child: Icon(
+                                            Icons.favorite,
+                                            color: AppColors.lightBlue3,
+                                            size: 14,
+                                          ),
                                         )
-                                      : widget.prayerData.prayer.isAnswer
-                                          ? Icon(
-                                              AppIcons.bestill_answered,
-                                              size: 12,
-                                              color: AppColors.lightBlue3,
-                                            )
-                                          : Container()
+                                      : SizedBox(),
                                 ],
                               ),
-                              Row(
-                                children: <Widget>[
-                                  hasReminder
-                                      ? Row(
-                                          children: <Widget>[
-                                            InkWell(
-                                              onTap: () => showDialog(
-                                                context: context,
-                                                barrierColor: AppColors
-                                                    .detailBackgroundColor[1]
-                                                    .withOpacity(0.5),
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return Dialog(
-                                                    insetPadding:
-                                                        EdgeInsets.all(20),
-                                                    backgroundColor: AppColors
-                                                        .prayerCardBgColor,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          color: AppColors
-                                                              .darkBlue),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                        Radius.circular(10.0),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: widget.prayerData.tags.length > 0
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                SizedBox(width: 10),
+                                                Expanded(
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    reverse: true,
+                                                    child: Container(
+                                                      height: 15,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 3),
+                                                      child: Text(
+                                                        tags,
+                                                        style: TextStyle(
+                                                          color: AppColors.red,
+                                                          fontSize: 10,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        softWrap: false,
+                                                        textAlign:
+                                                            TextAlign.end,
                                                       ),
                                                     ),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical: 30),
-                                                          child: ReminderPicker(
-                                                            type:
-                                                                NotificationType
-                                                                    .reminder,
-                                                            hideActionuttons:
-                                                                false,
-                                                            onCancel: () =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(),
-                                                            reminder: reminder,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  AppIcons.bestill_reminder,
-                                                  size: 12,
-                                                  color: AppColors.lightBlue3,
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                              ),
-                                              child: Text(
-                                                '|',
-                                                style: TextStyle(
-                                                  color: AppColors.lightBlue3,
-                                                  fontSize: 10,
-                                                ),
-                                              ),
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                  ),
+                                                  child: Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .prayerTextColor),
+                                                  ),
+                                                )
+                                              ],
                                             )
-                                          ],
-                                        )
-                                      : Container(),
-                                  Container(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children:
-                                            widget.prayerData.tags.map((tag) {
-                                          return Text(
-                                            ' ${tag.displayName}',
-                                            style: TextStyle(
-                                              color: AppColors.red,
-                                              fontSize: 10,
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
+                                          : Container(),
                                     ),
-                                  ),
-                                  widget.prayerData.tags.length > 0
-                                      ? Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                          ),
-                                          child: Text(
-                                            '|',
-                                            style: TextStyle(
+                                    Container(
+                                      child: Text(
+                                        widget.timeago,
+                                        style: AppTextStyles.regularText13
+                                            .copyWith(
                                                 color:
                                                     AppColors.prayerTextColor),
-                                          ),
-                                        )
-                                      : Container(),
-                                  Text(
-                                    widget.timeago,
-                                    style: AppTextStyles.regularText13.copyWith(
-                                        color: AppColors.prayerTextColor),
-                                  ),
-                                ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           ),
@@ -404,68 +437,93 @@ class _PrayerCardState extends State<PrayerCard> {
             ),
           ),
         ),
+        closeOnScroll: true,
         actions: <Widget>[
-          _buildSlideItem(
-            Icons.build,
-            'Options',
-            () => showModalBottomSheet(
+          _buildSlideItem(Icons.build, 'Options', () async {
+            await _setCurrentPrayer();
+
+            showModalBottomSheet(
               context: context,
-              barrierColor: AppColors.detailBackgroundColor[1].withOpacity(0.5),
+              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+                      .isDarkModeEnabled
+                  ? AppColors.backgroundColor[0].withOpacity(0.5)
+                  : Color(0xFF021D3C).withOpacity(0.7),
               backgroundColor:
-                  AppColors.detailBackgroundColor[1].withOpacity(1),
+                  Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? AppColors.backgroundColor[0].withOpacity(0.5)
+                      : Color(0xFF021D3C).withOpacity(0.7),
               isScrollControlled: true,
               builder: (BuildContext context) {
                 return _buildMenu();
               },
-            ),
-          ),
+            );
+          }, false)
         ],
         secondaryActions: <Widget>[
           _buildSlideItem(
-            AppIcons.bestill_answered,
-            widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
-            () => widget.prayerData.prayer.isAnswer
-                ? _unMarkAsAnswered()
-                : _onMarkAsAnswered(),
-          ),
+              AppIcons.bestill_answered,
+              widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
+              () => widget.prayerData.prayer.isAnswer
+                  ? _unMarkAsAnswered()
+                  : _onMarkAsAnswered(),
+              false),
           _buildSlideItem(
-            AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
-            widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
-            () => widget.prayerData.userPrayer.isArchived
-                ? _unArchive()
-                : _onArchive(),
-          ),
-          _buildSlideItem(
-            AppIcons.bestill_snooze,
-            widget.prayerData.userPrayer.isSnoozed ? 'Unsnooze' : 'Snooze',
-            () => widget.prayerData.userPrayer.isSnoozed
-                ? _unSnoozePrayer()
-                : showModalBottomSheet(
-                    context: context,
-                    barrierColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                    backgroundColor:
-                        AppColors.detailBackgroundColor[1].withOpacity(0.9),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) =>
-                        SnoozePrayer(widget.prayerData),
-                  ),
-          ),
+              AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
+              widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
+              () => widget.prayerData.userPrayer.isArchived
+                  ? _unArchive()
+                  : _onArchive(),
+              false),
+          widget.prayerData.userPrayer.isArchived ||
+                  widget.prayerData.prayer.isAnswer
+              ? _buildSlideItem(
+                  AppIcons.bestill_snooze, 'Snooze', () => null, true)
+              : _buildSlideItem(
+                  AppIcons.bestill_snooze,
+                  widget.prayerData.userPrayer.isSnoozed
+                      ? 'Unsnooze'
+                      : 'Snooze',
+                  () => widget.prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer()
+                      : showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              insetPadding: EdgeInsets.all(20),
+                              backgroundColor: AppColors.prayerCardBgColor,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: AppColors.darkBlue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30),
+                                      child: SnoozePrayer(widget.prayerData)),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                  false),
         ],
       ),
     );
   }
 
-  Widget _buildSlideItem(IconData icon, String label, Function _onTap) {
+  Widget _buildSlideItem(
+      IconData icon, String label, Function _onTap, bool isDisabled) {
     return Container(
       decoration: BoxDecoration(
           color: AppColors.prayerCardBgColor,
-          borderRadius: BorderRadius.only(
-            bottomRight: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-          border: Border.all(color: AppColors.cardBorder)),
+          border: Border.all(color: AppColors.slideBorder)),
       child: IconSlideAction(
+        closeOnTap: true,
         caption: label,
         color: Colors.transparent,
         iconWidget: Container(
@@ -475,17 +533,38 @@ class _PrayerCardState extends State<PrayerCard> {
                   angle: 90 * math.pi / 180,
                   child: Icon(
                     icon,
-                    color: AppColors.lightBlue3,
+                    color: Provider.of<ThemeProvider>(context, listen: false)
+                            .isDarkModeEnabled
+                        ? isDisabled
+                            ? AppColors.white.withOpacity(0.4)
+                            : AppColors.white
+                        : isDisabled
+                            ? AppColors.lightBlue3.withOpacity(0.4)
+                            : AppColors.lightBlue3,
                     size: 18,
                   ),
                 )
               : Icon(
                   icon,
-                  color: AppColors.lightBlue3,
+                  color: Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? isDisabled
+                          ? AppColors.white.withOpacity(0.4)
+                          : AppColors.white
+                      : isDisabled
+                          ? AppColors.lightBlue3.withOpacity(0.4)
+                          : AppColors.lightBlue3,
                   size: 18,
                 ),
         ),
-        foregroundColor: AppColors.lightBlue3,
+        foregroundColor:
+            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
+                ? isDisabled
+                    ? AppColors.white.withOpacity(0.4)
+                    : AppColors.white
+                : isDisabled
+                    ? AppColors.lightBlue3.withOpacity(0.4)
+                    : AppColors.lightBlue3,
         onTap: _onTap,
       ),
     );

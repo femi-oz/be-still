@@ -6,7 +6,6 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
@@ -47,15 +46,14 @@ class _ShareInAppState extends State<ShareInApp> {
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.popUntil(context, ModalRoute.withName(EntryScreen.routeName));
-    } on HttpException catch (e) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    } on HttpException {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 

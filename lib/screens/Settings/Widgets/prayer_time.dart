@@ -9,7 +9,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
-import 'package:be_still/utils/date_format.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -49,7 +48,6 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   ];
 
   double itemExtent = 30.0;
-  bool _addPrayerTypeMode = false;
   bool showUpdateField = false;
   LocalNotificationModel reminder;
 
@@ -64,17 +62,14 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       await LocalNotification.unschedule(localNotificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .deleteLocalNotification(notificationId);
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       setState(() {});
     } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -229,78 +224,82 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                   Row(
                                     children: [
                                       InkWell(
-                                        child: GestureDetector(
+                                        onTap: () {
+                                          reminder = data;
+                                          showDialog(
+                                            context: context,
+                                            barrierColor: AppColors
+                                                .detailBackgroundColor[1]
+                                                .withOpacity(0.5),
+                                            builder: (BuildContext context) {
+                                              return Dialog(
+                                                insetPadding:
+                                                    EdgeInsets.all(20),
+                                                backgroundColor:
+                                                    AppColors.prayerCardBgColor,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color:
+                                                          AppColors.darkBlue),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10.0),
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 30),
+                                                      child: ReminderPicker(
+                                                        type: NotificationType
+                                                            .prayer_time,
+                                                        reminder: data,
+                                                        hideActionuttons: false,
+                                                        onCancel: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(right: 5),
+                                          width: 30,
+                                          height: 30,
                                           child: Icon(
                                             AppIcons.bestill_edit,
                                             size: 16,
                                             color: AppColors.lightBlue3,
                                           ),
-                                          onTap: () {
-                                            reminder = data;
-                                            showDialog(
-                                              context: context,
-                                              barrierColor: AppColors
-                                                  .detailBackgroundColor[1]
-                                                  .withOpacity(0.5),
-                                              builder: (BuildContext context) {
-                                                return Dialog(
-                                                  insetPadding:
-                                                      EdgeInsets.all(20),
-                                                  backgroundColor: AppColors
-                                                      .prayerCardBgColor,
-                                                  shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color:
-                                                            AppColors.darkBlue),
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                      Radius.circular(10.0),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                vertical: 30),
-                                                        child: ReminderPicker(
-                                                          type: NotificationType
-                                                              .prayer_time,
-                                                          reminder: data,
-                                                          hideActionuttons:
-                                                              false,
-                                                          onCancel: () =>
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 15,
+                                        width: 5,
                                       ),
                                       InkWell(
-                                        child: GestureDetector(
+                                        onTap: () {
+                                          _deletePrayerTime(
+                                              data.localNotificationId,
+                                              data.id);
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          height: 30,
+                                          padding: EdgeInsets.only(right: 5),
                                           child: Icon(
                                             AppIcons.bestill_close,
                                             size: 18,
                                             color: AppColors.lightBlue3,
                                           ),
-                                          onTap: () {
-                                            _deletePrayerTime(
-                                                data.localNotificationId,
-                                                data.id);
-                                          },
                                         ),
                                       )
                                     ],

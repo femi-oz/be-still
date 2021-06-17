@@ -1,20 +1,18 @@
 import 'dart:ui';
 import 'package:be_still/models/devotionals.model.dart';
-import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../entry_screen.dart';
+
 class DevotionPlans extends StatefulWidget {
+  final Function setCurrentIndex;
+  DevotionPlans(this.setCurrentIndex);
   static const routeName = 'devotion-plan';
 
   @override
@@ -22,43 +20,6 @@ class DevotionPlans extends StatefulWidget {
 }
 
 class _DevotionPlansState extends State<DevotionPlans> {
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
-        await _getDevotionals();
-      });
-      setState(() => _isInit = false);
-    }
-    super.didChangeDependencies();
-  }
-
-  Future<void> _getDevotionals() async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      await Provider.of<DevotionalProvider>(context, listen: false)
-          .getDevotionals();
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   void _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -187,150 +148,169 @@ class _DevotionPlansState extends State<DevotionPlans> {
         });
   }
 
+  Future<bool> _onWillPop() async {
+    widget.setCurrentIndex(0, true);
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final devotionalData = Provider.of<DevotionalProvider>(context).devotionals;
-    return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage),
-                alignment: Alignment.bottomCenter,
-              ),
-            ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: double.infinity,
+          child: SingleChildScrollView(
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.backgroundColor[0].withOpacity(0.85),
-                    AppColors.backgroundColor[1].withOpacity(0.7),
-                  ],
+                image: DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage),
+                  alignment: Alignment.bottomCenter,
+                  fit: BoxFit.cover,
                 ),
               ),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: <Widget>[
-                        TextButton.icon(
-                          style: ButtonStyle(
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                                    EdgeInsets.zero),
-                          ),
-                          icon: Icon(
-                            AppIcons.bestill_back_arrow,
-                            color: AppColors.lightBlue3,
-                            size: 20,
-                          ),
-                          onPressed: () => NavigationService.instance.goHome(0),
-                          label: Text(
-                            'BACK',
-                            style: AppTextStyles.boldText20.copyWith(
-                              color: AppColors.lightBlue3,
+              child: Container(
+                padding: EdgeInsets.only(top: 40),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.backgroundColor[0].withOpacity(0.85),
+                      AppColors.backgroundColor[1].withOpacity(0.7),
+                    ],
+                  ),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: <Widget>[
+                          TextButton.icon(
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                      EdgeInsets.zero),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Text(
-                      'Devotionals & Reading Plans',
-                      style: AppTextStyles.boldText24
-                          .copyWith(color: AppColors.blueTitle),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 30.0,
-                      left: 20,
-                      bottom: 20,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        ...devotionalData.map(
-                          (dev) => GestureDetector(
-                            onTap: () => _showAlert(dev),
-                            child: Container(
-                              margin: EdgeInsets.symmetric(vertical: 7.0),
-                              decoration: BoxDecoration(
-                                  color: AppColors.prayerCardBgColor,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    topLeft: Radius.circular(10),
-                                  ),
-                                  border:
-                                      Border.all(color: AppColors.cardBorder)),
-                              child: Container(
-                                margin: EdgeInsets.symmetric(vertical: 5.0),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: AppColors.prayerCardBgColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          dev.type.toUpperCase(),
-                                          style: AppTextStyles.regularText14
-                                              .copyWith(
-                                                  color: AppColors.grey4,
-                                                  fontWeight: FontWeight.w500),
-                                        ),
-                                        Text(
-                                          'LENGTH: ${dev.period}'.toUpperCase(),
-                                          style: AppTextStyles.regularText13
-                                              .copyWith(color: AppColors.grey4),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0),
-                                      child: Divider(
-                                        color: AppColors.darkBlue,
-                                        thickness: 1,
-                                      ),
-                                    ),
-                                    Column(
-                                      children: <Widget>[
-                                        Text(
-                                          dev.title,
-                                          style: AppTextStyles.regularText16b
-                                              .copyWith(
-                                                  color: AppColors.lightBlue4),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                            icon: Icon(
+                              AppIcons.bestill_back_arrow,
+                              color: AppColors.lightBlue3,
+                              size: 20,
+                            ),
+                            onPressed: () => widget.setCurrentIndex(0, true),
+                            label: Container(
+                              width: 70,
+                              child: Text(
+                                'BACK',
+                                style: AppTextStyles.boldText20.copyWith(
+                                  color: AppColors.lightBlue3,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Text(
+                        'Devotionals & Reading Plans',
+                        style: AppTextStyles.boldText24
+                            .copyWith(color: AppColors.blueTitle),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 30.0,
+                        left: 20,
+                        bottom: 20,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          ...devotionalData.map(
+                            (dev) => GestureDetector(
+                              onTap: () => _showAlert(dev),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 7.0),
+                                decoration: BoxDecoration(
+                                    color: AppColors.prayerCardBgColor,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(10),
+                                      topLeft: Radius.circular(10),
+                                    ),
+                                    border: Border.all(
+                                        color: AppColors.cardBorder)),
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 5.0),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.prayerCardBgColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            dev.type.toUpperCase(),
+                                            style: AppTextStyles.regularText14
+                                                .copyWith(
+                                                    color: AppColors.grey4,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                          ),
+                                          Text(
+                                            'LENGTH: ${dev.period}'
+                                                .toUpperCase(),
+                                            style: AppTextStyles.regularText13
+                                                .copyWith(
+                                                    color: AppColors.grey4),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5.0),
+                                        child: Divider(
+                                          color: AppColors.darkBlue,
+                                          thickness: 1,
+                                        ),
+                                      ),
+                                      Column(
+                                        children: <Widget>[
+                                          Text(
+                                            dev.title,
+                                            style: AppTextStyles.regularText16b
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.lightBlue4),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

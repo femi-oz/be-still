@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -69,7 +69,11 @@ class _SplashScreenState extends State<SplashScreen>
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerTime());
+          Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
+          // NavigationService.instance.navigateToReplacement(PrayerTime(null));
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
@@ -79,6 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
+      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     }

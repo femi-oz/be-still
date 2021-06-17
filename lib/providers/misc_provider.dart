@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
 
 class MiscProvider with ChangeNotifier {
-  String _pageTitle = 'MY LIST';
+  String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
+
   int _currentPage = 0;
-  int _lastPage = 0;
   int get currentPage => _currentPage;
-  int get lastPage => _lastPage;
+
+  bool _initialLoad = false;
+  bool get initialLoad => _initialLoad;
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
-
-  GlobalKey _keyButton = GlobalKey();
-  GlobalKey _keyButton2 = GlobalKey();
-  GlobalKey _keyButton3 = GlobalKey();
-  GlobalKey _keyButton4 = GlobalKey();
-  GlobalKey _keyButton5 = GlobalKey();
-
-  GlobalKey get keyButton => _keyButton;
-  GlobalKey get keyButton2 => _keyButton2;
-  GlobalKey get keyButton3 => _keyButton3;
-  GlobalKey get keyButton4 => _keyButton4;
-  GlobalKey get keyButton5 => _keyButton5;
 
   bool _search = false;
   bool get search => _search;
@@ -41,9 +31,13 @@ class MiscProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setCurrentPage(int index, int last) {
+  setCurrentPage(int index) {
     _currentPage = index;
-    _lastPage = last;
+    notifyListeners();
+  }
+
+  setLoadStatus(bool value) {
+    _initialLoad = value;
     notifyListeners();
   }
 }

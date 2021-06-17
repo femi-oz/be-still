@@ -7,12 +7,11 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -51,7 +50,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   var minInTheHour = [0, 15, 30, 45];
   var years = new List<int>.generate(10, (i) => i + DateTime.now().year);
 
-  var daysOfMonth = new List<int>.generate(30, (i) => i + 1);
+  var daysOfMonth = new List<int>.generate(31, (i) => i + 1);
 
   @override
   void initState() {
@@ -65,12 +64,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
     selectedMinute = widget.reminder?.selectedMinute != null
         ? int.parse(widget.reminder?.selectedMinute)
         : 15;
-    selectedDayOfWeek = widget.reminder?.frequency == Frequency.one_time
-        ? 1
-        : widget.reminder?.selectedDay != null
-            ? LocalNotification.daysOfWeek
-                .indexOf(widget.reminder?.selectedDay?.capitalize())
-            : DateTime.now().weekday;
+    selectedDayOfWeek = widget.reminder?.selectedDay != null
+        ? LocalNotification.daysOfWeek
+            .indexOf(widget.reminder?.selectedDay?.capitalize())
+        : DateTime.now().weekday - 1;
     selectedPeriod = widget.reminder?.period != null
         ? widget.reminder?.period
         : DateTime.now().hour > 12
@@ -149,11 +146,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
       setState(() {});
       if (widget.type == NotificationType.reminder)
-        NavigationService.instance.goHome(0);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
       else
         widget.onCancel();
       setState(() => null);
@@ -185,12 +182,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedMonth,
         selectedDayOfMonth.toString(),
       );
-      await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
 
       setState(() {});
       if (widget.type == NotificationType.reminder)
-        NavigationService.instance.goHome(0);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
       else
         widget.onCancel();
     }
@@ -235,7 +232,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
         await LocalNotification.setLocalNotification(
           context: context,
           title: title,
-          description: description,
+          description: widget.type == NotificationType.prayer_time
+              ? 'It is time to pray!'
+              : description,
           scheduledDate: scheduleDate,
           payload: jsonEncode(payload.toJson()),
           frequency: selectedFrequency,
@@ -269,13 +268,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
             selectedYear.toString(),
           );
       } on HttpException catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(context, e, user, s);
       } catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -289,17 +286,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
             .deleteLocalNotification(widget.reminder.id);
         setState(() {});
         if (widget.type == NotificationType.reminder)
-          NavigationService.instance.goHome(0);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
         else
           widget.onCancel();
       } on HttpException catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(context, e, user, s);
       } catch (e, s) {
-        await Future.delayed(Duration(milliseconds: 300));
         BeStilDialog.hideLoading(context);
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -312,12 +308,27 @@ class _ReminderPickerState extends State<ReminderPicker> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Text(
+            widget.type == NotificationType.reminder
+                ? 'SET REMINDER'
+                : 'SET PRAYER TIME',
+            style: TextStyle(
+              color: AppColors.lightBlue1,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              height: 1.5,
+            ),
+          ),
           Center(
             child: Container(
               padding: EdgeInsets.all(20),
               height: 200,
               child: Column(
                 children: <Widget>[
+                  // SizedBox(
+                  //   height: 40,
+                  // ),
+
                   Expanded(
                     child: Container(
                       child: Row(
@@ -357,7 +368,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           ),
                           Container(
                             width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.145
+                                ? MediaQuery.of(context).size.width * 0.13
                                 : MediaQuery.of(context).size.width * 0.2,
                             child: selectedFrequency == Frequency.one_time
                                 ? CupertinoPicker(
@@ -369,7 +380,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                     scrollController: yearController,
                                     itemExtent: itemExtent,
                                     onSelectedItemChanged: (i) =>
-                                        setState(() => selectedYear = i + 1),
+                                        setState(() => selectedYear = years[i]),
                                     children: <Widget>[
                                       ...years.map(
                                         (r) => Align(
@@ -438,7 +449,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           selectedFrequency == Frequency.one_time
                               ? Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.09,
+                                      MediaQuery.of(context).size.width * 0.085,
                                   child: CupertinoPicker(
                                     selectionOverlay:
                                         CupertinoPickerDefaultSelectionOverlay(
@@ -464,9 +475,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 )
                               : Container(),
                           Container(
-                            width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.09
-                                : MediaQuery.of(context).size.width * 0.12,
+                            width: MediaQuery.of(context).size.width * 0.085,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -493,7 +502,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                           Container(
                             height: 31,
                             width: selectedFrequency == Frequency.one_time
-                                ? MediaQuery.of(context).size.width * 0.02
+                                ? MediaQuery.of(context).size.width * 0.015
                                 : MediaQuery.of(context).size.width * 0.1,
                             child: Align(
                               alignment: Alignment.center,
@@ -576,44 +585,108 @@ class _ReminderPickerState extends State<ReminderPicker> {
                   children: [
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 40),
+                      width: double.infinity,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          CustomButtonGroup(
-                            title: 'CANCEL',
-                            onSelected: (_) => widget.onCancel(),
-                            length: 2,
-                            index: 0,
+                          GestureDetector(
+                            onTap: () {
+                              widget.onCancel();
+                            },
+                            child: Container(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * .35,
+                              decoration: BoxDecoration(
+                                color: AppColors.grey.withOpacity(0.5),
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('CANCEL',
+                                      style: AppTextStyles.boldText20.copyWith(
+                                          color: AppColors.white, height: 1.5)),
+                                ],
+                              ),
+                            ),
                           ),
-                          CustomButtonGroup(
-                            title: 'SAVE',
-                            onSelected: (_) {
+                          GestureDetector(
+                            onTap: () {
                               setNotification();
                             },
-                            length: 2,
-                            index: 1,
+                            child: Container(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * .35,
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('SAVE',
+                                      style: AppTextStyles.boldText20.copyWith(
+                                          color: AppColors.white, height: 1.5)),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 20),
                     widget.reminder != null
-                        ? Container(
-                            margin: EdgeInsets.symmetric(horizontal: 40),
-                            child: Row(
-                              children: [
-                                CustomButtonGroup(
-                                  title: 'DELETE REMINDER',
-                                  onSelected: (_) {
-                                    _deleteReminder();
-                                  },
-                                  length: 1,
-                                  index: 1,
-                                  color: AppColors.red,
+                        ? GestureDetector(
+                            onTap: () {
+                              _deleteReminder();
+                            },
+                            child: Container(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * 0.71,
+                              decoration: BoxDecoration(
+                                color: AppColors.red,
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
                                 ),
-                              ],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text('DELETE REMINDER',
+                                      style: AppTextStyles.boldText20.copyWith(
+                                          color: AppColors.white, height: 1.5)),
+                                ],
+                              ),
                             ),
                           )
+                        // Container(
+                        //     margin: EdgeInsets.symmetric(horizontal: 40),
+                        //     child: Row(
+                        //       children: [
+                        //         CustomButtonGroup(
+                        //           title: 'DELETE REMINDER',
+                        //           onSelected: (_) {
+                        //             _deleteReminder();
+                        //           },
+                        //           length: 1,
+                        //           index: 1,
+                        //           color: AppColors.red,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   )
                         : Container(),
                   ],
                 ),

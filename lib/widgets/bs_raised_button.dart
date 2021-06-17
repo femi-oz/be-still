@@ -64,7 +64,7 @@ class BsRaisedButton extends StatelessWidget {
           size: 26,
         ),
       ),
-      onPressed: onPressed,
+      onPressed: disabled ? null : onPressed,
     );
   }
 }

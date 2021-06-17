@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
@@ -48,6 +46,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   var termsAccepted = false;
 
+  final key = GlobalKey<FormFieldState>();
+  final key2 = GlobalKey<FormFieldState>();
+  final key3 = GlobalKey<FormFieldState>();
+  final key4 = GlobalKey<FormFieldState>();
+  final key5 = GlobalKey<FormFieldState>();
+  final key6 = GlobalKey<FormFieldState>();
+
   _selectDob() async {
     FocusScope.of(context).unfocus();
     var pickedDate = await showDatePicker(
@@ -82,19 +87,21 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _formKey.currentState.save();
 
     try {
-      await BeStilDialog.showLoading(context, 'Registering...');
+      BeStilDialog.showLoading(context, 'Registering...');
       if (_firstnameController.text == null ||
           _firstnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'First Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
+        PlatformException e = PlatformException(
+            code: 'custom',
+            message: 'First Name is empty, please enter a valid name.');
+        BeStilDialog.showErrorDialog(context, e, null, null);
       } else if (_lastnameController.text == null ||
           _lastnameController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
-        BeStillSnackbar.showInSnackBar(
-            message: 'Last Name is empty, please enter a valid name.',
-            key: _scaffoldKey);
+        PlatformException e = PlatformException(
+            code: 'custom',
+            message: 'Last Name is empty, please enter a valid name.');
+        BeStilDialog.showErrorDialog(context, e, null, null);
       } else {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .registerUser(
@@ -113,10 +120,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Settings.userPassword =
             Settings.rememberMe ? _passwordController.text : '';
         BeStilDialog.hideLoading(context);
-        Navigator.push(
-          context,
-          SlideRightRoute(page: CreateAccountSuccess()),
-        );
+        showInfoDialog(context);
+        // Navigator.push(
+        //   context,
+        //   SlideRightRoute(page: CreateAccountSuccess()),
+        // );
       }
     } on HttpException catch (e, s) {
       var message = '';
@@ -144,6 +152,71 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       BeStilDialog.showErrorDialog(context, e, null, s);
       // }
     }
+  }
+
+  showInfoDialog(BuildContext context) {
+    AlertDialog dialog = AlertDialog(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20.0),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      elevation: 5,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(height: 10.0),
+          Flexible(
+            child: Text(
+              'Your account registration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration',
+              style: AppTextStyles.regularText16b
+                  .copyWith(color: AppColors.lightBlue4),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 20.0),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextButton(
+                    child: Text('OK',
+                        style: AppTextStyles.boldText16
+                            .copyWith(color: Colors.white)),
+                    style: ButtonStyle(
+                      textStyle: MaterialStateProperty.all<TextStyle>(
+                          AppTextStyles.boldText16
+                              .copyWith(color: Colors.white)),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.all(5.0)),
+                      elevation: MaterialStateProperty.all<double>(0.0),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        SlideRightRoute(
+                          page: LoginScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -174,6 +247,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       image: DecorationImage(
                         image: AssetImage(StringUtils.backgroundImage),
                         alignment: Alignment.bottomCenter,
+                        fit: BoxFit.cover,
                         colorFilter: new ColorFilter.mode(
                             AppColors.backgroundColor[0].withOpacity(0.2),
                             BlendMode.dstATop),
@@ -303,6 +377,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         child: Column(
           children: <Widget>[
             CustomInput(
+              textkey: key,
               label: 'First Name',
               controller: _firstnameController,
               keyboardType: TextInputType.text,
@@ -310,6 +385,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: key2,
               label: 'Last Name',
               controller: _lastnameController,
               keyboardType: TextInputType.text,
@@ -317,6 +393,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: key3,
               label: 'Email',
               isEmail: true,
               controller: _emailController,
@@ -330,6 +407,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 color: Colors.transparent,
                 child: IgnorePointer(
                   child: CustomInput(
+                    textkey: key4,
                     label: 'Date of Birth (optional)',
                     controller: _dobController,
                   ),
@@ -338,6 +416,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: key5,
               isPassword: true,
               obScurePassword: true,
               label: 'Password',
@@ -347,6 +426,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             SizedBox(height: 15.0),
             CustomInput(
+              textkey: key6,
               obScurePassword: true,
               label: 'Confirm Password',
               controller: _confirmPasswordController,

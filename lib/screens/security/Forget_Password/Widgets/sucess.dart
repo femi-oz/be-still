@@ -1,5 +1,3 @@
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +35,7 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
           image: DecorationImage(
             image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            fit: BoxFit.cover,
             colorFilter: new ColorFilter.mode(
                 AppColors.backgroundColor[0].withOpacity(0.2),
                 BlendMode.dstATop),

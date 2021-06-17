@@ -1,7 +1,6 @@
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
 class SlideRightRoute extends PageRouteBuilder {
@@ -48,7 +47,7 @@ class SlideLeftRoute extends PageRouteBuilder {
           ) =>
               SlideTransition(
             position: Tween<Offset>(
-              begin: const Offset(-1, 0),
+              begin: const Offset(1, 0),
               end: Offset.zero,
             ).animate(animation),
             child: child,
@@ -72,9 +71,9 @@ class NavigationService {
 
   Future<dynamic> goHome(int index) async {
     await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
-        .setCurrentPage(index, 1);
-    return navigationKey.currentState.pushReplacement(
-        MaterialPageRoute(builder: (context) => EntryScreen()));
+        .setCurrentPage(index);
+    return navigationKey.currentState
+        .pushReplacement(SlideLeftRoute(page: EntryScreen()));
   }
 
   Future<dynamic> navigateTo(String _rn) {

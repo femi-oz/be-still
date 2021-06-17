@@ -20,7 +20,7 @@ class CustomEditField extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
+            margin: EdgeInsets.only(left: 20.0, right: 10.0),
             padding: const EdgeInsets.all(15),
             height: 60.0,
             width: MediaQuery.of(context).size.width * 0.80,
@@ -56,13 +56,16 @@ class CustomEditField extends StatelessWidget {
             ),
           ),
           InkWell(
-            child: GestureDetector(
+            onTap: () => onPressed(),
+            child: Container(
+              height: 70,
+              width: 50,
+              padding: EdgeInsets.only(right: 5),
               child: Icon(
                 AppIcons.bestill_edit,
                 size: 16,
                 color: AppColors.lightBlue3,
               ),
-              onTap: () => onPressed(),
             ),
           ),
         ],

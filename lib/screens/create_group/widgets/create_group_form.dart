@@ -39,6 +39,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
       child: Column(
         children: [
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             controller: widget.groupNameController,
             label: 'Group Name*',
             keyboardType: TextInputType.text,
@@ -47,6 +48,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             controller: widget.emailController,
             label: 'Email*',
             keyboardType: TextInputType.emailAddress,
@@ -55,6 +57,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             controller: widget.cityController,
             label: 'City*',
             keyboardType: TextInputType.text,
@@ -63,6 +66,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             controller: widget.stateController,
             label: 'State*',
             keyboardType: TextInputType.text,
@@ -71,6 +75,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             controller: widget.organizationController,
             label: 'Organization / Church Association',
             isRequired: false,
@@ -79,6 +84,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
+            textkey: GlobalKey<FormFieldState>(),
             controller: widget.descriptionController,
             label: 'Group Short Description',
             maxLines: 4,

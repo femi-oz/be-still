@@ -1,5 +1,6 @@
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'essentials.dart';
 
 class BeStilDialog {
-  static Widget getLoading([String message = '']) {
+  static Widget getLoading(context, [String message = '']) {
+    precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
+      appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -44,7 +47,7 @@ class BeStilDialog {
 
   static Future<void> showLoading(BuildContext context,
       [String message = '']) async {
-    Navigator.of(context).push(Loader(message));
+    await Navigator.of(context).push(Loader(message));
   }
 
   static hideLoading(BuildContext context) {
@@ -59,15 +62,15 @@ class BeStilDialog {
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
         confirmText: 'OK',
-        message: error?.message,
+        message: error.message == null ? error.toString() : error.message,
       ),
     );
-    FirebaseCrashlytics.instance
+    await FirebaseCrashlytics.instance
         .setCustomKey('id', user == null ? 'N/A' : user.id);
-    FirebaseCrashlytics.instance
+    await FirebaseCrashlytics.instance
         .setCustomKey('email', user == null ? 'N/A' : user.email);
 
-    FirebaseCrashlytics.instance.recordError(
+    await FirebaseCrashlytics.instance.recordError(
       error,
       stackTrace,
     );

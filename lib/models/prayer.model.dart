@@ -101,7 +101,7 @@ class PrayerUpdateModel {
 
   PrayerUpdateModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        prayerId = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
         title = snapshot.data()['Title'],
         description = snapshot.data()['Description'],

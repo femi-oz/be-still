@@ -1,14 +1,14 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
-import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -41,6 +41,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIOverlays(
+        [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
@@ -90,7 +95,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
-          await LocalNotification.clearAll();
+          // await LocalNotification.clearAll();
           Navigator.of(context).pushNamedAndRemoveUntil(
             LoginScreen.routeName,
             (Route<dynamic> route) => false,
@@ -137,7 +142,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayerTimePrayers(message.entityId);
 
-      NavigationService.instance.navigateToReplacement(PrayerTime());
+      Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
     }
     if (message.type == NotificationType.prayer) {
       await Provider.of<PrayerProvider>(context, listen: false)
@@ -148,11 +155,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,

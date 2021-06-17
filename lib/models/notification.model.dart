@@ -1,5 +1,4 @@
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

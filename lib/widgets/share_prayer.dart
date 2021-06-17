@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/menu-button.dart';
+import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +17,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SharePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;
-  SharePrayer({this.prayerData});
+  final bool hasReminder;
+  final reminder;
+  SharePrayer({this.prayerData, this.hasReminder, this.reminder});
 
   _SharePrayerState createState() => _SharePrayerState();
 }
@@ -23,6 +30,7 @@ class _SharePrayerState extends State<SharePrayer> {
   String _textUpdatesToString;
 
   _emailLink([bool isChurch = false]) async {
+    final _break = '';
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
@@ -32,19 +40,37 @@ class _SharePrayerState extends State<SharePrayer> {
     var name = _user.firstName;
     name = toBeginningOfSentenceCase(name);
     var _footerText =
-        'This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. \n\n%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
-    final Uri params = Uri(
-        scheme: 'mailto',
-        path: isChurch ? _churchEmail : '',
-        query:
-            "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} \n$_prayer \n\n${_emailUpdatesToString != '' ? ' $_emailUpdatesToString \n\n\n' : ''}$_footerText");
+        '''This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. 
+        
+Click https://www.bestillapp.com to learn more!'''; //
+    //%3Ca%20href=https://www.bestillapp.com%3ELearn%20More%3C/a%3E
+    // final Uri params = Uri(
+    //     scheme: 'mailto',
+    //     path: isChurch ? _churchEmail : '',
+    //     query:
+    //         "subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+    // // var params = Uri.encodeFull(
+    // //     "mailto: ${isChurch ? _churchEmail : ''}?subject=$name shared a prayer with you&body=${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)} $_break$_prayer $_break$_break${_emailUpdatesToString != '' ? ' $_emailUpdatesToString $_break$_break$_break' : ''}$_footerText");
+    // var url = params.toString() +
+    //     '%3Ca%20href%3D%22https%3A%2F%2Fwww.bestillapp.com%2F%22%3ELearn%20More%3C%2Fa%3E';
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
+    final Email email = Email(
+      body:
+          '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+$_prayer   
 
-    var url = params.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
+$_footerText''',
+      subject: '$name shared a prayer with you',
+      recipients: isChurch ? [_churchEmail] : [],
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
   }
 
   _textLink([bool isChurch = false]) async {
@@ -68,74 +94,149 @@ class _SharePrayerState extends State<SharePrayer> {
   }
 
   initState() {
+    // final _break = ' ';
     var emailUpdates = [];
-    widget.prayerData.updates.forEach((u) => emailUpdates.add(
-        '${DateFormat('dd MMMM yyyy').format(u.createdOn)}\n${u.description}'));
+    widget.prayerData.updates.forEach((u) =>
+        emailUpdates.add('''${DateFormat('dd MMMM yyyy').format(u.createdOn)}
+${u.description}
+'''));
     var textUpdates = [];
     widget.prayerData.updates.forEach((u) => textUpdates.add(
         '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn)})'));
 
-    _emailUpdatesToString = emailUpdates.join("\n\n");
+    _emailUpdatesToString = emailUpdates.join(" ");
     _textUpdatesToString = textUpdates.join(" ");
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final sharingSettings =
-        Provider.of<SettingsProvider>(context, listen: false).sharingSettings;
     return Container(
       width: double.infinity,
       height: double.infinity,
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
+          SizedBox(height: 80),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                color: Provider.of<ThemeProvider>(context, listen: false)
+                        .isDarkModeEnabled
+                    ? Colors.transparent
+                    : AppColors.white,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(7),
+                  topRight: Radius.circular(7),
+                ),
+              ),
+              child: TextButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Provider.of<ThemeProvider>(context, listen: false)
+                            .isDarkModeEnabled
+                        ? Colors.transparent
+                        : AppColors.white,
+                  ),
+                ),
                 icon: Icon(
-                  AppIcons.bestill_close,
+                  AppIcons.bestill_back_arrow,
+                  size: 20,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  showModalBottomSheet(
+                    context: context,
+                    barrierColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.5)
+                            : Color(0xFF021D3C).withOpacity(0.7),
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.5)
+                            : Color(0xFF021D3C).withOpacity(0.7),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return PrayerMenu(context, widget.hasReminder,
+                          widget.reminder, null, widget.prayerData);
+                    },
+                  );
                 },
-                color: AppColors.textFieldText,
+                label: Text(
+                  'BACK',
+                  style: AppTextStyles.boldText20,
+                ),
               ),
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _textLink(),
-                  text: 'Text Message',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _emailLink(),
-                  text: 'Email',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => null,
-                  isDisable: true,
-                  text: 'Direct Message',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => null,
-                  isDisable: true,
-                  text: 'Post to Group(s)',
-                ),
-                MenuButton(
-                  icon: AppIcons.bestill_share,
-                  onPressed: () => _emailLink(true),
-                  text: 'To my Church',
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 50.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => _textLink(),
+                    text: 'Text Message',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => _emailLink(),
+                    text: 'Email',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => null,
+                    isDisabled: true,
+                    text: 'Direct Message',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => null,
+                    isDisabled: true,
+                    text: 'Post to Group(s)',
+                  ),
+                  LongButton(
+                    textColor: AppColors.lightBlue3,
+                    backgroundColor:
+                        Provider.of<ThemeProvider>(context, listen: false)
+                                .isDarkModeEnabled
+                            ? AppColors.backgroundColor[0].withOpacity(0.7)
+                            : AppColors.white,
+                    icon: AppIcons.bestill_share,
+                    onPress: () => _emailLink(true),
+                    text: 'To my Church',
+                  ),
+                ],
+              ),
             ),
           ),
         ],

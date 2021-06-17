@@ -3,7 +3,6 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';

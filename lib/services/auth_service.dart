@@ -13,32 +13,31 @@ class AuthenticationService {
   final _localAuth = LocalAuthentication();
   bool isAuthenticated = false;
 
-  Future<void> biometricAuthentication() async {
+  Future<bool> biometricAuthentication(String email) async {
     if (Settings.enableLocalAuth) {
       try {
-        isAuthenticated = await _localAuth.authenticateWithBiometrics(
+        isAuthenticated = await _localAuth.authenticate(
           localizedReason: 'authenticate to access',
           useErrorDialogs: true,
           stickyAuth: true,
+          biometricOnly: true,
         );
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
-          await locator<LogService>().createLog(
-              'Authentication Cancelled',
-              _firebaseAuth.currentUser.email,
-              'AUTHENTICATION/service/biometricAuthentication');
-          throw HttpException('Authentication Cancelled');
-        }
+          signOut();
+          return false;
+        } else
+          return true;
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
+        signOut();
         final message = StringUtils.generateExceptionMessage(e.code ?? null);
         await locator<LogService>().createLog(
-            message,
-            _firebaseAuth.currentUser.email,
-            'AUTHENTICATION/service/biometricAuthentication');
+            message, email, 'AUTHENTICATION/service/biometricAuthentication');
         throw HttpException(message);
       }
-    }
+    } else
+      return false;
   }
 
   Future forgotPassword(String email) async {

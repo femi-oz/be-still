@@ -1,5 +1,4 @@
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -53,6 +52,7 @@ class _FindAGroupState extends State<FindAGroup> {
                       child: IgnorePointer(
                         child: CustomInput(
                           controller: null,
+                          textkey: GlobalKey<FormFieldState>(),
                           label: 'Start your Search',
                           padding: 5.0,
                           showSuffix: false,
@@ -63,6 +63,7 @@ class _FindAGroupState extends State<FindAGroup> {
                 : Container(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: CustomInput(
+                      textkey: GlobalKey<FormFieldState>(),
                       controller: _searchController,
                       label: 'Start your Search',
                       padding: 5.0,

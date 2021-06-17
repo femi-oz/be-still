@@ -52,7 +52,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Can I have location always?</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Why is my app authenticating using face id?</string>
+	<string> </string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
 	<key>kTCCServiceMediaLibrary</key>
