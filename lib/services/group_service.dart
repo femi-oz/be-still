@@ -86,10 +86,6 @@ class GroupService {
           .snapshots()
           .map((convert) {
         return convert.docs.map((f) {
-          // Stream<GroupUserModel> userGroup = Stream.value(f)
-          //     .map<GroupUserModel>(
-          //         (document) => GroupUserModel.fromData(document));
-
           Stream<GroupModel> group = _groupCollectionReference
               .doc(f['GroupId'])
               .snapshots()
@@ -122,15 +118,12 @@ class GroupService {
 
   addGroup(String userId, GroupModel groupData, String fullName,
       String email) async {
-    // Generate uuid
     final _groupID = Uuid().v1();
     final _groupUserId = Uuid().v1();
     try {
       if (_firebaseAuth.currentUser == null) return null;
       var batch = FirebaseFirestore.instance.batch();
-      // return FirebaseFirestore.instance.runTransaction(
-      //   (transaction) async {
-      // store group
+
       batch.set(_groupCollectionReference.doc(_groupID), groupData.toJson());
 
       //store group user
@@ -140,12 +133,7 @@ class GroupService {
 
       await locator<SettingsService>()
           .addGroupSettings(userId, email, _groupID);
-      //   },
-      // ).then((val) {
-      //   return true;
-      // }).catchError((e) {
-      //   throw HttpException(e.message);
-      // });
+
       await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(
@@ -259,21 +247,6 @@ class GroupService {
     }
   }
 
-//   Future updateMemberType(String userId, String groupId) async {
-//     try {
-//       _groupCollectionReference
-//           .where('UserId', isEqualTo: userId)
-//           .snapshots()
-//           .map((event) {
-//         _groupCollectionReference
-//             .document(groupId)
-//             .updateData({'IsAdmin': '1'});
-//       });
-//     } catch (e) {
-//       throw HttpException(e.message);
-//     }
-//   }
-
   acceptInvite(String groupId, String userId, String email, String name) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -295,24 +268,4 @@ class GroupService {
       throw HttpException(e.message);
     }
   }
-
-//   Future removeMemberFromGroup(String userId, String groupId) async {
-  //   try {
-  //     return Firestore.instance.runTransaction((transaction) async {
-  //       final userGroupRes = await _groupUserCollectionReference
-  //           .where("GroupId", isEqualTo: groupId)
-  //           .where("UserId", isEqualTo: userId)
-  //           .limit(1)
-  //           .getDocuments();
-  //       await transaction.delete(_groupUserCollectionReference
-  //           .document(userGroupRes.documents[0].id));
-  //     }).then((value) {
-  //       return true;
-  //     }).catchError((e) {
-  //       throw HttpException(e.message);
-  //     });
-  //   } catch (e) {
-  //     throw HttpException(e.message);
-  //   }
-  // }
 }

@@ -28,15 +28,6 @@ class _SharingSettingsState extends State<SharingSettings> {
   bool showUrlEditField = false;
 
   void _updateChurch() async {
-    // if (_churchName.text == null || _churchName.text.trim() == '') {
-    //   final user =
-    //       Provider.of<UserProvider>(context, listen: false).currentUser;
-    //   PlatformException er = PlatformException(
-    //       code: 'custom',
-    //       message: 'Church name can not be empty, please enter a valid name');
-
-    //   BeStilDialog.showErrorDialog(context, er, user, null);
-    // } else {
     try {
       final settingProvider =
           Provider.of<SettingsProvider>(context, listen: false);
@@ -221,7 +212,7 @@ class _SharingSettingsState extends State<SharingSettings> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Form(
-                // autovalidateMode: AutovalidateMode.onUserInteraction,
+                // ignore: deprecated_member_use
                 autovalidate: _autoValidate,
                 key: _formKey,
                 child: Column(

@@ -125,8 +125,6 @@ class AppColors {
       getColor(darkMode, light: 0xFF004E75, dark: 0xFF004E75);
   static Color get blueTitle =>
       getColor(darkMode, light: 0xFF003B87, dark: 0xFF00ACD8);
-  // static Color get growMyPrayerText =>
-  //     getColor(darkMode, light: 0xFF002D4B, dark: 0xFFC1C5C8);
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),
@@ -166,15 +164,11 @@ class AppColors {
 }
 
 class AppTextStyles {
-  // new fonts region
-  // medium => w400, demi => w500, bold => w700, regular=> w300
   static TextStyle get medium10 => const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
       );
-
-  // end region
 
   static const TextStyle regularText11 = const TextStyle(
     color: AppColors.lightBlue4,

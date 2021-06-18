@@ -149,7 +149,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   ),
                 )
               : Container(),
-          // SizedBox(width: 20),
         ],
       ),
       title: widget.isSearchMode

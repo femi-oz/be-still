@@ -131,7 +131,6 @@ class PrayerService {
                     .toList());
 
         Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-            // .doc(doc['PrayerId'])
             .where('PrayerId', isEqualTo: doc['PrayerId'])
             .snapshots()
             .map<List<PrayerTagModel>>((list) =>
@@ -170,7 +169,6 @@ class PrayerService {
     String creatorName,
     String prayerDescBackup,
   ) async {
-    // Generate uuid
     newPrayerId = Uuid().v1();
     final userPrayerID = Uuid().v1();
 
@@ -692,14 +690,9 @@ class PrayerService {
   hideFromAllMembers(String prayerId, bool value) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      // _prayerCollectionReference
-      //     .where('GroupId', isEqualTo: groupId)
-      //     .snapshots()
-      //     .map((event) {
       _prayerCollectionReference
           .doc(prayerId)
           .update({'HideFromAllMembers': value});
-      // });
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),

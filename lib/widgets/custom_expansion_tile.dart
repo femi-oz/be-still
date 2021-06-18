@@ -127,10 +127,6 @@ class _ExpansionTileState extends State<ExpansionTile>
   }
 
   void _handleTap() {
-    // widget.scrollController.animateTo(
-    //     widget.scrollController.position.maxScrollExtent,
-    //     duration: Duration(seconds: 1),
-    //     curve: Curves.ease);
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {
@@ -138,9 +134,7 @@ class _ExpansionTileState extends State<ExpansionTile>
       } else {
         _controller.reverse().then<void>((void value) {
           if (!mounted) return;
-          setState(() {
-            // Rebuild without widget.children.
-          });
+          setState(() {});
         });
       }
       PageStorage.of(context)?.writeState(context, _isExpanded);
@@ -150,16 +144,11 @@ class _ExpansionTileState extends State<ExpansionTile>
   }
 
   Widget _buildChildren(BuildContext context, Widget child) {
-    // final Color borderSideColor = _borderColor.value ?? Colors.transparent;
     final Color titleColor = _headerColor.value;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.transparent,
-        // border: Border(
-        //   top: BorderSide(color: borderSideColor),
-        //   bottom: BorderSide(color: borderSideColor),
-        // )),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -167,8 +156,6 @@ class _ExpansionTileState extends State<ExpansionTile>
           IconTheme.merge(
             data: IconThemeData(color: _iconColor.value),
             child: Container(
-              // color: widget.headerBackgroundColor ?? Colors.black,
-
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(

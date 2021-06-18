@@ -73,7 +73,6 @@ class _SplashScreenState extends State<SplashScreen>
           Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
-          // NavigationService.instance.navigateToReplacement(PrayerTime(null));
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)

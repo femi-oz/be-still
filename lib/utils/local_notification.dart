@@ -26,8 +26,6 @@ class LocalNotification {
     Frequency.one_time,
     Frequency.daily,
     Frequency.weekly,
-    // 'Monthly',
-    // 'Yearly'
   ];
 
   static List<String> months = new List<String>.generate(

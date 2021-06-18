@@ -459,6 +459,7 @@ class _AddPrayerState extends State<AddPrayer> {
                           Padding(
                             padding: const EdgeInsets.only(top: 30.0),
                             child: Form(
+                              // ignore: deprecated_member_use
                               autovalidate: _autoValidate,
                               key: _formKey,
                               child: Container(
@@ -549,7 +550,6 @@ class _AddPrayerState extends State<AddPrayer> {
               ),
             ),
           ),
-          // ),
         ),
       ),
     );

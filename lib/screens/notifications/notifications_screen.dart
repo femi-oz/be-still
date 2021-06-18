@@ -23,42 +23,11 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   BuildContext bcontext;
-  // OverlayEntry _overlayEntry;
 
   @override
   void initState() {
     super.initState();
   }
-
-  // _closeOverlay() {
-  //   if (this._overlayEntry != null) {
-  //     this._overlayEntry.remove();
-  //     this._overlayEntry = null;
-  //   }
-  // }
-
-  // _callRequestAction() {
-  //   // this._overlayEntry = _createOverlayEntry();
-  //   // Overlay.of(context).insert(this._overlayEntry);
-  // }
-
-  // _acceptInvite(
-  //     String groupId, String userId, String name, String email) async {
-  //   try {
-  //     // _closeOverlay();
-  //     BeStilDialog.showLoading(
-  //       bcontext,
-  //     );
-  //     await Provider.of<NotificationProvider>(context, listen: false)
-  //         .acceptGroupInvite(groupId, userId, name, email);
-  //     BeStilDialog.hideLoading(context);
-  //     BeStilDialog.showSnackBar(_key, 'Request has been accepted');
-  //   } catch (e) {
-  //     BeStilDialog.hideLoading(context);
-  //     BeStilDialog.showErrorDialog(context, e.message.toString());
-  //     // _closeOverlay();
-  //   }
-  // }
 
   void _getNotifications() async {
     try {
@@ -67,11 +36,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       await Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(_user?.id);
-    } on HttpException catch (_) {
-      // BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      // BeStilDialog.showErrorDialog(context, e.toString());
-    }
+    } on HttpException catch (_) {} catch (e) {}
   }
 
   bool _isInit = true;
@@ -160,10 +125,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                           onPressed: () => null,
-                        )
-                        // _acceptInvite(
-                        //     groupId, _user.id, _user.firstName, _user.email)),
-                        ),
+                        )),
                     Container(
                       height: 30,
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
@@ -195,9 +157,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                         ),
                         onPressed: () {
-                          setState(() {
-                            // sortBy = 'date';
-                          });
+                          setState(() {});
                         },
                       ),
                     ),
@@ -240,14 +200,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             child: _buildPanel(),
           ),
         ),
-        // endDrawer: CustomDrawer(),
       ),
     );
   }
 
   Widget _buildPanel() {
     final data = Provider.of<NotificationProvider>(context).notifications;
-    // print(data[0])
+
     final requests =
         data.where((e) => e.messageType == NotificationType.request).toList();
     final newPrayers =
@@ -415,10 +374,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       ),
                                     ),
                                   ),
-
-                                  //   NotificationCard(
-                                  //       notificationByType['notifications'][i]),
-                                  // ),
                                   SizedBox(height: 10),
                                 ],
                               ))
@@ -590,10 +545,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         ),
                                       ),
                                     ),
-
-                                    //   NotificationCard(
-                                    //       notificationByType['notifications'][i]),
-                                    // ),
                                     SizedBox(height: 10),
                                   ],
                                 ))
