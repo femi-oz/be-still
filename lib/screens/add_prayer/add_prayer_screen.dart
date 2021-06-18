@@ -10,6 +10,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 import '../entry_screen.dart';
@@ -167,6 +168,10 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<void> getContacts() async {
+    var status = await Permission.contacts.status;
+    setState(() =>
+        Settings.enabledContactPermission = status == PermissionStatus.granted);
+
     if (Settings.enabledContactPermission) {
       final _localContacts =
           await ContactsService.getContacts(withThumbnails: false);
