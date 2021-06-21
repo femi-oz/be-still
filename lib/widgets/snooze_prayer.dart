@@ -10,7 +10,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
 class SnoozePrayer extends StatefulWidget {
@@ -27,7 +26,6 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
   List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
-
   String selectedInterval;
   int selectedDuration;
 

@@ -74,7 +74,7 @@ class _MyListSettingsState extends State<MyListSettings> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final userId = Provider.of<UserProvider>(context).currentUser.id;
     final snoozeDurationController = FixedExtentScrollController(
-        initialItem: snoozeDuration.asMap().containsKey(selectedDuration)
+        initialItem: snoozeDuration.contains(selectedDuration)
             ? snoozeDuration.indexOf(selectedDuration)
             : snoozeDuration[0]);
     return Container(
@@ -167,16 +167,7 @@ class _MyListSettingsState extends State<MyListSettings> {
                                           snoozeDurationController,
                                       itemExtent: 30,
                                       onSelectedItemChanged: (i) {
-                                        print(snoozeDuration
-                                            .asMap()
-                                            .containsKey(selectedDuration));
-                                        var index = snoozeDuration
-                                                .asMap()
-                                                .containsKey(selectedDuration)
-                                            ? i
-                                            : 0;
-                                        setState(() => selectedDuration =
-                                            snoozeDuration[index]);
+                                        selectedDuration = snoozeDuration[i];
                                       },
                                       children: <Widget>[
                                         ...snoozeDuration
