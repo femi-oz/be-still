@@ -1,5 +1,4 @@
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/utils/app_icons.dart';
 
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
@@ -11,9 +10,6 @@ import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateView extends StatelessWidget {
-  // final PrayerModel prayer;
-  // final List<PrayerUpdateModel> updates;
-
   static const routeName = '/update';
 
   @override
@@ -241,7 +237,6 @@ class UpdateView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                // margin: EdgeInsets.only(right: 30),
                 child: Row(
                   children: <Widget>[
                     Text(
@@ -303,14 +298,6 @@ class UpdateView extends StatelessWidget {
                                   decoration: TextDecoration.underline))
                       ],
                     ),
-
-                    // Text(
-                    //   description,
-                    //   style: AppTextStyles.regularText18b.copyWith(
-                    //     color: AppColors.prayerTextColor,
-                    //   ),
-                    //   textAlign: TextAlign.left,
-                    // ),
                   ),
                 ],
               ),

@@ -16,7 +16,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
-import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -78,7 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
               showFingerPrint = true;
             } else if (e.toString() == 'BiometricType.face') {
               showFaceId = true;
-              // _biologin();
             } else {
               showFaceId = false;
               showFingerPrint = false;
@@ -275,7 +273,6 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              // margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 60, vertical: 10),
               child: Text(
                 'Biometrics will be enabled after you log in.',
@@ -284,7 +281,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     .copyWith(color: AppColors.lightBlue1),
               ),
             ),
-            // GestureDetector(
             Container(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TextButton(
@@ -427,7 +423,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _bioButton() {
     return Container(
-      // height: 30,
       padding: EdgeInsets.only(
         left: 40,
       ),
@@ -449,11 +444,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Icons.fingerprint,
                         color: Colors.black,
                         size: 37,
-                      )
-            // Image.asset(
-            //     'assets/images/icon_face_id_ios.png',
-            //   ),
-            ),
+                      )),
       ),
     );
   }
@@ -465,6 +456,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildForm() {
     return Form(
+      // ignore: deprecated_member_use
       autovalidate: _autoValidate,
       key: _formKey,
       child: Column(

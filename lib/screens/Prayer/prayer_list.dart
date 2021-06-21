@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
@@ -21,7 +21,6 @@ import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class PrayerList extends StatefulWidget {
   final Function setCurrentIndex;
@@ -126,9 +125,12 @@ class _PrayerListState extends State<PrayerList> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final notifications =
+        Provider.of<NotificationProvider>(context, listen: false)
+            .localNotifications;
     if (user != null)
       Provider.of<PrayerProvider>(context, listen: false)
-          .checkPrayerValidity(user.id);
+          .checkPrayerValidity(user.id, notifications);
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
 
     final currentPrayerType =

@@ -235,7 +235,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   _buildEmailForm(BuildContext context) {
     return Form(
       key: _formKey1,
-      // autovalidateMode: AutovalidateMode.onUserInteraction,
+      // ignore: deprecated_member_use
       autovalidate: _autoValidate,
       child: Column(
         children: <Widget>[

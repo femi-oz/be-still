@@ -248,13 +248,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _updatePassword() async {
     try {
-      // BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
-      // BeStilDialog.hideLoading(context);
-      // Navigator.of(context).pop();
+
       BeStilDialog.showSuccessDialog(
           context, 'Your password has been updated successfully');
     } on HttpException catch (e, s) {
@@ -443,7 +441,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 ),
               SizedBox(height: 10.0),
               Form(
-                // autovalidateMode: AutovalidateMode.onUserInteraction,
+                // ignore: deprecated_member_use
                 autovalidate: _autoValidate,
                 key: _formKey,
                 child: Column(

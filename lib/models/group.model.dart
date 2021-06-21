@@ -73,9 +73,6 @@ class GroupInviteModel {
   final String sender;
   final String senderId;
   final String id;
-  // final String userId;
-  // final String groupId;
-  // final String status;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -83,9 +80,6 @@ class GroupInviteModel {
 
   const GroupInviteModel({
     this.id,
-    // @required this.userId,
-    // @required this.groupId,
-    // @required this.status,
     @required this.groupName,
     @required this.groupId,
     @required this.email,

@@ -18,7 +18,6 @@ class SettingsModel {
   final bool allowTextNotification;
   final bool allowAlexaReadPrayer;
   final bool emailUpdateNotification;
-  // final String emailUpdateFrequency;
   final int emailUpdateFrequencyMins;
   final bool notifyMeSomeoneSharePrayerWithMe;
   final bool notifyMeSomeonePostOnGroup;
@@ -46,7 +45,6 @@ class SettingsModel {
     @required this.allowPushNotification,
     @required this.allowTextNotification,
     @required this.allowAlexaReadPrayer,
-    // @required this.emailUpdateFrequency,
     @required this.emailUpdateFrequencyMins,
     @required this.emailUpdateNotification,
     @required this.notifyMeSomeonePostOnGroup,
@@ -78,7 +76,6 @@ class SettingsModel {
         allowPushNotification = snapshot.data()['AllowPushNotification'],
         allowTextNotification = snapshot.data()['AllowTextNotification'],
         allowAlexaReadPrayer = snapshot.data()['AllowAlexaReadPrayer'],
-        // emailUpdateFrequency = snapshot.data()['EmailUpdateFrequency'],
         emailUpdateFrequencyMins = snapshot.data()['EmailUpdateFrequencySecs'],
         emailUpdateNotification = snapshot.data()['EmailUpdateNotification'],
         notifyMeSomeonePostOnGroup =
@@ -111,7 +108,6 @@ class SettingsModel {
       'AllowPushNotification': allowPushNotification,
       'AllowTextNotification': allowTextNotification,
       'EmailUpdateNotification': emailUpdateNotification,
-      // 'EmailUpdateFrequency': emailUpdateFrequency,
       'EmailUpdateFrequencySecs': emailUpdateFrequencyMins,
       'NotifyMeSomeonePostOnGroup': notifyMeSomeonePostOnGroup,
       'NotifyMeSomeoneSharePrayerWithMe': notifyMeSomeoneSharePrayerWithMe,

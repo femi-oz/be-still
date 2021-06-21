@@ -37,7 +37,6 @@ class _AddUpdateState extends State<AddUpdate> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   String backupText;
-  String _oldDescription = '';
   TextPainter painter;
   bool showNoContact = false;
   String displayName = '';
@@ -46,7 +45,6 @@ class _AddUpdateState extends State<AddUpdate> {
 
   @override
   void initState() {
-    _oldDescription = _descriptionController.text;
     getContacts();
     super.initState();
   }
@@ -365,6 +363,7 @@ class _AddUpdateState extends State<AddUpdate> {
                         Stack(
                           children: [
                             Form(
+                              // ignore: deprecated_member_use
                               autovalidate: _autoValidate,
                               key: _formKey,
                               child: CustomInput(

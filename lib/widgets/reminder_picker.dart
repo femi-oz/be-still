@@ -325,10 +325,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
               height: 200,
               child: Column(
                 children: <Widget>[
-                  // SizedBox(
-                  //   height: 40,
-                  // ),
-
                   Expanded(
                     child: Container(
                       child: Row(
@@ -671,30 +667,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               ),
                             ),
                           )
-                        // Container(
-                        //     margin: EdgeInsets.symmetric(horizontal: 40),
-                        //     child: Row(
-                        //       children: [
-                        //         CustomButtonGroup(
-                        //           title: 'DELETE REMINDER',
-                        //           onSelected: (_) {
-                        //             _deleteReminder();
-                        //           },
-                        //           length: 1,
-                        //           index: 1,
-                        //           color: AppColors.red,
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   )
                         : Container(),
                   ],
                 ),
-          // Container(
-          //   margin: EdgeInsets.symmetric(horizontal: 40),
-          //   width: double.infinity,
-          //   child:
-          // ),
         ],
       ),
     );

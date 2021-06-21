@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -41,11 +40,8 @@ class PrayerMenu extends StatefulWidget {
 
 class _PrayerMenuState extends State<PrayerMenu> {
   List<String> reminderInterval = [
-    // 'Hourly',
     Frequency.daily,
     Frequency.weekly,
-    // 'Monthly',
-    // 'Yearly'
   ];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -305,12 +301,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     } on HttpException catch (e, s) {
-      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      // BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);

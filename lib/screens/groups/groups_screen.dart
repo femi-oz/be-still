@@ -39,7 +39,6 @@ class _GroupScreenState extends State<GroupScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Container(
-        // padding: EdgeInsets.only(left: 40),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
