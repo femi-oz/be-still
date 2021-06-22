@@ -98,7 +98,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   @override
   Widget build(BuildContext context) {
     final snoozeDurationController = FixedExtentScrollController(
-        initialItem: snoozeDuration.asMap().containsKey(selectedDuration)
+        initialItem: snoozeDuration.contains(selectedDuration)
             ? snoozeDuration.indexOf(selectedDuration)
             : snoozeDuration[0]);
     return Container(
@@ -183,16 +183,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                               scrollController: snoozeDurationController,
                               itemExtent: 30,
                               onSelectedItemChanged: (i) {
-                                print(snoozeDuration
-                                    .asMap()
-                                    .containsKey(selectedDuration));
-                                var index = snoozeDuration
-                                        .asMap()
-                                        .containsKey(selectedDuration)
-                                    ? i
-                                    : 0;
-                                setState(() =>
-                                    selectedDuration = snoozeDuration[index]);
+                                selectedDuration = snoozeDuration[i];
                               },
                               children: <Widget>[
                                 ...snoozeDuration
@@ -225,6 +216,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
             margin: EdgeInsets.symmetric(horizontal: 40),
             width: double.infinity,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
@@ -232,7 +224,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                   },
                   child: Container(
                     height: 38.0,
-                    width: MediaQuery.of(context).size.width * .35,
+                    width: MediaQuery.of(context).size.width * .32,
                     decoration: BoxDecoration(
                       color: AppColors.grey.withOpacity(0.5),
                       border: Border.all(
@@ -256,7 +248,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                   onTap: _snoozePrayer,
                   child: Container(
                     height: 38.0,
-                    width: MediaQuery.of(context).size.width * .35,
+                    width: MediaQuery.of(context).size.width * .32,
                     decoration: BoxDecoration(
                       color: Colors.blue,
                       border: Border.all(
