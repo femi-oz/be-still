@@ -357,7 +357,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                                         Axis.horizontal,
                                                     reverse: true,
                                                     child: Container(
-                                                      height: 15,
+                                                      height: 20,
                                                       padding:
                                                           EdgeInsets.symmetric(
                                                               vertical: 3),
