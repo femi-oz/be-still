@@ -218,18 +218,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       await Provider.of<UserProvider>(context, listen: false)
           .updateEmail(_newEmail.text, user.id);
-      BeStilDialog.showSuccessDialog(context,
-          'Your email has been updated successfully. You\'ll have to verify your email and relogin.',
-          () async {
-        await Provider.of<AuthenticationProvider>(context, listen: false)
-            .signOut();
-        Settings.enableLocalAuth = false;
-        Settings.rememberMe = false;
-        Navigator.pushReplacement(
-          context,
-          SlideRightRoute(page: LoginScreen()),
-        );
-      });
+      Settings.enableLocalAuth = false;
+      Settings.rememberMe = false;
+      BeStilDialog.showSuccessDialog(
+          context, 'Your email has been updated successfully.');
 
       _newEmail.clear();
     } on HttpException catch (e, s) {
