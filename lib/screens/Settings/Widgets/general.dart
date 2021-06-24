@@ -6,6 +6,8 @@ import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -216,8 +218,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       await Provider.of<UserProvider>(context, listen: false)
           .updateEmail(_newEmail.text, user.id);
-      BeStilDialog.showSuccessDialog(
-          context, 'Your email has been updated successfully');
+      BeStilDialog.showSuccessDialog(context,
+          'Your email has been updated successfully. You\'ll have to verify your email and relogin.',
+          () async {
+        await Provider.of<AuthenticationProvider>(context, listen: false)
+            .signOut();
+        Settings.enableLocalAuth = false;
+        Settings.rememberMe = false;
+        Navigator.pushReplacement(
+          context,
+          SlideRightRoute(page: LoginScreen()),
+        );
+      });
+
       _newEmail.clear();
     } on HttpException catch (e, s) {
       _newEmail.clear();

@@ -76,15 +76,16 @@ class BeStilDialog {
     );
   }
 
-  static Future showSuccessDialog(BuildContext context, String message) async {
+  static Future showSuccessDialog(BuildContext context, String message,
+      [Function onConfirm]) async {
     await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
-        type: AlertType.success,
-        confirmText: 'OK',
-        message: message,
-      ),
+          type: AlertType.success,
+          confirmText: 'OK',
+          message: message,
+          onConfirm: onConfirm),
     );
   }
 

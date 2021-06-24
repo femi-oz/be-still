@@ -47,11 +47,11 @@ class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
               'Password reset email has been sent to your email address.',
               style: AppTextStyles.regularText15,
             ),
-            SizedBox(height: 80),
-            Text(
-              'New password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase and 1 number.',
-              style: AppTextStyles.errorText,
-            ),
+            // SizedBox(height: 80),
+            // Text(
+            //   'New password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase and 1 number.',
+            //   style: AppTextStyles.errorText,
+            // ),
           ],
         ),
       ),

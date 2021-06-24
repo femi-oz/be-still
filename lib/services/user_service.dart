@@ -104,7 +104,8 @@ class UserService {
     User user = _firebaseAuth.currentUser;
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      await user.updateEmail(newEmail);
+      await user.updateEmail(newEmail.toLowerCase());
+      await user.sendEmailVerification();
       await _userCollectionReference.doc(userId).update({'Email': newEmail});
     } catch (e) {
       locator<LogService>().createLog(
