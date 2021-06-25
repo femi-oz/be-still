@@ -38,9 +38,7 @@ class _SharePrayerState extends State<SharePrayer> {
     var _footerText =
         '''This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. 
         
-Click https://www.bestillapp.com to learn more!'''; //
-    //%3Ca%20href=https://www.bestillapp.com%3ELearn%20More%3C/a%3E
-
+Click https://www.bestillapp.com to learn more!''';
     final Email email = Email(
       body:
           '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
