@@ -2,11 +2,11 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class NoUpdateView extends StatefulWidget {
   @override
@@ -17,15 +17,16 @@ class NoUpdateView extends StatefulWidget {
 }
 
 class _NoUpdateViewState extends State<NoUpdateView> {
-  _emailLink([String email]) async {
-    final Uri params = Uri(scheme: 'mailto', path: '', query: "");
+  _emailLink([String payload]) async {
+    print(payload);
+    payload = payload == null ? '' : payload;
+    final Email email = Email(
+      body: '',
+      recipients: [payload],
+      isHTML: false,
+    );
 
-    var url = params.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+    await FlutterEmailSender.send(email);
   }
 
   _textLink([String phoneNumber]) async {
