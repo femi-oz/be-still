@@ -36,20 +36,12 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
           .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.pushReplacement(
-      //     context,
-      //     PageTransition(
-      //       type: PageTransitionType.leftToRightWithFade,
-      //       child: EntryScreen(),
-      //     ));
     } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -60,20 +52,12 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       );
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // Navigator.pushReplacement(
-      //     context,
-      //     PageTransition(
-      //       type: PageTransitionType.leftToRightWithFade,
-      //       child: EntryScreen(),
-      //     ));
     } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -251,19 +235,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                           AppIcons.bestill_hide,
                           color: AppColors.lightBlue4,
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(left: 10.0),
-                        //   child: Text(
-                        //     widget.prayer.hideFromAllMembers
-                        //         ? 'Show in Group'
-                        //         : 'Hide From Group',
-                        //     style: TextStyle(
-                        //       color: AppColors.lightBlue4,
-                        //       fontSize: 14,
-                        //       fontWeight: FontWeight.w500,
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

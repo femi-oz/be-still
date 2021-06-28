@@ -52,7 +52,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
     Provider.of<NotificationProvider>(context, listen: false)
         .initLocal(context);
-    // FirebaseCrashlytics.instance.crash();
     _initializeFlutterFireFuture = _initializeFlutterFire();
 
     super.initState();
@@ -95,7 +94,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
-          // await LocalNotification.clearAll();
           Navigator.of(context).pushNamedAndRemoveUntil(
             LoginScreen.routeName,
             (Route<dynamic> route) => false,
@@ -103,9 +101,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         }
         final userId =
             Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+        final notifications =
+            Provider.of<NotificationProvider>(context, listen: false)
+                .localNotifications;
         if (userId != null)
           Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(userId);
+              .checkPrayerValidity(userId, notifications);
         print(
             'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
 

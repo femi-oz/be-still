@@ -13,7 +13,6 @@ class FlavorValues {
   final String country;
   //Add other flavor specific values, e.g database name
 
-  // FlavorValues({@required this.baseUrl});
   FlavorValues({@required this.country});
 }
 

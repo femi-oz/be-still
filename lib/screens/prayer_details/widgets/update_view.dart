@@ -1,32 +1,27 @@
 import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/utils/app_icons.dart';
 
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class UpdateView extends StatelessWidget {
-  // final PrayerModel prayer;
-  // final List<PrayerUpdateModel> updates;
-
   static const routeName = '/update';
 
   @override
   UpdateView();
-  _emailLink([String email]) async {
-    final Uri params = Uri(scheme: 'mailto', path: '', query: "");
+  _emailLink([String payload]) async {
+    final Email email = Email(
+      body: '',
+      recipients: [payload],
+      isHTML: false,
+    );
 
-    var url = params.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+    await FlutterEmailSender.send(email);
   }
 
   _textLink([String phoneNumber]) async {
@@ -241,7 +236,6 @@ class UpdateView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                // margin: EdgeInsets.only(right: 30),
                 child: Row(
                   children: <Widget>[
                     Text(
@@ -303,14 +297,6 @@ class UpdateView extends StatelessWidget {
                                   decoration: TextDecoration.underline))
                       ],
                     ),
-
-                    // Text(
-                    //   description,
-                    //   style: AppTextStyles.regularText18b.copyWith(
-                    //     color: AppColors.prayerTextColor,
-                    //   ),
-                    //   textAlign: TextAlign.left,
-                    // ),
                   ),
                 ],
               ),

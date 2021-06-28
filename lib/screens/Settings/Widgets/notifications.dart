@@ -50,56 +50,6 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
                 settingsId: widget.settings.id),
             value: widget.settings.allowPushNotification,
           ),
-          // CustomToggle(
-          //   title: 'Allow text Notifications?',
-          //   onChange: (value) => setingProvider.updateSettings(userId,
-          //       key: SettingsKey.allowTextNotification,
-          //       value: value,
-          //       settingsId: widget.settings.id),
-          //   value: widget.settings.allowTextNotification,
-          // ),
-          // CustomToggle(
-          //   title: 'Send notification email updates?',
-          //   onChange: (value) => setingProvider.updateSettings(userId,
-          //       key: SettingsKey.emailUpdateNotification,
-          //       value: value,
-          //       settingsId: widget.settings.id),
-          //   value: widget.settings.emailUpdateNotification,
-          // ),
-          // Column(
-          //   children: [
-          //     Container(
-          //       padding: EdgeInsets.only(left: 20.0, right: 20.0),
-          //       width: double.infinity,
-          //       child: Text(
-          //         'Set email update frequency',
-          //         style: AppTextStyles.regularText15
-          //             .copyWith(color: AppColors.textFieldText),
-          //         textAlign: TextAlign.left,
-          //       ),
-          //     ),
-          //     Container(
-          //       child: CustomPicker(
-          //           emailFrequency, setEmailUpdateFrequency, true, 1440),
-          //     ),
-          //   ],
-          // ),
-          // CustomToggle(
-          //   title: 'Notify me when someone shares a prayer with me',
-          //   onChange: (value) => setingProvider.updateSettings(userId,
-          //       key: SettingsKey.notifyMeSomeoneSharePrayerWithMe,
-          //       value: value,
-          //       settingsId: widget.settings.id),
-          //   value: widget.settings.notifyMeSomeoneSharePrayerWithMe,
-          // ),
-          // CustomToggle(
-          //   title: 'Notify me when someone posts to a Group I\'m in',
-          //   onChange: (value) => setingProvider.updateSettings(userId,
-          //       key: SettingsKey.notifyMeSomeonePostOnGroup,
-          //       value: value,
-          //       settingsId: widget.settings.id),
-          //   value: widget.settings.notifyMeSomeonePostOnGroup,
-          // ),
         ],
       ),
     );

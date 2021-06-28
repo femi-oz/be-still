@@ -34,11 +34,7 @@ class _GroupToolsState extends State<GroupTools> {
         data.group.id,
         data.groupUsers.firstWhere((e) => e.userId == _user.id).isAdmin,
       );
-    } on HttpException catch (_) {
-      // BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      // BeStilDialog.showErrorDialog(context, e.toString());
-    }
+    } on HttpException catch (_) {} catch (e) {}
   }
 
   @override

@@ -301,7 +301,6 @@ class _EntryScreenState extends State<EntryScreen>
               size: 50,
             ),
             SizedBox(height: 10.0),
-
             type == 'Group'
                 ? Icon(
                     AppIcons.groups,
@@ -311,7 +310,6 @@ class _EntryScreenState extends State<EntryScreen>
                 : Container(),
             const SizedBox(height: 10.0),
             Container(
-              // margin: EdgeInsets.only(bottom: 20),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Text(
                 message,
@@ -320,7 +318,6 @@ class _EntryScreenState extends State<EntryScreen>
                     .copyWith(color: AppColors.lightBlue4),
               ),
             ),
-            // GestureDetector(
             Container(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TextButton(

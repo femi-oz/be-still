@@ -134,8 +134,6 @@ class _FindAGroupState extends State<FindAGroup> {
                           ),
                         ),
                         SizedBox(height: 30.0),
-                        // for (int i = 0; i < _filteredGroups.length; i++)
-                        //   GroupCard(_filteredGroups[i]),
                         Padding(
                           padding: EdgeInsets.only(left: 20.0),
                           child: Column(

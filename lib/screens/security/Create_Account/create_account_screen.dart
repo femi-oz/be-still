@@ -5,7 +5,6 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/security/Create_Account/Widgets/success.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -15,7 +14,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:be_still/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +29,6 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
-  // bool disabled = false;
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
@@ -121,10 +118,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             Settings.rememberMe ? _passwordController.text : '';
         BeStilDialog.hideLoading(context);
         showInfoDialog(context);
-        // Navigator.push(
-        //   context,
-        //   SlideRightRoute(page: CreateAccountSuccess()),
-        // );
       }
     } on HttpException catch (e, s) {
       var message = '';
@@ -150,7 +143,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       BeStilDialog.hideLoading(context);
 
       BeStilDialog.showErrorDialog(context, e, null, s);
-      // }
     }
   }
 
@@ -222,7 +214,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget build(BuildContext context) {
-    // disabled = Provider.of<MiscProvider>(context).disable;
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
@@ -275,7 +266,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               ),
                               SizedBox(height: 10),
                               _buildFooter(),
-                              // SizedBox(height: 100),
                             ],
                           ),
                         ),
@@ -372,7 +362,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
-        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        // ignore: deprecated_member_use
         autovalidate: _autoValidate,
         child: Column(
           children: <Widget>[

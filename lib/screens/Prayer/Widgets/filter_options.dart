@@ -12,7 +12,6 @@ class PrayerFilters extends StatefulWidget {
 }
 
 class _PrayerFiltersState extends State<PrayerFilters> {
-  // List<String> options = [];
   String errorMessage = '';
   void setOption(status) async {
     errorMessage = '';
