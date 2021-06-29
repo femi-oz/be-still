@@ -1,148 +1,41 @@
 {
   "project_info": {
-    "project_number": "634311419885",
-    "firebase_url": "https://bestill-app.firebaseio.com",
-    "project_id": "bestill-app",
-    "storage_bucket": "bestill-app.appspot.com"
+    "project_number": "699798003228",
+    "project_id": "be-still-v2",
+    "storage_bucket": "be-still-v2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
+        "mobilesdk_app_id": "1:699798003228:android:ef8a4924d20b76a60cc9d9",
         "android_client_info": {
           "package_name": "org.second.bestill"
         }
       },
       "oauth_client": [
         {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
+          "client_id": "699798003228-ltsjbmtigrqj1r5vjkkivp8hiiluvgi2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
+          "current_key": "AIzaSyCnzI6HAFq0YTiYb010zPbx-pSgMi8DS10"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
+              "client_id": "699798003228-ltsjbmtigrqj1r5vjkkivp8hiiluvgi2.apps.googleusercontent.com",
               "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
-          "package_name": "org.second.bestill.local"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
+            },
             {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },{
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
-          "package_name": "org.second.bestill.dev"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },{
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
-          "package_name": "org.second.bestill.prod"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },{
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
-          "package_name": "org.second.bestill.test"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
+              "client_id": "699798003228-3ng9kmtqhpbtgr6vr6ji3h1ennt3302j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.second.bestill"
+              }
             }
           ]
         }
