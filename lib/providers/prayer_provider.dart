@@ -246,36 +246,40 @@ class PrayerProvider with ChangeNotifier {
       List<CombinePrayerStream> data,
       List<LocalNotificationModel> notifications) async {
     if (_firebaseAuth.currentUser == null) return null;
-    final archivedPrayers = data
-        .where((CombinePrayerStream data) => data.userPrayer.isArchived == true)
-        .toList();
     final settings = await locator<SettingsService>().getSettings(userId);
     final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
     final autoDeleteDuration = settings.archiveAutoDeleteMins;
-    List<CombinePrayerStream> toDelete = archivedPrayers;
-    if (!autoDeleteAnswered) {
-      toDelete = toDelete
-          .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
+    if (autoDeleteDuration > 0) {
+      final archivedPrayers = data
+          .where(
+              (CombinePrayerStream data) => data.userPrayer.isArchived == true)
           .toList();
-    }
-
-    for (int i = 0; i < toDelete.length; i++) {
-      if (toDelete[i]
-              .userPrayer
-              .archivedDate
-              .add(Duration(minutes: autoDeleteDuration))
-              .isBefore(DateTime.now()) &&
-          autoDeleteDuration != 0) {
-        final _notifications = notifications
-            .where((e) => e.entityId == toDelete[i].userPrayer.id)
+      List<CombinePrayerStream> toDelete = archivedPrayers;
+      if (!autoDeleteAnswered) {
+        toDelete = toDelete
+            .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
             .toList();
+      }
 
-        _notifications.forEach((e) async {
-          final notification = _notifications.firstWhere((e) => e.id == e.id);
-          await LocalNotification.unschedule(notification.localNotificationId);
-          await locator<NotificationService>().removeLocalNotification(e.id);
-        });
-        deletePrayer(toDelete[i].userPrayer.id);
+      for (int i = 0; i < toDelete.length; i++) {
+        if (toDelete[i]
+                .userPrayer
+                .archivedDate
+                .add(Duration(minutes: autoDeleteDuration))
+                .isBefore(DateTime.now()) &&
+            autoDeleteDuration != 0) {
+          final _notifications = notifications
+              .where((e) => e.entityId == toDelete[i].userPrayer.id)
+              .toList();
+
+          _notifications.forEach((e) async {
+            final notification = _notifications.firstWhere((e) => e.id == e.id);
+            await LocalNotification.unschedule(
+                notification.localNotificationId);
+            await locator<NotificationService>().removeLocalNotification(e.id);
+          });
+          deletePrayer(toDelete[i].userPrayer.id);
+        }
       }
     }
   }
