@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
@@ -212,40 +211,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
-  void _updateEmail(UserModel user) async {
-    try {
-      await Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(_newEmail.text, user.id);
-      BeStilDialog.showSuccessDialog(
-          context, 'Your email has been updated successfully');
-      _newEmail.clear();
-    } on HttpException catch (e, s) {
-      _newEmail.clear();
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      print(e.message);
-      var message = '';
-      if (e.message ==
-          'The email address is already in use by another account.') {
-        message =
-            'That email address is already in use. Please select another email.';
-      } else {
-        message = e.message;
-      }
-
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
-
-      BeStilDialog.showErrorDialog(context, er, user, s);
-      _newEmail.clear();
-    }
-  }
-
   void _updatePassword() async {
     try {
       await Provider.of<UserProvider>(context, listen: false)
@@ -280,9 +245,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           .signIn(email: _user.email, password: _currentPassword.text);
       _currentPassword.clear();
       Future.delayed(Duration(milliseconds: 300), () async {
-        if (type == _ModalType.email) {
-          _updateEmail(_user);
-        }
+        // if (type == _ModalType.email) {
+        //   _updateEmail(_user);
+        // }
 
         if (type == _ModalType.password) {
           _updatePassword();
@@ -350,16 +315,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               ],
             ),
             SizedBox(height: 30),
-            CustomEditField(
-              value: _currentUser.email,
-              onPressed: () {
-                setState(() => isVerified = false);
-                _update(_ModalType.email, context);
-              },
-              showLabel: false,
-              label: 'Email',
-            ),
-            SizedBox(height: 10),
+            // CustomEditField(
+            //   value: _currentUser.email,
+            //   onPressed: () {
+            //     setState(() => isVerified = false);
+            //     _update(_ModalType.email, context);
+            //   },
+            //   showLabel: false,
+            //   label: 'Email',
+            // ),
+            // SizedBox(height: 10),
             CustomEditField(
               value: '',
               onPressed: () {

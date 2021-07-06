@@ -7,7 +7,6 @@ import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class NoUpdateView extends StatefulWidget {
   @override

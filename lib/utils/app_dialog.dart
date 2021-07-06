@@ -56,13 +56,22 @@ class BeStilDialog {
 
   static Future showErrorDialog(BuildContext context, dynamic error,
       UserModel user, StackTrace stackTrace) async {
+    var hasProperty = false;
+    try {
+      (error as dynamic)?.message;
+      hasProperty = true;
+    } on NoSuchMethodError {}
     await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
         confirmText: 'OK',
-        message: error.message == null ? error.toString() : error.message,
+        message: error == null
+            ? StringUtils.generateExceptionMessage(null)
+            : !hasProperty
+                ? StringUtils.generateExceptionMessage(null)
+                : error?.message,
       ),
     );
     await FirebaseCrashlytics.instance
@@ -76,15 +85,16 @@ class BeStilDialog {
     );
   }
 
-  static Future showSuccessDialog(BuildContext context, String message) async {
+  static Future showSuccessDialog(BuildContext context, String message,
+      [Function onConfirm]) async {
     await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
-        type: AlertType.success,
-        confirmText: 'OK',
-        message: message,
-      ),
+          type: AlertType.success,
+          confirmText: 'OK',
+          message: message,
+          onConfirm: onConfirm),
     );
   }
 
