@@ -33,23 +33,37 @@ class _SharePrayerState extends State<SharePrayer> {
         .churchEmail;
     var _prayer =
         toBeginningOfSentenceCase(widget.prayerData.prayer.description);
-    var name = _user.firstName;
-    name = toBeginningOfSentenceCase(name);
+    var firstName = _user.firstName;
+    firstName = toBeginningOfSentenceCase(firstName);
+    var lastName = _user.lastName;
+    lastName = toBeginningOfSentenceCase(lastName);
     var _footerText =
-        '''This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. 
-        
-Click https://www.bestillapp.com to learn more!''';
+        '''$firstName $lastName shared this prayer request with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. Learn more about Be Still at 
+https://www.bestillapp.com.''';
     final Email email = Email(
       body:
-          '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+          '''I am sharing with you the following prayer request from my Be Still app:
+${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
+
+${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
 $_prayer   
 
-${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
 $_footerText''',
-      subject: '$name shared a prayer with you',
+      subject: 'Prayer Request',
       recipients: isChurch ? [_churchEmail] : [],
       isHTML: false,
     );
+//     final Email email = Email(
+//       body:
+//           '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+// $_prayer
+
+// ${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
+// $_footerText''',
+//       subject: '$name shared a prayer with you',
+//       recipients: isChurch ? [_churchEmail] : [],
+//       isHTML: false,
+//     );
 
     await FlutterEmailSender.send(email);
   }
