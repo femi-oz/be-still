@@ -109,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
     }
+    if (Settings.enableLocalAuth) _biologin();
     super.initState();
   }
 

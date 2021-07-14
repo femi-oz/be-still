@@ -41,9 +41,15 @@ class _SharePrayerState extends State<SharePrayer> {
         '''$firstName $lastName shared this prayer request with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. Learn more about Be Still at 
 https://www.bestillapp.com.''';
     final Email email = Email(
-      body:
-          '''I am sharing with you the following prayer request from my Be Still app:
-${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
+      body: _emailUpdatesToString.isNotEmpty
+          ? '''I am sharing with you the following prayer request from my Be Still app: 
+
+$_emailUpdatesToString
+${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+$_prayer   
+
+$_footerText'''
+          : '''I am sharing with you the following prayer request from my Be Still app: 
 
 ${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
 $_prayer   

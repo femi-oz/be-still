@@ -95,6 +95,24 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
     }
   }
 
+  void _unSnoozePrayer(CombinePrayerStream prayerData) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
+          prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final snoozeDurationController = FixedExtentScrollController(
@@ -215,44 +233,76 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           Container(
             margin: EdgeInsets.symmetric(horizontal: 40),
             width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    height: 38.0,
-                    width: MediaQuery.of(context).size.width * .32,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey.withOpacity(0.5),
-                      border: Border.all(
-                        color: AppColors.cardBorder,
-                        width: 1,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        height: 38.0,
+                        width: MediaQuery.of(context).size.width * .32,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey.withOpacity(0.5),
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text('CANCEL',
+                                style: AppTextStyles.boldText20.copyWith(
+                                    color: AppColors.white, height: 1.5)),
+                          ],
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('CANCEL',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.white, height: 1.5)),
-                      ],
+                    GestureDetector(
+                      onTap: _snoozePrayer,
+                      child: Container(
+                        height: 38.0,
+                        width: MediaQuery.of(context).size.width * .32,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text('SNOOZE',
+                                style: AppTextStyles.boldText20.copyWith(
+                                    color: AppColors.white, height: 1.5)),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
+                SizedBox(height: 10),
                 GestureDetector(
-                  onTap: _snoozePrayer,
+                  onTap: () => widget.prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer(widget.prayerData)
+                      : null,
                   child: Container(
                     height: 38.0,
-                    width: MediaQuery.of(context).size.width * .32,
                     decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: AppColors.red.withOpacity(
+                          widget.prayerData.userPrayer.isSnoozed ? 0.5 : 0.2),
                       border: Border.all(
-                        color: AppColors.cardBorder,
+                        color: AppColors.red.withOpacity(
+                            widget.prayerData.userPrayer.isSnoozed ? 1 : 0.5),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(5),
@@ -261,9 +311,13 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text('SNOOZE',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.white, height: 1.5)),
+                        Text('UNSNOOZE',
+                            style: AppTextStyles.boldText20.copyWith(
+                                color: AppColors.white.withOpacity(
+                                    widget.prayerData.userPrayer.isSnoozed
+                                        ? 1
+                                        : 0.3),
+                                height: 1.5)),
                       ],
                     ),
                   ),
