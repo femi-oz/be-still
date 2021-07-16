@@ -18,7 +18,6 @@ class NoUpdateView extends StatefulWidget {
 
 class _NoUpdateViewState extends State<NoUpdateView> {
   _emailLink([String payload]) async {
-    print(payload);
     payload = payload == null ? '' : payload;
     final Email email = Email(
       body: '',
@@ -27,6 +26,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
     );
 
     await FlutterEmailSender.send(email);
+    Navigator.pop(context);
   }
 
   _textLink([String phoneNumber]) async {
@@ -34,7 +34,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
         .catchError((onError) {
       print(onError);
     });
-    print(_result);
+    Navigator.pop(context);
   }
 
   _openShareModal(BuildContext context, String phoneNumber, String email) {
