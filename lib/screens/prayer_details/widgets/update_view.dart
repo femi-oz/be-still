@@ -9,11 +9,17 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 
-class UpdateView extends StatelessWidget {
+class UpdateView extends StatefulWidget {
   static const routeName = '/update';
 
   @override
   UpdateView();
+
+  @override
+  _UpdateView createState() => _UpdateView();
+}
+
+class _UpdateView extends State<UpdateView> {
   _emailLink([String payload]) async {
     final Email email = Email(
       body: '',
@@ -22,6 +28,7 @@ class UpdateView extends StatelessWidget {
     );
 
     await FlutterEmailSender.send(email);
+    Navigator.pop(context);
   }
 
   _textLink([String phoneNumber]) async {
@@ -29,7 +36,7 @@ class UpdateView extends StatelessWidget {
         .catchError((onError) {
       print(onError);
     });
-    print(_result);
+    Navigator.pop(context);
   }
 
   _openShareModal(BuildContext context, String phoneNumber, String email) {

@@ -12,10 +12,12 @@ import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
@@ -46,7 +48,7 @@ class _EntryScreenState extends State<EntryScreen>
 
   initState() {
     _getPermissions();
-    _tabController = new TabController(length: 7, vsync: this);
+    _tabController = new TabController(length: 8, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _currentIndex = miscProvider.currentPage;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -250,13 +252,8 @@ class _EntryScreenState extends State<EntryScreen>
                 physics: NeverScrollableScrollPhysics(),
                 controller: _tabController,
                 children: [
-                  getItems(miscProvider).map((e) => e.page).toList()[0],
-                  getItems(miscProvider).map((e) => e.page).toList()[1],
-                  getItems(miscProvider).map((e) => e.page).toList()[2],
-                  getItems(miscProvider).map((e) => e.page).toList()[3],
-                  getItems(miscProvider).map((e) => e.page).toList()[4],
-                  getItems(miscProvider).map((e) => e.page).toList()[5],
-                  getItems(miscProvider).map((e) => e.page).toList()[6],
+                  for (int i = 0; i < getItems().length; i++)
+                    getItems().map((e) => e.page).toList()[i],
                 ],
               ),
       ),
@@ -273,77 +270,6 @@ class _EntryScreenState extends State<EntryScreen>
       ),
       endDrawerEnableOpenDragGesture: false,
     );
-  }
-
-  void showInfoModal(message, type) {
-    final dialogContent = AlertDialog(
-      actionsPadding: EdgeInsets.all(0),
-      contentPadding: EdgeInsets.all(0),
-      backgroundColor: AppColors.prayerCardBgColor,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.darkBlue),
-        borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
-        ),
-      ),
-      content: Container(
-        width: double.infinity,
-        height: type == 'Group'
-            ? MediaQuery.of(context).size.height * 0.4
-            : MediaQuery.of(context).size.height * 0.35,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 10.0),
-            Icon(
-              Icons.error,
-              color: AppColors.red,
-              size: 50,
-            ),
-            SizedBox(height: 10.0),
-            type == 'Group'
-                ? Icon(
-                    AppIcons.groups,
-                    size: 50,
-                    color: AppColors.lightBlue4,
-                  )
-                : Container(),
-            const SizedBox(height: 10.0),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text(
-                message,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.regularText16b
-                    .copyWith(color: AppColors.lightBlue4),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: TextButton(
-                child: Text('OK',
-                    style:
-                        AppTextStyles.boldText16.copyWith(color: Colors.white)),
-                style: ButtonStyle(
-                  textStyle: MaterialStateProperty.all<TextStyle>(
-                      AppTextStyles.boldText16.copyWith(color: Colors.white)),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.blue),
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.all(5.0)),
-                  elevation: MaterialStateProperty.all<double>(0.0),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-    showDialog(
-        context: context, builder: (BuildContext context) => dialogContent);
   }
 
   Widget _createBottomNavigationBar(int _currentIndex) {
@@ -371,14 +297,14 @@ class _EntryScreenState extends State<EntryScreen>
                 if (prayers.length == 0) {
                   message =
                       'You must have at least one active prayer to start prayer time.';
-                  showInfoModal(message, 'PrayerTime');
+                  showInfoModal(message, 'PrayerTime', context);
                 } else {
                   _setCurrentIndex(index, true);
                 }
                 break;
               case 3:
                 message = 'This feature will be available soon.';
-                showInfoModal(message, 'Group');
+                showInfoModal(message, 'Group', context);
                 break;
               case 4:
                 Scaffold.of(context).openEndDrawer();
@@ -402,9 +328,7 @@ class _EntryScreenState extends State<EntryScreen>
           selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
-            for (final tabItem
-                in getItems(Provider.of<MiscProvider>(context, listen: false))
-                    .getRange(0, 5))
+            for (final tabItem in getItems().getRange(0, 5))
               BottomNavigationBarItem(
                 icon: Container(
                   key: tabItem.key,
@@ -431,7 +355,7 @@ class _EntryScreenState extends State<EntryScreen>
     });
   }
 
-  List<TabNavigationItem> getItems(miscProvider) => [
+  List<TabNavigationItem> getItems() => [
         TabNavigationItem(
           page: PrayerList(
             _setCurrentIndex,
@@ -510,6 +434,15 @@ class _EntryScreenState extends State<EntryScreen>
             padding: 7),
         TabNavigationItem(
             page: RecommenededBibles(_setCurrentIndex),
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: PrayerDetails(_setCurrentIndex),
             icon: Icon(
               Icons.more_horiz,
               size: 20,

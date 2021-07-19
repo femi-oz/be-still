@@ -62,7 +62,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Allow the Be Still to access your contacts information to enable sharing your prayers with them.</string>
+	<string>Allow Be Still to access your contacts information to enable sharing your prayers with them.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

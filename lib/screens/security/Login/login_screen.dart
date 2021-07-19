@@ -109,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
     }
+    if (Settings.enableLocalAuth) _biologin();
     super.initState();
   }
 
@@ -128,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerDetails());
+          // NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();

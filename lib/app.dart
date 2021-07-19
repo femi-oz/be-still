@@ -150,7 +150,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (message.type == NotificationType.prayer) {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(message.entityId);
-      NavigationService.instance.navigateToReplacement(PrayerDetails());
+      // NavigationService.instance.navigateToReplacement(PrayerDetails());
     }
   }
 
