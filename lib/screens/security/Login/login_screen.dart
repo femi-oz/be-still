@@ -28,6 +28,7 @@ import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = 'login';
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -109,8 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
     }
-    if (Settings.enableLocalAuth) _biologin();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bool showBioAuth = ModalRoute.of(context)?.settings?.arguments ?? false;
+      if (showBioAuth) _biologin();
+    });
   }
 
   Future<void> setRouteDestination() async {

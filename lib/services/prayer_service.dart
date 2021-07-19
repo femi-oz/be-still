@@ -351,7 +351,8 @@ class PrayerService {
     }
   }
 
-  Future snoozePrayer(DateTime endDate, String userPrayerID) async {
+  Future snoozePrayer(DateTime endDate, String userPrayerID, int duration,
+      String frequency) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(userPrayerID).update(
@@ -359,7 +360,9 @@ class PrayerService {
           'IsFavourite': false,
           'IsSnoozed': true,
           'SnoozeEndDate': endDate,
-          'Status': Status.inactive
+          'Status': Status.inactive,
+          'SnoozeDuration': duration,
+          'SnoozeFrequency': frequency,
         },
       );
     } catch (e) {
@@ -375,7 +378,13 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(userPrayerID).update(
-        {'IsSnoozed': false, 'Status': Status.active, 'SnoozeEndDate': endDate},
+        {
+          'IsSnoozed': false,
+          'Status': Status.active,
+          'SnoozeEndDate': endDate,
+          'SnoozeDuration': 0,
+          'SnoozeFrequency': '',
+        },
       );
     } catch (e) {
       locator<LogService>().createLog(
@@ -799,6 +808,8 @@ class PrayerService {
         isArchived: false,
         archivedDate: null,
         userId: userId,
+        snoozeDuration: 0,
+        snoozeFrequency: '',
         status: Status.active,
         sequence: null,
         prayerId: prayerID,

@@ -33,8 +33,12 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   void initState() {
     final settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
-    selectedInterval = settings.defaultSnoozeFrequency;
-    selectedDuration = settings.defaultSnoozeDuration;
+    selectedInterval = widget.prayerData.userPrayer.snoozeFrequency.isNotEmpty
+        ? widget.prayerData.userPrayer.snoozeFrequency
+        : settings.defaultSnoozeFrequency;
+    selectedDuration = widget.prayerData.userPrayer.snoozeDuration > 0
+        ? widget.prayerData.userPrayer.snoozeDuration
+        : settings.defaultSnoozeDuration;
     snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
         : settings.defaultSnoozeFrequency == "Months"
@@ -81,7 +85,9 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
           widget.prayerData.prayer.id,
           _snoozeEndDate,
-          widget.prayerData.userPrayer.id);
+          widget.prayerData.userPrayer.id,
+          selectedDuration,
+          selectedInterval);
 
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
