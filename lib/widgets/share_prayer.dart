@@ -59,17 +59,6 @@ $_footerText''',
       recipients: isChurch ? [_churchEmail] : [],
       isHTML: false,
     );
-//     final Email email = Email(
-//       body:
-//           '''${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
-// $_prayer
-
-// ${_emailUpdatesToString != '' ? ' $_emailUpdatesToString ' : ''}
-// $_footerText''',
-//       subject: '$name shared a prayer with you',
-//       recipients: isChurch ? [_churchEmail] : [],
-//       isHTML: false,
-//     );
 
     await FlutterEmailSender.send(email);
   }

@@ -61,7 +61,7 @@ class BeStilDialog {
       (error as dynamic)?.message;
       hasProperty = true;
     } on NoSuchMethodError {}
-    await showDialog(
+    showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
@@ -74,12 +74,13 @@ class BeStilDialog {
                 : error?.message,
       ),
     );
-    await FirebaseCrashlytics.instance
+    FirebaseCrashlytics.instance.setUserIdentifier(user?.id ?? 'N/A');
+    FirebaseCrashlytics.instance
         .setCustomKey('id', user == null ? 'N/A' : user.id);
-    await FirebaseCrashlytics.instance
+    FirebaseCrashlytics.instance
         .setCustomKey('email', user == null ? 'N/A' : user.email);
 
-    await FirebaseCrashlytics.instance.recordError(
+    FirebaseCrashlytics.instance.recordError(
       error,
       stackTrace,
     );
