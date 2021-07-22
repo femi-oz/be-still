@@ -387,8 +387,10 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    bool isValid = (!widget.isEdit && _descriptionController.text.isNotEmpty) ||
-        (widget.isEdit && _oldDescription != _descriptionController.text);
+    bool isValid =
+        (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
+            (widget.isEdit &&
+                _oldDescription.trim() != _descriptionController.text.trim());
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 

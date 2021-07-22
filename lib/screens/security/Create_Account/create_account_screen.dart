@@ -163,7 +163,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           SizedBox(height: 10.0),
           Flexible(
             child: Text(
-              'Your account registration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration',
+              'Your account registration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration.',
               style: AppTextStyles.regularText16b
                   .copyWith(color: AppColors.lightBlue4),
               textAlign: TextAlign.center,
