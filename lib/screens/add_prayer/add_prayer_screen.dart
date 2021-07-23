@@ -390,7 +390,8 @@ class _AddPrayerState extends State<AddPrayer> {
     bool isValid =
         (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
             (widget.isEdit &&
-                _oldDescription.trim() != _descriptionController.text.trim());
+                _oldDescription.trim() != _descriptionController.text.trim() &&
+                _descriptionController.text.trim().isNotEmpty);
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
