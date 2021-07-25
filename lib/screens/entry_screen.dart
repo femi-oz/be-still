@@ -234,6 +234,8 @@ class _EntryScreenState extends State<EntryScreen>
   @override
   Widget build(BuildContext context) {
     final miscProvider = Provider.of<MiscProvider>(context);
+    _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
+
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
