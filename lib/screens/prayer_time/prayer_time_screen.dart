@@ -1,4 +1,6 @@
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -18,8 +20,22 @@ class PrayerTime extends StatefulWidget {
 
 class _PrayerTimeState extends State<PrayerTime> {
   final _controller = PageController(initialPage: 0);
-
   var currentPage = 0;
+
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId);
+    });
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {

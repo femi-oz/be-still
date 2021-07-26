@@ -1,6 +1,7 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -55,6 +56,21 @@ class _AddPrayerState extends State<AddPrayer> {
   List<String> tagList = [];
   var displayname = [];
   double numberOfLines = 5.0;
+
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId);
+    });
+    super.didChangeDependencies();
+  }
 
   Future<void> _save() async {
     FocusScope.of(context).unfocus();

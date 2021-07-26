@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -20,6 +23,21 @@ class DevotionPlans extends StatefulWidget {
 }
 
 class _DevotionPlansState extends State<DevotionPlans> {
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId);
+    });
+    super.didChangeDependencies();
+  }
+
   void _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
