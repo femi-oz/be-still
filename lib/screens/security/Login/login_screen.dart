@@ -16,6 +16,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
+import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -533,11 +534,16 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Text('Remember Me', style: AppTextStyles.regularText15),
             SizedBox(width: 12),
-            Switch.adaptive(
-              activeColor: AppColors.lightBlue4,
+            CustomToggle(
+              hasText: false,
+              onChange: (value) => setState(() => Settings.rememberMe = value),
               value: _remeberMe,
-              onChanged: (value) => setState(() => Settings.rememberMe = value),
             ),
+            // Switch.adaptive(
+            //   activeColor: AppColors.lightBlue4,
+            //   value: _remeberMe,
+            //   onChanged: (value) => setState(() => Settings.rememberMe = value),
+            // ),
           ],
         ),
       ],
