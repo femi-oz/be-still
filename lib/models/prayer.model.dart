@@ -134,6 +134,8 @@ class UserPrayerModel {
   final String sequence;
   final bool isFavorite;
   final String status;
+  final int snoozeDuration;
+  final String snoozeFrequency;
   final int deleteStatus;
   final String createdBy;
   final DateTime createdOn;
@@ -150,6 +152,8 @@ class UserPrayerModel {
     @required this.sequence,
     @required this.isFavorite,
     @required this.status,
+    @required this.snoozeDuration,
+    @required this.snoozeFrequency,
     @required this.deleteStatus,
     @required this.isArchived,
     @required this.isSnoozed,
@@ -168,6 +172,8 @@ class UserPrayerModel {
         sequence = snapshot.data()['Sequence'],
         isFavorite = snapshot.data()['IsFavourite'],
         status = snapshot.data()['Status'],
+        snoozeDuration = snapshot.data()['SnoozeDuration'] ?? 0,
+        snoozeFrequency = snapshot.data()['SnoozeFrequency'] ?? '',
         deleteStatus = snapshot.data()['DeleteStatus'] ?? 0,
         archivedDate =
             snapshot.data()['ArchivedDate']?.toDate() ?? DateTime.now(),
@@ -187,6 +193,8 @@ class UserPrayerModel {
       'Sequence': sequence,
       'IsFavourite': isFavorite,
       'Status': status,
+      'SnoozeFrequency': snoozeFrequency,
+      'SnoozeDuration': snoozeDuration,
       'DeleteStatus': deleteStatus,
       'IsArchived': isArchived,
       'ArchivedDate': archivedDate,
