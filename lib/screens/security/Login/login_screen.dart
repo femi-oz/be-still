@@ -98,7 +98,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isInit) {
       setState(() => isFormValid = _usernameController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty);
-      _isBiometricAvailable();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _isBiometricAvailable();
+        bool showBioAuth = ModalRoute.of(context)?.settings?.arguments ?? false;
+        if (showBioAuth && isBioMetricAvailable && Settings.enableLocalAuth)
+          _biologin();
+      });
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -112,10 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text = Settings.userPassword;
     }
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      bool showBioAuth = ModalRoute.of(context)?.settings?.arguments ?? false;
-      if (showBioAuth) _biologin();
-    });
   }
 
   Future<void> setRouteDestination() async {
@@ -566,6 +567,7 @@ class _LoginScreenState extends State<LoginScreen> {
             verificationSendMessage,
             style: AppTextStyles.regularText15,
           ),
+        SizedBox(height: 5),
         BsRaisedButton(
           onPressed: _login,
           disabled: !isFormValid,
