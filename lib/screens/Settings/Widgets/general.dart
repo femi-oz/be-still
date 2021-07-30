@@ -287,6 +287,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _verifyPassword(_user, type, ctx) async {
     try {
+      if (_user.email.trim().toLowerCase() ==
+              _newEmail.text.trim().toLowerCase() &&
+          type == _ModalType.email) return;
       BeStilDialog.showLoading(context);
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .signIn(email: _user.email, password: _currentPassword.text);
