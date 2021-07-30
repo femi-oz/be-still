@@ -567,6 +567,7 @@ class _LoginScreenState extends State<LoginScreen> {
             verificationSendMessage,
             style: AppTextStyles.regularText15,
           ),
+        SizedBox(height: 5),
         BsRaisedButton(
           onPressed: _login,
           disabled: !isFormValid,

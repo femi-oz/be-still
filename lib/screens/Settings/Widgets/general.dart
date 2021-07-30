@@ -543,8 +543,17 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         ),
                         TextButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.lightBlue3),
+                            backgroundColor:
+                                // (_user.email
+                                //                 .trim()
+                                //                 .toLowerCase() ==
+                                //             _newEmail.text.trim().toLowerCase() &&
+                                //         type == _ModalType.email)
+                                //     ? MaterialStateProperty.all<Color>(
+                                //         AppColors.lightBlue3.withOpacity(0.5))
+                                //     :
+                                MaterialStateProperty.all<Color>(
+                                    AppColors.lightBlue3),
                           ),
                           onPressed: () {
                             setState(() => _autoValidate = true);
