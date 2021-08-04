@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -8,8 +12,9 @@ import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_appavailability/flutter_appavailability.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   final Function setCurrentIndex;
   final GlobalKey keyButton;
   final GlobalKey keyButton2;
@@ -26,11 +31,59 @@ class CustomDrawer extends StatelessWidget {
     this.keyButton5,
     this.scaffoldKey,
   );
+
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  initState() {
+    super.initState();
+    _generateBibleAppUri();
+  }
+
+  String _shareUri = 'https://my.bible.com/bible';
+
+  void _generateBibleAppUri() async {
+    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (Platform.isIOS) {
+      try {
+        await AppAvailability.checkAvailability(
+            "itms-appss://apps.apple.com/app/id282935706");
+        _shareUri = 'itms-appss://apps.apple.com/app/id282935706';
+      } catch (e, s) {
+        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+      }
+    }
+  }
+
   _launchURL(url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (Platform.isIOS) {
+      try {
+        AppAvailability.launchApp(_shareUri);
+      } catch (_, __) {
+        try {
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            throw 'Could not launch $url';
+          }
+        } catch (e, s) {
+          BeStilDialog.showErrorDialog(
+              context, e, _userProvider.currentUser, s);
+        }
+      }
     } else {
-      throw 'Could not launch $url';
+      try {
+        if (await canLaunch(url)) {
+          await launch(url);
+        } else {
+          throw 'Could not launch $url';
+        }
+      } catch (e, s) {
+        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+      }
     }
   }
 
@@ -216,8 +269,7 @@ class CustomDrawer extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () =>
-                                  _launchURL('https://my.bible.com/bible'),
+                              onTap: () => _launchURL(_shareUri),
                               child: Text("BIBLE APP",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
@@ -227,7 +279,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () async {
-                                await setCurrentIndex(6, false);
+                                await widget.setCurrentIndex(6, false);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
@@ -241,7 +293,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                                 onTap: () async {
-                                  await setCurrentIndex(5, false);
+                                  await widget.setCurrentIndex(5, false);
                                   await Future.delayed(
                                       Duration(milliseconds: 300));
                                   Navigator.pop(context);
@@ -254,7 +306,7 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () async {
-                                await setCurrentIndex(4, false);
+                                await widget.setCurrentIndex(4, false);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
@@ -278,15 +330,15 @@ class CustomDrawer extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
                               onTap: () {
-                                setCurrentIndex(0, true);
+                                widget.setCurrentIndex(0, true);
                                 Navigator.pop(context);
                                 TutorialTarget.showTutorial(
                                   context,
-                                  keyButton,
-                                  keyButton2,
-                                  keyButton3,
-                                  keyButton4,
-                                  keyButton5,
+                                  widget.keyButton,
+                                  widget.keyButton2,
+                                  widget.keyButton3,
+                                  widget.keyButton4,
+                                  widget.keyButton5,
                                 );
                               },
                               child: Text("QUICK TIPS",
