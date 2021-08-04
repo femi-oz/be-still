@@ -296,38 +296,38 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => widget.prayerData.userPrayer.isSnoozed
-                      ? _unSnoozePrayer(widget.prayerData)
-                      : null,
-                  child: Container(
-                    height: 38.0,
-                    decoration: BoxDecoration(
-                      color: AppColors.red.withOpacity(
-                          widget.prayerData.userPrayer.isSnoozed ? 0.5 : 0.2),
-                      border: Border.all(
-                        color: AppColors.red.withOpacity(
-                            widget.prayerData.userPrayer.isSnoozed ? 1 : 0.5),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('UNSNOOZE',
-                            style: AppTextStyles.boldText20.copyWith(
-                                color: AppColors.white.withOpacity(
-                                    widget.prayerData.userPrayer.isSnoozed
-                                        ? 1
-                                        : 0.3),
-                                height: 1.5)),
-                      ],
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 10),
+                // GestureDetector(
+                //   onTap: () => widget.prayerData.userPrayer.isSnoozed
+                //       ? _unSnoozePrayer(widget.prayerData)
+                //       : null,
+                //   child: Container(
+                //     height: 38.0,
+                //     decoration: BoxDecoration(
+                //       color: AppColors.red.withOpacity(
+                //           widget.prayerData.userPrayer.isSnoozed ? 0.5 : 0.2),
+                //       border: Border.all(
+                //         color: AppColors.red.withOpacity(
+                //             widget.prayerData.userPrayer.isSnoozed ? 1 : 0.5),
+                //         width: 1,
+                //       ),
+                //       borderRadius: BorderRadius.circular(5),
+                //     ),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       crossAxisAlignment: CrossAxisAlignment.center,
+                //       children: <Widget>[
+                //         Text('UNSNOOZE',
+                //             style: AppTextStyles.boldText20.copyWith(
+                //                 color: AppColors.white.withOpacity(
+                //                     widget.prayerData.userPrayer.isSnoozed
+                //                         ? 1
+                //                         : 0.3),
+                //                 height: 1.5)),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           )
