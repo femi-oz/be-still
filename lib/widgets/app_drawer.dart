@@ -42,15 +42,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
     _generateBibleAppUri();
   }
 
-  String _shareUri = 'https://my.bible.com/bible';
+  String _shareUri = '';
 
   void _generateBibleAppUri() async {
     final _userProvider = Provider.of<UserProvider>(context, listen: false);
     if (Platform.isIOS) {
       try {
-        await AppAvailability.checkAvailability(
-            "itms-appss://apps.apple.com/app/id282935706");
-        _shareUri = 'itms-appss://apps.apple.com/app/id282935706';
+        await AppAvailability.checkAvailability("youversion://");
+        _shareUri = 'youversion://';
+      } catch (e, s) {
+        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+      }
+    } else if (Platform.isAndroid) {
+      try {
+        await AppAvailability.checkAvailability("tv.lifechurch.bible");
+        _shareUri = 'tv.lifechurch.bible';
       } catch (e, s) {
         BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
       }
@@ -59,27 +65,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   _launchURL(url) async {
     final _userProvider = Provider.of<UserProvider>(context, listen: false);
-    if (Platform.isIOS) {
+    try {
+      AppAvailability.launchApp(_shareUri);
+    } catch (_, __) {
       try {
-        AppAvailability.launchApp(_shareUri);
-      } catch (_, __) {
-        try {
-          if (await canLaunch(url)) {
-            await launch(url);
-          } else {
-            throw 'Could not launch $url';
-          }
-        } catch (e, s) {
-          BeStilDialog.showErrorDialog(
-              context, e, _userProvider.currentUser, s);
-        }
-      }
-    } else {
-      try {
-        if (await canLaunch(url)) {
-          await launch(url);
+        if (await canLaunch('https://my.bible.com/bible')) {
+          await launch('https://my.bible.com/bible');
         } else {
-          throw 'Could not launch $url';
+          throw 'Could not launch https://my.bible.com/bible';
         }
       } catch (e, s) {
         BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
