@@ -39,7 +39,6 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   initState() {
     super.initState();
-    _generateBibleAppUri();
   }
 
   String _shareUri = '';
@@ -64,6 +63,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   _launchURL(url) async {
+    _generateBibleAppUri();
     final _userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
       AppAvailability.launchApp(_shareUri);
