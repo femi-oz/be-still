@@ -1,4 +1,7 @@
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -169,6 +172,16 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   var userId =
+    //       Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    //   await Provider.of<MiscProvider>(context, listen: false)
+    //       .setSearchMode(false);
+    //   await Provider.of<MiscProvider>(context, listen: false)
+    //       .setSearchQuery('');
+    //   await Provider.of<PrayerProvider>(context, listen: false)
+    //       .searchPrayers('', userId);
+    // });
     return SafeArea(
       child: Container(
         width: double.infinity,

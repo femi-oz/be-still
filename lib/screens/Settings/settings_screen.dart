@@ -41,7 +41,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
           .setSearchMode(false);
       await Provider.of<MiscProvider>(context, listen: false)
           .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<PrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
     });
     super.didChangeDependencies();
