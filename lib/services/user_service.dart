@@ -39,7 +39,7 @@ class UserService {
       churchId: 0,
       createdBy: email.toUpperCase(),
       createdOn: DateTime.now(),
-      dateOfBirth: dob == null ? '' : DateFormat('MM/DD/YY').format(dob),
+      dateOfBirth: dob == null ? '' : DateFormat('MM/dd/yyyy').format(dob),
       email: email,
       firstName: firstName,
       keyReference: uid,

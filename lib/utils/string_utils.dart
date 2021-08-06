@@ -86,7 +86,7 @@ class StringUtils {
         break;
       case ErrorType.userNotVerified:
         errorMessage =
-            "You email address has not been verified. Please verify and try again";
+            "Your email address has not been verified. Please verify and try again";
         break;
       default:
         errorMessage = "The application has encountered an error.";

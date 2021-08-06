@@ -33,8 +33,12 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   void initState() {
     final settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
-    selectedInterval = settings.defaultSnoozeFrequency;
-    selectedDuration = settings.defaultSnoozeDuration;
+    selectedInterval = widget.prayerData.userPrayer.snoozeFrequency.isNotEmpty
+        ? widget.prayerData.userPrayer.snoozeFrequency
+        : settings.defaultSnoozeFrequency;
+    selectedDuration = widget.prayerData.userPrayer.snoozeDuration > 0
+        ? widget.prayerData.userPrayer.snoozeDuration
+        : settings.defaultSnoozeDuration;
     snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
         : settings.defaultSnoozeFrequency == "Months"
@@ -81,7 +85,9 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
           widget.prayerData.prayer.id,
           _snoozeEndDate,
-          widget.prayerData.userPrayer.id);
+          widget.prayerData.userPrayer.id,
+          selectedDuration,
+          selectedInterval);
 
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
@@ -215,58 +221,62 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           Container(
             margin: EdgeInsets.symmetric(horizontal: 40),
             width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    height: 38.0,
-                    width: MediaQuery.of(context).size.width * .32,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey.withOpacity(0.5),
-                      border: Border.all(
-                        color: AppColors.cardBorder,
-                        width: 1,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        height: 38.0,
+                        width: MediaQuery.of(context).size.width * .32,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey.withOpacity(0.5),
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text('CANCEL',
+                                style: AppTextStyles.boldText20.copyWith(
+                                    color: AppColors.white, height: 1.5)),
+                          ],
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('CANCEL',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.white, height: 1.5)),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: _snoozePrayer,
-                  child: Container(
-                    height: 38.0,
-                    width: MediaQuery.of(context).size.width * .32,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      border: Border.all(
-                        color: AppColors.cardBorder,
-                        width: 1,
+                    GestureDetector(
+                      onTap: _snoozePrayer,
+                      child: Container(
+                        height: 38.0,
+                        width: MediaQuery.of(context).size.width * .32,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text('SNOOZE',
+                                style: AppTextStyles.boldText20.copyWith(
+                                    color: AppColors.white, height: 1.5)),
+                          ],
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('SNOOZE',
-                            style: AppTextStyles.boldText20
-                                .copyWith(color: AppColors.white, height: 1.5)),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
               ],
             ),

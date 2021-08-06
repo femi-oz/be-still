@@ -20,6 +20,9 @@ import 'package:provider/provider.dart';
 class PrayerDetails extends StatefulWidget {
   static const routeName = 'prayer-details';
 
+  final Function setCurrentIndex;
+  PrayerDetails(this.setCurrentIndex);
+
   @override
   _PrayerDetailsState createState() => _PrayerDetailsState();
 }
@@ -118,7 +121,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => widget.setCurrentIndex(0, true),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

@@ -329,24 +329,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  void _unSnoozePrayer(CombinePrayerStream prayerData) async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
-          prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
-      BeStilDialog.hideLoading(context);
-
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   void _onArchive(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
 
@@ -401,6 +383,24 @@ class _PrayerMenuState extends State<PrayerMenu> {
             reminder: widget.reminder,
           );
         });
+  }
+
+  void _unSnoozePrayer(CombinePrayerStream prayerData) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
+          prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   Widget build(BuildContext context) {
@@ -616,6 +616,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       text: widget.prayerData.userPrayer.isSnoozed
                           ? 'Unsnooze'
                           : 'Snooze',
+                      // text: 'Snooze',
                     ),
                     LongButton(
                       textColor: AppColors.lightBlue3,

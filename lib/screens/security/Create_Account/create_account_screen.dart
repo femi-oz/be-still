@@ -13,6 +13,7 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
+import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -163,7 +164,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           SizedBox(height: 10.0),
           Flexible(
             child: Text(
-              'Your account registration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration',
+              'Your account registration has been initiated. \n\n Click the link provided in the email sent to you to complete the registration.',
               style: AppTextStyles.regularText16b
                   .copyWith(color: AppColors.lightBlue4),
               textAlign: TextAlign.center,
@@ -447,20 +448,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 SizedBox(height: 10),
                 Row(
                   children: <Widget>[
-                    Theme(
-                      data: ThemeData(
-                          unselectedWidgetColor: AppColors.lightBlue3),
-                      child: Switch.adaptive(
-                        value: termsAccepted,
-                        activeColor: AppColors.lightBlue4,
-                        onChanged: (val) {
+                    CustomToggle(
+                        hasText: false,
+                        onChange: (val) {
                           setState(() {
                             _agreeTerms(val);
                             termsAccepted = val;
                           });
                         },
-                      ),
-                    ),
+                        value: termsAccepted),
                     SizedBox(width: 12),
                     Text(
                       'I agree to Terms of Use',

@@ -70,13 +70,13 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                       await Provider.of<PrayerProvider>(context,
                                               listen: false)
                                           .setPrayer(e.userPrayer.id);
-                                      Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new PrayerDetails(),
-                                        ),
-                                      );
+                                      // Navigator.push(
+                                      //   context,
+                                      //   new MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         new PrayerDetails(),
+                                      //   ),
+                                      // );
                                     },
                                     child: PrayerCard(
                                       prayerData: e,

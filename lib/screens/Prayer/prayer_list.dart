@@ -82,7 +82,8 @@ class _PrayerListState extends State<PrayerList> {
           .setPrayer(prayerData.userPrayer.id);
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
+      widget.setCurrentIndex(7, true);
+      // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
