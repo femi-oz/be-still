@@ -101,24 +101,6 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
     }
   }
 
-  void _unSnoozePrayer(CombinePrayerStream prayerData) async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
-          prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
-      BeStilDialog.hideLoading(context);
-
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final snoozeDurationController = FixedExtentScrollController(
@@ -295,38 +277,6 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                       ),
                     ),
                   ],
-                ),
-                SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => widget.prayerData.userPrayer.isSnoozed
-                      ? _unSnoozePrayer(widget.prayerData)
-                      : null,
-                  child: Container(
-                    height: 38.0,
-                    decoration: BoxDecoration(
-                      color: AppColors.red.withOpacity(
-                          widget.prayerData.userPrayer.isSnoozed ? 0.5 : 0.2),
-                      border: Border.all(
-                        color: AppColors.red.withOpacity(
-                            widget.prayerData.userPrayer.isSnoozed ? 1 : 0.5),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('UNSNOOZE',
-                            style: AppTextStyles.boldText20.copyWith(
-                                color: AppColors.white.withOpacity(
-                                    widget.prayerData.userPrayer.isSnoozed
-                                        ? 1
-                                        : 0.3),
-                                height: 1.5)),
-                      ],
-                    ),
-                  ),
                 ),
               ],
             ),

@@ -385,6 +385,24 @@ class _PrayerMenuState extends State<PrayerMenu> {
         });
   }
 
+  void _unSnoozePrayer(CombinePrayerStream prayerData) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
+          prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   Widget build(BuildContext context) {
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived ||
@@ -564,37 +582,41 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       onPress: () => widget.prayerData.prayer.isAnswer ||
                               widget.prayerData.userPrayer.isArchived
                           ? null
-                          // : widget.prayerData.userPrayer.isSnoozed
-                          //     ? _unSnoozePrayer(widget.prayerData)
-                          : showDialog(
-                              context: context,
-                              barrierColor: AppColors.detailBackgroundColor[1]
-                                  .withOpacity(0.5),
-                              builder: (BuildContext context) => Dialog(
-                                insetPadding: EdgeInsets.all(20),
-                                backgroundColor: AppColors.prayerCardBgColor,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: AppColors.darkBlue),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
+                          : widget.prayerData.userPrayer.isSnoozed
+                              ? _unSnoozePrayer(widget.prayerData)
+                              : showDialog(
+                                  context: context,
+                                  barrierColor: AppColors
+                                      .detailBackgroundColor[1]
+                                      .withOpacity(0.5),
+                                  builder: (BuildContext context) => Dialog(
+                                    insetPadding: EdgeInsets.all(20),
+                                    backgroundColor:
+                                        AppColors.prayerCardBgColor,
+                                    shape: RoundedRectangleBorder(
+                                      side:
+                                          BorderSide(color: AppColors.darkBlue),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 30),
+                                          child:
+                                              SnoozePrayer(widget.prayerData),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 30),
-                                      child: SnoozePrayer(widget.prayerData),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                      // text: widget.prayerData.userPrayer.isSnoozed
-                      //     ? 'Unsnooze'
-                      //     : 'Snooze',
-                      text: 'Snooze',
+                      text: widget.prayerData.userPrayer.isSnoozed
+                          ? 'Unsnooze'
+                          : 'Snooze',
+                      // text: 'Snooze',
                     ),
                     LongButton(
                       textColor: AppColors.lightBlue3,
