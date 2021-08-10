@@ -61,6 +61,7 @@ class _EntryScreenState extends State<EntryScreen>
   }
 
   Future<void> _setCurrentIndex(int index, bool animate) async {
+    //
     if (animate)
       _tabController.animateTo(index);
     else
