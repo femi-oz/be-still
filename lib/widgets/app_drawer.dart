@@ -43,6 +43,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   String _shareUri = '';
 
+  _launchHelpURL() async {
+    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      if (await canLaunch('https://www.bestillapp.com/help')) {
+        await launch('https://www.bestillapp.com/help');
+      } else {
+        throw 'Could not launch https://www.bestillapp.com/help';
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+    }
+  }
+
   _launchURL(url) async {
     final _userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
@@ -56,7 +70,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
       }
       AppAvailability.launchApp(_shareUri);
     } catch (_, __) {
-      print('--- after launch');
       try {
         if (await canLaunch('https://my.bible.com/bible')) {
           await launch('https://my.bible.com/bible');
@@ -311,8 +324,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: InkWell(
-                              onTap: () =>
-                                  _launchURL('https://www.bestillapp.com/help'),
+                              onTap: () => _launchHelpURL(),
                               child: Text("HELP",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
