@@ -43,31 +43,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   String _shareUri = '';
 
-  void _generateBibleAppUri() async {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
-    if (Platform.isIOS) {
-      try {
-        await AppAvailability.checkAvailability("youversion://");
-        _shareUri = 'youversion://';
-      } catch (e, s) {
-        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
-      }
-    } else if (Platform.isAndroid) {
-      try {
-        await AppAvailability.checkAvailability("tv.lifechurch.bible");
-        _shareUri = 'tv.lifechurch.bible';
-      } catch (e, s) {
-        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
-      }
-    }
-  }
-
   _launchURL(url) async {
-    _generateBibleAppUri();
     final _userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
+      if (Platform.isAndroid) {
+        await AppAvailability.checkAvailability(
+            "com.sirma.mobile.bible.android");
+        _shareUri = 'com.sirma.mobile.bible.android';
+      } else if (Platform.isIOS) {
+        await AppAvailability.checkAvailability("youversion://");
+        _shareUri = 'youversion://';
+      }
       AppAvailability.launchApp(_shareUri);
     } catch (_, __) {
+      print('--- after launch');
       try {
         if (await canLaunch('https://my.bible.com/bible')) {
           await launch('https://my.bible.com/bible');
@@ -214,6 +203,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   var userId =
+    //       Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    //   await Provider.of<MiscProvider>(context, listen: false)
+    //       .setSearchMode(false);
+    //   await Provider.of<MiscProvider>(context, listen: false)
+    //       .setSearchQuery('');
+    //   await Provider.of<PrayerProvider>(context, listen: false)
+    //       .searchPrayers('', userId);
+    // });
     return SafeArea(
       child: Container(
         width: double.infinity,
