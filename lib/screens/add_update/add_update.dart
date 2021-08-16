@@ -401,7 +401,8 @@ class _AddUpdateState extends State<AddUpdate> {
                               isSearch: false,
                             ),
                           ),
-                          tagText.length > 0
+                          tagText.length > 0 &&
+                                  Settings.enabledContactPermission
                               ? Positioned(
                                   top: ((numberOfLines * positionOffset) *
                                           positionOffset2) +
