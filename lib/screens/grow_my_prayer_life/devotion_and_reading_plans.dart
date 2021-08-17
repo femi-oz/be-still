@@ -220,7 +220,9 @@ class _DevotionPlansState extends State<DevotionPlans> {
                               color: AppColors.lightBlue3,
                               size: 20,
                             ),
-                            onPressed: () => widget.setCurrentIndex(0, true),
+                            // onPressed: () => widget.setCurrentIndex(0, true),
+                            onPressed: () =>
+                                Scaffold.of(context).openEndDrawer(),
                             label: Container(
                               width: 70,
                               child: Text(
