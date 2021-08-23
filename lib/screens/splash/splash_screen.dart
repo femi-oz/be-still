@@ -77,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerDetails());
+          // NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
@@ -94,9 +94,8 @@ class _SplashScreenState extends State<SplashScreen>
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (Settings.enableLocalAuth) {
         Navigator.of(context).pushNamedAndRemoveUntil(
-          LoginScreen.routeName,
-          (Route<dynamic> route) => false,
-        );
+            LoginScreen.routeName, (Route<dynamic> route) => false,
+            arguments: true);
       } else {
         if (Settings.rememberMe) {
           if (isLoggedIn) {
@@ -105,24 +104,21 @@ class _SplashScreenState extends State<SplashScreen>
             await setRouteDestination();
           } else {
             Navigator.of(context).pushNamedAndRemoveUntil(
-              LoginScreen.routeName,
-              (Route<dynamic> route) => false,
-            );
+                LoginScreen.routeName, (Route<dynamic> route) => false,
+                arguments: true);
           }
         } else {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName,
-            (Route<dynamic> route) => false,
-          );
+              LoginScreen.routeName, (Route<dynamic> route) => false,
+              arguments: true);
         }
       }
     } catch (e) {
       Navigator.of(context).pushNamedAndRemoveUntil(
-        LoginScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
+          LoginScreen.routeName, (Route<dynamic> route) => false,
+          arguments: true);
     }
   }
 

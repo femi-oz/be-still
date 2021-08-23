@@ -16,6 +16,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/bs_raised_button.dart';
 import 'package:be_still/widgets/custom_logo_shape.dart';
+import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -28,6 +29,7 @@ import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = 'login';
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -96,7 +98,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isInit) {
       setState(() => isFormValid = _usernameController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty);
-      _isBiometricAvailable();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _isBiometricAvailable();
+        bool showBioAuth = ModalRoute.of(context)?.settings?.arguments ?? false;
+        if (showBioAuth && isBioMetricAvailable && Settings.enableLocalAuth)
+          _biologin();
+      });
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -128,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerDetails());
+          // NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
@@ -528,11 +535,16 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Text('Remember Me', style: AppTextStyles.regularText15),
             SizedBox(width: 12),
-            Switch.adaptive(
-              activeColor: AppColors.lightBlue4,
+            CustomToggle(
+              hasText: false,
+              onChange: (value) => setState(() => Settings.rememberMe = value),
               value: _remeberMe,
-              onChanged: (value) => setState(() => Settings.rememberMe = value),
             ),
+            // Switch.adaptive(
+            //   activeColor: AppColors.lightBlue4,
+            //   value: _remeberMe,
+            //   onChanged: (value) => setState(() => Settings.rememberMe = value),
+            // ),
           ],
         ),
       ],
@@ -555,6 +567,7 @@ class _LoginScreenState extends State<LoginScreen> {
             verificationSendMessage,
             style: AppTextStyles.regularText15,
           ),
+        SizedBox(height: 5),
         BsRaisedButton(
           onPressed: _login,
           disabled: !isFormValid,

@@ -231,10 +231,11 @@ class PrayerProvider with ChangeNotifier {
   Future<void> unArchivePrayer(String userPrayerId, String prayerID) async =>
       await _prayerService.unArchivePrayer(userPrayerId, prayerID);
 
-  Future<void> snoozePrayer(
-      String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
+  Future<void> snoozePrayer(String prayerID, DateTime snoozeEndDate,
+      String userPrayerID, int duration, String frequency) async {
     if (_firebaseAuth.currentUser == null) return null;
-    await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
+    await _prayerService.snoozePrayer(
+        snoozeEndDate, userPrayerID, duration, frequency);
   }
 
   Future<void> unSnoozePrayer(
