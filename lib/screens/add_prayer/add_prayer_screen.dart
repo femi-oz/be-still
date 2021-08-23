@@ -507,7 +507,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                           ),
                         ),
-                        tagText.length > 0 && Settings.enabledContactPermission
+                        tagText.length > 1 && Settings.enabledContactPermission
                             ? Positioned(
                                 top: ((numberOfLines * positionOffset) *
                                         positionOffset2) +
