@@ -88,6 +88,211 @@ class _ReminderPickerState extends State<ReminderPicker> {
     super.initState();
   }
 
+  storeNotification(
+    String notificationText,
+    String userId,
+    String title,
+    String description,
+    String frequency,
+    tz.TZDateTime scheduledDate,
+    String prayerid,
+    String selectedDay,
+    String period,
+    String selectedHour,
+    String selectedMinute,
+    String selectedYear,
+  ) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .addLocalNotification(
+      LocalNotification.localNotificationID,
+      prayerid,
+      notificationText,
+      userId,
+      prayerid,
+      title,
+      description,
+      frequency,
+      widget.type,
+      scheduledDate,
+      selectedDay,
+      period,
+      selectedHour,
+      selectedMinute,
+      selectedYear,
+      selectedMonth,
+      selectedDayOfMonth.toString(),
+    );
+    BeStilDialog.hideLoading(context);
+    setState(() {});
+    if (widget.type == NotificationType.reminder)
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    else
+      widget.onCancel();
+    setState(() => null);
+  }
+
+  updatePrayerTime(
+    String selectedDay,
+    String selectedPeriod,
+    String selectedFrequency,
+    String selectedHour,
+    String selectedMinute,
+    tz.TZDateTime scheduledDate,
+    String userId,
+    String notificationText,
+    String selectedYear,
+  ) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .updateLocalNotification(
+      selectedFrequency,
+      scheduledDate,
+      selectedDay,
+      selectedPeriod,
+      selectedHour,
+      selectedMinute,
+      widget.reminder?.id,
+      userId,
+      notificationText,
+      selectedYear,
+      selectedMonth,
+      selectedDayOfMonth.toString(),
+    );
+    BeStilDialog.hideLoading(context);
+
+    setState(() {});
+    if (widget.type == NotificationType.reminder)
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          EntryScreen.routeName, (Route<dynamic> route) => false);
+    else
+      widget.onCancel();
+  }
+
+  setNotification() async {
+    var date = DateTime(
+        selectedYear,
+        LocalNotification.months.indexOf(selectedMonth),
+        selectedDayOfMonth,
+        selectedHour,
+        selectedMinute);
+    if (selectedFrequency == Frequency.one_time &&
+        date.isBefore(DateTime.now())) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      var e = Exception('One Time reminder can only take future date and time');
+      BeStilDialog.showErrorDialog(context, e, user, null);
+      return;
+    }
+    try {
+      var _selectedMinuteString =
+          selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
+      var _selectedHourString =
+          selectedHour < 10 ? '0$selectedHour' : '$selectedHour ';
+      BeStilDialog.showLoading(context);
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      var suffix = "th";
+      var digit = selectedDayOfMonth % 10;
+      if ((digit > 0 && digit < 4) &&
+          (selectedDayOfMonth < 11 || selectedDayOfMonth > 13)) {
+        suffix = ["st", "nd", "rd"][digit - 1];
+      }
+      final notificationText = selectedFrequency == Frequency.weekly
+          ? '$selectedFrequency, ${LocalNotification.daysOfWeek[selectedDayOfWeek]}, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
+          : selectedFrequency == Frequency.one_time
+              ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
+              : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
+      final prayerData =
+          Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+      final title = '$selectedFrequency reminder to pray';
+      final description = prayerData?.prayer?.description ?? '';
+
+      final scheduleDate = LocalNotification.scheduleDate(
+        selectedHour,
+        selectedMinute,
+        selectedDayOfWeek + 1,
+        selectedPeriod,
+        selectedYear,
+        selectedMonth,
+        selectedDayOfMonth,
+        selectedFrequency == Frequency.one_time,
+      );
+      final payload = NotificationMessage(
+          entityId: prayerData?.userPrayer?.id ?? '', type: widget.type);
+      await LocalNotification.setLocalNotification(
+        context: context,
+        title: title,
+        description: widget.type == NotificationType.prayer_time
+            ? 'It is time to pray!'
+            : description,
+        scheduledDate: scheduleDate,
+        payload: jsonEncode(payload.toJson()),
+        frequency: selectedFrequency,
+        localNotificationId: widget.reminder?.localNotificationId ?? null,
+      );
+      if (widget.reminder != null)
+        updatePrayerTime(
+          LocalNotification.daysOfWeek[selectedDayOfWeek],
+          selectedPeriod,
+          selectedFrequency,
+          _selectedHourString,
+          _selectedMinuteString,
+          scheduleDate,
+          userId,
+          notificationText,
+          selectedYear.toString(),
+        );
+      else
+        await storeNotification(
+          notificationText,
+          userId,
+          title,
+          description,
+          selectedFrequency,
+          scheduleDate,
+          prayerData?.userPrayer?.id ?? '',
+          LocalNotification.daysOfWeek[selectedDayOfWeek],
+          selectedPeriod,
+          _selectedHourString,
+          _selectedMinuteString,
+          selectedYear.toString(),
+        );
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  _deleteReminder() async {
+    try {
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .deleteLocalNotification(widget.reminder.id);
+      setState(() {});
+      if (widget.type == NotificationType.reminder)
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
+      else
+        widget.onCancel();
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     FixedExtentScrollController frequencyController =
@@ -111,197 +316,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
     FixedExtentScrollController dayOfMonthController =
         FixedExtentScrollController(
             initialItem: daysOfMonth.indexOf(selectedDayOfMonth));
-
-    storeNotification(
-      String notificationText,
-      String userId,
-      String title,
-      String description,
-      String frequency,
-      tz.TZDateTime scheduledDate,
-      String prayerid,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute,
-      String selectedYear,
-    ) async {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .addLocalNotification(
-        LocalNotification.localNotificationID,
-        prayerid,
-        notificationText,
-        userId,
-        prayerid,
-        title,
-        description,
-        frequency,
-        widget.type,
-        scheduledDate,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-        selectedYear,
-        selectedMonth,
-        selectedDayOfMonth.toString(),
-      );
-      BeStilDialog.hideLoading(context);
-      setState(() {});
-      if (widget.type == NotificationType.reminder)
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
-      else
-        widget.onCancel();
-      setState(() => null);
-    }
-
-    updatePrayerTime(
-      String selectedDay,
-      String selectedPeriod,
-      String selectedFrequency,
-      String selectedHour,
-      String selectedMinute,
-      tz.TZDateTime scheduledDate,
-      String userId,
-      String notificationText,
-      String selectedYear,
-    ) async {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .updateLocalNotification(
-        selectedFrequency,
-        scheduledDate,
-        selectedDay,
-        selectedPeriod,
-        selectedHour,
-        selectedMinute,
-        widget.reminder?.id,
-        userId,
-        notificationText,
-        selectedYear,
-        selectedMonth,
-        selectedDayOfMonth.toString(),
-      );
-      BeStilDialog.hideLoading(context);
-
-      setState(() {});
-      if (widget.type == NotificationType.reminder)
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
-      else
-        widget.onCancel();
-    }
-
-    setNotification() async {
-      try {
-        var _selectedMinuteString =
-            selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
-        var _selectedHourString =
-            selectedHour < 10 ? '0$selectedHour' : '$selectedHour ';
-        BeStilDialog.showLoading(context);
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        var suffix = "th";
-        var digit = selectedDayOfMonth % 10;
-        if ((digit > 0 && digit < 4) &&
-            (selectedDayOfMonth < 11 || selectedDayOfMonth > 13)) {
-          suffix = ["st", "nd", "rd"][digit - 1];
-        }
-        final notificationText = selectedFrequency == Frequency.weekly
-            ? '$selectedFrequency, ${LocalNotification.daysOfWeek[selectedDayOfWeek]}, $_selectedHourString:$_selectedMinuteString $selectedPeriod'
-            : selectedFrequency == Frequency.one_time
-                ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
-                : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
-        final prayerData =
-            Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-        final title = '$selectedFrequency reminder to pray';
-        final description = prayerData?.prayer?.description ?? '';
-
-        final scheduleDate = LocalNotification.scheduleDate(
-          selectedHour,
-          selectedMinute,
-          selectedDayOfWeek + 1,
-          selectedPeriod,
-          selectedYear,
-          selectedMonth,
-          selectedDayOfMonth,
-          selectedFrequency == Frequency.one_time,
-        );
-        final payload = NotificationMessage(
-            entityId: prayerData?.userPrayer?.id ?? '', type: widget.type);
-        await LocalNotification.setLocalNotification(
-          context: context,
-          title: title,
-          description: widget.type == NotificationType.prayer_time
-              ? 'It is time to pray!'
-              : description,
-          scheduledDate: scheduleDate,
-          payload: jsonEncode(payload.toJson()),
-          frequency: selectedFrequency,
-          localNotificationId: widget.reminder?.localNotificationId ?? null,
-        );
-        if (widget.reminder != null)
-          updatePrayerTime(
-            LocalNotification.daysOfWeek[selectedDayOfWeek],
-            selectedPeriod,
-            selectedFrequency,
-            _selectedHourString,
-            _selectedMinuteString,
-            scheduleDate,
-            userId,
-            notificationText,
-            selectedYear.toString(),
-          );
-        else
-          await storeNotification(
-            notificationText,
-            userId,
-            title,
-            description,
-            selectedFrequency,
-            scheduleDate,
-            prayerData?.userPrayer?.id ?? '',
-            LocalNotification.daysOfWeek[selectedDayOfWeek],
-            selectedPeriod,
-            _selectedHourString,
-            _selectedMinuteString,
-            selectedYear.toString(),
-          );
-      } on HttpException catch (e, s) {
-        BeStilDialog.hideLoading(context);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(context, e, user, s);
-      } catch (e, s) {
-        BeStilDialog.hideLoading(context);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(context, e, user, s);
-      }
-    }
-
-    _deleteReminder() async {
-      try {
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .deleteLocalNotification(widget.reminder.id);
-        setState(() {});
-        if (widget.type == NotificationType.reminder)
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
-        else
-          widget.onCancel();
-      } on HttpException catch (e, s) {
-        BeStilDialog.hideLoading(context);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(context, e, user, s);
-      } catch (e, s) {
-        BeStilDialog.hideLoading(context);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(context, e, user, s);
-      }
-    }
 
     return Container(
       width: double.infinity,
@@ -611,9 +625,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              setNotification();
-                            },
+                            onTap: setNotification,
                             child: Container(
                               height: 38.0,
                               width: MediaQuery.of(context).size.width * .35,

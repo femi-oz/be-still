@@ -14,6 +14,7 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'package:provider/provider.dart';
 
@@ -69,6 +70,15 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   updateUI() {
     setState(() {});
+  }
+
+  String getDayText(day) {
+    var suffix = "th";
+    var digit = day % 10;
+    if ((digit > 0 && digit < 4) && (day < 11 || day > 13)) {
+      suffix = ["st", "nd", "rd"][digit - 1];
+    }
+    return day.toString() + suffix;
   }
 
   BuildContext selectedContext;
@@ -159,6 +169,59 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 ],
               ),
             ),
+            if (prayerData.userPrayer.isSnoozed)
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                InkWell(
+                  onTap: () => showDialog(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        insetPadding: EdgeInsets.all(20),
+                        backgroundColor: AppColors.prayerCardBgColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: AppColors.darkBlue),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 30),
+                              child: ReminderPicker(
+                                type: NotificationType.reminder,
+                                reminder: _reminder,
+                                hideActionuttons: false,
+                                onCancel: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        AppIcons.snooze,
+                        size: 12,
+                        color: AppColors.lightBlue5,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 7),
+                        child: Text(
+                            'Snoozed until ${DateFormat('MMM').format(prayerData.userPrayer.snoozeEndDate)} ${getDayText(prayerData.userPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.userPrayer.snoozeEndDate)}',
+                            style: AppTextStyles.regularText12),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 20),
+              ]),
             hasReminder
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.end,

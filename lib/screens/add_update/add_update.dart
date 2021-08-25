@@ -78,13 +78,13 @@ class _AddUpdateState extends State<AddUpdate> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
-
       setState(() {
-        tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
-            ? tags[tags.length - 1]
+        var arrayWithSymbols =
+            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
+        tagText = arrayWithSymbols.length > 0
+            ? arrayWithSymbols[arrayWithSymbols.length - 1]
             : '';
       });
-
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -101,6 +101,7 @@ class _AddUpdateState extends State<AddUpdate> {
           text: val,
         ),
       );
+
       painter.layout();
       var lines = painter.computeLineMetrics();
       setState(() {
@@ -108,19 +109,21 @@ class _AddUpdateState extends State<AddUpdate> {
       });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
+          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
     }
   }
 
   Future<void> _onTagSelected(s) async {
     tagText = '';
     String tmpText = s.displayName.substring(0, s.displayName.length);
-
-    String controllerText = _descriptionController.text
-        .substring(0, _descriptionController.text.indexOf('@'));
-
+    String controllerText = _descriptionController.text.substring(
+      0,
+      _descriptionController.text.indexOf('@'),
+    );
+    String textAfter = _descriptionController.text
+        .substring(_descriptionController.text.indexOf('@') + 1);
     controllerText += tmpText;
-    _descriptionController.text = controllerText;
+    _descriptionController.text = controllerText + textAfter;
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
 
@@ -398,7 +401,8 @@ class _AddUpdateState extends State<AddUpdate> {
                               isSearch: false,
                             ),
                           ),
-                          tagText.length > 0
+                          tagText.length > 1 &&
+                                  Settings.enabledContactPermission
                               ? Positioned(
                                   top: ((numberOfLines * positionOffset) *
                                           positionOffset2) +
