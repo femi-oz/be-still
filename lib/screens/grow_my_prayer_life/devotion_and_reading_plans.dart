@@ -68,7 +68,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
