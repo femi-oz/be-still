@@ -47,7 +47,6 @@ class _EntryScreenState extends State<EntryScreen>
   final cron = Cron();
 
   initState() {
-    _getPermissions();
     _tabController = new TabController(length: 8, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     _currentIndex = miscProvider.currentPage;
@@ -69,19 +68,6 @@ class _EntryScreenState extends State<EntryScreen>
     setState(() => _currentIndex = index);
     await Provider.of<MiscProvider>(context, listen: false)
         .setCurrentPage(index);
-  }
-
-  void _getPermissions() async {
-    try {
-      if (Settings.isAppInit) {
-        await Permission.contacts.request().then((p) =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
-      }
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
   }
 
   Future<void> _preLoadData() async {

@@ -6,14 +6,14 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -61,7 +61,19 @@ class _SplashScreenState extends State<SplashScreen>
     return new Timer(duration, () => route());
   }
 
+  void _getPermissions() async {
+    try {
+      if (Settings.isAppInit) {
+        await Permission.contacts.request().then((p) =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(context, e, null, s);
+    }
+  }
+
   Future<void> setRouteDestination() async {
+    _getPermissions();
     var message =
         Provider.of<NotificationProvider>(context, listen: false).message;
     if (message != null) {
@@ -77,7 +89,6 @@ class _SplashScreenState extends State<SplashScreen>
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          // NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
