@@ -89,7 +89,6 @@ class _SplashScreenState extends State<SplashScreen>
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          // NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
