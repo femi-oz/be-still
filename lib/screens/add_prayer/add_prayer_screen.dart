@@ -259,8 +259,9 @@ class _AddPrayerState extends State<AddPrayer> {
         _descriptionController.text.indexOf('@'),
         _descriptionController.text.length);
     var textAfter = tmpTextAfter.split(" ");
-    var newText = textAfter..removeAt(0);
-    print(newText);
+    var newText = tmpTextAfter.contains(" ")
+        ? (textAfter..removeRange(0, 2))
+        : (textAfter..removeAt(0));
     var joinText = newText.join(" ");
 
     controllerText += tmpText;
