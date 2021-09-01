@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -216,16 +218,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   var userId =
-    //       Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    //   await Provider.of<MiscProvider>(context, listen: false)
-    //       .setSearchMode(false);
-    //   await Provider.of<MiscProvider>(context, listen: false)
-    //       .setSearchQuery('');
-    //   await Provider.of<PrayerProvider>(context, listen: false)
-    //       .searchPrayers('', userId);
-    // });
     return SafeArea(
       child: Container(
         width: double.infinity,
@@ -257,7 +249,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           color: AppColors.topNavTextColor,
                         ),
                         onTap: () {
-                          Navigator.pop(context);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setCurrentPage(0);
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              EntryScreen.routeName,
+                              (Route<dynamic> route) => false);
                         },
                       )
                     ],
@@ -265,102 +261,101 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 60),
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
-                              onTap: () => _launchURL(_shareUri),
-                              child: Text("BIBLE APP",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
+                    padding: EdgeInsets.only(left: 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => _launchURL(_shareUri),
+                            child: Text("BIBLE APP",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () async {
+                              await widget.setCurrentIndex(6, false);
+                              await Future.delayed(Duration(milliseconds: 300));
+                              Navigator.pop(context);
+                            },
+                            child: Text("RECOMMENDED BIBLES",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
                               onTap: () async {
-                                await widget.setCurrentIndex(6, false);
+                                await widget.setCurrentIndex(5, false);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
                               },
-                              child: Text("RECOMMENDED BIBLES",
+                              child: Text("DEVOTIONALS AND READING PLANS",
                                   style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
+                                      color: AppColors.drawerMenuColor))),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () async {
+                              await widget.setCurrentIndex(4, false);
+                              await Future.delayed(Duration(milliseconds: 300));
+                              Navigator.pop(context);
+                            },
+                            child: Text("SETTINGS",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
-                                onTap: () async {
-                                  await widget.setCurrentIndex(5, false);
-                                  await Future.delayed(
-                                      Duration(milliseconds: 300));
-                                  Navigator.pop(context);
-                                },
-                                child: Text("DEVOTIONALS AND READING PLANS",
-                                    style: AppTextStyles.drawerMenu.copyWith(
-                                        color: AppColors.drawerMenuColor))),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => _launchHelpURL(),
+                            child: Text("HELP",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
-                              onTap: () async {
-                                await widget.setCurrentIndex(4, false);
-                                await Future.delayed(
-                                    Duration(milliseconds: 300));
-                                Navigator.pop(context);
-                              },
-                              child: Text("SETTINGS",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () {
+                              widget.setCurrentIndex(0, true);
+                              Navigator.pop(context);
+                              TutorialTarget.showTutorial(
+                                context,
+                                widget.keyButton,
+                                widget.keyButton2,
+                                widget.keyButton3,
+                                widget.keyButton4,
+                                widget.keyButton5,
+                              );
+                            },
+                            child: Text("QUICK TIPS",
+                                style: AppTextStyles.drawerMenu.copyWith(
+                                    color: AppColors.drawerMenuColor)),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
-                              onTap: () => _launchHelpURL(),
-                              child: Text("HELP",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
-                              onTap: () {
-                                widget.setCurrentIndex(0, true);
-                                Navigator.pop(context);
-                                TutorialTarget.showTutorial(
-                                  context,
-                                  widget.keyButton,
-                                  widget.keyButton2,
-                                  widget.keyButton3,
-                                  widget.keyButton4,
-                                  widget.keyButton5,
-                                );
-                              },
-                              child: Text("QUICK TIPS",
-                                  style: AppTextStyles.drawerMenu.copyWith(
-                                      color: AppColors.drawerMenuColor)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: InkWell(
-                              onTap: () => _openLogoutConfirmation(context),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => _openLogoutConfirmation(context),
+                            child: Container(
+                              width: 100,
                               child: Text("LOGOUT",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 )

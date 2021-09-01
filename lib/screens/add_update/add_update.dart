@@ -120,10 +120,15 @@ class _AddUpdateState extends State<AddUpdate> {
       0,
       _descriptionController.text.indexOf('@'),
     );
-    String textAfter = _descriptionController.text
-        .substring(_descriptionController.text.indexOf('@') + 1);
+    var tmpTextAfter = _descriptionController.text.substring(
+        _descriptionController.text.indexOf('@'),
+        _descriptionController.text.length);
+    var textAfter = tmpTextAfter.split(" ");
+    var newText = textAfter..removeAt(0);
+    var joinText = newText.join(" ");
+
     controllerText += tmpText;
-    _descriptionController.text = controllerText + textAfter;
+    _descriptionController.text = controllerText + " " + joinText;
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
 
