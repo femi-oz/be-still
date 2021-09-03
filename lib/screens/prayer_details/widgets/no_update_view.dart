@@ -1,5 +1,6 @@
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -17,6 +18,8 @@ class NoUpdateView extends StatefulWidget {
 }
 
 class _NoUpdateViewState extends State<NoUpdateView> {
+  Iterable<Contact> localContacts = [];
+
   _emailLink([String payload]) async {
     payload = payload == null ? '' : payload;
     final Email email = Email(
@@ -30,14 +33,30 @@ class _NoUpdateViewState extends State<NoUpdateView> {
   }
 
   _textLink([String phoneNumber]) async {
-    String _result = await sendSMS(message: '', recipients: [phoneNumber])
-        .catchError((onError) {
+    await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
     Navigator.pop(context);
   }
 
-  _openShareModal(BuildContext context, String phoneNumber, String email) {
+  _openShareModal(BuildContext context, String phoneNumber, String email,
+      String identifier) async {
+    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    var updatedPhone = '';
+    var updatedEmail = '';
+    localContacts =
+        Provider.of<PrayerProvider>(context, listen: false).localContacts;
+    var latestContact =
+        localContacts.where((element) => element.identifier == identifier);
+
+    for (var contact in latestContact) {
+      final phoneNumber =
+          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
+      final email =
+          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
+      updatedPhone = phoneNumber;
+      updatedEmail = email;
+    }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -92,7 +111,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              _emailLink(email);
+                              _emailLink(updatedEmail);
                             },
                             child: Container(
                               height: 38.0,
@@ -119,7 +138,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _textLink(phoneNumber);
+                              _textLink(updatedPhone);
                             },
                             child: Container(
                               height: 38.0,
@@ -228,7 +247,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                           .format(prayerData.prayer.createdOn)
                           .toLowerCase(),
                       style: AppTextStyles.regularText18b
-                          .copyWith(color: AppColors.prayeModeBorder),
+                          .copyWith(color: AppColors.prayerModeBorder),
                     ),
                   ],
                 ),
@@ -269,7 +288,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                     _openShareModal(
                                         context,
                                         prayerData.tags[i].phoneNumber,
-                                        prayerData.tags[i].email);
+                                        prayerData.tags[i].email,
+                                        prayerData.tags[i].identifier);
                                   },
                                 style: AppTextStyles.regularText15.copyWith(
                                     color: AppColors.lightBlue2,

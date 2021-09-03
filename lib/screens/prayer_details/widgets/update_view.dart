@@ -1,11 +1,14 @@
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 
@@ -20,7 +23,9 @@ class UpdateView extends StatefulWidget {
 }
 
 class _UpdateView extends State<UpdateView> {
-  _emailLink([String payload]) async {
+  Iterable<Contact> localContacts = [];
+
+  _emailLink(String payload) async {
     final Email email = Email(
       body: '',
       recipients: [payload],
@@ -32,14 +37,30 @@ class _UpdateView extends State<UpdateView> {
   }
 
   _textLink([String phoneNumber]) async {
-    String _result = await sendSMS(message: '', recipients: [phoneNumber])
-        .catchError((onError) {
+    await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
     Navigator.pop(context);
   }
 
-  _openShareModal(BuildContext context, String phoneNumber, String email) {
+  _openShareModal(BuildContext context, String phoneNumber, String email,
+      String identifier) async {
+    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    var updatedPhone = '';
+    var updatedEmail = '';
+    localContacts =
+        Provider.of<PrayerProvider>(context, listen: false).localContacts;
+    var latestContact =
+        localContacts.where((element) => element.identifier == identifier);
+
+    for (var contact in latestContact) {
+      final phoneNumber =
+          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
+      final email =
+          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
+      updatedPhone = phoneNumber;
+      updatedEmail = email;
+    }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -94,7 +115,7 @@ class _UpdateView extends State<UpdateView> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              _emailLink(email);
+                              _emailLink(updatedEmail);
                             },
                             child: Container(
                               height: 38.0,
@@ -121,7 +142,7 @@ class _UpdateView extends State<UpdateView> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _textLink(phoneNumber);
+                              _textLink(updatedPhone);
                             },
                             child: Container(
                               height: 38.0,
@@ -248,7 +269,7 @@ class _UpdateView extends State<UpdateView> {
                     Text(
                       time,
                       style: AppTextStyles.regularText18b
-                          .copyWith(color: AppColors.prayeModeBorder),
+                          .copyWith(color: AppColors.prayerModeBorder),
                       overflow: TextOverflow.ellipsis,
                     ),
                     time != ''
@@ -257,14 +278,14 @@ class _UpdateView extends State<UpdateView> {
                                 .format(modifiedOn)
                                 .toLowerCase(),
                             style: AppTextStyles.regularText18b
-                                .copyWith(color: AppColors.prayeModeBorder),
+                                .copyWith(color: AppColors.prayerModeBorder),
                           )
                         : Text(
                             DateFormat('hh:mma | MM.dd.yyyy')
                                 .format(modifiedOn)
                                 .toLowerCase(),
                             style: AppTextStyles.regularText18b
-                                .copyWith(color: AppColors.prayeModeBorder),
+                                .copyWith(color: AppColors.prayerModeBorder),
                           ),
                   ],
                 ),
@@ -297,7 +318,7 @@ class _UpdateView extends State<UpdateView> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   _openShareModal(context, tags[i].phoneNumber,
-                                      tags[i].email);
+                                      tags[i].email, tags[i].identifier);
                                 },
                               style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.lightBlue2,
