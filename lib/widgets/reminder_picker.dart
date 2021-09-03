@@ -171,10 +171,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
   setNotification() async {
     var date = DateTime(
         selectedYear,
-        LocalNotification.months.indexOf(selectedMonth),
+        LocalNotification.months.indexOf(selectedMonth) + 1,
         selectedDayOfMonth,
         selectedHour,
         selectedMinute);
+
     if (selectedFrequency == Frequency.one_time &&
         date.isBefore(DateTime.now())) {
       final user =
