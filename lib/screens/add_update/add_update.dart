@@ -521,7 +521,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                                     .regularText18b
                                                     .copyWith(
                                                         color: AppColors
-                                                            .prayeModeBorder),
+                                                            .prayerModeBorder),
                                               ),
                                             ],
                                           ),
@@ -570,7 +570,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                                   .regularText18b
                                                   .copyWith(
                                                       color: AppColors
-                                                          .prayeModeBorder),
+                                                          .prayerModeBorder),
                                             ),
                                             Text(
                                               intl.DateFormat(' MM.dd.yyyy')
@@ -580,7 +580,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                                   .regularText18b
                                                   .copyWith(
                                                       color: AppColors
-                                                          .prayeModeBorder),
+                                                          .prayerModeBorder),
                                             ),
                                           ],
                                         ),

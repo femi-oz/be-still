@@ -9,9 +9,11 @@ import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
@@ -21,6 +23,8 @@ class PrayerProvider with ChangeNotifier {
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   List<CombinePrayerStream> _filteredPrayers = [];
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
+  Iterable<Contact> _localContacts = [];
+
   CombinePrayerStream _currentPrayer;
   String _filterOption = Status.active;
 
@@ -29,6 +33,8 @@ class PrayerProvider with ChangeNotifier {
 
   List<CombinePrayerStream> get filteredPrayerTimeList =>
       _filteredPrayerTimeList;
+
+  Iterable<Contact> get localContacts => _localContacts;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
   String get filterOption => _filterOption;
@@ -42,6 +48,17 @@ class PrayerProvider with ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+
+  Future<void> getContacts() async {
+    var status = await Permission.contacts.status;
+    Settings.enabledContactPermission = status == PermissionStatus.granted;
+
+    if (Settings.enabledContactPermission) {
+      final localContacts =
+          await ContactsService.getContacts(withThumbnails: false);
+      _localContacts = localContacts.where((e) => e.displayName != null);
+    }
   }
 
   Future<void> checkPrayerValidity(

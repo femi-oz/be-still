@@ -1,6 +1,8 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +11,18 @@ import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class NoUpdateView extends StatelessWidget {
+class NoUpdateView extends StatefulWidget {
   final CombinePrayerStream data;
 
   @override
   NoUpdateView(this.data);
+
+  @override
+  _NoUpdateViewState createState() => _NoUpdateViewState();
+}
+
+class _NoUpdateViewState extends State<NoUpdateView> {
+  Iterable<Contact> localContacts = [];
 
   _emailLink(String payload, context) async {
     payload = payload == null ? '' : payload;
@@ -28,14 +37,30 @@ class NoUpdateView extends StatelessWidget {
   }
 
   _textLink(String phoneNumber, context) async {
-    String _result = await sendSMS(message: '', recipients: [phoneNumber])
-        .catchError((onError) {
+    await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
     Navigator.pop(context);
   }
 
-  _openShareModal(BuildContext context, String phoneNumber, String email) {
+  _openShareModal(BuildContext context, String phoneNumber, String email,
+      String identifier) async {
+    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    var updatedPhone = '';
+    var updatedEmail = '';
+    localContacts =
+        Provider.of<PrayerProvider>(context, listen: false).localContacts;
+    var latestContact =
+        localContacts.where((element) => element.identifier == identifier);
+
+    for (var contact in latestContact) {
+      final phoneNumber =
+          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
+      final email =
+          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
+      updatedPhone = phoneNumber;
+      updatedEmail = email;
+    }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
         contentPadding: EdgeInsets.all(0),
@@ -90,7 +115,7 @@ class NoUpdateView extends StatelessWidget {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              _emailLink(email, context);
+                              _emailLink(updatedEmail, context);
                             },
                             child: Container(
                               height: 38.0,
@@ -117,7 +142,7 @@ class NoUpdateView extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _textLink(phoneNumber, context);
+                              _textLink(updatedPhone, context);
                             },
                             child: Container(
                               height: 38.0,
@@ -204,12 +229,12 @@ class NoUpdateView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              data.prayer.userId != _currentUser.id
+              widget.data.prayer.userId != _currentUser.id
                   ? Container(
                       padding: EdgeInsets.all(20),
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        data.prayer.creatorName,
+                        widget.data.prayer.creatorName,
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500),
@@ -226,10 +251,10 @@ class NoUpdateView extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           DateFormat('hh:mma | MM.dd.yyyy')
-                              .format(data.prayer.modifiedOn)
+                              .format(widget.data.prayer.modifiedOn)
                               .toLowerCase(),
                           style: AppTextStyles.regularText18b
-                              .copyWith(color: AppColors.prayeModeBorder),
+                              .copyWith(color: AppColors.prayerModeBorder),
                         ),
                       ],
                     ),
@@ -249,21 +274,22 @@ class NoUpdateView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: EasyRichText(
-                        data.prayer.description,
+                        widget.data.prayer.description,
                         defaultStyle: AppTextStyles.regularText16b.copyWith(
                           color: AppColors.prayerTextColor,
                         ),
                         textAlign: TextAlign.left,
                         patternList: [
-                          for (var i = 0; i < data.tags.length; i++)
+                          for (var i = 0; i < widget.data.tags.length; i++)
                             EasyRichTextPattern(
-                                targetString: data.tags[i].displayName,
+                                targetString: widget.data.tags[i].displayName,
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     _openShareModal(
                                         context,
-                                        data.tags[i].phoneNumber,
-                                        data.tags[i].email);
+                                        widget.data.tags[i].phoneNumber,
+                                        widget.data.tags[i].email,
+                                        widget.data.tags[i].identifier);
                                   },
                                 style: AppTextStyles.regularText15.copyWith(
                                     color: AppColors.lightBlue2,

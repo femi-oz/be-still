@@ -95,7 +95,7 @@ class AppColors {
       getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
   static Color get prayeModeBg =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF0D1319);
-  static Color get prayeModeBorder =>
+  static Color get prayerModeBorder =>
       getColor(darkMode, light: 0xFF009FD0, dark: 0xFF005882);
   static Color get splashTextColor =>
       getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
