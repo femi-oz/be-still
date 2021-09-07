@@ -174,6 +174,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,
         builder: (contect, snapshot) => MaterialApp(
+          builder: (BuildContext context, Widget child) {
+            final MediaQueryData data = MediaQuery.of(context);
+            return MediaQuery(
+                data: data.copyWith(textScaleFactor: 1), child: child);
+          },
           title: 'Be Still',
           debugShowCheckedModeBanner: false,
           theme: theme.isDarkModeEnabled

@@ -36,55 +36,45 @@ class ReminderPicker extends StatefulWidget {
 class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
+  int selectedHour;
+
   String selectedFrequency;
   int selectedDayOfWeek;
   String selectedPeriod;
-  int selectedHour;
   int selectedMinute;
   int selectedYear;
   String selectedMonth;
   int selectedDayOfMonth;
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
-  var hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
-  var minInTheHour = [0, 15, 30, 45];
-  var years = new List<int>.generate(10, (i) => i + DateTime.now().year);
-
-  var daysOfMonth = new List<int>.generate(31, (i) => i + 1);
+  List<int> hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
+  List<int> minInTheHour = [0, 15, 30, 45];
+  List<int> years = new List<int>.generate(10, (i) => i + DateTime.now().year);
+  List<int> daysOfMonth = new List<int>.generate(31, (i) => i + 1);
 
   @override
   void initState() {
-    selectedHour = widget.reminder?.selectedHour != null
-        ? int.parse(widget.reminder?.selectedHour)
-        : DateTime.now().hour > 12
-            ? DateTime.now().hour - 12
-            : DateTime.now().hour == 0
-                ? 12
-                : DateTime.now().hour;
-    selectedMinute = widget.reminder?.selectedMinute != null
-        ? int.parse(widget.reminder?.selectedMinute)
-        : 15;
-    selectedDayOfWeek = widget.reminder?.selectedDay != null
-        ? LocalNotification.daysOfWeek
-            .indexOf(widget.reminder?.selectedDay?.capitalize())
-        : DateTime.now().weekday - 1;
-    selectedPeriod = widget.reminder?.period != null
-        ? widget.reminder?.period
-        : DateTime.now().hour > 12
-            ? PeriodOfDay.pm
-            : PeriodOfDay.am;
-    selectedFrequency = widget.reminder?.frequency != null
-        ? widget.reminder?.frequency
-        : Frequency.one_time;
-    selectedYear = widget.reminder?.selectedYear != null
-        ? int.parse(widget.reminder?.selectedYear)
-        : DateTime.now().year;
-    selectedMonth = widget.reminder?.selectedMonth != null
-        ? widget.reminder?.selectedMonth
-        : LocalNotification.months[DateTime.now().month - 1];
-    selectedDayOfMonth = widget.reminder?.selectedDayOfMonth != null
-        ? int.parse(widget.reminder?.selectedDayOfMonth)
-        : DateTime.now().day;
+    if (widget.reminder != null) {
+      selectedHour = int.parse(widget.reminder?.selectedHour);
+      selectedMinute = int.parse(widget.reminder?.selectedMinute);
+      selectedDayOfWeek = LocalNotification.daysOfWeek
+          .indexOf(widget.reminder?.selectedDay?.capitalize());
+      selectedPeriod = widget.reminder?.period;
+      selectedFrequency = widget.reminder?.frequency;
+      selectedYear = int.parse(widget.reminder?.selectedYear);
+      selectedMonth = widget.reminder?.selectedMonth;
+      selectedDayOfMonth = int.parse(widget.reminder?.selectedDayOfMonth);
+    } else {
+      selectedHour = DateTime.now().hour == 0 ? 12 : DateTime.now().hour;
+      selectedMinute = minInTheHour[0];
+      selectedDayOfWeek = DateTime.now().weekday - 1;
+      selectedPeriod =
+          DateTime.now().hour > 12 ? PeriodOfDay.pm : PeriodOfDay.am;
+      selectedFrequency = Frequency.one_time;
+      selectedYear = DateTime.now().year;
+      selectedMonth = LocalNotification.months[DateTime.now().month - 1];
+      selectedDayOfMonth = DateTime.now().day;
+    }
     super.initState();
   }
 
@@ -169,12 +159,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   setNotification() async {
-    var date = DateTime(
+    DateTime date = DateTime(
         selectedYear,
-        LocalNotification.months.indexOf(selectedMonth),
+        LocalNotification.months.indexOf(selectedMonth) + 1,
         selectedDayOfMonth,
         selectedHour,
         selectedMinute);
+
     if (selectedFrequency == Frequency.one_time &&
         date.isBefore(DateTime.now())) {
       final user =
@@ -306,7 +297,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
     FixedExtentScrollController hourController = FixedExtentScrollController(
-        initialItem: hoursOfTheDay.indexOf(selectedHour));
+        initialItem: hoursOfTheDay
+            .indexOf(selectedHour > 12 ? selectedHour - 12 : selectedHour));
     FixedExtentScrollController minuteController = FixedExtentScrollController(
         initialItem: minInTheHour.indexOf(selectedMinute));
     FixedExtentScrollController yearController =
@@ -494,8 +486,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               backgroundColor: Colors.transparent,
                               scrollController: hourController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(
-                                  () => selectedHour = hoursOfTheDay[i]),
+                              onSelectedItemChanged: (i) => setState(() =>
+                                  selectedHour =
+                                      selectedPeriod == PeriodOfDay.pm
+                                          ? hoursOfTheDay[i] + 12
+                                          : hoursOfTheDay[i]),
                               children: <Widget>[
                                 for (var i = 0; i < hoursOfTheDay.length; i++)
                                   Align(

@@ -64,12 +64,11 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
         minutes = 10080;
         break;
       case 'Months':
-        minutes = 43800;
+        minutes = 44640;
         break;
       default:
     }
-
-    var e = selectedDuration * minutes;
+    var e = selectedDuration * (minutes);
     var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
     try {
       var notifications =

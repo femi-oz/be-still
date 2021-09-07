@@ -28,10 +28,8 @@ class LocalNotification {
     Frequency.weekly,
   ];
 
-  static List<String> months = new List<String>.generate(
-      12,
-      (i) => DateFormat('MMM')
-          .format(DateTime(DateTime.now().year, i + 1, DateTime.now().day)));
+  static List<String> months = new List<String>.generate(12,
+      (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
     final _localNotifications =
