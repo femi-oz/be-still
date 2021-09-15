@@ -1,6 +1,5 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/prayer_update_request.model.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
