@@ -223,8 +223,10 @@ class _UpdateViewState extends State<UpdateView> {
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    final updates = widget.data.updates;
+    var updates = widget.data.updates;
     updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+    updates = updates.where((element) => element.deleteStatus != -1).toList();
+
     return Container(
       child: SingleChildScrollView(
         child: Container(

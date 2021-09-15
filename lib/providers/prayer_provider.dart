@@ -242,6 +242,9 @@ class PrayerProvider with ChangeNotifier {
   Future<void> editprayer(String description, String prayerID) async =>
       await _prayerService.editPrayer(description, prayerID);
 
+  Future<void> editUpdate(String description, String prayerID) async =>
+      await _prayerService.editUpdate(description, prayerID);
+
   Future<void> archivePrayer(String userPrayerId) async =>
       await _prayerService.archivePrayer(userPrayerId);
 
@@ -323,6 +326,11 @@ class PrayerProvider with ChangeNotifier {
   Future<void> deletePrayer(String userPrayeId) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _prayerService.deletePrayer(userPrayeId);
+  }
+
+  Future<void> deleteUpdate(String prayerId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    await _prayerService.deleteUpdate(prayerId);
   }
 
   Future<void> setCurrentPrayerType(PrayerType type) async {

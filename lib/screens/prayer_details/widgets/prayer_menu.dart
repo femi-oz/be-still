@@ -407,6 +407,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived ||
         widget.prayerData.userPrayer.isSnoozed;
+    var isSnoozeAndUpdateDisable = widget.prayerData.prayer.isAnswer ||
+        widget.prayerData.userPrayer.isArchived;
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -479,8 +481,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: isDisable,
-                      onPress: () => isDisable
+                      isDisabled: isSnoozeAndUpdateDisable,
+                      onPress: () => isSnoozeAndUpdateDisable
                           ? null
                           : Navigator.push(
                               context,
@@ -501,8 +503,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
-                      isDisabled: isDisable,
-                      onPress: () => isDisable
+                      isDisabled: isSnoozeAndUpdateDisable,
+                      onPress: () => isSnoozeAndUpdateDisable
                           ? null
                           : Navigator.push(
                               context,
@@ -674,7 +676,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: AppIcons.bestill_close,
+                      icon: Icons.delete_forever,
                       onPress: () => _openDeleteConfirmation(context),
                       text: 'Delete',
                     ),

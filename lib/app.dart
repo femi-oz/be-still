@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         var backgroundTime = DateTime.parse(Settings.backgroundTime);
-        if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
+        if (DateTime.now().difference(backgroundTime) > Duration(minutes: 5)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(

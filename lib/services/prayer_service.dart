@@ -302,6 +302,21 @@ class PrayerService {
     }
   }
 
+  Future editUpdate(String description, String prayerID) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _prayerUpdateCollectionReference.doc(prayerID).update(
+        {"Description": description, "ModifiedOn": DateTime.now()},
+      );
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          prayerID,
+          'PRAYER/service/editPrayerUpdate');
+      throw HttpException(e.message);
+    }
+  }
+
   Future addPrayerUpdate(String userId, String prayer, String prayerId) async {
     final prayerUpdate = PrayerUpdateModel(
       prayerId: prayerId,
@@ -517,6 +532,21 @@ class PrayerService {
           e.message != null ? e.message : e.toString(),
           userPrayeId,
           'PRAYER/service/deletePrayer');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future deleteUpdate(String prayerId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _prayerUpdateCollectionReference
+          .doc(prayerId)
+          .update({'DeleteStatus': -1});
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          prayerId,
+          'PRAYER/service/deletePrayerUpdate');
       throw HttpException(e.message);
     }
   }
