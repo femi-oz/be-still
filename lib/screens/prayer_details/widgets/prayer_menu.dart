@@ -674,7 +674,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: AppIcons.bestill_close,
+                      icon: Icons.delete_forever,
                       onPress: () => _openDeleteConfirmation(context),
                       text: 'Delete',
                     ),

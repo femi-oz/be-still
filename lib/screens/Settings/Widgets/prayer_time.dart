@@ -296,8 +296,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                           height: 30,
                                           padding: EdgeInsets.only(right: 5),
                                           child: Icon(
-                                            AppIcons.bestill_close,
-                                            size: 18,
+                                             Icons.delete_forever,
+                                            size: 22,
                                             color: AppColors.lightBlue3,
                                           ),
                                         ),
