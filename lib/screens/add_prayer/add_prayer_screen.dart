@@ -93,16 +93,6 @@ class _AddPrayerState extends State<AddPrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
     try {
-      var updates = widget.prayerData.updates;
-      updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
-      updates = updates.where((element) => element.deleteStatus != -1).toList();
-      updates.forEach((str) {
-        if (textEditingControllers[str.id].text != str.description) {
-          updatedPrayer['id'] = str.id;
-          updatedPrayer['description'] = textEditingControllers[str.id].text;
-          prayerUpdateList = [...prayerUpdateList, updatedPrayer];
-        }
-      });
       if (_descriptionController.text == null ||
           _descriptionController.text.trim() == '') {
         BeStilDialog.hideLoading(context);
@@ -136,6 +126,18 @@ class _AddPrayerState extends State<AddPrayer> {
           BeStilDialog.hideLoading(context);
           widget.setCurrentIndex(0, true);
         } else {
+          var updates = widget.prayerData.updates;
+          updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+          updates =
+              updates.where((element) => element.deleteStatus != -1).toList();
+          updates.forEach((str) {
+            if (textEditingControllers[str.id].text != str.description) {
+              updatedPrayer['id'] = str.id;
+              updatedPrayer['description'] =
+                  textEditingControllers[str.id].text;
+              prayerUpdateList = [...prayerUpdateList, updatedPrayer];
+            }
+          });
           if (prayerUpdateList.length > 0) {
             prayerUpdateList.forEach((element) async {
               if (element['description'] == '') {
@@ -211,86 +213,86 @@ class _AddPrayerState extends State<AddPrayer> {
   void initState() {
     _descriptionController.text =
         widget.isEdit ? widget.prayerData.prayer.description : '';
-    var updates = widget.prayerData.updates;
-    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
-    updates = updates.where((element) => element.deleteStatus != -1).toList();
+    if (widget.isEdit) {
+      var updates = widget.prayerData.updates;
+      updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+      updates = updates.where((element) => element.deleteStatus != -1).toList();
 
-    widget.prayerData != null
-        ? updates.forEach(
-            (element) {
-              var textEditingController =
-                  new TextEditingController(text: element.description);
-              textEditingControllers.putIfAbsent(
-                  element.id, () => textEditingController);
+      updates.forEach(
+        (element) {
+          var textEditingController =
+              new TextEditingController(text: element.description);
+          textEditingControllers.putIfAbsent(
+              element.id, () => textEditingController);
 
-              return textFields.add(
-                Stack(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: TextField(
-                        controller: textEditingController,
-                        maxLines: 10,
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.sentences,
-                        style: AppTextStyles.regularText15,
-                        cursorColor: AppColors.lightBlue4,
-                        onChanged: (val) {
-                          setState(() {
-                            tagText = '';
-                            if (element.description.trim() !=
-                                textEditingController.text.trim()) {
-                              updateIsValid = true;
-                            } else {
-                              updateIsValid = false;
-                            }
-                          });
-                        },
-                        focusNode: updateIsValid ? _focusNode : null,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 15.0, vertical: 20.0),
-                          suffixStyle: AppTextStyles.regularText14.copyWith(
-                              color: Settings.isDarkMode
-                                  ? AppColors.offWhite2
-                                  : AppColors.prayerTextColor),
-                          counterText: '',
-                          hintText: 'Prayer update description',
-                          hintStyle:
-                              AppTextStyles.regularText15.copyWith(height: 1.5),
-                          errorBorder: new OutlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.redAccent),
-                          ),
-                          errorMaxLines: 5,
-                          errorStyle: AppTextStyles.errorText,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: widget.hasBorder
-                                  ? AppColors.lightBlue4.withOpacity(0.5)
-                                  : Colors.transparent,
-                              width: 1.0,
-                            ),
-                          ),
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: widget.hasBorder
-                                    ? AppColors.lightBlue4
-                                    : Colors.transparent,
-                                width: 1.0),
-                          ),
-                          fillColor: AppColors.textFieldBackgroundColor,
-                          filled: true,
+          return textFields.add(
+            Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: TextField(
+                    controller: textEditingController,
+                    maxLines: 10,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.sentences,
+                    style: AppTextStyles.regularText15,
+                    cursorColor: AppColors.lightBlue4,
+                    onChanged: (val) {
+                      setState(() {
+                        tagText = '';
+                        if (element.description.trim() !=
+                            textEditingController.text.trim()) {
+                          updateIsValid = true;
+                        } else {
+                          updateIsValid = false;
+                        }
+                      });
+                    },
+                    focusNode: updateIsValid ? _focusNode : null,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15.0, vertical: 20.0),
+                      suffixStyle: AppTextStyles.regularText14.copyWith(
+                          color: Settings.isDarkMode
+                              ? AppColors.offWhite2
+                              : AppColors.prayerTextColor),
+                      counterText: '',
+                      hintText: 'Prayer update description',
+                      hintStyle:
+                          AppTextStyles.regularText15.copyWith(height: 1.5),
+                      errorBorder: new OutlineInputBorder(
+                        borderSide: new BorderSide(color: Colors.redAccent),
+                      ),
+                      errorMaxLines: 5,
+                      errorStyle: AppTextStyles.errorText,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: widget.hasBorder
+                              ? AppColors.lightBlue4.withOpacity(0.5)
+                              : Colors.transparent,
+                          width: 1.0,
                         ),
                       ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: widget.hasBorder
+                                ? AppColors.lightBlue4
+                                : Colors.transparent,
+                            width: 1.0),
+                      ),
+                      fillColor: AppColors.textFieldBackgroundColor,
+                      filled: true,
                     ),
-                  ],
+                  ),
                 ),
-              );
-            },
-          )
-        : Container();
+              ],
+            ),
+          );
+        },
+      );
+    }
 
     _oldDescription = _descriptionController.text;
     getContacts();
@@ -527,6 +529,11 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
+    final updates = widget.prayerData != null
+        ? widget.prayerData.updates
+            .where((element) => element.deleteStatus != -1)
+            .toList()
+        : null;
     if (numberOfLines == 1.0) {
       positionOffset2 = 25;
     } else if (numberOfLines == 2.0) {
@@ -668,7 +675,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                     textkey: _prayerKey,
                                     label: 'Prayer description',
                                     controller: _descriptionController,
-                                    maxLines: widget.isEdit ? 10 : 23,
+                                    maxLines:
+                                        widget.isEdit && updates.length > 0
+                                            ? 10
+                                            : 23,
                                     isRequired: true,
                                     showSuffix: false,
                                     textInputAction: TextInputAction.newline,
