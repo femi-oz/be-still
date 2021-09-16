@@ -321,6 +321,9 @@ class _AddUpdateState extends State<AddUpdate> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final updates = prayerData.updates
+        .where((element) => element.deleteStatus != -1)
+        .toList();
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
@@ -500,7 +503,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                     ),
                                   )
                                 : Container(),
-                            ...prayerData.updates.map(
+                            ...updates.map(
                               (u) => Container(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
