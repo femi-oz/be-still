@@ -85,6 +85,7 @@ class PrayerUpdateModel {
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
+  final int deleteStatus;
 
   const PrayerUpdateModel({
     this.id,
@@ -97,6 +98,7 @@ class PrayerUpdateModel {
     @required this.createdOn,
     @required this.modifiedBy,
     @required this.modifiedOn,
+    @required this.deleteStatus,
   });
 
   PrayerUpdateModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
@@ -109,7 +111,8 @@ class PrayerUpdateModel {
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate(),
+        deleteStatus = snapshot.data()['DeleteStatus'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -122,6 +125,7 @@ class PrayerUpdateModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
+      'DeleteStatus': deleteStatus,
     };
   }
 }

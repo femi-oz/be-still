@@ -9,12 +9,14 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
 import './utils/routes.dart' as rt;
@@ -53,8 +55,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     Provider.of<NotificationProvider>(context, listen: false)
         .initLocal(context);
     _initializeFlutterFireFuture = _initializeFlutterFire();
+    _getPermissions();
 
     super.initState();
+  }
+
+  void _getPermissions() async {
+    try {
+      if (Settings.isAppInit) {
+        await Permission.contacts.request().then((p) =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(context, e, null, s);
+    }
   }
 
   Future<void> _initializeFlutterFire() async {
@@ -91,7 +105,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         var backgroundTime = DateTime.parse(Settings.backgroundTime);
-        if (DateTime.now().difference(backgroundTime) > Duration(hours: 24)) {
+        if (DateTime.now().difference(backgroundTime) > Duration(minutes: 5)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
@@ -160,6 +174,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,
         builder: (contect, snapshot) => MaterialApp(
+          builder: (BuildContext context, Widget child) {
+            final MediaQueryData data = MediaQuery.of(context);
+            return MediaQuery(
+                data: data.copyWith(textScaleFactor: 1), child: child);
+          },
           title: 'Be Still',
           debugShowCheckedModeBanner: false,
           theme: theme.isDarkModeEnabled

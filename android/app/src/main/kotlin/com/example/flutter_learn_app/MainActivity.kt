@@ -1,4 +1,4 @@
-package com.example.be_still
+package org.second.bestill
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterFragmentActivity

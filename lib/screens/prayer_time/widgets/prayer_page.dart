@@ -23,7 +23,7 @@ class PrayerView extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.textFieldBackgroundColor,
           border: Border.all(
-            color: AppColors.prayeModeBorder,
+            color: AppColors.prayerModeBorder,
             width: 1,
           ),
           borderRadius: BorderRadius.circular(5),
