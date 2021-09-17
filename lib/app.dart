@@ -7,7 +7,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
-import 'package:be_still/screens/security/login/login_screen.dart';
+import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -108,10 +108,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (DateTime.now().difference(backgroundTime) > Duration(minutes: 5)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName,
-            (Route<dynamic> route) => false,
-          );
+          await NavigationService.instance.navigateTo(LoginScreen.routeName);
         }
         final userId =
             Provider.of<UserProvider>(context, listen: false).currentUser?.id;
@@ -145,9 +142,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.paused:
         print('AppLifecycleState paused ===> ');
+        Settings.backgroundTime = DateTime.now().toString();
         break;
       case AppLifecycleState.detached:
         print('AppLifecycleState detached ===> ');
+        Settings.backgroundTime = DateTime.now().toString();
         break;
     }
   }
