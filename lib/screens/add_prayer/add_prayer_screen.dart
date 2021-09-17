@@ -217,7 +217,6 @@ class _AddPrayerState extends State<AddPrayer> {
       var updates = widget.prayerData.updates;
       updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
       updates = updates.where((element) => element.deleteStatus != -1).toList();
-
       updates.forEach(
         (element) {
           var textEditingController =
@@ -240,6 +239,7 @@ class _AddPrayerState extends State<AddPrayer> {
                     onChanged: (val) {
                       setState(() {
                         tagText = '';
+                        // _onTextChange(val);
                         if (element.description.trim() !=
                             textEditingController.text.trim()) {
                           updateIsValid = true;
@@ -534,6 +534,7 @@ class _AddPrayerState extends State<AddPrayer> {
             .where((element) => element.deleteStatus != -1)
             .toList()
         : null;
+
     if (numberOfLines == 1.0) {
       positionOffset2 = 25;
     } else if (numberOfLines == 2.0) {
@@ -545,6 +546,7 @@ class _AddPrayerState extends State<AddPrayer> {
     } else {
       positionOffset2 = 10;
     }
+
     Widget contactDropdown(context) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
