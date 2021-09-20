@@ -94,15 +94,17 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<void> _save(textEditingControllers) async {
+    BeStilDialog.showLoading(context);
+    FocusScope.of(context).unfocus();
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
     Map<String, dynamic> updatedPrayer = {};
     List<dynamic> prayerUpdateList = [];
+    List<PrayerTagModel> textList = [];
 
-    FocusScope.of(context).unfocus();
-    BeStilDialog.showLoading(context);
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
     try {
       if (_descriptionController.text == null ||
@@ -163,7 +165,6 @@ class _AddPrayerState extends State<AddPrayer> {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
 
-          List<PrayerTagModel> textList = [];
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
             if (widget.prayerData.updates.length == 0) {
