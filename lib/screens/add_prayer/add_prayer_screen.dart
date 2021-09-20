@@ -38,37 +38,42 @@ class AddPrayer extends StatefulWidget {
 }
 
 class _AddPrayerState extends State<AddPrayer> {
-  final _descriptionController = TextEditingController();
+  bool _autoValidate = false;
+  bool updated;
+  bool updateIsValid = false;
+  bool hasFocus;
+  bool showNoContact = false;
+  double numberOfLines = 5.0;
 
+  final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _prayerKey = GlobalKey<FormFieldState>();
-  List groups = [];
-  Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
-  List<String> tags = [];
-  String tagText = '';
-  List<Contact> contacts = [];
-  List<PrayerTagModel> oldTags = [];
-  bool _autoValidate = false;
-  String backupText;
-  String _oldDescription = '';
-  TextPainter painter;
-  bool showNoContact = false;
-  String displayName = '';
-  List<String> tagList = [];
-  var displayname = [];
-  double numberOfLines = 5.0;
-  bool updated;
-  Map<String, TextEditingController> textEditingControllers = {};
-  var textFields = <Stack>[];
-  bool updateIsValid = false;
-  List<PrayerUpdateModel> updates;
-  var textEditingController = TextEditingController();
-  List<Widget> contactDropDowns;
-  List textControllers = [];
-  bool hasFocus;
+
+  Iterable<Contact> localContacts = [];
   int fieldIndex;
 
+  List<PrayerUpdateModel> updates;
+  List groups = [];
+  List<Widget> contactDropDowns;
+  List textControllers = [];
+  List<String> tagList = [];
+  List<Contact> contacts = [];
+  List<PrayerTagModel> oldTags = [];
+  List<String> tags = [];
+
+  Map<String, TextEditingController> textEditingControllers = {};
+
+  String tagText = '';
+  String backupText;
+  String _oldDescription = '';
+  String displayName = '';
+
+  TextPainter painter;
+
+  var displayname = [];
+  var textFields = <Stack>[];
+  var textEditingController = TextEditingController();
   var positionOffset = 3.0;
   var positionOffset2 = 0.0;
 
@@ -225,7 +230,6 @@ class _AddPrayerState extends State<AddPrayer> {
       updates = widget.prayerData.updates;
       updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
       updates = updates.where((element) => element.deleteStatus != -1).toList();
-
       updates.forEach(
         (element) {
           textEditingController =
@@ -309,19 +313,18 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> _onTagSelected(s, controller) async {
     String controllerText;
-    tagText = '';
     String tmpText = s.displayName.substring(0, s.displayName.length);
-
-    controllerText = controller.text.substring(
-      0,
-      controller.text.indexOf('@'),
-    );
+    tagText = '';
     var tmpTextAfter = controller.text
         .substring(controller.text.indexOf('@'), controller.text.length);
     var textAfter = tmpTextAfter.split(" ");
     var newText = textAfter..removeAt(0);
     var joinText = newText.join(" ");
 
+    controllerText = controller.text.substring(
+      0,
+      controller.text.indexOf('@'),
+    );
     controllerText += tmpText;
     controller.text = controllerText + " " + joinText;
     controller.selection = TextSelection.fromPosition(
@@ -496,22 +499,23 @@ class _AddPrayerState extends State<AddPrayer> {
               ...localContacts.map((s) {
                 displayName = s.displayName ?? '';
 
-                if (('@' + s.displayName)
-                    .toLowerCase()
-                    .contains(tagText.toLowerCase())) {
+                if (('@' + s.displayName).toLowerCase().contains(
+                      tagText.toLowerCase(),
+                    )) {
                   return GestureDetector(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
-                        child: Text(
-                          displayName,
-                          style: AppTextStyles.regularText14.copyWith(
-                            color: AppColors.lightBlue4,
-                          ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        displayName,
+                        style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.lightBlue4,
                         ),
                       ),
-                      onTap: () =>
-                          _onTagSelected(s, textEditingControllers[e.id]));
+                    ),
+                    onTap: () =>
+                        _onTagSelected(s, textEditingControllers[e.id]),
+                  );
                 } else {
                   return SizedBox();
                 }
