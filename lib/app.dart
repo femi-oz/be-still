@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         var backgroundTime = DateTime.parse(Settings.backgroundTime);
-        if (DateTime.now().difference(backgroundTime) > Duration(minutes: 5)) {
+        if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           await NavigationService.instance.navigateTo(LoginScreen.routeName);
