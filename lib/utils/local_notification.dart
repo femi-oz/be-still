@@ -118,7 +118,7 @@ class LocalNotification {
     int selectedDayOfMonth,
     bool isOneTime,
   ) {
-    var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
+    var hour = selectedHour;
     if (period == PeriodOfDay.am && selectedHour == 12)
       hour = 00;
     else if (period == PeriodOfDay.pm && selectedHour == 12) hour = 12;

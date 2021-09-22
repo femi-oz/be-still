@@ -159,11 +159,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   setNotification() async {
+    final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12
+        ? selectedHour - 12
+        : selectedPeriod == PeriodOfDay.pm && selectedHour <= 12
+            ? selectedHour + 12
+            : selectedHour;
     DateTime date = DateTime(
         selectedYear,
         LocalNotification.months.indexOf(selectedMonth) + 1,
         selectedDayOfMonth,
-        selectedHour,
+        hour,
         selectedMinute);
 
     if (selectedFrequency == Frequency.one_time &&
@@ -177,8 +182,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
     try {
       var _selectedMinuteString =
           selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
-      var _selectedHourString =
-          selectedHour < 10 ? '0$selectedHour' : '$selectedHour ';
+      var _selectedHourString = hour < 10 ? '0$hour' : '$hour ';
       BeStilDialog.showLoading(context);
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -199,7 +203,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final description = prayerData?.prayer?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
-        selectedHour,
+        hour,
         selectedMinute,
         selectedDayOfWeek + 1,
         selectedPeriod,
@@ -486,11 +490,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               backgroundColor: Colors.transparent,
                               scrollController: hourController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() =>
-                                  selectedHour =
-                                      selectedPeriod == PeriodOfDay.pm
-                                          ? hoursOfTheDay[i] + 12
-                                          : hoursOfTheDay[i]),
+                              onSelectedItemChanged: (i) => setState(() {
+                                selectedHour = hoursOfTheDay[i];
+                              }),
                               children: <Widget>[
                                 for (var i = 0; i < hoursOfTheDay.length; i++)
                                   Align(
