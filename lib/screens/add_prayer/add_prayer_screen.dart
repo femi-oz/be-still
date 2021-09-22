@@ -140,10 +140,11 @@ class _AddPrayerState extends State<AddPrayer> {
           BeStilDialog.hideLoading(context);
           widget.setCurrentIndex(0, true);
         } else {
-          var updates = widget.prayerData.updates;
+          var updates = widget.prayerData?.updates;
           updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
           updates =
               updates.where((element) => element.deleteStatus != -1).toList();
+
           updates.forEach((str) {
             if (textEditingControllers[str.id].text != str.description) {
               updatedPrayer['id'] = str.id;
@@ -152,6 +153,7 @@ class _AddPrayerState extends State<AddPrayer> {
               prayerUpdateList = [...prayerUpdateList, updatedPrayer];
             }
           });
+
           if (prayerUpdateList.length > 0) {
             prayerUpdateList.forEach((element) async {
               if (element['description'] == '') {
@@ -162,35 +164,19 @@ class _AddPrayerState extends State<AddPrayer> {
                   .editUpdate(element['description'], element['id']);
             });
           }
+
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
 
           final text = [...widget.prayerData.tags];
           text.forEach((element) {
-            if (widget.prayerData.updates.length == 0) {
-              if (!_descriptionController.text
-                  .toLowerCase()
-                  .contains(element.displayName.toLowerCase())) {
-                textList.add(element);
-              }
-            } else {
-              widget.prayerData.updates.forEach((update) {
-                if (!_descriptionController.text
-                        .toLowerCase()
-                        .contains(element.displayName.toLowerCase()) &&
-                    !update.description
-                        .toLowerCase()
-                        .contains(element.displayName.toLowerCase())) {
-                  textList.add(element);
-                }
-                if (update.description
-                    .toLowerCase()
-                    .contains(element.displayName.toLowerCase())) {
-                  textList.remove(element);
-                }
-              });
+            if (!_descriptionController.text
+                .toLowerCase()
+                .contains(element.displayName.toLowerCase())) {
+              textList.add(element);
             }
           });
+
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
@@ -228,7 +214,7 @@ class _AddPrayerState extends State<AddPrayer> {
         widget.isEdit ? widget.prayerData.prayer.description : '';
 
     if (widget.isEdit && widget.prayerData != null) {
-      updates = widget.prayerData.updates;
+      updates = widget.prayerData?.updates;
       updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
       updates = updates.where((element) => element.deleteStatus != -1).toList();
       updates.forEach(
@@ -332,7 +318,7 @@ class _AddPrayerState extends State<AddPrayer> {
         TextPosition(offset: controller.text.length));
 
     setState(() {
-      _descriptionController.selection =
+      controller.selection =
           TextSelection.collapsed(offset: controller.text.length);
     });
 
@@ -687,7 +673,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               ),
                               tagText.length > 1 &&
                                       Settings.enabledContactPermission &&
-                                      widget.prayerData.prayer.description !=
+                                      widget.prayerData?.prayer?.description !=
                                           _descriptionController.text
                                   ? contactDropdown(context)
                                   : SizedBox(),
