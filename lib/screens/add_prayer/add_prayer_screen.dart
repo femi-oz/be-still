@@ -169,27 +169,86 @@ class _AddPrayerState extends State<AddPrayer> {
               _descriptionController.text, widget.prayerData.prayer.id);
 
           final text = [...widget.prayerData.tags];
-          text.forEach((element) {
-            if (!_descriptionController.text
-                .toLowerCase()
-                .contains(element.displayName.toLowerCase())) {
-              textList.add(element);
-            }
-          });
+          if (updates.length > 0) {
+            updates.forEach((x) async {
+              if (textEditingControllers[x.id].text != x.description) {
+                text.forEach((element) {
+                  if (!textEditingControllers[x.id]
+                      .text
+                      .toLowerCase()
+                      .contains(element.displayName.toLowerCase())) {
+                    textList.add(element);
+                  }
+                });
+                contacts.forEach((s) {
+                  if (!textEditingControllers[x.id]
+                      .text
+                      .contains(s.displayName)) {
+                    s.displayName = '';
+                  }
+                });
 
-          contacts.forEach((s) {
-            if (!_descriptionController.text.contains(s.displayName)) {
-              s.displayName = '';
-            }
-          });
+                if (contacts.length > 0) {
+                  await Provider.of<PrayerProvider>(context, listen: false)
+                      .addPrayerTag(contacts, _user,
+                          textEditingControllers[x.id].text, '');
+                }
+              } else {
+                text.forEach((element) {
+                  if (!_descriptionController.text
+                      .toLowerCase()
+                      .contains(element.displayName.toLowerCase())) {
+                    textList.add(element);
+                  }
+                });
 
-          for (int i = 0; i < textList.length; i++)
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .removePrayerTag(textList[i].id);
-          if (contacts.length > 0) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text, '');
+                contacts.forEach((s) {
+                  if (!_descriptionController.text.contains(s.displayName)) {
+                    s.displayName = '';
+                  }
+                });
+
+                if (contacts.length > 0) {
+                  await Provider.of<PrayerProvider>(context, listen: false)
+                      .addPrayerTag(
+                          contacts, _user, _descriptionController.text, '');
+                }
+              }
+
+              for (int i = 0; i < textList.length; i++)
+                if (!_descriptionController.text
+                        .contains(textList[i].displayName) &&
+                    !textEditingControllers[x.id]
+                        .text
+                        .contains(textList[i].displayName)) {
+                  await Provider.of<PrayerProvider>(context, listen: false)
+                      .removePrayerTag(textList[i].id);
+                }
+            });
+          } else {
+            text.forEach((element) {
+              if (!_descriptionController.text
+                  .toLowerCase()
+                  .contains(element.displayName.toLowerCase())) {
+                textList.add(element);
+              }
+            });
+
+            contacts.forEach((s) {
+              if (!_descriptionController.text.contains(s.displayName)) {
+                s.displayName = '';
+              }
+            });
+            for (int i = 0; i < textList.length; i++)
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .removePrayerTag(textList[i].id);
+            if (contacts.length > 0) {
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .addPrayerTag(
+                      contacts, _user, _descriptionController.text, '');
+            }
           }
+
           BeStilDialog.hideLoading(context);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -685,66 +744,72 @@ class _AddPrayerState extends State<AddPrayer> {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(top: 20),
-                                    child: TextField(
-                                      controller: textEditingControllers[e.id],
-                                      maxLines: 10,
-                                      keyboardType: TextInputType.text,
-                                      textCapitalization:
-                                          TextCapitalization.sentences,
-                                      style: AppTextStyles.regularText15,
-                                      cursorColor: AppColors.lightBlue4,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          _onTextChange(val);
-                                          if (e.description.trim() !=
-                                              textEditingController.text
-                                                  .trim()) {
-                                            updateIsValid = true;
-                                          } else {
-                                            updateIsValid = false;
-                                          }
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 15.0, vertical: 20.0),
-                                        suffixStyle: AppTextStyles.regularText14
-                                            .copyWith(
-                                                color: Settings.isDarkMode
-                                                    ? AppColors.offWhite2
-                                                    : AppColors
-                                                        .prayerTextColor),
-                                        counterText: '',
-                                        hintText: 'Prayer update description',
-                                        hintStyle: AppTextStyles.regularText15
-                                            .copyWith(height: 1.5),
-                                        errorBorder: new OutlineInputBorder(
-                                          borderSide: new BorderSide(
-                                              color: Colors.redAccent),
-                                        ),
-                                        errorMaxLines: 5,
-                                        errorStyle: AppTextStyles.errorText,
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: widget.hasBorder
-                                                ? AppColors.lightBlue4
-                                                    .withOpacity(0.5)
-                                                : Colors.transparent,
-                                            width: 1.0,
+                                    child: Container(
+                                      child: TextFormField(
+                                        controller:
+                                            textEditingControllers[e.id],
+                                        textInputAction:
+                                            TextInputAction.newline,
+                                        maxLines: 10,
+                                        keyboardType: TextInputType.multiline,
+                                        textCapitalization:
+                                            TextCapitalization.sentences,
+                                        style: AppTextStyles.regularText15,
+                                        cursorColor: AppColors.lightBlue4,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            _onTextChange(val);
+                                            if (e.description.trim() !=
+                                                textEditingController.text
+                                                    .trim()) {
+                                              updateIsValid = true;
+                                            } else {
+                                              updateIsValid = false;
+                                            }
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 15.0, vertical: 20.0),
+                                          suffixStyle: AppTextStyles
+                                              .regularText14
+                                              .copyWith(
+                                                  color: Settings.isDarkMode
+                                                      ? AppColors.offWhite2
+                                                      : AppColors
+                                                          .prayerTextColor),
+                                          counterText: '',
+                                          hintText: 'Prayer update description',
+                                          hintStyle: AppTextStyles.regularText15
+                                              .copyWith(height: 1.5),
+                                          errorBorder: new OutlineInputBorder(
+                                            borderSide: new BorderSide(
+                                                color: Colors.redAccent),
                                           ),
-                                        ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
+                                          errorMaxLines: 5,
+                                          errorStyle: AppTextStyles.errorText,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
                                               color: widget.hasBorder
                                                   ? AppColors.lightBlue4
+                                                      .withOpacity(0.5)
                                                   : Colors.transparent,
-                                              width: 1.0),
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          border: OutlineInputBorder(),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: widget.hasBorder
+                                                    ? AppColors.lightBlue4
+                                                    : Colors.transparent,
+                                                width: 1.0),
+                                          ),
+                                          fillColor: AppColors
+                                              .textFieldBackgroundColor,
+                                          filled: true,
                                         ),
-                                        fillColor:
-                                            AppColors.textFieldBackgroundColor,
-                                        filled: true,
                                       ),
                                     ),
                                   ),
