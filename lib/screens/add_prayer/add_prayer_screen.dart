@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
@@ -101,6 +102,7 @@ class _AddPrayerState extends State<AddPrayer> {
     Map<String, dynamic> updatedPrayer = {};
     List<dynamic> prayerUpdateList = [];
     List<PrayerTagModel> textList = [];
+    List<PrayerTagModel> updateTextList = [];
 
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
@@ -168,75 +170,57 @@ class _AddPrayerState extends State<AddPrayer> {
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
 
-          final text = [...widget.prayerData.tags];
+          final tags = [...widget.prayerData.tags];
           if (updates.length > 0) {
             updates.forEach((x) async {
               if (textEditingControllers[x.id].text != x.description) {
-                text.forEach((element) {
-                  if (!textEditingControllers[x.id]
-                      .text
-                      .toLowerCase()
-                      .contains(element.displayName.toLowerCase())) {
-                    textList.add(element);
-                  }
-                });
-                contacts.forEach((s) {
-                  if (!textEditingControllers[x.id]
-                      .text
-                      .contains(s.displayName)) {
-                    s.displayName = '';
-                  }
-                });
-
-                if (contacts.length > 0) {
-                  await Provider.of<PrayerProvider>(context, listen: false)
-                      .addPrayerTag(contacts, _user,
-                          textEditingControllers[x.id].text, '');
+                if (textEditingControllers[x.id].text != '') {
+                  tags.forEach((tag) async {
+                    if (!textEditingControllers[x.id]
+                            .text
+                            .toLowerCase()
+                            .contains(tag.displayName.toLowerCase()) &&
+                        !_descriptionController.text
+                            .toLowerCase()
+                            .contains(tag.displayName.toLowerCase())) {
+                      updateTextList.add(tag);
+                    }
+                  });
                 }
+              }
+              for (int i = 0; i < updateTextList.length; i++)
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .removePrayerTag(updateTextList[i].id);
+
+              if (contacts.length > 0) {
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .addPrayerTag(
+                        contacts, _user, textEditingControllers[x.id].text, '');
+              }
+            });
+          }
+          if (_descriptionController.text !=
+              widget.prayerData.prayer.description) {
+            tags.forEach((tag) {
+              if (updates.length > 0) {
+                updates.forEach((x) {
+                  if ((!textEditingControllers[x.id]
+                              .text
+                              .toLowerCase()
+                              .contains(tag.displayName.toLowerCase()) &&
+                          !_descriptionController.text
+                              .toLowerCase()
+                              .contains(tag.displayName.toLowerCase())) &&
+                      textEditingControllers[x.id] != '') {
+                    textList.add(tag);
+                  }
+                });
               } else {
-                text.forEach((element) {
-                  if (!_descriptionController.text
-                      .toLowerCase()
-                      .contains(element.displayName.toLowerCase())) {
-                    textList.add(element);
-                  }
-                });
-
-                contacts.forEach((s) {
-                  if (!_descriptionController.text.contains(s.displayName)) {
-                    s.displayName = '';
-                  }
-                });
-
-                if (contacts.length > 0) {
-                  await Provider.of<PrayerProvider>(context, listen: false)
-                      .addPrayerTag(
-                          contacts, _user, _descriptionController.text, '');
-                }
-              }
-
-              for (int i = 0; i < textList.length; i++)
                 if (!_descriptionController.text
-                        .contains(textList[i].displayName) &&
-                    !textEditingControllers[x.id]
-                        .text
-                        .contains(textList[i].displayName)) {
-                  await Provider.of<PrayerProvider>(context, listen: false)
-                      .removePrayerTag(textList[i].id);
+                    .toLowerCase()
+                    .contains(tag.displayName.toLowerCase())) {
+                  textList.add(tag);
                 }
-            });
-          } else {
-            text.forEach((element) {
-              if (!_descriptionController.text
-                  .toLowerCase()
-                  .contains(element.displayName.toLowerCase())) {
-                textList.add(element);
-              }
-            });
-
-            contacts.forEach((s) {
-              if (!_descriptionController.text.contains(s.displayName)) {
-                s.displayName = '';
               }
             });
             for (int i = 0; i < textList.length; i++)
