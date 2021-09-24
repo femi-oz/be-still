@@ -166,27 +166,31 @@ class _AddPrayerState extends State<AddPrayer> {
                   .editUpdate(element['description'], element['id']);
             });
           }
-
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
               _descriptionController.text, widget.prayerData.prayer.id);
 
+          //tags
+          List<PrayerTagModel> currentTags = [];
+          List<PrayerTagModel> initialTags = [];
           final tags = [...widget.prayerData.tags];
+
           if (updates.length > 0) {
             updates.forEach((x) async {
               if (textEditingControllers[x.id].text != x.description) {
-                if (textEditingControllers[x.id].text != '') {
-                  tags.forEach((tag) async {
-                    if (!textEditingControllers[x.id]
-                            .text
-                            .toLowerCase()
-                            .contains(tag.displayName.toLowerCase()) &&
-                        !_descriptionController.text
-                            .toLowerCase()
-                            .contains(tag.displayName.toLowerCase())) {
-                      updateTextList.add(tag);
-                    }
-                  });
-                }
+                tags.forEach((tag) async {
+                  if (x.description.contains(tag.displayName)) {
+                    currentTags = [...currentTags, tag];
+                  }
+                });
+                currentTags.forEach((y) {
+                  if (!textEditingControllers[x.id]
+                      .text
+                      .toLowerCase()
+                      .contains(y.displayName.toLowerCase())) {
+                    print(y);
+                    updateTextList.add(y);
+                  }
+                });
               }
               for (int i = 0; i < updateTextList.length; i++)
                 await Provider.of<PrayerProvider>(context, listen: false)
@@ -199,30 +203,33 @@ class _AddPrayerState extends State<AddPrayer> {
               }
             });
           }
+
           if (_descriptionController.text !=
               widget.prayerData.prayer.description) {
-            tags.forEach((tag) {
-              if (updates.length > 0) {
-                updates.forEach((x) {
-                  if ((!textEditingControllers[x.id]
-                              .text
-                              .toLowerCase()
-                              .contains(tag.displayName.toLowerCase()) &&
-                          !_descriptionController.text
-                              .toLowerCase()
-                              .contains(tag.displayName.toLowerCase())) &&
-                      textEditingControllers[x.id] != '') {
-                    textList.add(tag);
-                  }
-                });
-              } else {
+            if (updates.length > 0) {
+              tags.forEach((tag) async {
+                if (_oldDescription.contains(tag.displayName)) {
+                  initialTags = [...initialTags, tag];
+                }
+              });
+              initialTags.forEach((y) {
+                if (!_descriptionController.text
+                    .toLowerCase()
+                    .contains(y.displayName.toLowerCase())) {
+                  print(y);
+                  textList.add(y);
+                }
+              });
+            } else {
+              tags.forEach((tag) {
                 if (!_descriptionController.text
                     .toLowerCase()
                     .contains(tag.displayName.toLowerCase())) {
                   textList.add(tag);
                 }
-              }
-            });
+              });
+            }
+
             for (int i = 0; i < textList.length; i++)
               await Provider.of<PrayerProvider>(context, listen: false)
                   .removePrayerTag(textList[i].id);
