@@ -320,6 +320,7 @@ class PrayerService {
   Future addPrayerUpdate(String userId, String prayer, String prayerId) async {
     final prayerUpdate = PrayerUpdateModel(
       prayerId: prayerId,
+      deleteStatus: 0,
       userId: userId,
       title: '',
       description: prayer,
