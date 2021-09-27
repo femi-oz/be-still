@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
@@ -24,6 +25,7 @@ class AddPrayer extends StatefulWidget {
   final bool isGroup;
   final CombinePrayerStream prayerData;
   final Function setCurrentIndex;
+  final bool hasBorder = true;
 
   @override
   AddPrayer({
@@ -37,28 +39,48 @@ class AddPrayer extends StatefulWidget {
 }
 
 class _AddPrayerState extends State<AddPrayer> {
+  bool _autoValidate = false;
+  bool updated;
+  bool updateIsValid = false;
+  bool hasFocus;
+  bool showNoContact = false;
+  double numberOfLines = 5.0;
+
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _prayerKey = GlobalKey<FormFieldState>();
-  List groups = [];
-  Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
-  List<String> tags = [];
-  String tagText = '';
+
+  Iterable<Contact> localContacts = [];
+  int fieldIndex;
+
+  List<PrayerUpdateModel> updates;
+  List groups = [];
+  List<Widget> contactDropDowns;
+  List textControllers = [];
+  List<String> tagList = [];
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
-  bool _autoValidate = false;
+  List<String> tags = [];
+
+  Map<String, TextEditingController> textEditingControllers = {};
+
+  String tagText = '';
   String backupText;
   String _oldDescription = '';
-  TextPainter painter;
-  bool showNoContact = false;
   String displayName = '';
-  List<String> tagList = [];
+
+  TextPainter painter;
+
   var displayname = [];
-  double numberOfLines = 5.0;
+  var textFields = <Stack>[];
+  var textEditingController = TextEditingController();
+  var positionOffset = 3.0;
+  var positionOffset2 = 0.0;
 
   @override
   void didChangeDependencies() {
+    fieldIndex = null;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -72,13 +94,19 @@ class _AddPrayerState extends State<AddPrayer> {
     super.didChangeDependencies();
   }
 
-  Future<void> _save() async {
-    FocusScope.of(context).unfocus();
+  Future<void> _save(textEditingControllers) async {
     BeStilDialog.showLoading(context);
+    FocusScope.of(context).unfocus();
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    Map<String, dynamic> updatedPrayer = {};
+    List<dynamic> prayerUpdateList = [];
+    List<PrayerTagModel> textList = [];
+    List<PrayerTagModel> updateTextList = [];
+
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
     try {
       if (_descriptionController.text == null ||
@@ -114,48 +142,104 @@ class _AddPrayerState extends State<AddPrayer> {
           BeStilDialog.hideLoading(context);
           widget.setCurrentIndex(0, true);
         } else {
-          await Provider.of<PrayerProvider>(context, listen: false).editprayer(
-              _descriptionController.text, widget.prayerData.prayer.id);
-          List<PrayerTagModel> textList = [];
-          final text = [...widget.prayerData.tags];
-          text.forEach((element) {
-            if (widget.prayerData.updates.length == 0) {
-              if (!_descriptionController.text
-                  .toLowerCase()
-                  .contains(element.displayName.toLowerCase())) {
-                textList.add(element);
-              }
-            } else {
-              widget.prayerData.updates.forEach((update) {
-                if (!_descriptionController.text
-                        .toLowerCase()
-                        .contains(element.displayName.toLowerCase()) &&
-                    !update.description
-                        .toLowerCase()
-                        .contains(element.displayName.toLowerCase())) {
-                  textList.add(element);
-                }
-                if (update.description
-                    .toLowerCase()
-                    .contains(element.displayName.toLowerCase())) {
-                  textList.remove(element);
-                }
-              });
-            }
-          });
-          contacts.forEach((s) {
-            if (!_descriptionController.text.contains(s.displayName)) {
-              s.displayName = '';
+          var updates = widget.prayerData?.updates;
+          updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+          updates =
+              updates.where((element) => element.deleteStatus != -1).toList();
+
+          updates.forEach((str) {
+            if (textEditingControllers[str.id].text != str.description) {
+              updatedPrayer['id'] = str.id;
+              updatedPrayer['description'] =
+                  textEditingControllers[str.id].text;
+              prayerUpdateList = [...prayerUpdateList, updatedPrayer];
             }
           });
 
-          for (int i = 0; i < textList.length; i++)
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .removePrayerTag(textList[i].id);
-          if (contacts.length > 0) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .addPrayerTag(contacts, _user, _descriptionController.text, '');
+          if (prayerUpdateList.length > 0) {
+            prayerUpdateList.forEach((element) async {
+              if (element['description'] == '') {
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .deleteUpdate(element['id']);
+              }
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .editUpdate(element['description'], element['id']);
+            });
           }
+          await Provider.of<PrayerProvider>(context, listen: false).editprayer(
+              _descriptionController.text, widget.prayerData.prayer.id);
+
+          //tags
+          List<PrayerTagModel> currentTags = [];
+          List<PrayerTagModel> initialTags = [];
+          final tags = [...widget.prayerData.tags];
+
+          if (updates.length > 0) {
+            updates.forEach((x) async {
+              if (textEditingControllers[x.id].text != x.description) {
+                tags.forEach((tag) async {
+                  if (x.description.contains(tag.displayName)) {
+                    currentTags = [...currentTags, tag];
+                  }
+                });
+                currentTags.forEach((y) {
+                  if (!textEditingControllers[x.id]
+                      .text
+                      .toLowerCase()
+                      .contains(y.displayName.toLowerCase())) {
+                    print(y);
+                    updateTextList.add(y);
+                  }
+                });
+              }
+              for (int i = 0; i < updateTextList.length; i++)
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .removePrayerTag(updateTextList[i].id);
+
+              if (contacts.length > 0) {
+                await Provider.of<PrayerProvider>(context, listen: false)
+                    .addPrayerTag(
+                        contacts, _user, textEditingControllers[x.id].text, '');
+              }
+            });
+          }
+
+          if (_descriptionController.text !=
+              widget.prayerData.prayer.description) {
+            if (updates.length > 0) {
+              tags.forEach((tag) async {
+                if (_oldDescription.contains(tag.displayName)) {
+                  initialTags = [...initialTags, tag];
+                }
+              });
+              initialTags.forEach((y) {
+                if (!_descriptionController.text
+                    .toLowerCase()
+                    .contains(y.displayName.toLowerCase())) {
+                  print(y);
+                  textList.add(y);
+                }
+              });
+            } else {
+              tags.forEach((tag) {
+                if (!_descriptionController.text
+                    .toLowerCase()
+                    .contains(tag.displayName.toLowerCase())) {
+                  textList.add(tag);
+                }
+              });
+            }
+
+            for (int i = 0; i < textList.length; i++)
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .removePrayerTag(textList[i].id);
+            if (contacts.length > 0) {
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .addPrayerTag(
+                      contacts, _user, _descriptionController.text, '');
+            }
+          }
+
           BeStilDialog.hideLoading(context);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -178,6 +262,22 @@ class _AddPrayerState extends State<AddPrayer> {
   void initState() {
     _descriptionController.text =
         widget.isEdit ? widget.prayerData.prayer.description : '';
+
+    if (widget.isEdit && widget.prayerData != null) {
+      updates = widget.prayerData?.updates;
+      updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+      updates = updates.where((element) => element.deleteStatus != -1).toList();
+      updates.forEach(
+        (element) {
+          textEditingController =
+              new TextEditingController(text: element.description);
+          textEditingControllers.putIfAbsent(
+              element.id, () => textEditingController);
+          textControllers.add(textEditingController);
+        },
+      );
+    }
+
     _oldDescription = _descriptionController.text;
     getContacts();
     super.initState();
@@ -248,28 +348,28 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  Future<void> _onTagSelected(s) async {
-    tagText = '';
+  Future<void> _onTagSelected(s, controller) async {
+    String controllerText;
     String tmpText = s.displayName.substring(0, s.displayName.length);
-    String controllerText = _descriptionController.text.substring(
-      0,
-      _descriptionController.text.indexOf('@'),
-    );
-    var tmpTextAfter = _descriptionController.text.substring(
-        _descriptionController.text.indexOf('@'),
-        _descriptionController.text.length);
+    tagText = '';
+    var tmpTextAfter = controller.text
+        .substring(controller.text.indexOf('@'), controller.text.length);
     var textAfter = tmpTextAfter.split(" ");
     var newText = textAfter..removeAt(0);
     var joinText = newText.join(" ");
 
+    controllerText = controller.text.substring(
+      0,
+      controller.text.indexOf('@'),
+    );
     controllerText += tmpText;
-    _descriptionController.text = controllerText + " " + joinText;
-    _descriptionController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _descriptionController.text.length));
+    controller.text = controllerText + " " + joinText;
+    controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: controller.text.length));
 
     setState(() {
-      _descriptionController.selection =
-          TextSelection.collapsed(offset: _descriptionController.text.length);
+      controller.selection =
+          TextSelection.collapsed(offset: controller.text.length);
     });
 
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
@@ -411,14 +511,6 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    bool isValid =
-        (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
-            (widget.isEdit &&
-                _oldDescription.trim() != _descriptionController.text.trim() &&
-                _descriptionController.text.trim().isNotEmpty);
-    var positionOffset = 3.0;
-    var positionOffset2 = 0.0;
-
     if (numberOfLines == 1.0) {
       positionOffset2 = 25;
     } else if (numberOfLines == 2.0) {
@@ -430,6 +522,113 @@ class _AddPrayerState extends State<AddPrayer> {
     } else {
       positionOffset2 = 10;
     }
+
+    Widget updateContactDropdown(context, e) {
+      return Positioned(
+        top: ((numberOfLines * positionOffset) * positionOffset2) +
+            (textEditingControllers[e.id].selection.baseOffset / 3),
+        left: _focusNode.offset.dx,
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...localContacts.map((s) {
+                displayName = s.displayName ?? '';
+
+                if (('@' + s.displayName).toLowerCase().contains(
+                      tagText.toLowerCase(),
+                    )) {
+                  return GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      padding: EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        displayName,
+                        style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.lightBlue4,
+                        ),
+                      ),
+                    ),
+                    onTap: () =>
+                        _onTagSelected(s, textEditingControllers[e.id]),
+                  );
+                } else {
+                  return SizedBox();
+                }
+              }).toList(),
+              tagList.length == 0
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        'No matching contacts found.',
+                        style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.lightBlue4,
+                        ),
+                      ),
+                    )
+                  : Container()
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget contactDropdown(context) {
+      return Positioned(
+        top: ((numberOfLines * positionOffset) * positionOffset2) +
+            (_descriptionController.selection.baseOffset / 3),
+        left: _focusNode.offset.dx,
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...localContacts.map((s) {
+                displayName = s.displayName ?? '';
+
+                if (('@' + s.displayName)
+                    .toLowerCase()
+                    .contains(tagText.toLowerCase())) {
+                  return GestureDetector(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text(
+                          displayName,
+                          style: AppTextStyles.regularText14.copyWith(
+                            color: AppColors.lightBlue4,
+                          ),
+                        ),
+                      ),
+                      onTap: () => _onTagSelected(s, _descriptionController));
+                } else {
+                  return SizedBox();
+                }
+              }).toList(),
+              tagList.length == 0
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        'No matching contacts found.',
+                        style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.lightBlue4,
+                        ),
+                      ),
+                    )
+                  : Container()
+            ],
+          ),
+        ),
+      );
+    }
+
+    bool isValid =
+        (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
+            (widget.isEdit &&
+                _oldDescription.trim() != _descriptionController.text.trim() &&
+                _descriptionController.text.trim().isNotEmpty) ||
+            updateIsValid;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -482,100 +681,141 @@ class _AddPrayerState extends State<AddPrayer> {
                                 color: !isValid
                                     ? AppColors.lightBlue5.withOpacity(0.5)
                                     : Colors.blue)),
-                        onTap: () => isValid ? _save() : null,
+                        onTap: () =>
+                            isValid ? _save(textEditingControllers) : null,
                       ),
                     ],
                   ),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30.0),
-                          child: Form(
-                            // ignore: deprecated_member_use
-                            autovalidate: _autoValidate,
-                            key: _formKey,
-                            child: Container(
-                              child: CustomInput(
-                                textkey: _prayerKey,
-                                label: 'Prayer description',
-                                controller: _descriptionController,
-                                maxLines: 23,
-                                isRequired: true,
-                                showSuffix: false,
-                                textInputAction: TextInputAction.newline,
-                                onTextchanged: (val) => _onTextChange(val),
-                                focusNode: _focusNode,
-                              ),
-                            ),
-                          ),
-                        ),
-                        tagText.length > 1 && Settings.enabledContactPermission
-                            ? Positioned(
-                                top: ((numberOfLines * positionOffset) *
-                                        positionOffset2) +
-                                    (_descriptionController
-                                            .selection.baseOffset /
-                                        3),
-                                left: _focusNode.offset.dx,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...localContacts.map((s) {
-                                        displayName = s.displayName ?? '';
-
-                                        if (('@' + s.displayName)
-                                            .toLowerCase()
-                                            .contains(tagText.toLowerCase())) {
-                                          return GestureDetector(
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.5,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 10.0),
-                                                child: Text(
-                                                  displayName,
-                                                  style: AppTextStyles
-                                                      .regularText14
-                                                      .copyWith(
-                                                    color: AppColors.lightBlue4,
-                                                  ),
-                                                ),
-                                              ),
-                                              onTap: () => _onTagSelected(s));
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      }).toList(),
-                                      tagList.length == 0
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10.0),
-                                              child: Text(
-                                                'No matching contacts found.',
-                                                style: AppTextStyles
-                                                    .regularText14
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
+                    child: GestureDetector(
+                      onTap: fieldIndex = null,
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 30.0),
+                                child: Form(
+                                  // ignore: deprecated_member_use
+                                  autovalidate: _autoValidate,
+                                  key: _formKey,
+                                  child: Container(
+                                    child: CustomInput(
+                                      textkey: _prayerKey,
+                                      label: 'Prayer description',
+                                      controller: _descriptionController,
+                                      maxLines:
+                                          widget.isEdit && updates.length > 0
+                                              ? 10
+                                              : 23,
+                                      isRequired: true,
+                                      showSuffix: false,
+                                      textInputAction: TextInputAction.newline,
+                                      onTextchanged: (val) =>
+                                          _onTextChange(val),
+                                      focusNode:
+                                          !updateIsValid ? _focusNode : null,
+                                    ),
                                   ),
                                 ),
-                              )
-                            : SizedBox(),
-                      ],
+                              ),
+                              tagText.length > 1 &&
+                                      Settings.enabledContactPermission &&
+                                      widget.prayerData?.prayer?.description !=
+                                          _descriptionController.text
+                                  ? contactDropdown(context)
+                                  : SizedBox(),
+                            ],
+                          ),
+                          if (widget.prayerData != null && updates.length > 0)
+                            ...updates.map(
+                              (e) => Stack(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 20),
+                                    child: Container(
+                                      child: TextFormField(
+                                        controller:
+                                            textEditingControllers[e.id],
+                                        textInputAction:
+                                            TextInputAction.newline,
+                                        maxLines: 10,
+                                        keyboardType: TextInputType.multiline,
+                                        textCapitalization:
+                                            TextCapitalization.sentences,
+                                        style: AppTextStyles.regularText15,
+                                        cursorColor: AppColors.lightBlue4,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            _onTextChange(val);
+                                            if (e.description.trim() !=
+                                                textEditingController.text
+                                                    .trim()) {
+                                              updateIsValid = true;
+                                            } else {
+                                              updateIsValid = false;
+                                            }
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 15.0, vertical: 20.0),
+                                          suffixStyle: AppTextStyles
+                                              .regularText14
+                                              .copyWith(
+                                                  color: Settings.isDarkMode
+                                                      ? AppColors.offWhite2
+                                                      : AppColors
+                                                          .prayerTextColor),
+                                          counterText: '',
+                                          hintText: 'Prayer update description',
+                                          hintStyle: AppTextStyles.regularText15
+                                              .copyWith(height: 1.5),
+                                          errorBorder: new OutlineInputBorder(
+                                            borderSide: new BorderSide(
+                                                color: Colors.redAccent),
+                                          ),
+                                          errorMaxLines: 5,
+                                          errorStyle: AppTextStyles.errorText,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: widget.hasBorder
+                                                  ? AppColors.lightBlue4
+                                                      .withOpacity(0.5)
+                                                  : Colors.transparent,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          border: OutlineInputBorder(),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: widget.hasBorder
+                                                    ? AppColors.lightBlue4
+                                                    : Colors.transparent,
+                                                width: 1.0),
+                                          ),
+                                          fillColor: AppColors
+                                              .textFieldBackgroundColor,
+                                          filled: true,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  tagText.length > 1 &&
+                                          Settings.enabledContactPermission &&
+                                          updates[updates.indexOf(e)]
+                                                  .description !=
+                                              textEditingControllers[e.id].text
+                                      ? updateContactDropdown(context, e)
+                                      : SizedBox(),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

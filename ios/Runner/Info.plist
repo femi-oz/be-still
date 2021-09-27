@@ -81,5 +81,20 @@
     <array>
       <string>youversion</string>
     </array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLName</key>
+		<string>org.second.bestill</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>secondBeStill</string>
+		</array>
+		</dict>
+	</array>
 </dict>
 </plist>
