@@ -104,7 +104,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        var backgroundTime = DateTime.parse(Settings.backgroundTime);
+        var backgroundTime =
+            DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
@@ -137,16 +138,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // do check, route, clear message
         break;
       case AppLifecycleState.inactive:
-        Settings.backgroundTime = DateTime.now().toString();
+        Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
         print('AppLifecycleState inactive ===> ');
         break;
       case AppLifecycleState.paused:
         print('AppLifecycleState paused ===> ');
-        Settings.backgroundTime = DateTime.now().toString();
+        Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
         break;
       case AppLifecycleState.detached:
         print('AppLifecycleState detached ===> ');
-        Settings.backgroundTime = DateTime.now().toString();
+        Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
         break;
     }
   }
