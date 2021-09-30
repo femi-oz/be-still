@@ -284,12 +284,37 @@ class _UpdateViewState extends State<UpdateView> {
                             ? Row(
                                 children: [
                                   Flexible(
-                                    child: Text(
+                                    child: EasyRichText(
                                       updates[i].description,
-                                      style: AppTextStyles.regularText16b
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
+                                      defaultStyle:
+                                          AppTextStyles.regularText16b.copyWith(
+                                        color: AppColors.prayerTextColor,
+                                      ),
                                       textAlign: TextAlign.left,
+                                      patternList: [
+                                        for (var i = 0;
+                                            i < widget.data.tags.length;
+                                            i++)
+                                          EasyRichTextPattern(
+                                              targetString: widget
+                                                  .data.tags[i].displayName,
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  _openShareModal(
+                                                      context,
+                                                      widget.data.tags[i]
+                                                          .phoneNumber,
+                                                      widget.data.tags[i].email,
+                                                      widget.data.tags[i]
+                                                          .identifier);
+                                                },
+                                              style: AppTextStyles.regularText15
+                                                  .copyWith(
+                                                      color:
+                                                          AppColors.lightBlue2,
+                                                      decoration: TextDecoration
+                                                          .underline))
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -297,12 +322,37 @@ class _UpdateViewState extends State<UpdateView> {
                             : Row(
                                 children: [
                                   Flexible(
-                                    child: Text(
+                                    child: EasyRichText(
                                       updates[i].description,
-                                      style: AppTextStyles.regularText18b
-                                          .copyWith(
-                                              color: AppColors.prayerTextColor),
+                                      defaultStyle:
+                                          AppTextStyles.regularText16b.copyWith(
+                                        color: AppColors.prayerTextColor,
+                                      ),
                                       textAlign: TextAlign.left,
+                                      patternList: [
+                                        for (var i = 0;
+                                            i < widget.data.tags.length;
+                                            i++)
+                                          EasyRichTextPattern(
+                                              targetString: widget
+                                                  .data.tags[i].displayName,
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  _openShareModal(
+                                                      context,
+                                                      widget.data.tags[i]
+                                                          .phoneNumber,
+                                                      widget.data.tags[i].email,
+                                                      widget.data.tags[i]
+                                                          .identifier);
+                                                },
+                                              style: AppTextStyles.regularText15
+                                                  .copyWith(
+                                                      color:
+                                                          AppColors.lightBlue2,
+                                                      decoration: TextDecoration
+                                                          .underline))
+                                      ],
                                     ),
                                   ),
                                 ],
