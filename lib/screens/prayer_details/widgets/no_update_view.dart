@@ -282,7 +282,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                         patternList: [
                           for (var i = 0; i < prayerData.tags.length; i++)
                             EasyRichTextPattern(
-                                targetString: prayerData.tags[i].displayName,
+                                targetString:
+                                    prayerData.tags[i].displayName.trim(),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     _openShareModal(

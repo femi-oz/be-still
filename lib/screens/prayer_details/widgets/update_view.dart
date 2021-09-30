@@ -315,7 +315,7 @@ class _UpdateView extends State<UpdateView> {
                       patternList: [
                         for (var i = 0; i < tags.length; i++)
                           EasyRichTextPattern(
-                              targetString: tags[i].displayName,
+                              targetString: tags[i].displayName.trim(),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   _openShareModal(context, tags[i].phoneNumber,
