@@ -187,7 +187,6 @@ class _AddPrayerState extends State<AddPrayer> {
                       .text
                       .toLowerCase()
                       .contains(y.displayName.toLowerCase())) {
-                    print(y);
                     updateTextList.add(y);
                   }
                 });
@@ -216,7 +215,6 @@ class _AddPrayerState extends State<AddPrayer> {
                 if (!_descriptionController.text
                     .toLowerCase()
                     .contains(y.displayName.toLowerCase())) {
-                  print(y);
                   textList.add(y);
                 }
               });
