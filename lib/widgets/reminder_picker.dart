@@ -175,7 +175,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         date.isBefore(DateTime.now())) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      var e = Exception('One Time reminder can only take future date and time');
+      var e = Exception('Please select a date in the future.');
       BeStilDialog.showErrorDialog(context, e, user, null);
       return;
     }
