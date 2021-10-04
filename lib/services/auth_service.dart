@@ -73,7 +73,21 @@ class AuthenticationService {
 
   Future sendEmailVerification() async {
     try {
-      await _firebaseAuth.currentUser.sendEmailVerification();
+      User user = FirebaseAuth.instance.currentUser;
+      if (user != null && !user.emailVerified) {
+        var actionCodeSettings = ActionCodeSettings(
+          url: 'https://bestill-app.firebaseapp.com/?email=${user.email}',
+          dynamicLinkDomain: 'bestill.page.link',
+          androidPackageName: 'org.second.bestill',
+          androidInstallApp: true,
+          androidMinimumVersion: '12',
+          iOSBundleId: 'secondBeStill://',
+          handleCodeInApp: true,
+        );
+
+        await user.sendEmailVerification(actionCodeSettings);
+      }
+      // await _firebaseAuth.currentUser.sendEmailVerification();
     } catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>().createLog(
@@ -106,8 +120,14 @@ class AuthenticationService {
         dob,
       );
       await sendEmailVerification();
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       final message = StringUtils.generateExceptionMessage(e?.code ?? null);
+      await locator<LogService>()
+          .createLog(message, email, 'AUTHENTICATION/service/registerUser');
+      throw HttpException(message);
+    } catch (e) {
+      final message =
+          StringUtils.generateExceptionMessage(e?.toString() ?? null);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/registerUser');
       throw HttpException(message);

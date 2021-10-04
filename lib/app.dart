@@ -12,7 +12,9 @@ import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,6 +45,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    initDynamicLinks();
     SystemChrome.setEnabledSystemUIOverlays(
         [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
@@ -58,6 +61,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _getPermissions();
 
     super.initState();
+  }
+
+  initDynamicLinks() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+      var actionCode = deepLink.queryParameters['oobCode'];
+
+      if (deepLink != null) {
+        try {
+          await auth.checkActionCode(actionCode);
+          await auth.applyActionCode(actionCode);
+
+          // If successful, reload the user:
+          auth.currentUser.reload();
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'invalid-action-code') {
+            print('The code is invalid.');
+          }
+        }
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
   }
 
   void _getPermissions() async {
