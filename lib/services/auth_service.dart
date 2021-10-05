@@ -77,17 +77,16 @@ class AuthenticationService {
       if (user != null && !user.emailVerified) {
         var actionCodeSettings = ActionCodeSettings(
           url: 'https://bestill.page.link/?email=${user.email}',
-          // dynamicLinkDomain: 'bestill.page.link',
-          androidPackageName: 'org.second.bestill',
+          dynamicLinkDomain: 'bestill.page.link',
+          androidPackageName: 'org.second.bestill.dev',
           androidInstallApp: true,
           androidMinimumVersion: '1',
-          iOSBundleId: 'secondBeStill://',
+          iOSBundleId: 'org.second.bestill.dev',
           handleCodeInApp: true,
         );
 
         await user.sendEmailVerification(actionCodeSettings);
       }
-      // await _firebaseAuth.currentUser.sendEmailVerification();
     } catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>().createLog(

@@ -93,6 +93,7 @@
 		<key>CFBundleURLSchemes</key>
 		<array>
 		<string>secondBeStill</string>
+		<string>org.second.bestill.dev</string>
 		</array>
 		</dict>
 	</array>

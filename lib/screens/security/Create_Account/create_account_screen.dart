@@ -109,16 +109,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           lastName: _lastnameController.text,
           dob: _selectedDate,
         );
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(false);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        Settings.lastUser =
-            Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-        Settings.userPassword =
-            Settings.rememberMe ? _passwordController.text : '';
+        // await Provider.of<UserProvider>(context, listen: false)
+        //     .setCurrentUser(false);
+        // final user =
+        //     Provider.of<UserProvider>(context, listen: false).currentUser;
+        // Settings.lastUser =
+        //     Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
+        // Settings.userPassword =
+        //     Settings.rememberMe ? _passwordController.text : '';
         BeStilDialog.hideLoading(context);
-        showInfoDialog(context);
+        // showInfoDialog(context);
       }
     } on HttpException catch (e, s) {
       var message = '';
@@ -501,12 +501,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       icon: Icon(
                         AppIcons.bestill_close,
                         color: AppColors.dialogClose,
-                        
-                        
                       ),
-                    alignment: AlignmentDirectional(-4,-4),
+                      alignment: AlignmentDirectional(-4, -4),
                       onPressed: () => Navigator.of(context).pop(),
-                      
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
