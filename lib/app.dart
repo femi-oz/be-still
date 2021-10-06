@@ -62,32 +62,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
   }
 
- Future<void> initDynamicLinks() async {
+  Future<void> initDynamicLinks() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    
-      FirebaseDynamicLinks.instance.onLink(
-          onSuccess: (PendingDynamicLinkData dynamicLink) async {
-        final Uri deepLink = dynamicLink?.link;
 
-        if (deepLink != null) {
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      if (deepLink != null) {
         var actionCode = deepLink.queryParameters['oobCode'];
-          try {
-            await auth.checkActionCode(actionCode);
-            await auth.applyActionCode(actionCode);
+        try {
+          await auth.checkActionCode(actionCode);
+          await auth.applyActionCode(actionCode);
 
-            // If successful, reload the user:
-            auth.currentUser.reload();
-          } on FirebaseAuthException catch (e) {
-            if (e.code == 'invalid-action-code') {
-              print('The code is invalid.');
-            }
+          // If successful, reload the user:
+          auth.currentUser.reload();
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'invalid-action-code') {
+            print('The code is invalid.');
           }
         }
-      }, onError: (OnLinkErrorException e) async {
-        print('onLinkError');
-        print(e.message);
-      });
-    
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
   }
 
   void _getPermissions() async {
@@ -134,10 +133,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-       await initDynamicLinks();
+        await initDynamicLinks();
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
-            initDynamicLinks();
+        initDynamicLinks();
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
