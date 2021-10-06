@@ -67,36 +67,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   initDynamicLinks() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    if (Platform.isIOS) {
-      try {
-        final PendingDynamicLinkData data =
-            await FirebaseDynamicLinks.instance.getInitialLink();
-        final Uri deepLink = data?.link;
-        var actionCode = deepLink.queryParameters['oobCode'];
-
-        if (deepLink != null) {
-          try {
-            await auth.checkActionCode(actionCode);
-            await auth.applyActionCode(actionCode);
-
-            // If successful, reload the user:
-            auth.currentUser.reload();
-          } on FirebaseAuthException catch (e) {
-            if (e.code == 'invalid-action-code') {
-              print('The code is invalid.');
-            }
-          }
-        }
-      } catch (e) {
-        print(e.toString());
-      }
-    } else {
+    
       FirebaseDynamicLinks.instance.onLink(
           onSuccess: (PendingDynamicLinkData dynamicLink) async {
         final Uri deepLink = dynamicLink?.link;
-        var actionCode = deepLink.queryParameters['oobCode'];
 
         if (deepLink != null) {
+        var actionCode = deepLink.queryParameters['oobCode'];
           try {
             await auth.checkActionCode(actionCode);
             await auth.applyActionCode(actionCode);
@@ -113,7 +90,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         print('onLinkError');
         print(e.message);
       });
-    }
+    
   }
 
   void _getPermissions() async {
@@ -162,6 +139,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
+            initDynamicLinks();
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
