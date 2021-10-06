@@ -76,13 +76,13 @@ class AuthenticationService {
       User user = FirebaseAuth.instance.currentUser;
       if (user != null && !user.emailVerified) {
         var actionCodeSettings = ActionCodeSettings(
-          url: 'https://bestill.page.link',
+          url: 'https://bestill-app.firebaseapp.com',
           dynamicLinkDomain: 'bestill.page.link',
           androidPackageName: 'org.second.bestill.dev',
           androidInstallApp: true,
           androidMinimumVersion: '1',
           iOSBundleId: 'org.second.bestill.dev',
-          handleCodeInApp: false,
+          handleCodeInApp: true,
         );
 
         await user.sendEmailVerification(actionCodeSettings);
