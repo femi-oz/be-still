@@ -67,16 +67,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
+      final Uri deepLink = dynamicLink.link;
 
       if (deepLink != null) {
         var actionCode = deepLink.queryParameters['oobCode'];
         try {
           await auth.checkActionCode(actionCode);
           await auth.applyActionCode(actionCode);
-
-          // If successful, reload the user:
-          auth.currentUser.reload();
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setLoadStatus(true);
+          NavigationService.instance.navigationKey.currentState
+              .pushNamedAndRemoveUntil(
+                  EntryScreen.routeName, (Route<dynamic> route) => false);
         } on FirebaseAuthException catch (e) {
           if (e.code == 'invalid-action-code') {
             print('The code is invalid.');
@@ -87,6 +89,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       print('onLinkError');
       print(e.message);
     });
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      var actionCode = deepLink.queryParameters['oobCode'];
+      try {
+        await auth.checkActionCode(actionCode);
+        await auth.applyActionCode(actionCode);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setLoadStatus(true);
+        NavigationService.instance.navigationKey.currentState
+            .pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-action-code') {
+          print('The code is invalid.');
+        }
+      }
+    }
   }
 
   void _getPermissions() async {
