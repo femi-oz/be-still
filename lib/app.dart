@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -65,28 +67,53 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   initDynamicLinks() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-      var actionCode = deepLink.queryParameters['oobCode'];
+    if (Platform.isIOS) {
+      try {
+        final PendingDynamicLinkData data =
+            await FirebaseDynamicLinks.instance.getInitialLink();
+        final Uri deepLink = data?.link;
+        var actionCode = deepLink.queryParameters['oobCode'];
 
-      if (deepLink != null) {
-        try {
-          await auth.checkActionCode(actionCode);
-          await auth.applyActionCode(actionCode);
+        if (deepLink != null) {
+          try {
+            await auth.checkActionCode(actionCode);
+            await auth.applyActionCode(actionCode);
 
-          // If successful, reload the user:
-          auth.currentUser.reload();
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'invalid-action-code') {
-            print('The code is invalid.');
+            // If successful, reload the user:
+            auth.currentUser.reload();
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'invalid-action-code') {
+              print('The code is invalid.');
+            }
           }
         }
+      } catch (e) {
+        print(e.toString());
       }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
+    } else {
+      FirebaseDynamicLinks.instance.onLink(
+          onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        var actionCode = deepLink.queryParameters['oobCode'];
+
+        if (deepLink != null) {
+          try {
+            await auth.checkActionCode(actionCode);
+            await auth.applyActionCode(actionCode);
+
+            // If successful, reload the user:
+            auth.currentUser.reload();
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'invalid-action-code') {
+              print('The code is invalid.');
+            }
+          }
+        }
+      }, onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      });
+    }
   }
 
   void _getPermissions() async {
