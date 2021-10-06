@@ -12,6 +12,7 @@ import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -67,53 +68,46 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   initDynamicLinks() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    if (Platform.isIOS) {
-      try {
-        final PendingDynamicLinkData data =
-            await FirebaseDynamicLinks.instance.getInitialLink();
-        final Uri deepLink = data?.link;
-        var actionCode = deepLink.queryParameters['oobCode'];
 
-        if (deepLink != null) {
-          try {
-            await auth.checkActionCode(actionCode);
-            await auth.applyActionCode(actionCode);
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+      var actionCode = deepLink.queryParameters['oobCode'];
 
-            // If successful, reload the user:
-            auth.currentUser.reload();
-          } on FirebaseAuthException catch (e) {
-            if (e.code == 'invalid-action-code') {
-              print('The code is invalid.');
-            }
+      if (deepLink != null) {
+        try {
+          await auth.checkActionCode(actionCode);
+          await auth.applyActionCode(actionCode);
+
+          final snackBar = SnackBar(
+              content: Text('Your account have been successfully verified!'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          setRouteDestination();
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'invalid-action-code') {
+            final snackBar = SnackBar(
+                content: Text(
+                  'The code is invalid or expired.',
+                  style:
+                      AppTextStyles.boldText14.copyWith(color: AppColors.white),
+                ),
+                backgroundColor: AppColors.red);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         }
-      } catch (e) {
-        print(e.toString());
       }
-    } else {
-      FirebaseDynamicLinks.instance.onLink(
-          onSuccess: (PendingDynamicLinkData dynamicLink) async {
-        final Uri deepLink = dynamicLink?.link;
-        var actionCode = deepLink.queryParameters['oobCode'];
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+  }
 
-        if (deepLink != null) {
-          try {
-            await auth.checkActionCode(actionCode);
-            await auth.applyActionCode(actionCode);
-
-            // If successful, reload the user:
-            auth.currentUser.reload();
-          } on FirebaseAuthException catch (e) {
-            if (e.code == 'invalid-action-code') {
-              print('The code is invalid.');
-            }
-          }
-        }
-      }, onError: (OnLinkErrorException e) async {
-        print('onLinkError');
-        print(e.message);
-      });
-    }
+  Future<void> setRouteDestination() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.currentUser.reload();
+    await Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        EntryScreen.routeName, (Route<dynamic> route) => false);
   }
 
   void _getPermissions() async {
@@ -160,6 +154,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
+        initDynamicLinks();
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
