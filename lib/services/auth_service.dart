@@ -77,12 +77,12 @@ class AuthenticationService {
       if (user != null && !user.emailVerified) {
         var actionCodeSettings = ActionCodeSettings(
           url: 'https://bestill.page.link',
-          //dynamicLinkDomain: 'bestill.page.link',
+          dynamicLinkDomain: 'bestill.page.link',
           androidPackageName: 'org.second.bestill.dev',
           androidInstallApp: true,
           androidMinimumVersion: '1',
           iOSBundleId: 'org.second.bestill.dev',
-          handleCodeInApp: true,
+          handleCodeInApp: false,
         );
 
         await user.sendEmailVerification(actionCodeSettings);
