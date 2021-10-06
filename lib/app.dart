@@ -73,7 +73,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         var actionCode = deepLink.queryParameters['oobCode'];
         try {
           await auth.checkActionCode(actionCode);
-          await auth.applyActionCode(actionCode);
+          await auth.applyActionCode(actionCode).then((value) async {
+            NavigationService.instance.navigationKey.currentState.pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+            print('account verified');
+            await Provider.of<MiscProvider>(context, listen: false)
+                .setLoadStatus(true);
+          });
 
           // If successful, reload the user:
           auth.currentUser.reload();
@@ -133,11 +139,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-       await initDynamicLinks();
-      await Future.delayed(Duration(milliseconds: 1000));
+        await initDynamicLinks();
+        await Future.delayed(Duration(milliseconds: 1000));
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
-           
+
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
