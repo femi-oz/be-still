@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
   }
 
-  initDynamicLinks() async {
+ Future<void> initDynamicLinks() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     
       FirebaseDynamicLinks.instance.onLink(
@@ -134,7 +134,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        initDynamicLinks();
+       await initDynamicLinks();
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
             initDynamicLinks();
