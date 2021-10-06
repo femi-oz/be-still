@@ -135,9 +135,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
        await initDynamicLinks();
+      await Future.delayed(Duration(milliseconds: 1000));
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
-            initDynamicLinks();
+           
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
