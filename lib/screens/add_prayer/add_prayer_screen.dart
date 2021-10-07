@@ -567,7 +567,7 @@ class _AddPrayerState extends State<AddPrayer> {
     Widget updateContactDropdown(context, e) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (textEditingControllers[e.id].selection.baseOffset / 1.4),
+            (textEditingControllers[e.id].selection.baseOffset / 4),
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
@@ -623,7 +623,7 @@ class _AddPrayerState extends State<AddPrayer> {
     Widget contactDropdown(context) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (_descriptionController.selection.baseOffset / 1.4),
+            (_descriptionController.selection.baseOffset / 4),
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
