@@ -75,7 +75,7 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
   var textFields = <Stack>[];
   var textEditingController = TextEditingController();
-  var positionOffset = 3.0;
+  var positionOffset = 2.0;
   var positionOffset2 = 0.0;
 
   @override
@@ -187,7 +187,6 @@ class _AddPrayerState extends State<AddPrayer> {
                       .text
                       .toLowerCase()
                       .contains(y.displayName.toLowerCase())) {
-                    print(y);
                     updateTextList.add(y);
                   }
                 });
@@ -216,7 +215,6 @@ class _AddPrayerState extends State<AddPrayer> {
                 if (!_descriptionController.text
                     .toLowerCase()
                     .contains(y.displayName.toLowerCase())) {
-                  print(y);
                   textList.add(y);
                 }
               });
@@ -577,7 +575,7 @@ class _AddPrayerState extends State<AddPrayer> {
     Widget contactDropdown(context) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (_descriptionController.selection.baseOffset / 3),
+            (_descriptionController.selection.baseOffset / 2),
         left: _focusNode.offset.dx,
         height: MediaQuery.of(context).size.height * 0.4,
         child: SingleChildScrollView(
