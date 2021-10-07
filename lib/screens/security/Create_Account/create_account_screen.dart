@@ -501,12 +501,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       icon: Icon(
                         AppIcons.bestill_close,
                         color: AppColors.dialogClose,
-                        
-                        
                       ),
-                    alignment: AlignmentDirectional(-4,-4),
+                      alignment: AlignmentDirectional(-4, -4),
                       onPressed: () => Navigator.of(context).pop(),
-                      
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

@@ -60,6 +60,7 @@ dependencies:
   tutorial_coach_mark: ^1.0.0
   flutter_email_sender: ^5.0.0
   flutter_appavailability: ^0.0.21
+  firebase_dynamic_links: ^2.0.10
 
 
 
