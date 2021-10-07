@@ -524,7 +524,7 @@ class _AddPrayerState extends State<AddPrayer> {
     Widget updateContactDropdown(context, e) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (textEditingControllers[e.id].selection.baseOffset / 3),
+            (textEditingControllers[e.id].selection.baseOffset / 5),
         left: _focusNode.offset.dx,
         height: MediaQuery.of(context).size.height * 0.4,
         child: SingleChildScrollView(
