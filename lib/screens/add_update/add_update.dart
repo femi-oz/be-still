@@ -324,7 +324,7 @@ class _AddUpdateState extends State<AddUpdate> {
     final updates = prayerData.updates
         .where((element) => element.deleteStatus != -1)
         .toList();
-    var positionOffset = 3.0;
+    var positionOffset = 2.0;
     var positionOffset2 = 0.0;
 
     if (numberOfLines == 1.0) {
@@ -337,6 +337,60 @@ class _AddUpdateState extends State<AddUpdate> {
       positionOffset2 = 8;
     } else {
       positionOffset2 = 10;
+    }
+
+    Widget contactDropdown(context) {
+      return Positioned(
+        top: ((numberOfLines * positionOffset) * positionOffset2) +
+            (_descriptionController.selection.baseOffset / 1.4),
+        left: 10,
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          color: AppColors.prayerCardBgColor,
+          width: MediaQuery.of(context).size.width * 0.85,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...localContacts.map((s) {
+                  displayName = s.displayName ?? '';
+
+                  if (('@' + s.displayName)
+                      .toLowerCase()
+                      .contains(tagText.toLowerCase())) {
+                    return GestureDetector(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          child: Text(
+                            displayName,
+                            style: AppTextStyles.regularText14.copyWith(
+                              color: AppColors.lightBlue4,
+                            ),
+                          ),
+                        ),
+                        onTap: () => _onTagSelected(s));
+                  } else {
+                    return SizedBox();
+                  }
+                }).toList(),
+                tagList.length == 0
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text(
+                          'No matching contacts found.',
+                          style: AppTextStyles.regularText14.copyWith(
+                            color: AppColors.lightBlue4,
+                          ),
+                        ),
+                      )
+                    : Container()
+              ],
+            ),
+          ),
+        ),
+      );
     }
 
     return WillPopScope(
@@ -411,69 +465,7 @@ class _AddUpdateState extends State<AddUpdate> {
                           ),
                           tagText.length > 1 &&
                                   Settings.enabledContactPermission
-                              ? Positioned(
-                                  top: ((numberOfLines * positionOffset) *
-                                          positionOffset2) +
-                                      (_descriptionController
-                                              .selection.baseOffset /
-                                          3),
-                                  left: _focusNode.offset.dx,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ...localContacts.map((s) {
-                                          displayName = s.displayName ?? '';
-
-                                          if (('@' + s.displayName)
-                                              .toLowerCase()
-                                              .contains(
-                                                  tagText.toLowerCase())) {
-                                            return GestureDetector(
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.5,
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 10.0),
-                                                  child: Text(
-                                                    displayName,
-                                                    style: AppTextStyles
-                                                        .regularText14
-                                                        .copyWith(
-                                                      color:
-                                                          AppColors.lightBlue4,
-                                                    ),
-                                                  ),
-                                                ),
-                                                onTap: () => _onTagSelected(s));
-                                          } else {
-                                            return SizedBox();
-                                          }
-                                        }).toList(),
-                                        tagList.length == 0
-                                            ? Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0),
-                                                child: Text(
-                                                  'No matching contacts found.',
-                                                  style: AppTextStyles
-                                                      .regularText14
-                                                      .copyWith(
-                                                    color: AppColors.lightBlue4,
-                                                  ),
-                                                ),
-                                              )
-                                            : Container()
-                                      ],
-                                    ),
-                                  ),
-                                )
+                              ? contactDropdown(context)
                               : SizedBox(),
                         ],
                       ),
