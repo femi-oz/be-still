@@ -121,6 +121,14 @@ class PrayerProvider with ChangeNotifier {
       _filteredPrayers = filteredPrayers;
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+      List<CombinePrayerStream> _distinct = [];
+      var idSet = <String>{};
+      for (var e in _filteredPrayers) {
+        if (idSet.add(e.prayer.id)) {
+          _distinct.add(e);
+        }
+      }
+      _filteredPrayers = _distinct;
     }
     notifyListeners();
   }
