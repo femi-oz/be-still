@@ -567,7 +567,7 @@ class _AddPrayerState extends State<AddPrayer> {
     Widget updateContactDropdown(context, e) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (textEditingControllers[e.id].selection.baseOffset / 4),
+            (textEditingControllers[e.id].selection.baseOffset / 1.8),
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
@@ -612,7 +612,10 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                         ),
                       )
-                    : Container()
+                    : Container(),
+                SizedBox(
+                  height: 50,
+                )
               ],
             ),
           ),
@@ -623,10 +626,11 @@ class _AddPrayerState extends State<AddPrayer> {
     Widget contactDropdown(context) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (_descriptionController.selection.baseOffset / 4),
+            (_descriptionController.selection.baseOffset / 1.8),
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
+          // height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.all(20),
           color: AppColors.prayerCardBgColor,
           width: MediaQuery.of(context).size.width * 0.85,
@@ -666,7 +670,10 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                         ),
                       )
-                    : Container()
+                    : Container(),
+                SizedBox(
+                  height: 50,
+                )
               ],
             ),
           ),
@@ -757,10 +764,11 @@ class _AddPrayerState extends State<AddPrayer> {
                                       textkey: _prayerKey,
                                       label: 'Prayer description',
                                       controller: _descriptionController,
-                                      maxLines:
-                                          widget.isEdit && updates.length > 0
-                                              ? 10
-                                              : 23,
+                                      maxLines: widget.isEdit &&
+                                              updates.length > 0 &&
+                                              tagText.length == 0
+                                          ? 10
+                                          : 40,
                                       isRequired: true,
                                       showSuffix: false,
                                       textInputAction: TextInputAction.newline,
@@ -792,7 +800,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                             textEditingControllers[e.id],
                                         textInputAction:
                                             TextInputAction.newline,
-                                        maxLines: 10,
+                                        maxLines:
+                                            updateTagText.length == 0 ? 10 : 23,
                                         keyboardType: TextInputType.multiline,
                                         textCapitalization:
                                             TextCapitalization.sentences,
