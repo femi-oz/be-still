@@ -630,7 +630,6 @@ class _AddPrayerState extends State<AddPrayer> {
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
-          // height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.all(20),
           color: AppColors.prayerCardBgColor,
           width: MediaQuery.of(context).size.width * 0.85,
@@ -768,7 +767,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                               updates.length > 0 &&
                                               tagText.length == 0
                                           ? 10
-                                          : 40,
+                                          : 30,
                                       isRequired: true,
                                       showSuffix: false,
                                       textInputAction: TextInputAction.newline,
