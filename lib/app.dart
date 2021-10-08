@@ -6,13 +6,14 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,6 +44,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    initDynamicLinks();
     SystemChrome.setEnabledSystemUIOverlays(
         [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
@@ -58,6 +60,56 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _getPermissions();
 
     super.initState();
+  }
+
+  Future<void> initDynamicLinks() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink.link;
+
+      if (deepLink != null) {
+        var actionCode = deepLink.queryParameters['oobCode'];
+        try {
+          await auth.checkActionCode(actionCode);
+          await auth.applyActionCode(actionCode);
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setLoadStatus(true);
+          NavigationService.instance.navigationKey.currentState
+              .pushNamedAndRemoveUntil(
+                  EntryScreen.routeName, (Route<dynamic> route) => false);
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'invalid-action-code') {
+            print('The code is invalid.');
+          }
+        }
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      var actionCode = deepLink.queryParameters['oobCode'];
+      try {
+        await auth.checkActionCode(actionCode);
+        await auth.applyActionCode(actionCode);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setLoadStatus(true);
+        NavigationService.instance.navigationKey.currentState
+            .pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-action-code') {
+          print('The code is invalid.');
+        }
+      }
+    }
   }
 
   void _getPermissions() async {
@@ -104,8 +156,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
+        await initDynamicLinks();
+        await Future.delayed(Duration(milliseconds: 1000));
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
+
         if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
