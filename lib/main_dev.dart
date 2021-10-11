@@ -8,7 +8,7 @@ Future<void> main() async {
   FlavorConfig(
     flavor: Flavor.DEV,
     color: Colors.green,
-    values: FlavorValues(country: 'NG'),
+    values: FlavorValues(country: 'NG', packageName: 'org.second.bestill.dev'),
   );
   common.main();
 }

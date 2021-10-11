@@ -525,7 +525,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       isDisabled: isDisable,
                       suffix: widget.hasReminder &&
                               widget.reminder.frequency == Frequency.one_time
-                          ? DateFormat('dd MMM yyyy HH:mma').format(widget
+                          ? DateFormat('dd MMM yyyy hh:mma').format(widget
                               .reminder.scheduledDate) //'19 May 2021 11:45PM'
                           : widget.hasReminder &&
                                   widget.reminder.frequency !=

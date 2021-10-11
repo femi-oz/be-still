@@ -1,3 +1,4 @@
+import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/log_service.dart';
@@ -78,10 +79,10 @@ class AuthenticationService {
         var actionCodeSettings = ActionCodeSettings(
           url: 'https://bestill-app.firebaseapp.com',
           dynamicLinkDomain: 'bestill.page.link',
-          androidPackageName: 'org.second.bestill.dev',
+          androidPackageName: FlavorConfig.instance.values.packageName,
           androidInstallApp: true,
           androidMinimumVersion: '1',
-          iOSBundleId: 'org.second.bestill.dev',
+          iOSBundleId: FlavorConfig.instance.values.packageName,
           handleCodeInApp: true,
         );
 

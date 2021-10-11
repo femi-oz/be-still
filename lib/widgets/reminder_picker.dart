@@ -159,9 +159,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   setNotification() async {
+    print(selectedPeriod);
+    // AM 22= 22-12
+    // pm 12 = 12+12
     final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12
         ? selectedHour - 12
-        : selectedPeriod == PeriodOfDay.pm && selectedHour <= 12
+        : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
             ? selectedHour + 12
             : selectedHour;
     DateTime date = DateTime(
@@ -182,7 +185,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
     try {
       var _selectedMinuteString =
           selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
-      var _selectedHourString = hour < 10 ? '0$hour' : '$hour ';
+      var _selectedHourString = hour < 10
+          ? '0$hour'
+          : hour > 12
+              ? (hour - 12).toString()
+              : '$hour ';
       BeStilDialog.showLoading(context);
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -197,6 +204,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           : selectedFrequency == Frequency.one_time
               ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
               : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
+
       final prayerData =
           Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
       final title = '$selectedFrequency reminder to pray';
@@ -212,6 +220,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
+      print(scheduleDate);
       final payload = NotificationMessage(
           entityId: prayerData?.userPrayer?.id ?? '', type: widget.type);
       await LocalNotification.setLocalNotification(
