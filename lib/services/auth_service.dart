@@ -78,7 +78,7 @@ class AuthenticationService {
       if (user != null && !user.emailVerified) {
         var actionCodeSettings = ActionCodeSettings(
           url: 'https://bestill-app.firebaseapp.com',
-          dynamicLinkDomain: 'bestill.page.link',
+          dynamicLinkDomain: FlavorConfig.instance.values.dynamicLink,
           androidPackageName: FlavorConfig.instance.values.packageName,
           androidInstallApp: true,
           androidMinimumVersion: '1',

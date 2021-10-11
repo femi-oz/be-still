@@ -8,7 +8,10 @@ Future<void> main() async {
   FlavorConfig(
     flavor: Flavor.STORE,
     color: Colors.green,
-    values: FlavorValues(country: 'US', packageName: 'org.second.bestill'),
+    values: FlavorValues(
+        country: 'US',
+        packageName: 'org.second.bestill',
+        dynamicLink: 'bestill.page.link'),
   );
   common.main();
 }
