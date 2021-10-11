@@ -94,6 +94,8 @@
 		<array>
 		<string>secondBeStill</string>
 		<string>org.second.bestill.dev</string>
+		<string>org.second.bestill.test</string>
+		<string>org.second.bestill</string>
 		</array>
 		</dict>
 	</array>
