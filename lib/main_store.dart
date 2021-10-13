@@ -11,7 +11,7 @@ Future<void> main() async {
     values: FlavorValues(
         country: 'US',
         packageName: 'org.second.bestill',
-        dynamicLink: 'bestill.page.link'),
+        dynamicLink: 'bestillapp.page.link'),
   );
   common.main();
 }
