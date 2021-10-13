@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>699798003228-3ng9kmtqhpbtgr6vr6ji3h1ennt3302j.apps.googleusercontent.com</string>
+	<string>699798003228-agb28vn312um3o0552j5hbs5hqplrpsg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.699798003228-3ng9kmtqhpbtgr6vr6ji3h1ennt3302j</string>
+	<string>com.googleusercontent.apps.699798003228-agb28vn312um3o0552j5hbs5hqplrpsg</string>
 	<key>API_KEY</key>
 	<string>AIzaSyD0yjoUcvCTfwtffs37Z-ZXhAhfNltDBTs</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.second.bestill</string>
+	<string>org.second.bestill.v2</string>
 	<key>PROJECT_ID</key>
 	<string>be-still-v2</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:699798003228:ios:b120932d3d705bed0cc9d9</string>
+	<string>1:699798003228:ios:eee1a84729b9d7f50cc9d9</string>
 </dict>
 </plist>
