@@ -20,10 +20,75 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.second.bestill</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>secondBeStill</string>
+				<string>org.second.bestill.dev</string>
+				<string>org.second.bestill.test</string>
+				<string>org.second.bestill</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.second.bestill.v2</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>secondBestill</string>
+				<string>org.second.bestill.v2</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(APPCENTER_BUILD_ID)</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>youversion</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Access to Calendars</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow Be Still to access your contacts information to enable sharing your prayers with them.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string> </string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Always and when in use!</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Can I have location always?</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Older devices need location.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Need location when in use</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Access to reminders</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Access to speech</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -43,62 +108,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need location when in use</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use!</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I have location always?</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string> </string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
 	<key>kTCCServiceMediaLibrary</key>
 	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Access to Calendars</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Allow Be Still to access your contacts information to enable sharing your prayers with them.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Access to speech</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>Access to reminders</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the flutter permission library, which references this permission in its code.</string>
-	<key>LSApplicationQueriesSchemes</key>
-    <array>
-      <string>youversion</string>
-    </array>
-	<key>FlutterDeepLinkingEnabled</key>
-	<true/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLName</key>
-		<string>org.second.bestill</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		<string>secondBeStill</string>
-		<string>org.second.bestill.dev</string>
-		<string>org.second.bestill.test</string>
-		<string>org.second.bestill</string>
-		<string>org.second.bestill.v2</string>
-		</array>
-		</dict>
-	</array>
 </dict>
 </plist>
