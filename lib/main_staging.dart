@@ -11,7 +11,8 @@ Future<void> main() async {
     values: FlavorValues(
         country: 'US',
         packageName: 'org.second.bestill.test',
-        dynamicLink: 'bestilltest.page.link'),
+        dynamicLink: 'bestilltest.page.link',
+        appUrl: 'https://bestill-app.firebaseapp.com'),
   );
   common.main();
 }

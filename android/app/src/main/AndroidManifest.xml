@@ -56,6 +56,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" android:host="org.second.bestill" />
                 <data android:scheme="http" android:host="org.second.bestill.dev" />
+                <data android:scheme="http" android:host="org.second.bestill.test" />
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
