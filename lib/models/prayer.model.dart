@@ -37,7 +37,7 @@ class PrayerModel {
     @required this.modifiedOn,
   });
 
-  PrayerModel.fromData(DocumentSnapshot snapshot)
+  PrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         groupId = snapshot.data()['GroupId'] ?? 'N/A',
         userId = snapshot.data()['UserId'] ?? 'N/A',
@@ -85,6 +85,7 @@ class PrayerUpdateModel {
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
+  final int deleteStatus;
 
   const PrayerUpdateModel({
     this.id,
@@ -97,11 +98,12 @@ class PrayerUpdateModel {
     @required this.createdOn,
     @required this.modifiedBy,
     @required this.modifiedOn,
+    @required this.deleteStatus,
   });
 
-  PrayerUpdateModel.fromData(DocumentSnapshot snapshot)
+  PrayerUpdateModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        prayerId = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
         title = snapshot.data()['Title'],
         description = snapshot.data()['Description'],
@@ -109,7 +111,8 @@ class PrayerUpdateModel {
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate(),
+        deleteStatus = snapshot.data()['DeleteStatus'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -122,6 +125,7 @@ class PrayerUpdateModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
+      'DeleteStatus': deleteStatus,
     };
   }
 }
@@ -134,6 +138,8 @@ class UserPrayerModel {
   final String sequence;
   final bool isFavorite;
   final String status;
+  final int snoozeDuration;
+  final String snoozeFrequency;
   final int deleteStatus;
   final String createdBy;
   final DateTime createdOn;
@@ -150,6 +156,8 @@ class UserPrayerModel {
     @required this.sequence,
     @required this.isFavorite,
     @required this.status,
+    @required this.snoozeDuration,
+    @required this.snoozeFrequency,
     @required this.deleteStatus,
     @required this.isArchived,
     @required this.isSnoozed,
@@ -161,13 +169,15 @@ class UserPrayerModel {
     @required this.modifiedOn,
   });
 
-  UserPrayerModel.fromData(DocumentSnapshot snapshot)
+  UserPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
         sequence = snapshot.data()['Sequence'],
         isFavorite = snapshot.data()['IsFavourite'],
         status = snapshot.data()['Status'],
+        snoozeDuration = snapshot.data()['SnoozeDuration'] ?? 0,
+        snoozeFrequency = snapshot.data()['SnoozeFrequency'] ?? '',
         deleteStatus = snapshot.data()['DeleteStatus'] ?? 0,
         archivedDate =
             snapshot.data()['ArchivedDate']?.toDate() ?? DateTime.now(),
@@ -187,6 +197,8 @@ class UserPrayerModel {
       'Sequence': sequence,
       'IsFavourite': isFavorite,
       'Status': status,
+      'SnoozeFrequency': snoozeFrequency,
+      'SnoozeDuration': snoozeDuration,
       'DeleteStatus': deleteStatus,
       'IsArchived': isArchived,
       'ArchivedDate': archivedDate,
@@ -230,7 +242,7 @@ class PrayerTagModel {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  PrayerTagModel.fromData(DocumentSnapshot snapshot)
+  PrayerTagModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],
@@ -299,7 +311,8 @@ class PrayerRequestMessageModel {
       @required this.sender,
       @required this.receiver});
 
-  PrayerRequestMessageModel.fromData(DocumentSnapshot snapshot)
+  PrayerRequestMessageModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : senderId = snapshot.id,
         receiverId = snapshot.data()['ReceiverId'],
         message = snapshot.data()['Message'],
@@ -338,7 +351,7 @@ class HiddenPrayerModel {
     @required this.modifiedOn,
   });
 
-  HiddenPrayerModel.fromData(DocumentSnapshot snapshot)
+  HiddenPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         userId = snapshot.data()['UserId'],

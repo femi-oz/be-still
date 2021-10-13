@@ -33,7 +33,7 @@ class GroupModel {
     @required this.modifiedOn,
   });
 
-  GroupModel.fromData(DocumentSnapshot snapshot)
+  GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot.data()['Name'],
         description = snapshot.data()['Description'],
@@ -73,9 +73,6 @@ class GroupInviteModel {
   final String sender;
   final String senderId;
   final String id;
-  // final String userId;
-  // final String groupId;
-  // final String status;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -83,9 +80,6 @@ class GroupInviteModel {
 
   const GroupInviteModel({
     this.id,
-    // @required this.userId,
-    // @required this.groupId,
-    // @required this.status,
     @required this.groupName,
     @required this.groupId,
     @required this.email,
@@ -97,7 +91,7 @@ class GroupInviteModel {
     @required this.modifiedOn,
   });
 
-  GroupInviteModel.fromData(DocumentSnapshot snapshot)
+  GroupInviteModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         groupName = snapshot.data()['GroupName'],
         groupId = snapshot.data()['GroupId'],
@@ -149,7 +143,7 @@ class GroupPrayerModel {
     @required this.modifiedOn,
   });
 
-  GroupPrayerModel.fromData(DocumentSnapshot snapshot)
+  GroupPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
         groupId = snapshot.data()['GroupId'],
@@ -203,7 +197,7 @@ class GroupUserModel {
     @required this.modifiedOn,
   });
 
-  GroupUserModel.fromData(DocumentSnapshot snapshot)
+  GroupUserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],

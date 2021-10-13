@@ -19,7 +19,7 @@ class MessageTemplate {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  MessageTemplate.fromData(DocumentSnapshot snapshot)
+  MessageTemplate.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         templateSubject = snapshot.data()['TemplateSubject'],
         templateBody = snapshot.data()['TemplateBody'],

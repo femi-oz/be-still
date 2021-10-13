@@ -1,5 +1,59 @@
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+
+class SlideRightRoute extends PageRouteBuilder {
+  final Widget page;
+  SlideRightRoute({this.page})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(-1, 0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+}
+
+class SlideLeftRoute extends PageRouteBuilder {
+  final Widget page;
+  SlideLeftRoute({this.page})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+}
 
 class NavigationService {
   GlobalKey<NavigatorState> navigationKey;
@@ -11,8 +65,15 @@ class NavigationService {
   }
 
   Future<dynamic> navigateToReplacement(Widget _rn) {
-    return navigationKey.currentState.pushReplacement(PageTransition(
-        type: PageTransitionType.leftToRightWithFade, child: _rn));
+    return navigationKey.currentState
+        .pushReplacement(SlideRightRoute(page: _rn));
+  }
+
+  Future<dynamic> goHome(int index) async {
+    await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
+        .setCurrentPage(index);
+    return navigationKey.currentState
+        .pushReplacement(SlideLeftRoute(page: EntryScreen()));
   }
 
   Future<dynamic> navigateTo(String _rn) {

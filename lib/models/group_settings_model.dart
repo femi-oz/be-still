@@ -30,7 +30,7 @@ class GroupSettings {
     @required this.modifiedOn,
   });
 
-  GroupSettings.fromData(DocumentSnapshot snapshot)
+  GroupSettings.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],
@@ -75,7 +75,8 @@ class GroupPreferenceSettings {
     @required this.enableNotificationForAllGroups,
   });
 
-  GroupPreferenceSettings.fromData(DocumentSnapshot snapshot)
+  GroupPreferenceSettings.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         enableNotificationForAllGroups =

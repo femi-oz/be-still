@@ -8,8 +8,8 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 class GroupAdminPrayerMenu extends StatefulWidget {
@@ -36,15 +36,12 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
           .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -53,20 +50,14 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      // await Provider.of<PrayerProvider>(context, listen: false)
-      //     .hidePrayerFromAllMembers(
-      //         widget.prayer.id, !widget.prayer.hideFromAllMembers);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushReplacementNamed(EntryScreen.routeName);
-    } on HttpException catch (e) {
+    } on HttpException catch (_) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
     } catch (e) {
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
     }
   }
 
@@ -83,21 +74,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    // UserPrayerModel userPrayer = UserPrayerModel(
-                    //   isSnoozed: false,
-                    //   snoozeEndDate: null,
-                    //   userId: _user.id,
-                    //   status: Status.active,
-                    //   sequence: null,
-                    //   prayerId: widget.prayer.id,
-                    //   isFavorite: false,
-                    //   createdBy: widget.prayer.createdBy,
-                    //   createdOn: DateTime.now(),
-                    //   modifiedBy: widget.prayer.modifiedBy,
-                    //   modifiedOn: DateTime.now(),
-                    // );
-                    // Provider.of<PrayerProvider>(context, listen: false)
-                    //     .addPrayerToMyList(userPrayer);
                     Navigator.of(context)
                         .pushReplacementNamed(EntryScreen.routeName);
                   },
@@ -259,19 +235,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                           AppIcons.bestill_hide,
                           color: AppColors.lightBlue4,
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(left: 10.0),
-                        //   child: Text(
-                        //     widget.prayer.hideFromAllMembers
-                        //         ? 'Show in Group'
-                        //         : 'Hide From Group',
-                        //     style: TextStyle(
-                        //       color: AppColors.lightBlue4,
-                        //       fontSize: 14,
-                        //       fontWeight: FontWeight.w500,
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

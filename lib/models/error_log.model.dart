@@ -20,7 +20,7 @@ class ErrorLog {
     @required this.modifiedOn,
   });
 
-  ErrorLog.fromData(DocumentSnapshot snapshot)
+  ErrorLog.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         message = snapshot.data()['Message'],
         location = snapshot.data()['Location'],

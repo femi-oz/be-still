@@ -6,7 +6,6 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -35,11 +34,7 @@ class _GroupToolsState extends State<GroupTools> {
         data.group.id,
         data.groupUsers.firstWhere((e) => e.userId == _user.id).isAdmin,
       );
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
+    } on HttpException catch (_) {} catch (e) {}
   }
 
   @override
@@ -54,7 +49,7 @@ class _GroupToolsState extends State<GroupTools> {
           colors: AppColors.backgroundColor,
         ),
         image: DecorationImage(
-          image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+          image: AssetImage(StringUtils.backgroundImage),
           alignment: Alignment.bottomCenter,
         ),
       ),

@@ -1,23 +1,21 @@
-import 'dart:convert';
-
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:flutter_sms/flutter_sms.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:be_still/widgets/snooze_prayer.dart';
+import 'dart:math' as math;
 
 class PrayerCard extends StatefulWidget {
   final CombinePrayerStream prayerData;
@@ -31,6 +29,11 @@ class PrayerCard extends StatefulWidget {
 
 class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
+  final SlidableController slidableController = SlidableController();
+
+  initState() {
+    super.initState();
+  }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
@@ -40,7 +43,6 @@ class _PrayerCardState extends State<PrayerCard> {
     reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == widget.prayerData.userPrayer.id,
         orElse: () => null);
-
     if (reminder == null)
       return false;
     else {
@@ -48,453 +50,518 @@ class _PrayerCardState extends State<PrayerCard> {
     }
   }
 
-  _emailLink([bool isChurch = false]) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+  void _unArchive() async {
+    BeStilDialog.showLoading(context);
 
-    var name = _user.firstName;
-    name = toBeginningOfSentenceCase(name);
-
-    final Uri params = Uri(scheme: 'mailto', path: '', query: "");
-
-    var url = params.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  _textLink([bool isChurch = false]) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    var name = _user.firstName;
-    name = toBeginningOfSentenceCase(name);
-
-    String _result =
-        await sendSMS(message: '', recipients: []).catchError((onError) {
-      print(onError);
-    });
-    print(_result);
-
-    // final uri =
-    //     "sms:${isChurch ? _churchPhone : ''}${Platform.isIOS ? '&' : '?'}body=$_prayer \n\n ${updates != '' ? 'Comments  \n $updates \n\n' : ''}$_footerText";
-
-    // if (await canLaunch(uri)) {
-    //   await launch(uri);
-    // } else {
-    //   throw 'Could not launch $uri';
-    // }
-  }
-
-  _openShareModal(BuildContext context) {
-    AlertDialog dialog = AlertDialog(
-        actionsPadding: EdgeInsets.all(0),
-        contentPadding: EdgeInsets.all(0),
-        backgroundColor: AppColors.prayerCardBgColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: AppColors.darkBlue),
-          borderRadius: BorderRadius.all(
-            Radius.circular(10.0),
-          ),
-        ),
-        content: Container(
-          height: MediaQuery.of(context).size.height * 0.2,
-          child: Stack(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Container(
-                  margin: EdgeInsets.only(top: 5, right: 5),
-                  alignment: Alignment.topRight,
-                  child: Icon(
-                    Icons.cancel,
-                    color: AppColors.red,
-                    size: 20,
-                  ),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40),
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              _emailLink(false);
-                            },
-                            child: Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * .20,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.cardBorder,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'EMAIL',
-                                    style: TextStyle(
-                                      color: AppColors.lightBlue4,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _textLink(false);
-                            },
-                            child: Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * .20,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.cardBorder,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'SMS',
-                                    style: TextStyle(
-                                      color: AppColors.lightBlue4,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
-  }
-
-  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, CombinePrayerStream prayerData) async {
     try {
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final notificationText = selectedFrequency == Frequency.weekly
-          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-      final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer.description;
-      final scheduleDate = LocalNotification.scheduleDate(
-          int.parse(selectedHour),
-          int.parse(selectedMinute),
-          selectedDay,
-          period);
-      final payload = NotificationMessage(
-          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: reminder.localNotificationId,
-      );
-      await storeNotification(
-        notificationText,
-        userId,
-        title,
-        description,
-        selectedFrequency,
-        scheduleDate,
-        prayerData.userPrayer.id,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-      );
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
+      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
+          widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
     }
   }
 
-  storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    String prayerid,
-    String selectedDay,
-    String period,
-    String selectedHour,
-    String selectedMinute,
-  ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      reminder.id,
-      userId,
-      notificationText,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    Navigator.of(context).pop();
+  void _onArchive() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .archivePrayer(widget.prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _unSnoozePrayer() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
+          widget.prayerData.prayer.id,
+          DateTime.now(),
+          widget.prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _onMarkAsAnswered() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _unMarkAsAnswered() async {
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unMarkPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  Widget _buildMenu() {
+    return PrayerMenu(
+        context, hasReminder, reminder, () => updateUI(), widget.prayerData);
+  }
+
+  updateUI() {
+    setState(() {});
+  }
+
+  Future<void> _setCurrentPrayer() async {
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayer(widget.prayerData.userPrayer.id);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
+    var tags = '';
+    final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
+    widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
+    widget.prayerData.tags.forEach((element) {
+      tags += ' ' + element.displayName;
+    });
     return Container(
+      color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
-      decoration: BoxDecoration(
-          color: AppColors.prayerCardBgColor,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10),
-            topLeft: Radius.circular(10),
+      child: Slidable(
+        controller: slidableController,
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.25,
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cardBorder,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              topLeft: Radius.circular(10),
+            ),
           ),
-          border: Border.all(color: AppColors.cardBorder)),
-      child: Container(
-        margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: AppColors.prayerCardBgColor,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(8),
-            topLeft: Radius.circular(8),
-          ),
-        ),
-        child: Column(
-          children: <Widget>[
-            Row(
+          child: Container(
+            margin: EdgeInsetsDirectional.only(start: 1, bottom: 1, top: 1),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.prayerCardBgColor,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                topLeft: Radius.circular(8),
+              ),
+            ),
+            child: Column(
               children: <Widget>[
-                Flexible(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: Column(
                         children: <Widget>[
                           Row(
-                            children: [
-                              widget.prayerData.prayer.userId != _user.id
-                                  ? Text(
-                                      widget.prayerData.prayer.creatorName,
-                                      style: AppTextStyles.boldText14.copyWith(
-                                        color: AppColors.lightBlue4,
-                                      ),
-                                    )
-                                  : Container(),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              widget.prayerData.userPrayer.isFavorite
-                                  ? Icon(
-                                      Icons.favorite,
-                                      color: AppColors.lightBlue3,
-                                      size: 10,
-                                    )
-                                  : widget.prayerData.prayer.isAnswer
-                                      ? Icon(
-                                          AppIcons.bestill_answered,
-                                          size: 10,
-                                          color: AppColors.lightBlue3,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  widget.prayerData.prayer.isAnswer
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5, right: 8),
+                                          child: Icon(
+                                            AppIcons.bestill_answered,
+                                            size: 12,
+                                            color: AppColors.lightBlue3,
+                                          ),
                                         )
-                                      : Container()
+                                      : SizedBox(),
+                                  widget.prayerData.userPrayer.isSnoozed
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5, right: 8),
+                                          child: Icon(
+                                            AppIcons.snooze,
+                                            size: 14,
+                                            color: AppColors.lightBlue3,
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                  hasReminder
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
+                                          child: InkWell(
+                                            onTap: () => showDialog(
+                                              context: context,
+                                              barrierColor: AppColors
+                                                  .detailBackgroundColor[1]
+                                                  .withOpacity(0.5),
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                  insetPadding:
+                                                      EdgeInsets.all(20),
+                                                  backgroundColor: AppColors
+                                                      .prayerCardBgColor,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color:
+                                                            AppColors.darkBlue),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(10.0),
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 30),
+                                                        child: ReminderPicker(
+                                                          type: NotificationType
+                                                              .reminder,
+                                                          hideActionuttons:
+                                                              false,
+                                                          onCancel: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                          reminder: reminder,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, bottom: 5, right: 8),
+                                              child: Icon(
+                                                AppIcons.bestill_reminder,
+                                                size: 12,
+                                                color: AppColors.lightBlue3,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                  widget.prayerData.prayer.userId != _user?.id
+                                      ? Text(
+                                          widget.prayerData.prayer.creatorName,
+                                          style:
+                                              AppTextStyles.boldText14.copyWith(
+                                            color: AppColors.lightBlue4,
+                                          ),
+                                        )
+                                      : Container(),
+                                  widget.prayerData.userPrayer.isFavorite
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 3, bottom: 3, right: 8),
+                                          child: Icon(
+                                            Icons.favorite,
+                                            color: AppColors.lightBlue3,
+                                            size: 14,
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                ],
+                              ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: widget.prayerData.tags.length > 0
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                SizedBox(width: 10),
+                                                Expanded(
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    reverse: true,
+                                                    child: Container(
+                                                      height: 20,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 3),
+                                                      child: Text(
+                                                        tags,
+                                                        style: TextStyle(
+                                                          color: AppColors.red,
+                                                          fontSize: 10,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        softWrap: false,
+                                                        textAlign:
+                                                            TextAlign.end,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                  ),
+                                                  child: Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .prayerTextColor),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          : Container(),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        widget.timeago,
+                                        style: AppTextStyles.regularText13
+                                            .copyWith(
+                                                color:
+                                                    AppColors.prayerTextColor),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              hasReminder
-                                  ? Row(
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: () => showModalBottomSheet(
-                                            context: context,
-                                            barrierColor: AppColors
-                                                .detailBackgroundColor[1]
-                                                .withOpacity(0.5),
-                                            backgroundColor: AppColors
-                                                .detailBackgroundColor[1]
-                                                .withOpacity(0.9),
-                                            isScrollControlled: true,
-                                            builder: (BuildContext context) {
-                                              return ReminderPicker(
-                                                hideActionuttons: false,
-                                                frequency: LocalNotification
-                                                    .reminderInterval,
-                                                reminderDays: LocalNotification
-                                                    .reminderDays,
-                                                onCancel: () =>
-                                                    Navigator.of(context).pop(),
-                                                onSave: (selectedFrequency,
-                                                        selectedHour,
-                                                        selectedMinute,
-                                                        selectedDay,
-                                                        period) =>
-                                                    setNotification(
-                                                        selectedHour,
-                                                        selectedFrequency,
-                                                        selectedMinute,
-                                                        selectedDay,
-                                                        period,
-                                                        widget.prayerData),
-                                                selectedDay: LocalNotification
-                                                        .reminderDays
-                                                        .indexOf(reminder
-                                                            .selectedDay) +
-                                                    1,
-                                                selectedFrequency:
-                                                    reminder.frequency,
-                                                selectedHour: int.parse(
-                                                    reminder.selectedHour),
-                                                selectedMinute: int.parse(
-                                                    reminder.selectedMinute),
-                                                selectedPeriod: reminder.period,
-                                              );
-                                            },
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Icon(
-                                              AppIcons.bestill_reminder,
-                                              size: 12,
-                                              color: AppColors.lightBlue3,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                          ),
-                                          child: Text(
-                                            '|',
-                                            style: TextStyle(
-                                              color: AppColors.lightBlue3,
-                                              fontSize: 10,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  : Container(),
-                              Container(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: widget.prayerData.tags.map((tag) {
-                                      return Text(
-                                        ' ${tag.displayName}',
-                                        style: TextStyle(
-                                          color: AppColors.red,
-                                          fontSize: 10,
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
-                              widget.prayerData.tags.length > 0
-                                  ? Container(
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                      ),
-                                      child: Text(
-                                        '|',
-                                        style: TextStyle(
-                                            color: AppColors.prayerTextColor),
-                                      ),
-                                    )
-                                  : Container(),
-                              Text(
-                                widget.timeago,
-                                style: AppTextStyles.regularText13
-                                    .copyWith(color: AppColors.prayerTextColor),
-                              ),
-                            ],
-                          )
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                Divider(
+                  color: AppColors.divider,
+                  thickness: 0.5,
+                ),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Text(
+                        widget.prayerData.prayer.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.regularText15
+                            .copyWith(color: AppColors.prayerTextColor),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            Divider(
-              color: AppColors.divider,
-              thickness: 0.5,
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child:
-                      // EasyRichText(
-                      //   widget.prayerData.prayer.description,
-                      //   defaultStyle: AppTextStyles.regularText15
-                      //       .copyWith(color: AppColors.prayerTextColor),
-                      //   patternList: [
-                      //     for (var i = 0; i < widget.prayerData.tags.length; i++)
-                      //       EasyRichTextPattern(
-                      //           targetString: widget.prayerData.tags[i].displayName,
-                      //           recognizer: TapGestureRecognizer()
-                      //             ..onTap = () {
-                      //               _openShareModal(context);
-                      //             },
-                      //           style: AppTextStyles.regularText15.copyWith(
-                      //               color: AppColors.lightBlue2,
-                      //               decoration: TextDecoration.underline))
-                      //   ],
-                      // ),
-                      Text(
-                    widget.prayerData.prayer.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.regularText15
-                        .copyWith(color: AppColors.prayerTextColor),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
+        closeOnScroll: true,
+        actions: <Widget>[
+          _buildSlideItem(Icons.build, 'Options', () async {
+            await _setCurrentPrayer();
+
+            showModalBottomSheet(
+              context: context,
+              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+                      .isDarkModeEnabled
+                  ? AppColors.backgroundColor[0].withOpacity(0.5)
+                  : Color(0xFF021D3C).withOpacity(0.7),
+              backgroundColor:
+                  Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? AppColors.backgroundColor[0].withOpacity(0.5)
+                      : Color(0xFF021D3C).withOpacity(0.7),
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return _buildMenu();
+              },
+            );
+          }, false)
+        ],
+        secondaryActions: <Widget>[
+          _buildSlideItem(
+              AppIcons.bestill_answered,
+              widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
+              () => widget.prayerData.prayer.isAnswer
+                  ? _unMarkAsAnswered()
+                  : _onMarkAsAnswered(),
+              false),
+          _buildSlideItem(
+              AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
+              widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
+              () => widget.prayerData.userPrayer.isArchived
+                  ? _unArchive()
+                  : _onArchive(),
+              false),
+          widget.prayerData.userPrayer.isArchived ||
+                  widget.prayerData.prayer.isAnswer
+              ? _buildSlideItem(
+                  AppIcons.bestill_snooze, 'Snooze', () => null, true)
+              : _buildSlideItem(
+                  AppIcons.bestill_snooze,
+                  widget.prayerData.userPrayer.isSnoozed
+                      ? 'Unsnooze'
+                      : 'Snooze',
+                  () => widget.prayerData.userPrayer.isSnoozed
+                      ? _unSnoozePrayer()
+                      : showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              insetPadding: EdgeInsets.all(20),
+                              backgroundColor: AppColors.prayerCardBgColor,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: AppColors.darkBlue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30),
+                                      child: SnoozePrayer(widget.prayerData)),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                  false),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSlideItem(
+      IconData icon, String label, Function _onTap, bool isDisabled) {
+    return Container(
+      decoration: BoxDecoration(
+          color: AppColors.prayerCardBgColor,
+          border: Border.all(color: AppColors.slideBorder)),
+      child: IconSlideAction(
+        closeOnTap: true,
+        caption: label,
+        color: Colors.transparent,
+        iconWidget: Container(
+          margin: const EdgeInsets.all(10.0),
+          child: label == 'Options'
+              ? Transform.rotate(
+                  angle: 90 * math.pi / 180,
+                  child: Icon(
+                    icon,
+                    color: Provider.of<ThemeProvider>(context, listen: false)
+                            .isDarkModeEnabled
+                        ? isDisabled
+                            ? AppColors.white.withOpacity(0.4)
+                            : AppColors.white
+                        : isDisabled
+                            ? AppColors.lightBlue3.withOpacity(0.4)
+                            : AppColors.lightBlue3,
+                    size: 18,
+                  ),
+                )
+              : Icon(
+                  icon,
+                  color: Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? isDisabled
+                          ? AppColors.white.withOpacity(0.4)
+                          : AppColors.white
+                      : isDisabled
+                          ? AppColors.lightBlue3.withOpacity(0.4)
+                          : AppColors.lightBlue3,
+                  size: 18,
+                ),
+        ),
+        foregroundColor:
+            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
+                ? isDisabled
+                    ? AppColors.white.withOpacity(0.4)
+                    : AppColors.white
+                : isDisabled
+                    ? AppColors.lightBlue3.withOpacity(0.4)
+                    : AppColors.lightBlue3,
+        onTap: _onTap,
       ),
     );
   }

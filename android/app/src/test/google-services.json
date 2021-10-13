@@ -10,63 +10,6 @@
       "client_info": {
         "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
         "android_client_info": {
-          "package_name": "org.second.bestill"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
-          "package_name": "org.second.bestill.local"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },{
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
           "package_name": "org.second.bestill.dev"
         }
       },
@@ -87,41 +30,21 @@
             {
               "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
               "client_type": 3
-            }
-          ]
-        }
-      }
-    },{
-      "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
-        "android_client_info": {
-          "package_name": "org.second.bestill.prod"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCyEFx8qillxeldwNgNGK_1QHI7tF12iBc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
+            },
             {
-              "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
-              "client_type": 3
+              "client_id": "634311419885-2s806irll7rm9utv166ehelk0vrvlt7l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.second.bestill.prod"
+              }
             }
           ]
         }
       }
-    },{
+    },
+    {
       "client_info": {
-        "mobilesdk_app_id": "1:634311419885:android:7e9948833ec1b07cd729e4",
+        "mobilesdk_app_id": "1:634311419885:android:4aab1286e166bd48d729e4",
         "android_client_info": {
           "package_name": "org.second.bestill.test"
         }
@@ -143,6 +66,13 @@
             {
               "client_id": "634311419885-1l94k4ijgd526pgtm2uu02jcisi0gm4r.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "634311419885-2s806irll7rm9utv166ehelk0vrvlt7l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.second.bestill.prod"
+              }
             }
           ]
         }

@@ -1,33 +1,93 @@
+import 'dart:io';
+
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/grow_my_prayer_life/grow_my_prayer_life_screen.dart';
-import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
-import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/screens/Settings/settings_screen.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_appavailability/flutter_appavailability.dart';
 
-class CustomDrawer extends StatelessWidget {
-  _launchURL() async {
-    const url = 'https://my.bible.com/bible';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+class CustomDrawer extends StatefulWidget {
+  final Function setCurrentIndex;
+  final GlobalKey keyButton;
+  final GlobalKey keyButton2;
+  final GlobalKey keyButton3;
+  final GlobalKey keyButton4;
+  final GlobalKey keyButton5;
+  final scaffoldKey;
+  CustomDrawer(
+    this.setCurrentIndex,
+    this.keyButton,
+    this.keyButton2,
+    this.keyButton3,
+    this.keyButton4,
+    this.keyButton5,
+    this.scaffoldKey,
+  );
+
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  initState() {
+    super.initState();
+  }
+
+  String _shareUri = '';
+
+  _launchHelpURL() async {
+    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      if (await canLaunch('https://www.bestillapp.com/help')) {
+        await launch('https://www.bestillapp.com/help');
+      } else {
+        throw 'Could not launch https://www.bestillapp.com/help';
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+    }
+  }
+
+  _launchURL(url) async {
+    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    try {
+      if (Platform.isAndroid) {
+        await AppAvailability.checkAvailability(
+            "com.sirma.mobile.bible.android");
+        _shareUri = 'com.sirma.mobile.bible.android';
+      } else if (Platform.isIOS) {
+        await AppAvailability.checkAvailability("youversion://");
+        _shareUri = 'youversion://';
+      }
+      AppAvailability.launchApp(_shareUri);
+    } catch (_, __) {
+      try {
+        if (await canLaunch('https://my.bible.com/bible')) {
+          await launch('https://my.bible.com/bible');
+        } else {
+          throw 'Could not launch https://my.bible.com/bible';
+        }
+      } catch (e, s) {
+        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+      }
     }
   }
 
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
-    AlertDialog dialog = AlertDialog(
+    final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
       backgroundColor: AppColors.prayerCardBgColor,
@@ -39,72 +99,41 @@ class CustomDrawer extends StatelessWidget {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              margin: EdgeInsets.only(bottom: 5.0),
               child: Text(
-                'Are you sure you want to logout?',
+                'LOGOUT',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                   height: 1.5,
                 ),
               ),
             ),
-            // GestureDetector(
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  'Are you sure you want to logout?',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      await _authProvider.signOut();
-                      await LocalNotification.clearAll();
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: LoginScreen(),
-                        ),
-                      );
-                      // Navigator.of(context).pushNamedAndRemoveUntil(
-                      //   LoginScreen.routeName,
-                      //   (Route<dynamic> route) => false,
-                      // );
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .20,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'LOGOUT',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
@@ -118,6 +147,7 @@ class CustomDrawer extends StatelessWidget {
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(5),
+                        color: AppColors.grey.withOpacity(0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -125,7 +155,44 @@ class CustomDrawer extends StatelessWidget {
                           Text(
                             'CANCEL',
                             style: TextStyle(
-                              color: AppColors.red,
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      await _authProvider.signOut();
+                      Navigator.pushReplacement(
+                        context,
+                        SlideRightRoute(page: LoginScreen()),
+                      );
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .20,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'LOGOUT',
+                            style: TextStyle(
+                              color: AppColors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -171,11 +238,10 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                  color: AppColors.drawerTopColor,
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       InkWell(
                         child: Icon(
@@ -183,7 +249,11 @@ class CustomDrawer extends StatelessWidget {
                           color: AppColors.topNavTextColor,
                         ),
                         onTap: () {
-                          Navigator.pop(context);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setCurrentPage(0);
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              EntryScreen.routeName,
+                              (Route<dynamic> route) => false);
                         },
                       )
                     ],
@@ -191,82 +261,101 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 60),
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(EntryScreen.routeName),
-                            title: Text("MY LIST",
+                    padding: EdgeInsets.only(left: 0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => _launchURL(_shareUri),
+                            child: Text("BIBLE APP",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EntryScreen(screenNumber: 2),
-                              ),
-                            ),
-                            title: Text("ADD A PRAYER",
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () async {
+                              await widget.setCurrentIndex(6, false);
+                              await Future.delayed(Duration(milliseconds: 300));
+                              Navigator.pop(context);
+                            },
+                            child: Text("RECOMMENDED BIBLES",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(PrayerTime.routeName),
-                            title: Text("PRAY",
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                              onTap: () async {
+                                await widget.setCurrentIndex(5, false);
+                                await Future.delayed(
+                                    Duration(milliseconds: 300));
+                                Navigator.pop(context);
+                              },
+                              child: Text("DEVOTIONALS AND READING PLANS",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor))),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () async {
+                              await widget.setCurrentIndex(4, false);
+                              await Future.delayed(Duration(milliseconds: 300));
+                              Navigator.pop(context);
+                            },
+                            child: Text("SETTINGS",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: _launchURL,
-                            title: Text("BIBLE",
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => _launchHelpURL(),
+                            child: Text("HELP",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: GrowMyPrayerLifeScreen(),
-                              ),
-                            ),
-                            title: Text("GROW MY PRAYER LIFE",
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () {
+                              widget.setCurrentIndex(0, true);
+                              Navigator.pop(context);
+                              TutorialTarget.showTutorial(
+                                context,
+                                widget.keyButton,
+                                widget.keyButton2,
+                                widget.keyButton3,
+                                widget.keyButton4,
+                                widget.keyButton5,
+                              );
+                            },
+                            child: Text("QUICK TIPS",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
                           ),
-                          ListTile(
-                            onTap: () => Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.leftToRightWithFade,
-                                child: RecommenededBibles(),
-                              ),
-                            ),
-                            title: Text("RECOMMENDED BIBLES",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
-                          ListTile(
-                            onTap: () => Navigator.of(context)
-                                .pushReplacementNamed(SettingsScreen.routeName),
-                            title: Text("SETTINGS",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
-                          ),
-                          ListTile(
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
                             onTap: () => _openLogoutConfirmation(context),
-                            title: Text("LOGOUT",
-                                style: AppTextStyles.drawerMenu.copyWith(
-                                    color: AppColors.drawerMenuColor)),
+                            child: Container(
+                              width: 100,
+                              child: Text("LOGOUT",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 )

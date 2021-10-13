@@ -1,5 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +35,8 @@ class PushNotificationModel {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  PushNotificationModel.fromData(DocumentSnapshot snapshot)
+  PushNotificationModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         title = snapshot.data()['Title'],
         tokens = snapshot.data()['Tokens'],
@@ -86,6 +87,9 @@ class LocalNotificationModel {
   final String period;
   final String selectedHour;
   final String selectedMinute;
+  final String selectedYear;
+  final String selectedMonth;
+  final String selectedDayOfMonth;
 
   const LocalNotificationModel({
     this.id,
@@ -103,8 +107,12 @@ class LocalNotificationModel {
     @required this.period,
     @required this.selectedHour,
     @required this.selectedMinute,
+    @required this.selectedYear,
+    @required this.selectedMonth,
+    @required this.selectedDayOfMonth,
   });
-  LocalNotificationModel.fromData(DocumentSnapshot snapshot)
+  LocalNotificationModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         entityId = snapshot.data()['EntityId'],
@@ -118,15 +126,24 @@ class LocalNotificationModel {
         localNotificationId = snapshot.data()['LocalNotificationId'],
         selectedDay = snapshot.data()['SelectedDay'] != ''
             ? snapshot.data()['SelectedDay']
-            : DaysOfWeek.wed,
+            : LocalNotification.daysOfWeek[DateTime.now().weekday],
         period =
             snapshot.data()['Period'] != '' ? snapshot.data()['Period'] : 'pm',
         selectedHour = snapshot.data()['SelectedHour'] != ''
             ? snapshot.data()['SelectedHour']
-            : '06',
+            : DateTime.now().hour.toString(),
         selectedMinute = snapshot.data()['SelectedMinute'] != ''
             ? snapshot.data()['SelectedMinute']
-            : '40';
+            : DateTime.now().minute.toString(),
+        selectedMonth = snapshot.data()['SelectedMonth'] != ''
+            ? snapshot.data()['SelectedMonth']
+            : DateTime.now().month.toString(),
+        selectedDayOfMonth = snapshot.data()['SelectedDayOfMonth'] != ''
+            ? snapshot.data()['SelectedDayOfMonth']
+            : DateTime.now().day.toString(),
+        selectedYear = snapshot.data()['SelectedYear'] != ''
+            ? snapshot.data()['SelectedYear']
+            : DateTime.now().year.toString();
 
   Map<String, dynamic> toJson() {
     return {
@@ -144,6 +161,9 @@ class LocalNotificationModel {
       'Period': period,
       'SelectedHour': selectedHour,
       'SelectedMinute': selectedMinute,
+      'SelectedMonth': selectedMonth,
+      'SelectedDayOfMonth': selectedDayOfMonth,
+      'SelectedYear': selectedYear,
     };
   }
 }
@@ -182,7 +202,7 @@ class MessageModel {
     @required this.modifiedBy,
     @required this.modifiedOn,
   });
-  MessageModel.fromData(DocumentSnapshot snapshot)
+  MessageModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         title = snapshot.data()['Title'],
         message = snapshot.data()['Message'],

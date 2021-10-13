@@ -1,7 +1,11 @@
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:masked_text/masked_text.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class CustomInput extends StatefulWidget {
   final int maxLines;
@@ -23,27 +27,34 @@ class CustomInput extends StatefulWidget {
   final bool isLink;
   final bool unfocus;
   final FocusNode focusNode;
+  final bool isSearch;
+  final GlobalKey textkey;
+  final bool hasBorder;
 
-  CustomInput(
-      {this.maxLines = 1,
-      @required this.label,
-      this.color,
-      this.isPassword = false,
-      @required this.controller,
-      this.showSuffix = true,
-      this.textInputAction = TextInputAction.next,
-      this.submitForm,
-      this.onTextchanged,
-      this.keyboardType,
-      this.isRequired = false,
-      this.validator,
-      this.obScurePassword = false,
-      this.padding = 20.0,
-      this.isPhone = false,
-      this.isEmail = false,
-      this.isLink = false,
-      this.unfocus = false,
-      this.focusNode});
+  CustomInput({
+    this.maxLines = 1,
+    @required this.label,
+    this.color,
+    this.isPassword = false,
+    @required this.controller,
+    this.textkey,
+    this.showSuffix = true,
+    this.textInputAction = TextInputAction.done,
+    this.submitForm,
+    this.onTextchanged,
+    this.keyboardType,
+    this.isRequired = false,
+    this.validator,
+    this.obScurePassword = false,
+    this.padding = 20.0,
+    this.isPhone = false,
+    this.isEmail = false,
+    this.isLink = false,
+    this.unfocus = false,
+    this.isSearch = false,
+    this.hasBorder = true,
+    this.focusNode,
+  });
 
   @override
   _CustomInputState createState() => _CustomInputState();
@@ -55,125 +66,90 @@ class _CustomInputState extends State<CustomInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: widget.isPhone
-          ? MaskedTextField(
-              maskedTextFieldController: widget.controller,
-              mask: "(xxx) xxx-xxxx",
-              maxLength: 14,
-              keyboardType: TextInputType.number,
-              inputDecoration: InputDecoration(
-                suffixText: (widget.showSuffix && _isTextNotEmpty) ||
-                        (widget.showSuffix && widget.controller.text != '')
-                    ? widget.label
-                    : '',
-                // suffixIcon: widget.showBiometric
-                //     ? IconButton(
-                //         icon: Icon(
-                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-                //         onPressed: () {
-                //           // widget.bioLogin;
-                //         })
-                //     : Container(),
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 15, vertical: widget.padding),
-                suffixStyle: AppTextStyles.regularText14.copyWith(
-                    color: Settings.isDarkMode
-                        ? AppColors.offWhite2
-                        : AppColors.grey4),
-                counterText: '',
-                hintText: widget.label,
-                hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
-                errorBorder: new OutlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.redAccent),
-                ),
-                errorMaxLines: 5,
-                errorStyle: AppTextStyles.errorText,
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.lightBlue4.withOpacity(0.5),
-                    width: 1.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppColors.lightBlue4, width: 1.0),
-                ),
-                fillColor: AppColors.textFieldBackgroundColor,
-                filled: true,
-              ),
-            )
-          : TextFormField(
-              controller: widget.controller,
-              keyboardType: widget.keyboardType,
-              textCapitalization: TextCapitalization.sentences,
-              style: AppTextStyles.regularText15,
-              focusNode: widget.focusNode,
-              cursorColor:
-                  widget.color == null ? AppColors.lightBlue4 : widget.color,
-              maxLines: widget.maxLines,
-              decoration: InputDecoration(
-                suffixText: (widget.showSuffix && _isTextNotEmpty) ||
-                        (widget.showSuffix && widget.controller.text != '')
-                    ? widget.label
-                    : '',
-                // suffixIcon: widget.showBiometric
-                //     ? IconButton(
-                //         icon: Icon(
-                //             widget.showFaceId ? Icons.face : Icons.fingerprint),
-                //         onPressed: () {
-                //           // widget.bioLogin;
-                //         })
-                //     : Container(),
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 15, vertical: widget.padding),
-                suffixStyle: AppTextStyles.regularText14.copyWith(
-                    color: Settings.isDarkMode
-                        ? AppColors.offWhite2
-                        : AppColors.prayerTextColor),
-                counterText: '',
-                hintText: widget.label,
-                hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
-                errorBorder: new OutlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.redAccent),
-                ),
-                errorMaxLines: 5,
-                errorStyle: AppTextStyles.errorText,
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.lightBlue4.withOpacity(0.5),
-                    width: 1.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppColors.lightBlue4, width: 1.0),
-                ),
-                fillColor: AppColors.textFieldBackgroundColor,
-                filled: true,
-              ),
-              obscureText: widget.obScurePassword,
-              validator: (value) => _validatorFn(value),
-              onFieldSubmitted: (_) => {
-                    widget.unfocus
-                        ? FocusScope.of(context).unfocus()
-                        : FocusScope.of(context).nextFocus(),
-                    widget.unfocus ? widget.submitForm : null
-                  },
-              textInputAction: widget.textInputAction,
-              onChanged: (val) {
-                setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
-                if (widget.onTextchanged != null) widget.onTextchanged(val);
-              }),
+      child: TextFormField(
+        key: widget.textkey,
+        inputFormatters:
+            widget.isPhone ? [LengthLimitingTextInputFormatter(10)] : null,
+        controller: widget.controller,
+        keyboardType: widget.keyboardType,
+        textCapitalization: TextCapitalization.sentences,
+        style: AppTextStyles.regularText15,
+        focusNode: widget.focusNode,
+        cursorColor: widget.color == null ? AppColors.lightBlue4 : widget.color,
+        maxLines: widget.maxLines,
+        decoration: InputDecoration(
+          suffixText: (widget.showSuffix && _isTextNotEmpty) ||
+                  (widget.showSuffix && widget.controller.text != '')
+              ? widget.label
+              : '',
+          isDense: true,
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 15, vertical: widget.padding),
+          suffixStyle: AppTextStyles.regularText14.copyWith(
+              color: Settings.isDarkMode
+                  ? AppColors.offWhite2
+                  : AppColors.prayerTextColor),
+          counterText: '',
+          hintText: widget.label,
+          hintStyle: AppTextStyles.regularText15.copyWith(height: 1.5),
+          errorBorder: new OutlineInputBorder(
+            borderSide: new BorderSide(color: Colors.redAccent),
+          ),
+          errorMaxLines: 5,
+          errorStyle: AppTextStyles.errorText,
+          border: OutlineInputBorder(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: widget.hasBorder
+                  ? AppColors.lightBlue4.withOpacity(0.5)
+                  : Colors.transparent,
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: widget.hasBorder
+                    ? AppColors.lightBlue4
+                    : Colors.transparent,
+                width: 1.0),
+          ),
+          fillColor: AppColors.textFieldBackgroundColor,
+          filled: true,
+        ),
+        obscureText: widget.obScurePassword,
+        validator: (value) => _validatorFn(value),
+        onFieldSubmitted: (val) => {
+          widget.isSearch ? _searchPrayer(val) : null,
+          widget.unfocus
+              ? FocusScope.of(context).unfocus()
+              : FocusScope.of(context).nextFocus(),
+          widget.unfocus ? widget.submitForm : null
+        },
+        textInputAction: widget.textInputAction,
+        onChanged: (val) {
+          setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
+          if (widget.onTextchanged != null) widget.onTextchanged(val);
+        },
+      ),
     );
+  }
+
+  void _searchPrayer(String value) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
   }
 
   String _validatorFn(String value) {
     if (widget.isRequired) {
-      if (value.isEmpty) {
+      if (value.isEmpty && widget.isEmail) {
+        return 'Email is required';
+      } else if (value.isEmpty && widget.isPassword) {
+        return 'Password is required';
+      } else if (value.isEmpty) {
         return '${widget.label} is required';
       }
     }
@@ -191,17 +167,19 @@ class _CustomInputState extends State<CustomInput> {
       }
     }
     if (widget.isPhone && value.isNotEmpty) {
-      String p = r'(^(?:[+234])?[0-9]{6,}$)';
-      RegExp regExp = new RegExp(p);
-      if (value.length < 6 || value.length > 15 || !regExp.hasMatch(value)) {
+      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+
+      RegExp regExp = new RegExp(pattern);
+      if (value.length != 10 || !regExp.hasMatch(value)) {
         return 'Enter a valid phone number';
       }
     }
     if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
       Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
-      if (!regex.hasMatch(value))
+      if (!regex.hasMatch(value)) {
         return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
+      }
     }
     if (widget.isLink && value.isNotEmpty) {
       Pattern pattern =

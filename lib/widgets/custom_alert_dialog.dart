@@ -51,32 +51,39 @@ class CustomAlertDialog extends StatelessWidget {
             size: 50,
           ),
           const SizedBox(height: 10.0),
-          Text(
-            title.isEmpty ? _getTitle(type) : title,
-            style: AppTextStyles.regularText13.copyWith(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
+          title.isNotEmpty
+              ? Text(
+                  title.isEmpty ? _getTitle(type) : title,
+                  style: AppTextStyles.regularText13
+                      .copyWith(fontSize: 18, color: AppColors.lightBlue4),
+                  textAlign: TextAlign.center,
+                )
+              : Container(),
           Divider(),
-          Text(
-            message ?? 'An error occured!',
-            style: AppTextStyles.regularText14
-                .copyWith(color: AppColors.lightBlue3),
-            textAlign: TextAlign.center,
+          Flexible(
+            child: Text(
+              message ?? 'An error occured!',
+              style: AppTextStyles.regularText16b
+                  .copyWith(color: AppColors.lightBlue4),
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(height: 20.0),
           SizedBox(
-            width: double.maxFinite,
+            width: MediaQuery.of(context).size.width * 0.4,
             child: Row(
               children: <Widget>[
                 Expanded(
                   child: TextButton(
-                    child: Text(confirmText),
+                    child: Text(confirmText,
+                        style: AppTextStyles.boldText16
+                            .copyWith(color: Colors.white)),
                     style: ButtonStyle(
                       textStyle: MaterialStateProperty.all<TextStyle>(
                           AppTextStyles.boldText16
                               .copyWith(color: Colors.white)),
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(_getColor(type)),
+                          MaterialStateProperty.all<Color>(Colors.blue),
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                           EdgeInsets.all(5.0)),
                       elevation: MaterialStateProperty.all<double>(0.0),
@@ -135,7 +142,7 @@ class CustomAlertDialog extends StatelessWidget {
         return Icons.check_circle;
       case AlertType.error:
         return Icons.error;
-      case AlertType.info:
+      case AlertType.warning:
       default:
         return Icons.info_outline;
     }
@@ -148,7 +155,7 @@ class CustomAlertDialog extends StatelessWidget {
       case AlertType.success:
         return 'Success';
       case AlertType.error:
-        return 'Oops!';
+        return '';
       case AlertType.info:
       default:
         return '';

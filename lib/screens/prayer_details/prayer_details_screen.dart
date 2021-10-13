@@ -1,40 +1,34 @@
-import 'dart:convert';
-
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:intl/intl.dart';
+import 'dart:math' as math;
 import 'package:provider/provider.dart';
-import 'package:timezone/timezone.dart' as tz;
-import '../entry_screen.dart';
 
 class PrayerDetails extends StatefulWidget {
   static const routeName = 'prayer-details';
+
+  final Function setCurrentIndex;
+  PrayerDetails(this.setCurrentIndex);
 
   @override
   _PrayerDetailsState createState() => _PrayerDetailsState();
 }
 
 class _PrayerDetailsState extends State<PrayerDetails> {
-  // GroupUserModel groupUser;
-
   void getSettings() async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     await Provider.of<SettingsProvider>(context, listen: false)
@@ -47,9 +41,12 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Duration snoozeDurationinMinutes;
   String durationText;
   int snoozeDuration;
-  LocalNotificationModel reminder;
+  LocalNotificationModel _reminder;
   Widget _buildMenu() {
-    return PrayerMenu(context, hasReminder, reminder, () => updateUI());
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    return PrayerMenu(
+        context, hasReminder, _reminder, () => updateUI(), prayerData);
   }
 
   String reminderString;
@@ -58,7 +55,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         .localNotifications;
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    reminder = reminders.firstWhere(
+    final reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.userPrayer.id,
         orElse: () => null);
     reminderString = reminder?.notificationText ?? '';
@@ -72,105 +69,43 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   bool _isInit = true;
 
   updateUI() {
-    if (hasReminder) {
-      print('reminderString $reminderString');
-    }
     setState(() {});
+  }
+
+  String getDayText(day) {
+    var suffix = "th";
+    var digit = day % 10;
+    if ((digit > 0 && digit < 4) && (day < 11 || day > 13)) {
+      suffix = ["st", "nd", "rd"][digit - 1];
+    }
+    return day.toString() + suffix;
   }
 
   BuildContext selectedContext;
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      getSettings();
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        getSettings();
+      });
       _isInit = false;
     }
     super.didChangeDependencies();
   }
 
-  setNotification(selectedHour, selectedFrequency, selectedMinute, selectedDay,
-      period, CombinePrayerStream prayerData) async {
-    try {
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final notificationText = selectedFrequency == Frequency.weekly
-          ? '$selectedFrequency, $selectedDay, $selectedHour:$selectedMinute $period'
-          : '$selectedFrequency, $selectedHour:$selectedMinute $period';
-      final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer.description;
-      final scheduleDate = LocalNotification.scheduleDate(
-          int.parse(selectedHour),
-          int.parse(selectedMinute),
-          selectedDay,
-          period);
-      final payload = NotificationMessage(
-          entityId: prayerData.userPrayer.id, type: NotificationType.prayer);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: reminder.localNotificationId,
-      );
-      await storeNotification(
-        notificationText,
-        userId,
-        title,
-        description,
-        selectedFrequency,
-        scheduleDate,
-        prayerData.userPrayer.id,
-        selectedDay,
-        period,
-        selectedHour,
-        selectedMinute,
-      );
-    } catch (e) {
-      await Future.delayed(Duration(milliseconds: 300));
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured);
-    }
-  }
-
-  storeNotification(
-      String notificationText,
-      String userId,
-      String title,
-      String description,
-      String frequency,
-      tz.TZDateTime scheduledDate,
-      String prayerid,
-      String selectedDay,
-      String period,
-      String selectedHour,
-      String selectedMinute) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      reminder.id,
-      userId,
-      notificationText,
-    );
-    await Future.delayed(Duration(milliseconds: 300));
-    BeStilDialog.hideLoading(context);
-    Navigator.of(context).pop();
-  }
-
   @override
   Widget build(BuildContext context) {
+    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    _reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.userPrayer.id,
+        orElse: () => null);
     return Scaffold(
       appBar: CustomAppBar(
         showPrayerActions: false,
       ),
-      endDrawer: CustomDrawer(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -182,7 +117,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: EdgeInsets.only(left: 10, top: 20, right: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -196,14 +131,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => Navigator.push(
-                      context,
-                      PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: EntryScreen(
-                            screenNumber: 0,
-                          )),
-                    ),
+                    onPressed: () => widget.setCurrentIndex(0, true),
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(
@@ -211,76 +139,154 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       ),
                     ),
                   ),
-                  hasReminder
-                      ? InkWell(
-                          onTap: () => showModalBottomSheet(
+                  Row(
+                    children: [
+                      Transform.rotate(
+                        angle: 90 * math.pi / 180,
+                        child: IconButton(
+                          icon: Icon(Icons.build, color: AppColors.lightBlue3),
+                          onPressed: () => showModalBottomSheet(
                             context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            backgroundColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.9),
+                            barrierColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.8)
+                                : Color(0xFF021D3C).withOpacity(0.7),
+                            backgroundColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.8)
+                                : Color(0xFF021D3C).withOpacity(0.7),
                             isScrollControlled: true,
                             builder: (BuildContext context) {
-                              return ReminderPicker(
-                                hideActionuttons: false,
-                                frequency: LocalNotification.reminderInterval,
-                                reminderDays: LocalNotification.reminderDays,
-                                onCancel: () => Navigator.of(context).pop(),
-                                onSave: (selectedFrequency, selectedHour,
-                                        selectedMinute, selectedDay, period) =>
-                                    setNotification(
-                                        selectedHour,
-                                        selectedFrequency,
-                                        selectedMinute,
-                                        selectedDay,
-                                        period,
-                                        Provider.of<PrayerProvider>(context,
-                                                listen: false)
-                                            .currentPrayer),
-                                selectedDay: LocalNotification.reminderDays
-                                        .indexOf(reminder.selectedDay) +
-                                    1,
-                                selectedFrequency: reminder.frequency,
-                                selectedHour: int.parse(reminder.selectedHour),
-                                selectedMinute:
-                                    int.parse(reminder.selectedMinute),
-                                selectedPeriod: reminder.period,
-                              );
+                              return _buildMenu();
                             },
                           ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.bestill_reminder,
-                                size: 14,
-                                color: AppColors.lightBlue5,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  reminderString,
-                                  style: TextStyle(
-                                    color: AppColors.lightBlue5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Container(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
+            if (prayerData.userPrayer.isSnoozed)
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                InkWell(
+                  onTap: () => showDialog(
+                    context: context,
+                    barrierColor:
+                        AppColors.detailBackgroundColor[1].withOpacity(0.5),
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        insetPadding: EdgeInsets.all(20),
+                        backgroundColor: AppColors.prayerCardBgColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: AppColors.darkBlue),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 30),
+                              child: ReminderPicker(
+                                type: NotificationType.reminder,
+                                reminder: _reminder,
+                                hideActionuttons: false,
+                                onCancel: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        AppIcons.snooze,
+                        size: 12,
+                        color: AppColors.lightBlue5,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 7),
+                        child: Text(
+                            'Snoozed until ${DateFormat('MMM').format(prayerData.userPrayer.snoozeEndDate)} ${getDayText(prayerData.userPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.userPrayer.snoozeEndDate)}',
+                            style: AppTextStyles.regularText12),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 20),
+              ]),
+            hasReminder
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () => showDialog(
+                          context: context,
+                          barrierColor: AppColors.detailBackgroundColor[1]
+                              .withOpacity(0.5),
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              insetPadding: EdgeInsets.all(20),
+                              backgroundColor: AppColors.prayerCardBgColor,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: AppColors.darkBlue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 30),
+                                    child: ReminderPicker(
+                                      type: NotificationType.reminder,
+                                      reminder: _reminder,
+                                      hideActionuttons: false,
+                                      onCancel: () =>
+                                          Navigator.of(context).pop(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              AppIcons.bestill_reminder,
+                              size: 12,
+                              color: AppColors.lightBlue5,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 7),
+                              child: Text(reminderString,
+                                  style: AppTextStyles.regularText12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                    ],
+                  )
+                : Container(),
+            SizedBox(height: 10),
             Expanded(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  // gradient: LinearGradient(
-                  //   begin: Alignment.topCenter,
-                  //   end: Alignment.bottomCenter,
                   color: AppColors.prayerDetailsBgColor,
-                  // ),
                   border: Border.all(
                     color: AppColors.cardBorder,
                     width: 1,
@@ -296,27 +302,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     : NoUpdateView(),
               ),
             ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: AppColors.lightBlue3,
-              ),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                barrierColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                backgroundColor:
-                    AppColors.detailBackgroundColor[1].withOpacity(1),
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return _buildMenu();
-                },
-              ),
-            ),
+            SizedBox(
+              height: 30,
+            )
           ],
-          // ),
         ),
-        // endDrawer: CustomDrawer(),
       ),
     );
   }

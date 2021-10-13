@@ -12,34 +12,14 @@ class PrayerFilters extends StatefulWidget {
 }
 
 class _PrayerFiltersState extends State<PrayerFilters> {
-  // List<String> options = [];
   String errorMessage = '';
   void setOption(status) async {
     errorMessage = '';
 
-    // if (options.contains(status)) {
-    //   if (options.length > 1)
-    //     options.remove(status);
-    //   else
-    //     errorMessage = 'At least one filter must be selected';
-    // } else {
-    //   options.add(status);
-    // }
-
     Provider.of<PrayerProvider>(context, listen: false)
         .setPrayerFilterOptions(status);
     Provider.of<PrayerProvider>(context, listen: false).filterPrayers();
-    // if (status == Status.archived) {
-    //   Provider.of<PrayerProvider>(context, listen: false)
-    //       .filterPrayers();
-    // } else {
-    //   Provider.of<PrayerProvider>(context, listen: false)
-    //       .filterPrayers(settings.defaultSortBy);
-    // }
     String heading =
-        // options.length > 1 || options.length == 0
-        //     ? 'MY PRAYERS'
-        //     :
         '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
     await Provider.of<MiscProvider>(context, listen: false)
         .setPageTitle(heading);

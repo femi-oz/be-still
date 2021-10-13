@@ -2,7 +2,6 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class _FindAGroupState extends State<FindAGroup> {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -53,6 +52,7 @@ class _FindAGroupState extends State<FindAGroup> {
                       child: IgnorePointer(
                         child: CustomInput(
                           controller: null,
+                          textkey: GlobalKey<FormFieldState>(),
                           label: 'Start your Search',
                           padding: 5.0,
                           showSuffix: false,
@@ -63,6 +63,7 @@ class _FindAGroupState extends State<FindAGroup> {
                 : Container(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: CustomInput(
+                      textkey: GlobalKey<FormFieldState>(),
                       controller: _searchController,
                       label: 'Start your Search',
                       padding: 5.0,
@@ -133,8 +134,6 @@ class _FindAGroupState extends State<FindAGroup> {
                           ),
                         ),
                         SizedBox(height: 30.0),
-                        // for (int i = 0; i < _filteredGroups.length; i++)
-                        //   GroupCard(_filteredGroups[i]),
                         Padding(
                           padding: EdgeInsets.only(left: 20.0),
                           child: Column(

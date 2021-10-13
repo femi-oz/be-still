@@ -10,22 +10,7 @@ class StringUtils {
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
       'You have to be recently logged in the perform this action. Please re-login';
-  static String backgroundImage([bool isDarkMode]) {
-    String retVal;
-    switch (Settings.isDarkMode) {
-      case true:
-        retVal = 'assets/images/background-pattern-dark.png';
-        break;
-      case false:
-        retVal = 'assets/images/bestill_arrows-bg-lt.png';
-        break;
-      default:
-        retVal = 'assets/images/bestill_arrows-bg-lt.png';
-
-        break;
-    }
-    return retVal;
-  }
+  static String backgroundImage = 'assets/images/bestill_arrows-bg-lt.png';
 
   static String drawerBackgroundImage([bool isDarkMode]) {
     String retVal;
@@ -49,8 +34,23 @@ class StringUtils {
   static String backText = "Go Back";
   static String copyRight1 = '$year All Rights Reserved';
   static String copyRight2 =
-      "BeStill is a ministry of Second Baptist Church Houston, TX";
-
+      "Be Still is a ministry of Second Baptist Church Houston, TX";
+  static String quickTipWelcome =
+      "Here\'s a quick tour that will get you started.\n\nThe Be Still app can organize all your prayers and lead you through your own personal prayer time.\n\nYou can add prayers to your prayer list, add updates, mark prayers as answered, and access online Bibles and devotionals.\n\nTap ";
+  static String quickTipWelcome2 =
+      " to begin the tour, or close this window to begin using Be Still right away.";
+  static String quickTipList =
+      " at any time to view all the prayers in your current prayer list.";
+  static String quickTipQuickAccess =
+      "You can swipe right or left on any prayer in your prayer list to display common actions.";
+  static String quickTipFilters =
+      " to toggle between prayer statuses on your list.";
+  static String quickTipAdd =
+      " to create a new prayer and add it to your prayer list.";
+  static String quickTipPray =
+      "Tap the Be Still logo to view your prayers one at a time in a distraction-free zone during your prayer time.";
+  static String quickTipMore =
+      " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
   static generateExceptionMessage(exceptionCode) {
     String errorMessage;
     switch (exceptionCode) {
@@ -63,6 +63,10 @@ class StringUtils {
         break;
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";
+        break;
+      case ErrorType.notAvailable:
+        errorMessage =
+            "Finger Print / Face ID is not supported on your device.";
         break;
       case ErrorType.userNotFound:
         errorMessage = "User with this email doesn't exist.";
@@ -82,7 +86,7 @@ class StringUtils {
         break;
       case ErrorType.userNotVerified:
         errorMessage =
-            "You email address has not been verified. Please verify and try again";
+            "Your email address has not been verified. Please verify and try again";
         break;
       default:
         errorMessage = "The application has encountered an error.";

@@ -13,11 +13,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function switchSearchMode;
   final bool isSearchMode;
   final bool showPrayerActions;
+  final GlobalKey globalKey;
   CustomAppBar({
     Key key,
     this.switchSearchMode,
     this.isSearchMode = false,
     this.showPrayerActions = true,
+    this.globalKey,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -29,51 +31,42 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  final TextEditingController searchController = TextEditingController();
-  void _searchPrayer(String value) async {
-    // var options =
-    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-    var userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    // if (options.contains(Status.archived)) {
-    //   await Provider.of<PrayerProvider>(context, listen: false).searchPrayers(
-    //       value,
-    //       Provider.of<SettingsProvider>(context, listen: false)
-    //           .settings
-    //           .archiveSortBy,
-    //       userId);
-    // } else {
+  TextEditingController _searchController = TextEditingController();
+  final _searchKey = GlobalKey();
 
-    // }
-    //
+  void _searchPrayer(String value) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
         .searchPrayers(value, userId);
   }
 
   void _clearSearchField() async {
-    searchController.clear();
+    _searchController.clear();
     _searchPrayer('');
   }
 
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      setState(() {
+        if (searchQuery != '') {
+          _searchController.text = searchQuery;
+        }
+      });
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   _openFilter(bool isDark) {
-    // showModalBottomSheet(
-    //   context: context,
-    //   barrierColor: AppColors.addPrayerBg.withOpacity(0.8),
-    //   backgroundColor: AppColors.darkMode
-    //       ? AppColors.addPrayerBg.withOpacity(0.8)
-    //       : AppColors.offWhite4.withOpacity(0.8),
-    //   isScrollControlled: true,
-    //   builder: (BuildContext context) {
-    //     return PrayerFilters();
-    //   },
-    // );
-    //
-    // BeStilDialog.showConfirmDialog(context,
-    //     message: 'This feature will be available soon.');
-    //
-    Dialog dialog = Dialog(
-        // actionsPadding: EdgeInsets.all(0),
-        // contentPadding: EdgeInsets.all(0),
+    final dialog = Dialog(
         insetPadding: EdgeInsets.all(40),
         backgroundColor: AppColors.prayerCardBgColor,
         shape: RoundedRectangleBorder(
@@ -93,8 +86,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    // List<PushNotificationModel> notifications =
-    //     Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
@@ -107,108 +98,107 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       centerTitle: true,
-      leadingWidth: 100,
+      leadingWidth: widget.showPrayerActions && !widget.isSearchMode ? 100 : 53,
       leading: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(width: 20),
           widget.showPrayerActions
-              ? GestureDetector(
+              ? InkWell(
                   onTap: () {
-                    widget.switchSearchMode(true);
-                    setState(() {});
+                    if (_searchController.text.isEmpty) {
+                      widget.switchSearchMode(true);
+                      Provider.of<MiscProvider>(context, listen: false)
+                          .setSearchMode(true);
+                      setState(() {});
+                    } else {
+                      _searchPrayer(_searchController.text);
+                    }
                   },
-                  child: Icon(
-                    AppIcons.bestill_search,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: Center(
+                      child: Icon(
+                        AppIcons.bestill_search,
+                        color: AppColors.bottomNavIconColor,
+                        size: 18,
+                      ),
+                    ),
                   ),
                 )
               : Container(),
-          SizedBox(width: 15),
-          widget.showPrayerActions
-              ? GestureDetector(
+          widget.showPrayerActions && !widget.isSearchMode
+              ? SizedBox(width: 5)
+              : Container(),
+          widget.showPrayerActions && !widget.isSearchMode
+              ? InkWell(
                   onTap: () => _openFilter(Settings.isDarkMode),
-                  child: Icon(
-                    AppIcons.bestill_tools,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: Center(
+                      child: Icon(
+                        AppIcons.bestill_tools,
+                        key: widget.globalKey,
+                        color: AppColors.bottomNavIconColor,
+                        size: 18,
+                      ),
+                    ),
                   ),
                 )
               : Container(),
-          // SizedBox(width: 15),
-          // InkWell(
-          //     onTap: () => null,
-          //     // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-          //     child: Icon(
-          //       Icons.notifications_none,
-          //       color: AppColors.white,
-          //     )
-          //     //notifications.length == 0
-          //     // ? Icon(
-          //     //     AppIcons.bestill_notifications,
-          //     //     color: AppColors.bottomNavIconColor,
-          //     //     size: 18,
-          //     //   )
-          //     // : Stack(
-          //     //     alignment: Alignment.center,
-          //     //     children: [
-          //     //       Icon(
-          //     //         AppIcons.bestill_notifications,
-          //     //         color: AppColors.red,
-          //     //         size: 18,
-          //     //       ),
-          //     //       Text(
-          //     //         notifications.length.toString(),
-          //     //         style: TextStyle(
-          //     //           color: Colors.white,
-          //     //           fontSize: 11,
-          //     //         ),
-          //     //         textAlign: TextAlign.center,
-          //     //       ),
-          //     //     ],
-          //     //   ),
-          //     ),
-          // SizedBox(width: 15),
         ],
       ),
       title: widget.isSearchMode
-          ? Row(
-              children: [
-                Expanded(
-                  // child: Form(
-                  //   key: widget.formKey,
-                  // autovalidateMode: AutovalidateMode.disabled,
-                  child: CustomInput(
-                    controller: searchController,
-                    label: 'Search',
-                    padding: 5.0,
-                    showSuffix: false,
-                    textInputAction: TextInputAction.done,
-                    onTextchanged: _searchPrayer,
+          ? Container(
+              width: MediaQuery.of(context).size.width * 2,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomInput(
+                      controller: _searchController,
+                      label: 'Search',
+                      padding: 5.0,
+                      showSuffix: false,
+                      textInputAction: TextInputAction.done,
+                      isSearch: true,
+                      textkey: _searchKey,
+                      unfocus: true,
+                    ),
                   ),
-                  // ),
-                ),
-                SizedBox(width: 10),
-                InkWell(
-                  child: Icon(
-                    AppIcons.bestill_close,
-                    color: AppColors.bottomNavIconColor,
-                    size: 18,
-                  ),
-                  onTap: () => setState(
-                    () {
-                      _clearSearchField();
-                      widget.switchSearchMode(false);
-                      setState(() {});
-                    },
-                  ),
-                )
-              ],
+                  SizedBox(width: 10),
+                  InkWell(
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: Center(
+                        child: Icon(
+                          AppIcons.bestill_close,
+                          color: AppColors.bottomNavIconColor,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    onTap: () => setState(
+                      () {
+                        _clearSearchField();
+                        widget.switchSearchMode(false);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchMode(false);
+                        Provider.of<MiscProvider>(context, listen: false)
+                            .setSearchQuery('');
+
+                        setState(() {});
+                      },
+                    ),
+                  )
+                ],
+              ),
             )
           : Text(
-              pageTitle,
+              widget.showPrayerActions ? pageTitle : '',
               style: TextStyle(
                 color: AppColors.bottomNavIconColor,
                 fontSize: 32,
@@ -217,27 +207,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.notifications_none,
-            color: AppColors.white,
-          ),
-          onPressed: null,
-        )
-        // Builder(
-        //   builder: (BuildContext context) {
-        //     return IconButton(
-        //       icon: Icon(
-        //         AppIcons.bestill_main_menu,
-        //         size: 18,
-        //         color: AppColors.bottomNavIconColor,
-        //       ),
-        //       onPressed: () {
-        //         Scaffold.of(context).openEndDrawer();
-        //       },
-        //     );
-        //   },
-        // ),
+        !widget.isSearchMode
+            ? IconButton(
+                icon: Icon(
+                  Icons.notifications_none,
+                  color: AppColors.white,
+                ),
+                onPressed: null,
+              )
+            : Container(),
       ],
     );
   }

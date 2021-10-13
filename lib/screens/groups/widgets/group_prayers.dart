@@ -1,7 +1,7 @@
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/groups/widgets/group_quick_access.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -9,12 +9,9 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../entry_screen.dart';
 
 class GroupPrayers extends StatefulWidget {
   @override
@@ -23,11 +20,8 @@ class GroupPrayers extends StatefulWidget {
 
 class _GroupPrayersState extends State<GroupPrayers> {
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 1),
-            ))) ??
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;
   }
 
@@ -40,7 +34,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: CustomAppBar(),
-        endDrawer: CustomDrawer(),
         body: Container(
           padding: EdgeInsets.only(left: 20),
           height: MediaQuery.of(context).size.height * 1,
@@ -51,8 +44,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image:
-                  AssetImage(StringUtils.backgroundImage(Settings.isDarkMode)),
+              image: AssetImage(StringUtils.backgroundImage),
               alignment: Alignment.bottomCenter,
             ),
           ),
@@ -78,29 +70,13 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                       await Provider.of<PrayerProvider>(context,
                                               listen: false)
                                           .setPrayer(e.userPrayer.id);
-                                      Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new PrayerDetails(),
-                                        ),
-                                      );
-                                    },
-                                    onLongPressEnd:
-                                        (LongPressEndDetails details) {
-                                      var y = details.globalPosition.dy;
-                                      showModalBottomSheet(
-                                        context: context,
-                                        barrierColor: AppColors.addPrayerBg
-                                            .withOpacity(0.5),
-                                        backgroundColor: AppColors.addPrayerBg
-                                            .withOpacity(0.9),
-                                        isScrollControlled: true,
-                                        builder: (BuildContext context) {
-                                          return GroupPrayerQuickAccess(
-                                              y: y, prayer: e);
-                                        },
-                                      );
+                                      // Navigator.push(
+                                      //   context,
+                                      //   new MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         new PrayerDetails(),
+                                      //   ),
+                                      // );
                                     },
                                     child: PrayerCard(
                                       prayerData: e,

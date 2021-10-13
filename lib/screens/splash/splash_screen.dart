@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -33,8 +33,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    print(
-        'message -- splash init ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
     _textAnimationController =
         AnimationController(vsync: this, duration: Duration(seconds: 3))
           ..repeat();
@@ -63,7 +61,19 @@ class _SplashScreenState extends State<SplashScreen>
     return new Timer(duration, () => route());
   }
 
+  void _getPermissions() async {
+    try {
+      if (Settings.isAppInit) {
+        await Permission.contacts.request().then((p) =>
+            Settings.enabledContactPermission = p == PermissionStatus.granted);
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(context, e, null, s);
+    }
+  }
+
   Future<void> setRouteDestination() async {
+    _getPermissions();
     var message =
         Provider.of<NotificationProvider>(context, listen: false).message;
     if (message != null) {
@@ -71,16 +81,19 @@ class _SplashScreenState extends State<SplashScreen>
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerTime());
+          Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
         }
         if (message.type == NotificationType.prayer) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId);
-          NavigationService.instance.navigateToReplacement(PrayerDetails());
         }
       });
       Provider.of<NotificationProvider>(context, listen: false).clearMessage();
     } else {
+      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     }
@@ -92,9 +105,8 @@ class _SplashScreenState extends State<SplashScreen>
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (Settings.enableLocalAuth) {
         Navigator.of(context).pushNamedAndRemoveUntil(
-          LoginScreen.routeName,
-          (Route<dynamic> route) => false,
-        );
+            LoginScreen.routeName, (Route<dynamic> route) => false,
+            arguments: true);
       } else {
         if (Settings.rememberMe) {
           if (isLoggedIn) {
@@ -103,24 +115,21 @@ class _SplashScreenState extends State<SplashScreen>
             await setRouteDestination();
           } else {
             Navigator.of(context).pushNamedAndRemoveUntil(
-              LoginScreen.routeName,
-              (Route<dynamic> route) => false,
-            );
+                LoginScreen.routeName, (Route<dynamic> route) => false,
+                arguments: true);
           }
         } else {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName,
-            (Route<dynamic> route) => false,
-          );
+              LoginScreen.routeName, (Route<dynamic> route) => false,
+              arguments: true);
         }
       }
     } catch (e) {
       Navigator.of(context).pushNamedAndRemoveUntil(
-        LoginScreen.routeName,
-        (Route<dynamic> route) => false,
-      );
+          LoginScreen.routeName, (Route<dynamic> route) => false,
+          arguments: true);
     }
   }
 

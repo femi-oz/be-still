@@ -1,17 +1,19 @@
-import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
-import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RecommenededBibles extends StatefulWidget {
+  final Function setCurrentIndex;
+  RecommenededBibles(this.setCurrentIndex);
   static const routeName = 'recommended-bible';
 
   @override
@@ -19,35 +21,24 @@ class RecommenededBibles extends StatefulWidget {
 }
 
 class _RecommenededBiblesState extends State<RecommenededBibles> {
-  bool _isInit = true;
+  final _scrollController = new ScrollController();
+
   @override
   void didChangeDependencies() {
-    if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle('');
-        _getBibles();
-      });
-      setState(() => _isInit = false);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId);
+    });
     super.didChangeDependencies();
   }
 
-  _getBibles() async {
-    await BeStilDialog.showLoading(context, '');
-    try {
-      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e) {
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message);
-    } catch (e) {
-      BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.toString());
-    }
-  }
-
-  _launchURL(url) async {
+  Future<void> _launchURL(url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -55,87 +46,112 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     }
   }
 
-  ScrollController _scrollController = new ScrollController();
+  Future<bool> _onWillPop() async {
+    widget.setCurrentIndex(0, true);
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SettingsAppBar(title: ''),
-      endDrawer: CustomDrawer(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: AppColors.backgroundColor,
-          ),
-        ),
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage()),
-                alignment: Alignment.bottomCenter,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage),
+                  alignment: Alignment.bottomCenter,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            child: Column(
-              children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.all(20.0),
-                //   child: Align(
-                //     alignment: Alignment.centerLeft,
-                //     child: TextButton.icon(
-                //       style: ButtonStyle(
-                //         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                //             EdgeInsets.zero),
-                //       ),
-                //       icon: Icon(
-                //         AppIcons.bestill_back_arrow,
-                //         color: AppColors.lightBlue3,
-                //         size: 20,
-                //       ),
-                //       onPressed: () => Navigator.pushReplacement(
-                //         context,
-                //         PageTransition(
-                //           type: PageTransitionType.rightToLeftWithFade,
-                //           child: EntryScreen(screenNumber: 3),
-                //         ),
-                //       ),
-                //       // Navigator.popUntil(
-                //       //     context, ModalRoute.withName(EntryScreen.routeName)),
-                //       label: Text(
-                //         'BACK',
-                //         style: AppTextStyles.boldText20.copyWith(
-                //           color: AppColors.lightBlue3,
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: Text(
-                    'Recommended Bibles',
-                    style: AppTextStyles.boldText24
-                        .copyWith(color: AppColors.blueTitle),
-                    textAlign: TextAlign.center,
+              child: Container(
+                padding: EdgeInsets.only(top: 40),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.backgroundColor[0].withOpacity(0.85),
+                      AppColors.backgroundColor[1].withOpacity(0.7),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 40.0, horizontal: 40.0),
-                  child: Text(
-                    'Consider the following reading plans available in the Bible app to supplement your prayer time.',
-                    style: AppTextStyles.regularText16b
-                        .copyWith(color: AppColors.prayerTextColor),
-                    textAlign: TextAlign.left,
-                  ),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: <Widget>[
+                          TextButton.icon(
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                      EdgeInsets.zero),
+                            ),
+                            icon: Icon(
+                              AppIcons.bestill_back_arrow,
+                              color: AppColors.lightBlue3,
+                              size: 20,
+                            ),
+                            // onPressed: () => widget.setCurrentIndex(0, true),
+                            onPressed: () =>
+                                Scaffold.of(context).openEndDrawer(),
+                            label: Container(
+                              width: 70,
+                              child: Text(
+                                'BACK',
+                                style: AppTextStyles.boldText20.copyWith(
+                                  color: AppColors.lightBlue3,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                      child: Text(
+                        'Recommended Bibles',
+                        style: AppTextStyles.boldText24
+                            .copyWith(color: AppColors.blueTitle),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'Prayer is a conversation with God. The primary way God speaks to us is through his written Word, the Bible. ',
+                              style: AppTextStyles.regularText16b
+                                  .copyWith(color: AppColors.prayerTextColor),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'The first step in growing your prayer life is to learn God’s voice through reading his Word. Selecting the correct translation of the Bible is important to understanding what God is saying to you.',
+                              style: AppTextStyles.regularText16b
+                                  .copyWith(color: AppColors.prayerTextColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    _buildPanel(),
+                  ],
                 ),
-                _buildPanel(),
-              ],
+              ),
             ),
           ),
         ),
@@ -144,11 +160,11 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   }
 
   Widget _buildPanel() {
-    var bibleData = Provider.of<DevotionalProvider>(context).bibles;
-    bibleData.sort((a, b) => a.name.compareTo(b.name));
+    final bibleData = Provider.of<DevotionalProvider>(context).bibles;
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(
+        padding: EdgeInsets.only(top: 35, bottom: 200),
         child: Column(
           children: <Widget>[
             for (int i = 0; i < bibleData.length; i++)
@@ -166,7 +182,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                       bibleData[i].shortName,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.boldText20.copyWith(
-                        color: Color(0xFFffffff),
+                        color: AppColors.white,
                       ),
                     ),
                   ),

@@ -30,8 +30,8 @@ class AuthenticationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> biometricSignin() async {
-    await _authService.biometricAuthentication();
+  Future<bool> biometricSignin(String email) async {
+    return await _authService.biometricAuthentication(email);
   }
 
   Future<void> registerUser({

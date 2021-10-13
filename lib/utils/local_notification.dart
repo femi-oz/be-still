@@ -3,6 +3,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -11,7 +12,7 @@ class LocalNotification {
       FlutterLocalNotificationsPlugin();
   static String reminderId;
   static int localNotificationID;
-  static List<String> reminderDays = [
+  static List<String> daysOfWeek = [
     DaysOfWeek.mon,
     DaysOfWeek.tue,
     DaysOfWeek.wed,
@@ -20,13 +21,15 @@ class LocalNotification {
     DaysOfWeek.sat,
     DaysOfWeek.sun,
   ];
-  static List<String> reminderInterval = [
-    // 'Hourly',
+
+  static List<String> frequency = [
+    Frequency.one_time,
     Frequency.daily,
     Frequency.weekly,
-    // 'Monthly',
-    // 'Yearly'
   ];
+
+  static List<String> months = new List<String>.generate(12,
+      (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
     final _localNotifications =
@@ -87,9 +90,11 @@ class LocalNotification {
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents:
-          frequency.toString().toLowerCase() == Frequency.daily.toLowerCase()
-              ? DateTimeComponents.time
+      matchDateTimeComponents: frequency.toString().toLowerCase() ==
+              Frequency.daily.toLowerCase()
+          ? DateTimeComponents.time
+          : frequency.toString().toLowerCase() == Frequency.daily.toLowerCase()
+              ? null
               : DateTimeComponents.dayOfWeekAndTime,
     );
   }
@@ -104,16 +109,29 @@ class LocalNotification {
   }
 
   static tz.TZDateTime scheduleDate(
-      selectedHour, selectedMinute, selectedDay, period) {
-    var day = reminderDays.indexOf(selectedDay) + 1;
-    var hour = period == PeriodOfDay.am ? selectedHour : selectedHour + 12;
+    int selectedHour,
+    int selectedMinute,
+    int selectedDay,
+    String period,
+    int selectedYear,
+    String selectedMonth,
+    int selectedDayOfMonth,
+    bool isOneTime,
+  ) {
+    int hour = selectedHour;
     if (period == PeriodOfDay.am && selectedHour == 12)
       hour = 00;
     else if (period == PeriodOfDay.pm && selectedHour == 12) hour = 12;
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, _getExactDy(day), hour, selectedMinute);
-    if (scheduledDate.isBefore(now)) {
+      tz.local,
+      isOneTime ? selectedYear : now.year,
+      isOneTime ? months.indexOf(selectedMonth) + 1 : now.month,
+      isOneTime ? selectedDayOfMonth : _getExactDy(selectedDay),
+      hour,
+      selectedMinute,
+    );
+    if (scheduledDate.isBefore(now) && !isOneTime) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;

@@ -32,7 +32,7 @@ class SharingSettingsModel {
     @required this.modifiedOn,
   });
 
-  SharingSettingsModel.fromData(DocumentSnapshot snapshot)
+  SharingSettingsModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()["UserId"],
         enableSharingViaEmail = snapshot.data()["EnableSharingViaEmail"],

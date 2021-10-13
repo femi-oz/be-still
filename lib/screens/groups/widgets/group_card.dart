@@ -22,7 +22,6 @@ class _GroupCardState extends State<GroupCard> {
   @override
   void initState() {
     super.initState();
-    // you can use this.widget.foo here
   }
 
   _joinGroupInvite(String groupId, String userId, String userName) async {
@@ -36,7 +35,6 @@ class _GroupCardState extends State<GroupCard> {
       BeStilDialog.showSnackBar(_key, 'Request has been sent');
     } catch (e) {
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e.message.toString());
     }
   }
 
@@ -45,7 +43,6 @@ class _GroupCardState extends State<GroupCard> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      // _getGroups();
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -56,7 +53,6 @@ class _GroupCardState extends State<GroupCard> {
     setState(() => this.bcontext = context);
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
 
-    // return Container();
     void _showAlert() {
       FocusScope.of(context).unfocus();
       AlertDialog dialog = AlertDialog(
@@ -230,8 +226,6 @@ class _GroupCardState extends State<GroupCard> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // Icon(Icons.more_horiz,
-                                //     color: AppColors.lightBlue3),
                                 Text(
                                   'REQUEST',
                                   style: AppTextStyles.boldText20,

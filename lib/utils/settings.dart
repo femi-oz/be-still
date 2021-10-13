@@ -50,10 +50,9 @@ class Settings {
       sharedPrefs.setString(USER_PASSWORD, password);
   static String get userPassword => sharedPrefs.getString(USER_PASSWORD) ?? '';
 
-  static set backgroundTime(String time) =>
-      sharedPrefs.setString(BACKGROUND_TIME, time);
-  static String get backgroundTime =>
-      sharedPrefs.getString(BACKGROUND_TIME) ?? '';
+  static set backgroundTime(int time) =>
+      sharedPrefs.setInt(BACKGROUND_TIME, time);
+  static int get backgroundTime => sharedPrefs.getInt(BACKGROUND_TIME) ?? '';
 
   static set snoozeDuration(String duration) =>
       sharedPrefs.setString(SNOOZE_DURATION, duration);

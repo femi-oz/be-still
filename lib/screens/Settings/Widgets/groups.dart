@@ -48,7 +48,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       ),
       content: Container(
         width: double.infinity,
-        // height: MediaQuery.of(context).size.height * 0.6,
         margin: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -362,7 +361,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
       _emailController.text = '';
     } catch (e) {
-      BeStilDialog.showErrorDialog(context, e.message.toString());
+      // BeStilDialog.showErrorDialog(context, e.message.toString());
     }
   }
 
@@ -939,6 +938,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             child: Column(
                                               children: [
                                                 CustomInput(
+                                                  textkey: GlobalKey<
+                                                      FormFieldState>(),
                                                   label: 'Email Address',
                                                   controller: _emailController,
                                                   isEmail: true,
@@ -1107,7 +1108,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   orElse: () => null)
                               .id;
                           if (id != null) {
-                            await BeStilDialog.showLoading(context, '');
+                            BeStilDialog.showLoading(context, '');
 
                             await Provider.of<GroupProvider>(context,
                                     listen: false)
@@ -1148,7 +1149,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         orElse: () => null)
                                     .id;
                                 if (id != null) {
-                                  await BeStilDialog.showLoading(context, '');
+                                  BeStilDialog.showLoading(context, '');
                                   Provider.of<GroupProvider>(context,
                                           listen: false)
                                       .deleteGroup(id, data.group.id);

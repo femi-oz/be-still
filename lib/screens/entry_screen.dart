@@ -1,216 +1,269 @@
-import 'package:be_still/models/user.model.dart';
+import 'package:be_still/enums/settings_key.dart';
+import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/prayer_list.dart';
+import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
-import 'package:be_still/screens/prayer/prayer_list.dart';
+import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
+import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
+import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class EntryScreen extends StatefulWidget {
   static const routeName = '/entry';
-  final int screenNumber;
-
-  EntryScreen({this.screenNumber = 0});
   @override
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-bool _isSearchMode = false;
+TutorialCoachMark tutorialCoachMark;
 
-class _EntryScreenState extends State<EntryScreen> {
+class _EntryScreenState extends State<EntryScreen>
+    with TickerProviderStateMixin {
   BuildContext bcontext;
   int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  TabController _tabController;
 
-  void _switchSearchMode(bool value) => setState(() => _isSearchMode = value);
-
-  @override
-  void initState() {
-    _currentIndex = widget.screenNumber;
-    _switchSearchMode(false);
-    super.initState();
-  }
+  bool _isSearchMode = false;
+  void _switchSearchMode(bool value) => _isSearchMode = value;
 
   final cron = Cron();
 
-  Future<void> _preLoadData() async {
-    if (Settings.setenableLocalAuth) {
-      setState(() {
-        Settings.enableLocalAuth = true;
-      });
-    } else {
-      setState(() {
-        Settings.enableLocalAuth = false;
-      });
-    }
-
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-    if (userId != null)
-      cron.schedule(Schedule.parse('*/10 * * * *'), () async {
-        Provider.of<PrayerProvider>(context, listen: false)
-            .checkPrayerValidity(userId);
-      });
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    // final options =
-    //     Provider.of<PrayerProvider>(context, listen: false).filterOptions;
-    // final settings =
-    //     Provider.of<SettingsProvider>(context, listen: false).settings;
-    // await Provider.of<PrayerProvider>(context, listen: false).setPrayers(
-    //     _user?.id,
-    //     options.contains(Status.archived) && options.length == 1
-    //         ? settings.archiveSortBy
-    //         : settings.defaultSortBy);
-
-    //load settings
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setPrayerSettings(_user.id);
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
-    Provider.of<SettingsProvider>(context, listen: false)
-        .setSharingSettings(_user.id);
-
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setPrayerTimeNotifications(userId);
-
-    //get all users
-    Provider.of<UserProvider>(context, listen: false).setAllUsers(_user.id);
-
-    // get all push notifications
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setUserNotifications(_user?.id);
-
-    // get all local notifications
-    Provider.of<NotificationProvider>(context, listen: false)
-        .setLocalNotifications(_user.id);
+  initState() {
+    _tabController = new TabController(length: 8, vsync: this);
+    final miscProvider = Provider.of<MiscProvider>(context, listen: false);
+    _currentIndex = miscProvider.currentPage;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (miscProvider.initialLoad) {
+        await _preLoadData();
+        miscProvider.setLoadStatus(false);
+      }
+    });
+    super.initState();
   }
+
+  Future<void> _setCurrentIndex(int index, bool animate) async {
+    //
+    if (animate)
+      _tabController.animateTo(index);
+    else
+      _tabController.index = index;
+    setState(() => _currentIndex = index);
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setCurrentPage(index);
+  }
+
+  Future<void> _preLoadData() async {
+    try {
+      if (Settings.setenableLocalAuth)
+        Settings.enableLocalAuth = true;
+      else
+        Settings.enableLocalAuth = false;
+
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+
+      await _getPrayers();
+      await _getActivePrayers();
+      await _getDevotionals();
+      await _getBibles();
+      //load settings
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setPrayerSettings(userId);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(userId);
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSharingSettings(userId);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setPrayerTimeNotifications(userId);
+
+      //set all users
+      Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
+
+      // get all push notifications
+      Provider.of<NotificationProvider>(context, listen: false)
+          .setUserNotifications(userId);
+
+      // get all local notifications
+      Provider.of<NotificationProvider>(context, listen: false)
+          .setLocalNotifications(userId);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  Future<void> _getActivePrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  Future<void> _getPrayers() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final searchQuery =
+          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerTimePrayers(_user.id);
+      if (searchQuery.isNotEmpty) {
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers(searchQuery, _user.id);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayers(_user?.id);
+      }
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  Future<void> _getDevotionals() async {
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false)
+          .getDevotionals();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  Future<void> _getBibles() async {
+    try {
+      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
+    try {
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeDuration,
+        value: selectedDuration,
+        settingsId: settingsId,
+      );
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .updateSettings(
+        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        key: SettingsKey.defaultSnoozeFrequency,
+        value: selectedInterval,
+        settingsId: settingsId,
+      );
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  GlobalKey _keyButton = GlobalKey();
+  GlobalKey _keyButton2 = GlobalKey();
+  GlobalKey _keyButton3 = GlobalKey();
+  GlobalKey _keyButton4 = GlobalKey();
+  GlobalKey _keyButton5 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
+    final miscProvider = Provider.of<MiscProvider>(context);
+    _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
+
     return Scaffold(
       key: _scaffoldKey,
-      appBar: _currentIndex == 2 || _currentIndex == 3
-          ? null
-          : CustomAppBar(
-              showPrayerActions: _currentIndex == 0,
-              isSearchMode: _isSearchMode,
-              switchSearchMode: (bool val) => _switchSearchMode(val),
-            ),
-      body: FutureBuilder(
-        future: _preLoadData(),
-        initialData: null,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Container(
-                height: double.infinity,
-                child: TabNavigationItem.items[_currentIndex].page);
-          } else
-            return BeStilDialog.getLoading();
-        },
-      ),
-      bottomNavigationBar:
-          _currentIndex == 3 ? null : _createBottomNavigationBar(),
-      endDrawer: CustomDrawer(),
-    );
-  }
-
-  showInfoModal() {
-    // BeStilDialog.showConfirmDialog(context,
-    //     message: 'This feature will be available soon.');
-    //
-    AlertDialog dialog = AlertDialog(
-      actionsPadding: EdgeInsets.all(0),
-      contentPadding: EdgeInsets.all(0),
-      backgroundColor: AppColors.prayerCardBgColor,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.darkBlue),
-        borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
         ),
-      ),
-      content: Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.25,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(bottom: 20),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Text(
-                'This feature will be available soon.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.lightBlue4,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
-                ),
-              ),
-            ),
-            // GestureDetector(
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .60,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'OK',
-                            style: TextStyle(
-                              color: AppColors.lightBlue4,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+        child: miscProvider.initialLoad
+            ? BeStilDialog.getLoading(context)
+            : new TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: [
+                  for (int i = 0; i < getItems().length; i++)
+                    getItems().map((e) => e.page).toList()[i],
                 ],
               ),
-            )
-          ],
-        ),
       ),
+      bottomNavigationBar:
+          _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
+      endDrawer: CustomDrawer(
+        _setCurrentIndex,
+        _keyButton,
+        _keyButton2,
+        _keyButton3,
+        _keyButton4,
+        _keyButton5,
+        _scaffoldKey,
+      ),
+      endDrawerEnableOpenDragGesture: false,
     );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
   }
 
-  Widget _createBottomNavigationBar() {
+  Widget _createBottomNavigationBar(int _currentIndex) {
+    var message = '';
+
     return Builder(builder: (BuildContext context) {
       return Container(
         decoration: BoxDecoration(
@@ -223,88 +276,184 @@ class _EntryScreenState extends State<EntryScreen> {
           ),
         ),
         child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            if (index == 1) {
-              showInfoModal();
-              return;
+          currentIndex: _currentIndex > 4 ? 4 : _currentIndex,
+          onTap: (index) async {
+            switch (index) {
+              case 2:
+                final prayers =
+                    Provider.of<PrayerProvider>(context, listen: false)
+                        .filteredPrayerTimeList;
+                if (prayers.length == 0) {
+                  message =
+                      'You must have at least one active prayer to start prayer time.';
+                  showInfoModal(message, 'PrayerTime', context);
+                } else {
+                  _setCurrentIndex(index, true);
+                }
+                break;
+              case 3:
+                message = 'This feature will be available soon.';
+                showInfoModal(message, 'Group', context);
+                break;
+              case 4:
+                Scaffold.of(context).openEndDrawer();
+                break;
+              default:
+                _setCurrentIndex(index, true);
+                break;
             }
-            if (index == 4) {
-              Scaffold.of(context).openEndDrawer();
-              return;
-            }
-
-            _currentIndex = index;
-            _switchSearchMode(false);
           },
           showSelectedLabels: false,
           showUnselectedLabels: false,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          unselectedItemColor: AppColors.bottomNavIconColor,
+          selectedLabelStyle: AppTextStyles.boldText14
+              .copyWith(color: AppColors.bottomNavIconColor, height: 1.3),
+          unselectedLabelStyle: AppTextStyles.boldText14.copyWith(
+              color: AppColors.bottomNavIconColor.withOpacity(0.5),
+              height: 1.4),
+          unselectedItemColor: AppColors.bottomNavIconColor.withOpacity(0.5),
+          selectedItemColor: AppColors.bottomNavIconColor,
           selectedIconTheme: IconThemeData(color: AppColors.bottomNavIconColor),
           items: [
-            for (final tabItem in TabNavigationItem.items)
-              BottomNavigationBarItem(icon: tabItem.icon, label: tabItem.title)
+            for (final tabItem in getItems().getRange(0, 5))
+              BottomNavigationBarItem(
+                icon: Container(
+                  key: tabItem.key,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      tabItem.icon,
+                      SizedBox(height: tabItem.padding),
+                      Text(
+                        tabItem.title,
+                        style: AppTextStyles.boldText14.copyWith(
+                          color: AppColors.bottomNavIconColor.withOpacity(0.5),
+                          height: 1,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                label: '',
+              )
           ],
         ),
       );
     });
   }
+
+  List<TabNavigationItem> getItems() => [
+        TabNavigationItem(
+          page: PrayerList(
+            _setCurrentIndex,
+            _keyButton,
+            _keyButton2,
+            _keyButton3,
+            _keyButton4,
+            _keyButton5,
+            _isSearchMode,
+            _switchSearchMode,
+          ),
+          icon: Icon(
+            AppIcons.list,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "List",
+          padding: 7,
+          key: _keyButton,
+        ),
+        TabNavigationItem(
+          page: AddPrayer(
+            setCurrentIndex: _setCurrentIndex,
+            isEdit: false,
+            isGroup: false,
+            showCancel: false,
+          ),
+          icon: Icon(
+            AppIcons.bestill_add,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "Add",
+          padding: 8,
+          key: _keyButton2,
+        ),
+        TabNavigationItem(
+          page: PrayerTime(_setCurrentIndex),
+          icon: Icon(
+            AppIcons.bestill_menu_logo_lt,
+            size: 16,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "Pray",
+          padding: 7,
+          key: _keyButton3,
+        ),
+        TabNavigationItem(
+            page: GroupScreen(),
+            icon: Icon(
+              AppIcons.groups,
+              size: 18,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "Groups",
+            padding: 4),
+        TabNavigationItem(
+          page: SettingsScreen(_setDefaultSnooze),
+          icon: Icon(
+            Icons.more_horiz,
+            size: 22,
+            color: AppColors.bottomNavIconColor,
+          ),
+          title: "More",
+          padding: 2,
+          key: _keyButton4,
+        ),
+        TabNavigationItem(
+            page: DevotionPlans(_setCurrentIndex),
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: RecommenededBibles(_setCurrentIndex),
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: PrayerDetails(_setCurrentIndex),
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+      ];
 }
 
 class TabNavigationItem {
   final Widget page;
   final String title;
   final Icon icon;
+  final double padding;
+  final GlobalKey key;
 
   TabNavigationItem({
     @required this.page,
     @required this.title,
     @required this.icon,
+    @required this.padding,
+    this.key,
   });
-
-  static List<TabNavigationItem> get items => [
-        TabNavigationItem(
-          page: PrayerList(),
-          icon: Icon(
-            Icons.home,
-            size: 26,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "prayer",
-        ),
-        TabNavigationItem(
-          page: GroupScreen(),
-          icon: Icon(AppIcons.bestill_groups,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "group",
-        ),
-        TabNavigationItem(
-          page: AddPrayer(
-            isEdit: false,
-            isGroup: false,
-            showCancel: false,
-          ),
-          icon: Icon(AppIcons.bestill_add,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "add prayer",
-        ),
-        TabNavigationItem(
-          page: PrayerTime(),
-          icon: Icon(AppIcons.bestill_menu_logo_lt,
-              size: 18, color: AppColors.bottomNavIconColor),
-          title: "grow my prayer life",
-        ),
-        TabNavigationItem(
-          page: null,
-          icon: Icon(
-            AppIcons.bestill_main_menu,
-            size: 18,
-            color: AppColors.bottomNavIconColor,
-          ),
-          title: "Main Menu",
-        ),
-      ];
 }

@@ -7,8 +7,8 @@ class SettingsModel {
   final String deviceId;
   final String appearance;
   final String defaultSortBy;
-  final String defaultSnoozeDuration;
-  final int defaultSnoozeDurationMins;
+  final String defaultSnoozeFrequency;
+  final int defaultSnoozeDuration;
   final String archiveSortBy;
   final String archiveAutoDelete;
   final int archiveAutoDeleteMins;
@@ -18,7 +18,6 @@ class SettingsModel {
   final bool allowTextNotification;
   final bool allowAlexaReadPrayer;
   final bool emailUpdateNotification;
-  // final String emailUpdateFrequency;
   final int emailUpdateFrequencyMins;
   final bool notifyMeSomeoneSharePrayerWithMe;
   final bool notifyMeSomeonePostOnGroup;
@@ -36,8 +35,8 @@ class SettingsModel {
     @required this.deviceId,
     @required this.appearance,
     @required this.defaultSortBy,
+    @required this.defaultSnoozeFrequency,
     @required this.defaultSnoozeDuration,
-    @required this.defaultSnoozeDurationMins,
     @required this.pauseInterval,
     @required this.archiveSortBy,
     @required this.archiveAutoDelete,
@@ -46,7 +45,6 @@ class SettingsModel {
     @required this.allowPushNotification,
     @required this.allowTextNotification,
     @required this.allowAlexaReadPrayer,
-    // @required this.emailUpdateFrequency,
     @required this.emailUpdateFrequencyMins,
     @required this.emailUpdateNotification,
     @required this.notifyMeSomeonePostOnGroup,
@@ -60,16 +58,16 @@ class SettingsModel {
     @required this.modifiedOn,
   });
 
-  SettingsModel.fromData(DocumentSnapshot snapshot)
+  SettingsModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         deviceId = snapshot.data()['DeviceId'],
         appearance = snapshot.data()['Appearance'],
         pauseInterval = snapshot.data()['PauseInterval'],
         defaultSortBy = snapshot.data()['DefaultSortBy'],
-        defaultSnoozeDuration = snapshot.data()['DefaultSnoozeDuration'],
-        defaultSnoozeDurationMins =
-            snapshot.data()['DefaultSnoozeDurationMins'] ?? 30,
+        defaultSnoozeFrequency = snapshot.data()['DefaultSnoozeFrequency'],
+        defaultSnoozeDuration =
+            snapshot.data()['DefaultSnoozeDurationValue'] ?? 15,
         archiveSortBy = snapshot.data()['ArchiveSortBy'],
         archiveAutoDelete = snapshot.data()['ArchiveAutoDelete'],
         archiveAutoDeleteMins = snapshot.data()['ArchiveAutoDeleteMins'] ?? 30,
@@ -78,7 +76,6 @@ class SettingsModel {
         allowPushNotification = snapshot.data()['AllowPushNotification'],
         allowTextNotification = snapshot.data()['AllowTextNotification'],
         allowAlexaReadPrayer = snapshot.data()['AllowAlexaReadPrayer'],
-        // emailUpdateFrequency = snapshot.data()['EmailUpdateFrequency'],
         emailUpdateFrequencyMins = snapshot.data()['EmailUpdateFrequencySecs'],
         emailUpdateNotification = snapshot.data()['EmailUpdateNotification'],
         notifyMeSomeonePostOnGroup =
@@ -101,8 +98,8 @@ class SettingsModel {
       'Appearance': appearance,
       'DefaultSortBy': defaultSortBy,
       'PauseInterval': pauseInterval,
-      'DefaultSnoozeDuration': defaultSnoozeDuration,
-      'DefaultSnoozeDurationMins': defaultSnoozeDurationMins,
+      'DefaultSnoozeFrequency': defaultSnoozeFrequency,
+      'DefaultSnoozeDurationValue': defaultSnoozeDuration,
       'ArchiveSortBy': archiveSortBy,
       'ArchiveAutoDelete': archiveAutoDelete,
       'ArchiveAutoDeleteMins': archiveAutoDeleteMins,
@@ -111,7 +108,6 @@ class SettingsModel {
       'AllowPushNotification': allowPushNotification,
       'AllowTextNotification': allowTextNotification,
       'EmailUpdateNotification': emailUpdateNotification,
-      // 'EmailUpdateFrequency': emailUpdateFrequency,
       'EmailUpdateFrequencySecs': emailUpdateFrequencyMins,
       'NotifyMeSomeonePostOnGroup': notifyMeSomeonePostOnGroup,
       'NotifyMeSomeoneSharePrayerWithMe': notifyMeSomeoneSharePrayerWithMe,

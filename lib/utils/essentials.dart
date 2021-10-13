@@ -59,6 +59,15 @@ class AppColors {
   static Color get inactvePrayerMenu =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
 
+  static Color get tabBackground =>
+      getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF005780);
+
+  static Color get inactveTabMenu =>
+      getColor(darkMode, light: 0xFF718B92, dark: 0xB3FFFFFF);
+
+  static Color get actveTabMenu =>
+      getColor(darkMode, light: 0xFF009FD0, dark: 0xFF009FD0);
+
   static Color get textFieldBackgroundColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF022F52);
   static Color get appBarColor =>
@@ -76,6 +85,8 @@ class AppColors {
       getColor(darkMode, light: 0xFF9BD4E5, dark: 0xFF025584);
   static Color get cardBorder =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF004E75);
+  static Color get slideBorder =>
+      getColor(darkMode, light: 0xFFEDEFF0, dark: 0xFF004E75);
   static Color get divider =>
       getColor(darkMode, light: 0xFF0D1319, dark: 0xFF005780);
   static Color get textFieldText =>
@@ -84,7 +95,7 @@ class AppColors {
       getColor(darkMode, light: 0xFFB4E3F1, dark: 0xFF014C73);
   static Color get prayeModeBg =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0xFF0D1319);
-  static Color get prayeModeBorder =>
+  static Color get prayerModeBorder =>
       getColor(darkMode, light: 0xFF009FD0, dark: 0xFF005882);
   static Color get splashTextColor =>
       getColor(darkMode, light: 0xFF005780, dark: 0xFF00ACD8);
@@ -114,8 +125,6 @@ class AppColors {
       getColor(darkMode, light: 0xFF004E75, dark: 0xFF004E75);
   static Color get blueTitle =>
       getColor(darkMode, light: 0xFF003B87, dark: 0xFF00ACD8);
-  // static Color get growMyPrayerText =>
-  //     getColor(darkMode, light: 0xFF002D4B, dark: 0xFFC1C5C8);
 
   static const List<Color> customLogoShaperadient = [
     const Color(0xFF005177),
@@ -155,21 +164,23 @@ class AppColors {
 }
 
 class AppTextStyles {
-  // new fonts region
-  // medium => w400, demi => w500, bold => w700, regular=> w300
   static TextStyle get medium10 => const TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
       );
 
-  // end region
-
   static const TextStyle regularText11 = const TextStyle(
     color: AppColors.lightBlue4,
     fontSize: 11,
     fontWeight: FontWeight.w300,
     letterSpacing: 0.5,
+  );
+  static const TextStyle regularText12 = const TextStyle(
+    color: AppColors.lightBlue5,
+    fontSize: 13,
+    fontWeight: FontWeight.w300,
+    letterSpacing: 0,
   );
   static const TextStyle regularText13 = const TextStyle(
     color: AppColors.lightBlue4,
@@ -253,6 +264,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     letterSpacing: 0.5,
   );
+  static const TextStyle boldText16b = const TextStyle(
+    color: AppColors.lightBlue4,
+    fontSize: 16.8,
+    fontWeight: FontWeight.w700,
+    letterSpacing: 0.5,
+  );
   static const TextStyle boldText28 = const TextStyle(
     color: AppColors.grey3,
     fontSize: 28,
@@ -268,7 +285,7 @@ class AppTextStyles {
   static const TextStyle demiboldText34 = const TextStyle(
     color: AppColors.offWhite2,
     fontSize: 34,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0.5,
   );
   static const TextStyle errorText = const TextStyle(
@@ -326,7 +343,7 @@ class AppTextStyles {
     letterSpacing: 1,
   );
   static const TextStyle drawerMenu = const TextStyle(
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.bold,
     letterSpacing: 1,
   );

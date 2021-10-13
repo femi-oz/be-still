@@ -1,4 +1,5 @@
 class Frequency {
+  static const one_time = 'One Time';
   static const daily = 'Daily';
   static const monthly = 'Monthly';
   static const per_instance = 'Per Instance';

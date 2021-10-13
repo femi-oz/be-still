@@ -1,3 +1,4 @@
+import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/log_service.dart';
@@ -13,32 +14,31 @@ class AuthenticationService {
   final _localAuth = LocalAuthentication();
   bool isAuthenticated = false;
 
-  Future<void> biometricAuthentication() async {
+  Future<bool> biometricAuthentication(String email) async {
     if (Settings.enableLocalAuth) {
       try {
-        isAuthenticated = await _localAuth.authenticateWithBiometrics(
+        isAuthenticated = await _localAuth.authenticate(
           localizedReason: 'authenticate to access',
           useErrorDialogs: true,
           stickyAuth: true,
+          biometricOnly: true,
         );
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
-          await locator<LogService>().createLog(
-              'Authentication Cancelled',
-              _firebaseAuth.currentUser.email,
-              'AUTHENTICATION/service/biometricAuthentication');
-          throw HttpException('Authentication Cancelled');
-        }
+          signOut();
+          return false;
+        } else
+          return true;
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
+        signOut();
         final message = StringUtils.generateExceptionMessage(e.code ?? null);
         await locator<LogService>().createLog(
-            message,
-            _firebaseAuth.currentUser.email,
-            'AUTHENTICATION/service/biometricAuthentication');
+            message, email, 'AUTHENTICATION/service/biometricAuthentication');
         throw HttpException(message);
       }
-    }
+    } else
+      return false;
   }
 
   Future forgotPassword(String email) async {
@@ -74,7 +74,20 @@ class AuthenticationService {
 
   Future sendEmailVerification() async {
     try {
-      await _firebaseAuth.currentUser.sendEmailVerification();
+      User user = FirebaseAuth.instance.currentUser;
+      if (user != null && !user.emailVerified) {
+        var actionCodeSettings = ActionCodeSettings(
+          url: 'https://bestill-app.firebaseapp.com',
+          dynamicLinkDomain: FlavorConfig.instance.values.dynamicLink,
+          androidPackageName: FlavorConfig.instance.values.packageName,
+          androidInstallApp: true,
+          androidMinimumVersion: '1',
+          iOSBundleId: FlavorConfig.instance.values.packageName,
+          handleCodeInApp: true,
+        );
+
+        await user.sendEmailVerification(actionCodeSettings);
+      }
     } catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code ?? null);
       await locator<LogService>().createLog(
@@ -107,8 +120,14 @@ class AuthenticationService {
         dob,
       );
       await sendEmailVerification();
+    } on FirebaseAuthException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e?.code ?? null);
+      await locator<LogService>()
+          .createLog(message, email, 'AUTHENTICATION/service/registerUser');
+      throw HttpException(message);
     } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      final message =
+          StringUtils.generateExceptionMessage(e?.toString() ?? null);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/registerUser');
       throw HttpException(message);

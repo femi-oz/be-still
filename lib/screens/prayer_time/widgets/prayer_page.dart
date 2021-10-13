@@ -21,11 +21,12 @@ class PrayerView extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.84,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
+          color: AppColors.textFieldBackgroundColor,
           border: Border.all(
-            color: AppColors.prayeModeBorder,
+            color: AppColors.prayerModeBorder,
             width: 1,
           ),
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(5),
         ),
       ),
     );

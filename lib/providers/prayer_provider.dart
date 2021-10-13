@@ -2,20 +2,29 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PrayerProvider with ChangeNotifier {
   PrayerService _prayerService = locator<PrayerService>();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   List<CombinePrayerStream> _prayers = [];
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   List<CombinePrayerStream> _filteredPrayers = [];
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
+  Iterable<Contact> _localContacts = [];
+
   CombinePrayerStream _currentPrayer;
   String _filterOption = Status.active;
 
@@ -24,11 +33,14 @@ class PrayerProvider with ChangeNotifier {
 
   List<CombinePrayerStream> get filteredPrayerTimeList =>
       _filteredPrayerTimeList;
+
+  Iterable<Contact> get localContacts => _localContacts;
   PrayerType get currentPrayerType => _currentPrayerType;
   CombinePrayerStream get currentPrayer => _currentPrayer;
   String get filterOption => _filterOption;
 
   Future<void> setPrayers(String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
       (data) {
         _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
@@ -38,9 +50,22 @@ class PrayerProvider with ChangeNotifier {
     );
   }
 
-  Future<void> checkPrayerValidity(String userId) async {
+  Future<void> getContacts() async {
+    var status = await Permission.contacts.status;
+    Settings.enabledContactPermission = status == PermissionStatus.granted;
+
+    if (Settings.enabledContactPermission) {
+      final localContacts =
+          await ContactsService.getContacts(withThumbnails: false);
+      _localContacts = localContacts.where((e) => e.displayName != null);
+    }
+  }
+
+  Future<void> checkPrayerValidity(
+      String userId, List<LocalNotificationModel> notifications) async {
+    if (_firebaseAuth.currentUser == null) return null;
     if (prayers.length > 0) {
-      await _autoDeleteArchivePrayers(userId, prayers);
+      await _autoDeleteArchivePrayers(userId, prayers, notifications);
       await _unSnoozePrayerPast(prayers);
     }
   }
@@ -48,14 +73,19 @@ class PrayerProvider with ChangeNotifier {
   Future<void> setPrayerTimePrayers(String userId) async =>
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _filteredPrayerTimeList = data
+          _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
+          _prayers.sort(
+              (a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+
+          _filteredPrayerTimeList = _prayers
               .where((e) =>
                   e.userPrayer.status.toLowerCase() ==
                   Status.active.toLowerCase())
               .toList();
-          var favoritePrayers = data
+          var favoritePrayers = _prayers
               .where((CombinePrayerStream e) => e.userPrayer.isFavorite)
               .toList();
+
           _filteredPrayerTimeList = [
             ...favoritePrayers,
             ..._filteredPrayerTimeList
@@ -68,27 +98,37 @@ class PrayerProvider with ChangeNotifier {
             }
           }
           _filteredPrayerTimeList = _distinct;
-          notifyListeners();
         },
       );
 
   Future<void> searchPrayers(String searchQuery, String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     if (searchQuery == '') {
       filterPrayers();
     } else {
-      List<CombinePrayerStream> filteredPrayers = _prayers
+      filterPrayers();
+
+      List<CombinePrayerStream> filteredPrayers = _filteredPrayers
           .where((CombinePrayerStream data) => data.prayer.description
               .toLowerCase()
               .contains(searchQuery.toLowerCase()))
           .toList();
-      for (int i = 0; i < _prayers.length; i++) {
-        var hasMatch = _prayers[i].updates.any((u) =>
+      for (int i = 0; i < _filteredPrayers.length; i++) {
+        var hasMatch = _filteredPrayers[i].updates.any((u) =>
             u.description.toLowerCase().contains(searchQuery.toLowerCase()));
-        if (hasMatch) filteredPrayers.add(_prayers[i]);
+        if (hasMatch) filteredPrayers.add(_filteredPrayers[i]);
       }
       _filteredPrayers = filteredPrayers;
       _filteredPrayers
           .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+      List<CombinePrayerStream> _distinct = [];
+      var idSet = <String>{};
+      for (var e in _filteredPrayers) {
+        if (idSet.add(e.prayer.id)) {
+          _distinct.add(e);
+        }
+      }
+      _filteredPrayers = _distinct;
     }
     notifyListeners();
   }
@@ -105,6 +145,7 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future<void> filterPrayers() async {
+    if (_firebaseAuth.currentUser == null) return null;
     List<CombinePrayerStream> prayers = _prayers.toList();
     List<CombinePrayerStream> activePrayers = [];
     List<CombinePrayerStream> answeredPrayers = [];
@@ -118,7 +159,6 @@ class PrayerProvider with ChangeNotifier {
           .toList();
       allPrayers = prayers;
     }
-    print(_filterOption);
     if (_filterOption == Status.active) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
@@ -154,8 +194,8 @@ class PrayerProvider with ChangeNotifier {
       ...snoozedPrayers,
       ...answeredPrayers
     ];
-    await _sortBySettings();
-
+    _filteredPrayers
+        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
     _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
     List<CombinePrayerStream> _distinct = [];
     var idSet = <String>{};
@@ -169,6 +209,7 @@ class PrayerProvider with ChangeNotifier {
   }
 
   Future<void> _unSnoozePrayerPast(List<CombinePrayerStream> data) async {
+    if (_firebaseAuth.currentUser == null) return null;
     var prayersToUnsnooze = data
         .where((e) =>
             e.userPrayer.snoozeEndDate.isBefore(DateTime.now()) &&
@@ -179,27 +220,6 @@ class PrayerProvider with ChangeNotifier {
       await locator<PrayerService>()
           .unSnoozePrayer(DateTime.now(), prayersToUnsnooze[i].userPrayer.id);
     }
-  }
-
-  Future<void> _sortBySettings() async {
-    _filteredPrayers
-        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    // if (sortBy == SortType.date) {
-    //   _filteredPrayers
-    //       .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    // }
-    // else if (sortBy == SortType.tag) {
-    //   var hasTags = _filteredPrayers.where((e) => e.tags.length > 0).toList();
-    //   var noTags = _filteredPrayers.where((e) => e.tags.length == 0).toList();
-    //   hasTags.sort(
-    //       (a, b) => a.tags[0].displayName.compareTo(b.tags[0].displayName));
-    //   _filteredPrayers = [...hasTags, ...noTags];
-    // } else {
-    //   var answered = _filteredPrayers.where((e) => e.prayer.isAnswer).toList();
-    //   var unAnswered =
-    //       _filteredPrayers.where((e) => !e.prayer.isAnswer).toList();
-    //   _filteredPrayers = [...answered, ...unAnswered];
-    // }
   }
 
   Future<void> addPrayer(
@@ -216,9 +236,9 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.addUserPrayer(
           prayerId, prayerDesc, recieverId, senderId, sender);
 
-  Future<void> addPrayerTag(
-          List<Contact> contactData, UserModel user, String message) async =>
-      await _prayerService.addPrayerTag(contactData, user, message);
+  Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
+          String message, String prayerId) async =>
+      await _prayerService.addPrayerTag(contactData, user, message, prayerId);
 
   Future<void> removePrayerTag(String tagId) async =>
       await _prayerService.removePrayerTag(tagId);
@@ -230,18 +250,20 @@ class PrayerProvider with ChangeNotifier {
   Future<void> editprayer(String description, String prayerID) async =>
       await _prayerService.editPrayer(description, prayerID);
 
+  Future<void> editUpdate(String description, String prayerID) async =>
+      await _prayerService.editUpdate(description, prayerID);
+
   Future<void> archivePrayer(String userPrayerId) async =>
       await _prayerService.archivePrayer(userPrayerId);
 
-  Future<void> unArchivePrayer(String userPrayerId) async =>
-      await _prayerService.unArchivePrayer(userPrayerId);
+  Future<void> unArchivePrayer(String userPrayerId, String prayerID) async =>
+      await _prayerService.unArchivePrayer(userPrayerId, prayerID);
 
-  Future<void> snoozePrayer(
-      String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
-    await _prayerService.snoozePrayer(snoozeEndDate, userPrayerID);
-    // var duration = snoozeEndDate.difference(DateTime.now());
-    // Future.delayed(duration.);
-    // setPrayers(userPrayerID, '');
+  Future<void> snoozePrayer(String prayerID, DateTime snoozeEndDate,
+      String userPrayerID, int duration, String frequency) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    await _prayerService.snoozePrayer(
+        snoozeEndDate, userPrayerID, duration, frequency);
   }
 
   Future<void> unSnoozePrayer(
@@ -249,27 +271,44 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.unSnoozePrayer(snoozeEndDate, userPrayerID);
 
   Future<void> _autoDeleteArchivePrayers(
-      String userId, List<CombinePrayerStream> data) async {
-    final archivedPrayers = data
-        .where((CombinePrayerStream data) => data.userPrayer.isArchived == true)
-        .toList();
+      String userId,
+      List<CombinePrayerStream> data,
+      List<LocalNotificationModel> notifications) async {
+    if (_firebaseAuth.currentUser == null) return null;
     final settings = await locator<SettingsService>().getSettings(userId);
     final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
-    final autoDeleteDuration = settings.defaultSnoozeDurationMins;
-    List<CombinePrayerStream> toDelete = archivedPrayers;
-    if (!autoDeleteAnswered) {
-      toDelete = archivedPrayers
-          .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
+    final autoDeleteDuration = settings.archiveAutoDeleteMins;
+    if (autoDeleteDuration > 0) {
+      final archivedPrayers = data
+          .where(
+              (CombinePrayerStream data) => data.userPrayer.isArchived == true)
           .toList();
-    }
-    for (int i = 0; i < toDelete.length; i++) {
-      if (toDelete[i]
-              .userPrayer
-              .archivedDate
-              .add(Duration(minutes: autoDeleteDuration))
-              .isBefore(DateTime.now()) &&
-          autoDeleteDuration != 0) {
-        deletePrayer(toDelete[i].userPrayer.id);
+      List<CombinePrayerStream> toDelete = archivedPrayers;
+      if (!autoDeleteAnswered) {
+        toDelete = toDelete
+            .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
+            .toList();
+      }
+
+      for (int i = 0; i < toDelete.length; i++) {
+        if (toDelete[i]
+                .userPrayer
+                .archivedDate
+                .add(Duration(minutes: autoDeleteDuration))
+                .isBefore(DateTime.now()) &&
+            autoDeleteDuration != 0) {
+          final _notifications = notifications
+              .where((e) => e.entityId == toDelete[i].userPrayer.id)
+              .toList();
+
+          _notifications.forEach((e) async {
+            final notification = _notifications.firstWhere((e) => e.id == e.id);
+            await LocalNotification.unschedule(
+                notification.localNotificationId);
+            await locator<NotificationService>().removeLocalNotification(e.id);
+          });
+          deletePrayer(toDelete[i].userPrayer.id);
+        }
       }
     }
   }
@@ -281,18 +320,29 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.unFavoritePrayer(prayerID);
 
   Future<void> markPrayerAsAnswered(
-          String prayerId, String userPrayerId) async =>
+    String prayerId,
+    String userPrayerId,
+  ) async =>
       await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> unMarkPrayerAsAnswered(
-          String prayerId, String userPrayerId) async =>
+    String prayerId,
+    String userPrayerId,
+  ) async =>
       await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
 
   Future<void> deletePrayer(String userPrayeId) async {
+    if (_firebaseAuth.currentUser == null) return null;
     await _prayerService.deletePrayer(userPrayeId);
   }
 
+  Future<void> deleteUpdate(String prayerId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    await _prayerService.deleteUpdate(prayerId);
+  }
+
   Future<void> setCurrentPrayerType(PrayerType type) async {
+    if (_firebaseAuth.currentUser == null) return null;
     _currentPrayerType = type;
     notifyListeners();
   }
@@ -304,9 +354,6 @@ class PrayerProvider with ChangeNotifier {
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((data) {
-        // if (!isGroupAdmin) {
-        //   _prayers = _prayers.where((e) => !e.prayer.hideFromMe).toList();
-        // }
         _filteredPrayers = _prayers;
 
         _filteredPrayers

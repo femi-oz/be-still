@@ -31,7 +31,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -39,13 +39,14 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        checkReleaseBuilds false
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.be_still"
+        applicationId "org.second.bestill"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -89,31 +90,31 @@ android {
     productFlavors {
         local {
             dimension "app"
-            resValue "string", "app_name", "BeStill Local"
+            resValue "string", "app_name", "Be Still Local"
             versionNameSuffix "-local"
             applicationId "org.second.bestill.local"
         }
         dev {
             dimension "app"
-            resValue "string", "app_name", "BeStill Dev"
+            resValue "string", "app_name", "Be Still Dev"
             versionNameSuffix "-dev"
             applicationId "org.second.bestill.dev"
         }
         staging {
             dimension "app"
-            resValue "string", "app_name", "BeStill Test"
+            resValue "string", "app_name", "Be Still Test"
             versionNameSuffix "-test"
             applicationId "org.second.bestill.test"
         }
         prod {
             dimension "app"
-            resValue "string", "app_name", "BeStill Prod"
+            resValue "string", "app_name", "Be Still Prod"
             versionNameSuffix "-prod"
             applicationId "org.second.bestill.prod"
         }
         store {
             dimension "app"
-            resValue "string", "app_name", "BeStill"
+            resValue "string", "app_name", "Be Still"
             versionNameSuffix "-store"
             applicationId "org.second.bestill"
         }
@@ -127,6 +128,8 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
+    
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'

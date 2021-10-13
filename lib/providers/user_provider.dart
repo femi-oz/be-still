@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider with ChangeNotifier {
@@ -18,9 +15,7 @@ class UserProvider with ChangeNotifier {
   List<UserModel> get allUsers => _allUsers;
 
   Future setCurrentUser(bool isLocalAuth) async {
-    var keyRefernence = isLocalAuth
-        ? jsonDecode(Settings.lastUser)['keyReference']
-        : _firebaseAuth.currentUser.uid;
+    var keyRefernence = _firebaseAuth.currentUser.uid;
     _currentUser = await _userService.getCurrentUser(keyRefernence);
     notifyListeners();
   }
@@ -33,6 +28,8 @@ class UserProvider with ChangeNotifier {
     _allUsers = _allUsers.where((e) => e.id != userId).toList();
     notifyListeners();
   }
+
+  Future<void> clearCurrentUser() => _currentUser = null;
 
   updateEmail(String newEmail, String userId) async {
     await _userService.updateEmail(newEmail, userId);

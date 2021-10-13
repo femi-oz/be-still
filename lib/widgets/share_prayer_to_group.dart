@@ -34,8 +34,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   @override
   Widget build(BuildContext context) {
     final groups = Provider.of<GroupProvider>(context).allGroups;
-    // final groups =
-    //     groupData.where((gl) => gl.members.contains(_currentUser.id));
+
     return Container(
       width: double.infinity,
       height: double.infinity,

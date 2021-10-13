@@ -14,7 +14,7 @@ class BibleModel {
     this.shortName,
     this.recommendedFor,
   });
-  BibleModel.fromData(DocumentSnapshot snapshot)
+  BibleModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot.data()['name'],
         recommendedFor = snapshot.data()['recommendedFor'],

@@ -1,6 +1,4 @@
-import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -21,57 +19,36 @@ class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
-    // List<PushNotificationModel> notifications =
-    //     Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
-      title: Text(widget.title,
-          style: AppTextStyles.boldText28.copyWith(
-              height: 1.5,
-              color:
-                  Settings.isDarkMode ? AppColors.darkBlue3 : AppColors.grey2)),
-      centerTitle: true,
-      leading: InkWell(
-          onTap: () => null,
-          // Navigator.of(context).pushNamed(NotificationsScreen.routeName),
-          child:
-              // notifications.length == 0
-              //     ?
-              Icon(
-            AppIcons.bestill_notifications,
-            color: AppColors.grey,
-            size: 18,
-          )
-          // : Stack(
-          //     alignment: Alignment.center,
-          //     children: [
-          //       Icon(
-          //         AppIcons.bestill_notifications,
-          //         color: AppColors.red,
-          //         size: 18,
-          //       ),
-          //       Text(
-          //         notifications.length.toString(),
-          //         style: TextStyle(
-          //           color: Colors.white,
-          //           fontSize: 11,
-          //         ),
-          //         textAlign: TextAlign.center,
-          //       ),
-          //     ],
-          //   ),
+      leading: Container(),
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.topRight,
+            colors: AppColors.appBarBackground,
           ),
+        ),
+      ),
+      title: Text(
+        widget.title,
+        style: TextStyle(
+          color: AppColors.bottomNavIconColor,
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          height: 1.5,
+        ),
+      ),
+      centerTitle: true,
       actions: <Widget>[
         Builder(
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                AppIcons.bestill_main_menu,
-                color: AppColors.grey,
-                size: 18,
+                Icons.notifications_none,
+                color: AppColors.white,
               ),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
+              onPressed: () => null,
             );
           },
         ),

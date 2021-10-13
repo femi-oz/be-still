@@ -1,4 +1,8 @@
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
@@ -6,12 +10,14 @@ import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = 'settings';
+  final Function setDefaultSnooze;
+  SettingsScreen(this.setDefaultSnooze);
   @override
   _SettingsScreenPage createState() => _SettingsScreenPage();
 }
@@ -27,6 +33,21 @@ class _SettingsScreenPage extends State<SettingsScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId);
+    });
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     tabController.dispose();
     super.dispose();
@@ -35,13 +56,18 @@ class _SettingsScreenPage extends State<SettingsScreen>
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: SettingsAppBar(),
-        endDrawer: CustomDrawer(),
-        body: SettingsTab());
+      appBar: SettingsAppBar(),
+      endDrawer: null,
+      endDrawerEnableOpenDragGesture: false,
+      body: SettingsTab(widget.setDefaultSnooze),
+    );
   }
 }
 
 class SettingsTab extends StatefulWidget {
+  final Function setDefaultSnooze;
+  SettingsTab(this.setDefaultSnooze);
+
   @override
   SettingsTabState createState() => SettingsTabState();
 }
@@ -73,11 +99,8 @@ class SettingsTabState extends State<SettingsTab>
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EntryScreen(screenNumber: 0),
-            ))) ??
+    return (Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;
   }
 
@@ -101,18 +124,19 @@ class SettingsTabState extends State<SettingsTab>
                     blurRadius: 5.0,
                   ),
                 ],
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: AppColors.prayerMenu,
-                ),
+                color: !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                    ? Color(0xFFFFFFFF)
+                    : Color(0xFF005780),
               ),
               height: 50.0,
               child: new TabBar(
                 indicatorColor: Colors.transparent,
-                unselectedLabelColor: AppColors.inactvePrayerMenu,
-                labelColor: AppColors.lightBlue4,
-                labelStyle: AppTextStyles.boldText24,
+                unselectedLabelColor:
+                    !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                        ? Color(0xFF718B92)
+                        : Color(0xB3FFFFFF),
+                labelColor: AppColors.actveTabMenu,
+                labelStyle: AppTextStyles.boldText16b,
                 isScrollable: true,
                 tabs: [
                   Tab(
@@ -124,40 +148,23 @@ class SettingsTabState extends State<SettingsTab>
                   Tab(
                     text: "Set Reminder",
                   ),
-                  // Tab(
-                  //   text: "Notifications",
-                  // ),
-                  // Tab(
-                  //   text: "Alexa",
-                  // ),
                   Tab(
                     text: "Sharing",
                   ),
-                  // Tab(
-                  //   text: "Groups",
-                  // ),
                 ],
               ),
             ),
           ),
           body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
-            ),
             child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 GeneralSettings(_settingsProvider.settings, _scaffoldKey),
-                MyListSettings(_settingsProvider.settings),
+                MyListSettings(
+                    _settingsProvider.settings, widget.setDefaultSnooze),
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
-                // NotificationsSettings(_settingsProvider.settings),
-                // AlexaSettings(_settingsProvider.settings),
                 SharingSettings(),
-                // GroupsSettings(),
               ],
             ),
           ),

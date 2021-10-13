@@ -1,13 +1,18 @@
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'essentials.dart';
 
 class BeStilDialog {
-  static Widget getLoading([String message = '']) {
+  static Widget getLoading(context, [String message = '']) {
+    precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
+      appBar: CustomAppBar(),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -16,7 +21,7 @@ class BeStilDialog {
             colors: AppColors.backgroundColor,
           ),
           image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage(true)),
+            image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -42,21 +47,55 @@ class BeStilDialog {
 
   static Future<void> showLoading(BuildContext context,
       [String message = '']) async {
-    Navigator.of(context).push(Loader(message));
+    await Navigator.of(context).push(Loader(message));
   }
 
   static hideLoading(BuildContext context) {
     Navigator.pop(context);
   }
 
-  static Future showErrorDialog(BuildContext context, String message) async {
-    await showDialog(
+  static Future showErrorDialog(BuildContext context, dynamic error,
+      UserModel user, StackTrace stackTrace) async {
+    var hasProperty = false;
+    try {
+      (error as dynamic)?.message;
+      hasProperty = true;
+    } on NoSuchMethodError {}
+    showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
-        confirmText: 'Close',
-        message: message,
+        confirmText: 'OK',
+        message: error == null
+            ? StringUtils.generateExceptionMessage(null)
+            : !hasProperty
+                ? StringUtils.generateExceptionMessage(null)
+                : error?.message,
       ),
+    );
+    FirebaseCrashlytics.instance.setUserIdentifier(user?.id ?? 'N/A');
+    FirebaseCrashlytics.instance
+        .setCustomKey('id', user == null ? 'N/A' : user.id);
+    FirebaseCrashlytics.instance
+        .setCustomKey('email', user == null ? 'N/A' : user.email);
+
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stackTrace,
+    );
+  }
+
+  static Future showSuccessDialog(BuildContext context, String message,
+      [Function onConfirm]) async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (_) => CustomAlertDialog(
+          type: AlertType.success,
+          confirmText: 'OK',
+          message: message,
+          onConfirm: onConfirm),
     );
   }
 
@@ -83,8 +122,7 @@ class BeStilDialog {
       SnackBar(
         content: Text(
           message,
-          style:
-              AppTextStyles.medium10.copyWith(color: AppColors.splashTextColor),
+          style: AppTextStyles.medium10.copyWith(color: AppColors.lightBlue3),
         ),
         backgroundColor: type == AlertType.info
             ? AppColors.lightBlue2

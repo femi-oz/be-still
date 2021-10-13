@@ -5,7 +5,6 @@ class PrayerSettingsModel {
   final String id;
   final String userId;
   final String frequency;
-  // final DateTime date;
   final String day;
   final String time;
   final bool doNotDisturb;
@@ -21,7 +20,6 @@ class PrayerSettingsModel {
     this.id,
     @required this.userId,
     @required this.frequency,
-    // @required this.date,
     @required this.time,
     @required this.day,
     @required this.doNotDisturb,
@@ -34,11 +32,10 @@ class PrayerSettingsModel {
     @required this.modifiedOn,
   });
 
-  PrayerSettingsModel.fromData(DocumentSnapshot snapshot)
+  PrayerSettingsModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()["UserId"],
         frequency = snapshot.data()["Frequency"],
-        // date = snapshot.data()["Date"].toDate(),
         day = snapshot.data()["Day"],
         time = snapshot.data()["Time"],
         doNotDisturb = snapshot.data()['DoNotDisturb'],
@@ -54,7 +51,6 @@ class PrayerSettingsModel {
     return {
       'UserId': userId,
       'Frequency': frequency,
-      // 'Date': date,
       'Day': day,
       'Time': time,
       'DoNotDisturb': doNotDisturb,
