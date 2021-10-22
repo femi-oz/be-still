@@ -684,8 +684,7 @@ class _AddPrayerState extends State<AddPrayer> {
         (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
             (widget.isEdit &&
                 _oldDescription.trim() != _descriptionController.text.trim() &&
-                _descriptionController.text.trim().isNotEmpty) ||
-            updateIsValid;
+                _descriptionController.text.trim().isNotEmpty);
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -807,16 +806,16 @@ class _AddPrayerState extends State<AddPrayer> {
                                         style: AppTextStyles.regularText15,
                                         cursorColor: AppColors.lightBlue4,
                                         onChanged: (val) {
-                                          setState(() {
-                                            _onUpdateTextChange(val);
-                                            if (e.description.trim() !=
-                                                textEditingController.text
-                                                    .trim()) {
-                                              updateIsValid = true;
-                                            } else {
-                                              updateIsValid = false;
-                                            }
-                                          });
+                                          // setState(() {});
+                                          _onUpdateTextChange(val);
+                                          // if (e.description.trim() !=
+                                          //     textEditingController.text
+                                          //         .trim()) {
+                                          //   updateIsValid = true;
+                                          // } else {
+                                          //   updateIsValid = false;
+                                          // }
+                                          // });
                                         },
                                         decoration: InputDecoration(
                                           isDense: true,
