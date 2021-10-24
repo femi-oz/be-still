@@ -684,6 +684,9 @@ class _AddPrayerState extends State<AddPrayer> {
         (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
             (widget.isEdit &&
                 _oldDescription.trim() != _descriptionController.text.trim() &&
+                _descriptionController.text.trim().isNotEmpty) ||
+            (widget.isEdit &&
+                updates.length > 0 &&
                 _descriptionController.text.trim().isNotEmpty);
 
     return WillPopScope(
