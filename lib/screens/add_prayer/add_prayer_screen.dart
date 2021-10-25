@@ -297,13 +297,26 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
+      var hasEmptyString = false;
       setState(() {
+        tags.forEach((element) {
+          if (!element.contains('@')) {
+            hasEmptyString = true;
+          } else {
+            hasEmptyString = false;
+          }
+        });
+        if (hasEmptyString) {
+          tagText = '';
+          return;
+        }
         var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
+            tags.where((c) => c != ' ' && c.substring(0, 1) == "@").toList();
         tagText = arrayWithSymbols.length > 0
             ? arrayWithSymbols[arrayWithSymbols.length - 1]
             : '';
       });
+
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -549,19 +562,19 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    var positionOffset = 2.0;
+    var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
     if (numberOfLines == 1.0) {
-      positionOffset2 = 25;
+      positionOffset2 = 24;
     } else if (numberOfLines == 2.0) {
-      positionOffset2 = 20;
+      positionOffset2 = 19;
     } else if (numberOfLines == 3.0) {
-      positionOffset2 = 15;
+      positionOffset2 = 14;
     } else if (numberOfLines > 8) {
-      positionOffset2 = 8;
+      positionOffset2 = 7;
     } else {
-      positionOffset2 = 10;
+      positionOffset2 = 9;
     }
 
     Widget updateContactDropdown(context, e) {
@@ -639,7 +652,6 @@ class _AddPrayerState extends State<AddPrayer> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
-
                   if (('@' + s.displayName)
                       .toLowerCase()
                       .contains(tagText.toLowerCase())) {
