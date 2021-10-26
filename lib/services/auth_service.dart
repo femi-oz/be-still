@@ -64,6 +64,7 @@ class AuthenticationService {
         needsVerification = true;
         var e = FirebaseAuthException(
             code: 'not-verified', message: 'not-verified');
+        signOut();
         throw HttpException(e.code);
       }
       return {'error': null, 'needsVerification': needsVerification};
@@ -87,6 +88,7 @@ class AuthenticationService {
         );
 
         await user.sendEmailVerification(actionCodeSettings);
+        signOut();
       }
     } catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code ?? null);
