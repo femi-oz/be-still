@@ -62,6 +62,7 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   List<String> tags = [];
+  List<String> noTags = [];
 
   Map<String, TextEditingController> textEditingControllers = {};
 
@@ -292,37 +293,35 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void _onTextChange(val) {
+  void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
       tags = val.split(new RegExp(r"\s"));
-      var hasEmptyString = false;
+
+      // if (val.indexOf('@') > -1) {
+      //   var newVal = val.substring(val.indexOf('@'));
+      //   tags = newVal.split(new RegExp("/\s+/"));
+      // } else {
+      //   tags = val.split(new RegExp(r"\s"));
+      // }
+      //   tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
+      //       ? tags[tags.length - 1]
+      //       : '';
+
+      // print(tags);
       setState(() {
-        tags.forEach((element) {
-          if (!element.contains('@')) {
-            hasEmptyString = true;
-          } else {
-            hasEmptyString = false;
-          }
-        });
-        if (hasEmptyString) {
-          tagText = '';
-          return;
-        }
         var arrayWithSymbols =
-            tags.where((c) => c != ' ' && c.substring(0, 1) == "@").toList();
+            tags.where((c) => c != '' && c.substring(0, 1) == "@").toList();
         tagText = arrayWithSymbols.length > 0
             ? arrayWithSymbols[arrayWithSymbols.length - 1]
             : '';
       });
-
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
-            .trim()
             .toLowerCase()
-            .contains(tagText.trim().toLowerCase())) {
+            .contains(tagText.toLowerCase())) {
           tagList.add(s.displayName);
         }
       });
