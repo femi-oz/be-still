@@ -294,22 +294,21 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void _onTextChange(String val) {
+    // print(val.length);
+    // print(val.substring(val.indexOf('@')).length);
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(new RegExp(r"\s"));
+      if (val.indexOf('@') > -1 &&
+          !val.substring(val.indexOf('@') + 1).startsWith(' ')) {
+        var newVal = val.substring(val.indexOf('@'));
+        print(newVal);
+        print(newVal);
+        tags = newVal.split(new RegExp("/\s+/"));
+      } else {
+        tags = val.split(new RegExp(r"\s"));
+      }
 
-      // if (val.indexOf('@') > -1) {
-      //   var newVal = val.substring(val.indexOf('@'));
-      //   tags = newVal.split(new RegExp("/\s+/"));
-      // } else {
-      //   tags = val.split(new RegExp(r"\s"));
-      // }
-      //   tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
-      //       ? tags[tags.length - 1]
-      //       : '';
-
-      // print(tags);
       setState(() {
         var arrayWithSymbols =
             tags.where((c) => c != '' && c.substring(0, 1) == "@").toList();
