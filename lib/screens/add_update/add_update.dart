@@ -32,6 +32,7 @@ class _AddUpdateState extends State<AddUpdate> {
   FocusNode _focusNode = FocusNode();
   bool _autoValidate = false;
   final _prayerKey = GlobalKey();
+  bool textWithSpace = false;
 
   List<String> tags = [];
   String tagText = '';
@@ -77,14 +78,24 @@ class _AddUpdateState extends State<AddUpdate> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        tagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      bool contactSearchMode = false;
+      if (val.contains('@')) {
+        contactSearchMode = true;
+      } else {
+        contactSearchMode = false;
+      }
+      var topCaseSearch =
+          contactSearchMode ? val.substring(val.indexOf('@')) : '';
+      if (' '.allMatches(topCaseSearch).length == 0 ||
+          ' '.allMatches(topCaseSearch).length == 1) {
+        textWithSpace = true;
+        tagText = topCaseSearch;
+        topCaseSearch = topCaseSearch + ' ';
+      } else {
+        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
+        tagText = textBefore;
+        textWithSpace = false;
+      }
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -126,9 +137,20 @@ class _AddUpdateState extends State<AddUpdate> {
     var textAfter = tmpTextAfter.split(" ");
     var newText = textAfter..removeAt(0);
     var joinText = newText.join(" ");
-
+    controllerText = _descriptionController.text.substring(
+      0,
+      _descriptionController.text.indexOf('@'),
+    );
     controllerText += tmpText;
-    _descriptionController.text = controllerText + " " + joinText;
+    if (textWithSpace) {
+      _descriptionController.text = controllerText;
+      textWithSpace = false;
+    } else {
+      _descriptionController.text = controllerText + " " + joinText;
+      textWithSpace = false;
+    }
+
+    // _descriptionController.text = controllerText + " " + joinText;
     _descriptionController.selection = TextSelection.fromPosition(
         TextPosition(offset: _descriptionController.text.length));
 
