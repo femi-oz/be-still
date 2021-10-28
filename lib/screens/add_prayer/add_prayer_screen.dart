@@ -360,11 +360,11 @@ class _AddPrayerState extends State<AddPrayer> {
       if (' '.allMatches(topCaseSearch).length == 0 ||
           ' '.allMatches(topCaseSearch).length == 1) {
         textWithSpace = true;
-        tagText = topCaseSearch;
+        updateTagText = topCaseSearch;
         topCaseSearch = topCaseSearch + ' ';
       } else {
         var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
-        tagText = textBefore;
+        updateTagText = textBefore;
         textWithSpace = false;
       }
       tagList.clear();
