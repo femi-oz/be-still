@@ -345,7 +345,7 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void _onUpdateTextChange(val) {
+  void _onUpdateTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
@@ -360,11 +360,11 @@ class _AddPrayerState extends State<AddPrayer> {
       if (' '.allMatches(topCaseSearch).length == 0 ||
           ' '.allMatches(topCaseSearch).length == 1) {
         textWithSpace = true;
-        tagText = topCaseSearch;
+        updateTagText = topCaseSearch;
         topCaseSearch = topCaseSearch + ' ';
       } else {
         var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
-        tagText = textBefore;
+        updateTagText = textBefore;
         textWithSpace = false;
       }
       tagList.clear();
