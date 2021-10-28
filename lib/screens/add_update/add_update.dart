@@ -346,19 +346,19 @@ class _AddUpdateState extends State<AddUpdate> {
     final updates = prayerData.updates
         .where((element) => element.deleteStatus != -1)
         .toList();
-    var positionOffset = 2.0;
+    var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
     if (numberOfLines == 1.0) {
-      positionOffset2 = 25;
+      positionOffset2 = 24;
     } else if (numberOfLines == 2.0) {
-      positionOffset2 = 15;
+      positionOffset2 = 19;
     } else if (numberOfLines == 3.0) {
-      positionOffset2 = 12;
+      positionOffset2 = 14;
     } else if (numberOfLines > 8) {
-      positionOffset2 = 8;
+      positionOffset2 = 7;
     } else {
-      positionOffset2 = 10;
+      positionOffset2 = 9;
     }
 
     Widget contactDropdown(context) {

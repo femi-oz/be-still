@@ -345,7 +345,7 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void _onUpdateTextChange(val) {
+  void _onUpdateTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
