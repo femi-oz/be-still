@@ -45,6 +45,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool hasFocus;
   bool showNoContact = false;
   double numberOfLines = 5.0;
+  bool textWithSpace = false;
 
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -296,27 +297,27 @@ class _AddPrayerState extends State<AddPrayer> {
   void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
-      tags = val.split(new RegExp(r"\s"));
+      bool contactSearchMode = false;
+      if (val.contains('@')) {
+        contactSearchMode = true;
+      } else {
+        contactSearchMode = false;
+      }
+      var topCaseSearch =
+          contactSearchMode ? val.substring(val.indexOf('@')) : '';
+      if (' '.allMatches(topCaseSearch).length == 0 ||
+          ' '.allMatches(topCaseSearch).length == 1) {
+        textWithSpace = true;
+        tagText = topCaseSearch;
+        topCaseSearch = topCaseSearch + ' ';
+      } else {
+        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
+        tagText = textBefore;
+        textWithSpace = false;
+      }
 
-      // if (val.indexOf('@') > -1) {
-      //   var newVal = val.substring(val.indexOf('@'));
-      //   tags = newVal.split(new RegExp("/\s+/"));
-      // } else {
-      //   tags = val.split(new RegExp(r"\s"));
-      // }
-      //   tagText = tags.length > 0 && tags[tags.length - 1].startsWith('@')
-      //       ? tags[tags.length - 1]
-      //       : '';
-
-      // print(tags);
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != '' && c.substring(0, 1) == "@").toList();
-        tagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -348,14 +349,24 @@ class _AddPrayerState extends State<AddPrayer> {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        updateTagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      bool contactSearchMode = false;
+      if (val.contains('@')) {
+        contactSearchMode = true;
+      } else {
+        contactSearchMode = false;
+      }
+      var topCaseSearch =
+          contactSearchMode ? val.substring(val.indexOf('@')) : '';
+      if (' '.allMatches(topCaseSearch).length == 0 ||
+          ' '.allMatches(topCaseSearch).length == 1) {
+        textWithSpace = true;
+        tagText = topCaseSearch;
+        topCaseSearch = topCaseSearch + ' ';
+      } else {
+        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
+        tagText = textBefore;
+        textWithSpace = false;
+      }
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -413,7 +424,13 @@ class _AddPrayerState extends State<AddPrayer> {
       controller.text.indexOf('@'),
     );
     controllerText += tmpText;
-    controller.text = controllerText + " " + joinText;
+    if (textWithSpace) {
+      controller.text = controllerText;
+      textWithSpace = false;
+    } else {
+      controller.text = controllerText + " " + joinText;
+      textWithSpace = false;
+    }
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
 
