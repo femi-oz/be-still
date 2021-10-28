@@ -707,12 +707,10 @@ class _AddPrayerState extends State<AddPrayer> {
           onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
-            ),
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: AppColors.backgroundColor)),
             padding: EdgeInsets.only(
                 bottom: 20,
                 left: 20,
@@ -721,42 +719,40 @@ class _AddPrayerState extends State<AddPrayer> {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
-                        child: Text(
-                          'CANCEL',
-                          style: AppTextStyles.boldText18
-                              .copyWith(color: AppColors.grey),
-                        ),
-                        onTap: isValid
-                            ? () => onCancel()
-                            : widget.isEdit
-                                ? () {
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-                                    Navigator.pop(context);
-                                  }
-                                : () {
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-                                    widget.setCurrentIndex(0, true);
-                                  },
-                      ),
-                      InkWell(
-                        child: Text('SAVE',
-                            style: AppTextStyles.boldText18.copyWith(
-                                color: !isValid
-                                    ? AppColors.lightBlue5.withOpacity(0.5)
-                                    : Colors.blue)),
-                        onTap: () =>
-                            isValid ? _save(textEditingControllers) : null,
-                      ),
-                    ],
-                  ),
-                ),
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          InkWell(
+                            child: Text(
+                              'CANCEL',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.grey),
+                            ),
+                            onTap: isValid
+                                ? () => onCancel()
+                                : widget.isEdit
+                                    ? () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.pop(context);
+                                      }
+                                    : () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        widget.setCurrentIndex(0, true);
+                                      },
+                          ),
+                          InkWell(
+                            child: Text('SAVE',
+                                style: AppTextStyles.boldText18.copyWith(
+                                    color: !isValid
+                                        ? AppColors.lightBlue5.withOpacity(0.5)
+                                        : Colors.blue)),
+                            onTap: () =>
+                                isValid ? _save(textEditingControllers) : null,
+                          ),
+                        ])),
                 Expanded(
                   child: SingleChildScrollView(
                     child: GestureDetector(

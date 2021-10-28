@@ -149,18 +149,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         borderRadius: BorderRadius.circular(5),
                         color: AppColors.grey.withOpacity(0.5),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'CANCEL',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'CANCEL',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                            height: 1,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -186,18 +184,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'LOGOUT',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'LOGOUT',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                            height: 1,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

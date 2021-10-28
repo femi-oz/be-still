@@ -63,113 +63,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
   }
 
-  // showInfoDialog(BuildContext context) {
-  //   AlertDialog dialog = AlertDialog(
-  //     shape: RoundedRectangleBorder(
-  //       side: BorderSide(color: AppColors.darkBlue),
-  //       borderRadius: BorderRadius.all(
-  //         Radius.circular(20.0),
-  //       ),
-  //     ),
-  //     backgroundColor: Colors.white,
-  //     elevation: 5,
-  //     content: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: <Widget>[
-  //         SizedBox(height: 10.0),
-  //         Flexible(
-  //           child: Text(
-  //             'Your account has been successfully verified. \n\n Login to continue.',
-  //             style: AppTextStyles.regularText16b
-  //                 .copyWith(color: AppColors.lightBlue4),
-  //             textAlign: TextAlign.center,
-  //           ),
-  //         ),
-  //         SizedBox(height: 20.0),
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.4,
-  //           child: Row(
-  //             children: <Widget>[
-  //               Expanded(
-  //                 child: TextButton(
-  //                   child: Text('OK',
-  //                       style: AppTextStyles.boldText16
-  //                           .copyWith(color: Colors.white)),
-  //                   style: ButtonStyle(
-  //                     textStyle: MaterialStateProperty.all<TextStyle>(
-  //                         AppTextStyles.boldText16
-  //                             .copyWith(color: Colors.white)),
-  //                     backgroundColor:
-  //                         MaterialStateProperty.all<Color>(Colors.blue),
-  //                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-  //                         EdgeInsets.all(5.0)),
-  //                     elevation: MaterialStateProperty.all<double>(0.0),
-  //                   ),
-  //                   onPressed: () {
-  //                     Navigator.of(context).pop();
-  //                   },
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return dialog;
-  //       });
-  // }
-
-  // Future<void> initDynamicLinks() async {
-  //   FirebaseAuth auth = FirebaseAuth.instance;
-
-  //   FirebaseDynamicLinks.instance.onLink(
-  //       onSuccess: (PendingDynamicLinkData dynamicLink) async {
-  //     final Uri deepLink = dynamicLink.link;
-
-  //     if (deepLink != null) {
-  //       var actionCode = deepLink.queryParameters['oobCode'];
-  //       try {
-  //         await auth.checkActionCode(actionCode);
-  //         await auth.applyActionCode(actionCode);
-  //         showInfoDialog(context);
-  //       } on FirebaseAuthException catch (e) {
-  //         if (e.code == 'invalid-action-code') {
-  //           print('The code is invalid.');
-  //         }
-  //       }
-  //     }
-  //   }, onError: (OnLinkErrorException e) async {
-  //     print('onLinkError');
-  //     print(e.message);
-  //   });
-
-  //   final PendingDynamicLinkData data =
-  //       await FirebaseDynamicLinks.instance.getInitialLink();
-  //   final Uri deepLink = data?.link;
-
-  //   if (deepLink != null) {
-  //     var actionCode = deepLink.queryParameters['oobCode'];
-  //     try {
-  //       await auth.checkActionCode(actionCode);
-  //       await auth.applyActionCode(actionCode);
-  //       await Provider.of<MiscProvider>(context, listen: false)
-  //           .setLoadStatus(true);
-  //       NavigationService.instance.navigationKey.currentState
-  //           .pushNamedAndRemoveUntil(
-  //               EntryScreen.routeName, (Route<dynamic> route) => false);
-  //     } on FirebaseAuthException catch (e) {
-  //       if (e.code == 'invalid-action-code') {
-  //         print('The code is invalid.');
-  //       }
-  //     }
-  //   }
-  // }
-
   void _getPermissions() async {
     try {
       if (Settings.isAppInit) {
@@ -214,7 +107,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        // await initDynamicLinks();
         await Future.delayed(Duration(milliseconds: 1000));
         var backgroundTime =
             DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);

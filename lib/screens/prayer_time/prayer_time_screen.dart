@@ -23,7 +23,7 @@ class _PrayerTimeState extends State<PrayerTime> {
   var currentPage = 0;
 
   @override
-  void didChangeDependencies() {
+  void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
@@ -34,7 +34,7 @@ class _PrayerTimeState extends State<PrayerTime> {
       Provider.of<PrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
     });
-    super.didChangeDependencies();
+    super.initState();
   }
 
   @override
