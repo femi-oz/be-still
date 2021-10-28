@@ -77,6 +77,7 @@ class _AddUpdateState extends State<AddUpdate> {
   void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
       bool contactSearchMode = false;
       if (val.contains('@')) {
@@ -96,12 +97,12 @@ class _AddUpdateState extends State<AddUpdate> {
         tagText = textBefore;
         textWithSpace = false;
       }
+
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
-            .trim()
             .toLowerCase()
-            .contains(tagText.trim().toLowerCase())) {
+            .contains(tagText.toLowerCase())) {
           tagList.add(s.displayName);
         }
       });
@@ -120,7 +121,7 @@ class _AddUpdateState extends State<AddUpdate> {
       });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
+          e.toString(), userId, 'ADD_UPDATE/screen/onTextChange_tag');
     }
   }
 
