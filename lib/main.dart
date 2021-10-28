@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:be_still/controllers/root_binding.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/devotional_provider.dart';
@@ -31,6 +32,7 @@ void main() async {
     FirebaseFirestore.instance.settings = Settings(
         host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
   }
+  await RootBinding().dependencies();
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 

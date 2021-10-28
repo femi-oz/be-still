@@ -1,4 +1,6 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -18,6 +20,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
@@ -157,19 +160,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  gotoPage(message) async {
+  gotoPage(NotificationMessage message) async {
     if (message.type == NotificationType.prayer_time) {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(message.entityId);
-
-      Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(2, false);
     }
-    if (message.type == NotificationType.prayer) {
+    if (message.type == NotificationType.reminder) {
       await Provider.of<PrayerProvider>(context, listen: false)
           .setPrayer(message.entityId);
-      // NavigationService.instance.navigateToReplacement(PrayerDetails());
+      // Future.delayed(Duration)
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(7, false);
     }
   }
 

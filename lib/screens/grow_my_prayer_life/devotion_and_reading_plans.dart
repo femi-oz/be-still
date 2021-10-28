@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/models/devotionals.model.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -8,14 +9,13 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../entry_screen.dart';
 
 class DevotionPlans extends StatefulWidget {
-  final Function setCurrentIndex;
-  DevotionPlans(this.setCurrentIndex);
   static const routeName = 'devotion-plan';
 
   @override
@@ -167,7 +167,9 @@ class _DevotionPlansState extends State<DevotionPlans> {
   }
 
   Future<bool> _onWillPop() async {
-    widget.setCurrentIndex(0, true);
+    AppCOntroller appCOntroller = Get.find();
+
+    appCOntroller.setCurrentPage(0, true);
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;

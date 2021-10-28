@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -6,12 +7,11 @@ import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
 class PrayerTime extends StatefulWidget {
-  final Function setCurrentIndex;
-  PrayerTime(this.setCurrentIndex);
   static const routeName = '/prayer-time';
 
   @override
@@ -44,7 +44,9 @@ class _PrayerTimeState extends State<PrayerTime> {
   }
 
   Future<bool> _onWillPop() async {
-    widget.setCurrentIndex(0, true);
+    AppCOntroller appCOntroller = Get.find();
+
+    appCOntroller.setCurrentPage(0, true);
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;
@@ -130,7 +132,11 @@ class _PrayerTimeState extends State<PrayerTime> {
                           color: AppColors.lightBlue3,
                           size: 30,
                         ),
-                        onTap: () => widget.setCurrentIndex(0, true),
+                        onTap: () {
+                          AppCOntroller appCOntroller = Get.find();
+
+                          appCOntroller.setCurrentPage(0, true);
+                        },
                       ),
                       InkWell(
                           child: Icon(

@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/auth_provider.dart';
@@ -19,6 +20,7 @@ import 'package:be_still/widgets/custom_logo_shape.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 
 import 'package:provider/provider.dart';
@@ -234,7 +236,10 @@ class _LoginScreenState extends State<LoginScreen> {
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
-          Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+          AppCOntroller appCOntroller = Get.find();
+
+          appCOntroller.setCurrentPage(2, false);
           Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);

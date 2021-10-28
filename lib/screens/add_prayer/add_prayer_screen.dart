@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
@@ -11,6 +12,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -24,7 +26,6 @@ class AddPrayer extends StatefulWidget {
   final bool isEdit;
   final bool isGroup;
   final CombinePrayerStream prayerData;
-  final Function setCurrentIndex;
   final bool hasBorder = true;
 
   @override
@@ -33,7 +34,6 @@ class AddPrayer extends StatefulWidget {
     this.prayerData,
     this.isGroup,
     this.showCancel = true,
-    this.setCurrentIndex,
   });
   _AddPrayerState createState() => _AddPrayerState();
 }
@@ -141,7 +141,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
           BeStilDialog.hideLoading(context);
-          widget.setCurrentIndex(0, true);
+          AppCOntroller appCOntroller = Get.find();
+
+          appCOntroller.setCurrentPage(0, true);
         } else {
           var updates = widget.prayerData?.updates;
           updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
@@ -401,7 +403,9 @@ class _AddPrayerState extends State<AddPrayer> {
       onCancel();
       return true;
     } else {
-      widget.setCurrentIndex(0, true);
+      AppCOntroller appCOntroller = Get.find();
+
+      appCOntroller.setCurrentPage(0, true);
       return (Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false)) ??
           false;
@@ -499,7 +503,9 @@ class _AddPrayerState extends State<AddPrayer> {
                             EntryScreen.routeName,
                             (Route<dynamic> route) => false);
                       } else {
-                        widget.setCurrentIndex(0, true);
+                        AppCOntroller appCOntroller = Get.find();
+
+                        appCOntroller.setCurrentPage(0, true);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus.unfocus();
                       }
@@ -757,7 +763,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                     : () {
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
-                                        widget.setCurrentIndex(0, true);
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+
+                                        appCOntroller.setCurrentPage(0, true);
                                       },
                           ),
                           InkWell(

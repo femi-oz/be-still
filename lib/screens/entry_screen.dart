@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
@@ -22,6 +23,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -34,12 +36,10 @@ class EntryScreen extends StatefulWidget {
 
 TutorialCoachMark tutorialCoachMark;
 
-class _EntryScreenState extends State<EntryScreen>
-    with TickerProviderStateMixin {
+class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  TabController _tabController;
 
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
@@ -47,9 +47,8 @@ class _EntryScreenState extends State<EntryScreen>
   final cron = Cron();
 
   initState() {
-    _tabController = new TabController(length: 8, vsync: this);
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
-    _currentIndex = miscProvider.currentPage;
+    // _currentIndex = miscProvider.currentPage;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (miscProvider.initialLoad) {
         await _preLoadData();
@@ -57,17 +56,6 @@ class _EntryScreenState extends State<EntryScreen>
       }
     });
     super.initState();
-  }
-
-  Future<void> _setCurrentIndex(int index, bool animate) async {
-    //
-    if (animate)
-      _tabController.animateTo(index);
-    else
-      _tabController.index = index;
-    setState(() => _currentIndex = index);
-    await Provider.of<MiscProvider>(context, listen: false)
-        .setCurrentPage(index);
   }
 
   Future<void> _preLoadData() async {
@@ -225,6 +213,7 @@ class _EntryScreenState extends State<EntryScreen>
     final miscProvider = Provider.of<MiscProvider>(context);
     _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
 
+    AppCOntroller appCOntroller = Get.find();
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
@@ -239,17 +228,22 @@ class _EntryScreenState extends State<EntryScreen>
             ? BeStilDialog.getLoading(context)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),
-                controller: _tabController,
+                controller: appCOntroller.tabController,
                 children: [
                   for (int i = 0; i < getItems().length; i++)
                     getItems().map((e) => e.page).toList()[i],
                 ],
               ),
       ),
-      bottomNavigationBar:
-          _currentIndex == 3 ? null : _createBottomNavigationBar(_currentIndex),
+      bottomNavigationBar: appCOntroller.currentPage == 3
+          ? null
+          : _createBottomNavigationBar(appCOntroller.currentPage),
       endDrawer: CustomDrawer(
-        _setCurrentIndex,
+        (index) {
+          AppCOntroller appCOntroller = Get.find();
+
+          appCOntroller.setCurrentPage(index, true);
+        },
         _keyButton,
         _keyButton2,
         _keyButton3,
@@ -288,7 +282,9 @@ class _EntryScreenState extends State<EntryScreen>
                       'You must have at least one active prayer to start prayer time.';
                   showInfoModal(message, 'PrayerTime', context);
                 } else {
-                  _setCurrentIndex(index, true);
+                  AppCOntroller appCOntroller = Get.find();
+
+                  appCOntroller.setCurrentPage(index, true);
                 }
                 break;
               case 3:
@@ -299,7 +295,9 @@ class _EntryScreenState extends State<EntryScreen>
                 Scaffold.of(context).openEndDrawer();
                 break;
               default:
-                _setCurrentIndex(index, true);
+                AppCOntroller appCOntroller = Get.find();
+
+                appCOntroller.setCurrentPage(index, true);
                 break;
             }
           },
@@ -347,7 +345,6 @@ class _EntryScreenState extends State<EntryScreen>
   List<TabNavigationItem> getItems() => [
         TabNavigationItem(
           page: PrayerList(
-            _setCurrentIndex,
             _keyButton,
             _keyButton2,
             _keyButton3,
@@ -367,7 +364,6 @@ class _EntryScreenState extends State<EntryScreen>
         ),
         TabNavigationItem(
           page: AddPrayer(
-            setCurrentIndex: _setCurrentIndex,
             isEdit: false,
             isGroup: false,
             showCancel: false,
@@ -382,7 +378,7 @@ class _EntryScreenState extends State<EntryScreen>
           key: _keyButton2,
         ),
         TabNavigationItem(
-          page: PrayerTime(_setCurrentIndex),
+          page: PrayerTime(),
           icon: Icon(
             AppIcons.bestill_menu_logo_lt,
             size: 16,
@@ -413,7 +409,7 @@ class _EntryScreenState extends State<EntryScreen>
           key: _keyButton4,
         ),
         TabNavigationItem(
-            page: DevotionPlans(_setCurrentIndex),
+            page: DevotionPlans(),
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -422,7 +418,7 @@ class _EntryScreenState extends State<EntryScreen>
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: RecommenededBibles(_setCurrentIndex),
+            page: RecommenededBibles(),
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -431,7 +427,7 @@ class _EntryScreenState extends State<EntryScreen>
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: PrayerDetails(_setCurrentIndex),
+            page: PrayerDetails(),
             icon: Icon(
               Icons.more_horiz,
               size: 20,
