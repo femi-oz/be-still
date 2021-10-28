@@ -74,7 +74,7 @@ class _AddUpdateState extends State<AddUpdate> {
     }
   }
 
-  void _onTextChange(val) {
+  void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
