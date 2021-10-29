@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/log_provider.dart';
@@ -11,6 +12,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -24,7 +26,6 @@ class AddPrayer extends StatefulWidget {
   final bool isEdit;
   final bool isGroup;
   final CombinePrayerStream prayerData;
-  final Function setCurrentIndex;
   final bool hasBorder = true;
 
   @override
@@ -33,7 +34,6 @@ class AddPrayer extends StatefulWidget {
     this.prayerData,
     this.isGroup,
     this.showCancel = true,
-    this.setCurrentIndex,
   });
   _AddPrayerState createState() => _AddPrayerState();
 }
@@ -45,6 +45,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool hasFocus;
   bool showNoContact = false;
   double numberOfLines = 5.0;
+  bool textWithSpace = false;
 
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -62,6 +63,7 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   List<String> tags = [];
+  List<String> noTags = [];
 
   Map<String, TextEditingController> textEditingControllers = {};
 
@@ -139,7 +141,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
           BeStilDialog.hideLoading(context);
-          widget.setCurrentIndex(0, true);
+          AppCOntroller appCOntroller = Get.find();
+
+          appCOntroller.setCurrentPage(0, true);
         } else {
           var updates = widget.prayerData?.updates;
           updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
@@ -292,24 +296,35 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void _onTextChange(val) {
+  void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        tagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      bool contactSearchMode = false;
+      if (val.contains('@')) {
+        contactSearchMode = true;
+      } else {
+        contactSearchMode = false;
+      }
+      var topCaseSearch =
+          contactSearchMode ? val.substring(val.indexOf('@')) : '';
+      if (' '.allMatches(topCaseSearch).length == 0 ||
+          ' '.allMatches(topCaseSearch).length == 1) {
+        textWithSpace = true;
+        tagText = topCaseSearch;
+        topCaseSearch = topCaseSearch + ' ';
+      } else {
+        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
+        tagText = textBefore;
+        textWithSpace = false;
+      }
+
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
-            .trim()
             .toLowerCase()
-            .contains(tagText.trim().toLowerCase())) {
+            .contains(tagText.toLowerCase())) {
           tagList.add(s.displayName);
         }
       });
@@ -332,18 +347,28 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void _onUpdateTextChange(val) {
+  void _onUpdateTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        updateTagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      bool contactSearchMode = false;
+      if (val.contains('@')) {
+        contactSearchMode = true;
+      } else {
+        contactSearchMode = false;
+      }
+      var topCaseSearch =
+          contactSearchMode ? val.substring(val.indexOf('@')) : '';
+      if (' '.allMatches(topCaseSearch).length == 0 ||
+          ' '.allMatches(topCaseSearch).length == 1) {
+        textWithSpace = true;
+        updateTagText = topCaseSearch;
+        topCaseSearch = topCaseSearch + ' ';
+      } else {
+        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
+        updateTagText = textBefore;
+        textWithSpace = false;
+      }
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -378,7 +403,9 @@ class _AddPrayerState extends State<AddPrayer> {
       onCancel();
       return true;
     } else {
-      widget.setCurrentIndex(0, true);
+      AppCOntroller appCOntroller = Get.find();
+
+      appCOntroller.setCurrentPage(0, true);
       return (Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false)) ??
           false;
@@ -401,7 +428,13 @@ class _AddPrayerState extends State<AddPrayer> {
       controller.text.indexOf('@'),
     );
     controllerText += tmpText;
-    controller.text = controllerText + " " + joinText;
+    if (textWithSpace) {
+      controller.text = controllerText;
+      textWithSpace = false;
+    } else {
+      controller.text = controllerText + " " + joinText;
+      textWithSpace = false;
+    }
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
 
@@ -470,7 +503,9 @@ class _AddPrayerState extends State<AddPrayer> {
                             EntryScreen.routeName,
                             (Route<dynamic> route) => false);
                       } else {
-                        widget.setCurrentIndex(0, true);
+                        AppCOntroller appCOntroller = Get.find();
+
+                        appCOntroller.setCurrentPage(0, true);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus.unfocus();
                       }
@@ -549,19 +584,19 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    var positionOffset = 2.0;
+    var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
     if (numberOfLines == 1.0) {
-      positionOffset2 = 25;
+      positionOffset2 = 24;
     } else if (numberOfLines == 2.0) {
-      positionOffset2 = 20;
+      positionOffset2 = 19;
     } else if (numberOfLines == 3.0) {
-      positionOffset2 = 15;
+      positionOffset2 = 14;
     } else if (numberOfLines > 8) {
-      positionOffset2 = 8;
+      positionOffset2 = 7;
     } else {
-      positionOffset2 = 10;
+      positionOffset2 = 9;
     }
 
     Widget updateContactDropdown(context, e) {
@@ -639,7 +674,6 @@ class _AddPrayerState extends State<AddPrayer> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
-
                   if (('@' + s.displayName)
                       .toLowerCase()
                       .contains(tagText.toLowerCase())) {
@@ -685,7 +719,9 @@ class _AddPrayerState extends State<AddPrayer> {
             (widget.isEdit &&
                 _oldDescription.trim() != _descriptionController.text.trim() &&
                 _descriptionController.text.trim().isNotEmpty) ||
-            updateIsValid;
+            (widget.isEdit &&
+                updates.length > 0 &&
+                _descriptionController.text.trim().isNotEmpty);
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -694,12 +730,10 @@ class _AddPrayerState extends State<AddPrayer> {
           onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
-            ),
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: AppColors.backgroundColor)),
             padding: EdgeInsets.only(
                 bottom: 20,
                 left: 20,
@@ -708,42 +742,43 @@ class _AddPrayerState extends State<AddPrayer> {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      InkWell(
-                        child: Text(
-                          'CANCEL',
-                          style: AppTextStyles.boldText18
-                              .copyWith(color: AppColors.grey),
-                        ),
-                        onTap: isValid
-                            ? () => onCancel()
-                            : widget.isEdit
-                                ? () {
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-                                    Navigator.pop(context);
-                                  }
-                                : () {
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
-                                    widget.setCurrentIndex(0, true);
-                                  },
-                      ),
-                      InkWell(
-                        child: Text('SAVE',
-                            style: AppTextStyles.boldText18.copyWith(
-                                color: !isValid
-                                    ? AppColors.lightBlue5.withOpacity(0.5)
-                                    : Colors.blue)),
-                        onTap: () =>
-                            isValid ? _save(textEditingControllers) : null,
-                      ),
-                    ],
-                  ),
-                ),
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          InkWell(
+                            child: Text(
+                              'CANCEL',
+                              style: AppTextStyles.boldText18
+                                  .copyWith(color: AppColors.grey),
+                            ),
+                            onTap: isValid
+                                ? () => onCancel()
+                                : widget.isEdit
+                                    ? () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.pop(context);
+                                      }
+                                    : () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+
+                                        appCOntroller.setCurrentPage(0, true);
+                                      },
+                          ),
+                          InkWell(
+                            child: Text('SAVE',
+                                style: AppTextStyles.boldText18.copyWith(
+                                    color: !isValid
+                                        ? AppColors.lightBlue5.withOpacity(0.5)
+                                        : Colors.blue)),
+                            onTap: () =>
+                                isValid ? _save(textEditingControllers) : null,
+                          ),
+                        ])),
                 Expanded(
                   child: SingleChildScrollView(
                     child: GestureDetector(
@@ -807,16 +842,16 @@ class _AddPrayerState extends State<AddPrayer> {
                                         style: AppTextStyles.regularText15,
                                         cursorColor: AppColors.lightBlue4,
                                         onChanged: (val) {
-                                          setState(() {
-                                            _onUpdateTextChange(val);
-                                            if (e.description.trim() !=
-                                                textEditingController.text
-                                                    .trim()) {
-                                              updateIsValid = true;
-                                            } else {
-                                              updateIsValid = false;
-                                            }
-                                          });
+                                          // setState(() {});
+                                          _onUpdateTextChange(val);
+                                          // if (e.description.trim() !=
+                                          //     textEditingController.text
+                                          //         .trim()) {
+                                          //   updateIsValid = true;
+                                          // } else {
+                                          //   updateIsValid = false;
+                                          // }
+                                          // });
                                         },
                                         decoration: InputDecoration(
                                           isDense: true,
