@@ -43,10 +43,10 @@ class _GroupToolsState extends State<GroupTools> {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(_user.id);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(_user.id);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setAllGroups(_user.id);
       // await Provider.of<PrayerProvider>(context, listen: false).setGroupPrayers(
       //   _user?.id,
       //   data.group.id,

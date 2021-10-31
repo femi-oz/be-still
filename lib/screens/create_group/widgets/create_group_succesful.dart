@@ -1,22 +1,24 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupCreated extends StatefulWidget {
   final String groupName;
   final bool isEdit;
-  final setCurrentIndex;
 
-  GroupCreated(this.groupName, this.isEdit, this.setCurrentIndex);
+  GroupCreated(this.groupName, this.isEdit);
   @override
   _GroupCreatedState createState() => _GroupCreatedState();
 }
 
 class _GroupCreatedState extends State<GroupCreated> {
   var option = NotificationType.email;
+  AppCOntroller appCOntroller = Get.find();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -168,11 +170,11 @@ class _GroupCreatedState extends State<GroupCreated> {
                   final _user =
                       Provider.of<UserProvider>(context, listen: false)
                           .currentUser;
-                  await Provider.of<GroupProvider>(context, listen: false)
-                      .setAllGroups(_user.id);
-                  await Provider.of<GroupProvider>(context, listen: false)
-                      .setUserGroups(_user.id);
-                  widget.setCurrentIndex(3, false);
+                  // await Provider.of<GroupProvider>(context, listen: false)
+                  //     .setAllGroups(_user.id);
+                  // await Provider.of<GroupProvider>(context, listen: false)
+                  //     .setUserGroups(_user.id);
+                  appCOntroller.setCurrentPage(3, false);
                 },
               ),
             ),

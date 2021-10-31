@@ -16,25 +16,11 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
-  final bool showCancel;
-  final bool isEdit;
-  final bool isGroup;
-  final CombinePrayerStream prayerData;
-  final bool hasBorder = true;
-
-  @override
-  AddPrayer({
-    this.isEdit,
-    this.prayerData,
-    this.isGroup,
-    this.showCancel = true,
-  });
   _AddPrayerState createState() => _AddPrayerState();
 }
 
@@ -119,7 +105,7 @@ class _AddPrayerState extends State<AddPrayer> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
-        if (!widget.isEdit) {
+        if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
           await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
             _descriptionController.text,
             _user.id,
@@ -145,7 +131,9 @@ class _AddPrayerState extends State<AddPrayer> {
 
           appCOntroller.setCurrentPage(0, true);
         } else {
-          var updates = widget.prayerData?.updates;
+          var updates = Provider.of<PrayerProvider>(context, listen: false)
+              .prayerToEdit
+              ?.updates;
           updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
           updates =
               updates.where((element) => element.deleteStatus != -1).toList();
@@ -170,12 +158,20 @@ class _AddPrayerState extends State<AddPrayer> {
             });
           }
           await Provider.of<PrayerProvider>(context, listen: false).editprayer(
-              _descriptionController.text, widget.prayerData.prayer.id);
+              _descriptionController.text,
+              Provider.of<PrayerProvider>(context, listen: false)
+                  .prayerToEdit
+                  .prayer
+                  .id);
 
           //tags
           List<PrayerTagModel> currentTags = [];
           List<PrayerTagModel> initialTags = [];
-          final tags = [...widget.prayerData.tags];
+          final tags = [
+            ...Provider.of<PrayerProvider>(context, listen: false)
+                .prayerToEdit
+                .tags
+          ];
 
           if (updates.length > 0) {
             updates.forEach((x) async {
@@ -207,7 +203,10 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           if (_descriptionController.text !=
-              widget.prayerData.prayer.description) {
+              Provider.of<PrayerProvider>(context, listen: false)
+                  .prayerToEdit
+                  .prayer
+                  .description) {
             if (updates.length > 0) {
               tags.forEach((tag) async {
                 if (_oldDescription.contains(tag.displayName)) {
@@ -242,8 +241,9 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           BeStilDialog.hideLoading(context);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
+          AppCOntroller appCOntroller = Get.find();
+
+          appCOntroller.setCurrentPage(0, true);
         }
       }
     } on HttpException catch (e, s) {
@@ -261,11 +261,20 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
-    _descriptionController.text =
-        widget.isEdit ? widget.prayerData.prayer.description : '';
+    final isEdit = Provider.of<PrayerProvider>(context, listen: false).isEdit;
+    _descriptionController.text = isEdit
+        ? Provider.of<PrayerProvider>(context, listen: false)
+            .prayerToEdit
+            .prayer
+            .description
+        : '';
 
-    if (widget.isEdit && widget.prayerData != null) {
-      updates = widget.prayerData?.updates;
+    if (isEdit &&
+        Provider.of<PrayerProvider>(context, listen: false).prayerToEdit !=
+            null) {
+      updates = Provider.of<PrayerProvider>(context, listen: false)
+          .prayerToEdit
+          ?.updates;
       updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
       updates = updates.where((element) => element.deleteStatus != -1).toList();
       updates.forEach(
@@ -398,8 +407,10 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    if ((!widget.isEdit && _descriptionController.text.isNotEmpty) ||
-        (widget.isEdit && _oldDescription != _descriptionController.text)) {
+    if ((!Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+            _descriptionController.text.isNotEmpty) ||
+        (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+            _oldDescription != _descriptionController.text)) {
       onCancel();
       return true;
     } else {
@@ -498,7 +509,8 @@ class _AddPrayerState extends State<AddPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      if (widget.isEdit) {
+                      if (Provider.of<PrayerProvider>(context, listen: false)
+                          .isEdit) {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                             EntryScreen.routeName,
                             (Route<dynamic> route) => false);
@@ -715,11 +727,12 @@ class _AddPrayerState extends State<AddPrayer> {
     }
 
     bool isValid =
-        (!widget.isEdit && _descriptionController.text.trim().isNotEmpty) ||
-            (widget.isEdit &&
+        (!Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+                _descriptionController.text.trim().isNotEmpty) ||
+            (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
                 _oldDescription.trim() != _descriptionController.text.trim() &&
                 _descriptionController.text.trim().isNotEmpty) ||
-            (widget.isEdit &&
+            (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
                 updates.length > 0 &&
                 _descriptionController.text.trim().isNotEmpty);
 
@@ -754,7 +767,9 @@ class _AddPrayerState extends State<AddPrayer> {
                             ),
                             onTap: isValid
                                 ? () => onCancel()
-                                : widget.isEdit
+                                : Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .isEdit
                                     ? () {
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
@@ -798,7 +813,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                       textkey: _prayerKey,
                                       label: 'Prayer description',
                                       controller: _descriptionController,
-                                      maxLines: widget.isEdit &&
+                                      maxLines: Provider.of<PrayerProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .isEdit &&
                                               updates.length > 0 &&
                                               tagText.length == 0
                                           ? 10
@@ -816,13 +834,21 @@ class _AddPrayerState extends State<AddPrayer> {
                               ),
                               tagText.length > 1 &&
                                       Settings.enabledContactPermission &&
-                                      widget.prayerData?.prayer?.description !=
+                                      Provider.of<PrayerProvider>(context,
+                                                  listen: false)
+                                              .prayerToEdit
+                                              ?.prayer
+                                              ?.description !=
                                           _descriptionController.text
                                   ? contactDropdown(context)
                                   : SizedBox(),
                             ],
                           ),
-                          if (widget.prayerData != null && updates.length > 0)
+                          if (Provider.of<PrayerProvider>(context,
+                                          listen: false)
+                                      .prayerToEdit !=
+                                  null &&
+                              updates.length > 0)
                             ...updates.map(
                               (e) => Stack(
                                 children: [
@@ -876,19 +902,15 @@ class _AddPrayerState extends State<AddPrayer> {
                                           errorStyle: AppTextStyles.errorText,
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: widget.hasBorder
-                                                  ? AppColors.lightBlue4
-                                                      .withOpacity(0.5)
-                                                  : Colors.transparent,
+                                              color: AppColors.lightBlue4
+                                                  .withOpacity(0.5),
                                               width: 1.0,
                                             ),
                                           ),
                                           border: OutlineInputBorder(),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: widget.hasBorder
-                                                    ? AppColors.lightBlue4
-                                                    : Colors.transparent,
+                                                color: AppColors.lightBlue4,
                                                 width: 1.0),
                                           ),
                                           fillColor: AppColors

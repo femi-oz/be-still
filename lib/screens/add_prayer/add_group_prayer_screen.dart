@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -14,6 +15,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -22,12 +24,6 @@ import '../entry_screen.dart';
 class AddGroupPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
-  final Function(int, bool) setCurrentIndex;
-
-  @override
-  AddGroupPrayer({
-    this.setCurrentIndex,
-  });
   _AddGroupPrayerState createState() => _AddGroupPrayerState();
 }
 
@@ -70,6 +66,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   var textFields = <Stack>[];
   var textEditingController = TextEditingController();
 
+  AppCOntroller appCOntroller = Get.find();
+
   @override
   void didChangeDependencies() {
     fieldIndex = null;
@@ -83,10 +81,10 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
       Provider.of<GroupPrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(userId);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(userId);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setAllGroups(userId);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(userId);
     });
     super.didChangeDependencies();
   }
@@ -164,7 +162,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           }
 
           BeStilDialog.hideLoading(context);
-          widget.setCurrentIndex(8, true);
+          appCOntroller.setCurrentPage(8, true);
         } else {
           var updates = Provider.of<GroupPrayerProvider>(context, listen: false)
               .prayerToEdit
@@ -277,7 +275,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           }
           _sendNotification();
           BeStilDialog.hideLoading(context);
-          widget.setCurrentIndex(8, true);
+          appCOntroller.setCurrentPage(8, true);
         }
       }
     } on HttpException catch (e, s) {
@@ -427,7 +425,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
       onCancel();
       return true;
     } else {
-      widget.setCurrentIndex(8, true);
+      appCOntroller.setCurrentPage(8, true);
       return (Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false)) ??
           false;
@@ -514,7 +512,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      widget.setCurrentIndex(8, true);
+                      appCOntroller.setCurrentPage(8, true);
                       Navigator.pop(context);
                       FocusManager.instance.primaryFocus.unfocus();
                     },
@@ -767,8 +765,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                             : () {
                                 FocusScope.of(context)
                                     .requestFocus(new FocusNode());
-                                // Navigator.pop(context);
-                                widget.setCurrentIndex(8, true);
+                                appCOntroller.setCurrentPage(8, true);
                               },
                       ),
                       InkWell(

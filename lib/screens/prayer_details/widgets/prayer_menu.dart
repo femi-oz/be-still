@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -19,6 +20,7 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
@@ -409,6 +411,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
         widget.prayerData.userPrayer.isSnoozed;
     var isSnoozeAndUpdateDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived;
+    final _user = Provider.of<UserProvider>(context).currentUser;
+    bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
+
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -482,17 +487,23 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
                       isDisabled: isSnoozeAndUpdateDisable,
-                      onPress: () => isSnoozeAndUpdateDisable
+                      onPress: isSnoozeAndUpdateDisable ||
+                              !((!widget.prayerData.prayer.isGroup) ||
+                                  (widget.prayerData.prayer.isGroup && isOwner))
                           ? null
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddPrayer(
-                                  isEdit: true,
-                                  prayerData: widget.prayerData,
-                                ),
-                              ),
-                            ),
+                          : () async {
+                              Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .setEditMode(true);
+                              Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .setEditPrayer(widget.prayerData);
+                              Navigator.pop(context);
+                              await Future.delayed(Duration(milliseconds: 200));
+                              AppCOntroller appCOntroller = Get.find();
+
+                              appCOntroller.setCurrentPage(1, true);
+                            },
                       text: 'Edit',
                     ),
                     LongButton(

@@ -1,9 +1,8 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
@@ -12,27 +11,12 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   static const routeName = '/create-group';
-  final activeList;
-  final List<PrayerModel> prayers;
-  final groupId;
-  final isEdit;
-  final CombineGroupUserStream groupData;
-  final Function(int, bool) setCurrentIndex;
-
-  @override
-  CreateGroupScreen(
-      {this.activeList,
-      this.groupId,
-      this.prayers,
-      this.isEdit,
-      this.setCurrentIndex,
-      this.groupData});
 
   @override
   _CreateGroupScreenState createState() => _CreateGroupScreenState();
@@ -41,7 +25,7 @@ class CreateGroupScreen extends StatefulWidget {
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
   GroupType _option = GroupType.normal;
   int _step = 1;
-
+  AppCOntroller appCOntroller = Get.find();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _groupNameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
@@ -55,8 +39,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
-    // isEdit = Provider.of<MiscProvider>(context, listen: false).isEdit;
-    isEdit = widget.isEdit;
+    isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
     List locationArr = isEdit ? groupData?.group?.location?.split(',') : [];
     _groupNameController.text = isEdit ? groupData?.group?.name : '';
     _cityController.text = isEdit ? locationArr[0].trim() : '';
@@ -161,7 +144,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      widget.setCurrentIndex(3, true);
+                      appCOntroller.setCurrentPage(3, true);
                       Navigator.pop(context);
                       FocusManager.instance.primaryFocus.unfocus();
                     },
@@ -283,7 +266,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             FocusScope.of(context)
                                 .requestFocus(new FocusNode());
                             // Navigator.pop(context);
-                            widget.setCurrentIndex(3, true);
+                            appCOntroller.setCurrentPage(3, true);
                           },
                   ),
                 ),
@@ -306,8 +289,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             setOption: _setOption,
                             autoValidate: _autoValidate,
                           )
-                        : GroupCreated(_groupNameController.text, isEdit,
-                            widget.setCurrentIndex),
+                        : GroupCreated(
+                            _groupNameController.text,
+                            isEdit,
+                          ),
                     SizedBox(height: 30.0),
                     _step == 1
                         ? Container(

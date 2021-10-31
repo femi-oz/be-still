@@ -24,8 +24,6 @@ import 'package:provider/provider.dart';
 class NotificationsScreen extends StatefulWidget {
   static const routeName = 'notifications';
 
-  NotificationsScreen();
-
   @override
   _NotificationsScreenState createState() => _NotificationsScreenState();
 }
@@ -52,8 +50,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(_user?.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(_user.id);
     } on HttpException catch (_) {
     } catch (e) {}
   }

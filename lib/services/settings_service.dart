@@ -84,7 +84,7 @@ class SettingsService {
     return groupPreferenceSettings;
   }
 
-  populateGroupSettings(String userId, String email) {
+  populateGroupSettings(String userId) {
     GroupSettings groupsSettings = GroupSettings(
         userId: userId,
         enableNotificationFormNewPrayers: false,
@@ -92,9 +92,9 @@ class SettingsService {
         notifyOfMembershipRequest: false,
         notifyMeofFlaggedPrayers: false,
         notifyWhenNewMemberJoins: false,
-        createdBy: email,
+        createdBy: userId,
         createdOn: DateTime.now(),
-        modifiedBy: email,
+        modifiedBy: userId,
         modifiedOn: DateTime.now());
     return groupsSettings;
   }
@@ -148,14 +148,14 @@ class SettingsService {
     }
   }
 
-  Future addGroupSettings(String userId, String email) async {
+  Future addGroupSettings(String userId) async {
     final groupSettingsId = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _groupSettingsCollectionReference
           .doc(groupSettingsId)
-          .set(populateGroupSettings(userId, email).toJson());
+          .set(populateGroupSettings(userId).toJson());
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -237,6 +237,8 @@ class SettingsService {
       var settings = await _groupSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
+      if (settings.docs.length < 1) await addGroupSettings(userId);
+
       return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
     } catch (e) {
       locator<LogService>().createLog(
@@ -254,6 +256,7 @@ class SettingsService {
       var settings = await _groupPrefernceSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
+      if (settings.docs.length < 1) await addGroupPreferenceSettings(userId);
       return settings.docs
           .map((e) => GroupPreferenceSettings.fromData(e))
           .toList()[0];

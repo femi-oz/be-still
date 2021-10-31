@@ -19,6 +19,8 @@ class GroupProvider with ChangeNotifier {
   List<CombineGroupUserStream> get filteredAllGroups => _filteredAllGroups;
   CombineGroupUserStream get currentGroup => _currentGroup;
 
+  bool _isEdit = false;
+  bool get isEdit => _isEdit;
   Future setUserGroups(String userId) async {
     // if (_userGroups.isNotEmpty) {
     //   _userGroups = [];
@@ -119,5 +121,10 @@ class GroupProvider with ChangeNotifier {
   Future denyRequest(String groupId, String requestId) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.denyRequest(groupId, requestId);
+  }
+
+  void setEditMode(bool value) {
+    _isEdit = value;
+    notifyListeners();
   }
 }

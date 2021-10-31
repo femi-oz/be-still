@@ -18,14 +18,13 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupScreen extends StatefulWidget {
-  // final Function(int, bool) setCurrentIndex;
-  // GroupScreen(this.setCurrentIndex);
   static const routeName = 'group-screen';
   @override
   _GroupScreenState createState() => _GroupScreenState();
 }
 
 class _GroupScreenState extends State<GroupScreen> {
+  AppCOntroller appCOntroller = Get.find();
   Future<bool> _onWillPop() async {
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
@@ -37,6 +36,7 @@ class _GroupScreenState extends State<GroupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Provider.of<MiscProvider>(context, listen: false)
           .setPageTitle('MY GROUPS');
+      // appCOntroller.setCurrentPage(4, true);
     });
     super.initState();
   }
@@ -105,10 +105,7 @@ class _GroupScreenState extends State<GroupScreen> {
                     onPress: () {
                       Provider.of<MiscProvider>(context, listen: false)
                           .setPageTitle('FIND A GROUP');
-                      AppCOntroller appCOntroller = Get.find();
-
                       appCOntroller.setCurrentPage(11, true);
-                      // widget.setCurrentIndex(11, true);
                     },
                     text: 'FIND A GROUP',
                     backgroundColor:
@@ -126,7 +123,7 @@ class _GroupScreenState extends State<GroupScreen> {
                           .setPageTitle('CREATE A GROUP');
                       // await Provider.of<MiscProvider>(context, listen: false)
                       //     .setIsEdit(false);
-                      // widget.setCurrentIndex(12, true);
+                      appCOntroller.setCurrentPage(12, true);
                     },
                     text: 'CREATE A GROUP',
                     backgroundColor:
@@ -156,9 +153,6 @@ class _GroupScreenState extends State<GroupScreen> {
                                       LongButton(
                                         onPress: () async {
                                           _getPrayers(e);
-                                          // widget.setCurrentIndex(8, true);
-                                          AppCOntroller appCOntroller =
-                                              Get.find();
 
                                           appCOntroller.setCurrentPage(8, true);
                                         },

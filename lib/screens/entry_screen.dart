@@ -30,7 +30,6 @@ import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -44,7 +43,6 @@ TutorialCoachMark tutorialCoachMark;
 
 class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
-  // int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _isSearchMode = false;
@@ -54,7 +52,6 @@ class _EntryScreenState extends State<EntryScreen> {
 
   initState() {
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
-    // _currentIndex = miscProvider.currentPage;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (miscProvider.initialLoad) {
         await _preLoadData();
@@ -249,9 +246,8 @@ class _EntryScreenState extends State<EntryScreen> {
                 ],
               ),
       ),
-      bottomNavigationBar: appCOntroller.currentPage == 3
-          ? null
-          : _createBottomNavigationBar(appCOntroller.currentPage),
+      bottomNavigationBar:
+          _createBottomNavigationBar(appCOntroller.currentPage),
       endDrawer: CustomDrawer(
         (index) {
           AppCOntroller appCOntroller = Get.find();
@@ -301,10 +297,15 @@ class _EntryScreenState extends State<EntryScreen> {
                   appCOntroller.setCurrentPage(index, true);
                 }
                 break;
-              // case 3:
-              //   message = 'This feature will be available soon.';
-              //   showInfoModal(message, 'Group', context);
-              //   break;
+              case 1:
+                Provider.of<PrayerProvider>(context, listen: false)
+                    .setEditMode(false);
+                Provider.of<PrayerProvider>(context, listen: false)
+                    .setEditPrayer(null);
+                AppCOntroller appCOntroller = Get.find();
+
+                appCOntroller.setCurrentPage(1, true);
+                break;
               case 4:
                 Scaffold.of(context).openEndDrawer();
                 break;
@@ -378,10 +379,10 @@ class _EntryScreenState extends State<EntryScreen> {
         ),
         TabNavigationItem(
           page: AddPrayer(
-            isEdit: false,
-            isGroup: false,
-            showCancel: false, //1
-          ),
+              // isEdit: false,
+              // isGroup: false,
+              // showCancel: false, //1
+              ),
           icon: Icon(
             AppIcons.bestill_add,
             size: 16,

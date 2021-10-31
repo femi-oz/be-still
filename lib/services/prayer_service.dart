@@ -746,19 +746,19 @@ class PrayerService {
     }
   }
 
-  Future addPrayerToMyList(UserPrayerModel userPrayer) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      final userPrayerId = Uuid().v1();
-      return await _userPrayerCollectionReference
-          .doc(userPrayerId)
-          .set(userPrayer.toJson());
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userPrayer.userId, 'PRAYER/service/addPrayerToMyList');
-      throw HttpException(e.message);
-    }
-  }
+  // Future addPrayerToMyList(UserPrayerModel userPrayer) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null) return null;
+  //     final userPrayerId = Uuid().v1();
+  //     return await _userPrayerCollectionReference
+  //         .doc(userPrayerId)
+  //         .set(userPrayer.toJson());
+  //   } catch (e) {
+  //     locator<LogService>().createLog(
+  //         e.message, userPrayer.userId, 'PRAYER/service/addPrayerToMyList');
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
   Future addToMyList(
     String prayerId,
