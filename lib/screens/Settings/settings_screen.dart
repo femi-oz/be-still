@@ -110,7 +110,7 @@ class SettingsTabState extends State<SettingsTab>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
-        length: 4,
+        length: 5,
         child: Scaffold(
           key: _scaffoldKey,
           appBar: PreferredSize(
@@ -150,6 +150,9 @@ class SettingsTabState extends State<SettingsTab>
                   ),
                   Tab(
                     text: "Sharing",
+                  ),
+                  Tab(
+                    text: "Groups",
                   ),
                 ],
               ),

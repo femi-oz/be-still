@@ -378,11 +378,7 @@ class _EntryScreenState extends State<EntryScreen> {
           key: _keyButton,
         ),
         TabNavigationItem(
-          page: AddPrayer(
-              // isEdit: false,
-              // isGroup: false,
-              // showCancel: false, //1
-              ),
+          page: AddPrayer(), //1
           icon: Icon(
             AppIcons.bestill_add,
             size: 16,
@@ -487,11 +483,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: CreateGroupScreen(
-                //12
-
-                // isEdit: isEdit,
-                ),
+            page: CreateGroupScreen(), //12
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -499,18 +491,6 @@ class _EntryScreenState extends State<EntryScreen> {
             ),
             title: "More",
             padding: 7),
-        // TabNavigationItem(
-        //     page: AddGroupPrayer(
-        //         //13
-
-        //         ),
-        //     icon: Icon(
-        //       Icons.more_horiz,
-        //       size: 20,
-        //       color: AppColors.bottomNavIconColor,
-        //     ),
-        //     title: "More",
-        //     padding: 7),
       ];
 }
 
