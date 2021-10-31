@@ -1,9 +1,12 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,22 +20,29 @@ class GroupCard extends StatefulWidget {
 }
 
 class _GroupCardState extends State<GroupCard> {
-  BuildContext bcontext;
-  var _key = GlobalKey<State>();
   @override
   void initState() {
     super.initState();
   }
 
-  _joinGroupInvite(String groupId, String userId, String userName) async {
+  _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
+      String status, String userName, String adminId) async {
+    const title = 'Group Request';
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupId, userId, userName);
+          .joinRequest(groupData.group.id, userId, status, userName);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .addPushNotification(
+              '$userName has requested to join your group',
+              NotificationType.request,
+              userName,
+              userId,
+              adminId,
+              title,
+              groupData.group.id);
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showSnackBar(_key, 'Request has been sent');
+      Navigator.pop(context);
     } catch (e) {
       BeStilDialog.hideLoading(context);
     }
@@ -48,12 +58,15 @@ class _GroupCardState extends State<GroupCard> {
     super.didChangeDependencies();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+  void _showAlert() async {
+    final admin = widget.groupData.groupUsers
+        .firstWhere((e) => e.role == GroupUserRole.admin);
+    await Provider.of<UserProvider>(context, listen: false)
+        .getUserById(admin.userId);
+    Future.delayed(Duration(milliseconds: 500)).then((value) {
+      final adminData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
 
-    void _showAlert() {
       FocusScope.of(context).unfocus();
       AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -107,12 +120,15 @@ class _GroupCardState extends State<GroupCard> {
                                 'Admin: ',
                                 style: AppTextStyles.regularText15,
                               ),
-                              Text(
-                                '${this.widget.groupData.group.createdBy}',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
+                              Flexible(
+                                child: Text(
+                                  '${adminData.firstName} ${adminData.lastName}',
+                                  softWrap: true,
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.textFieldText,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
@@ -173,20 +189,23 @@ class _GroupCardState extends State<GroupCard> {
                       Column(
                         children: [
                           Text(
-                            '${this.widget.groupData.groupUsers.length} current members',
+                            this.widget.groupData.groupUsers.length > 1 ||
+                                    this.widget.groupData.groupUsers.length == 0
+                                ? '${this.widget.groupData.groupUsers.length} current members'
+                                : '${this.widget.groupData.groupUsers.length} current member',
                             style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.textFieldText,
                             ),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 5.0),
-                          Text(
-                            '2 contacts',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: AppColors.textFieldText,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                          // Text(
+                          //   '2 contacts',
+                          //   style: AppTextStyles.regularText15.copyWith(
+                          //     color: AppColors.textFieldText,
+                          //   ),
+                          //   textAlign: TextAlign.center,
+                          // ),
                         ],
                       ),
                       SizedBox(height: 30.0),
@@ -198,47 +217,68 @@ class _GroupCardState extends State<GroupCard> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 30.0),
-                      Text(
-                        'Would you like to request to join?',
-                        style: AppTextStyles.regularText15.copyWith(
-                          color: AppColors.textFieldText,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(height: 20.0),
-                      Container(
-                        height: 30,
-                        padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          border: Border.all(
-                            color: AppColors.cardBorder,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            side: MaterialStateProperty.all<BorderSide>(
-                                BorderSide(color: Colors.transparent)),
-                          ),
-                          child: Container(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'REQUEST',
-                                  style: AppTextStyles.boldText20,
-                                ),
-                              ],
+                      isRequestSent(this.widget.groupData.group.id)
+                          ? Container()
+                          : Text(
+                              'Would you like to request to join?',
+                              style: AppTextStyles.regularText15.copyWith(
+                                color: AppColors.textFieldText,
+                              ),
+                              textAlign: TextAlign.left,
                             ),
-                          ),
-                          onPressed: () => _joinGroupInvite(
-                              this.widget.groupData.group.id,
-                              _currentUser.id,
-                              _currentUser.email),
-                        ),
-                      ),
+                      isRequestSent(this.widget.groupData.group.id)
+                          ? Container()
+                          : SizedBox(height: 20.0),
+                      isRequestSent(this.widget.groupData.group.id)
+                          ? Container(
+                              child: Text(
+                                StringUtils.joinRequestSent,
+                                style: AppTextStyles.regularText15.copyWith(
+                                  color: AppColors.textFieldText,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            )
+                          : Container(
+                              height: 30,
+                              padding: EdgeInsets.symmetric(horizontal: 15.0),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(
+                                  color: AppColors.cardBorder,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
+                                  ),
+                                  child: Container(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'REQUEST',
+                                          style: AppTextStyles.boldText20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _requestToJoinGroup(
+                                      this.widget.groupData,
+                                      Provider.of<UserProvider>(context,
+                                              listen: false)
+                                          .currentUser
+                                          .id,
+                                      StringUtils.joinRequestStatusPending,
+                                      '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
+                                      adminData.id,
+                                    );
+                                  }),
+                            ),
                     ],
                   ),
                 ),
@@ -253,10 +293,22 @@ class _GroupCardState extends State<GroupCard> {
           builder: (BuildContext context) {
             return dialog;
           });
-    }
+    });
+  }
 
+  bool isRequestSent(id) {
+    print(Provider.of<UserProvider>(context, listen: false).currentUser.id);
+    print(widget.groupData.groupRequests.map((e) => e.status));
+    return widget.groupData.groupRequests.any((element) =>
+        element.userId ==
+            Provider.of<UserProvider>(context, listen: false).currentUser.id &&
+        element.status == StringUtils.joinRequestStatusPending);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showAlert(),
+      onTap: _showAlert,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(

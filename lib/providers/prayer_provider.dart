@@ -231,11 +231,6 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.addPrayer(
           prayerDesc, userId, creatorName, prayerDescBackup);
 
-  Future<void> addUserPrayer(String prayerId, String prayerDesc,
-          String recieverId, String senderId, String sender) async =>
-      await _prayerService.addUserPrayer(
-          prayerId, prayerDesc, recieverId, senderId, sender);
-
   Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
           String message, String prayerId) async =>
       await _prayerService.addPrayerTag(contactData, user, message, prayerId);
@@ -382,4 +377,9 @@ class PrayerProvider with ChangeNotifier {
 
   Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
       await _prayerService.addPrayerToMyList(userPrayer);
+
+  Future<void> flagAsInappropriate(String prayerId) async =>
+      await _prayerService.flagAsInappropriate(prayerId);
+  Future<void> addToMyList(String prayerId, String userId) async =>
+      await _prayerService.addToMyList(prayerId, userId);
 }

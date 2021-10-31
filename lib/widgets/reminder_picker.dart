@@ -58,7 +58,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedHour = int.parse(widget.reminder?.selectedHour);
       selectedMinute = int.parse(widget.reminder?.selectedMinute);
       selectedDayOfWeek = LocalNotification.daysOfWeek
-          .indexOf(widget.reminder?.selectedDay?.capitalize());
+          .indexOf(widget.reminder?.selectedDay?.capitalizeFirst());
       selectedPeriod = widget.reminder?.period;
       selectedFrequency = widget.reminder?.frequency;
       selectedYear = int.parse(widget.reminder?.selectedYear);

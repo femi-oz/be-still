@@ -1,6 +1,11 @@
+import 'dart:ui';
+
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/groups/widgets/filter_options.dart';
+import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -13,11 +18,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function switchSearchMode;
   final bool isSearchMode;
   final bool showPrayerActions;
+  final bool isGroup;
   final GlobalKey globalKey;
   CustomAppBar({
     Key key,
     this.switchSearchMode,
     this.isSearchMode = false,
+    this.isGroup = false,
     this.showPrayerActions = true,
     this.globalKey,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
@@ -83,9 +90,29 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
+  _openGroupFilter(bool isDark) {
+    final dialog = Dialog(
+        insetPadding: EdgeInsets.all(40),
+        backgroundColor: AppColors.prayerCardBgColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.darkBlue),
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+        ),
+        child: GroupPrayerFilters());
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
+    final notifications =
+        Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
@@ -134,7 +161,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
               : Container(),
           widget.showPrayerActions && !widget.isSearchMode
               ? InkWell(
-                  onTap: () => _openFilter(Settings.isDarkMode),
+                  onTap: () => widget.isGroup
+                      ? _openGroupFilter(Settings.isDarkMode)
+                      : _openFilter(Settings.isDarkMode),
                   child: Container(
                     height: 30,
                     width: 30,
@@ -201,19 +230,56 @@ class _CustomAppBarState extends State<CustomAppBar> {
               widget.showPrayerActions ? pageTitle : '',
               style: TextStyle(
                 color: AppColors.bottomNavIconColor,
-                fontSize: 32,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
                 height: 1.5,
               ),
             ),
       actions: <Widget>[
         !widget.isSearchMode
-            ? IconButton(
-                icon: Icon(
-                  Icons.notifications_none,
-                  color: AppColors.white,
+            ? GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NotificationsScreen(),
+                  ),
                 ),
-                onPressed: null,
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: IconButton(
+                        icon: Icon(
+                            notifications.length != 0
+                                ? Icons.notifications
+                                : Icons.notifications_none,
+                            size: 30,
+                            color: notifications.length != 0
+                                ? AppColors.red
+                                : AppColors.white),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationsScreen(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    notifications.length != 0
+                        ? Positioned(
+                            top: MediaQuery.of(context).size.height * 0.035,
+                            left: notifications.length > 9
+                                ? MediaQuery.of(context).size.width * 0.044
+                                : MediaQuery.of(context).size.width * 0.05,
+                            child: Text(notifications.length.toString(),
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w600)),
+                          )
+                        : Container(),
+                  ],
+                ),
               )
             : Container(),
       ],

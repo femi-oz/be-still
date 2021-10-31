@@ -18,8 +18,8 @@ class SettingsProvider with ChangeNotifier {
   PrayerSettingsModel get prayerSetttings => _prayerSettings;
   SharingSettingsModel _sharingSettings;
   SharingSettingsModel get sharingSettings => _sharingSettings;
-  List<GroupSettings> _groupSettings;
-  List<GroupSettings> get groupSettings => _groupSettings;
+  GroupSettings _groupSettings;
+  GroupSettings get groupSettings => _groupSettings;
   GroupPreferenceSettings _groupPreferenceSettings;
   GroupPreferenceSettings get groupPreferenceSettings =>
       _groupPreferenceSettings;
@@ -87,17 +87,19 @@ class SettingsProvider with ChangeNotifier {
     await setSharingSettings(userId);
   }
 
-  Future updateGroupSettings(
+  Future updateGroupSettings(String userId,
       {String key, dynamic value, String settingsId}) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _settingsService.updateGroupSettings(
         key: key, groupSettingsId: settingsId, value: value);
+    await setGroupSettings(userId);
   }
 
-  Future updateGroupPrefenceSettings(
+  Future updateGroupPrefenceSettings(String userId,
       {String key, dynamic value, String settingsId}) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _settingsService.updateGroupPreferenceSettings(
         key: key, groupPreferenceSettingsId: settingsId, value: value);
+    await setGroupPreferenceSettings(userId);
   }
 }

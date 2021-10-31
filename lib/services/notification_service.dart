@@ -42,7 +42,6 @@ class NotificationService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       var tokens = await getNotificationToken(userId);
-      print(tokens);
       if (tokens.contains(token)) return;
       await _deviceCollectionReference.doc(deviceId).set(
             DeviceModel(
@@ -106,17 +105,19 @@ class NotificationService {
     String message,
     String messageType,
     String sender,
-    List<String> tokens,
     String senderId,
     String recieverId,
+    String title,
     @required String entityId,
   }) async {
     final _notificationId = Uuid().v1();
+    var tokens = await getNotificationToken(recieverId);
+
     var data = PushNotificationModel(
       messageType: messageType,
       message: message,
       sender: sender,
-      title: "You have been tagged in a prayer",
+      title: title,
       tokens: tokens,
       createdBy: senderId,
       createdOn: DateTime.now(),
@@ -311,6 +312,19 @@ class NotificationService {
     } catch (e) {
       locator<LogService>().createLog(
           e.message, deviceId, 'NOTIFICATION/service/updateLocalNotification');
+      throw HttpException(e.message);
+    }
+  }
+
+  updatePushNotification(String _notificationId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _pushNotificationCollectionReference
+          .doc(_notificationId)
+          .update({'Status': Status.inactive});
+    } catch (e) {
+      locator<LogService>().createLog(e.message, _notificationId,
+          'NOTIFICATION/service/updatePushNotification');
       throw HttpException(e.message);
     }
   }

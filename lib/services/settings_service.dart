@@ -84,10 +84,9 @@ class SettingsService {
     return groupPreferenceSettings;
   }
 
-  populateGroupSettings(String userId, String email, String groupId) {
+  populateGroupSettings(String userId, String email) {
     GroupSettings groupsSettings = GroupSettings(
         userId: userId,
-        groupId: groupId,
         enableNotificationFormNewPrayers: false,
         enableNotificationForUpdates: false,
         notifyOfMembershipRequest: false,
@@ -149,14 +148,14 @@ class SettingsService {
     }
   }
 
-  Future addGroupSettings(String userId, String email, String groupId) async {
+  Future addGroupSettings(String userId, String email) async {
     final groupSettingsId = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      await _groupSettingsCollectionReference
+      _groupSettingsCollectionReference
           .doc(groupSettingsId)
-          .set(populateGroupSettings(userId, email, groupId).toJson());
+          .set(populateGroupSettings(userId, email).toJson());
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -232,13 +231,13 @@ class SettingsService {
     }
   }
 
-  Future<List<GroupSettings>> getGroupSettings(String userId) async {
+  Future<GroupSettings> getGroupSettings(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var settings = await _sharingSettingsCollectionReference
+      var settings = await _groupSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
-      return settings.docs.map((e) => GroupSettings.fromData(e)).toList();
+      return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
