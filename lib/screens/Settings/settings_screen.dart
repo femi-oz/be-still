@@ -8,6 +8,7 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
+import 'package:be_still/screens/settings/widgets/groups.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -168,6 +169,7 @@ class SettingsTabState extends State<SettingsTab>
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
                 SharingSettings(),
+                GroupsSettings(),
               ],
             ),
           ),
