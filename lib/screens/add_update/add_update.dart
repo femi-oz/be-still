@@ -79,25 +79,10 @@ class _AddUpdateState extends State<AddUpdate> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
     try {
-      bool contactSearchMode = false;
-      if (val.contains('@')) {
-        contactSearchMode = true;
-      } else {
-        contactSearchMode = false;
-      }
-      var topCaseSearch =
-          contactSearchMode ? val.substring(val.indexOf('@')) : '';
-      if (' '.allMatches(topCaseSearch).length == 0 ||
-          ' '.allMatches(topCaseSearch).length == 1) {
-        textWithSpace = true;
-        tagText = topCaseSearch;
-        topCaseSearch = topCaseSearch + ' ';
-      } else {
-        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
-        tagText = textBefore;
-        textWithSpace = false;
-      }
-
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -121,7 +106,7 @@ class _AddUpdateState extends State<AddUpdate> {
       });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_UPDATE/screen/onTextChange_tag');
+          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
