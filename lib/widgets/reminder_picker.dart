@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
@@ -254,7 +255,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
           description,
           selectedFrequency,
           scheduleDate,
-          prayerData?.userPrayer?.id ?? '',
+          widget.type == NotificationType.prayer_time
+              ? ''
+              : prayerData?.userPrayer?.id,
           LocalNotification.daysOfWeek[selectedDayOfWeek],
           selectedPeriod,
           _selectedHourString,
