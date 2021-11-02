@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -10,6 +11,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class SnoozePrayer extends StatefulWidget {
@@ -87,10 +89,12 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           widget.prayerData.userPrayer.id,
           selectedDuration,
           selectedInterval);
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      Navigator.pop(context);
 
-      await Future.delayed(Duration(milliseconds: 300),
-          () => {BeStilDialog.hideLoading(context)});
-      Navigator.pushReplacement(context, SlideRightRoute(page: EntryScreen()));
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});

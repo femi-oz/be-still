@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/time_range.dart';
@@ -15,6 +16,7 @@ import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:provider/provider.dart';
 
@@ -59,7 +61,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedHour = int.parse(widget.reminder?.selectedHour);
       selectedMinute = int.parse(widget.reminder?.selectedMinute);
       selectedDayOfWeek = LocalNotification.daysOfWeek
-          .indexOf(widget.reminder?.selectedDay?.capitalize());
+          .indexOf(widget.reminder?.selectedDay?.capitalizeFirst);
       selectedPeriod = widget.reminder?.period;
       selectedFrequency = widget.reminder?.frequency;
       selectedYear = int.parse(widget.reminder?.selectedYear);
@@ -115,10 +117,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
     );
     BeStilDialog.hideLoading(context);
     setState(() {});
-    if (widget.type == NotificationType.reminder)
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
-    else
+    if (widget.type == NotificationType.reminder) {
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
+    } else
       widget.onCancel();
     setState(() => null);
   }
@@ -152,10 +157,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
     BeStilDialog.hideLoading(context);
 
     setState(() {});
-    if (widget.type == NotificationType.reminder)
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
-    else
+    if (widget.type == NotificationType.reminder) {
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
+    } else
       widget.onCancel();
   }
 
