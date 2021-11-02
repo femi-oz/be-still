@@ -113,7 +113,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                   _user.id,
                   receiver[i].userId,
                   'Prayer flagged as innapropriate',
-                  widget.prayerData.groupPrayer.prayerId);
+                  widget.prayerData.prayer.id);
         }
       }
     });

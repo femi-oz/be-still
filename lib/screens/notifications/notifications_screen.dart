@@ -235,7 +235,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               currentUser.id,
               receiverId,
               'Request Denied',
-              receiverId);
+              groupData.id);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
     } catch (e) {
@@ -275,7 +275,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               currentUser.id,
               receiverId,
               'Request Accepted',
-              receiverId);
+              groupData.id);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
     } catch (e) {

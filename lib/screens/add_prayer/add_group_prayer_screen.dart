@@ -89,7 +89,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     super.didChangeDependencies();
   }
 
-  _sendNotification() async {
+  _sendNotification(String prayerId) async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
@@ -106,7 +106,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                   _user.id,
                   receiver[i].userId,
                   'Prayer Update',
-                  element.group.id);
+                  prayerId);
         }
       }
     });
@@ -155,7 +155,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               contacts = [...contacts, s];
             }
           });
-          _sendNotification();
           if (contacts.length > 0) {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
@@ -273,7 +272,11 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-          _sendNotification();
+          _sendNotification(
+              Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .prayerToEdit
+                  .prayer
+                  .id);
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         }
