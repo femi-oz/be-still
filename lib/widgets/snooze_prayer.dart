@@ -5,10 +5,8 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +14,8 @@ import 'package:provider/provider.dart';
 
 class SnoozePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;
-  SnoozePrayer(this.prayerData);
+  final bool popTwice;
+  SnoozePrayer(this.prayerData, {this.popTwice = true});
   @override
   _SnoozePrayerState createState() => _SnoozePrayerState();
 }
@@ -91,9 +90,9 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           selectedInterval);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
+      if (widget.popTwice) Navigator.pop(context);
       appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300),

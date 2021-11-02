@@ -500,7 +500,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                   Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 30),
-                                      child: SnoozePrayer(widget.prayerData)),
+                                      child: SnoozePrayer(widget.prayerData,
+                                          popTwice: false)),
                                 ],
                               ),
                             );
