@@ -55,6 +55,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
@@ -79,7 +80,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unfavoritePrayer(prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
-
+      Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
@@ -111,7 +112,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
-
+      Navigator.pop(context);
+      Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
@@ -276,6 +278,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
 
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
@@ -299,6 +302,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unMarkPrayerAsAnswered(
               prayerData.prayer.id, prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
@@ -320,6 +324,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unArchivePrayer(prayerData.userPrayer.id, prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
@@ -349,6 +354,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
@@ -394,6 +400,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
           prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
