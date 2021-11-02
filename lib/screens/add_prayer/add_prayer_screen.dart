@@ -301,25 +301,10 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
     try {
-      bool contactSearchMode = false;
-      if (val.contains('@')) {
-        contactSearchMode = true;
-      } else {
-        contactSearchMode = false;
-      }
-      var topCaseSearch =
-          contactSearchMode ? val.substring(val.indexOf('@')) : '';
-      if (' '.allMatches(topCaseSearch).length == 0 ||
-          ' '.allMatches(topCaseSearch).length == 1) {
-        textWithSpace = true;
-        tagText = topCaseSearch;
-        topCaseSearch = topCaseSearch + ' ';
-      } else {
-        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
-        tagText = textBefore;
-        textWithSpace = false;
-      }
-
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -347,34 +332,20 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void _onUpdateTextChange(String val) {
+  void _onUpdateTextChange(String val, TextEditingController controller) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
-      bool contactSearchMode = false;
-      if (val.contains('@')) {
-        contactSearchMode = true;
-      } else {
-        contactSearchMode = false;
-      }
-      var topCaseSearch =
-          contactSearchMode ? val.substring(val.indexOf('@')) : '';
-      if (' '.allMatches(topCaseSearch).length == 0 ||
-          ' '.allMatches(topCaseSearch).length == 1) {
-        textWithSpace = true;
-        updateTagText = topCaseSearch;
-        topCaseSearch = topCaseSearch + ' ';
-      } else {
-        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
-        updateTagText = textBefore;
-        textWithSpace = false;
-      }
+      var cursorPos = controller.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      updateTagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
-            .trim()
             .toLowerCase()
-            .contains(updateTagText.trim().toLowerCase())) {
+            .contains(updateTagText.toLowerCase())) {
           tagList.add(s.displayName);
         }
       });
@@ -412,29 +383,50 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  Future<void> _onTagSelected(s, controller) async {
-    String controllerText;
-    String tmpText = s.displayName.substring(0, s.displayName.length);
+  Future<void> _onUpdateTagSelected(s, TextEditingController controller) async {
+    controller.text =
+        controller.text.replaceFirst(updateTagText, s.displayName);
+
+    updateTagText = '';
+
+    setState(() {
+      controller.selection =
+          TextSelection.collapsed(offset: controller.text.length);
+    });
+
+    if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+      contacts = [...contacts, s];
+    }
+  }
+
+  Future<void> _onTagSelected(s, TextEditingController controller) async {
+    // print(controller.text.replaceFirst(tagText, s.displayName));
+    // String controllerText;
+    // String tmpText = s.displayName.substring(0, s.displayName.length);
+
+    controller.text = controller.text.replaceFirst(tagText, s.displayName);
     tagText = '';
     updateTagText = '';
-    var tmpTextAfter = controller.text
-        .substring(controller.text.indexOf('@'), controller.text.length);
-    var textAfter = tmpTextAfter.split(" ");
-    var newText = textAfter..removeAt(0);
-    var joinText = newText.join(" ");
+    // var tmpTextAfter = controller.text
+    //     .substring(controller.text.indexOf('@'), controller.text.length);
+    // var textAfter = tmpTextAfter.split(" ");
+    // var newText = textAfter..removeAt(0);
+    // var joinText = newText.join(" ");
 
-    controllerText = controller.text.substring(
-      0,
-      controller.text.indexOf('@'),
-    );
-    controllerText += tmpText;
-    if (textWithSpace) {
-      controller.text = controllerText;
-      textWithSpace = false;
-    } else {
-      controller.text = controllerText + " " + joinText;
-      textWithSpace = false;
-    }
+    // controllerText = controller.text.substring(
+    //   0,
+    //   controller.text.indexOf('@'),
+    // );
+    // controllerText += tmpText;
+    // if (textWithSpace) {
+    //   controller.text = controllerText;
+    //   textWithSpace = false;
+    // } else {
+    //   textWithSpace = false;
+    // }
+    // controller.text = controllerText;
+    // controller.text = controllerText + " " + joinText;
+
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
 
@@ -631,7 +623,7 @@ class _AddPrayerState extends State<AddPrayer> {
                         ),
                       ),
                       onTap: () =>
-                          _onTagSelected(s, textEditingControllers[e.id]),
+                          _onUpdateTagSelected(s, textEditingControllers[e.id]),
                     );
                   } else {
                     return SizedBox();
@@ -843,7 +835,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                         cursorColor: AppColors.lightBlue4,
                                         onChanged: (val) {
                                           // setState(() {});
-                                          _onUpdateTextChange(val);
+                                          _onUpdateTextChange(val,
+                                              textEditingControllers[e.id]);
                                           // if (e.description.trim() !=
                                           //     textEditingController.text
                                           //         .trim()) {
