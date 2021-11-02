@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -19,6 +20,7 @@ import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
@@ -54,8 +56,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .favoritePrayer(prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -78,8 +80,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unfavoritePrayer(prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -110,8 +112,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .deletePrayer(widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -275,8 +277,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -298,8 +300,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
               prayerData.prayer.id, prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -319,8 +321,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unArchivePrayer(prayerData.userPrayer.id, prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -348,8 +350,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .archivePrayer(widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -393,8 +395,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
