@@ -85,11 +85,14 @@ class _AddUpdateState extends State<AddUpdate> {
       tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
-        if (('@' + s.displayName)
-            .toLowerCase()
-            .contains(tagText.toLowerCase())) {
-          tagList.add(s.displayName);
-        }
+        var displayName = s.displayName == null ? '' : s.displayName;
+        var displayNameList =
+            displayName.toLowerCase().split(new RegExp(r"\s"));
+        displayNameList.forEach((e) {
+          if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
+            tagList.add(displayName);
+          }
+        });
       });
 
       painter = TextPainter(
@@ -105,8 +108,9 @@ class _AddUpdateState extends State<AddUpdate> {
         numberOfLines = lines.length.toDouble();
       });
     } catch (e) {
+      print(e);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
+          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
@@ -351,7 +355,7 @@ class _AddUpdateState extends State<AddUpdate> {
     Widget contactDropdown(context) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (_descriptionController.selection.baseOffset / 4),
+            (_descriptionController.selection.baseOffset / 1.8),
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
@@ -364,10 +368,18 @@ class _AddUpdateState extends State<AddUpdate> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
+                  var name = '';
 
-                  if (('@' + s.displayName)
-                      .toLowerCase()
-                      .contains(tagText.toLowerCase())) {
+                  var displayNameList =
+                      displayName.toLowerCase().split(new RegExp(r"\s"));
+                  displayNameList.forEach((e) {
+                    if (e
+                        .toLowerCase()
+                        .contains(tagText.toLowerCase().substring(1))) {
+                      name = e;
+                    }
+                  });
+                  if (name.isNotEmpty) {
                     return GestureDetector(
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.5,
@@ -394,7 +406,10 @@ class _AddUpdateState extends State<AddUpdate> {
                           ),
                         ),
                       )
-                    : Container()
+                    : Container(),
+                SizedBox(
+                  height: 50,
+                )
               ],
             ),
           ),
