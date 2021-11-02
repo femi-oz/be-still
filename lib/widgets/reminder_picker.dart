@@ -154,7 +154,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedMonth,
       selectedDayOfMonth.toString(),
     );
-    BeStilDialog.hideLoading(context);
 
     setState(() {});
     if (widget.type == NotificationType.reminder) {
@@ -290,10 +289,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .deleteLocalNotification(widget.reminder.id);
       setState(() {});
-      if (widget.type == NotificationType.reminder)
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
-      else
+      if (widget.type == NotificationType.reminder) {
+        Navigator.pop(context);
+
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(0, true);
+      } else
         widget.onCancel();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
