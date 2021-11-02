@@ -160,7 +160,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
