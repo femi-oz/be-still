@@ -79,32 +79,20 @@ class _AddUpdateState extends State<AddUpdate> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
     try {
-      bool contactSearchMode = false;
-      if (val.contains('@')) {
-        contactSearchMode = true;
-      } else {
-        contactSearchMode = false;
-      }
-      var topCaseSearch =
-          contactSearchMode ? val.substring(val.indexOf('@')) : '';
-      if (' '.allMatches(topCaseSearch).length == 0 ||
-          ' '.allMatches(topCaseSearch).length == 1) {
-        textWithSpace = true;
-        tagText = topCaseSearch;
-        topCaseSearch = topCaseSearch + ' ';
-      } else {
-        var textBefore = topCaseSearch.substring(0, topCaseSearch.indexOf(' '));
-        tagText = textBefore;
-        textWithSpace = false;
-      }
-
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
-        if (('@' + s.displayName)
-            .toLowerCase()
-            .contains(tagText.toLowerCase())) {
-          tagList.add(s.displayName);
-        }
+        var displayName = s.displayName == null ? '' : s.displayName;
+        var displayNameList =
+            displayName.toLowerCase().split(new RegExp(r"\s"));
+        displayNameList.forEach((e) {
+          if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
+            tagList.add(displayName);
+          }
+        });
       });
 
       painter = TextPainter(
@@ -120,44 +108,46 @@ class _AddUpdateState extends State<AddUpdate> {
         numberOfLines = lines.length.toDouble();
       });
     } catch (e) {
+      print(e);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_UPDATE/screen/onTextChange_tag');
+          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
-  Future<void> _onTagSelected(s) async {
-    tagText = '';
-    String tmpText = s.displayName.substring(0, s.displayName.length);
-    String controllerText = _descriptionController.text.substring(
-      0,
-      _descriptionController.text.indexOf('@'),
-    );
-    var tmpTextAfter = _descriptionController.text.substring(
-        _descriptionController.text.indexOf('@'),
-        _descriptionController.text.length);
-    var textAfter = tmpTextAfter.split(" ");
-    var newText = textAfter..removeAt(0);
-    var joinText = newText.join(" ");
-    controllerText = _descriptionController.text.substring(
-      0,
-      _descriptionController.text.indexOf('@'),
-    );
-    controllerText += tmpText;
-    if (textWithSpace) {
-      _descriptionController.text = controllerText;
-      textWithSpace = false;
-    } else {
-      _descriptionController.text = controllerText + " " + joinText;
-      textWithSpace = false;
-    }
+  Future<void> _onTagSelected(s, TextEditingController controller) async {
+    // print(controller.text.replaceFirst(tagText, s.displayName));
+    // String controllerText;
+    // String tmpText = s.displayName.substring(0, s.displayName.length);
 
-    // _descriptionController.text = controllerText + " " + joinText;
-    _descriptionController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _descriptionController.text.length));
+    controller.text = controller.text.replaceFirst(tagText, s.displayName);
+    tagText = '';
+    // updateTagText = '';
+    // var tmpTextAfter = controller.text
+    //     .substring(controller.text.indexOf('@'), controller.text.length);
+    // var textAfter = tmpTextAfter.split(" ");
+    // var newText = textAfter..removeAt(0);
+    // var joinText = newText.join(" ");
+
+    // controllerText = controller.text.substring(
+    //   0,
+    //   controller.text.indexOf('@'),
+    // );
+    // controllerText += tmpText;
+    // if (textWithSpace) {
+    //   controller.text = controllerText;
+    //   textWithSpace = false;
+    // } else {
+    //   textWithSpace = false;
+    // }
+    // controller.text = controllerText;
+    // controller.text = controllerText + " " + joinText;
+
+    controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: controller.text.length));
 
     setState(() {
-      _descriptionController.selection =
-          TextSelection.collapsed(offset: _descriptionController.text.length);
+      controller.selection =
+          TextSelection.collapsed(offset: controller.text.length);
     });
 
     if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
@@ -365,7 +355,7 @@ class _AddUpdateState extends State<AddUpdate> {
     Widget contactDropdown(context) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (_descriptionController.selection.baseOffset / 4),
+            (_descriptionController.selection.baseOffset / 1.8),
         left: 10,
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
@@ -378,10 +368,18 @@ class _AddUpdateState extends State<AddUpdate> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
+                  var name = '';
 
-                  if (('@' + s.displayName)
-                      .toLowerCase()
-                      .contains(tagText.toLowerCase())) {
+                  var displayNameList =
+                      displayName.toLowerCase().split(new RegExp(r"\s"));
+                  displayNameList.forEach((e) {
+                    if (e
+                        .toLowerCase()
+                        .contains(tagText.toLowerCase().substring(1))) {
+                      name = e;
+                    }
+                  });
+                  if (name.isNotEmpty) {
                     return GestureDetector(
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.5,
@@ -393,7 +391,7 @@ class _AddUpdateState extends State<AddUpdate> {
                             ),
                           ),
                         ),
-                        onTap: () => _onTagSelected(s));
+                        onTap: () => _onTagSelected(s, _descriptionController));
                   } else {
                     return SizedBox();
                   }
@@ -408,7 +406,10 @@ class _AddUpdateState extends State<AddUpdate> {
                           ),
                         ),
                       )
-                    : Container()
+                    : Container(),
+                SizedBox(
+                  height: 50,
+                )
               ],
             ),
           ),
