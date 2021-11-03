@@ -299,10 +299,9 @@ class _GroupCardState extends State<GroupCard> {
   bool isRequestSent(id) {
     print(Provider.of<UserProvider>(context, listen: false).currentUser.id);
     print(widget.groupData.groupRequests.map((e) => e.status));
-    return widget.groupData.groupRequests.any((element) =>
+    return widget.groupData.groupUsers.any((element) =>
         element.userId ==
-            Provider.of<UserProvider>(context, listen: false).currentUser.id &&
-        element.status == StringUtils.joinRequestStatusPending);
+        Provider.of<UserProvider>(context, listen: false).currentUser.id);
   }
 
   @override
