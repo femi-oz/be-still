@@ -42,20 +42,27 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteFromGroup(user.userId, user.groupId);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
-              '$userName has removed you from ${group.group.name}',
-              NotificationType.remove_from_group,
-              userName,
-              _currentUser.id,
-              user.userId,
-              'Remove from group',
-              group.group.id);
+      sendPushNotification(
+          '$userName has removed you from ${group.group.name}',
+          NotificationType.remove_from_group,
+          userName,
+          _currentUser.id,
+          user.userId,
+          'Remove from group',
+          group.group.id);
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       BeStilDialog.showSuccessDialog(context, message);
     } on HttpException catch (_) {
     } catch (e) {}
+  }
+
+  sendPushNotification(message, messageType, sender, senderId, receiverId,
+      title, entityId) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .addPushNotification(message, messageType, sender, senderId, receiverId,
+            title, entityId);
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
@@ -1003,6 +1010,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         !isAdmin
                             ? GestureDetector(
                                 onTap: () async {
+                                  var receiver = data.groupUsers.firstWhere(
+                                      (element) =>
+                                          element.role == GroupUserRole.admin);
                                   final id = data.groupUsers
                                       .firstWhere(
                                           (e) => e.userId == _currentUser.id,
@@ -1010,10 +1020,17 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       .id;
                                   if (id != null) {
                                     BeStilDialog.showLoading(context, '');
-
                                     await Provider.of<GroupProvider>(context,
                                             listen: false)
                                         .leaveGroup(id);
+                                    sendPushNotification(
+                                        '${_currentUser.firstName} has left your group ${data.group.name}',
+                                        NotificationType.leave_group,
+                                        _currentUser.firstName,
+                                        _currentUser.id,
+                                        receiver.userId,
+                                        'Leave Group',
+                                        data.group.id);
                                     await Future.delayed(
                                         Duration(milliseconds: 300));
                                     BeStilDialog.hideLoading(context);

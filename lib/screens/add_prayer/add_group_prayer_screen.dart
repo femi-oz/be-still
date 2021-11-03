@@ -92,24 +92,24 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   _sendNotification(String prayerId) async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    List receiver;
     data.forEach((element) async {
-      for (var i = 0; i < element.groupUsers.length; i++) {
-        var receiver =
-            element.groupUsers.where((e) => e.userId != _user.id).toList();
-        if (receiver.length > 0) {
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .addPushNotification(
-                  _descriptionController.text,
-                  NotificationType.prayer,
-                  _user.firstName,
-                  _user.id,
-                  receiver[i].userId,
-                  'Prayer Update',
-                  prayerId);
-        }
-      }
+      receiver = element.groupUsers.where((e) => e.userId != _user.id).toList();
     });
+
+    for (var i = 0; i < receiver.length; i++) {
+      if (receiver.length > 0) {
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .addPushNotification(
+                _descriptionController.text,
+                NotificationType.prayer,
+                _user.firstName,
+                _user.id,
+                receiver[i].userId,
+                'Prayer Update',
+                prayerId);
+      }
+    }
   }
 
   Future<void> _save(textEditingControllers) async {
