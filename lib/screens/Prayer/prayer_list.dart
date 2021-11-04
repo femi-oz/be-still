@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -20,10 +21,11 @@ import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class PrayerList extends StatefulWidget {
-  final Function setCurrentIndex;
+  // final Function setCurrentIndex;
   final GlobalKey keyButton;
   final GlobalKey keyButton2;
   final GlobalKey keyButton3;
@@ -32,7 +34,7 @@ class PrayerList extends StatefulWidget {
   final bool isSearchMode;
   final Function switchSearchMode;
   PrayerList(
-    this.setCurrentIndex,
+    // this.setCurrentIndex,
     this.keyButton,
     this.keyButton2,
     this.keyButton3,
@@ -82,7 +84,9 @@ class _PrayerListState extends State<PrayerList> {
           .setPrayer(prayerData.userPrayer.id);
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      widget.setCurrentIndex(7, true);
+      AppCOntroller appCOntroller = Get.find();
+
+      appCOntroller.setCurrentPage(7, true);
       // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -193,8 +197,12 @@ class _PrayerListState extends State<PrayerList> {
                                   Container(
                                     padding: EdgeInsets.only(left: 20.0),
                                     child: LongButton(
-                                      onPress: () =>
-                                          widget.setCurrentIndex(1, true),
+                                      onPress: () {
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+
+                                        appCOntroller.setCurrentPage(1, true);
+                                      },
                                       text: 'Add New Prayer',
                                       backgroundColor: AppColors
                                           .addprayerBgColor
@@ -225,8 +233,15 @@ class _PrayerListState extends State<PrayerList> {
                                                       PrayerType.answered
                                               ? Container()
                                               : LongButton(
-                                                  onPress: () => widget
-                                                      .setCurrentIndex(1, true),
+                                                  onPress: () {
+                                                    AppCOntroller
+                                                        appCOntroller =
+                                                        Get.find();
+
+                                                    appCOntroller
+                                                        .setCurrentPage(
+                                                            1, true);
+                                                  },
                                                   text: 'Add New Prayer',
                                                   backgroundColor: AppColors
                                                       .addprayerBgColor

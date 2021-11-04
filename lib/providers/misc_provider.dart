@@ -4,9 +4,6 @@ class MiscProvider with ChangeNotifier {
   String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
 
-  int _currentPage = 0;
-  int get currentPage => _currentPage;
-
   bool _initialLoad = false;
   bool get initialLoad => _initialLoad;
 
@@ -28,11 +25,6 @@ class MiscProvider with ChangeNotifier {
 
   setSearchQuery(String searchText) {
     _searchQuery = searchText;
-    notifyListeners();
-  }
-
-  setCurrentPage(int index) {
-    _currentPage = index;
     notifyListeners();
   }
 

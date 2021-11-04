@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -14,15 +15,13 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'package:provider/provider.dart';
 
 class PrayerDetails extends StatefulWidget {
   static const routeName = 'prayer-details';
-
-  final Function setCurrentIndex;
-  PrayerDetails(this.setCurrentIndex);
 
   @override
   _PrayerDetailsState createState() => _PrayerDetailsState();
@@ -131,7 +130,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       color: AppColors.lightBlue3,
                       size: 20,
                     ),
-                    onPressed: () => widget.setCurrentIndex(0, true),
+                    onPressed: () {
+                      AppCOntroller appCOntroller = Get.find();
+
+                      appCOntroller.setCurrentPage(0, true);
+                    },
                     label: Text(
                       'BACK',
                       style: AppTextStyles.boldText20.copyWith(

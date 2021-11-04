@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -8,12 +9,11 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RecommenededBibles extends StatefulWidget {
-  final Function setCurrentIndex;
-  RecommenededBibles(this.setCurrentIndex);
   static const routeName = 'recommended-bible';
 
   @override
@@ -47,7 +47,9 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   }
 
   Future<bool> _onWillPop() async {
-    widget.setCurrentIndex(0, true);
+    AppCOntroller appCOntroller = Get.find();
+
+    appCOntroller.setCurrentPage(0, true);
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;

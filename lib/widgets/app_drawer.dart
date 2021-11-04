@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -12,12 +13,13 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_appavailability/flutter_appavailability.dart';
 
 class CustomDrawer extends StatefulWidget {
-  final Function setCurrentIndex;
+  final Function(int) setCurrentIndex;
   final GlobalKey keyButton;
   final GlobalKey keyButton2;
   final GlobalKey keyButton3;
@@ -149,18 +151,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         borderRadius: BorderRadius.circular(5),
                         color: AppColors.grey.withOpacity(0.5),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'CANCEL',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'CANCEL',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                            height: 1,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -186,18 +186,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'LOGOUT',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'LOGOUT',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 14,
+                            height: 1,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -249,11 +247,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           color: AppColors.topNavTextColor,
                         ),
                         onTap: () {
-                          Provider.of<MiscProvider>(context, listen: false)
-                              .setCurrentPage(0);
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              EntryScreen.routeName,
-                              (Route<dynamic> route) => false);
+                          // AppCOntroller appCOntroller = Get.find();
+                          // appCOntroller.setCurrentPage(0, false);
+                          Navigator.pop(context);
                         },
                       )
                     ],
@@ -279,7 +275,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () async {
-                              await widget.setCurrentIndex(6, false);
+                              AppCOntroller appCOntroller = Get.find();
+
+                              appCOntroller.setCurrentPage(6, false);
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -292,7 +290,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                               onTap: () async {
-                                await widget.setCurrentIndex(5, false);
+                                AppCOntroller appCOntroller = Get.find();
+
+                                appCOntroller.setCurrentPage(5, false);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
@@ -305,7 +305,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () async {
-                              await widget.setCurrentIndex(4, false);
+                              AppCOntroller appCOntroller = Get.find();
+
+                              appCOntroller.setCurrentPage(4, false);
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -327,7 +329,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () {
-                              widget.setCurrentIndex(0, true);
+                              AppCOntroller appCOntroller = Get.find();
+
+                              appCOntroller.setCurrentPage(0, true);
                               Navigator.pop(context);
                               TutorialTarget.showTutorial(
                                 context,

@@ -1,6 +1,8 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class SlideRightRoute extends PageRouteBuilder {
@@ -70,8 +72,8 @@ class NavigationService {
   }
 
   Future<dynamic> goHome(int index) async {
-    await Provider.of<MiscProvider>(navigationKey.currentContext, listen: false)
-        .setCurrentPage(index);
+    AppCOntroller appCOntroller = Get.find();
+    appCOntroller.setCurrentPage(index, true);
     return navigationKey.currentState
         .pushReplacement(SlideLeftRoute(page: EntryScreen()));
   }

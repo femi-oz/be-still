@@ -36,7 +36,7 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+    var reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
@@ -500,7 +500,8 @@ class _PrayerCardState extends State<PrayerCard> {
                                   Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 30),
-                                      child: SnoozePrayer(widget.prayerData)),
+                                      child: SnoozePrayer(widget.prayerData,
+                                          popTwice: false)),
                                 ],
                               ),
                             );
