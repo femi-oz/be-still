@@ -250,27 +250,28 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           child: Column(
             children: <Widget>[
               SizedBox(height: MediaQuery.of(context).padding.top + 20),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0, left: 20),
-                  child: InkWell(
-                    child: Text(
-                      'CANCEL',
-                      style: AppTextStyles.boldText18
-                          .copyWith(color: AppColors.grey),
+              if (_step == 1)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                    child: InkWell(
+                      child: Text(
+                        'CANCEL',
+                        style: AppTextStyles.boldText18
+                            .copyWith(color: AppColors.grey),
+                      ),
+                      onTap: isValid
+                          ? () => onCancel()
+                          : () {
+                              FocusScope.of(context)
+                                  .requestFocus(new FocusNode());
+                              // Navigator.pop(context);
+                              appCOntroller.setCurrentPage(3, true);
+                            },
                     ),
-                    onTap: isValid
-                        ? () => onCancel()
-                        : () {
-                            FocusScope.of(context)
-                                .requestFocus(new FocusNode());
-                            // Navigator.pop(context);
-                            appCOntroller.setCurrentPage(3, true);
-                          },
                   ),
                 ),
-              ),
               Expanded(
                   child: SingleChildScrollView(
                 padding: EdgeInsets.all(20.0),

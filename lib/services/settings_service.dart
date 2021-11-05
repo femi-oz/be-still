@@ -240,10 +240,12 @@ class SettingsService {
           .where('UserId', isEqualTo: userId)
           .get();
       if (settings.docs.length < 1) {
-        return addGroupSettings(userId).then((value) =>
-            settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0]);
-      } else
-        return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
+        await addGroupSettings(userId);
+        settings = await _groupSettingsCollectionReference
+            .where('UserId', isEqualTo: userId)
+            .get();
+      }
+      return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -260,7 +262,12 @@ class SettingsService {
       var settings = await _groupPrefernceSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
-      if (settings.docs.length < 1) await addGroupPreferenceSettings(userId);
+      if (settings.docs.length < 1) {
+        await addGroupPreferenceSettings(userId);
+        settings = await _groupPrefernceSettingsCollectionReference
+            .where('UserId', isEqualTo: userId)
+            .get();
+      }
       return settings.docs
           .map((e) => GroupPreferenceSettings.fromData(e))
           .toList()[0];
