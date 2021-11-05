@@ -58,7 +58,8 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addGroup(GroupModel groupData, String userID, String email) async {
+  Future<void> addGroup(
+      GroupModel groupData, String userID, String email) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.addGroup(userID, groupData, email);
   }

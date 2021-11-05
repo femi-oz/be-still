@@ -82,123 +82,132 @@ class _GroupScreenState extends State<GroupScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: CustomAppBar(showPrayerActions: false),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
+        body: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+              image: DecorationImage(
+                image: AssetImage(StringUtils.backgroundImage),
+                alignment: Alignment.bottomCenter,
+              ),
             ),
-            image: DecorationImage(
-              image: AssetImage(StringUtils.backgroundImage),
-              alignment: Alignment.bottomCenter,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20 + MediaQuery.of(context).padding.top),
-                Container(
-                  padding: EdgeInsets.only(left: 50),
-                  child: LongButton(
-                    onPress: () {
-                      Provider.of<MiscProvider>(context, listen: false)
-                          .setPageTitle('FIND A GROUP');
-                      appCOntroller.setCurrentPage(11, true);
-                    },
-                    text: 'FIND A GROUP',
-                    backgroundColor:
-                        AppColors.groupActionBgColor.withOpacity(0.9),
-                    textColor: AppColors.addprayerTextColor,
-                    hasIcon: false,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  padding: EdgeInsets.only(left: 50),
-                  child: LongButton(
-                    onPress: () async {
-                      await Provider.of<MiscProvider>(context, listen: false)
-                          .setPageTitle('CREATE A GROUP');
-                      // await Provider.of<MiscProvider>(context, listen: false)
-                      //     .setIsEdit(false);
-                      appCOntroller.setCurrentPage(12, true);
-                    },
-                    text: 'CREATE A GROUP',
-                    backgroundColor:
-                        AppColors.groupActionBgColor.withOpacity(0.9),
-                    textColor: AppColors.addprayerTextColor,
-                    hasIcon: false,
-                  ),
-                ),
-                SizedBox(height: 30),
-                data.length == 0
-                    ? Container(
-                        padding: EdgeInsets.only(right: 20, left: 20),
-                        child: Text(
-                          'You are currently not in any groups',
-                          style: AppTextStyles.demiboldText34,
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : Container(
-                        padding: EdgeInsets.only(left: 50),
-                        child: Column(
-                          children: <Widget>[
-                            ...data
-                                .map(
-                                  (e) => Column(
-                                    children: [
-                                      LongButton(
-                                        onPress: () async {
-                                          _getPrayers(e);
-
-                                          appCOntroller.setCurrentPage(8, true);
-                                        },
-                                        text: e.group.name.capitalizeFirst,
-                                        backgroundColor:
-                                            AppColors.groupCardBgColor,
-                                        textColor: AppColors.lightBlue3,
-                                        hasIcon: false,
-                                        hasMore: true,
-                                        onPressMore: () => showModalBottomSheet(
-                                          context: context,
-                                          barrierColor:
-                                              Provider.of<ThemeProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .isDarkModeEnabled
-                                                  ? AppColors.backgroundColor[0]
-                                                      .withOpacity(0.8)
-                                                  : Color(0xFF021D3C)
-                                                      .withOpacity(0.7),
-                                          backgroundColor:
-                                              Provider.of<ThemeProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .isDarkModeEnabled
-                                                  ? AppColors.backgroundColor[0]
-                                                      .withOpacity(0.8)
-                                                  : Color(0xFF021D3C)
-                                                      .withOpacity(0.7),
-                                          isScrollControlled: true,
-                                          builder: (BuildContext context) {
-                                            return GroupTools(e);
-                                          },
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                    ],
-                                  ),
-                                )
-                                .toList(),
-                          ],
-                        ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 20 + MediaQuery.of(context).padding.top),
+                    Container(
+                      padding: EdgeInsets.only(left: 50),
+                      child: LongButton(
+                        onPress: () {
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setPageTitle('FIND A GROUP');
+                          appCOntroller.setCurrentPage(11, true);
+                        },
+                        text: 'FIND A GROUP',
+                        backgroundColor:
+                            AppColors.groupActionBgColor.withOpacity(0.9),
+                        textColor: AppColors.addprayerTextColor,
+                        hasIcon: false,
                       ),
-                SizedBox(height: 80),
-              ],
-            ),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      padding: EdgeInsets.only(left: 50),
+                      child: LongButton(
+                        onPress: () async {
+                          await Provider.of<MiscProvider>(context,
+                                  listen: false)
+                              .setPageTitle('CREATE A GROUP');
+                          // await Provider.of<MiscProvider>(context, listen: false)
+                          //     .setIsEdit(false);
+                          appCOntroller.setCurrentPage(12, true);
+                        },
+                        text: 'CREATE A GROUP',
+                        backgroundColor:
+                            AppColors.groupActionBgColor.withOpacity(0.9),
+                        textColor: AppColors.addprayerTextColor,
+                        hasIcon: false,
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    data.length == 0
+                        ? Container(
+                            padding: EdgeInsets.only(right: 20, left: 20),
+                            child: Text(
+                              'You are currently not in any groups',
+                              style: AppTextStyles.demiboldText34,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.only(left: 50),
+                            child: Column(
+                              children: <Widget>[
+                                ...data
+                                    .map(
+                                      (e) => Column(
+                                        children: [
+                                          LongButton(
+                                            onPress: () async {
+                                              _getPrayers(e);
+
+                                              appCOntroller.setCurrentPage(
+                                                  8, true);
+                                            },
+                                            text: e.group.name.capitalizeFirst,
+                                            backgroundColor:
+                                                AppColors.groupCardBgColor,
+                                            textColor: AppColors.lightBlue3,
+                                            hasIcon: false,
+                                            hasMore: true,
+                                            onPressMore: () =>
+                                                showModalBottomSheet(
+                                              context: context,
+                                              barrierColor:
+                                                  Provider.of<ThemeProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .isDarkModeEnabled
+                                                      ? AppColors
+                                                          .backgroundColor[0]
+                                                          .withOpacity(0.8)
+                                                      : Color(0xFF021D3C)
+                                                          .withOpacity(0.7),
+                                              backgroundColor:
+                                                  Provider.of<ThemeProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .isDarkModeEnabled
+                                                      ? AppColors
+                                                          .backgroundColor[0]
+                                                          .withOpacity(0.8)
+                                                      : Color(0xFF021D3C)
+                                                          .withOpacity(0.7),
+                                              isScrollControlled: true,
+                                              builder: (BuildContext context) {
+                                                return GroupTools(e);
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(height: 10),
+                                        ],
+                                      ),
+                                    )
+                                    .toList(),
+                              ],
+                            ),
+                          ),
+                    SizedBox(height: 80),
+                  ],
+                ),
+              ),
+            ).marginOnly(bottom: 200),
           ),
         ),
       ),

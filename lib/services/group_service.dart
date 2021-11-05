@@ -183,31 +183,32 @@ class GroupService {
     }
   }
 
-  addGroup(String userId, GroupModel groupData, String email) async {
-    final _groupID = Uuid().v1();
+  Future<void> addGroup(
+      String userId, GroupModel groupData, String email) async {
+    // final _groupID = Uuid().v1();
     final _userGroupId = Uuid().v1();
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
       _groupCollectionReference
-          .doc(_groupID)
-          .set(populateGroup(groupData, _groupID).toJson());
+          .doc(groupData.id)
+          .set(populateGroup(groupData, groupData.id).toJson());
       // FirebaseFirestore.instance
-      //     .collection("Group/" + _groupID + "/Users")
+      //     .collection("Group/" + groupData.id + "/Users")
       //     .add({'userId': userId});
 
       _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
               groupData,
               userId,
-              _groupID,
+              groupData.id,
               GroupUserRole.admin,
               groupData.createdBy)
           .toJson());
-
+      return groupData.id;
       //store group settings
 
       // await locator<SettingsService>()
-      //     .addGroupSettings(userId, email, _groupID);
+      //     .addGroupSettings(userId, email, groupData.id);
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
