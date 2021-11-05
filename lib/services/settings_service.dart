@@ -148,14 +148,16 @@ class SettingsService {
     }
   }
 
-  Future addGroupSettings(String userId) async {
+  Future<bool> addGroupSettings(String userId) async {
     final groupSettingsId = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null) return null;
+
       _groupSettingsCollectionReference
           .doc(groupSettingsId)
           .set(populateGroupSettings(userId).toJson());
+      return true;
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -237,9 +239,11 @@ class SettingsService {
       var settings = await _groupSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
-      if (settings.docs.length < 1) await addGroupSettings(userId);
-
-      return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
+      if (settings.docs.length < 1) {
+        return addGroupSettings(userId).then((value) =>
+            settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0]);
+      } else
+        return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
