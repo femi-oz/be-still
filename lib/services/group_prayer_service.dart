@@ -701,16 +701,23 @@ class GroupPrayerService {
     }
   }
 
-  Future addPrayerToMyList(UserPrayerModel userPrayer) async {
+  Future addToMyList(
+    String prayerId,
+    String userId,
+  ) async {
+    final userPrayerID = Uuid().v1();
+
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      final userPrayerId = Uuid().v1();
-      return await _groupPrayerCollectionReference
-          .doc(userPrayerId)
-          .set(userPrayer.toJson());
+      //store user prayer
+      _userPrayerCollectionReference
+          .doc(userPrayerID)
+          .set(populateUserPrayer(userId, prayerId).toJson());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userPrayer.userId, 'PRAYER/service/addPrayerToMyList');
+      await locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'PRAYER/service/addPrayer');
       throw HttpException(e.message);
     }
   }
@@ -728,6 +735,30 @@ class GroupPrayerService {
           'PRAYER/service/flagAsInappropriate');
       throw HttpException(e.message);
     }
+  }
+
+  populateUserPrayer(
+    String userId,
+    String prayerID,
+  ) {
+    UserPrayerModel userPrayer = UserPrayerModel(
+        deleteStatus: 0,
+        isArchived: false,
+        archivedDate: null,
+        userId: userId,
+        snoozeDuration: 0,
+        snoozeFrequency: '',
+        status: Status.active,
+        sequence: null,
+        prayerId: prayerID,
+        isFavorite: false,
+        isSnoozed: false,
+        snoozeEndDate: DateTime.now(),
+        createdBy: userId,
+        createdOn: DateTime.now(),
+        modifiedBy: userId,
+        modifiedOn: DateTime.now());
+    return userPrayer;
   }
 
   populatePrayer(

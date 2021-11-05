@@ -13,9 +13,6 @@ import '../locator.dart';
 class GroupService {
   final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
-  // final CollectionReference<Map<String, dynamic>>
-  // _groupUserCollectionReference =
-  // FirebaseFirestore.instance.collection("GroupUser");
   final CollectionReference<Map<String, dynamic>>
       _userGroupCollectionReference =
       FirebaseFirestore.instance.collection("UserGroup");
@@ -302,7 +299,7 @@ class GroupService {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           userId,
-          'GROUP/service/acceptInvite');
+          'GROUP/service/acceptRequest');
       throw HttpException(e.message);
     }
   }
@@ -318,13 +315,10 @@ class GroupService {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           requestId,
-          'GROUP/service/denyInvite');
+          'GROUP/service/denyRequest');
       throw HttpException(e.message);
     }
   }
-
-//////////////////////////////////////////////////////////////////
-  ///
 
   leaveGroup(String userGroupId) {
     try {

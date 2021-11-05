@@ -79,9 +79,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).addToMyList(
-          widget.prayerData.prayer.id,
-          Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .addToMyList(widget.prayerData.prayer.id,
+              Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -123,7 +123,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
           .flagAsInappropriate(widget.prayerData.prayer.id);
       _sendNotification();
       BeStilDialog.hideLoading(context);

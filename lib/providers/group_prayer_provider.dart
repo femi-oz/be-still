@@ -77,9 +77,6 @@ class GroupPrayerProvider with ChangeNotifier {
   Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async =>
       await _prayerService.hideFromAllMembers(prayerId, value);
 
-  Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
-      await _prayerService.addPrayerToMyList(userPrayer);
-
   Future<void> getContacts() async {
     var status = await Permission.contacts.status;
     Settings.enabledContactPermission = status == PermissionStatus.granted;
@@ -250,4 +247,9 @@ class GroupPrayerProvider with ChangeNotifier {
     _filteredPrayers = _distinct;
     notifyListeners();
   }
+
+  Future<void> flagAsInappropriate(String prayerId) async =>
+      await _prayerService.flagAsInappropriate(prayerId);
+  Future<void> addToMyList(String prayerId, String userId) async =>
+      await _prayerService.addToMyList(prayerId, userId);
 }

@@ -348,47 +348,6 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-//Group Prayers
-  Future<void> setGroupPrayers(
-          String userId, String groupId, bool isGroupAdmin) async =>
-      _prayerService
-          .getGroupPrayers(groupId)
-          .asBroadcastStream()
-          .listen((data) {
-        _filteredPrayers = _prayers;
-
-        _filteredPrayers
-            .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-        notifyListeners();
-      });
-
-  Future<void> messageRequestor(
-          PrayerRequestMessageModel prayerRequestData) async =>
-      await _prayerService.messageRequestor(prayerRequestData);
-
-  Future<void> addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
-          List groups, String _userID) async =>
-      await _prayerService.addPrayerWithGroup(
-          context, prayerData, groups, _userID);
-
-  Future<void> addGroupPrayer(
-          BuildContext context, PrayerModel prayerData) async =>
-      await _prayerService.addGroupPrayer(context, prayerData);
-
-  Future<void> hidePrayer(String prayerId, UserModel user) async =>
-      await _prayerService.hidePrayer(prayerId, user);
-
-  Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async =>
-      await _prayerService.hideFromAllMembers(prayerId, value);
-
-  // Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
-  //     await _prayerService.addPrayerToMyList(userPrayer);
-
-  Future<void> flagAsInappropriate(String prayerId) async =>
-      await _prayerService.flagAsInappropriate(prayerId);
-  Future<void> addToMyList(String prayerId, String userId) async =>
-      await _prayerService.addToMyList(prayerId, userId);
-
   void setEditMode(bool value) {
     _isEdit = value;
     notifyListeners();
