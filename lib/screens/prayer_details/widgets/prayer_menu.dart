@@ -49,15 +49,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
+  void _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -72,16 +73,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  _unMarkPrayerAsFavorite(CombinePrayerStream prayerData) async {
+  void _unMarkPrayerAsFavorite(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unfavoritePrayer(prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
-
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -97,7 +98,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  _onDelete() async {
+  void _onDelete() async {
     BeStilDialog.showLoading(context);
     try {
       var notifications =
@@ -111,9 +112,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      Navigator.pop(context);
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -127,12 +130,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  _openDeleteConfirmation(BuildContext context) {
+  void _openDeleteConfirmation(BuildContext context) {
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -276,9 +274,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
 
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -299,9 +298,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unMarkPrayerAsAnswered(
               prayerData.prayer.id, prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -320,9 +320,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unArchivePrayer(prayerData.userPrayer.id, prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -349,9 +350,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -394,9 +396,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
           prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
       BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

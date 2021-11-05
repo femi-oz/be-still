@@ -63,6 +63,12 @@
 		BEBD4D8E2714A3A0009EB94A /* RunnerRelease-staging.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-staging.entitlements"; sourceTree = "<group>"; };
 		BEBD4D8F2714BD4B009EB94A /* RunnerProfile-test.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerProfile-test.entitlements"; sourceTree = "<group>"; };
 		BEBD4D902714BD5D009EB94A /* RunnerRelease-test.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-test.entitlements"; sourceTree = "<group>"; };
+		BECA3DF82714FB4F00F3426C /* RunnerDebug-prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerDebug-prod.entitlements"; sourceTree = "<group>"; };
+		BECA3DF92714FB5F00F3426C /* RunnerDebug-store.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerDebug-store.entitlements"; sourceTree = "<group>"; };
+		BECA3DFA2714FB6D00F3426C /* RunnerRelease-store.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-store.entitlements"; sourceTree = "<group>"; };
+		BECA3DFB2714FB7900F3426C /* RunnerRelease-prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-prod.entitlements"; sourceTree = "<group>"; };
+		BECA3DFC2714FB8600F3426C /* RunnerProfile-store.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerProfile-store.entitlements"; sourceTree = "<group>"; };
+		BECA3DFD2714FB9900F3426C /* RunnerProfile-prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerProfile-prod.entitlements"; sourceTree = "<group>"; };
 		C5E5CE411A0B969ECFC10E40 /* Pods-Runner.debug-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-dev.xcconfig"; sourceTree = "<group>"; };
 		CB765B8F2539F9CE005AB3B0 /* config */ = {isa = PBXFileReference; lastKnownFileType = folder; path = config; sourceTree = "<group>"; };
 		F05DE40A9D87ECFB3ABBF1FB /* Pods-Runner.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-dev.xcconfig"; sourceTree = "<group>"; };
@@ -138,6 +144,12 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				BECA3DFD2714FB9900F3426C /* RunnerProfile-prod.entitlements */,
+				BECA3DFC2714FB8600F3426C /* RunnerProfile-store.entitlements */,
+				BECA3DFB2714FB7900F3426C /* RunnerRelease-prod.entitlements */,
+				BECA3DFA2714FB6D00F3426C /* RunnerRelease-store.entitlements */,
+				BECA3DF92714FB5F00F3426C /* RunnerDebug-store.entitlements */,
+				BECA3DF82714FB4F00F3426C /* RunnerDebug-prod.entitlements */,
 				BEBD4D902714BD5D009EB94A /* RunnerRelease-test.entitlements */,
 				BEBD4D8F2714BD4B009EB94A /* RunnerProfile-test.entitlements */,
 				BEBD4D8E2714A3A0009EB94A /* RunnerRelease-staging.entitlements */,
@@ -601,7 +613,7 @@
 				APP_DISPLAY_NAME = "Be Still Prod";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerDebug-prod.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 9DPT62GHB3;
@@ -875,7 +887,7 @@
 				APP_DISPLAY_NAME = BeStill;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerDebug-store.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
@@ -896,7 +908,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.second.bestill.v2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore org.second.bestill";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore org.second.bestill.v2";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1140,7 +1152,7 @@
 				APP_DISPLAY_NAME = "Be Still Prod";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerRelease-prod.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 9DPT62GHB3;
@@ -1227,7 +1239,7 @@
 				APP_DISPLAY_NAME = "Be Still";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerRelease-store.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
@@ -1248,7 +1260,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.second.bestill.v2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore org.second.bestill";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore org.second.bestill.v2";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1485,7 +1497,7 @@
 				APP_DISPLAY_NAME = "Be Still Prod";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerProfile-prod.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 9DPT62GHB3;
@@ -1570,7 +1582,7 @@
 				APP_DISPLAY_NAME = BeStill;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "Runner/RunnerProfile-store.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
@@ -1591,7 +1603,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.second.bestill.v2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore org.second.bestill";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore org.second.bestill.v2";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
