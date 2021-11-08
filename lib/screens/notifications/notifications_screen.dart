@@ -211,6 +211,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   gotoPrayer(PushNotificationModel notification) async {
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayer(notification.entityId);
+    deleteNotification(notification.id);
     AppCOntroller appCOntroller = Get.find();
     appCOntroller.setCurrentPage(9, true);
     Navigator.pop(context);
@@ -218,7 +219,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Future<void> denyRequest(
       String groupId, String notificationId, String receiverId) async {
-    var requestId;
     GroupModel groupData;
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
 
@@ -230,13 +230,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       tempGroupData.where((x) => x.id == groupId).forEach((element) {
         groupData = element;
       });
-
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .addPushNotification(
               'Your request to join ${groupData.name} has been denied',
-              NotificationType.accept_request,
+              NotificationType.deny_request,
               currentUser.firstName,
               currentUser.id,
               receiverId,
@@ -245,6 +244,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
     } catch (e) {
+      print(e.toString());
       BeStilDialog.hideLoading(context);
     }
   }
@@ -516,9 +516,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             child: GestureDetector(
                               onLongPressEnd: null,
                               onTap: () async {
+                                deleteNotification(notification.id);
                                 Navigator.pop(context);
                                 AppCOntroller appCOntroller = Get.find();
-
                                 appCOntroller.setCurrentPage(8, true);
                               },
                               child: Container(
@@ -684,7 +684,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             },
                             child: GestureDetector(
                               onLongPressEnd: null,
-                              onTap: () => null,
+                              onTap: () {
+                                deleteNotification(notification.id);
+                              },
                               child: Container(
                                 margin: EdgeInsets.only(left: 20.0),
                                 decoration: BoxDecoration(
@@ -827,7 +829,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               margin: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.1),
               child: Text(
-                NotificationType.remove_from_group,
+                NotificationType.leave_group,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.boldText24.copyWith(
                   color: AppColors.white,
@@ -849,6 +851,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             child: GestureDetector(
                               onLongPressEnd: null,
                               onTap: () async {
+                                deleteNotification(notification.id);
                                 Navigator.pop(context);
                                 AppCOntroller appCOntroller = Get.find();
                                 appCOntroller.setCurrentPage(3, true);
@@ -1017,6 +1020,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             child: GestureDetector(
                               onLongPressEnd: null,
                               onTap: () {
+                                deleteNotification(notification.id);
                                 Navigator.pop(context);
                                 AppCOntroller appCOntroller = Get.find();
                                 appCOntroller.setCurrentPage(3, true);
@@ -1185,9 +1189,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             child: GestureDetector(
                               onLongPressEnd: null,
                               onTap: () {
+                                deleteNotification(notification.id);
                                 Navigator.pop(context);
                                 AppCOntroller appCOntroller = Get.find();
-
                                 appCOntroller.setCurrentPage(3, true);
                               },
                               child: Container(

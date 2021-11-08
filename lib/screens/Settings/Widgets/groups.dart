@@ -53,9 +53,44 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
+      Navigator.pop(context);
       BeStilDialog.showSuccessDialog(context, message);
     } on HttpException catch (_) {
     } catch (e) {}
+  }
+
+  leaveGroup(CombineGroupUserStream data) async {
+    final _currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    var receiver = data.groupUsers
+        .firstWhere((element) => element.role == GroupUserRole.admin);
+    final id = data.groupUsers
+        .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
+        .id;
+    if (id != null) {
+      BeStilDialog.showLoading(context, '');
+      await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
+      sendPushNotification(
+          '${_currentUser.firstName} has left your group ${data.group.name}',
+          NotificationType.leave_group,
+          _currentUser.firstName,
+          _currentUser.id,
+          receiver.userId,
+          'Leave Group',
+          data.group.id);
+      Navigator.pop(context);
+      BeStilDialog.hideLoading(context);
+    }
+  }
+
+  deleteGroup(CombineGroupUserStream data) async {
+    BeStilDialog.showLoading(context, '');
+    Provider.of<GroupProvider>(context, listen: false)
+        .deleteGroup(data.group.id);
+    await Future.delayed(Duration(milliseconds: 300));
+    Navigator.pop(context);
+    BeStilDialog.hideLoading(context);
   }
 
   sendPushNotification(message, messageType, sender, senderId, receiverId,
@@ -365,9 +400,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  setState(() {
-                                    _removeUserFromGroup(user, group);
-                                  });
+                                  const message =
+                                      'Are you sure you want to remove this user from your group?';
+                                  const method = 'Remove';
+                                  const title = 'Remove From Group';
+                                  _openRemoveConfirmation(context, title,
+                                      method, message, user, group);
                                 },
                               ),
                             )
@@ -376,6 +414,264 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   ))
             ],
           ),
+        ),
+      ),
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
+  void _openDeleteConfirmation(BuildContext context, String message,
+      String method, String title, CombineGroupUserStream data) {
+    final dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.25,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 5.0),
+              child: Text(
+                title.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .28,
+                      decoration: BoxDecoration(
+                        color: AppColors.grey.withOpacity(0.5),
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'CANCEL',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      method == 'Delete' ? deleteGroup(data) : leaveGroup(data);
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .28,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            method,
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
+  void _openRemoveConfirmation(BuildContext context, String title,
+      String method, String message, user, group) {
+    final dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.25,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 5.0),
+              child: Text(
+                title.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue1,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .28,
+                      decoration: BoxDecoration(
+                        color: AppColors.grey.withOpacity(0.5),
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'CANCEL',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _removeUserFromGroup(user, group);
+                    },
+                    child: Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width * .28,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(
+                          color: AppColors.cardBorder,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            method,
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -1010,31 +1306,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         !isAdmin
                             ? GestureDetector(
                                 onTap: () async {
-                                  var receiver = data.groupUsers.firstWhere(
-                                      (element) =>
-                                          element.role == GroupUserRole.admin);
-                                  final id = data.groupUsers
-                                      .firstWhere(
-                                          (e) => e.userId == _currentUser.id,
-                                          orElse: () => null)
-                                      .id;
-                                  if (id != null) {
-                                    BeStilDialog.showLoading(context, '');
-                                    await Provider.of<GroupProvider>(context,
-                                            listen: false)
-                                        .leaveGroup(id);
-                                    sendPushNotification(
-                                        '${_currentUser.firstName} has left your group ${data.group.name}',
-                                        NotificationType.leave_group,
-                                        _currentUser.firstName,
-                                        _currentUser.id,
-                                        receiver.userId,
-                                        'Leave Group',
-                                        data.group.id);
-                                    await Future.delayed(
-                                        Duration(milliseconds: 300));
-                                    BeStilDialog.hideLoading(context);
-                                  }
+                                  const message =
+                                      'Are you sure you want to leave this group?';
+                                  const method = 'LEAVE';
+                                  const title = 'Leave Group';
+                                  _openDeleteConfirmation(
+                                      context, message, method, title, data);
                                 },
                                 child: Container(
                                   margin: EdgeInsets.symmetric(horizontal: 20),
@@ -1063,13 +1340,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         isAdmin
                             ? GestureDetector(
                                 onTap: () async {
-                                  BeStilDialog.showLoading(context, '');
-                                  Provider.of<GroupProvider>(context,
-                                          listen: false)
-                                      .deleteGroup(data.group.id);
-                                  await Future.delayed(
-                                      Duration(milliseconds: 300));
-                                  BeStilDialog.hideLoading(context);
+                                  const message =
+                                      'Are you sure you want to delete this group';
+                                  const method = 'Delete';
+                                  const title = 'Delete Group';
+                                  _openDeleteConfirmation(
+                                      context, message, method, title, data);
                                 },
                                 child: Container(
                                   margin: EdgeInsets.symmetric(

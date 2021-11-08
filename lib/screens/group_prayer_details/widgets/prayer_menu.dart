@@ -128,7 +128,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       _sendNotification();
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
-
       appCOntroller.setCurrentPage(0, true);
       Navigator.pop(context);
     } catch (e, s) {
@@ -533,39 +532,39 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                             ),
                       text: 'Reminder',
                     ),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: Icons.remove_red_eye_sharp,
-                        text: 'Hide',
-                        isDisabled: isDisable,
-                        onPress: () => null),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: Icons.remove_red_eye_sharp,
-                        text: 'Hide From Group',
-                        isDisabled: isDisable,
-                        onPress: () => null),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: Icons.messenger,
-                        text: 'Message Requestor',
-                        isDisabled: isDisable,
-                        onPress: () => null),
+                    // LongButton(
+                    //     textColor: AppColors.lightBlue3,
+                    //     backgroundColor:
+                    //         Provider.of<ThemeProvider>(context, listen: false)
+                    //                 .isDarkModeEnabled
+                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
+                    //             : AppColors.white,
+                    //     icon: Icons.remove_red_eye_sharp,
+                    //     text: 'Hide',
+                    //     isDisabled: isDisable,
+                    //     onPress: () => null),
+                    // LongButton(
+                    //     textColor: AppColors.lightBlue3,
+                    //     backgroundColor:
+                    //         Provider.of<ThemeProvider>(context, listen: false)
+                    //                 .isDarkModeEnabled
+                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
+                    //             : AppColors.white,
+                    //     icon: Icons.remove_red_eye_sharp,
+                    //     text: 'Hide From Group',
+                    //     isDisabled: isDisable,
+                    //     onPress: () => null),
+                    // LongButton(
+                    //     textColor: AppColors.lightBlue3,
+                    //     backgroundColor:
+                    //         Provider.of<ThemeProvider>(context, listen: false)
+                    //                 .isDarkModeEnabled
+                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
+                    //             : AppColors.white,
+                    //     icon: Icons.messenger,
+                    //     text: 'Message Requestor',
+                    //     isDisabled: isDisable,
+                    //     onPress: () => null),
                     LongButton(
                         textColor: AppColors.lightBlue3,
                         backgroundColor:
