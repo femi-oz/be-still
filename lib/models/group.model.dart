@@ -1,4 +1,5 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -50,6 +51,7 @@ class GroupModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'Id': id,
       'Name': name,
       'Description': description,
       'Status': status,
@@ -62,6 +64,40 @@ class GroupModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
+class GroupRequestModel {
+  final String id;
+  final String groupId;
+  final String userId;
+  final String status;
+  final String createdBy;
+  final DateTime createdOn;
+
+  const GroupRequestModel(
+      {this.id,
+      @required this.userId,
+      @required this.groupId,
+      @required this.status,
+      @required this.createdBy,
+      @required this.createdOn});
+  GroupRequestModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : id = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        groupId = snapshot.data()['GroupId'],
+        status = snapshot.data()['Status'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate();
+  Map<String, dynamic> toJson() {
+    return {
+      'Id': id,
+      'UserId': userId,
+      'GroupId': groupId,
+      'Status': status,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn
     };
   }
 }
@@ -126,22 +162,35 @@ class GroupPrayerModel {
   final bool isFavorite;
   final String status;
   final String createdBy;
+  final bool isArchived;
+  final bool isSnoozed;
+  final DateTime snoozeEndDate;
+  final DateTime archivedDate;
+  final int snoozeDuration;
+  final String snoozeFrequency;
+  final int deleteStatus;
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const GroupPrayerModel({
-    this.id,
-    @required this.groupId,
-    @required this.prayerId,
-    @required this.sequence,
-    @required this.isFavorite,
-    @required this.status,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
-  });
+  const GroupPrayerModel(
+      {this.id,
+      @required this.groupId,
+      @required this.prayerId,
+      @required this.sequence,
+      @required this.isFavorite,
+      @required this.status,
+      @required this.createdBy,
+      @required this.createdOn,
+      @required this.modifiedBy,
+      @required this.modifiedOn,
+      @required this.deleteStatus,
+      @required this.isSnoozed,
+      @required this.isArchived,
+      @required this.snoozeEndDate,
+      @required this.archivedDate,
+      @required this.snoozeDuration,
+      @required this.snoozeFrequency});
 
   GroupPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
@@ -153,7 +202,16 @@ class GroupPrayerModel {
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate(),
+        isSnoozed = snapshot.data()['IsSnoozed'] ?? false,
+        isArchived = snapshot.data()['IsArchived'] ?? false,
+        snoozeDuration = snapshot.data()['SnoozeDuration'] ?? 0,
+        snoozeFrequency = snapshot.data()['SnoozeFrequency'] ?? '',
+        snoozeEndDate =
+            snapshot.data()['SnoozeEndDate']?.toDate() ?? DateTime.now(),
+        archivedDate =
+            snapshot.data()['ArchivedDate']?.toDate() ?? DateTime.now(),
+        deleteStatus = snapshot.data()['DeleteStatus'] ?? 0;
 
   Map<String, dynamic> toJson() {
     return {
@@ -166,18 +224,30 @@ class GroupPrayerModel {
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
       'ModifiedOn': modifiedOn,
+      'DeleteStatus': deleteStatus,
+      'IsSnoozed': isSnoozed,
+      'IsArchived': isArchived,
+      'SnoozeFrequency': snoozeFrequency,
+      'SnoozeDuration': snoozeDuration,
+      'SnoozeEndDate': snoozeEndDate,
+      'ArchivedDate': archivedDate,
     };
   }
+}
+
+class GroupUserRole {
+  static String admin = 'admin';
+  static String moderator = 'moderator';
+  static String member = 'member';
 }
 
 class GroupUserModel {
   final String id;
   final String groupId;
   final String userId;
-  final bool isAdmin;
-  final bool isModerator;
   final String fullName;
   final String status;
+  final String role;
   final String createdBy;
   final DateTime createdOn;
   final String modifiedBy;
@@ -187,10 +257,9 @@ class GroupUserModel {
     this.id,
     @required this.groupId,
     @required this.userId,
-    @required this.isAdmin,
-    @required this.isModerator,
     @required this.fullName,
     @required this.status,
+    @required this.role,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -201,10 +270,9 @@ class GroupUserModel {
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],
-        isAdmin = snapshot.data()['IsAdmin'],
-        isModerator = snapshot.data()['IsModerator'],
         fullName = snapshot.data()['FullName'],
         status = snapshot.data()['Status'],
+        role = snapshot.data()['Role'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
         modifiedBy = snapshot.data()['ModifiedBy'],
@@ -214,10 +282,9 @@ class GroupUserModel {
     return {
       'UserId': userId,
       'GroupId': groupId,
-      'IsAdmin': isAdmin,
-      'IsModerator': isModerator,
       'FullName': fullName,
       'Status': status,
+      'Role': role,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,
@@ -226,18 +293,108 @@ class GroupUserModel {
   }
 }
 
+class UserGroupModel {
+  final String id;
+  final String groupId;
+  final String userId;
+  final String status;
+  final String role;
+  final String createdBy;
+  final DateTime createdOn;
+  final String modifiedBy;
+  final DateTime modifiedOn;
+
+  const UserGroupModel({
+    this.id,
+    @required this.groupId,
+    @required this.userId,
+    @required this.status,
+    @required this.role,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+
+  UserGroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : id = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        groupId = snapshot.data()['GroupId'],
+        status = snapshot.data()['Status'],
+        role = snapshot.data()['Role'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'UserId': userId,
+      'GroupId': groupId,
+      // 'FullName': fullName,
+      'Status': status,
+      'Role': role,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
+}
+
+class GroupUserReferenceModel {
+  final String id;
+  final String userId;
+  final String groupId;
+
+  const GroupUserReferenceModel(
+      {this.id, @required this.userId, @required this.groupId});
+
+  GroupUserReferenceModel.fromData(
+      DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : id = snapshot.id,
+        userId = snapshot.data()['UserId'],
+        groupId = snapshot.data()['GroupId'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'UserId': userId,
+      'GroupId': groupId,
+    };
+  }
+}
+
 class CombineGroupUserStream {
   final List<GroupUserModel> groupUsers;
+  final List<GroupRequestModel> groupRequests;
   final GroupModel group;
+  // final UserModel admin;
 
-  CombineGroupUserStream(this.groupUsers, this.group);
+  CombineGroupUserStream(
+    this.groupUsers,
+    this.group,
+    this.groupRequests,
+    // this.admin,
+  );
 }
 
 class CombineGroupPrayerStream {
-  final PrayerModel prayer;
+  final String id;
   final GroupPrayerModel groupPrayer;
+  @required
+  final PrayerModel prayer;
+  @required
+  final List<PrayerTagModel> tags;
+  @required
+  final List<PrayerUpdateModel> updates;
 
-  CombineGroupPrayerStream(this.prayer, this.groupPrayer);
+  CombineGroupPrayerStream({
+    this.id,
+    this.groupPrayer,
+    this.prayer,
+    this.tags,
+    this.updates,
+  });
 }
 
 class CombineGroupInviteStream {

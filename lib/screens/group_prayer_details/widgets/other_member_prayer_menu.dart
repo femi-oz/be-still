@@ -1,8 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -30,8 +28,8 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
       BeStilDialog.showLoading(
         bcontext,
       );
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .hidePrayer(widget.prayer.id, _user);
+      // await Provider.of<PrayerProvider>(context, listen: false)
+      //     .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (_) {
@@ -194,41 +192,41 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                     ),
                   ),
                 ),
-                // GestureDetector(
-                //   onTap: _onHide,
-                //   child: Container(
-                //     height: 50,
-                //     padding: EdgeInsets.symmetric(horizontal: 20),
-                //     width: double.infinity,
-                //     margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                //     decoration: BoxDecoration(
-                //       border: Border.all(
-                //         color: AppColors.lightBlue6,
-                //         width: 1,
-                //       ),
-                //       borderRadius: BorderRadius.circular(10),
-                //     ),
-                //     child: Row(
-                //       children: <Widget>[
-                //         Icon(
-                //           Icons.remove_red_eye,
-                //           color: AppColors.lightBlue4,
-                //         ),
-                //         Padding(
-                //           padding: const EdgeInsets.only(left: 10.0),
-                //           child: Text(
-                //             'Hide',
-                //             style: TextStyle(
-                //               color: AppColors.lightBlue4,
-                //               fontSize: 14,
-                //               fontWeight: FontWeight.w500,
-                //             ),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
+                GestureDetector(
+                  onTap: _onHide,
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    width: double.infinity,
+                    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColors.lightBlue6,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.remove_red_eye,
+                          color: AppColors.lightBlue4,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            'Hide',
+                            style: TextStyle(
+                              color: AppColors.lightBlue4,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

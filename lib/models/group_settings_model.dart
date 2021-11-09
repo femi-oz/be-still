@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class GroupSettings {
   final String id;
   final String userId;
-  final String groupId;
+  // final String groupId;
   final bool enableNotificationFormNewPrayers;
   final bool enableNotificationForUpdates;
   final bool notifyOfMembershipRequest;
@@ -18,7 +18,7 @@ class GroupSettings {
   const GroupSettings({
     this.id,
     @required this.userId,
-    @required this.groupId,
+    // @required this.groupId,
     @required this.enableNotificationFormNewPrayers,
     @required this.enableNotificationForUpdates,
     @required this.notifyOfMembershipRequest,
@@ -33,7 +33,7 @@ class GroupSettings {
   GroupSettings.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
+        // groupId = snapshot.data()['GroupId'],
         enableNotificationFormNewPrayers =
             snapshot.data()['EnableNotificationFormNewPrayers'],
         enableNotificationForUpdates =
@@ -50,7 +50,7 @@ class GroupSettings {
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,
-      'GroupId': groupId,
+      // 'GroupId': groupId,
       'EnableNotificationFormNewPrayers': enableNotificationFormNewPrayers,
       'EnableNotificationForUpdates': enableNotificationForUpdates,
       'NotifyOfMembershipRequest': notifyOfMembershipRequest,

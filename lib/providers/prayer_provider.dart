@@ -39,6 +39,12 @@ class PrayerProvider with ChangeNotifier {
   CombinePrayerStream get currentPrayer => _currentPrayer;
   String get filterOption => _filterOption;
 
+  bool _isEdit = false;
+  bool get isEdit => _isEdit;
+
+  CombinePrayerStream _prayerToEdit;
+  CombinePrayerStream get prayerToEdit => _prayerToEdit;
+
   Future<void> setPrayers(String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
@@ -231,11 +237,6 @@ class PrayerProvider with ChangeNotifier {
       await _prayerService.addPrayer(
           prayerDesc, userId, creatorName, prayerDescBackup);
 
-  Future<void> addUserPrayer(String prayerId, String prayerDesc,
-          String recieverId, String senderId, String sender) async =>
-      await _prayerService.addUserPrayer(
-          prayerId, prayerDesc, recieverId, senderId, sender);
-
   Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
           String message, String prayerId) async =>
       await _prayerService.addPrayerTag(contactData, user, message, prayerId);
@@ -380,6 +381,21 @@ class PrayerProvider with ChangeNotifier {
   Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async =>
       await _prayerService.hideFromAllMembers(prayerId, value);
 
-  Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
-      await _prayerService.addPrayerToMyList(userPrayer);
+  // Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
+  //     await _prayerService.addPrayerToMyList(userPrayer);
+
+  Future<void> flagAsInappropriate(String prayerId) async =>
+      await _prayerService.flagAsInappropriate(prayerId);
+  Future<void> addToMyList(String prayerId, String userId) async =>
+      await _prayerService.addToMyList(prayerId, userId);
+
+  void setEditMode(bool value) {
+    _isEdit = value;
+    notifyListeners();
+  }
+
+  void setEditPrayer(CombinePrayerStream data) {
+    _prayerToEdit = data;
+    notifyListeners();
+  }
 }

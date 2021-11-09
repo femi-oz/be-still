@@ -1,9 +1,11 @@
-import 'package:be_still/enums/prayer_list.enum.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer/widgets/prayer_card.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -11,6 +13,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupPrayers extends StatefulWidget {
@@ -25,15 +28,46 @@ class _GroupPrayersState extends State<GroupPrayers> {
         false;
   }
 
+  bool _isInit = true;
+  @override
+  void didChangeDependencies() async {
+    if (_isInit) {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final group =
+            Provider.of<GroupProvider>(context, listen: false).currentGroup;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle(group.group.name.toUpperCase());
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setHiddenPrayer(_user.id);
+      });
+      _isInit = false;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<PrayerProvider>(context).filteredPrayers;
-    final currentPrayerType =
-        Provider.of<PrayerProvider>(context).currentPrayerType;
+    var data = Provider.of<GroupPrayerProvider>(context).filteredPrayers;
+    final _hiddenPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false).hiddenPrayers;
+    data.forEach((element) {
+      _hiddenPrayers.forEach((x) {
+        if (element.groupPrayer.prayerId.contains(x.prayerId)) {
+          data = data
+              .where(
+                  (y) => y.groupPrayer.prayerId != element.groupPrayer.prayerId)
+              .toList();
+        }
+      });
+    });
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: CustomAppBar(),
+        appBar: CustomAppBar(isGroup: true),
         body: Container(
           padding: EdgeInsets.only(left: 20),
           height: MediaQuery.of(context).size.height * 1,
@@ -67,18 +101,20 @@ class _GroupPrayersState extends State<GroupPrayers> {
                             ...data
                                 .map((e) => GestureDetector(
                                     onTap: () async {
-                                      await Provider.of<PrayerProvider>(context,
+                                      await Provider.of<GroupPrayerProvider>(
+                                              context,
                                               listen: false)
-                                          .setPrayer(e.userPrayer.id);
-                                      // Navigator.push(
-                                      //   context,
-                                      //   new MaterialPageRoute(
-                                      //     builder: (context) =>
-                                      //         new PrayerDetails(),
-                                      //   ),
-                                      // );
+                                          .setPrayer(e.groupPrayer.id);
+                                      Future.delayed(
+                                              Duration(milliseconds: 400))
+                                          .then((value) {
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+
+                                        appCOntroller.setCurrentPage(9, true);
+                                      });
                                     },
-                                    child: PrayerCard(
+                                    child: GroupPrayerCard(
                                       prayerData: e,
                                       timeago: '',
                                     )))
@@ -86,26 +122,31 @@ class _GroupPrayersState extends State<GroupPrayers> {
                           ],
                         ),
                       ),
-                currentPrayerType == PrayerType.archived ||
-                        currentPrayerType == PrayerType.answered
-                    ? Container()
-                    : LongButton(
-                        onPress: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AddPrayer(isEdit: false, isGroup: true),
-                          ),
-                        ),
-                        text: 'Add New Prayer',
-                        backgroundColor: Settings.isDarkMode
-                            ? AppColors.backgroundColor[1]
-                            : AppColors.lightBlue3,
-                        textColor: Settings.isDarkMode
-                            ? AppColors.lightBlue3
-                            : Colors.white,
-                        icon: AppIcons.bestill_add,
-                      ),
+                // currentPrayerType == Status.archived ||
+                //         currentPrayerType == Status.answered
+                //     ? Container()
+                //     :
+                // groupUser.role == GroupUserRole.admin
+                //     ?
+                LongButton(
+                  onPress: () {
+                    Provider.of<GroupPrayerProvider>(context, listen: false)
+                        .setEditMode(false);
+                    Provider.of<GroupPrayerProvider>(context, listen: false)
+                        .setEditPrayer(null);
+                    AppCOntroller appCOntroller = Get.find();
+
+                    appCOntroller.setCurrentPage(10, true);
+                  },
+                  text: 'Add New Prayer',
+                  backgroundColor: Settings.isDarkMode
+                      ? AppColors.backgroundColor[1]
+                      : AppColors.lightBlue3,
+                  textColor:
+                      Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
+                  icon: AppIcons.bestill_add,
+                ),
+                // : Container(),
                 SizedBox(height: 80),
               ],
             ),

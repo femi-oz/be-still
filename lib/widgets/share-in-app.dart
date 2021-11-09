@@ -29,20 +29,13 @@ class _ShareInAppState extends State<ShareInApp> {
 
   _share(receievrId) async {
     if (userInput.text == '') return;
-
-    final creator =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
     final _prayer = Provider.of<PrayerProvider>(context, listen: false)
         .currentPrayer
         .prayer;
     try {
       BeStilDialog.showLoading(context);
-      await Provider.of<PrayerProvider>(context, listen: false).addUserPrayer(
-          _prayer.id,
-          _prayer.description,
-          receievrId,
-          creator.id,
-          '${creator.firstName} ${creator.lastName}');
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .addToMyList(_prayer.id, receievrId);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

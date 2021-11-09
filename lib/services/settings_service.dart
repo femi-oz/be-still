@@ -84,18 +84,17 @@ class SettingsService {
     return groupPreferenceSettings;
   }
 
-  populateGroupSettings(String userId, String email, String groupId) {
+  populateGroupSettings(String userId) {
     GroupSettings groupsSettings = GroupSettings(
         userId: userId,
-        groupId: groupId,
         enableNotificationFormNewPrayers: false,
         enableNotificationForUpdates: false,
         notifyOfMembershipRequest: false,
         notifyMeofFlaggedPrayers: false,
         notifyWhenNewMemberJoins: false,
-        createdBy: email,
+        createdBy: userId,
         createdOn: DateTime.now(),
-        modifiedBy: email,
+        modifiedBy: userId,
         modifiedOn: DateTime.now());
     return groupsSettings;
   }
@@ -149,14 +148,14 @@ class SettingsService {
     }
   }
 
-  Future addGroupSettings(String userId, String email, String groupId) async {
+  Future addGroupSettings(String userId) async {
     final groupSettingsId = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      await _groupSettingsCollectionReference
+      _groupSettingsCollectionReference
           .doc(groupSettingsId)
-          .set(populateGroupSettings(userId, email, groupId).toJson());
+          .set(populateGroupSettings(userId).toJson());
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -232,13 +231,15 @@ class SettingsService {
     }
   }
 
-  Future<List<GroupSettings>> getGroupSettings(String userId) async {
+  Future<GroupSettings> getGroupSettings(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var settings = await _sharingSettingsCollectionReference
+      var settings = await _groupSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
-      return settings.docs.map((e) => GroupSettings.fromData(e)).toList();
+      if (settings.docs.length < 1) await addGroupSettings(userId);
+
+      return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -255,6 +256,7 @@ class SettingsService {
       var settings = await _groupPrefernceSettingsCollectionReference
           .where('UserId', isEqualTo: userId)
           .get();
+      if (settings.docs.length < 1) await addGroupPreferenceSettings(userId);
       return settings.docs
           .map((e) => GroupPreferenceSettings.fromData(e))
           .toList()[0];

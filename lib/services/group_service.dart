@@ -2,44 +2,76 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/services/log_service.dart';
-import 'package:be_still/services/settings_service.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
-
 import '../locator.dart';
 
 class GroupService {
   final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
   final CollectionReference<Map<String, dynamic>>
-      _groupUserCollectionReference =
-      FirebaseFirestore.instance.collection("GroupUser");
+      _groupRequestCollectionReference =
+      FirebaseFirestore.instance.collection("GroupRequest");
+  final CollectionReference<Map<String, dynamic>>
+      _userGroupCollectionReference =
+      FirebaseFirestore.instance.collection("UserGroup");
+
   final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  populateGroupUser(
-    GroupModel groupData,
-    String userID,
-    String fullName,
-    String groupID,
-  ) {
+  GroupUserModel populateGroupUser(GroupModel groupData, String userID,
+      String groupID, String role, String creator, String fullName) {
     GroupUserModel userPrayer = GroupUserModel(
+      fullName: fullName,
       userId: userID,
       status: Status.active,
       groupId: groupID,
-      isAdmin: true,
-      isModerator: true,
-      fullName: fullName,
+      role: role,
+      createdBy: creator,
+      createdOn: DateTime.now(),
+      modifiedBy: creator,
+      modifiedOn: DateTime.now(),
+    );
+    return userPrayer;
+  }
+
+  GroupModel populateGroup(
+    GroupModel groupData,
+    String groupID,
+  ) {
+    GroupModel group = GroupModel(
+      status: Status.active,
+      id: groupID,
       createdBy: groupData.createdBy,
       createdOn: groupData.createdOn,
       modifiedBy: groupData.modifiedBy,
       modifiedOn: groupData.modifiedOn,
+      description: groupData.description,
+      email: groupData.email,
+      isFeed: groupData.isFeed,
+      isPrivate: groupData.isPrivate,
+      location: groupData.location,
+      name: groupData.name,
+      organization: groupData.organization,
     );
-    return userPrayer;
+    return group;
+  }
+
+  GroupRequestModel populateGroupRequest(String userId, String status,
+      String createdBy, DateTime createdOn, String groupId, String id) {
+    GroupRequestModel groupRequest = GroupRequestModel(
+        id: id,
+        userId: userId,
+        groupId: groupId,
+        status: status,
+        createdBy: createdBy,
+        createdOn: createdOn);
+    return groupRequest;
   }
 
   Stream<List<CombineGroupUserStream>> _combineAllGroupsStream;
@@ -52,15 +84,35 @@ class GroupService {
           Stream<GroupModel> group = Stream.value(g)
               .map<GroupModel>((document) => GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
-              _groupUserCollectionReference
+              _userGroupCollectionReference
                   .where('GroupId', isEqualTo: g.id)
                   .snapshots()
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
 
-          return Rx.combineLatest2(groupUsers, group,
-              (groupUsers, group) => CombineGroupUserStream(groupUsers, group));
+          Stream<List<GroupRequestModel>> groupRequests =
+              _groupRequestCollectionReference
+                  .where('GroupId', isEqualTo: g.id)
+                  .snapshots()
+                  .asyncMap((e) => e.docs
+                      .map((doc) => GroupRequestModel.fromData(doc))
+                      .toList());
+
+          return Rx.combineLatest3(
+              groupUsers,
+              group,
+              groupRequests,
+              (
+                groupUsers,
+                group,
+                groupRequests,
+              ) =>
+                  CombineGroupUserStream(
+                    groupUsers,
+                    group,
+                    groupRequests,
+                  ));
         });
       }).switchMap((observables) {
         return observables.length > 0
@@ -80,8 +132,7 @@ class GroupService {
   Stream<List<CombineGroupUserStream>> _combineUserGroupStream;
   Stream<List<CombineGroupUserStream>> getUserGroups(String userId) {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
-      _combineUserGroupStream = _groupUserCollectionReference
+      _combineUserGroupStream = _userGroupCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((convert) {
@@ -91,21 +142,41 @@ class GroupService {
               .snapshots()
               .map<GroupModel>((document) => GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
-              _groupUserCollectionReference
+              _userGroupCollectionReference
                   .where('GroupId', isEqualTo: f['GroupId'])
                   .snapshots()
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
 
-          return Rx.combineLatest2(groupUsers, group,
-              (groupUsers, group) => CombineGroupUserStream(groupUsers, group));
+          Stream<List<GroupRequestModel>> groupRequests =
+              _groupRequestCollectionReference
+                  .where('GroupId', isEqualTo: f['GroupId'])
+                  .snapshots()
+                  .asyncMap((e) => e.docs
+                      .map((doc) => GroupRequestModel.fromData(doc))
+                      .toList());
+          return Rx.combineLatest3(
+              groupUsers,
+              group,
+              groupRequests,
+              (
+                groupUsers,
+                group,
+                groupRequests,
+              ) =>
+                  CombineGroupUserStream(
+                    groupUsers,
+                    group,
+                    groupRequests,
+                  ));
         });
       }).switchMap((observables) {
         return observables.length > 0
             ? Rx.combineLatestList(observables)
             : Stream.value([]);
       });
+
       return _combineUserGroupStream;
     } catch (e) {
       locator<LogService>().createLog(
@@ -116,25 +187,33 @@ class GroupService {
     }
   }
 
-  addGroup(String userId, GroupModel groupData, String fullName,
-      String email) async {
+  addGroup(String userId, GroupModel groupData, String email,
+      String fullName) async {
     final _groupID = Uuid().v1();
-    final _groupUserId = Uuid().v1();
+    final _userGroupId = Uuid().v1();
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var batch = FirebaseFirestore.instance.batch();
 
-      batch.set(_groupCollectionReference.doc(_groupID), groupData.toJson());
+      _groupCollectionReference
+          .doc(_groupID)
+          .set(populateGroup(groupData, _groupID).toJson());
+      // FirebaseFirestore.instance
+      //     .collection("Group/" + _groupID + "/Users")
+      //     .add({'userId': userId});
 
-      //store group user
-      batch.set(_groupUserCollectionReference.doc(_groupUserId),
-          populateGroupUser(groupData, userId, fullName, _groupID).toJson());
+      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
+              groupData,
+              userId,
+              _groupID,
+              GroupUserRole.admin,
+              groupData.createdBy,
+              fullName)
+          .toJson());
+
       //store group settings
 
-      await locator<SettingsService>()
-          .addGroupSettings(userId, email, _groupID);
-
-      await batch.commit();
+      // await locator<SettingsService>()
+      //     .addGroupSettings(userId, email, _groupID);
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -144,26 +223,111 @@ class GroupService {
     }
   }
 
-  Stream<QuerySnapshot> getGroupUsers(String groupId) {
+  Future editGroup(
+    GroupModel groupData,
+    String groupID,
+  ) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var users = _groupUserCollectionReference
-          .where('GroupId', isEqualTo: groupId)
-          .snapshots();
-      return users;
+      _groupCollectionReference.doc(groupID).update(
+        {
+          "Name": groupData.name,
+          "Description": groupData.description,
+          "Email": groupData.email,
+          "Organization": groupData.organization,
+          "Location": groupData.location,
+          "Status": groupData.status,
+          "IsPrivate": groupData.isPrivate,
+          "IsFeed": groupData.isFeed,
+          "ModifiedOn": DateTime.now()
+        },
+      );
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
-          groupId,
-          'GROUP/service/getGroupUsers');
+          groupID,
+          'GROUP/service/editGroup');
       throw HttpException(e.message);
     }
   }
 
+  joinRequest(
+    String groupId,
+    String userId,
+    String status,
+    String createdBy,
+  ) async {
+    try {
+      final _requestID = Uuid().v1();
+      if (_firebaseAuth.currentUser == null) return null;
+      _groupRequestCollectionReference.doc(_requestID).set(populateGroupRequest(
+              userId, status, createdBy, DateTime.now(), groupId, _requestID)
+          .toJson());
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/joinRequest');
+      throw HttpException(e.message);
+    }
+  }
+
+  acceptRequest(String groupId, GroupModel groupData, String userId,
+      String requestId, String fullName) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      final _userGroupId = Uuid().v1();
+      // _groupCollectionReference
+      //     .doc(groupId)
+      //     .collection('Users')
+      //     .doc(_groupUserId)
+      //     .set(populateGroupUser(
+      //             groupData, userId, groupId, GroupUserRole.member)
+      //         .toJson());
+      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
+              groupData,
+              userId,
+              groupId,
+              GroupUserRole.member,
+              userId,
+              fullName)
+          .toJson());
+      _groupRequestCollectionReference
+          .doc(requestId)
+          .update({"Status": StringUtils.joinRequestStatusApproved});
+      // await addGroupUserReference(groupId, userId);
+
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/acceptInvite');
+      throw HttpException(e.message);
+    }
+  }
+
+  denyRequest(String groupId, String requestId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _groupRequestCollectionReference
+          .doc(requestId)
+          .update({"Status": StringUtils.joinRequestStatusDenied});
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          requestId,
+          'GROUP/service/denyInvite');
+      throw HttpException(e.message);
+    }
+  }
+
+//////////////////////////////////////////////////////////////////
+  ///
+
   leaveGroup(String userGroupId) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _groupUserCollectionReference.doc(userGroupId).delete();
+      _userGroupCollectionReference.doc(userGroupId).delete();
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -173,16 +337,46 @@ class GroupService {
     }
   }
 
-  deleteGroup(String userGroupId, String groupId) {
+  deleteGroup(String groupId) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _groupUserCollectionReference.doc(userGroupId).delete();
+
       _groupCollectionReference.doc(groupId).delete();
+      _userGroupCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          element.reference.delete();
+        });
+      });
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
-          userGroupId,
+          groupId,
           'GROUP/service/deleteGroup');
+      throw HttpException(e.message);
+    }
+  }
+
+  deleteFromGroup(String userId, String groupId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _userGroupCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .where('GroupId', isEqualTo: groupId)
+          .get()
+          .then((value) => {
+                value.docs.forEach((element) {
+                  var id = element.reference.id;
+                  _userGroupCollectionReference.doc(id).delete();
+                })
+              });
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/removeFromGroup');
       throw HttpException(e.message);
     }
   }
@@ -220,51 +414,6 @@ class GroupService {
           e.message != null ? e.message : e.toString(),
           senderId,
           'GROUP/service/inviteMember');
-      throw HttpException(e.message);
-    }
-  }
-
-  joinRequest(String groupId, String userId, String userName) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      var dio = Dio(BaseOptions(followRedirects: false));
-      var data = {
-        'groupId': groupId,
-        'userId': userId,
-        'userName': userName,
-      };
-      print(data);
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/JoinRequest',
-        data: data,
-      );
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userId,
-          'GROUP/service/joinRequest');
-      throw HttpException(e.message);
-    }
-  }
-
-  acceptInvite(String groupId, String userId, String email, String name) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      var dio = Dio();
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/InviteAcceptance',
-        data: {
-          'groupId': groupId,
-          'userId': userId,
-          'email': email,
-          'name': name,
-        },
-      );
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userId,
-          'GROUP/service/acceptInvite');
       throw HttpException(e.message);
     }
   }

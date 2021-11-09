@@ -8,7 +8,7 @@ class AppCOntroller extends GetxController with SingleGetTickerProviderMixin {
 
   @override
   void onInit() {
-    tabController = new TabController(length: 8, vsync: this);
+    tabController = new TabController(length: 13, vsync: this);
     super.onInit();
   }
 

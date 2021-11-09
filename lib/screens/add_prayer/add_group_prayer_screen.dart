@@ -1,9 +1,12 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -18,21 +21,19 @@ import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
 import '../entry_screen.dart';
 
-class AddPrayer extends StatefulWidget {
+class AddGroupPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
 
-  _AddPrayerState createState() => _AddPrayerState();
+  _AddGroupPrayerState createState() => _AddGroupPrayerState();
 }
 
-class _AddPrayerState extends State<AddPrayer> {
+class _AddGroupPrayerState extends State<AddGroupPrayer> {
   bool _autoValidate = false;
   bool updated;
   bool updateIsValid = false;
   bool hasFocus;
   bool showNoContact = false;
   double numberOfLines = 5.0;
-  bool textWithSpace = false;
-  bool contactSearchMode = false;
 
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -50,11 +51,6 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   List<String> tags = [];
-  List<String> noTags = [];
-  var newDisplayName = '';
-
-  List<String> previousArrayWithSymbols = [];
-  int tagLength;
 
   Map<String, TextEditingController> textEditingControllers = {};
 
@@ -63,13 +59,14 @@ class _AddPrayerState extends State<AddPrayer> {
   String backupText;
   String _oldDescription = '';
   String displayName = '';
-  int index;
 
   TextPainter painter;
 
   var displayname = [];
   var textFields = <Stack>[];
   var textEditingController = TextEditingController();
+
+  AppCOntroller appCOntroller = Get.find();
 
   @override
   void didChangeDependencies() {
@@ -81,16 +78,46 @@ class _AddPrayerState extends State<AddPrayer> {
           .setSearchMode(false);
       await Provider.of<MiscProvider>(context, listen: false)
           .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
+      Provider.of<GroupPrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
+
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setAllGroups(userId);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(userId);
     });
     super.didChangeDependencies();
+  }
+
+  _sendNotification(String prayerId) async {
+    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    List receiver;
+    data.forEach((element) async {
+      receiver = element.groupUsers.where((e) => e.userId != _user.id).toList();
+    });
+
+    for (var i = 0; i < receiver.length; i++) {
+      if (receiver.length > 0) {
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .addPushNotification(
+                _descriptionController.text,
+                NotificationType.prayer,
+                _user.firstName,
+                _user.id,
+                receiver[i].userId,
+                'Prayer Update',
+                prayerId);
+      }
+    }
   }
 
   Future<void> _save(textEditingControllers) async {
     BeStilDialog.showLoading(context);
     FocusScope.of(context).unfocus();
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final _group =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
     Map<String, dynamic> updatedPrayer = {};
     List<dynamic> prayerUpdateList = [];
@@ -107,16 +134,17 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(context, e, user, null);
+
+        BeStilDialog.showErrorDialog(context, e, _user, null);
       } else {
-        if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
-          await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
+        if (!Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .addPrayer(
             _descriptionController.text,
-            _user.id,
+            _group.group.id,
             '${_user.firstName} ${_user.lastName}',
             backupText,
+            _user.id,
           );
 
           contacts.forEach((s) {
@@ -127,17 +155,15 @@ class _AddPrayerState extends State<AddPrayer> {
               contacts = [...contacts, s];
             }
           });
-
           if (contacts.length > 0) {
-            await Provider.of<PrayerProvider>(context, listen: false)
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          BeStilDialog.hideLoading(context);
-          AppCOntroller appCOntroller = Get.find();
 
-          appCOntroller.setCurrentPage(0, true);
+          BeStilDialog.hideLoading(context);
+          appCOntroller.setCurrentPage(8, true);
         } else {
-          var updates = Provider.of<PrayerProvider>(context, listen: false)
+          var updates = Provider.of<GroupPrayerProvider>(context, listen: false)
               .prayerToEdit
               ?.updates;
           updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
@@ -156,25 +182,26 @@ class _AddPrayerState extends State<AddPrayer> {
           if (prayerUpdateList.length > 0) {
             prayerUpdateList.forEach((element) async {
               if (element['description'] == '') {
-                await Provider.of<PrayerProvider>(context, listen: false)
+                await Provider.of<GroupPrayerProvider>(context, listen: false)
                     .deleteUpdate(element['id']);
               }
-              await Provider.of<PrayerProvider>(context, listen: false)
+              await Provider.of<GroupPrayerProvider>(context, listen: false)
                   .editUpdate(element['description'], element['id']);
             });
           }
-          await Provider.of<PrayerProvider>(context, listen: false).editprayer(
-              _descriptionController.text,
-              Provider.of<PrayerProvider>(context, listen: false)
-                  .prayerToEdit
-                  .prayer
-                  .id);
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .editprayer(
+                  _descriptionController.text,
+                  Provider.of<GroupPrayerProvider>(context, listen: false)
+                      .prayerToEdit
+                      .prayer
+                      .id);
 
           //tags
           List<PrayerTagModel> currentTags = [];
           List<PrayerTagModel> initialTags = [];
           final tags = [
-            ...Provider.of<PrayerProvider>(context, listen: false)
+            ...Provider.of<GroupPrayerProvider>(context, listen: false)
                 .prayerToEdit
                 .tags
           ];
@@ -197,11 +224,11 @@ class _AddPrayerState extends State<AddPrayer> {
                 });
               }
               for (int i = 0; i < updateTextList.length; i++)
-                await Provider.of<PrayerProvider>(context, listen: false)
+                await Provider.of<GroupPrayerProvider>(context, listen: false)
                     .removePrayerTag(updateTextList[i].id);
 
               if (contacts.length > 0) {
-                await Provider.of<PrayerProvider>(context, listen: false)
+                await Provider.of<GroupPrayerProvider>(context, listen: false)
                     .addPrayerTag(
                         contacts, _user, textEditingControllers[x.id].text, '');
               }
@@ -209,7 +236,7 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           if (_descriptionController.text !=
-              Provider.of<PrayerProvider>(context, listen: false)
+              Provider.of<GroupPrayerProvider>(context, listen: false)
                   .prayerToEdit
                   .prayer
                   .description) {
@@ -237,19 +264,21 @@ class _AddPrayerState extends State<AddPrayer> {
             }
 
             for (int i = 0; i < textList.length; i++)
-              await Provider.of<PrayerProvider>(context, listen: false)
+              await Provider.of<GroupPrayerProvider>(context, listen: false)
                   .removePrayerTag(textList[i].id);
             if (contacts.length > 0) {
-              await Provider.of<PrayerProvider>(context, listen: false)
+              await Provider.of<GroupPrayerProvider>(context, listen: false)
                   .addPrayerTag(
                       contacts, _user, _descriptionController.text, '');
             }
           }
-
+          _sendNotification(
+              Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .prayerToEdit
+                  .prayer
+                  .id);
           BeStilDialog.hideLoading(context);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(0, true);
+          appCOntroller.setCurrentPage(8, true);
         }
       }
     } on HttpException catch (e, s) {
@@ -267,18 +296,18 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
-    final isEdit = Provider.of<PrayerProvider>(context, listen: false).isEdit;
-    _descriptionController.text = isEdit
-        ? Provider.of<PrayerProvider>(context, listen: false)
-            .prayerToEdit
-            .prayer
-            .description
-        : '';
+    _descriptionController.text =
+        Provider.of<GroupPrayerProvider>(context, listen: false).isEdit
+            ? Provider.of<GroupPrayerProvider>(context, listen: false)
+                .prayerToEdit
+                .prayer
+                .description
+            : '';
 
-    if (isEdit &&
-        Provider.of<PrayerProvider>(context, listen: false).prayerToEdit !=
+    if (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit &&
+        Provider.of<GroupPrayerProvider>(context, listen: false).prayerToEdit !=
             null) {
-      updates = Provider.of<PrayerProvider>(context, listen: false)
+      updates = Provider.of<GroupPrayerProvider>(context, listen: false)
           .prayerToEdit
           ?.updates;
       updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
@@ -392,16 +421,14 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    if ((!Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+    if ((!Provider.of<GroupPrayerProvider>(context, listen: false).isEdit &&
             _descriptionController.text.isNotEmpty) ||
-        (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+        (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit &&
             _oldDescription != _descriptionController.text)) {
       onCancel();
       return true;
     } else {
-      AppCOntroller appCOntroller = Get.find();
-
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(8, true);
       return (Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false)) ??
           false;
@@ -515,18 +542,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
-                      if (Provider.of<PrayerProvider>(context, listen: false)
-                          .isEdit) {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
-                      } else {
-                        AppCOntroller appCOntroller = Get.find();
-
-                        appCOntroller.setCurrentPage(0, true);
-                        Navigator.pop(context);
-                        FocusManager.instance.primaryFocus.unfocus();
-                      }
+                      appCOntroller.setCurrentPage(8, true);
+                      Navigator.pop(context);
+                      FocusManager.instance.primaryFocus.unfocus();
                     },
                     child: Container(
                       height: 30,
@@ -616,7 +634,6 @@ class _AddPrayerState extends State<AddPrayer> {
     } else {
       positionOffset2 = 9;
     }
-
     Widget updateContactDropdown(context, e) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
@@ -748,14 +765,12 @@ class _AddPrayerState extends State<AddPrayer> {
     }
 
     bool isValid =
-        (!Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+        (!Provider.of<GroupPrayerProvider>(context, listen: false).isEdit &&
                 _descriptionController.text.trim().isNotEmpty) ||
-            (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+            (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit &&
                 _oldDescription.trim() != _descriptionController.text.trim() &&
                 _descriptionController.text.trim().isNotEmpty) ||
-            (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
-                updates.length > 0 &&
-                _descriptionController.text.trim().isNotEmpty);
+            updateIsValid;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -764,10 +779,12 @@ class _AddPrayerState extends State<AddPrayer> {
           onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
           child: Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: AppColors.backgroundColor)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+            ),
             padding: EdgeInsets.only(
                 bottom: 20,
                 left: 20,
@@ -776,45 +793,36 @@ class _AddPrayerState extends State<AddPrayer> {
             child: Column(
               children: <Widget>[
                 Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          InkWell(
-                            child: Text(
-                              'CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey),
-                            ),
-                            onTap: isValid
-                                ? () => onCancel()
-                                : Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .isEdit
-                                    ? () {
-                                        FocusScope.of(context)
-                                            .requestFocus(new FocusNode());
-                                        Navigator.pop(context);
-                                      }
-                                    : () {
-                                        FocusScope.of(context)
-                                            .requestFocus(new FocusNode());
-                                        AppCOntroller appCOntroller =
-                                            Get.find();
-
-                                        appCOntroller.setCurrentPage(0, true);
-                                      },
-                          ),
-                          InkWell(
-                            child: Text('SAVE',
-                                style: AppTextStyles.boldText18.copyWith(
-                                    color: !isValid
-                                        ? AppColors.lightBlue5.withOpacity(0.5)
-                                        : Colors.blue)),
-                            onTap: () =>
-                                isValid ? _save(textEditingControllers) : null,
-                          ),
-                        ])),
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      InkWell(
+                        child: Text(
+                          'CANCEL',
+                          style: AppTextStyles.boldText18
+                              .copyWith(color: AppColors.grey),
+                        ),
+                        onTap: isValid
+                            ? () => onCancel()
+                            : () {
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                                appCOntroller.setCurrentPage(8, true);
+                              },
+                      ),
+                      InkWell(
+                        child: Text('SAVE',
+                            style: AppTextStyles.boldText18.copyWith(
+                                color: !isValid
+                                    ? AppColors.lightBlue5.withOpacity(0.5)
+                                    : Colors.blue)),
+                        onTap: () =>
+                            isValid ? _save(textEditingControllers) : null,
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: GestureDetector(
@@ -834,14 +842,15 @@ class _AddPrayerState extends State<AddPrayer> {
                                       textkey: _prayerKey,
                                       label: 'Prayer description',
                                       controller: _descriptionController,
-                                      maxLines: Provider.of<PrayerProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .isEdit &&
-                                              updates.length > 0 &&
-                                              tagText.length == 0
-                                          ? 10
-                                          : 30,
+                                      maxLines:
+                                          Provider.of<GroupPrayerProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .isEdit &&
+                                                  updates.length > 0 &&
+                                                  tagText.length == 0
+                                              ? 10
+                                              : 23,
                                       isRequired: true,
                                       showSuffix: false,
                                       textInputAction: TextInputAction.newline,
@@ -855,7 +864,7 @@ class _AddPrayerState extends State<AddPrayer> {
                               ),
                               tagText.length > 1 &&
                                       Settings.enabledContactPermission &&
-                                      Provider.of<PrayerProvider>(context,
+                                      Provider.of<GroupPrayerProvider>(context,
                                                   listen: false)
                                               .prayerToEdit
                                               ?.prayer
@@ -865,7 +874,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                   : SizedBox(),
                             ],
                           ),
-                          if (Provider.of<PrayerProvider>(context,
+                          if (Provider.of<GroupPrayerProvider>(context,
                                           listen: false)
                                       .prayerToEdit !=
                                   null &&
@@ -889,17 +898,17 @@ class _AddPrayerState extends State<AddPrayer> {
                                         style: AppTextStyles.regularText15,
                                         cursorColor: AppColors.lightBlue4,
                                         onChanged: (val) {
-                                          // setState(() {});
-                                          _onUpdateTextChange(val,
-                                              textEditingControllers[e.id]);
-                                          // if (e.description.trim() !=
-                                          //     textEditingController.text
-                                          //         .trim()) {
-                                          //   updateIsValid = true;
-                                          // } else {
-                                          //   updateIsValid = false;
-                                          // }
-                                          // });
+                                          setState(() {
+                                            _onUpdateTextChange(val,
+                                                textEditingControllers[e.id]);
+                                            if (e.description.trim() !=
+                                                textEditingController.text
+                                                    .trim()) {
+                                              updateIsValid = true;
+                                            } else {
+                                              updateIsValid = false;
+                                            }
+                                          });
                                         },
                                         decoration: InputDecoration(
                                           isDense: true,
@@ -924,15 +933,23 @@ class _AddPrayerState extends State<AddPrayer> {
                                           errorStyle: AppTextStyles.errorText,
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: AppColors.lightBlue4
-                                                  .withOpacity(0.5),
+                                              color:
+                                                  //  widget.hasBorder
+                                                  // ?
+                                                  AppColors.lightBlue4
+                                                      .withOpacity(0.5),
+                                              // : Colors.transparent,
                                               width: 1.0,
                                             ),
                                           ),
                                           border: OutlineInputBorder(),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: AppColors.lightBlue4,
+                                                color:
+                                                    // widget.hasBorder
+                                                    // ?
+                                                    AppColors
+                                                        .lightBlue4, // : Colors.transparent,
                                                 width: 1.0),
                                           ),
                                           fillColor: AppColors
