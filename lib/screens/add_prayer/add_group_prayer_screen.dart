@@ -340,24 +340,20 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     }
   }
 
-  void _onTextChange(val) {
+  void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        tagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
-            .trim()
             .toLowerCase()
-            .contains(tagText.trim().toLowerCase())) {
+            .contains(tagText.toLowerCase())) {
           tagList.add(s.displayName);
         }
       });
@@ -376,22 +372,18 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
       });
     } catch (e) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
+          e.toString(), userId, 'ADD_GROUP_PRAYER/screen/onTextChange_tag');
     }
   }
 
-  void _onUpdateTextChange(val) {
+  void _onUpdateTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        updateTagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
         if (('@' + s.displayName)
@@ -415,8 +407,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         numberOfLines = lines.length.toDouble();
       });
     } catch (e) {
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          userId, 'ADD_GROUP_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
@@ -435,23 +427,34 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     }
   }
 
-  Future<void> _onTagSelected(s, controller) async {
-    String controllerText;
-    String tmpText = s.displayName.substring(0, s.displayName.length);
+  Future<void> _onTagSelected(s, TextEditingController controller) async {
+    // print(controller.text.replaceFirst(tagText, s.displayName));
+    // String controllerText;
+    // String tmpText = s.displayName.substring(0, s.displayName.length);
+
+    controller.text = controller.text.replaceFirst(tagText, s.displayName);
     tagText = '';
     updateTagText = '';
-    var tmpTextAfter = controller.text
-        .substring(controller.text.indexOf('@'), controller.text.length);
-    var textAfter = tmpTextAfter.split(" ");
-    var newText = textAfter..removeAt(0);
-    var joinText = newText.join(" ");
+    // var tmpTextAfter = controller.text
+    //     .substring(controller.text.indexOf('@'), controller.text.length);
+    // var textAfter = tmpTextAfter.split(" ");
+    // var newText = textAfter..removeAt(0);
+    // var joinText = newText.join(" ");
 
-    controllerText = controller.text.substring(
-      0,
-      controller.text.indexOf('@'),
-    );
-    controllerText += tmpText;
-    controller.text = controllerText + " " + joinText;
+    // controllerText = controller.text.substring(
+    //   0,
+    //   controller.text.indexOf('@'),
+    // );
+    // controllerText += tmpText;
+    // if (textWithSpace) {
+    //   controller.text = controllerText;
+    //   textWithSpace = false;
+    // } else {
+    //   textWithSpace = false;
+    // }
+    // controller.text = controllerText;
+    // controller.text = controllerText + " " + joinText;
+
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
 
@@ -593,19 +596,19 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    var positionOffset = 2.0;
+    var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
     if (numberOfLines == 1.0) {
-      positionOffset2 = 25;
+      positionOffset2 = 24;
     } else if (numberOfLines == 2.0) {
-      positionOffset2 = 20;
+      positionOffset2 = 19;
     } else if (numberOfLines == 3.0) {
-      positionOffset2 = 15;
+      positionOffset2 = 14;
     } else if (numberOfLines > 8) {
-      positionOffset2 = 8;
+      positionOffset2 = 7;
     } else {
-      positionOffset2 = 10;
+      positionOffset2 = 9;
     }
 
     Widget updateContactDropdown(context, e) {
@@ -683,7 +686,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
-
                   if (('@' + s.displayName)
                       .toLowerCase()
                       .contains(tagText.toLowerCase())) {
