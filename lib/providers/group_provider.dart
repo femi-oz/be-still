@@ -58,9 +58,10 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addGroup(GroupModel groupData, String userID, String email) async {
+  Future addGroup(GroupModel groupData, String userID, String email,
+      String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.addGroup(userID, groupData, email);
+    return await _groupService.addGroup(userID, groupData, email, fullName);
   }
 
   Future editGroup(GroupModel groupData, String groupId) async {
@@ -108,14 +109,10 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future acceptRequest(GroupModel groupData, String groupId, String userId,
-      String requestId) async {
+      String requestId, String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.acceptRequest(
-      groupId,
-      groupData,
-      userId,
-      requestId,
-    );
+        groupId, groupData, userId, requestId, fullName);
   }
 
   Future denyRequest(String groupId, String requestId) async {

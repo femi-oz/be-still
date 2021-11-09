@@ -297,17 +297,16 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   bool isRequestSent() {
-    print(isRequestDenied());
-    if (isRequestDenied()) {
+    var currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    var requestPending = widget.groupData.groupRequests.where((element) =>
+        element.status == StringUtils.joinRequestStatusPending &&
+        element.userId == currentUser.id);
+    if (requestPending.length == 0) {
       return false;
     } else {
-      return widget.groupData.groupRequests.any(
-          (element) => element.status == StringUtils.joinRequestStatusPending);
+      return true;
     }
-  }
-
-  bool isRequestDenied() {
-    return true;
   }
 
   @override

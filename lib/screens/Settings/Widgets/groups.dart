@@ -692,6 +692,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     super.didChangeDependencies();
   }
 
+  String getUser(CombineGroupUserStream data) {
+    data.groupUsers.forEach((element) {
+      Provider.of<UserProvider>(context, listen: false)
+          .getUserById(element.userId);
+    });
+    return Provider.of<UserProvider>(context, listen: false)
+        .selectedUser
+        .lastName;
+  }
+
   void _sendInvite(String groupName, String groupId) async {
     try {
       final _user =
@@ -1225,76 +1235,78 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     child: Column(
                                       children: <Widget>[
                                         ...data.groupUsers.map(
-                                          (user) => GestureDetector(
-                                            onTap: () => _showAlert(user, data),
-                                            child: Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 7.0),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.cardBorder,
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(10),
-                                                  topLeft: Radius.circular(10),
-                                                ),
-                                              ),
+                                          (user) {
+                                            return GestureDetector(
+                                              onTap: () =>
+                                                  _showAlert(user, data),
                                               child: Container(
-                                                margin:
-                                                    EdgeInsetsDirectional.only(
-                                                        start: 1,
-                                                        bottom: 1,
-                                                        top: 1),
-                                                padding: EdgeInsets.all(20),
-                                                width: double.infinity,
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 7.0),
                                                 decoration: BoxDecoration(
-                                                  color: AppColors
-                                                      .prayerCardBgColor,
+                                                  color: AppColors.cardBorder,
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     bottomLeft:
-                                                        Radius.circular(9),
-                                                    topLeft: Radius.circular(9),
+                                                        Radius.circular(10),
+                                                    topLeft:
+                                                        Radius.circular(10),
                                                   ),
                                                 ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    Text(
-                                                        data.groupUsers
-                                                            .firstWhere(
-                                                                (element) =>
-                                                                    element
-                                                                        .userId ==
-                                                                    user.userId)
-                                                            .userId,
+                                                child: Container(
+                                                  margin: EdgeInsetsDirectional
+                                                      .only(
+                                                          start: 1,
+                                                          bottom: 1,
+                                                          top: 1),
+                                                  padding: EdgeInsets.all(20),
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .prayerCardBgColor,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(9),
+                                                      topLeft:
+                                                          Radius.circular(9),
+                                                    ),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                          user.fullName == null
+                                                              ? ''
+                                                              : user.fullName,
+                                                          style: AppTextStyles
+                                                              .boldText14
+                                                              .copyWith(
+                                                                  color: AppColors
+                                                                      .lightBlue4)),
+                                                      Text(
+                                                        user.role ==
+                                                                GroupUserRole
+                                                                    .admin
+                                                            ? 'ADMIN'
+                                                            : user.role ==
+                                                                    GroupUserRole
+                                                                        .moderator
+                                                                ? 'MODERATOR'
+                                                                : 'MEMBER',
                                                         style: AppTextStyles
-                                                            .boldText14
+                                                            .regularText14
                                                             .copyWith(
                                                                 color: AppColors
-                                                                    .lightBlue4)),
-                                                    Text(
-                                                      user.role ==
-                                                              GroupUserRole
-                                                                  .admin
-                                                          ? 'ADMIN'
-                                                          : user.role ==
-                                                                  GroupUserRole
-                                                                      .moderator
-                                                              ? 'MODERATOR'
-                                                              : 'MEMBER',
-                                                      style: AppTextStyles
-                                                          .regularText14
-                                                          .copyWith(
-                                                              color: AppColors
-                                                                  .lightBlue1),
-                                                    ),
-                                                  ],
+                                                                    .lightBlue1),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),

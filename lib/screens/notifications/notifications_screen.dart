@@ -63,10 +63,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      getUserGroupsData();
       _getNotifications();
       _isInit = false;
     }
     super.didChangeDependencies();
+  }
+
+  getUserGroupsData() async {
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    await Provider.of<GroupProvider>(context, listen: false)
+        .setUserGroups(userId);
   }
 
   void _showAlert(String groupId, String message, String senderId,
@@ -227,11 +234,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       var tempGroupData = data.map((e) => e.group);
+      var tempRequestGroupData = data.map((e) => e.groupRequests);
+      GroupRequestModel groupRequest;
+      tempRequestGroupData.forEach((element) {
+        groupRequest = element.firstWhere((element) =>
+            element.userId == receiverId &&
+            element.status == StringUtils.joinRequestStatusPending);
+      });
+
       tempGroupData.where((x) => x.id == groupId).forEach((element) {
         groupData = element;
       });
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .denyRequest(groupId, groupRequest.id);
       await Provider.of<NotificationProvider>(context, listen: false)
           .addPushNotification(
               'Your request to join ${groupData.name} has been denied',
@@ -263,13 +280,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       tempGroupData.where((x) => x.id == groupId).forEach((element) {
         groupData = element;
       });
-      data.forEach((element) {
-        element.groupUsers.forEach((element) {
-          requestId = element.id;
-        });
+      var tempRequestGroupData = data.map((e) => e.groupRequests);
+      GroupRequestModel groupRequest;
+      tempRequestGroupData.forEach((element) {
+        groupRequest = element.firstWhere((element) =>
+            element.userId == receiverId &&
+            element.status == StringUtils.joinRequestStatusPending);
       });
-      await Provider.of<GroupProvider>(context, listen: false)
-          .acceptRequest(groupData, groupId, senderId, requestId);
+
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(receiverId);
+      final receiverFullName =
+          '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
+
+      await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
+          groupData, groupId, senderId, groupRequest.id, receiverFullName);
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
@@ -686,6 +711,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               onLongPressEnd: null,
                               onTap: () {
                                 deleteNotification(notification.id);
+                                Navigator.pop(context);
+                                AppCOntroller appCOntroller = Get.find();
+                                appCOntroller.setCurrentPage(3, true);
                               },
                               child: Container(
                                 margin: EdgeInsets.only(left: 20.0),
