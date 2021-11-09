@@ -1,4 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -31,11 +32,16 @@ class _GroupPrayersState extends State<GroupPrayers> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final group =
             Provider.of<GroupProvider>(context, listen: false).currentGroup;
         await Provider.of<MiscProvider>(context, listen: false)
             .setPageTitle(group.group.name.toUpperCase());
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setHiddenPrayer(_user.id);
       });
       _isInit = false;
     }
@@ -44,14 +50,19 @@ class _GroupPrayersState extends State<GroupPrayers> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<GroupPrayerProvider>(context).filteredPrayers;
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
-    var currentGroupUsers = Provider.of<GroupProvider>(context, listen: false)
-        .currentGroup
-        .groupUsers;
-    var groupUser =
-        currentGroupUsers.firstWhere((element) => element.userId == _user.id);
+    var data = Provider.of<GroupPrayerProvider>(context).filteredPrayers;
+    final _hiddenPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false).hiddenPrayers;
+    data.forEach((element) {
+      _hiddenPrayers.forEach((x) {
+        if (element.groupPrayer.prayerId.contains(x.prayerId)) {
+          data = data
+              .where(
+                  (y) => y.groupPrayer.prayerId != element.groupPrayer.prayerId)
+              .toList();
+        }
+      });
+    });
 
     return WillPopScope(
       onWillPop: _onWillPop,

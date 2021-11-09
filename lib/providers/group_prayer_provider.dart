@@ -20,12 +20,14 @@ class GroupPrayerProvider with ChangeNotifier {
   Iterable<Contact> _localContacts = [];
 
   CombineGroupPrayerStream _currentPrayer;
+  List<HiddenPrayerModel> _hiddenPrayers = [];
 
   List<CombineGroupPrayerStream> get prayers => _prayers;
   List<CombineGroupPrayerStream> get filteredPrayers => _filteredPrayers;
 
   Iterable<Contact> get localContacts => _localContacts;
   CombineGroupPrayerStream get currentPrayer => _currentPrayer;
+  List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
 
   bool _isEdit = false;
   bool get isEdit => _isEdit;
@@ -49,6 +51,11 @@ class GroupPrayerProvider with ChangeNotifier {
   Future<void> setPrayer(String id) async =>
       _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
         _currentPrayer = prayer;
+        notifyListeners();
+      });
+  Future<void> setHiddenPrayer(String id) async =>
+      _prayerService.getHiddenPrayers(id).asBroadcastStream().listen((prayer) {
+        _hiddenPrayers = prayer;
         notifyListeners();
       });
 

@@ -98,7 +98,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   _sendNotification() async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    print(widget.prayerData.groupPrayer.id);
     data.forEach((element) async {
       for (var i = 0; i < element.groupUsers.length; i++) {
         var receiver = element.groupUsers
@@ -113,7 +113,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                   _user.id,
                   receiver[i].userId,
                   'Prayer flagged as innapropriate',
-                  widget.prayerData.prayer.id);
+                  widget.prayerData.groupPrayer.id);
         }
       }
     });
@@ -123,12 +123,16 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
+      var currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
           .flagAsInappropriate(widget.prayerData.prayer.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .hidePrayer(widget.prayerData.prayer.id, currentUser);
       _sendNotification();
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(8, true);
       Navigator.pop(context);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
