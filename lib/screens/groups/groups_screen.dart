@@ -124,8 +124,8 @@ class _GroupScreenState extends State<GroupScreen> {
                           await Provider.of<MiscProvider>(context,
                                   listen: false)
                               .setPageTitle('CREATE A GROUP');
-                          // await Provider.of<MiscProvider>(context, listen: false)
-                          //     .setIsEdit(false);
+                          Provider.of<GroupProvider>(context, listen: false)
+                              .setEditMode(false);
                           appCOntroller.setCurrentPage(12, true);
                         },
                         text: 'CREATE A GROUP',
