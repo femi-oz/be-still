@@ -21,6 +21,7 @@ class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
 class NotificationBarState extends State<NotificationBar> {
   @override
   Widget build(BuildContext context) {
+    final data = Provider.of<NotificationProvider>(context).notifications;
     return AppBar(
       flexibleSpace: Container(
         decoration: BoxDecoration(
@@ -31,7 +32,21 @@ class NotificationBarState extends State<NotificationBar> {
           ),
         ),
       ),
-      title: Text(''),
+      centerTitle: true,
+      title: data.length > 0
+          ? TextButton(
+              onPressed: () =>
+                  Provider.of<NotificationProvider>(context, listen: false)
+                      .clearNotification(),
+              child: Text(
+                "CLEAR ALL",
+                style: AppTextStyles.boldText16
+                    .copyWith(color: AppColors.bottomNavIconColor),
+              ),
+            )
+          : Text('Notifications',
+              style: AppTextStyles.boldText16
+                  .copyWith(color: AppColors.bottomNavIconColor)),
       leading: IconButton(
         icon: Icon(
           AppIcons.bestill_close,
@@ -40,33 +55,24 @@ class NotificationBarState extends State<NotificationBar> {
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () =>
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .clearNotification(),
-          child: Text(
-            "CLEAR ALL",
-            style: AppTextStyles.boldText16
-                .copyWith(color: AppColors.bottomNavIconColor),
-          ),
-        ),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.24),
-        Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                AppIcons.bestill_main_menu,
-                color: AppColors.bottomNavIconColor,
-                size: 18,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
-              },
-            );
-          },
-        ),
-      ],
+      // actions: <Widget>[
+      //   ,
+      //   SizedBox(width: MediaQuery.of(context).size.width * 0.4),
+      // Builder(
+      //   builder: (BuildContext context) {
+      //     return IconButton(
+      //       icon: Icon(
+      //         AppIcons.bestill_main_menu,
+      //         color: AppColors.bottomNavIconColor,
+      //         size: 18,
+      //       ),
+      //       onPressed: () {
+      //         Scaffold.of(context).openEndDrawer();
+      //       },
+      //     );
+      //   },
+      // ),
+      // ],
     );
   }
 }

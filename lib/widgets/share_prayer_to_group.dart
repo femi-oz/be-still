@@ -17,8 +17,8 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   void _getGroup() async {
     UserModel _user =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    await Provider.of<GroupProvider>(context, listen: false)
-        .setAllGroups(_user.id);
+    // await Provider.of<GroupProvider>(context, listen: false)
+    //     .setAllGroups(_user.id);
   }
 
   bool _isInit = true;

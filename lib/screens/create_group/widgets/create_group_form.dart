@@ -3,7 +3,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/input_field.dart';
 
-class CreateGroupForm extends StatefulWidget {
+class CreateGroupForm extends StatelessWidget {
   final groupNameController;
   final cityController;
   final stateController;
@@ -13,34 +13,33 @@ class CreateGroupForm extends StatefulWidget {
   final option;
   final formKey;
   final emailController;
+  final bool isEdit;
+  final bool autoValidate;
 
-  CreateGroupForm({
-    this.groupNameController,
-    this.cityController,
-    this.stateController,
-    this.organizationController,
-    this.descriptionController,
-    this.setOption,
-    this.option,
-    this.formKey,
-    this.emailController,
-  });
+  CreateGroupForm(
+      {this.groupNameController,
+      this.cityController,
+      this.stateController,
+      this.organizationController,
+      this.descriptionController,
+      this.setOption,
+      this.option,
+      this.formKey,
+      this.emailController,
+      this.autoValidate,
+      this.isEdit});
 
-  @override
-  _CreateGroupFormState createState() => _CreateGroupFormState();
-}
-
-class _CreateGroupFormState extends State<CreateGroupForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: widget.formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      key: formKey,
+      // ignore: deprecated_member_use
+      autovalidate: autoValidate,
       child: Column(
         children: [
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
-            controller: widget.groupNameController,
+            // textkey: GlobalKey<FormFieldState>(),
+            controller: groupNameController,
             label: 'Group Name*',
             keyboardType: TextInputType.text,
             isRequired: true,
@@ -48,17 +47,18 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
-            controller: widget.emailController,
+            // textkey: GlobalKey<FormFieldState>(),
+            controller: emailController,
             label: 'Email*',
+            isEmail: true,
             keyboardType: TextInputType.emailAddress,
             isRequired: true,
             showSuffix: false,
           ),
           SizedBox(height: 12.0),
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
-            controller: widget.cityController,
+            // textkey: GlobalKey<FormFieldState>(),
+            controller: cityController,
             label: 'City*',
             keyboardType: TextInputType.text,
             isRequired: true,
@@ -66,8 +66,8 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
-            controller: widget.stateController,
+            // textkey: GlobalKey<FormFieldState>(),
+            controller: stateController,
             label: 'State*',
             keyboardType: TextInputType.text,
             isRequired: true,
@@ -75,8 +75,8 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
-            controller: widget.organizationController,
+            // textkey: GlobalKey<FormFieldState>(),
+            controller: organizationController,
             label: 'Organization / Church Association',
             isRequired: false,
             keyboardType: TextInputType.text,
@@ -84,8 +84,8 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           ),
           SizedBox(height: 12.0),
           CustomInput(
-            textkey: GlobalKey<FormFieldState>(),
-            controller: widget.descriptionController,
+            // textkey: GlobalKey<FormFieldState>(),
+            controller: descriptionController,
             label: 'Group Short Description',
             maxLines: 4,
             textInputAction: TextInputAction.done,
@@ -96,94 +96,94 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                height: 30,
-                decoration: BoxDecoration(
-                  color: widget.option == GroupType.normal
-                      ? AppColors.activeButton.withOpacity(0.3)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: OutlinedButton(
-                    style: ButtonStyle(
-                      side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.transparent)),
-                    ),
-                    child: Container(
-                      child: Text(
-                        'NORMAL',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () => null),
-              ),
-              Container(
-                height: 30,
-                decoration: BoxDecoration(
-                  color: widget.option == GroupType.private
-                      ? AppColors.activeButton.withOpacity(0.5)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: OutlinedButton(
-                    style: ButtonStyle(
-                      side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.transparent)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5.0, vertical: 5),
-                      child: Text(
-                        'PRIVATE',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () => null),
-              ),
-              Container(
-                height: 30,
-                decoration: BoxDecoration(
-                  color: widget.option == GroupType.feed
-                      ? AppColors.activeButton.withOpacity(0.5)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: OutlinedButton(
-                    style: ButtonStyle(
-                      side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.transparent)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5.0, vertical: 5),
-                      child: Text(
-                        'FEED',
-                        style: TextStyle(
-                            color: AppColors.lightBlue3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    onPressed: () => null),
-              ),
+              // Container(
+              //   height: 30,
+              //   decoration: BoxDecoration(
+              //     color: option == GroupType.normal
+              //         ? AppColors.activeButton.withOpacity(0.3)
+              //         : Colors.transparent,
+              //     border: Border.all(
+              //       color: AppColors.cardBorder,
+              //       width: 1,
+              //     ),
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              //   child: OutlinedButton(
+              //       style: ButtonStyle(
+              //         side: MaterialStateProperty.all<BorderSide>(
+              //             BorderSide(color: AppColors.lightBlue4)),
+              //       ),
+              //       child: Container(
+              //         child: Text(
+              //           'NORMAL',
+              //           style: TextStyle(
+              //               color: AppColors.lightBlue3,
+              //               fontSize: 14,
+              //               fontWeight: FontWeight.w500),
+              //         ),
+              //       ),
+              //       onPressed: () => this.setOption(GroupType.normal)),
+              // ),
+              // Container(
+              //   height: 30,
+              //   decoration: BoxDecoration(
+              //     color: option == GroupType.private
+              //         ? AppColors.activeButton.withOpacity(0.5)
+              //         : Colors.transparent,
+              //     border: Border.all(
+              //       color: AppColors.cardBorder,
+              //       width: 1,
+              //     ),
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              //   child: OutlinedButton(
+              //       style: ButtonStyle(
+              //         side: MaterialStateProperty.all<BorderSide>(
+              //             BorderSide(color: AppColors.lightBlue4)),
+              //       ),
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(
+              //             horizontal: 5.0, vertical: 5),
+              //         child: Text(
+              //           'PRIVATE',
+              //           style: TextStyle(
+              //               color: AppColors.lightBlue3,
+              //               fontSize: 14,
+              //               fontWeight: FontWeight.w500),
+              //         ),
+              //       ),
+              //       onPressed: () => this.setOption(GroupType.private)),
+              // ),
+              // Container(
+              //   height: 30,
+              //   decoration: BoxDecoration(
+              //     color: option == GroupType.feed
+              //         ? AppColors.activeButton.withOpacity(0.5)
+              //         : Colors.transparent,
+              //     border: Border.all(
+              //       color: AppColors.cardBorder,
+              //       width: 1,
+              //     ),
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              //   child: OutlinedButton(
+              //       style: ButtonStyle(
+              //         side: MaterialStateProperty.all<BorderSide>(
+              //             BorderSide(color: AppColors.lightBlue4)),
+              //       ),
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(
+              //             horizontal: 5.0, vertical: 5),
+              //         child: Text(
+              //           'FEED',
+              //           style: TextStyle(
+              //               color: AppColors.lightBlue3,
+              //               fontSize: 14,
+              //               fontWeight: FontWeight.w500),
+              //         ),
+              //       ),
+              //       onPressed: () => this.setOption(GroupType.feed)),
+              // ),
             ],
           ),
           SizedBox(height: 30.0),

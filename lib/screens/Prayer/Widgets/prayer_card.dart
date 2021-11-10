@@ -290,6 +290,11 @@ class _PrayerCardState extends State<PrayerCard> {
                                                                     .symmetric(
                                                                 vertical: 30),
                                                         child: ReminderPicker(
+                                                          entityId: widget
+                                                                  .prayerData
+                                                                  ?.userPrayer
+                                                                  ?.id ??
+                                                              '',
                                                           type: NotificationType
                                                               .reminder,
                                                           hideActionuttons:

@@ -78,7 +78,7 @@ class AuthenticationService {
       User user = FirebaseAuth.instance.currentUser;
       if (user != null && !user.emailVerified) {
         var actionCodeSettings = ActionCodeSettings(
-          url: 'https://bestill-app.firebaseapp.com',
+          url: FlavorConfig.instance.values.appUrl,
           dynamicLinkDomain: FlavorConfig.instance.values.dynamicLink,
           androidPackageName: FlavorConfig.instance.values.packageName,
           androidInstallApp: true,

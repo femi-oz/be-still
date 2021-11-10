@@ -10,8 +10,9 @@ Future<void> main() async {
     color: Colors.green,
     values: FlavorValues(
         country: 'US',
-        packageName: 'org.second.bestill',
-        dynamicLink: 'bestill.page.link'),
+        packageName: 'org.second.bestill.v2',
+        dynamicLink: 'bestillapp.page.link',
+        appUrl: 'https://be-still-v2.firebaseapp.com'),
   );
   common.main();
 }

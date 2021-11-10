@@ -11,6 +11,9 @@ class UserProvider with ChangeNotifier {
   UserModel _currentUser;
   UserModel get currentUser => _currentUser;
 
+  UserModel _selectedUser;
+  UserModel get selectedUser => _selectedUser;
+
   List<UserModel> _allUsers;
   List<UserModel> get allUsers => _allUsers;
 
@@ -20,13 +23,20 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setAllUsers(String userId) async {
-    var users = await _userService.getAllUsers();
+  Future<void> getUserById(String id) async {
+    _userService.getUserById(id).asBroadcastStream().listen((event) {
+      _selectedUser = event;
+      notifyListeners();
+    });
+  }
 
-    _allUsers =
-        users.where((e) => e.firstName != null || e.lastName != null).toList();
-    _allUsers = _allUsers.where((e) => e.id != userId).toList();
-    notifyListeners();
+  Future setAllUsers(String userId) async {
+    _userService.getAllUsers().then((e) {
+      _allUsers =
+          e.where((e) => e.firstName != null || e.lastName != null).toList();
+      _allUsers = _allUsers.where((e) => e.id != userId).toList();
+      notifyListeners();
+    });
   }
 
   Future<void> clearCurrentUser() => _currentUser = null;

@@ -59,7 +59,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   height: 20.0,
                 ),
                 CustomInput(
-                  textkey: GlobalKey<FormFieldState>(),
+                  // textkey: GlobalKey<FormFieldState>(),
                   controller: _groupNameController,
                   label: 'Group Name',
                   isRequired: false,

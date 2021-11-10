@@ -7,6 +7,10 @@ class StringUtils {
     return paths[paths.length - 1];
   }
 
+  static const String joinRequestStatusPending = '0';
+  static const String joinRequestStatusApproved = '1';
+  static const String joinRequestStatusDenied = '-1';
+  static const String joinRequestSent = 'Your request is pending';
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
       'You have to be recently logged in the perform this action. Please re-login';
@@ -93,11 +97,5 @@ class StringUtils {
     }
 
     return errorMessage;
-  }
-}
-
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
   }
 }

@@ -61,11 +61,16 @@ class LongButton extends StatelessWidget {
                       ? Icon(icon, color: textColor, size: 18)
                       : Container(),
                   SizedBox(width: 10),
-                  Text(
-                    text,
-                    style: AppTextStyles.boldText18.copyWith(
-                      color: textColor.withOpacity(isDisabled ? 0.5 : 1.0),
-                      height: 1,
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Text(
+                      text,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style: AppTextStyles.boldText18.copyWith(
+                        color: textColor.withOpacity(isDisabled ? 0.5 : 1.0),
+                        height: 1,
+                      ),
                     ),
                   ),
                 ],

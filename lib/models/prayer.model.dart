@@ -11,12 +11,13 @@ class PrayerModel {
   final String status;
   final String description;
   final String descriptionBackup;
-  final bool isAnswer;
-  final bool isInappropriate;
   final String creatorName;
   final String createdBy;
-  final DateTime createdOn;
   final String modifiedBy;
+  final bool isAnswer;
+  final bool isGroup;
+  final bool isInappropriate;
+  final DateTime createdOn;
   final DateTime modifiedOn;
 
   const PrayerModel({
@@ -29,6 +30,7 @@ class PrayerModel {
     @required this.description,
     @required this.descriptionBackup,
     @required this.isAnswer,
+    @required this.isGroup,
     @required this.isInappropriate,
     @required this.creatorName,
     @required this.createdBy,
@@ -46,8 +48,9 @@ class PrayerModel {
         status = snapshot.data()['Status'] ?? 'N/A',
         description = snapshot.data()['Description'] ?? 'N/A',
         descriptionBackup = snapshot.data()['DescriptionBackup'] ?? 'N/A',
-        isAnswer = snapshot.data()['IsAnswer'] ?? 'N/A',
-        isInappropriate = snapshot.data()['IsInappropriate'] ?? 'N/A',
+        isAnswer = snapshot.data()['IsAnswer'] ?? false,
+        isGroup = snapshot.data()['IsGroup'] ?? false,
+        isInappropriate = snapshot.data()['IsInappropriate'] ?? false,
         creatorName = snapshot.data()['CreatorName'] ?? 'N/A',
         createdBy = snapshot.data()['CreatedBy'] ?? 'N/A',
         createdOn = snapshot.data()['CreatedOn']?.toDate(),
@@ -64,6 +67,7 @@ class PrayerModel {
       'Description': description,
       'DescriptionBackup': descriptionBackup,
       'IsAnswer': isAnswer,
+      'IsGroup': isGroup,
       'IsInappropriate': isInappropriate,
       'CreatorName': creatorName,
       'CreatedBy': createdBy,

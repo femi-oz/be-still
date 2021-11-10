@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -29,20 +30,13 @@ class _ShareInAppState extends State<ShareInApp> {
 
   _share(receievrId) async {
     if (userInput.text == '') return;
-
-    final creator =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
     final _prayer = Provider.of<PrayerProvider>(context, listen: false)
         .currentPrayer
         .prayer;
     try {
       BeStilDialog.showLoading(context);
-      await Provider.of<PrayerProvider>(context, listen: false).addUserPrayer(
-          _prayer.id,
-          _prayer.description,
-          receievrId,
-          creator.id,
-          '${creator.firstName} ${creator.lastName}');
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .addToMyList(_prayer.id, receievrId);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

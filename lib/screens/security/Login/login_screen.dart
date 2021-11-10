@@ -254,6 +254,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       await Provider.of<MiscProvider>(context, listen: false)
           .setLoadStatus(true);
+      AppCOntroller appCOntroller = Get.find();
+
+      appCOntroller.setCurrentPage(0, false);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     }
