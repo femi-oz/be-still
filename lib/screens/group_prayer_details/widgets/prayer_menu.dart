@@ -157,9 +157,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .deletePrayer(
               widget.prayerData.groupPrayer.id, widget.prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
-
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(8, true);
+      Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
