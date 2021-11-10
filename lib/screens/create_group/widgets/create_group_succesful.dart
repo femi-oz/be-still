@@ -3,6 +3,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -27,24 +28,27 @@ class _GroupCreatedState extends State<GroupCreated> {
   }
 
   void generateInviteLink(int type) async {
-    final user = Provider.of<UserProvider>(context).currentUser;
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final _url =
+        'https://${FlavorConfig.instance.values.dynamicLink}/groups?${widget.newGroupId}';
     final DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: FlavorConfig.instance.values.dynamicLink,
-      link: Uri.parse(
-          '${FlavorConfig.instance.values}/groups?${widget.newGroupId}'),
+      uriPrefix: "https://" + FlavorConfig.instance.values.dynamicLink,
+      link: Uri.parse(_url),
       androidParameters: AndroidParameters(
-        packageName: 'com.ars.laisla',
-        minimumVersion: 0, //124
+        packageName: FlavorConfig.instance.values.packageName,
+        minimumVersion: 0,
       ),
       dynamicLinkParametersOptions: DynamicLinkParametersOptions(
         shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
       ),
       iosParameters: IosParameters(
-        bundleId: 'com.ars.laisla',
+        bundleId: FlavorConfig.instance.values.packageName,
         minimumVersion: '1.0.1',
         appStoreId: '123456789',
       ),
     );
+    // final Uri shortLink = await parameters.buildUrl();
+    // Uri url = shortLink;
     final ShortDynamicLink shortLink = await parameters.buildShortLink();
     Uri url = shortLink.shortUrl;
     if (type == 0) {
@@ -52,13 +56,14 @@ class _GroupCreatedState extends State<GroupCreated> {
           subject: 'Private Room Invitaion',
           recipients: [],
           body:
-              '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${url.origin}${url.path} on the La Isla App
-   ''');
+              '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${widget.groupName} Group on the Be Still App
+Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} to join ''');
       await FlutterEmailSender.send(email);
     } else {
       await sendSMS(
           message:
-              '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${url.origin}${url.path} on the La Isla App
+              '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${widget.groupName} Group on the Be Still App
+Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} to join
    ''',
           recipients: []).catchError((onError) {
         print(onError);
@@ -79,7 +84,8 @@ class _GroupCreatedState extends State<GroupCreated> {
           'CONGRATULATIONS!',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: AppColors.white,
+              color:
+                  Settings.isDarkMode ? AppColors.white : AppColors.lightBlue1,
               fontSize: 22,
               fontWeight: FontWeight.w700),
         ),
@@ -88,7 +94,8 @@ class _GroupCreatedState extends State<GroupCreated> {
           'Your Group',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: AppColors.white,
+              color:
+                  Settings.isDarkMode ? AppColors.white : AppColors.lightBlue1,
               fontSize: 16,
               fontWeight: FontWeight.w600),
         ),
@@ -106,7 +113,8 @@ class _GroupCreatedState extends State<GroupCreated> {
           widget.isEdit ? 'has been updated' : 'has been created.',
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: AppColors.white,
+              color:
+                  Settings.isDarkMode ? AppColors.white : AppColors.lightBlue1,
               fontSize: 16,
               fontWeight: FontWeight.w500),
         ),
@@ -118,7 +126,9 @@ class _GroupCreatedState extends State<GroupCreated> {
             'Now spread the news and send some invitations.',
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: AppColors.white,
+                color: Settings.isDarkMode
+                    ? AppColors.white
+                    : AppColors.lightBlue1,
                 fontSize: 16,
                 fontWeight: FontWeight.w400),
           ),

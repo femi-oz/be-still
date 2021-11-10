@@ -21,5 +21,4 @@ void setupLocator() {
   locator.registerLazySingleton(() => NotificationService());
   locator.registerLazySingleton(() => DevotionalService());
   locator.registerLazySingleton(() => LogService());
-  locator.registerLazySingleton(() => GroupPrayerService());
 }
