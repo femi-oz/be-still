@@ -27,7 +27,9 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
+import 'package:be_still/widgets/join_group.dart';
 import 'package:cron/cron.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -56,9 +58,49 @@ class _EntryScreenState extends State<EntryScreen> {
       if (miscProvider.initialLoad) {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
+        final groupId =
+            Provider.of<GroupProvider>(context, listen: false).groupJoinId;
+        final userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+        if (groupId.isNotEmpty)
+          Provider.of<GroupProvider>(context, listen: false)
+              .getGroup(groupId)
+              .asBroadcastStream()
+              .listen((groupPrayer) {
+            if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
+              JoinGroup().showAlert(context, groupPrayer);
+          });
+        initDynamicLinks();
       }
     });
     super.initState();
+  }
+
+  Future<void> initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink.link;
+
+      if (deepLink != null) {
+        var groupId = deepLink.queryParameters['groups'];
+
+        Provider.of<GroupProvider>(context, listen: false)
+            .setJoinGroupId(groupId);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      var groupId = deepLink.queryParameters['groups'];
+      Provider.of<GroupProvider>(context, listen: false)
+          .setJoinGroupId(groupId);
+    }
   }
 
   Future<void> _preLoadData() async {

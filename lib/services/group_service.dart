@@ -129,6 +129,55 @@ class GroupService {
     }
   }
 
+  Stream<CombineGroupUserStream> getGroup(String groupdId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      final c = _groupCollectionReference.doc(groupdId).snapshots().map((g) {
+        // return convert.map((g) {
+        Stream<GroupModel> group = Stream.value(g)
+            .map<GroupModel>((document) => GroupModel.fromData(document));
+        Stream<List<GroupUserModel>> groupUsers = _userGroupCollectionReference
+            .where('GroupId', isEqualTo: g.id)
+            .snapshots()
+            .asyncMap((e) =>
+                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
+
+        Stream<List<GroupRequestModel>> groupRequests =
+            _groupRequestCollectionReference
+                .where('GroupId', isEqualTo: g.id)
+                .snapshots()
+                .asyncMap((e) => e.docs
+                    .map((doc) => GroupRequestModel.fromData(doc))
+                    .toList());
+
+        return Rx.combineLatest3(
+            groupUsers,
+            group,
+            groupRequests,
+            (
+              groupUsers,
+              group,
+              groupRequests,
+            ) =>
+                CombineGroupUserStream(
+                  groupUsers,
+                  group,
+                  groupRequests,
+                ));
+        // });
+      }).switchMap((observables) {
+        return observables;
+      });
+      return c;
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          groupdId,
+          'GROUP/service/getAllGroups');
+      throw HttpException(e.message);
+    }
+  }
+
   Stream<List<CombineGroupUserStream>> _combineUserGroupStream;
   Stream<List<CombineGroupUserStream>> getUserGroups(String userId) {
     try {

@@ -30,7 +30,7 @@ class _GroupCreatedState extends State<GroupCreated> {
   void generateInviteLink(int type) async {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _url =
-        'https://${FlavorConfig.instance.values.dynamicLink}/groups?${widget.newGroupId}';
+        'https://${FlavorConfig.instance.values.dynamicLink}/?groups=${widget.newGroupId}';
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: "https://" + FlavorConfig.instance.values.dynamicLink,
       link: Uri.parse(_url),
@@ -53,7 +53,7 @@ class _GroupCreatedState extends State<GroupCreated> {
     Uri url = shortLink.shortUrl;
     if (type == 0) {
       final Email email = Email(
-          subject: 'Private Room Invitaion',
+          subject: 'Invitaion to join ${widget.groupName} group',
           recipients: [],
           body:
               '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${widget.groupName} Group on the Be Still App

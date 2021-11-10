@@ -21,6 +21,8 @@ class GroupProvider with ChangeNotifier {
 
   bool _isEdit = false;
   bool get isEdit => _isEdit;
+  String _groupJoinId = '';
+  String get groupJoinId => _groupJoinId;
   Future setUserGroups(String userId) async {
     // if (_userGroups.isNotEmpty) {
     //   _userGroups = [];
@@ -34,6 +36,10 @@ class GroupProvider with ChangeNotifier {
       _userGroups = userGroups;
       notifyListeners();
     });
+  }
+
+  Stream<CombineGroupUserStream> getGroup(groupdId) {
+    return _groupService.getGroup(groupdId);
   }
 
   Future setAllGroups(String userId) async {
@@ -122,6 +128,11 @@ class GroupProvider with ChangeNotifier {
 
   void setEditMode(bool value) {
     _isEdit = value;
+    notifyListeners();
+  }
+
+  void setJoinGroupId(String value) {
+    _groupJoinId = value;
     notifyListeners();
   }
 }
