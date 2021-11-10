@@ -489,7 +489,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: isSnoozeAndUpdateDisable,
+                      isDisabled: isSnoozeAndUpdateDisable || !isOwner,
                       onPress: isSnoozeAndUpdateDisable ||
                               !((!widget.prayerData.prayer.isGroup) ||
                                   (widget.prayerData.prayer.isGroup && isOwner))

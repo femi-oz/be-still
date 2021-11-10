@@ -70,6 +70,11 @@ class _PrayerFiltersState extends State<PrayerFilters> {
                   onPressed: () => setOption(Status.answered),
                   text: Status.answered.toUpperCase(),
                 ),
+                MenuButton(
+                  isActive: status == Status.following,
+                  onPressed: () => setOption(Status.following),
+                  text: Status.following.toUpperCase(),
+                ),
                 SizedBox(height: 30),
                 Text(
                   errorMessage,

@@ -79,7 +79,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> clearNotification() async {
-    // _notifications = [];
+    _notifications = [];
     notifyListeners();
     await _notificationService
         .clearNotification(_notifications.map((e) => e.id).toList());

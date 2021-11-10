@@ -252,7 +252,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             ),
           ),
           child: Container(
-            height: Get.height,
+            // height: Get.height,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -343,7 +343,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 ),
               ],
             ),
-          ).marginOnly(bottom: 300),
+          ).marginOnly(bottom: 200),
         ),
       )),
     );
