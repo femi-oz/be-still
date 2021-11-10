@@ -97,7 +97,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   _sendNotification() async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    print(widget.prayerData.groupPrayer.id);
     data.forEach((element) async {
       for (var i = 0; i < element.groupUsers.length; i++) {
         var receiver = element.groupUsers

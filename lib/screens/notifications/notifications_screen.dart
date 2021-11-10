@@ -545,10 +545,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             child: GestureDetector(
                               onLongPressEnd: null,
                               onTap: () async {
-                                deleteNotification(notification.id);
-                                Navigator.pop(context);
-                                AppCOntroller appCOntroller = Get.find();
-                                appCOntroller.setCurrentPage(8, true);
+                                gotoPrayer(notification);
                               },
                               child: Container(
                                 margin: EdgeInsets.only(left: 20.0),

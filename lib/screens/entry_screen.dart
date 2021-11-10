@@ -30,6 +30,7 @@ import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/join_group.dart';
 import 'package:cron/cron.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,7 @@ TutorialCoachMark tutorialCoachMark;
 class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  FirebaseMessaging messaging;
 
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
@@ -55,6 +57,8 @@ class _EntryScreenState extends State<EntryScreen> {
   initState() {
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
       if (miscProvider.initialLoad) {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
@@ -72,6 +76,11 @@ class _EntryScreenState extends State<EntryScreen> {
           });
         initDynamicLinks();
       }
+      messaging = FirebaseMessaging.instance;
+      messaging.getToken().then((value) => {
+            Provider.of<NotificationProvider>(context, listen: false)
+                .init(value, userId)
+          });
     });
     super.initState();
   }
@@ -102,6 +111,8 @@ class _EntryScreenState extends State<EntryScreen> {
           .setJoinGroupId(groupId);
     }
   }
+
+  notificationInit() {}
 
   Future<void> _preLoadData() async {
     try {

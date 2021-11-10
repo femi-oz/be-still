@@ -18,9 +18,11 @@ import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +41,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _initializeFlutterFireFuture;
-
+  static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   Future<void> _testAsyncErrorOnInit() async {
     Future<void>.delayed(const Duration(milliseconds: 2), () {
       final List<int> list = <int>[];
@@ -62,8 +65,52 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         .initLocal(context);
     _initializeFlutterFireFuture = _initializeFlutterFire();
     _getPermissions();
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+
+    _flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: _onSelectNotification);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      showNotification(message);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
 
     super.initState();
+  }
+
+  Future<void> showNotification(RemoteMessage message) async {
+    var androidChannelSpecifics = AndroidNotificationDetails(
+      'CHANNEL_ID',
+      'CHANNEL_NAME',
+      "CHANNEL_DESCRIPTION",
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      timeoutAfter: 10000,
+      styleInformation: BigTextStyleInformation(''),
+    );
+    var iosChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      message.notification.title, // Notification Title
+      message.notification
+          .body, // Notification Body, set as null to remove the body
+      platformChannelSpecifics,
+      payload: 'New Payload', // Notification Payload
+    );
+  }
+
+  Future _onSelectNotification(String payload) async {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      return EntryScreen();
+    }));
   }
 
   void _getPermissions() async {

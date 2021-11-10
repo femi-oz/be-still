@@ -174,6 +174,7 @@ class GroupPrayerService {
       _groupPrayerCollectionReference
           .doc(userPrayerID)
           .set(populateGroupPrayer(groupId, newPrayerId, groupId).toJson());
+      return userPrayerID;
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
