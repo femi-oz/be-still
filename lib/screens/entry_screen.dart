@@ -88,21 +88,22 @@ class _EntryScreenState extends State<EntryScreen> {
           .setGroupSettings(userId);
       await Provider.of<SettingsProvider>(context, listen: false)
           .setGroupPreferenceSettings(userId);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setUserGroups(userId);
 
       //set all users
-      Provider.of<UserProvider>(context, listen: false).setAllUsers(userId);
+      await Provider.of<UserProvider>(context, listen: false)
+          .setAllUsers(userId);
 
       // get all push notifications
-      Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(userId);
 
       // get all local notifications
-      Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<NotificationProvider>(context, listen: false)
           .setLocalNotifications(userId);
       await Provider.of<GroupProvider>(context, listen: false)
           .setAllGroups(userId);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(userId);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -447,7 +448,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: GroupPrayers(), //8
+            page: GroupPrayers(_switchSearchMode, _isSearchMode), //8
             icon: Icon(
               Icons.more_horiz,
               size: 20,

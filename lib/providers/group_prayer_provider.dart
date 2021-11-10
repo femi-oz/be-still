@@ -149,7 +149,9 @@ class GroupPrayerProvider with ChangeNotifier {
   Future<void> searchPrayers(String searchQuery, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
     if (searchQuery == '') {
+      filterPrayers();
     } else {
+      filterPrayers();
       List<CombineGroupPrayerStream> filteredPrayers = _filteredPrayers
           .where((CombineGroupPrayerStream data) => data.prayer.description
               .toLowerCase()

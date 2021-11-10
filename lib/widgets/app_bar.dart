@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -53,6 +54,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void _clearSearchField() async {
     _searchController.clear();
     _searchPrayer('');
+  }
+
+  void _searchGroupPrayer(String value) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchQuery(value);
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
+  }
+
+  void _clearGroupSearchField() async {
+    _searchController.clear();
+    _searchGroupPrayer('');
   }
 
   bool _isInit = true;
@@ -140,7 +155,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                           .setSearchMode(true);
                       setState(() {});
                     } else {
-                      _searchPrayer(_searchController.text);
+                      widget.isGroup
+                          ? _searchGroupPrayer(_searchController.text)
+                          : _searchPrayer(_searchController.text);
                     }
                   },
                   child: Container(
@@ -212,7 +229,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     onTap: () => setState(
                       () {
-                        _clearSearchField();
+                        widget.isGroup
+                            ? _clearGroupSearchField()
+                            : _clearSearchField();
+
                         widget.switchSearchMode(false);
                         Provider.of<MiscProvider>(context, listen: false)
                             .setSearchMode(false);

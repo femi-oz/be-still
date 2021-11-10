@@ -158,6 +158,7 @@ class PrayerProvider with ChangeNotifier {
     List<CombinePrayerStream> snoozedPrayers = [];
     List<CombinePrayerStream> favoritePrayers = [];
     List<CombinePrayerStream> archivedPrayers = [];
+    List<CombinePrayerStream> followingPrayers = [];
     List<CombinePrayerStream> allPrayers = [];
     if (_filterOption == Status.all) {
       favoritePrayers = prayers
@@ -193,12 +194,18 @@ class PrayerProvider with ChangeNotifier {
               data.userPrayer.snoozeEndDate.isAfter(DateTime.now()))
           .toList();
     }
+    if (_filterOption == Status.following) {
+      followingPrayers = prayers
+          .where((CombinePrayerStream data) => data.prayer.isGroup)
+          .toList();
+    }
     _filteredPrayers = [
       ...allPrayers,
       ...activePrayers,
       ...archivedPrayers,
       ...snoozedPrayers,
-      ...answeredPrayers
+      ...answeredPrayers,
+      ...followingPrayers
     ];
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));

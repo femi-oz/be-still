@@ -6,10 +6,8 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -63,18 +61,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      getUserGroupsData();
+      // getUserGroupsData();
       _getNotifications();
       _isInit = false;
     }
     super.didChangeDependencies();
   }
 
-  getUserGroupsData() async {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    await Provider.of<GroupProvider>(context, listen: false)
-        .setUserGroups(userId);
-  }
+  // getUserGroupsData() async {
+  //   final userId = Provider.of<UserProvider>(context).currentUser.id;
+  //   await Provider.of<GroupProvider>(context, listen: false)
+  //       .setUserGroups(userId);
+  // }
 
   void _showAlert(String groupId, String message, String senderId,
       String notificationId, String receiverId) {
@@ -261,6 +259,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               receiverId,
               'Request Denied',
               groupData.id);
+      deleteNotification(notificationId);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
     } catch (e) {
@@ -310,6 +309,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               receiverId,
               'Request Accepted',
               groupData.id);
+      deleteNotification(notificationId);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
     } catch (e) {

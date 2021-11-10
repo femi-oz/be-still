@@ -45,12 +45,12 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      // final _user =
+      //     Provider.of<UserProvider>(context, listen: false).currentUser;
       // await Provider.of<GroupProvider>(context, listen: false)
       //     .setAllGroups(_user.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_user.id);
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(_user.id);
       setState(() {});
 
       _isInit = false;
