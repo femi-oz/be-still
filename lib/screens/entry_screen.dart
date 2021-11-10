@@ -28,6 +28,7 @@ import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ TutorialCoachMark tutorialCoachMark;
 class _EntryScreenState extends State<EntryScreen> {
   BuildContext bcontext;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  FirebaseMessaging messaging;
 
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
@@ -53,13 +55,22 @@ class _EntryScreenState extends State<EntryScreen> {
   initState() {
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
       if (miscProvider.initialLoad) {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
       }
+      messaging = FirebaseMessaging.instance;
+      messaging.getToken().then((value) => {
+            Provider.of<NotificationProvider>(context, listen: false)
+                .init(value, userId)
+          });
     });
     super.initState();
   }
+
+  notificationInit() {}
 
   Future<void> _preLoadData() async {
     try {
