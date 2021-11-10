@@ -273,7 +273,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           _sendNotification(
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .prayerToEdit
-                  .prayer
+                  .groupPrayer
                   .id,
               NotificationType.prayer_updates);
           BeStilDialog.hideLoading(context);
