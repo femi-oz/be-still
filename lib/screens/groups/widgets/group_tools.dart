@@ -129,24 +129,20 @@ class _GroupToolsState extends State<GroupTools> {
               : Container(),
 
           SizedBox(height: 10),
-          currentGroupUser.role == GroupUserRole.admin
-              ? LongButton(
-                  icon: Icons.add,
-                  onPress: () {
-                    AppCOntroller appCOntroller = Get.find();
-
-                    appCOntroller.setCurrentPage(13, true);
-
-                    Navigator.pop(context);
-                  },
-                  text: "Add a Prayer",
-                  backgroundColor: Settings.isDarkMode
-                      ? AppColors.backgroundColor[0]
-                      : Colors.white,
-                  textColor: AppColors.lightBlue3,
-                  onPressMore: () => null,
-                )
-              : Container(),
+          LongButton(
+            icon: Icons.add,
+            onPress: () {
+              AppCOntroller appCOntroller = Get.find();
+              appCOntroller.setCurrentPage(10, true);
+              Navigator.pop(context);
+            },
+            text: "Add a Prayer",
+            backgroundColor: Settings.isDarkMode
+                ? AppColors.backgroundColor[0]
+                : Colors.white,
+            textColor: AppColors.lightBlue3,
+            onPressMore: () => null,
+          ),
           SizedBox(height: 10),
           LongButton(
             icon: Icons.more_vert,

@@ -51,7 +51,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   List<String> tags = [];
-
   Map<String, TextEditingController> textEditingControllers = {};
 
   String tagText = '';
@@ -59,7 +58,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   String backupText;
   String _oldDescription = '';
   String displayName = '';
-
   TextPainter painter;
 
   var displayname = [];
@@ -80,36 +78,31 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           .setSearchQuery('');
       Provider.of<GroupPrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
-
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setAllGroups(userId);
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(userId);
     });
     super.didChangeDependencies();
   }
 
-  _sendNotification() async {
+  _sendNotification(String prayerId) async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    List receiver;
     data.forEach((element) async {
-      for (var i = 0; i < element.groupUsers.length; i++) {
-        var receiver =
-            element.groupUsers.where((e) => e.userId != _user.id).toList();
-        if (receiver.length > 0) {
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .addPushNotification(
-                  _descriptionController.text,
-                  NotificationType.prayer,
-                  _user.firstName,
-                  _user.id,
-                  receiver[i].userId,
-                  'Prayer Update',
-                  element.group.id);
-        }
-      }
+      receiver = element.groupUsers.where((e) => e.userId != _user.id).toList();
     });
+
+    for (var i = 0; i < receiver.length; i++) {
+      if (receiver.length > 0) {
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .addPushNotification(
+                _descriptionController.text,
+                NotificationType.prayer_updates,
+                _user.firstName,
+                _user.id,
+                receiver[i].userId,
+                'Prayer Update',
+                prayerId);
+      }
+    }
   }
 
   Future<void> _save(textEditingControllers) async {
@@ -155,7 +148,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               contacts = [...contacts, s];
             }
           });
-          _sendNotification();
           if (contacts.length > 0) {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
@@ -273,7 +265,11 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-          _sendNotification();
+          _sendNotification(
+              Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .prayerToEdit
+                  .prayer
+                  .id);
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         }
@@ -337,26 +333,25 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     }
   }
 
-  void _onTextChange(val) {
+  void _onTextChange(String val) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        tagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
       localContacts.forEach((s) {
-        if (('@' + s.displayName)
-            .trim()
-            .toLowerCase()
-            .contains(tagText.trim().toLowerCase())) {
-          tagList.add(s.displayName);
-        }
+        var displayName = s.displayName == null ? '' : s.displayName;
+        var displayNameList =
+            displayName.toLowerCase().split(new RegExp(r"\s"));
+        displayNameList.forEach((e) {
+          if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
+            tagList.add(displayName);
+          }
+        });
       });
 
       painter = TextPainter(
@@ -372,31 +367,32 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         numberOfLines = lines.length.toDouble();
       });
     } catch (e) {
+      print(e);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
     }
   }
 
-  void _onUpdateTextChange(val) {
+  void _onUpdateTextChange(String val, TextEditingController controller) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
     try {
-      tags = val.split(new RegExp(r"\s"));
-      setState(() {
-        var arrayWithSymbols =
-            tags.where((c) => c != "" && c.substring(0, 1) == "@").toList();
-        updateTagText = arrayWithSymbols.length > 0
-            ? arrayWithSymbols[arrayWithSymbols.length - 1]
-            : '';
-      });
+      var cursorPos = _descriptionController.selection.base.offset;
+      var stringBeforeCursor = val.substring(0, cursorPos);
+      tags = stringBeforeCursor.split(new RegExp(r"\s"));
+      tagText = tags.last.startsWith('@') ? tags.last : '';
+
       tagList.clear();
       localContacts.forEach((s) {
-        if (('@' + s.displayName)
-            .trim()
-            .toLowerCase()
-            .contains(updateTagText.trim().toLowerCase())) {
-          tagList.add(s.displayName);
-        }
+        var displayName = s.displayName == null ? '' : s.displayName;
+        var displayNameList =
+            displayName.toLowerCase().split(new RegExp(r"\s"));
+        displayNameList.forEach((e) {
+          if (('@' + e).toLowerCase().contains(updateTagText.toLowerCase())) {
+            tagList.add(displayName);
+          }
+        });
       });
 
       painter = TextPainter(
@@ -432,23 +428,50 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     }
   }
 
-  Future<void> _onTagSelected(s, controller) async {
-    String controllerText;
-    String tmpText = s.displayName.substring(0, s.displayName.length);
+  Future<void> _onUpdateTagSelected(s, TextEditingController controller) async {
+    controller.text =
+        controller.text.replaceFirst(updateTagText, s.displayName);
+
+    updateTagText = '';
+
+    setState(() {
+      controller.selection =
+          TextSelection.collapsed(offset: controller.text.length);
+    });
+
+    if (!contacts.map((e) => e.identifier).contains(s.identifier)) {
+      contacts = [...contacts, s];
+    }
+  }
+
+  Future<void> _onTagSelected(s, TextEditingController controller) async {
+    // print(controller.text.replaceFirst(tagText, s.displayName));
+    // String controllerText;
+    // String tmpText = s.displayName.substring(0, s.displayName.length);
+
+    controller.text = controller.text.replaceFirst(tagText, s.displayName);
     tagText = '';
     updateTagText = '';
-    var tmpTextAfter = controller.text
-        .substring(controller.text.indexOf('@'), controller.text.length);
-    var textAfter = tmpTextAfter.split(" ");
-    var newText = textAfter..removeAt(0);
-    var joinText = newText.join(" ");
+    // var tmpTextAfter = controller.text
+    //     .substring(controller.text.indexOf('@'), controller.text.length);
+    // var textAfter = tmpTextAfter.split(" ");
+    // var newText = textAfter..removeAt(0);
+    // var joinText = newText.join(" ");
 
-    controllerText = controller.text.substring(
-      0,
-      controller.text.indexOf('@'),
-    );
-    controllerText += tmpText;
-    controller.text = controllerText + " " + joinText;
+    // controllerText = controller.text.substring(
+    //   0,
+    //   controller.text.indexOf('@'),
+    // );
+    // controllerText += tmpText;
+    // if (textWithSpace) {
+    //   controller.text = controllerText;
+    //   textWithSpace = false;
+    // } else {
+    //   textWithSpace = false;
+    // }
+    // controller.text = controllerText;
+    // controller.text = controllerText + " " + joinText;
+
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
 
@@ -590,21 +613,20 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    var positionOffset = 2.0;
+    var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
     if (numberOfLines == 1.0) {
-      positionOffset2 = 25;
+      positionOffset2 = 24;
     } else if (numberOfLines == 2.0) {
-      positionOffset2 = 20;
+      positionOffset2 = 19;
     } else if (numberOfLines == 3.0) {
-      positionOffset2 = 15;
+      positionOffset2 = 14;
     } else if (numberOfLines > 8) {
-      positionOffset2 = 8;
+      positionOffset2 = 7;
     } else {
-      positionOffset2 = 10;
+      positionOffset2 = 9;
     }
-
     Widget updateContactDropdown(context, e) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
@@ -621,24 +643,30 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
-
-                  if (('@' + s.displayName).toLowerCase().contains(
-                        updateTagText.toLowerCase(),
-                      )) {
+                  var name = '';
+                  var displayNameList =
+                      displayName.toLowerCase().split(new RegExp(r"\s"));
+                  displayNameList.forEach((e) {
+                    if (e
+                        .toLowerCase()
+                        .contains(updateTagText.toLowerCase().substring(1))) {
+                      name = e;
+                    }
+                  });
+                  if (name.isNotEmpty) {
                     return GestureDetector(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
-                        child: Text(
-                          displayName,
-                          style: AppTextStyles.regularText14.copyWith(
-                            color: AppColors.lightBlue4,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          child: Text(
+                            displayName,
+                            style: AppTextStyles.regularText14.copyWith(
+                              color: AppColors.lightBlue4,
+                            ),
                           ),
                         ),
-                      ),
-                      onTap: () =>
-                          _onTagSelected(s, textEditingControllers[e.id]),
-                    );
+                        onTap: () => _onUpdateTagSelected(
+                            s, textEditingControllers[e.id]));
                   } else {
                     return SizedBox();
                   }
@@ -680,10 +708,18 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               children: [
                 ...localContacts.map((s) {
                   displayName = s.displayName ?? '';
+                  var name = '';
 
-                  if (('@' + s.displayName)
-                      .toLowerCase()
-                      .contains(tagText.toLowerCase())) {
+                  var displayNameList =
+                      displayName.toLowerCase().split(new RegExp(r"\s"));
+                  displayNameList.forEach((e) {
+                    if (e
+                        .toLowerCase()
+                        .contains(tagText.toLowerCase().substring(1))) {
+                      name = e;
+                    }
+                  });
+                  if (name.isNotEmpty) {
                     return GestureDetector(
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.5,
@@ -856,7 +892,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                         cursorColor: AppColors.lightBlue4,
                                         onChanged: (val) {
                                           setState(() {
-                                            _onUpdateTextChange(val);
+                                            _onUpdateTextChange(val,
+                                                textEditingControllers[e.id]);
                                             if (e.description.trim() !=
                                                 textEditingController.text
                                                     .trim()) {

@@ -267,7 +267,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     notifications.length != 0
                         ? Positioned(
-                            top: MediaQuery.of(context).size.height * 0.035,
+                            top: MediaQuery.of(context).size.height * 0.037,
                             left: notifications.length > 9
                                 ? MediaQuery.of(context).size.width * 0.044
                                 : MediaQuery.of(context).size.width * 0.05,

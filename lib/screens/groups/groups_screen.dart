@@ -156,7 +156,6 @@ class _GroupScreenState extends State<GroupScreen> {
                                           LongButton(
                                             onPress: () async {
                                               _getPrayers(e);
-
                                               appCOntroller.setCurrentPage(
                                                   8, true);
                                             },

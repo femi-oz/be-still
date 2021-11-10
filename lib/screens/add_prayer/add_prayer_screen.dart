@@ -32,6 +32,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool showNoContact = false;
   double numberOfLines = 5.0;
   bool textWithSpace = false;
+  bool contactSearchMode = false;
 
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -51,6 +52,10 @@ class _AddPrayerState extends State<AddPrayer> {
   List<String> tags = [];
   List<String> noTags = [];
   var newDisplayName = '';
+
+  List<String> previousArrayWithSymbols = [];
+  int tagLength;
+
   Map<String, TextEditingController> textEditingControllers = {};
 
   String tagText = '';
@@ -58,6 +63,7 @@ class _AddPrayerState extends State<AddPrayer> {
   String backupText;
   String _oldDescription = '';
   String displayName = '';
+  int index;
 
   TextPainter painter;
 
@@ -350,10 +356,10 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
     try {
-      var cursorPos = controller.selection.base.offset;
+      var cursorPos = _descriptionController.selection.base.offset;
       var stringBeforeCursor = val.substring(0, cursorPos);
       tags = stringBeforeCursor.split(new RegExp(r"\s"));
-      updateTagText = tags.last.startsWith('@') ? tags.last : '';
+      tagText = tags.last.startsWith('@') ? tags.last : '';
 
       tagList.clear();
       localContacts.forEach((s) {
@@ -788,7 +794,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                     ? () {
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
-                                        Navigator.pop(context);
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+
+                                        appCOntroller.setCurrentPage(7, true);
                                       }
                                     : () {
                                         FocusScope.of(context)

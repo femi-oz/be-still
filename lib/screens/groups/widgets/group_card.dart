@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
@@ -8,6 +9,7 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupCard extends StatefulWidget {
@@ -217,7 +219,7 @@ class _GroupCardState extends State<GroupCard> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 30.0),
-                      isRequestSent(this.widget.groupData.group.id)
+                      isRequestSent()
                           ? Container()
                           : Text(
                               'Would you like to request to join?',
@@ -226,10 +228,8 @@ class _GroupCardState extends State<GroupCard> {
                               ),
                               textAlign: TextAlign.left,
                             ),
-                      isRequestSent(this.widget.groupData.group.id)
-                          ? Container()
-                          : SizedBox(height: 20.0),
-                      isRequestSent(this.widget.groupData.group.id)
+                      isRequestSent() ? Container() : SizedBox(height: 20.0),
+                      isRequestSent()
                           ? Container(
                               child: Text(
                                 StringUtils.joinRequestSent,
@@ -296,13 +296,17 @@ class _GroupCardState extends State<GroupCard> {
     });
   }
 
-  bool isRequestSent(id) {
-    print(Provider.of<UserProvider>(context, listen: false).currentUser.id);
-    print(widget.groupData.groupRequests.map((e) => e.status));
-    return widget.groupData.groupRequests.any((element) =>
-        element.userId ==
-            Provider.of<UserProvider>(context, listen: false).currentUser.id &&
-        element.status == StringUtils.joinRequestStatusPending);
+  bool isRequestSent() {
+    var currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
+    var requestPending = widget.groupData.groupRequests.where((element) =>
+        element.status == StringUtils.joinRequestStatusPending &&
+        element.userId == currentUser.id);
+    if (requestPending.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override

@@ -98,7 +98,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   _sendNotification() async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    print(widget.prayerData.groupPrayer.id);
     data.forEach((element) async {
       for (var i = 0; i < element.groupUsers.length; i++) {
         var receiver = element.groupUsers
@@ -113,7 +113,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                   _user.id,
                   receiver[i].userId,
                   'Prayer flagged as innapropriate',
-                  widget.prayerData.groupPrayer.prayerId);
+                  widget.prayerData.groupPrayer.id);
         }
       }
     });
@@ -123,13 +123,16 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
+      var currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<PrayerProvider>(context, listen: false)
           .flagAsInappropriate(widget.prayerData.prayer.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .hidePrayer(widget.prayerData.prayer.id, currentUser);
       _sendNotification();
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
-
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(8, true);
       Navigator.pop(context);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -154,9 +157,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .deletePrayer(
               widget.prayerData.groupPrayer.id, widget.prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
-
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(8, true);
+      Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -533,39 +537,39 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                             ),
                       text: 'Reminder',
                     ),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: Icons.remove_red_eye_sharp,
-                        text: 'Hide',
-                        isDisabled: isDisable,
-                        onPress: () => null),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: Icons.remove_red_eye_sharp,
-                        text: 'Hide From Group',
-                        isDisabled: isDisable,
-                        onPress: () => null),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: Icons.messenger,
-                        text: 'Message Requestor',
-                        isDisabled: isDisable,
-                        onPress: () => null),
+                    // LongButton(
+                    //     textColor: AppColors.lightBlue3,
+                    //     backgroundColor:
+                    //         Provider.of<ThemeProvider>(context, listen: false)
+                    //                 .isDarkModeEnabled
+                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
+                    //             : AppColors.white,
+                    //     icon: Icons.remove_red_eye_sharp,
+                    //     text: 'Hide',
+                    //     isDisabled: isDisable,
+                    //     onPress: () => null),
+                    // LongButton(
+                    //     textColor: AppColors.lightBlue3,
+                    //     backgroundColor:
+                    //         Provider.of<ThemeProvider>(context, listen: false)
+                    //                 .isDarkModeEnabled
+                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
+                    //             : AppColors.white,
+                    //     icon: Icons.remove_red_eye_sharp,
+                    //     text: 'Hide From Group',
+                    //     isDisabled: isDisable,
+                    //     onPress: () => null),
+                    // LongButton(
+                    //     textColor: AppColors.lightBlue3,
+                    //     backgroundColor:
+                    //         Provider.of<ThemeProvider>(context, listen: false)
+                    //                 .isDarkModeEnabled
+                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
+                    //             : AppColors.white,
+                    //     icon: Icons.messenger,
+                    //     text: 'Message Requestor',
+                    //     isDisabled: isDisable,
+                    //     onPress: () => null),
                     LongButton(
                         textColor: AppColors.lightBlue3,
                         backgroundColor:

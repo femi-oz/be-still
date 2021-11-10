@@ -14,6 +14,9 @@ class GroupService {
   final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
   final CollectionReference<Map<String, dynamic>>
+      _groupRequestCollectionReference =
+      FirebaseFirestore.instance.collection("GroupRequest");
+  final CollectionReference<Map<String, dynamic>>
       _userGroupCollectionReference =
       FirebaseFirestore.instance.collection("UserGroup");
 
@@ -21,9 +24,10 @@ class GroupService {
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  UserGroupModel populateGroupUser(GroupModel groupData, String userID,
-      String groupID, String role, String creator) {
-    UserGroupModel userPrayer = UserGroupModel(
+  GroupUserModel populateGroupUser(GroupModel groupData, String userID,
+      String groupID, String role, String creator, String fullName) {
+    GroupUserModel userPrayer = GroupUserModel(
+      fullName: fullName,
       userId: userID,
       status: Status.active,
       groupId: groupID,
@@ -87,13 +91,13 @@ class GroupService {
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
 
-          Stream<List<GroupRequestModel>> groupRequests = FirebaseFirestore
-              .instance
-              .collection("Group/" + g.id + "/Requests")
-              .snapshots()
-              .asyncMap((e) => e.docs
-                  .map((doc) => GroupRequestModel.fromData(doc))
-                  .toList());
+          Stream<List<GroupRequestModel>> groupRequests =
+              _groupRequestCollectionReference
+                  .where('GroupId', isEqualTo: g.id)
+                  .snapshots()
+                  .asyncMap((e) => e.docs
+                      .map((doc) => GroupRequestModel.fromData(doc))
+                      .toList());
 
           return Rx.combineLatest3(
               groupUsers,
@@ -145,13 +149,13 @@ class GroupService {
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
 
-          Stream<List<GroupRequestModel>> groupRequests = FirebaseFirestore
-              .instance
-              .collection("Group/" + f.id + "/Requests")
-              .snapshots()
-              .asyncMap((e) => e.docs
-                  .map((doc) => GroupRequestModel.fromData(doc))
-                  .toList());
+          Stream<List<GroupRequestModel>> groupRequests =
+              _groupRequestCollectionReference
+                  .where('GroupId', isEqualTo: f['GroupId'])
+                  .snapshots()
+                  .asyncMap((e) => e.docs
+                      .map((doc) => GroupRequestModel.fromData(doc))
+                      .toList());
           return Rx.combineLatest3(
               groupUsers,
               group,
@@ -183,9 +187,9 @@ class GroupService {
     }
   }
 
-  Future<void> addGroup(
-      String userId, GroupModel groupData, String email) async {
-    // final _groupID = Uuid().v1();
+  addGroup(String userId, GroupModel groupData, String email,
+      String fullName) async {
+    final _groupID = Uuid().v1();
     final _userGroupId = Uuid().v1();
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -202,7 +206,8 @@ class GroupService {
               userId,
               groupData.id,
               GroupUserRole.admin,
-              groupData.createdBy)
+              groupData.createdBy,
+              fullName)
           .toJson());
       return groupData.id;
       //store group settings
@@ -255,13 +260,9 @@ class GroupService {
     try {
       final _requestID = Uuid().v1();
       if (_firebaseAuth.currentUser == null) return null;
-      _groupCollectionReference
-          .doc(groupId)
-          .collection('Requests')
-          .doc(_requestID)
-          .set(populateGroupRequest(userId, status, createdBy, DateTime.now(),
-                  groupId, _requestID)
-              .toJson());
+      _groupRequestCollectionReference.doc(_requestID).set(populateGroupRequest(
+              userId, status, createdBy, DateTime.now(), groupId, _requestID)
+          .toJson());
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -271,12 +272,8 @@ class GroupService {
     }
   }
 
-  acceptRequest(
-    String groupId,
-    GroupModel groupData,
-    String userId,
-    String requestId,
-  ) async {
+  acceptRequest(String groupId, GroupModel groupData, String userId,
+      String requestId, String fullName) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       final _userGroupId = Uuid().v1();
@@ -288,10 +285,14 @@ class GroupService {
       //             groupData, userId, groupId, GroupUserRole.member)
       //         .toJson());
       _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
-              groupData, userId, groupId, GroupUserRole.member, userId)
+              groupData,
+              userId,
+              groupId,
+              GroupUserRole.member,
+              userId,
+              fullName)
           .toJson());
-      FirebaseFirestore.instance
-          .collection("Group/" + groupId + "/Requests")
+      _groupRequestCollectionReference
           .doc(requestId)
           .update({"Status": StringUtils.joinRequestStatusApproved});
       // await addGroupUserReference(groupId, userId);
@@ -308,8 +309,7 @@ class GroupService {
   denyRequest(String groupId, String requestId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      FirebaseFirestore.instance
-          .collection("Group/" + groupId + "/Requests")
+      _groupRequestCollectionReference
           .doc(requestId)
           .update({"Status": StringUtils.joinRequestStatusDenied});
     } catch (e) {
