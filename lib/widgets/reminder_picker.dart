@@ -22,6 +22,7 @@ class ReminderPicker extends StatefulWidget {
   final bool hideActionuttons;
   final LocalNotificationModel reminder;
   final String type;
+  final String entityId;
 
   @override
   ReminderPicker({
@@ -29,6 +30,7 @@ class ReminderPicker extends StatefulWidget {
     @required this.onCancel,
     @required this.reminder,
     @required this.type,
+    @required this.entityId,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
@@ -119,7 +121,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
     } else
       widget.onCancel();
     setState(() => null);
@@ -156,9 +158,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
     } else
       widget.onCancel();
   }
@@ -226,8 +229,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedFrequency == Frequency.one_time,
       );
       print(scheduleDate);
-      final payload = NotificationMessage(
-          entityId: prayerData?.userPrayer?.id ?? '', type: widget.type);
+      final payload =
+          NotificationMessage(entityId: widget.entityId, type: widget.type);
       await LocalNotification.setLocalNotification(
         context: context,
         title: title,
@@ -259,9 +262,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           description,
           selectedFrequency,
           scheduleDate,
-          widget.type == NotificationType.prayer_time
-              ? ''
-              : prayerData?.userPrayer?.id,
+          widget.type == NotificationType.prayer_time ? '' : widget.entityId,
           LocalNotification.daysOfWeek[selectedDayOfWeek],
           selectedPeriod,
           _selectedHourString,
@@ -288,9 +289,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
       setState(() {});
       if (widget.type == NotificationType.reminder) {
         Navigator.pop(context);
+        Navigator.pop(context);
 
         AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(0, true);
+        appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
       } else
         widget.onCancel();
     } on HttpException catch (e, s) {

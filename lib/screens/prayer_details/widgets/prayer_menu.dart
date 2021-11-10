@@ -569,6 +569,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 30),
                                         child: ReminderPicker(
+                                          entityId: widget
+                                                  .prayerData?.userPrayer?.id ??
+                                              '',
                                           type: NotificationType.reminder,
                                           hideActionuttons: false,
                                           reminder: widget.hasReminder

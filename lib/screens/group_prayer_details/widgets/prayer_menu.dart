@@ -525,6 +525,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                           reminder: widget.hasReminder
                                               ? widget.reminder
                                               : null,
+                                          entityId: widget.prayerData
+                                                  ?.groupPrayer?.id ??
+                                              '',
                                           onCancel: () =>
                                               Navigator.of(context).pop(),
                                         ),
