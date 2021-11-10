@@ -236,21 +236,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       var tempGroupData = data.map((e) => e.group);
-      var tempRequestGroupData = data.map((e) => e.groupRequests);
-      GroupRequestModel groupRequest;
-      tempRequestGroupData.forEach((element) {
-        groupRequest = element.firstWhere((element) =>
-            element.userId == receiverId &&
-            element.status == StringUtils.joinRequestStatusPending);
-      });
-
       tempGroupData.where((x) => x.id == groupId).forEach((element) {
         groupData = element;
       });
+      var tempRequestGroupData = data.map((e) => e.groupRequests);
+      GroupRequestModel groupRequest;
+      tempRequestGroupData.forEach((element) async {
+        groupRequest = element.firstWhere((element) =>
+            element.userId == receiverId &&
+            element.status == StringUtils.joinRequestStatusPending);
+        await Provider.of<GroupProvider>(context, listen: false)
+            .denyRequest(groupId, groupRequest.id);
+      });
+
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .denyRequest(groupId, groupRequest.id);
+
       await Provider.of<NotificationProvider>(context, listen: false)
           .addPushNotification(
               'Your request to join ${groupData.name} has been denied',
@@ -271,8 +272,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Future<void> acceptRequest(String groupId, String senderId,
       String notificationId, String receiverId) async {
     GroupModel groupData;
+    GroupRequestModel groupRequest;
+    var requestId = '';
+
     try {
       BeStilDialog.showLoading(context);
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(receiverId);
+      final receiverFullName =
+          '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
+
       final data =
           Provider.of<GroupProvider>(context, listen: false).userGroups;
       final currentUser =
@@ -282,20 +291,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         groupData = element;
       });
       var tempRequestGroupData = data.map((e) => e.groupRequests);
-      GroupRequestModel groupRequest;
-      tempRequestGroupData.forEach((element) {
+      tempRequestGroupData.forEach((element) async {
         groupRequest = element.firstWhere((element) =>
             element.userId == receiverId &&
             element.status == StringUtils.joinRequestStatusPending);
+
+        await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
+            groupData, groupId, senderId, groupRequest.id, receiverFullName);
       });
-
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(receiverId);
-      final receiverFullName =
-          '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
-
-      await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
-          groupData, groupId, senderId, groupRequest.id, receiverFullName);
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)

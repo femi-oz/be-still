@@ -489,11 +489,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: isSnoozeAndUpdateDisable,
+                      isDisabled: !isOwner,
                       onPress: isSnoozeAndUpdateDisable ||
                               !((!widget.prayerData.prayer.isGroup) ||
                                   (widget.prayerData.prayer.isGroup && isOwner))
-                          ? null
+                          ? () {}
                           : () async {
                               Provider.of<PrayerProvider>(context,
                                       listen: false)
@@ -517,9 +517,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
-                      isDisabled: isSnoozeAndUpdateDisable,
-                      onPress: () => isSnoozeAndUpdateDisable
-                          ? null
+                      isDisabled: isSnoozeAndUpdateDisable || !isOwner,
+                      onPress: () => isSnoozeAndUpdateDisable || !isOwner
+                          ? () {}
                           : Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -536,7 +536,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_reminder,
-                      isDisabled: isDisable,
+                      isDisabled: !isOwner,
                       suffix: widget.hasReminder &&
                               widget.reminder.frequency == Frequency.one_time
                           ? DateFormat('dd MMM yyyy hh:mma').format(widget
@@ -546,8 +546,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                       Frequency.one_time
                               ? widget.reminder.frequency
                               : null,
-                      onPress: () => isDisable
-                          ? null
+                      onPress: () => isDisable || !isOwner
+                          ? () {}
                           : showDialog(
                               context: context,
                               barrierColor: AppColors.detailBackgroundColor[1]
@@ -594,10 +594,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_snooze,
                       isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived,
+                          widget.prayerData.userPrayer.isArchived ||
+                          !isOwner,
                       onPress: () => widget.prayerData.prayer.isAnswer ||
-                              widget.prayerData.userPrayer.isArchived
-                          ? null
+                              widget.prayerData.userPrayer.isArchived ||
+                              !isOwner
+                          ? () {}
                           : widget.prayerData.userPrayer.isSnoozed
                               ? _unSnoozePrayer(widget.prayerData)
                               : showDialog(
@@ -641,10 +643,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
+                      isDisabled: !isOwner,
                       icon: AppIcons.bestill_answered,
-                      onPress: () => widget.prayerData.prayer.isAnswer
-                          ? _unMarkAsAnswered(widget.prayerData)
-                          : _onMarkAsAnswered(widget.prayerData),
+                      onPress: !isOwner
+                          ? () {}
+                          : () => widget.prayerData.prayer.isAnswer
+                              ? _unMarkAsAnswered(widget.prayerData)
+                              : _onMarkAsAnswered(widget.prayerData),
                       text: widget.prayerData.prayer.isAnswer
                           ? 'Unmark as Answered'
                           : 'Mark as Answered',
@@ -659,9 +664,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       icon: widget.prayerData.userPrayer.isFavorite
                           ? Icons.favorite_border_outlined
                           : Icons.favorite,
-                      onPress: () => widget.prayerData.userPrayer.isFavorite
-                          ? _unMarkPrayerAsFavorite(widget.prayerData)
-                          : _markPrayerAsFavorite(widget.prayerData),
+                      isDisabled: !isOwner,
+                      onPress: !isOwner
+                          ? () {}
+                          : () => widget.prayerData.userPrayer.isFavorite
+                              ? _unMarkPrayerAsFavorite(widget.prayerData)
+                              : _markPrayerAsFavorite(widget.prayerData),
                       text: widget.prayerData.userPrayer.isFavorite
                           ? 'Unmark as Favorite '
                           : 'Mark as Favorite ',
@@ -669,6 +677,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     LongButton(
                       textColor: AppColors.lightBlue3,
                       hasIcon: true,
+                      isDisabled: !isOwner,
                       backgroundColor:
                           Provider.of<ThemeProvider>(context, listen: false)
                                   .isDarkModeEnabled
@@ -676,9 +685,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons
                           .bestill_icons_bestill_archived_icon_revised_drk,
-                      onPress: () => widget.prayerData.userPrayer.isArchived
-                          ? _unArchive(widget.prayerData)
-                          : _onArchive(widget.prayerData),
+                      onPress: !isOwner
+                          ? () {}
+                          : () => widget.prayerData.userPrayer.isArchived
+                              ? _unArchive(widget.prayerData)
+                              : _onArchive(widget.prayerData),
                       text: widget.prayerData.userPrayer.isArchived
                           ? 'Unarchive'
                           : 'Archive',
@@ -691,7 +702,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: Icons.delete_forever,
-                      onPress: () => _openDeleteConfirmation(context),
+                      isDisabled: !isOwner,
+                      onPress: !isOwner
+                          ? () {}
+                          : () => _openDeleteConfirmation(context),
                       text: 'Delete',
                     ),
                   ],

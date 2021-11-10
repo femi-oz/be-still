@@ -794,7 +794,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                     ? () {
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
-                                        Navigator.pop(context);
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+
+                                        appCOntroller.setCurrentPage(7, true);
                                       }
                                     : () {
                                         FocusScope.of(context)

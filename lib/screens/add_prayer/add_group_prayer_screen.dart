@@ -51,7 +51,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
   List<String> tags = [];
-
   Map<String, TextEditingController> textEditingControllers = {};
 
   String tagText = '';
@@ -59,7 +58,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   String backupText;
   String _oldDescription = '';
   String displayName = '';
-
   TextPainter painter;
 
   var displayname = [];
@@ -80,11 +78,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           .setSearchQuery('');
       Provider.of<GroupPrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
-
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setAllGroups(userId);
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(userId);
     });
     super.didChangeDependencies();
   }
@@ -102,7 +95,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         await Provider.of<NotificationProvider>(context, listen: false)
             .addPushNotification(
                 _descriptionController.text,
-                NotificationType.prayer,
+                NotificationType.prayer_updates,
                 _user.firstName,
                 _user.id,
                 receiver[i].userId,
