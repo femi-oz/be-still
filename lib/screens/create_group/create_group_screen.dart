@@ -295,9 +295,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                 autoValidate: _autoValidate,
                               )
                             : GroupCreated(
-                                _groupNameController.text,
-                                isEdit,
-                              ),
+                                _groupNameController.text, isEdit, newGroupId),
                         SizedBox(height: 30.0),
                         _step == 1
                             ? Container(
