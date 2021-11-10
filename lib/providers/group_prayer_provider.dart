@@ -32,6 +32,9 @@ class GroupPrayerProvider with ChangeNotifier {
   bool _isEdit = false;
   bool get isEdit => _isEdit;
 
+  String _newPrayerId = '';
+  String get newPrayerId => _newPrayerId;
+
   CombineGroupPrayerStream _prayerToEdit;
   CombineGroupPrayerStream get prayerToEdit => _prayerToEdit;
 
@@ -66,8 +69,9 @@ class GroupPrayerProvider with ChangeNotifier {
     String prayerDescBackup,
     String userId,
   ) async =>
-      await _prayerService.addPrayer(
-          prayerDesc, groupId, creatorName, prayerDescBackup, userId);
+      await _prayerService
+          .addPrayer(prayerDesc, groupId, creatorName, prayerDescBackup, userId)
+          .then((value) => _newPrayerId = value);
 
   Future<void> messageRequestor(
           PrayerRequestMessageModel prayerRequestData) async =>
