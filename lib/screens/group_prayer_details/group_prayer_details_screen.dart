@@ -99,6 +99,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
         .localNotifications;
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
+
     _reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.groupPrayer.id,
         orElse: () => null);
@@ -132,7 +133,6 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                       ),
                       onPressed: () {
                         AppCOntroller appCOntroller = Get.find();
-
                         appCOntroller.setCurrentPage(8, true);
                       },
                       label: Text(

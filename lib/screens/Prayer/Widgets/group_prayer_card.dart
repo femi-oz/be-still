@@ -368,7 +368,9 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Expanded(
-                                      child: widget.prayerData.tags.length > 0
+                                      child: widget.prayerData.tags.length >
+                                                  0 &&
+                                              isOwner
                                           ? Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
