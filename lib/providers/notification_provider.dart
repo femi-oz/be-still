@@ -91,9 +91,11 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> clearNotification() async {
-    _notifications = [];
+    // _notifications = [];
+    var notificationsToClear =
+        _notifications.where((e) => e.messageType != NotificationType.request);
     await _notificationService
-        .clearNotification(_notifications.map((e) => e.id).toList());
+        .clearNotification(notificationsToClear.map((e) => e.id).toList());
     notifyListeners();
   }
 
