@@ -61,11 +61,15 @@ class _EntryScreenState extends State<EntryScreen> {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
       }
-      messaging = FirebaseMessaging.instance;
-      messaging.getToken().then((value) => {
-            Provider.of<NotificationProvider>(context, listen: false)
-                .init(value, userId)
-          });
+      if (Provider.of<SettingsProvider>(context, listen: false)
+          .groupPreferenceSettings
+          .enableNotificationForAllGroups) {
+        messaging = FirebaseMessaging.instance;
+        messaging.getToken().then((value) => {
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .init(value, userId)
+            });
+      }
     });
     super.initState();
   }

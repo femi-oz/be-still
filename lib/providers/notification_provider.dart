@@ -62,6 +62,18 @@ class NotificationProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future disablePushNotifications(String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _notificationService.disablePushNotifications(userId);
+    notifyListeners();
+  }
+
+  Future enablePushNotifications(String token, String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _notificationService.enablePushNotification(token, userId);
+    notifyListeners();
+  }
+
   Future<void> clearMessage() async {
     _message = null;
   }

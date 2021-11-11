@@ -101,6 +101,81 @@ class NotificationService {
     return devices.map((e) => e.name).toList();
   }
 
+  disablePushNotifications(userId) async {
+    //get user devices
+    var userDevices = await _userDeviceCollectionReference
+        .where('UserId', isEqualTo: userId)
+        .get();
+    var userDevicesDocs =
+        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
+    List<DeviceModel> devices = [];
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      for (int i = 0; i < userDevicesDocs.length; i++) {
+        var dev = await _deviceCollectionReference
+            .doc(userDevicesDocs[i].deviceId)
+            .get();
+        devices.add(DeviceModel.fromData(dev));
+        devices.forEach((element) async {
+          await _deviceCollectionReference.doc(element.id).update(
+                DeviceModel(
+                        modifiedOn: DateTime.now(),
+                        modifiedBy: 'MOBILE',
+                        model: 'MOBILE',
+                        deviceId: '',
+                        name: '',
+                        status: Status.active,
+                        createdBy: element.createdBy,
+                        createdOn: DateTime.now())
+                    .toJson(),
+              );
+        });
+      }
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
+      throw HttpException(e.message);
+    }
+  }
+
+  enablePushNotification(String token, String userId) async {
+    var userDevices = await _userDeviceCollectionReference
+        .where('UserId', isEqualTo: userId)
+        .get();
+    var userDevicesDocs =
+        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
+    List<DeviceModel> devices = [];
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      for (int i = 0; i < userDevicesDocs.length; i++) {
+        var dev = await _deviceCollectionReference
+            .doc(userDevicesDocs[i].deviceId)
+            .get();
+        devices.add(DeviceModel.fromData(dev));
+
+        devices.forEach((element) async {
+          print(element.id);
+          await _deviceCollectionReference.doc(element.id).update(
+                DeviceModel(
+                        modifiedOn: DateTime.now(),
+                        modifiedBy: 'MOBILE',
+                        model: 'MOBILE',
+                        deviceId: '',
+                        name: token,
+                        status: Status.active,
+                        createdBy: element.createdBy,
+                        createdOn: DateTime.now())
+                    .toJson(),
+              );
+        });
+      }
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
+      throw HttpException(e.message);
+    }
+  }
+
   addPushNotification({
     String message,
     String messageType,

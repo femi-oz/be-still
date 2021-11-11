@@ -218,11 +218,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   gotoPrayer(PushNotificationModel notification) async {
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayer(notification.entityId);
-    deleteNotification(notification.id);
-    Future.delayed(Duration(milliseconds: 400)).then((value) {
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(9, true);
-      Navigator.pop(context);
+    BeStilDialog.showLoading(context);
+    new Future.delayed(const Duration(seconds: 5), () async {
+      var prayerGroupId =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .currentPrayer
+              .groupPrayer
+              .groupId;
+      var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
+      var dataIndex = data.indexOf(
+          data.firstWhere((element) => element.group.id == prayerGroupId));
+      if (data.length > 0) {
+        await Provider.of<GroupProvider>(context, listen: false)
+            .setCurrentGroup(data[dataIndex]);
+      }
+      BeStilDialog.hideLoading(context);
+      deleteNotification(notification.id);
+      Future.delayed(Duration(milliseconds: 400)).then((value) {
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(9, true);
+        Navigator.pop(context);
+      });
     });
   }
 
