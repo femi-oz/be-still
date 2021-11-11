@@ -222,9 +222,6 @@ class _UpdateView extends State<UpdateView> {
 
   Widget build(BuildContext context) {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    bool isOwner = prayerData.prayer.createdBy == _currentUser.id;
-
     var updates = prayerData.updates;
     updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
     updates = updates.where((element) => element.deleteStatus != -1).toList();
@@ -249,14 +246,9 @@ class _UpdateView extends State<UpdateView> {
                   : Container(),
               for (int i = 0; i < updates.length; i++)
                 _buildDetail('', updates[i].modifiedOn, updates[i].description,
-                    prayerData.tags, context, isOwner),
-              _buildDetail(
-                  'Initial Prayer | ',
-                  prayerData.prayer.createdOn,
-                  prayerData.prayer.description,
-                  prayerData.tags,
-                  context,
-                  isOwner),
+                    prayerData.tags, context),
+              _buildDetail('Initial Prayer | ', prayerData.prayer.createdOn,
+                  prayerData.prayer.description, prayerData.tags, context),
             ],
           ),
         ),
@@ -264,7 +256,9 @@ class _UpdateView extends State<UpdateView> {
     );
   }
 
-  Widget _buildDetail(time, modifiedOn, description, tags, context, isOwner) {
+  Widget _buildDetail(time, modifiedOn, description, tags, context) {
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -328,7 +322,7 @@ class _UpdateView extends State<UpdateView> {
                                 _openShareModal(context, tags[i].phoneNumber,
                                     tags[i].email, tags[i].identifier);
                               },
-                            style: isOwner
+                            style: tags[i].userId == _currentUser.id
                                 ? AppTextStyles.regularText15.copyWith(
                                     color: AppColors.lightBlue2,
                                     decoration: TextDecoration.underline)

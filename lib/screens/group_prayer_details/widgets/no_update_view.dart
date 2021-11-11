@@ -197,7 +197,6 @@ class _NoUpdateViewState extends State<NoUpdateView> {
   Widget build(BuildContext context) {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    bool isOwner = prayerData.prayer.createdBy == _currentUser.id;
 
     return Container(
         padding: EdgeInsets.all(20),
@@ -270,7 +269,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                           prayerData.tags[i].email,
                                           prayerData.tags[i].identifier);
                                     },
-                                  style: isOwner
+                                  style: prayerData.tags[i].userId ==
+                                          _currentUser.id
                                       ? AppTextStyles.regularText15.copyWith(
                                           color: AppColors.lightBlue2,
                                           decoration: TextDecoration.underline)
