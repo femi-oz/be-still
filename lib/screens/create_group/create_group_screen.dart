@@ -15,6 +15,7 @@ import 'package:be_still/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   static const routeName = '/create-group';
@@ -34,13 +35,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  bool isEdit = false;
+  // bool isEdit = false;
   @override
   void initState() {
     final groupData =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
-    isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
+    final isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
     List locationArr = isEdit ? groupData?.group?.location?.split(',') : [];
     _groupNameController.text = isEdit ? groupData?.group?.name : '';
     _cityController.text = isEdit ? locationArr[0].trim() : '';
@@ -57,6 +58,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     // });
   }
 
+  String newGroupId = '';
+
   void _save(isEdit, group) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return null;
@@ -66,6 +69,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     GroupModel groupData = GroupModel(
+      id: Uuid().v1(),
       name: _groupNameController.text,
       location: '${_cityController.text}, ${_stateController.text}',
       organization: _organizationController.text,
@@ -89,8 +93,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           .editGroup(groupData, group.group.id);
       BeStilDialog.hideLoading(context);
     }
-
     setState(() {
+      newGroupId = groupData.id;
       _step++;
     });
   }
@@ -138,10 +142,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             ),
             SizedBox(height: 20),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              // margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
@@ -151,7 +155,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      // width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: AppColors.cardBorder,
@@ -167,7 +172,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -176,13 +181,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     ),
                   ),
                   SizedBox(
-                    width: 20,
+                    width: 10,
                   ),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      // width: MediaQuery.of(context).size.width * .25,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(
@@ -198,7 +204,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -223,8 +229,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   bool _autoValidate = false;
   Widget build(BuildContext context) {
-    final groupData =
-        Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+    final groupData = groupProvider.currentGroup;
     bool isValid = _groupNameController.text.isNotEmpty ||
         _emailController.text.isNotEmpty ||
         _cityController.text.isNotEmpty ||
@@ -232,116 +238,113 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-          appBar: CustomAppBar(
-            showPrayerActions: false,
-          ),
+          // appBar: CustomAppBar(
+          //   showPrayerActions: false,
+          // ),
           body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
-              image: DecorationImage(
-                image: AssetImage(StringUtils.backgroundImage),
-                alignment: Alignment.bottomCenter,
-              ),
-            ),
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  // SizedBox(height: MediaQuery.of(context).padding.top + 20),
-                  // Align(
-                  //   alignment: Alignment.centerLeft,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.only(bottom: 10.0, left: 20),
-                  //     child: InkWell(
-                  //       child: Text(
-                  //         'CANCEL',
-                  //         style: AppTextStyles.boldText18
-                  //             .copyWith(color: AppColors.grey),
-                  //       ),
-                  //       onTap: isValid
-                  //           ? () => onCancel()
-                  //           : () {
-                  //               FocusScope.of(context)
-                  //                   .requestFocus(new FocusNode());
-                  //               // Navigator.pop(context);
-                  //               appCOntroller.setCurrentPage(3, true);
-                  //             },
-                  //     ),
-                  //   ),
-                  // ),
-                  Expanded(
-                      child: SingleChildScrollView(
-                    padding: EdgeInsets.all(20.0),
-                    child: Column(
-                      children: [
-                        _step == 1
-                            ? CreateGroupForm(
-                                formKey: _formKey,
-                                cityController: _cityController,
-                                descriptionController: _descriptionController,
-                                groupNameController: _groupNameController,
-                                emailController: _emailController,
-                                option: _option,
-                                organizationController: _organizationController,
-                                stateController: _stateController,
-                                setOption: _setOption,
-                                autoValidate: _autoValidate,
-                              )
-                            : GroupCreated(
-                                _groupNameController.text,
-                                isEdit,
-                              ),
-                        SizedBox(height: 30.0),
-                        _step == 1
-                            ? Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      width: double.infinity,
-                                      margin: EdgeInsets.only(bottom: 20),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            AppColors.lightBlue1,
-                                            AppColors.lightBlue2,
-                                          ],
-                                        ),
-                                      ),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          if (_step == 1) {
-                                            _save(isEdit, groupData);
-                                          } else {
-                                            NavigationService.instance
-                                                .goHome(0);
-                                          }
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.transparent),
-                                        ),
-                                        child: Icon(AppIcons.bestill_next_arrow,
-                                            color: AppColors.white),
-                                      ),
-                                    ),
-                                    SizedBox(height: 60.0),
-                                  ],
-                                ),
-                              )
-                            : Container(),
-                      ],
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: AppColors.backgroundColor,
+          ),
+          image: DecorationImage(
+            image: AssetImage(StringUtils.backgroundImage),
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: MediaQuery.of(context).padding.top + 20),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0, left: 20),
+                  child: InkWell(
+                    child: Text(
+                      'CANCEL',
+                      style: AppTextStyles.boldText18
+                          .copyWith(color: AppColors.grey),
                     ),
-                  )),
-                ],
+                    onTap: isValid
+                        ? () => onCancel()
+                        : () {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            // Navigator.pop(context);
+                            appCOntroller.setCurrentPage(3, true);
+                          },
+                  ),
+                ),
               ),
-            ),
-          )),
+              Expanded(
+                  child: SingleChildScrollView(
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    _step == 1
+                        ? CreateGroupForm(
+                            formKey: _formKey,
+                            cityController: _cityController,
+                            descriptionController: _descriptionController,
+                            groupNameController: _groupNameController,
+                            emailController: _emailController,
+                            option: _option,
+                            organizationController: _organizationController,
+                            stateController: _stateController,
+                            setOption: _setOption,
+                            autoValidate: _autoValidate,
+                          )
+                        : GroupCreated(_groupNameController.text,
+                            groupProvider.isEdit, newGroupId),
+                    SizedBox(height: 30.0),
+                    _step == 1
+                        ? Container(
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  width: double.infinity,
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        AppColors.lightBlue1,
+                                        AppColors.lightBlue2,
+                                      ],
+                                    ),
+                                  ),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      if (_step == 1) {
+                                        _save(groupProvider.isEdit, groupData);
+                                      } else {
+                                        NavigationService.instance.goHome(0);
+                                      }
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.transparent),
+                                    ),
+                                    child: Icon(AppIcons.bestill_next_arrow,
+                                        color: AppColors.white),
+                                  ),
+                                ),
+                                SizedBox(height: 60.0),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+              )),
+            ],
+          ),
+        ),
+      )),
     );
   }
 }

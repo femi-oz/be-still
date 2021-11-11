@@ -32,7 +32,7 @@ class _GroupToolsState extends State<GroupTools> {
 
     appCOntroller.setCurrentPage(12, true);
 
-    // await Provider.of<MiscProvider>(context, listen: false).setIsEdit(true);
+    Provider.of<GroupProvider>(context, listen: false).setEditMode(true);
     await Provider.of<GroupProvider>(context, listen: false)
         .setCurrentGroup(groupData);
     Navigator.pop(context);

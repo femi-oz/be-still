@@ -489,7 +489,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: !isOwner,
+                      isDisabled: isSnoozeAndUpdateDisable || !isOwner,
                       onPress: isSnoozeAndUpdateDisable ||
                               !((!widget.prayerData.prayer.isGroup) ||
                                   (widget.prayerData.prayer.isGroup && isOwner))
@@ -569,6 +569,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 30),
                                         child: ReminderPicker(
+                                          entityId: widget
+                                                  .prayerData?.userPrayer?.id ??
+                                              '',
                                           type: NotificationType.reminder,
                                           hideActionuttons: false,
                                           reminder: widget.hasReminder

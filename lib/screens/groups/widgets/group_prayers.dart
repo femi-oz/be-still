@@ -17,6 +17,12 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupPrayers extends StatefulWidget {
+  final Function switchSearchMode;
+  final bool isSearchMode;
+  GroupPrayers(
+    this.switchSearchMode,
+    this.isSearchMode,
+  );
   @override
   _GroupPrayersState createState() => _GroupPrayersState();
 }
@@ -67,7 +73,12 @@ class _GroupPrayersState extends State<GroupPrayers> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: CustomAppBar(isGroup: true),
+        appBar: CustomAppBar(
+          isGroup: true,
+          showPrayerActions: true,
+          isSearchMode: widget.isSearchMode,
+          switchSearchMode: (bool val) => widget.switchSearchMode(val),
+        ),
         body: Container(
           padding: EdgeInsets.only(left: 20),
           height: MediaQuery.of(context).size.height * 1,

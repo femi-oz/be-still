@@ -7,7 +7,6 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -79,9 +78,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).addToMyList(
-          widget.prayerData.prayer.id,
-          Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .addToMyList(widget.prayerData.prayer.id,
+              Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -124,7 +123,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     try {
       var currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
           .flagAsInappropriate(widget.prayerData.prayer.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .hidePrayer(widget.prayerData.prayer.id, currentUser);
@@ -525,6 +524,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                           reminder: widget.hasReminder
                                               ? widget.reminder
                                               : null,
+                                          entityId: widget.prayerData
+                                                  ?.groupPrayer?.id ??
+                                              '',
                                           onCancel: () =>
                                               Navigator.of(context).pop(),
                                         ),

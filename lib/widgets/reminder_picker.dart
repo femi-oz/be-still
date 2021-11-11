@@ -2,18 +2,15 @@ import 'dart:convert';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,6 +22,7 @@ class ReminderPicker extends StatefulWidget {
   final bool hideActionuttons;
   final LocalNotificationModel reminder;
   final String type;
+  final String entityId;
 
   @override
   ReminderPicker({
@@ -32,6 +30,7 @@ class ReminderPicker extends StatefulWidget {
     @required this.onCancel,
     @required this.reminder,
     @required this.type,
+    @required this.entityId,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
@@ -60,8 +59,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
     if (widget.reminder != null) {
       selectedHour = int.parse(widget.reminder?.selectedHour);
       selectedMinute = int.parse(widget.reminder?.selectedMinute);
-      selectedDayOfWeek =
-          LocalNotification.daysOfWeek.indexOf(widget.reminder?.selectedDay);
+      selectedDayOfWeek = LocalNotification.daysOfWeek
+          .indexOf(widget.reminder?.selectedDay?.capitalizeFirst);
       selectedPeriod = widget.reminder?.period;
       selectedFrequency = widget.reminder?.frequency;
       selectedYear = int.parse(widget.reminder?.selectedYear);
@@ -122,7 +121,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
     } else
       widget.onCancel();
     setState(() => null);
@@ -159,9 +158,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
+      Navigator.pop(context);
 
       AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
     } else
       widget.onCancel();
   }
@@ -229,8 +229,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedFrequency == Frequency.one_time,
       );
       print(scheduleDate);
-      final payload = NotificationMessage(
-          entityId: prayerData?.userPrayer?.id ?? '', type: widget.type);
+      final payload =
+          NotificationMessage(entityId: widget.entityId, type: widget.type);
       await LocalNotification.setLocalNotification(
         context: context,
         title: title,
@@ -262,9 +262,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           description,
           selectedFrequency,
           scheduleDate,
-          widget.type == NotificationType.prayer_time
-              ? ''
-              : prayerData?.userPrayer?.id,
+          widget.type == NotificationType.prayer_time ? '' : widget.entityId,
           LocalNotification.daysOfWeek[selectedDayOfWeek],
           selectedPeriod,
           _selectedHourString,
@@ -291,9 +289,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
       setState(() {});
       if (widget.type == NotificationType.reminder) {
         Navigator.pop(context);
+        Navigator.pop(context);
 
         AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(0, true);
+        appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
       } else
         widget.onCancel();
     } on HttpException catch (e, s) {

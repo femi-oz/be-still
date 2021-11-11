@@ -10,13 +10,12 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -38,8 +37,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final message = 'You have removed the user from your group';
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    final userName = ('${_currentUser.firstName}  ${_currentUser.lastName}')
-        .capitalizeFirst();
+    final userName =
+        ('${_currentUser.firstName}  ${_currentUser.lastName}').capitalizeFirst;
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
@@ -819,7 +818,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         margin: EdgeInsets.only(
                             left: MediaQuery.of(context).size.width * 0.1),
                         child: Text(
-                          data.group.name.capitalizeFirst(),
+                          data.group.name.capitalizeFirst,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white70),
