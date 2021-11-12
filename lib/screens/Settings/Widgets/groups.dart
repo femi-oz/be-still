@@ -78,7 +78,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           _currentUser.firstName,
           _currentUser.id,
           receiver.userId,
-          'Leave Group',
+          'Groups',
           data.group.id);
       Navigator.pop(context);
       BeStilDialog.hideLoading(context);
@@ -1291,10 +1291,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: <Widget>[
-                                                      Text(
-                                                          user.fullName == null
-                                                              ? ''
-                                                              : user.fullName,
+                                                      Text(user.fullName ?? '',
                                                           style: AppTextStyles
                                                               .boldText14
                                                               .copyWith(
@@ -1332,7 +1329,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         SizedBox(height: 40),
                         !isAdmin
                             ? GestureDetector(
-                                onTap: () async {
+                                onTap: () {
                                   const message =
                                       'Are you sure you want to leave this group?';
                                   const method = 'LEAVE';

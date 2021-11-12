@@ -290,7 +290,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             top: MediaQuery.of(context).size.height * 0.037,
                             left: notifications.length > 9
                                 ? MediaQuery.of(context).size.width * 0.044
-                                : MediaQuery.of(context).size.width * 0.05,
+                                : MediaQuery.of(context).size.width * 0.053,
                             child: Text(notifications.length.toString(),
                                 style: TextStyle(
                                     fontSize: 10,

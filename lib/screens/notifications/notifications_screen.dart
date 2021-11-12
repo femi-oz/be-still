@@ -286,48 +286,49 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Future<void> acceptRequest(String groupId, String senderId,
       String notificationId, String receiverId) async {
+    BeStilDialog.showLoading(context);
     GroupModel groupData;
     GroupRequestModel groupRequest;
-    var requestId = '';
-
     try {
-      BeStilDialog.showLoading(context);
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(receiverId);
-      final receiverFullName =
-          '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
 
-      final data =
-          Provider.of<GroupProvider>(context, listen: false).userGroups;
-      final currentUser =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      var tempGroupData = data.map((e) => e.group);
-      tempGroupData.where((x) => x.id == groupId).forEach((element) {
-        groupData = element;
-      });
-      var tempRequestGroupData = data.map((e) => e.groupRequests);
-      tempRequestGroupData.forEach((element) async {
-        groupRequest = element.firstWhere((element) =>
-            element.userId == receiverId &&
-            element.status == StringUtils.joinRequestStatusPending);
+      Future.delayed(Duration(seconds: 5), () async {
+        final receiverFullName =
+            '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
+        final data =
+            Provider.of<GroupProvider>(context, listen: false).userGroups;
+        final currentUser =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        var tempGroupData = data.map((e) => e.group);
+        tempGroupData.where((x) => x.id == groupId).forEach((element) {
+          groupData = element;
+        });
+        var tempRequestGroupData = data.map((e) => e.groupRequests);
+        tempRequestGroupData.forEach((element) async {
+          groupRequest = element.firstWhere((element) =>
+              element.userId == receiverId &&
+              element.status == StringUtils.joinRequestStatusPending);
 
-        await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
-            groupData, groupId, senderId, groupRequest.id, receiverFullName);
+          await Provider.of<GroupProvider>(context, listen: false)
+              .acceptRequest(groupData, groupId, senderId, groupRequest.id,
+                  receiverFullName);
+        });
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .updateNotification(notificationId);
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .addPushNotification(
+                'Your request to join ${groupData.name} has been accepted',
+                NotificationType.accept_request,
+                currentUser.firstName,
+                currentUser.id,
+                receiverId,
+                'Request Accepted',
+                groupData.id);
+        deleteNotification(notificationId);
+        Navigator.of(context).pop();
+        BeStilDialog.hideLoading(context);
       });
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .updateNotification(notificationId);
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
-              'Your request to join ${groupData.name} has been accepted',
-              NotificationType.accept_request,
-              currentUser.firstName,
-              currentUser.id,
-              receiverId,
-              'Request Accepted',
-              groupData.id);
-      deleteNotification(notificationId);
-      Navigator.of(context).pop();
-      BeStilDialog.hideLoading(context);
     } catch (e) {
       BeStilDialog.hideLoading(context);
       // print(e);
