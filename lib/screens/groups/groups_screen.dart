@@ -99,8 +99,9 @@ class _GroupScreenState extends State<GroupScreen> {
               height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 20 + MediaQuery.of(context).padding.top),
+                    SizedBox(height: 20),
                     Container(
                       padding: EdgeInsets.only(left: 50),
                       child: LongButton(
@@ -204,9 +205,9 @@ class _GroupScreenState extends State<GroupScreen> {
                           ),
                     SizedBox(height: 80),
                   ],
-                ),
+                ).marginOnly(bottom: 150),
               ),
-            ).marginOnly(bottom: 200),
+            ),
           ),
         ),
       ),
