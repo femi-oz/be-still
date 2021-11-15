@@ -365,7 +365,7 @@ class GroupUserReferenceModel {
 }
 
 class CombineGroupUserStream {
-  final List<GroupUserModel> groupUsers;
+  List<GroupUserModel> groupUsers;
   final List<GroupRequestModel> groupRequests;
   final GroupModel group;
   // final UserModel admin;

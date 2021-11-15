@@ -150,7 +150,7 @@ class _GroupToolsState extends State<GroupTools> {
               AppCOntroller appCOntroller = Get.find();
 
               appCOntroller.setCurrentPage(4, true);
-
+              appCOntroller.settingsTab = 4;
               Navigator.pop(context);
             },
             text: "Manage Settings",

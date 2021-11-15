@@ -33,7 +33,26 @@ class GroupProvider with ChangeNotifier {
         .getUserGroups(userId)
         .asBroadcastStream()
         .listen((userGroups) {
-      _userGroups = userGroups;
+      List<CombineGroupUserStream> _distinct = [];
+      var idSet = <String>{};
+      for (var e in userGroups) {
+        if (idSet.add(e.group.id)) {
+          _distinct.add(e);
+        }
+      }
+      _userGroups = _distinct;
+
+      _userGroups = _userGroups.map((u) {
+        List<GroupUserModel> _distinct = [];
+        var idSet = <String>{};
+        for (var e in u.groupUsers) {
+          if (idSet.add(e.userId)) {
+            _distinct.add(e);
+          }
+        }
+
+        return u..groupUsers = _distinct;
+      }).toList();
       notifyListeners();
     });
   }
