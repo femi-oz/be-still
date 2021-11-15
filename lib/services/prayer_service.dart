@@ -182,41 +182,12 @@ class PrayerService {
       //store user prayer
       _userPrayerCollectionReference
           .doc(userPrayerID)
-          .set(populateUserPrayer(userId, newPrayerId, userId).toJson());
+          .set(populateUserPrayer(userId, newPrayerId).toJson());
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           userId,
           'PRAYER/service/addPrayer');
-      throw HttpException(e.message);
-    }
-  }
-
-  Future addUserPrayer(String prayerId, String prayerDesc, String recieverId,
-      String senderId, String sender) async {
-    // Generate uuid
-    final _userPrayerID = Uuid().v1();
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      //store user prayer
-      _userPrayerCollectionReference
-          .doc(_userPrayerID)
-          .set(populateUserPrayer(recieverId, prayerId, senderId).toJson());
-      var tokens = await _notificationService.getNotificationToken(recieverId);
-      _notificationService.addPushNotification(
-        messageType: NotificationType.prayer,
-        message: prayerDesc,
-        sender: sender,
-        senderId: senderId,
-        recieverId: recieverId,
-        tokens: tokens,
-        entityId: prayerId,
-      );
-    } catch (e) {
-      await locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          senderId,
-          'PRAYER/service/addUserPrayer');
       throw HttpException(e.message);
     }
   }
@@ -595,7 +566,7 @@ class PrayerService {
 
       //store user prayer
       batch.set(_userPrayerCollectionReference.doc(_userPrayerID),
-          populateUserPrayer(_userID, _prayerID, _userID).toJson());
+          populateUserPrayer(_userID, _prayerID).toJson());
 
       for (var groupId in groups) {
         var groupPrayerId = Uuid().v1();
@@ -656,77 +627,6 @@ class PrayerService {
     }
   }
 
-  Stream<List<CombinePrayerStream>> _combineGroupStream;
-  Stream<List<CombinePrayerStream>> getGroupPrayers(String groupId) {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      _combineGroupStream = _groupPrayerCollectionReference
-          .where('GroupId', isEqualTo: groupId)
-          .snapshots()
-          .map((convert) {
-        return convert.docs.map((f) {
-          Stream<GroupPrayerModel> groupPrayer = Stream.value(f)
-              .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
-
-          Stream<PrayerModel> prayer = _prayerCollectionReference
-              .doc(f['PrayerId'])
-              .snapshots()
-              .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
-          Stream<List<PrayerUpdateModel>> updates =
-              _prayerUpdateCollectionReference
-                  .where('PrayerId', isEqualTo: f['PrayerId'])
-                  .snapshots()
-                  .map<List<PrayerUpdateModel>>((list) => list.docs
-                      .map((e) => PrayerUpdateModel.fromData(e))
-                      .toList());
-
-          return Rx.combineLatest3(
-            groupPrayer,
-            prayer,
-            updates,
-            (GroupPrayerModel groupPrayer, PrayerModel prayer,
-                    List<PrayerUpdateModel> updates) =>
-                CombinePrayerStream(
-              groupPrayer: groupPrayer,
-              prayer: prayer,
-              updates: updates,
-            ),
-          );
-        });
-      }).switchMap((observables) {
-        return observables.length > 0
-            ? Rx.combineLatestList(observables)
-            : Stream.value([]);
-      });
-      return _combineGroupStream;
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          groupId,
-          'PRAYER/service/getGroupPrayers');
-      throw HttpException(e.message);
-    }
-  }
-
-  Stream<List<HiddenPrayerModel>> getHiddenPrayers(
-    String userId,
-  ) {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      return _hiddenPrayerCollectionReference
-          .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .asyncMap((event) =>
-              event.docs.map((e) => HiddenPrayerModel.fromData(e)).toList());
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userId,
-          'PRAYER/service/getHiddenPrayers');
-      throw HttpException(e.message);
-    }
-  }
-
   hideFromAllMembers(String prayerId, bool value) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -742,68 +642,6 @@ class PrayerService {
     }
   }
 
-  messageRequestor(PrayerRequestMessageModel requestMessageModel) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      var dio = Dio(BaseOptions(followRedirects: false));
-      var user = await _userCollectionReference
-          .where('Email', isEqualTo: requestMessageModel.email)
-          .limit(1)
-          .get();
-      if (user.docs.length == 0) {
-        throw HttpException(
-            'This email is not registered on Be Still! Please try with a registered email');
-      }
-      var data = {
-        'recieverId': requestMessageModel.receiverId,
-        'receiver': requestMessageModel.receiver,
-        'message': user.docs[0].id,
-        'email': requestMessageModel.email,
-        'sender': requestMessageModel.sender,
-        'senderId': user.docs[0].id,
-      };
-      await dio.post(
-        'https://us-central1-bestill-app.cloudfunctions.net/SendMessage',
-        data: data,
-      );
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          requestMessageModel.senderId,
-          'PRAYER/service/messageRequestor');
-      throw HttpException(e.message);
-    }
-  }
-
-  Future addPrayerToMyList(UserPrayerModel userPrayer) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      final userPrayerId = Uuid().v1();
-      return await _userPrayerCollectionReference
-          .doc(userPrayerId)
-          .set(userPrayer.toJson());
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userPrayer.userId, 'PRAYER/service/addPrayerToMyList');
-      throw HttpException(e.message);
-    }
-  }
-
-  flagAsInappropriate(String prayerId) {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      _prayerCollectionReference
-          .doc(prayerId)
-          .update({'IsInappropriate': true});
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          prayerId,
-          'PRAYER/service/flagAsInappropriate');
-      throw HttpException(e.message);
-    }
-  }
-
   populatePrayer(
     String userId,
     String prayerDesc,
@@ -811,6 +649,7 @@ class PrayerService {
     String prayerDescBackup,
   ) {
     PrayerModel prayer = PrayerModel(
+      isGroup: false,
       isAnswer: false,
       isInappropriate: false,
       title: '',
@@ -832,7 +671,6 @@ class PrayerService {
   populateUserPrayer(
     String userId,
     String prayerID,
-    String creatorId,
   ) {
     UserPrayerModel userPrayer = UserPrayerModel(
         deleteStatus: 0,
@@ -847,9 +685,9 @@ class PrayerService {
         isFavorite: false,
         isSnoozed: false,
         snoozeEndDate: DateTime.now(),
-        createdBy: creatorId,
+        createdBy: userId,
         createdOn: DateTime.now(),
-        modifiedBy: creatorId,
+        modifiedBy: userId,
         modifiedOn: DateTime.now());
     return userPrayer;
   }
@@ -887,8 +725,15 @@ class PrayerService {
         groupId: prayerData.groupId,
         status: Status.active,
         sequence: null,
+        deleteStatus: 0,
         prayerId: prayerID,
+        isSnoozed: false,
+        isArchived: false,
         isFavorite: false,
+        archivedDate: DateTime.now(),
+        snoozeEndDate: DateTime.now(),
+        snoozeDuration: 0,
+        snoozeFrequency: '',
         createdBy: prayerData.createdBy,
         createdOn: prayerData.createdOn,
         modifiedBy: prayerData.modifiedBy,
@@ -903,7 +748,14 @@ class PrayerService {
         status: Status.active,
         sequence: null,
         prayerId: prayerID,
+        isSnoozed: false,
+        deleteStatus: 0,
+        archivedDate: DateTime.now(),
+        snoozeEndDate: DateTime.now(),
+        snoozeDuration: 0,
+        snoozeFrequency: '',
         isFavorite: false,
+        isArchived: false,
         createdBy: prayerData.createdBy,
         createdOn: prayerData.createdOn,
         modifiedBy: prayerData.modifiedBy,

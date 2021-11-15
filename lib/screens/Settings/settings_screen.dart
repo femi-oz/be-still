@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -8,9 +9,11 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
+import 'package:be_still/screens/settings/widgets/groups.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:provider/provider.dart';
 
@@ -104,13 +107,16 @@ class SettingsTabState extends State<SettingsTab>
         false;
   }
 
+  AppCOntroller appCOntroller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     final _settingsProvider = Provider.of<SettingsProvider>(context);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
-        length: 4,
+        initialIndex: appCOntroller.settingsTab,
+        length: 5,
         child: Scaffold(
           key: _scaffoldKey,
           appBar: PreferredSize(
@@ -151,6 +157,9 @@ class SettingsTabState extends State<SettingsTab>
                   Tab(
                     text: "Sharing",
                   ),
+                  Tab(
+                    text: "Groups",
+                  ),
                 ],
               ),
             ),
@@ -165,6 +174,7 @@ class SettingsTabState extends State<SettingsTab>
                 PrayerTimeSettings(_settingsProvider.prayerSetttings,
                     _settingsProvider.settings),
                 SharingSettings(),
+                GroupsSettings(),
               ],
             ),
           ),

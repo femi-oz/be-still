@@ -255,6 +255,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                               .symmetric(
                                                           vertical: 30),
                                                       child: ReminderPicker(
+                                                        entityId: '',
                                                         type: NotificationType
                                                             .prayer_time,
                                                         reminder: data,
@@ -296,7 +297,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                           height: 30,
                                           padding: EdgeInsets.only(right: 5),
                                           child: Icon(
-                                             Icons.delete_forever,
+                                            Icons.delete_forever,
                                             size: 22,
                                             color: AppColors.lightBlue3,
                                           ),
@@ -346,6 +347,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 30),
                                     child: ReminderPicker(
+                                      entityId: '',
                                       type: NotificationType.prayer_time,
                                       reminder: null,
                                       hideActionuttons: false,

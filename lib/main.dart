@@ -3,6 +3,7 @@ import 'package:be_still/controllers/root_binding.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -46,6 +47,7 @@ void main() async {
           ChangeNotifierProvider(create: (ctx) => PrayerProvider()),
           ChangeNotifierProvider(create: (ctx) => SettingsProvider()),
           ChangeNotifierProvider(create: (ctx) => GroupProvider()),
+          ChangeNotifierProvider(create: (ctx) => GroupPrayerProvider()),
           ChangeNotifierProvider(create: (ctx) => MiscProvider()),
           ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
           ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),

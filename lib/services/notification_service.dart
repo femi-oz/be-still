@@ -42,7 +42,6 @@ class NotificationService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       var tokens = await getNotificationToken(userId);
-      print(tokens);
       if (tokens.contains(token)) return;
       await _deviceCollectionReference.doc(deviceId).set(
             DeviceModel(
@@ -102,21 +101,98 @@ class NotificationService {
     return devices.map((e) => e.name).toList();
   }
 
+  disablePushNotifications(userId) async {
+    //get user devices
+    var userDevices = await _userDeviceCollectionReference
+        .where('UserId', isEqualTo: userId)
+        .get();
+    var userDevicesDocs =
+        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
+    List<DeviceModel> devices = [];
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      for (int i = 0; i < userDevicesDocs.length; i++) {
+        var dev = await _deviceCollectionReference
+            .doc(userDevicesDocs[i].deviceId)
+            .get();
+        devices.add(DeviceModel.fromData(dev));
+        devices.forEach((element) async {
+          await _deviceCollectionReference.doc(element.id).update(
+                DeviceModel(
+                        modifiedOn: DateTime.now(),
+                        modifiedBy: 'MOBILE',
+                        model: 'MOBILE',
+                        deviceId: '',
+                        name: '',
+                        status: Status.active,
+                        createdBy: element.createdBy,
+                        createdOn: DateTime.now())
+                    .toJson(),
+              );
+        });
+      }
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
+      throw HttpException(e.message);
+    }
+  }
+
+  enablePushNotification(String token, String userId) async {
+    var userDevices = await _userDeviceCollectionReference
+        .where('UserId', isEqualTo: userId)
+        .get();
+    var userDevicesDocs =
+        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
+    List<DeviceModel> devices = [];
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      for (int i = 0; i < userDevicesDocs.length; i++) {
+        var dev = await _deviceCollectionReference
+            .doc(userDevicesDocs[i].deviceId)
+            .get();
+        devices.add(DeviceModel.fromData(dev));
+
+        devices.forEach((element) async {
+          print(element.id);
+          await _deviceCollectionReference.doc(element.id).update(
+                DeviceModel(
+                        modifiedOn: DateTime.now(),
+                        modifiedBy: 'MOBILE',
+                        model: 'MOBILE',
+                        deviceId: '',
+                        name: token,
+                        status: Status.active,
+                        createdBy: element.createdBy,
+                        createdOn: DateTime.now())
+                    .toJson(),
+              );
+        });
+      }
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
+      throw HttpException(e.message);
+    }
+  }
+
   addPushNotification({
     String message,
     String messageType,
     String sender,
-    List<String> tokens,
     String senderId,
     String recieverId,
+    String title,
     @required String entityId,
   }) async {
     final _notificationId = Uuid().v1();
+    var tokens = await getNotificationToken(recieverId);
+
     var data = PushNotificationModel(
       messageType: messageType,
       message: message,
       sender: sender,
-      title: "You have been tagged in a prayer",
+      title: title,
       tokens: tokens,
       createdBy: senderId,
       createdOn: DateTime.now(),
@@ -311,6 +387,19 @@ class NotificationService {
     } catch (e) {
       locator<LogService>().createLog(
           e.message, deviceId, 'NOTIFICATION/service/updateLocalNotification');
+      throw HttpException(e.message);
+    }
+  }
+
+  updatePushNotification(String _notificationId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _pushNotificationCollectionReference
+          .doc(_notificationId)
+          .update({'Status': Status.inactive});
+    } catch (e) {
+      locator<LogService>().createLog(e.message, _notificationId,
+          'NOTIFICATION/service/updatePushNotification');
       throw HttpException(e.message);
     }
   }

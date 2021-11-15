@@ -308,6 +308,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               AppCOntroller appCOntroller = Get.find();
 
                               appCOntroller.setCurrentPage(4, false);
+                              appCOntroller.settingsTab = 0;
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },

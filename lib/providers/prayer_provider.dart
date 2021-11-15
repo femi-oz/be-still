@@ -39,6 +39,12 @@ class PrayerProvider with ChangeNotifier {
   CombinePrayerStream get currentPrayer => _currentPrayer;
   String get filterOption => _filterOption;
 
+  bool _isEdit = false;
+  bool get isEdit => _isEdit;
+
+  CombinePrayerStream _prayerToEdit;
+  CombinePrayerStream get prayerToEdit => _prayerToEdit;
+
   Future<void> setPrayers(String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
     _prayerService.getPrayers(userId).asBroadcastStream().listen(
@@ -152,6 +158,7 @@ class PrayerProvider with ChangeNotifier {
     List<CombinePrayerStream> snoozedPrayers = [];
     List<CombinePrayerStream> favoritePrayers = [];
     List<CombinePrayerStream> archivedPrayers = [];
+    List<CombinePrayerStream> followingPrayers = [];
     List<CombinePrayerStream> allPrayers = [];
     if (_filterOption == Status.all) {
       favoritePrayers = prayers
@@ -187,12 +194,18 @@ class PrayerProvider with ChangeNotifier {
               data.userPrayer.snoozeEndDate.isAfter(DateTime.now()))
           .toList();
     }
+    if (_filterOption == Status.following) {
+      followingPrayers = prayers
+          .where((CombinePrayerStream data) => data.prayer.isGroup)
+          .toList();
+    }
     _filteredPrayers = [
       ...allPrayers,
       ...activePrayers,
       ...archivedPrayers,
       ...snoozedPrayers,
-      ...answeredPrayers
+      ...answeredPrayers,
+      ...followingPrayers
     ];
     _filteredPrayers
         .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
@@ -230,11 +243,6 @@ class PrayerProvider with ChangeNotifier {
   ) async =>
       await _prayerService.addPrayer(
           prayerDesc, userId, creatorName, prayerDescBackup);
-
-  Future<void> addUserPrayer(String prayerId, String prayerDesc,
-          String recieverId, String senderId, String sender) async =>
-      await _prayerService.addUserPrayer(
-          prayerId, prayerDesc, recieverId, senderId, sender);
 
   Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
           String message, String prayerId) async =>
@@ -347,39 +355,13 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-//Group Prayers
-  Future<void> setGroupPrayers(
-          String userId, String groupId, bool isGroupAdmin) async =>
-      _prayerService
-          .getGroupPrayers(groupId)
-          .asBroadcastStream()
-          .listen((data) {
-        _filteredPrayers = _prayers;
+  void setEditMode(bool value) {
+    _isEdit = value;
+    notifyListeners();
+  }
 
-        _filteredPrayers
-            .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-        notifyListeners();
-      });
-
-  Future<void> messageRequestor(
-          PrayerRequestMessageModel prayerRequestData) async =>
-      await _prayerService.messageRequestor(prayerRequestData);
-
-  Future<void> addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
-          List groups, String _userID) async =>
-      await _prayerService.addPrayerWithGroup(
-          context, prayerData, groups, _userID);
-
-  Future<void> addGroupPrayer(
-          BuildContext context, PrayerModel prayerData) async =>
-      await _prayerService.addGroupPrayer(context, prayerData);
-
-  Future<void> hidePrayer(String prayerId, UserModel user) async =>
-      await _prayerService.hidePrayer(prayerId, user);
-
-  Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async =>
-      await _prayerService.hideFromAllMembers(prayerId, value);
-
-  Future<void> addPrayerToMyList(UserPrayerModel userPrayer) async =>
-      await _prayerService.addPrayerToMyList(userPrayer);
+  void setEditPrayer(CombinePrayerStream data) {
+    _prayerToEdit = data;
+    notifyListeners();
+  }
 }

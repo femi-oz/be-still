@@ -13,12 +13,15 @@ class FlavorValues {
   final String country;
   final String packageName;
   final String dynamicLink;
+  final String appUrl;
   //Add other flavor specific values, e.g database name
 
-  FlavorValues(
-      {@required this.country,
-      @required this.packageName,
-      @required this.dynamicLink});
+  FlavorValues({
+    @required this.country,
+    @required this.packageName,
+    @required this.dynamicLink,
+    @required this.appUrl,
+  });
 }
 
 class FlavorConfig {

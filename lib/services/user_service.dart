@@ -59,6 +59,7 @@ class UserService {
 
       // store default settings
       await locator<SettingsService>().addSettings('', userId, email);
+      await locator<SettingsService>().addGroupSettings(userId);
       await locator<SettingsService>().addGroupPreferenceSettings(userId);
     } catch (e) {
       locator<LogService>().createLog(
@@ -81,6 +82,22 @@ class UserService {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           keyReference,
+          'USER/service/getCurrentUser');
+      throw HttpException(e.message);
+    }
+  }
+
+  Stream<UserModel> getUserById(String id) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return _userCollectionReference
+          .doc(id)
+          .snapshots()
+          .map((event) => UserModel.fromData(event));
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          id,
           'USER/service/getCurrentUser');
       throw HttpException(e.message);
     }

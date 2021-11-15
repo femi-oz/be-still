@@ -56,6 +56,24 @@ class NotificationProvider with ChangeNotifier {
     print('message -- prov _onSelectNotification ===> $_message');
   }
 
+  Future init(String token, String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _notificationService.init(token, userId);
+    notifyListeners();
+  }
+
+  Future disablePushNotifications(String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _notificationService.disablePushNotifications(userId);
+    notifyListeners();
+  }
+
+  Future enablePushNotifications(String token, String userId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _notificationService.enablePushNotification(token, userId);
+    notifyListeners();
+  }
+
   Future<void> clearMessage() async {
     _message = null;
   }
@@ -73,10 +91,12 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> clearNotification() async {
-    _notifications = [];
-    notifyListeners();
+    // _notifications = [];
+    var notificationsToClear =
+        _notifications.where((e) => e.messageType != NotificationType.request);
     await _notificationService
-        .clearNotification(_notifications.map((e) => e.id).toList());
+        .clearNotification(notificationsToClear.map((e) => e.id).toList());
+    notifyListeners();
   }
 
   Future<void> setLocalNotifications(userId) async {
@@ -115,6 +135,31 @@ class NotificationProvider with ChangeNotifier {
           .toList();
       notifyListeners();
     });
+  }
+
+  Future updateNotification(String notificationId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    return await _notificationService.updatePushNotification(notificationId);
+  }
+
+  Future addPushNotification(
+    String message,
+    String messageType,
+    String sender,
+    String senderId,
+    String recieverId,
+    String title,
+    String entityId,
+  ) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    return await _notificationService.addPushNotification(
+        message: message,
+        entityId: entityId,
+        messageType: messageType,
+        sender: sender,
+        senderId: senderId,
+        recieverId: recieverId,
+        title: title);
   }
 
   Future<void> addLocalNotification(
