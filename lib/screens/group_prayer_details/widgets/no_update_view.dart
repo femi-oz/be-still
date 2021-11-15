@@ -1,4 +1,5 @@
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/gestures.dart';
@@ -195,6 +196,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
 
   Widget build(BuildContext context) {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+
     return Container(
         padding: EdgeInsets.all(20),
         child: Column(children: <Widget>[
@@ -257,19 +260,24 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                 patternList: [
                               for (var i = 0; i < prayerData.tags.length; i++)
                                 EasyRichTextPattern(
-                                    targetString:
-                                        prayerData.tags[i].displayName,
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        _openShareModal(
-                                            context,
-                                            prayerData.tags[i].phoneNumber,
-                                            prayerData.tags[i].email,
-                                            prayerData.tags[i].identifier);
-                                      },
-                                    style: AppTextStyles.regularText15.copyWith(
-                                        color: AppColors.lightBlue2,
-                                        decoration: TextDecoration.underline))
+                                  targetString: prayerData.tags[i].displayName,
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      _openShareModal(
+                                          context,
+                                          prayerData.tags[i].phoneNumber,
+                                          prayerData.tags[i].email,
+                                          prayerData.tags[i].identifier);
+                                    },
+                                  style: prayerData.tags[i].userId ==
+                                          _currentUser.id
+                                      ? AppTextStyles.regularText15.copyWith(
+                                          color: AppColors.lightBlue2,
+                                          decoration: TextDecoration.underline)
+                                      : AppTextStyles.regularText16b.copyWith(
+                                          color: AppColors.prayerTextColor,
+                                        ),
+                                )
                             ]))))
               ]))
         ]));

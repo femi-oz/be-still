@@ -76,11 +76,15 @@ class _EntryScreenState extends State<EntryScreen> {
           });
         initDynamicLinks();
       }
-      messaging = FirebaseMessaging.instance;
-      messaging.getToken().then((value) => {
-            Provider.of<NotificationProvider>(context, listen: false)
-                .init(value, userId)
-          });
+      if (Provider.of<SettingsProvider>(context, listen: false)
+          .groupPreferenceSettings
+          .enableNotificationForAllGroups) {
+        messaging = FirebaseMessaging.instance;
+        messaging.getToken().then((value) => {
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .init(value, userId)
+            });
+      }
     });
     super.initState();
   }

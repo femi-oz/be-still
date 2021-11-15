@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -98,6 +99,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
         .localNotifications;
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
+
     _reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.groupPrayer.id,
         orElse: () => null);
@@ -131,7 +133,6 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                       ),
                       onPressed: () {
                         AppCOntroller appCOntroller = Get.find();
-
                         appCOntroller.setCurrentPage(8, true);
                       },
                       label: Text(

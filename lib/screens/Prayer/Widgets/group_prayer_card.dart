@@ -194,7 +194,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     final _user = Provider.of<UserProvider>(context).currentUser;
     var tags = '';
     final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
-    widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
+    widget.prayerData.tags.retainWhere(
+        (x) => eTags.remove(x.displayName) && x.userId == _user.id);
     widget.prayerData.tags.forEach((element) {
       tags += ' ' + element.displayName;
     });

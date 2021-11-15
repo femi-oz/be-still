@@ -12,6 +12,7 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
 import 'package:get/get_utils/src/extensions/string_extensions.dart';
@@ -27,6 +28,7 @@ class GroupsSettings extends StatefulWidget {
 
 class _GroupsSettingsState extends State<GroupsSettings> {
   final f = new DateFormat('yyyy-MM-dd');
+  FirebaseMessaging messaging;
 
   _removeUserFromGroup(
       GroupUserModel user, CombineGroupUserStream group) async {
@@ -76,7 +78,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           _currentUser.firstName,
           _currentUser.id,
           receiver.userId,
-          'Leave Group',
+          'Groups',
           data.group.id);
       Navigator.pop(context);
       BeStilDialog.hideLoading(context);
@@ -769,11 +771,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             SizedBox(height: 30),
             CustomToggle(
               title: 'Enable notifications from Groups?',
-              onChange: (value) =>
-                  _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
-                      key: 'EnableNotificationForAllGroups',
-                      value: value,
-                      settingsId: _groupPreferenceSettings.id),
+              onChange: (value) async {
+                _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
+                    key: 'EnableNotificationForAllGroups',
+                    value: value,
+                    settingsId: _groupPreferenceSettings.id);
+
+                if (value) {
+                  messaging = FirebaseMessaging.instance;
+                  messaging.getToken().then((value) => {
+                        Provider.of<NotificationProvider>(context,
+                                listen: false)
+                            .enablePushNotifications(value, _currentUser.id)
+                      });
+                } else {
+                  await Provider.of<NotificationProvider>(context,
+                          listen: false)
+                      .disablePushNotifications(_currentUser.id);
+                }
+              },
               value: _groupPreferenceSettings?.enableNotificationForAllGroups,
             ),
             Column(
@@ -1275,10 +1291,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: <Widget>[
-                                                      Text(
-                                                          user.fullName == null
-                                                              ? ''
-                                                              : user.fullName,
+                                                      Text(user.fullName ?? '',
                                                           style: AppTextStyles
                                                               .boldText14
                                                               .copyWith(
@@ -1316,7 +1329,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         SizedBox(height: 40),
                         !isAdmin
                             ? GestureDetector(
-                                onTap: () async {
+                                onTap: () {
                                   const message =
                                       'Are you sure you want to leave this group?';
                                   const method = 'LEAVE';

@@ -1,4 +1,5 @@
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/gestures.dart';
@@ -256,6 +257,8 @@ class _UpdateView extends State<UpdateView> {
   }
 
   Widget _buildDetail(time, modifiedOn, description, tags, context) {
+    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -313,15 +316,20 @@ class _UpdateView extends State<UpdateView> {
                       patternList: [
                         for (var i = 0; i < tags.length; i++)
                           EasyRichTextPattern(
-                              targetString: tags[i].displayName,
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  _openShareModal(context, tags[i].phoneNumber,
-                                      tags[i].email, tags[i].identifier);
-                                },
-                              style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.lightBlue2,
-                                  decoration: TextDecoration.underline))
+                            targetString: tags[i].displayName,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                _openShareModal(context, tags[i].phoneNumber,
+                                    tags[i].email, tags[i].identifier);
+                              },
+                            style: tags[i].userId == _currentUser.id
+                                ? AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.lightBlue2,
+                                    decoration: TextDecoration.underline)
+                                : AppTextStyles.regularText16b.copyWith(
+                                    color: AppColors.prayerTextColor,
+                                  ),
+                          )
                       ],
                     ),
                   ),
