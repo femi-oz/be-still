@@ -4,6 +4,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -90,12 +91,14 @@ class NotificationProvider with ChangeNotifier {
     });
   }
 
-  Future<void> clearNotification() async {
+  Future<void> clearNotification(BuildContext context) async {
     // _notifications = [];
+    BeStilDialog.showLoading(context);
     var notificationsToClear =
         _notifications.where((e) => e.messageType != NotificationType.request);
     await _notificationService
         .clearNotification(notificationsToClear.map((e) => e.id).toList());
+    BeStilDialog.hideLoading(context);
     notifyListeners();
   }
 

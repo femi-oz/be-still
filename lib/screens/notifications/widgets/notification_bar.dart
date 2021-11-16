@@ -37,7 +37,7 @@ class NotificationBarState extends State<NotificationBar> {
           ? TextButton(
               onPressed: () =>
                   Provider.of<NotificationProvider>(context, listen: false)
-                      .clearNotification(),
+                      .clearNotification(context),
               child: Text(
                 "CLEAR ALL",
                 style: AppTextStyles.boldText16
