@@ -391,7 +391,7 @@ class PrayerService {
         {
           'IsArchived': true,
           'Status': Status.inactive,
-          'IsFavourite': false,
+          // 'IsFavourite': false,
           'ArchivedDate': DateTime.now(),
           'IsSnoozed': false
         },
