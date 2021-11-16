@@ -46,6 +46,7 @@ class GroupPrayerProvider with ChangeNotifier {
       (data) {
         _prayers = data.where((e) => e.groupPrayer.deleteStatus > -1).toList();
         _filteredPrayers = _prayers;
+        filterPrayers();
         notifyListeners();
       },
     );
