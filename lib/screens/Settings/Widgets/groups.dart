@@ -102,17 +102,20 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
-    await Provider.of<UserProvider>(context, listen: false)
-        .getUserById(user.userId);
-    final _currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    bool userIsAdmin =
-        user.userId == _currentUser.id && user.role == GroupUserRole.admin
-            ? true
-            : false;
+    bool userIsAdmin;
+    UserModel userData;
 
-    var userData =
-        Provider.of<UserProvider>(context, listen: false).selectedUser;
+    setState(() {
+      final _currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      userIsAdmin =
+          user.userId == _currentUser.id && user.role == GroupUserRole.admin
+              ? true
+              : false;
+
+      userData = Provider.of<UserProvider>(context, listen: false).selectedUser;
+    });
+
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -159,7 +162,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
-                          user.userId,
+                          user.email ?? '',
                           style: TextStyle(
                               color: AppColors.textFieldText,
                               fontSize: 12,
@@ -1251,12 +1254,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       children: <Widget>[
                                         ...data.groupUsers.map(
                                           (user) {
-                                            print(data.group.name);
-                                            print(data.groupUsers
-                                                .map((e) => e.userId));
                                             return GestureDetector(
-                                              onTap: () =>
-                                                  _showAlert(user, data),
+                                              onTap: () async {
+                                                await Provider.of<UserProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .getUserById(user.userId);
+                                                Future.delayed(
+                                                    Duration(milliseconds: 15),
+                                                    () {
+                                                  _showAlert(user, data);
+                                                });
+                                              },
                                               child: Container(
                                                 margin: EdgeInsets.symmetric(
                                                     vertical: 7.0),

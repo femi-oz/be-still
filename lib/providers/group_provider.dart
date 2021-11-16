@@ -134,10 +134,10 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future acceptRequest(GroupModel groupData, String groupId, String userId,
-      String requestId, String fullName) async {
+      String requestId, String fullName, String email) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.acceptRequest(
-        groupId, groupData, userId, requestId, fullName);
+        groupId, groupData, userId, requestId, fullName, email);
   }
 
   Future denyRequest(String groupId, String requestId) async {

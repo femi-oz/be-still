@@ -300,6 +300,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Provider.of<GroupProvider>(context, listen: false).userGroups;
         final currentUser =
             Provider.of<UserProvider>(context, listen: false).currentUser;
+        final receiverEmail = Provider.of<UserProvider>(context, listen: false)
+            .selectedUser
+            .email;
         var tempGroupData = data.map((e) => e.group);
         tempGroupData.where((x) => x.id == groupId).forEach((element) {
           groupData = element;
@@ -313,7 +316,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
           await Provider.of<GroupProvider>(context, listen: false)
               .acceptRequest(groupData, groupId, senderId, groupRequest.id,
-                  receiverFullName);
+                  receiverFullName, receiverEmail);
         });
         await Provider.of<NotificationProvider>(context, listen: false)
             .updateNotification(notificationId);
