@@ -246,36 +246,38 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                  side: MaterialStateProperty.all<BorderSide>(
-                                      BorderSide(color: Colors.transparent)),
-                                ),
-                                child: Container(
-                                  child: Text(
-                                    'ADMIN',
-                                    style: TextStyle(
-                                        color: AppColors.lightBlue3,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
                                   ),
+                                  child: Container(
+                                    child: Text(
+                                      'ADMIN',
+                                      style: TextStyle(
+                                          color: AppColors.lightBlue3,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      barrierColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.5),
+                                      backgroundColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.9),
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return GroupPrivilegeSettings(
+                                            'admin', user);
+                                      },
+                                    );
+                                  },
                                 ),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor: AppColors
-                                        .detailBackgroundColor[1]
-                                        .withOpacity(0.5),
-                                    backgroundColor: AppColors
-                                        .detailBackgroundColor[1]
-                                        .withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return GroupPrivilegeSettings(
-                                          'admin', user);
-                                    },
-                                  );
-                                },
                               ),
                             ),
                             Container(
@@ -292,36 +294,38 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                  side: MaterialStateProperty.all<BorderSide>(
-                                      BorderSide(color: Colors.transparent)),
-                                ),
-                                child: Container(
-                                  child: Text(
-                                    'MODERATOR',
-                                    style: TextStyle(
-                                        color: AppColors.lightBlue3,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
                                   ),
+                                  child: Container(
+                                    child: Text(
+                                      'MODERATOR',
+                                      style: TextStyle(
+                                          color: AppColors.lightBlue3,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      barrierColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.5),
+                                      backgroundColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.9),
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return GroupPrivilegeSettings(
+                                            'moderator', user);
+                                      },
+                                    );
+                                  },
                                 ),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor: AppColors
-                                        .detailBackgroundColor[1]
-                                        .withOpacity(0.5),
-                                    backgroundColor: AppColors
-                                        .detailBackgroundColor[1]
-                                        .withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return GroupPrivilegeSettings(
-                                          'moderator', user);
-                                    },
-                                  );
-                                },
                               ),
                             ),
                             Container(
@@ -338,36 +342,38 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                  side: MaterialStateProperty.all<BorderSide>(
-                                      BorderSide(color: Colors.transparent)),
-                                ),
-                                child: Container(
-                                  child: Text(
-                                    'MEMBER',
-                                    style: TextStyle(
-                                        color: AppColors.lightBlue3,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
                                   ),
+                                  child: Container(
+                                    child: Text(
+                                      'MEMBER',
+                                      style: TextStyle(
+                                          color: AppColors.lightBlue3,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      barrierColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.5),
+                                      backgroundColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.9),
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return GroupPrivilegeSettings(
+                                            'member', user);
+                                      },
+                                    );
+                                  },
                                 ),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor: AppColors
-                                        .detailBackgroundColor[1]
-                                        .withOpacity(0.5),
-                                    backgroundColor: AppColors
-                                        .detailBackgroundColor[1]
-                                        .withOpacity(0.9),
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return GroupPrivilegeSettings(
-                                          'member', user);
-                                    },
-                                  );
-                                },
                               ),
                             ),
                           ],
@@ -389,28 +395,30 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                  side: MaterialStateProperty.all<BorderSide>(
-                                      BorderSide(color: Colors.transparent)),
-                                ),
-                                child: Container(
-                                  child: Text(
-                                    'REMOVE',
-                                    style: TextStyle(
-                                        color: AppColors.red,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
+                              child: FittedBox(
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
                                   ),
+                                  child: Container(
+                                    child: Text(
+                                      'REMOVE',
+                                      style: TextStyle(
+                                          color: AppColors.red,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    const message =
+                                        'Are you sure you want to remove this user from your group?';
+                                    const method = 'Remove';
+                                    const title = 'Remove From Group';
+                                    _openRemoveConfirmation(context, title,
+                                        method, message, user, group);
+                                  },
                                 ),
-                                onPressed: () {
-                                  const message =
-                                      'Are you sure you want to remove this user from your group?';
-                                  const method = 'Remove';
-                                  const title = 'Remove From Group';
-                                  _openRemoveConfirmation(context, title,
-                                      method, message, user, group);
-                                },
                               ),
                             )
                           : Container(),

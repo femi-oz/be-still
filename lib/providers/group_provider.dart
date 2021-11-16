@@ -65,7 +65,9 @@ class GroupProvider with ChangeNotifier {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
       _allGroups = groups;
-      _filteredAllGroups = groups
+      _filteredAllGroups =
+          groups.where((e) => e.groupUsers.length > 0).toList();
+      _filteredAllGroups = _filteredAllGroups
           .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
           .toList();
       notifyListeners();

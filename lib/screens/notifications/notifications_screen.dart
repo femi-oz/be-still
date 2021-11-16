@@ -213,11 +213,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         .updateNotification(id);
   }
 
+  //fittedBox fix: BoxFit.cont
+
   gotoPrayer(PushNotificationModel notification) async {
+    // does it exist
+    // not, should show modal this prayer by admin/owner
+    BeStilDialog.showLoading(context);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayer(notification.entityId);
-    BeStilDialog.showLoading(context);
-    new Future.delayed(const Duration(seconds: 5), () async {
+    new Future.delayed(const Duration(milliseconds: 15), () async {
       var prayerGroupId =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .currentPrayer
@@ -720,7 +724,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...remove
-                  .map((notification) => Column(
+                  .map((PushNotificationModel notification) => Column(
                         children: [
                           SizedBox(height: 10),
                           Dismissible(
@@ -1071,6 +1075,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               onLongPressEnd: null,
                               onTap: () {
                                 deleteNotification(notification.id);
+                                // service get group by id
+                                // go to 8
                                 Navigator.pop(context);
                                 AppCOntroller appCOntroller = Get.find();
                                 appCOntroller.setCurrentPage(3, true);
@@ -1556,7 +1562,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...prayerUpdates
-                  .map((notification) => Column(
+                  .map((PushNotificationModel notification) => Column(
                         children: [
                           SizedBox(height: 10),
                           Dismissible(
