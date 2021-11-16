@@ -291,7 +291,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     GroupRequestModel groupRequest;
     try {
       await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(receiverId);
+          .getUserById(receiverId); //sender
 
       Future.delayed(Duration(seconds: 5), () async {
         final receiverFullName =
@@ -304,7 +304,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         tempGroupData.where((x) => x.id == groupId).forEach((element) {
           groupData = element;
         });
-        var tempRequestGroupData = data.map((e) => e.groupRequests);
+        var tempRequestGroupData = data.map((e) => e.groupRequests).toList();
+
         tempRequestGroupData.forEach((element) async {
           groupRequest = element.firstWhere((element) =>
               element.userId == receiverId &&
@@ -384,7 +385,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         initiallyExpanded: true,
         children: <Widget>[
           ...requests
-              .map((notification) => Column(
+              .map((PushNotificationModel notification) => Column(
                     children: [
                       SizedBox(height: 10),
                       Dismissible(

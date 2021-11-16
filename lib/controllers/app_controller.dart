@@ -5,6 +5,9 @@ class AppCOntroller extends GetxController with SingleGetTickerProviderMixin {
   TabController tabController;
   Rx<int> _currentPage = 0.obs;
   int get currentPage => _currentPage.value;
+  Rx<int> _settingsTab = 0.obs;
+  int get settingsTab => _settingsTab.value;
+  set settingsTab(int i) => _settingsTab.value = i;
 
   @override
   void onInit() {

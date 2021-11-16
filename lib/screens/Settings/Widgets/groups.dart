@@ -1251,6 +1251,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       children: <Widget>[
                                         ...data.groupUsers.map(
                                           (user) {
+                                            print(data.group.name);
+                                            print(data.groupUsers
+                                                .map((e) => e.userId));
                                             return GestureDetector(
                                               onTap: () =>
                                                   _showAlert(user, data),
