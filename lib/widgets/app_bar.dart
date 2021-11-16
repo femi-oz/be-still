@@ -286,16 +286,22 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                     ),
                     notifications.length != 0
-                        ? Positioned(
-                            top: MediaQuery.of(context).size.height * 0.037,
-                            left: notifications.length > 9
-                                ? MediaQuery.of(context).size.width * 0.044
-                                : MediaQuery.of(context).size.width * 0.053,
-                            child: Text(notifications.length.toString(),
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.w600)),
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: notifications.length > 9
+                                      ? MediaQuery.of(context).size.width *
+                                          0.045
+                                      : MediaQuery.of(context).size.width *
+                                          0.054,
+                                  top: 10),
+                              child: Text(notifications.length.toString(),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.w600)),
+                            ),
                           )
                         : Container(),
                   ],
