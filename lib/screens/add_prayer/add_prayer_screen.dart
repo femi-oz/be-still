@@ -685,12 +685,15 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<GroupProvider>(context, listen: false).userGroups;
     List<SaveOptionModel> saveOptions = [];
     SaveOptionModel saveOption;
-    userGroups.forEach((element) {
-      saveOption =
-          new SaveOptionModel(id: element.group.id, name: element.group.name);
-      saveOptions.add(saveOption);
-    });
-    saveOptions.insert(0, SaveOptionModel(id: currentUser.id, name: 'My List'));
+    if (userGroups.length > 0) {
+      userGroups.forEach((element) {
+        saveOption =
+            new SaveOptionModel(id: element.group.id, name: element.group.name);
+        saveOptions.add(saveOption);
+      });
+      saveOptions.insert(
+          0, SaveOptionModel(id: currentUser.id, name: 'My List'));
+    }
 
     Widget updateContactDropdown(context, e) {
       return Positioned(
@@ -892,7 +895,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 isValid ? _save(textEditingControllers) : null,
                           ),
                         ])),
-                showSaveDropDown
+                showSaveDropDown && userGroups.length > 0
                     ? SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
