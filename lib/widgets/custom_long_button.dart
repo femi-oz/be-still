@@ -12,6 +12,7 @@ class LongButton extends StatelessWidget {
   final bool isDisabled;
   final IconData icon;
   final String suffix;
+  final Widget child;
 
   LongButton({
     this.onPress,
@@ -24,6 +25,7 @@ class LongButton extends StatelessWidget {
     this.isDisabled = false,
     this.icon,
     this.suffix,
+    this.child
   });
   @override
   Widget build(BuildContext context) {
@@ -54,26 +56,30 @@ class LongButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  hasIcon
-                      ? Icon(icon, color: textColor, size: 18)
-                      : Container(),
-                  SizedBox(width: 10),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: Text(
-                      text,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      style: AppTextStyles.boldText18.copyWith(
-                        color: textColor.withOpacity(isDisabled ? 0.5 : 1.0),
-                        height: 1,
+              Expanded(
+                child: Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      hasIcon
+                          ? Icon(icon, color: textColor, size: 18)
+                          : Container(),
+                      SizedBox(width: 10),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Text(
+                          text,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          style: AppTextStyles.boldText18.copyWith(
+                            color: textColor.withOpacity(isDisabled ? 0.5 : 1.0),
+                            height: 1,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
               suffix != null
                   ? Text(
@@ -85,9 +91,14 @@ class LongButton extends StatelessWidget {
                       ),
                     )
                   : hasMore
-                      ? InkWell(
-                          onTap: () => onPressMore(),
-                          child: Icon(Icons.more_vert, color: textColor))
+                      ? Row(
+                        children: [
+                          child != null?child: SizedBox.shrink(),
+                          InkWell(
+                              onTap: () => onPressMore(),
+                              child: Icon(Icons.more_vert, color: textColor)),
+                        ],
+                      )
                       : Container(),
             ],
           ),

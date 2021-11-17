@@ -23,7 +23,7 @@ class GroupProvider with ChangeNotifier {
   bool get isEdit => _isEdit;
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
-  Future setUserGroups(String userId) async {
+  Future<void> setUserGroups(String userId) async {
     // if (_userGroups.isNotEmpty) {
     //   _userGroups = [];
     // }
