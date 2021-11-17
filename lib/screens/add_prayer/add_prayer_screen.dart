@@ -1,6 +1,8 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -70,6 +72,7 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
   var textFields = <Stack>[];
   var textEditingController = TextEditingController();
+  var saveOption = '';
 
   @override
   void didChangeDependencies() {
@@ -83,6 +86,8 @@ class _AddPrayerState extends State<AddPrayer> {
           .setSearchQuery('');
       Provider.of<PrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setUserGroups(userId);
     });
     super.didChangeDependencies();
   }
@@ -617,6 +622,9 @@ class _AddPrayerState extends State<AddPrayer> {
       positionOffset2 = 9;
     }
 
+    var userGroups =
+        Provider.of<GroupProvider>(context, listen: false).userGroups;
+
     Widget updateContactDropdown(context, e) {
       return Positioned(
         top: ((numberOfLines * positionOffset) * positionOffset2) +
@@ -804,7 +812,6 @@ class _AddPrayerState extends State<AddPrayer> {
                                             .requestFocus(new FocusNode());
                                         AppCOntroller appCOntroller =
                                             Get.find();
-
                                         appCOntroller.setCurrentPage(0, true);
                                       },
                           ),

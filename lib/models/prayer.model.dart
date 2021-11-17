@@ -375,3 +375,43 @@ class HiddenPrayerModel {
     };
   }
 }
+
+class FollowedPrayerModel {
+  final String id;
+  final String prayerId;
+  final String userId;
+  final String createdBy;
+  final DateTime createdOn;
+  final String modifiedBy;
+  final DateTime modifiedOn;
+
+  const FollowedPrayerModel({
+    this.id,
+    @required this.prayerId,
+    @required this.userId,
+    @required this.createdBy,
+    @required this.createdOn,
+    @required this.modifiedBy,
+    @required this.modifiedOn,
+  });
+
+  FollowedPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : id = snapshot.id,
+        prayerId = snapshot.data()['PrayerId'],
+        userId = snapshot.data()['UserId'],
+        createdBy = snapshot.data()['CreatedBy'],
+        createdOn = snapshot.data()['CreatedOn'].toDate(),
+        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'PrayerId': prayerId,
+      'UserId': userId,
+      'CreatedBy': createdBy,
+      'CreatedOn': createdOn,
+      'ModifiedBy': modifiedBy,
+      'ModifiedOn': modifiedOn,
+    };
+  }
+}
