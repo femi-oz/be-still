@@ -661,7 +661,7 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       return _followedPrayerCollectionReference
-          // .where('PrayerId', isEqualTo: prayerId)
+          .where('PrayerId', isEqualTo: prayerId)
           .snapshots()
           .asyncMap((event) =>
               event.docs.map((e) => FollowedPrayerModel.fromData(e)).toList());

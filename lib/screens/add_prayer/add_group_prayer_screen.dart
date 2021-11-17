@@ -78,8 +78,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           .setSearchQuery('');
       Provider.of<GroupPrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayer(userId);
+      if (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setFollowedPrayer(
+                Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .prayerToEdit
+                    .prayer
+                    .id);
+      }
     });
     super.didChangeDependencies();
   }
