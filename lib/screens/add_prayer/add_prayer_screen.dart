@@ -1,4 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
@@ -6,6 +7,7 @@ import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -92,6 +94,38 @@ class _AddPrayerState extends State<AddPrayer> {
     super.didChangeDependencies();
   }
 
+  _sendNotification(String prayerId, type) async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers;
+
+    final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .prayerToEdit
+        .prayer
+        .id;
+
+    List<FollowedPrayerModel> receiver;
+    receiver = followedPrayers
+        .where((element) => element.prayerId == prayerId)
+        .toList();
+    for (var i = 0; i < receiver.length; i++) {
+      if (receiver.length > 0) {
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .addPushNotification(
+                _descriptionController.text,
+                type,
+                _user.firstName,
+                _user.id,
+                receiver[i].userId,
+                type == NotificationType.prayer
+                    ? 'New Prayer'
+                    : 'Prayer Update',
+                prayerId);
+      }
+    }
+  }
+
   Future<void> _save(textEditingControllers) async {
     BeStilDialog.showLoading(context);
     FocusScope.of(context).unfocus();
@@ -125,6 +159,9 @@ class _AddPrayerState extends State<AddPrayer> {
               backupText,
             );
           } else {
+            var prayerId =
+                Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .newPrayerId;
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
@@ -133,6 +170,7 @@ class _AddPrayerState extends State<AddPrayer> {
               backupText,
               _user.id,
             );
+            _sendNotification(prayerId, NotificationType.prayer);
           }
 
           contacts.forEach((s) {
