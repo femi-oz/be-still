@@ -415,3 +415,13 @@ class FollowedPrayerModel {
     };
   }
 }
+
+class SaveOptionModel {
+  final String id;
+  final String name;
+
+  const SaveOptionModel({
+    @required this.id,
+    @required this.name,
+  });
+}
