@@ -344,7 +344,6 @@ class PrayerService {
       if (_firebaseAuth.currentUser == null) return null;
       _userPrayerCollectionReference.doc(userPrayerID).update(
         {
-          'IsFavourite': false,
           'IsSnoozed': true,
           'SnoozeEndDate': endDate,
           'Status': Status.inactive,
@@ -391,7 +390,7 @@ class PrayerService {
         {
           'IsArchived': true,
           'Status': Status.inactive,
-          // 'IsFavourite': false,
+          'IsFavourite': false,
           'ArchivedDate': DateTime.now(),
           'IsSnoozed': false
         },
