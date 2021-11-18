@@ -169,7 +169,7 @@ class PrayerProvider with ChangeNotifier {
     if (_filterOption == Status.active) {
       favoritePrayers = prayers
           .where((CombinePrayerStream data) =>
-              data.userPrayer.isFavorite && !data.userPrayer.isArchived)
+              data.userPrayer.isFavorite && !data.userPrayer.isSnoozed)
           .toList();
       activePrayers = prayers
           .where((CombinePrayerStream data) =>
