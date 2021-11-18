@@ -96,19 +96,26 @@ class _AddPrayerState extends State<AddPrayer> {
 
   _sendNotification(String prayerId, type) async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final followedPrayers =
-        Provider.of<GroupPrayerProvider>(context, listen: false)
-            .followedPrayers;
+    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
+    List receiver;
+    var followedPrayers;
+    if (type == NotificationType.prayer_updates) {
+      final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .prayerToEdit
+          .prayer
+          .id;
+      followedPrayers = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers;
+      receiver = followedPrayers
+          .where((element) => element.prayerId == prayerId)
+          .toList();
+    } else {
+      data.forEach((element) async {
+        receiver =
+            element.groupUsers.where((e) => e.userId != _user.id).toList();
+      });
+    }
 
-    final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
-        .prayerToEdit
-        .prayer
-        .id;
-
-    List<FollowedPrayerModel> receiver;
-    receiver = followedPrayers
-        .where((element) => element.prayerId == prayerId)
-        .toList();
     for (var i = 0; i < receiver.length; i++) {
       if (receiver.length > 0) {
         await Provider.of<NotificationProvider>(context, listen: false)
