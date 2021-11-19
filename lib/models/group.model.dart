@@ -245,6 +245,7 @@ class GroupUserModel {
   final String id;
   final String groupId;
   final String userId;
+  final String email;
   final String fullName;
   final String status;
   final String role;
@@ -258,6 +259,7 @@ class GroupUserModel {
     @required this.groupId,
     @required this.userId,
     @required this.fullName,
+    @required this.email,
     @required this.status,
     @required this.role,
     @required this.createdBy,
@@ -271,6 +273,7 @@ class GroupUserModel {
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],
         fullName = snapshot.data()['FullName'],
+        email = snapshot.data()['Email'],
         status = snapshot.data()['Status'],
         role = snapshot.data()['Role'],
         createdBy = snapshot.data()['CreatedBy'],
@@ -283,6 +286,7 @@ class GroupUserModel {
       'UserId': userId,
       'GroupId': groupId,
       'FullName': fullName,
+      'Email': email,
       'Status': status,
       'Role': role,
       'CreatedBy': createdBy,

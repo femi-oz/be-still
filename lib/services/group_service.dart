@@ -24,10 +24,17 @@ class GroupService {
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  GroupUserModel populateGroupUser(GroupModel groupData, String userID,
-      String groupID, String role, String creator, String fullName) {
+  GroupUserModel populateGroupUser(
+      GroupModel groupData,
+      String userID,
+      String groupID,
+      String role,
+      String creator,
+      String fullName,
+      String email) {
     GroupUserModel userPrayer = GroupUserModel(
       fullName: fullName,
+      email: email,
       userId: userID,
       status: Status.active,
       groupId: groupID,
@@ -256,7 +263,8 @@ class GroupService {
               groupData.id,
               GroupUserRole.admin,
               groupData.createdBy,
-              fullName)
+              fullName,
+              email)
           .toJson());
       return groupData.id;
       //store group settings
@@ -322,7 +330,7 @@ class GroupService {
   }
 
   acceptRequest(String groupId, GroupModel groupData, String userId,
-      String requestId, String fullName) async {
+      String requestId, String fullName, String email) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       final _userGroupId = Uuid().v1();
@@ -339,7 +347,8 @@ class GroupService {
               groupId,
               GroupUserRole.member,
               userId,
-              fullName)
+              fullName,
+              email)
           .toJson());
       _groupRequestCollectionReference
           .doc(requestId)

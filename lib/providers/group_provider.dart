@@ -23,7 +23,7 @@ class GroupProvider with ChangeNotifier {
   bool get isEdit => _isEdit;
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
-  Future setUserGroups(String userId) async {
+  Future<void> setUserGroups(String userId) async {
     // if (_userGroups.isNotEmpty) {
     //   _userGroups = [];
     // }
@@ -65,7 +65,9 @@ class GroupProvider with ChangeNotifier {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
       _allGroups = groups;
-      _filteredAllGroups = groups
+      _filteredAllGroups =
+          groups.where((e) => e.groupUsers.length > 0).toList();
+      _filteredAllGroups = _filteredAllGroups
           .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
           .toList();
       notifyListeners();
@@ -134,10 +136,10 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future acceptRequest(GroupModel groupData, String groupId, String userId,
-      String requestId, String fullName) async {
+      String requestId, String fullName, String email) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.acceptRequest(
-        groupId, groupData, userId, requestId, fullName);
+        groupId, groupData, userId, requestId, fullName, email);
   }
 
   Future denyRequest(String groupId, String requestId) async {

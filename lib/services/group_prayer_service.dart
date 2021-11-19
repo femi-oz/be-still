@@ -39,6 +39,9 @@ class GroupPrayerService {
   final CollectionReference<Map<String, dynamic>>
       _userPrayerCollectionReference =
       FirebaseFirestore.instance.collection("UserPrayer");
+  final CollectionReference<Map<String, dynamic>>
+      _followedPrayerCollectionReference =
+      FirebaseFirestore.instance.collection("FollowedPrayer");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final _notificationService = locator<NotificationService>();
@@ -654,6 +657,23 @@ class GroupPrayerService {
     }
   }
 
+  Stream<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return _followedPrayerCollectionReference
+          .where('PrayerId', isEqualTo: prayerId)
+          .snapshots()
+          .asyncMap((event) =>
+              event.docs.map((e) => FollowedPrayerModel.fromData(e)).toList());
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          prayerId,
+          'PRAYER/service/getFollowedPrayers');
+      throw HttpException(e.message);
+    }
+  }
+
   hideFromAllMembers(String prayerId, bool value) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -707,6 +727,7 @@ class GroupPrayerService {
     String userId,
   ) async {
     final userPrayerID = Uuid().v1();
+    final followedPrayerID = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -714,6 +735,9 @@ class GroupPrayerService {
       _userPrayerCollectionReference
           .doc(userPrayerID)
           .set(populateUserPrayer(userId, prayerId).toJson());
+      _followedPrayerCollectionReference
+          .doc(followedPrayerID)
+          .set(populateFollowedPrayer(userId, prayerId).toJson());
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -736,6 +760,17 @@ class GroupPrayerService {
           'PRAYER/service/flagAsInappropriate');
       throw HttpException(e.message);
     }
+  }
+
+  populateFollowedPrayer(String userId, String prayerId) {
+    FollowedPrayerModel followedPrayer = FollowedPrayerModel(
+        prayerId: prayerId,
+        userId: userId,
+        createdBy: userId,
+        createdOn: DateTime.now(),
+        modifiedBy: userId,
+        modifiedOn: DateTime.now());
+    return followedPrayer;
   }
 
   populateUserPrayer(

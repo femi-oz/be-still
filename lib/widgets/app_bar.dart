@@ -264,41 +264,45 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     builder: (context) => NotificationsScreen(),
                   ),
                 ),
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: IconButton(
-                        icon: Icon(
-                            notifications.length != 0
-                                ? Icons.notifications
-                                : Icons.notifications_none,
-                            size: 30,
-                            color: notifications.length != 0
-                                ? AppColors.red
-                                : AppColors.white),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NotificationsScreen(),
+                child: Container(
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                              notifications.length != 0
+                                  ? Icons.notifications
+                                  : Icons.notifications_none,
+                              size: 30,
+                              color: notifications.length != 0
+                                  ? AppColors.red
+                                  : AppColors.white),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationsScreen(),
+                            ),
                           ),
                         ),
-                      ),
+                        notifications.length != 0
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    right: notifications.length == 1
+                                        ? 2
+                                        : notifications.length > 9
+                                            ? 1
+                                            : 0),
+                                child: Text(notifications.length.toString(),
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600)),
+                              )
+                            : Container(),
+                      ],
                     ),
-                    notifications.length != 0
-                        ? Positioned(
-                            top: MediaQuery.of(context).size.height * 0.037,
-                            left: notifications.length > 9
-                                ? MediaQuery.of(context).size.width * 0.044
-                                : MediaQuery.of(context).size.width * 0.053,
-                            child: Text(notifications.length.toString(),
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.w600)),
-                          )
-                        : Container(),
-                  ],
+                  ),
                 ),
               )
             : Container(),

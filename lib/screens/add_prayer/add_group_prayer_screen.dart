@@ -78,17 +78,39 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           .setSearchQuery('');
       Provider.of<GroupPrayerProvider>(context, listen: false)
           .searchPrayers('', userId);
+      if (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setFollowedPrayer(
+                Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .prayerToEdit
+                    .prayer
+                    .id);
+      }
     });
     super.didChangeDependencies();
   }
 
   _sendNotification(String prayerId, type) async {
-    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     List receiver;
-    data.forEach((element) async {
-      receiver = element.groupUsers.where((e) => e.userId != _user.id).toList();
-    });
+    var followedPrayers;
+    if (type == NotificationType.prayer_updates) {
+      final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .prayerToEdit
+          .prayer
+          .id;
+      followedPrayers = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers;
+      receiver = followedPrayers
+          .where((element) => element.prayerId == prayerId)
+          .toList();
+    } else {
+      data.forEach((element) async {
+        receiver =
+            element.groupUsers.where((e) => e.userId != _user.id).toList();
+      });
+    }
 
     for (var i = 0; i < receiver.length; i++) {
       if (receiver.length > 0) {
@@ -270,6 +292,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
+
           _sendNotification(
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .prayerToEdit

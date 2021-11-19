@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -25,6 +26,8 @@ class GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<GroupScreen> {
   AppCOntroller appCOntroller = Get.find();
+
+  UserModel _user;
   Future<bool> _onWillPop() async {
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
@@ -34,6 +37,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<MiscProvider>(context, listen: false)
           .setPageTitle('MY GROUPS');
       // appCOntroller.setCurrentPage(4, true);
@@ -78,6 +82,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
+    
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -166,6 +171,26 @@ class _GroupScreenState extends State<GroupScreen> {
                                             textColor: AppColors.lightBlue3,
                                             hasIcon: false,
                                             hasMore: true,
+                                            child:_user != null? e.groupUsers.firstWhere((x) => (x.userId == _user.id && x.role == GroupUserRole.admin), orElse: () => null) != null? Container(
+                                              alignment: Alignment.center,
+                                              height: 25,
+                                              width: 60,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color:
+                                                          AppColors.lightBlue3,
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10)),
+                                              child: Text(
+                                                "Admin",
+                                                style: TextStyle(
+                                                  color: AppColors.lightBlue3,
+                                                  fontSize: 12
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ): SizedBox.shrink():SizedBox.shrink(),
                                             onPressMore: () =>
                                                 showModalBottomSheet(
                                               context: context,
