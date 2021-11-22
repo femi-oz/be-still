@@ -49,13 +49,17 @@ class _FindAGroupState extends State<FindAGroup> {
 
   @override
   Widget build(BuildContext context) {
-    var _filteredGroups = Provider.of<GroupProvider>(context).filteredAllGroups;
+    var _filteredGroups = Provider.of<GroupProvider>(context)
+        .filteredAllGroups
+        .where((g) => g.groupUsers.length > 0)
+        .toList();
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: CustomAppBar(
-          showPrayerActions: true,
+          showPrayerActions: false,
           isSearchMode: false,
+          showOnlyTitle: true,
           globalKey: _keyButton,
         ),
         body: Container(

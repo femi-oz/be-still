@@ -1,5 +1,3 @@
-import 'package:be_still/enums/group_type.dart';
-import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/input_field.dart';
 
@@ -77,7 +75,7 @@ class CreateGroupForm extends StatelessWidget {
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),
             controller: organizationController,
-            label: 'Organization / Church Association',
+            label: 'Church Association',
             isRequired: false,
             keyboardType: TextInputType.text,
             showSuffix: false,
@@ -86,7 +84,7 @@ class CreateGroupForm extends StatelessWidget {
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),
             controller: descriptionController,
-            label: 'Group Short Description',
+            label: 'Purpose',
             maxLines: 4,
             textInputAction: TextInputAction.done,
             isRequired: false,
