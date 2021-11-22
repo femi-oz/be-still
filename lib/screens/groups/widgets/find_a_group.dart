@@ -140,17 +140,18 @@ class _FindAGroupState extends State<FindAGroup> {
                               child: OutlinedButton(
                                 style: ButtonStyle(
                                   side: MaterialStateProperty.all<BorderSide>(
-                                      BorderSide(color: Colors.transparent)),
+                                      BorderSide(color: AppColors.lightBlue4)),
                                 ),
                                 child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(Icons.more_horiz,
                                           color: AppColors.lightBlue3),
                                       Text(
-                                        'ADVANCE SEARCH',
-                                        style: AppTextStyles.boldText24,
+                                        'ADVANCED SEARCH',
+                                        style: AppTextStyles.boldText20,
                                       ),
                                     ],
                                   ),

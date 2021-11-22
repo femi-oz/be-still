@@ -184,12 +184,6 @@ class CreateGroupForm extends StatelessWidget {
               // ),
             ],
           ),
-          SizedBox(height: 30.0),
-          Text(
-            'PRIVATE groups setting will hide the group from general search, admin & moderators will need to send invites directly to add new members',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200),
-          ),
         ],
       ),
     );
