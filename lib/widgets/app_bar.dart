@@ -20,12 +20,14 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isSearchMode;
   final bool showPrayerActions;
   final bool isGroup;
+  final bool showOnlyTitle;
   final GlobalKey globalKey;
   CustomAppBar({
     Key key,
     this.switchSearchMode,
     this.isSearchMode = false,
     this.isGroup = false,
+    this.showOnlyTitle = false,
     this.showPrayerActions = true,
     this.globalKey,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
@@ -41,6 +43,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   TextEditingController _searchController = TextEditingController();
   final _searchKey = GlobalKey();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.showOnlyTitle);
+  }
 
   void _searchPrayer(String value) async {
     final userId =
@@ -197,7 +206,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               : Container(),
         ],
       ),
-      title: widget.isSearchMode
+      title: !widget.showOnlyTitle && widget.isSearchMode
           ? Container(
               width: MediaQuery.of(context).size.width * 2,
               child: Row(
@@ -247,7 +256,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             )
           : Text(
-              widget.showPrayerActions ? pageTitle : '',
+              widget.showOnlyTitle
+                  ? pageTitle
+                  : widget.showPrayerActions
+                      ? pageTitle
+                      : '',
               style: TextStyle(
                 color: AppColors.bottomNavIconColor,
                 fontSize: 22,

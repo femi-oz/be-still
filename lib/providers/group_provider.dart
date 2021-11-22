@@ -5,6 +5,7 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/services/group_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:uuid/uuid.dart';
 
 class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
@@ -82,13 +83,25 @@ class GroupProvider with ChangeNotifier {
             !data.groupUsers.map((e) => e.userId).contains(userId))
         .toList();
     _filteredAllGroups = filteredGroups;
+
+    _filteredAllGroups = _filteredAllGroups
+        .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
+        .toList();
     notifyListeners();
   }
 
   Future addGroup(GroupModel groupData, String userID, String email,
       String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.addGroup(userID, groupData, email, fullName);
+    {
+      final _userGroupId = Uuid().v1();
+      return _groupService
+          .addGroup(userID, groupData, email, fullName, _userGroupId)
+          .then((value) async {
+        await Future.delayed(Duration(milliseconds: 500));
+        await setCurrentGroupById(_userGroupId);
+      });
+    }
   }
 
   Future editGroup(GroupModel groupData, String groupId) async {
@@ -109,6 +122,17 @@ class GroupProvider with ChangeNotifier {
   Future setCurrentGroup(CombineGroupUserStream group) async {
     if (_firebaseAuth.currentUser == null) return null;
     _currentGroup = group;
+    notifyListeners();
+  }
+
+  Future setCurrentGroupById(String userGroupId) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _groupService
+        .getUserGroupById(userGroupId)
+        .asBroadcastStream()
+        .listen((userGroup) {
+      _currentGroup = userGroup;
+    });
     notifyListeners();
   }
 

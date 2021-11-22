@@ -1,5 +1,4 @@
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -37,8 +36,8 @@ class GroupModel {
   GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot.data()['Name'],
-        description = snapshot.data()['Description'],
-        status = snapshot.data()['Status'],
+        description = snapshot.data()['Description'] ?? 'N/A',
+        status = snapshot.data()['Status'] ?? 'N/A',
         email = snapshot.data()['Email'],
         organization = snapshot.data()['Organization'],
         location = snapshot.data()['Location'],

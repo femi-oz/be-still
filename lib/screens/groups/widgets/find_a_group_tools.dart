@@ -85,7 +85,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 CustomInput(
                   textkey: GlobalKey<FormFieldState>(),
                   controller: _organizationController,
-                  label: 'Organization / Church Association',
+                  label: 'Church Association',
                   isRequired: false,
                   showSuffix: false,
                 ),
@@ -101,7 +101,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 CustomInput(
                   textkey: GlobalKey<FormFieldState>(),
                   controller: _descriptionController,
-                  label: 'Description',
+                  label: 'Purpose',
                   isRequired: false,
                   showSuffix: false,
                 ),
