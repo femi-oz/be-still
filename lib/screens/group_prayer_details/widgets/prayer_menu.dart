@@ -94,18 +94,19 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  _sendNotification() async {
+  _sendNotification(String groupId) async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     GroupUserModel receiver;
-    data.forEach((element) async {
+    data
+        .where((element) => element.group.id == groupId)
+        .forEach((element) async {
       for (var i = 0; i < element.groupUsers.length; i++) {
         receiver =
             element.groupUsers.firstWhere((e) => e.role == GroupUserRole.admin);
       }
     });
     if (receiver != null) {
-      print(receiver.role);
       await Provider.of<NotificationProvider>(context, listen: false)
           .addPushNotification(
               '${_user.firstName} flagged a prayer as inappropriate',
@@ -118,7 +119,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  void _flagAsInappropriate() async {
+  void _flagAsInappropriate(groupId) async {
     BeStilDialog.showLoading(context);
 
     try {
@@ -128,7 +129,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .flagAsInappropriate(widget.prayerData.prayer.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .hidePrayer(widget.prayerData.prayer.id, currentUser);
-      _sendNotification();
+      _sendNotification(groupId);
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
@@ -356,6 +357,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         widget.prayerData.groupPrayer.isArchived ||
         widget.prayerData.groupPrayer.isSnoozed;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final groupId = Provider.of<GroupProvider>(context, listen: false)
+        .currentGroup
+        .group
+        .id;
     bool isAdmin = Provider.of<GroupProvider>(context)
             .currentGroup
             .groupUsers
@@ -582,7 +587,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                         icon: Icons.info,
                         text: 'Flag As Inappropriate',
                         isDisabled: isDisable,
-                        onPress: () => _flagAsInappropriate()),
+                        onPress: () => _flagAsInappropriate(groupId)),
                     if (isAdmin || isOwner)
                       LongButton(
                         textColor: AppColors.lightBlue3,

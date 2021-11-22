@@ -142,12 +142,15 @@ class _GroupCardState extends State<GroupCard> {
                                 'Based in: ',
                                 style: AppTextStyles.regularText15,
                               ),
-                              Text(
-                                '${this.widget.groupData.group.location}',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
+                              Flexible(
+                                child: Text(
+                                  '${this.widget.groupData.group.location}',
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.textFieldText,
+                                  ),
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
@@ -159,12 +162,16 @@ class _GroupCardState extends State<GroupCard> {
                                 'Associated with: ',
                                 style: AppTextStyles.regularText15,
                               ),
-                              Text(
-                                '${this.widget.groupData.group.organization}',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: Text(
+                                  '${this.widget.groupData.group.organization}',
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.textFieldText,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
