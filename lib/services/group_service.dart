@@ -243,10 +243,56 @@ class GroupService {
     }
   }
 
-  addGroup(String userId, GroupModel groupData, String email,
-      String fullName) async {
-    final _groupID = Uuid().v1();
-    final _userGroupId = Uuid().v1();
+  Stream<CombineGroupUserStream> getUserGroupById(String userGroupId) {
+    try {
+      final data = _userGroupCollectionReference.doc(userGroupId).snapshots();
+      // .map((convert) {
+      return data.map((f) {
+        Stream<GroupModel> group = _groupCollectionReference
+            .doc(f['GroupId'])
+            .snapshots()
+            .map<GroupModel>((document) => GroupModel.fromData(document));
+        Stream<List<GroupUserModel>> groupUsers = _userGroupCollectionReference
+            .where('GroupId', isEqualTo: f['GroupId'])
+            .snapshots()
+            .asyncMap((e) =>
+                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
+
+        Stream<List<GroupRequestModel>> groupRequests =
+            _groupRequestCollectionReference
+                .where('GroupId', isEqualTo: f['GroupId'])
+                .snapshots()
+                .asyncMap((e) => e.docs
+                    .map((doc) => GroupRequestModel.fromData(doc))
+                    .toList());
+        return Rx.combineLatest3(
+            groupUsers,
+            group,
+            groupRequests,
+            (
+              groupUsers,
+              group,
+              groupRequests,
+            ) =>
+                CombineGroupUserStream(
+                  groupUsers,
+                  group,
+                  groupRequests,
+                ));
+      }).switchMap((observables) {
+        return observables;
+      });
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userGroupId,
+          'GROUP/service/getUserGroups');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<String> addGroup(String userId, GroupModel groupData, String email,
+      String fullName, String userGroupId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
@@ -257,7 +303,7 @@ class GroupService {
       //     .collection("Group/" + groupData.id + "/Users")
       //     .add({'userId': userId});
 
-      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
+      _userGroupCollectionReference.doc(userGroupId).set(populateGroupUser(
               groupData,
               userId,
               groupData.id,
@@ -266,7 +312,7 @@ class GroupService {
               fullName,
               email)
           .toJson());
-      return groupData.id;
+      return userGroupId;
       //store group settings
 
       // await locator<SettingsService>()

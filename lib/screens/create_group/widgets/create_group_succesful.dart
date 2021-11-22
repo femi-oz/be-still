@@ -227,7 +227,7 @@ Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} t
                   ),
                 ),
                 onPressed: () async {
-                  appCOntroller.setCurrentPage(3, false);
+                  appCOntroller.setCurrentPage(8, false);
                 },
               ),
             ),

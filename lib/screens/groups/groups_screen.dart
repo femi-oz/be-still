@@ -87,7 +87,11 @@ class _GroupScreenState extends State<GroupScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: SettingsAppBar(title: 'GROUPS'),
+        appBar: CustomAppBar(
+          showPrayerActions: false,
+          isSearchMode: false,
+          showOnlyTitle: true,
+        ),
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(

@@ -901,7 +901,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      'Group Description',
+                                      'Purpose',
                                       style: AppTextStyles.regularText11
                                           .copyWith(
                                               color: AppColors.lightBlue2),
@@ -941,7 +941,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text('Associated Church/Organisation',
+                                    Text('Associated Church',
                                         style: AppTextStyles.regularText11
                                             .copyWith(
                                                 color: AppColors.lightBlue2))

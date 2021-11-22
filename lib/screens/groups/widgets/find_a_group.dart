@@ -1,6 +1,5 @@
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
@@ -29,7 +28,6 @@ class _FindAGroupState extends State<FindAGroup> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearchMode = true;
   final GlobalKey _keyButton = GlobalKey();
-  static const pageTitle = 'FIND A GROUP';
 
   @override
   void initState() {
@@ -51,17 +49,19 @@ class _FindAGroupState extends State<FindAGroup> {
 
   @override
   Widget build(BuildContext context) {
-    var _filteredGroups = Provider.of<GroupProvider>(context).filteredAllGroups;
+    var _filteredGroups = Provider.of<GroupProvider>(context)
+        .filteredAllGroups
+        .where((g) => g.groupUsers.length > 0)
+        .toList();
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: SettingsAppBar(title: pageTitle),
-
-        // CustomAppBar(
-        //   showPrayerActions: true,
-        //   isSearchMode: false,
-        //   globalKey: _keyButton,
-        // ),
+        appBar: CustomAppBar(
+          showPrayerActions: false,
+          isSearchMode: false,
+          showOnlyTitle: true,
+          globalKey: _keyButton,
+        ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 20.0),
           height: MediaQuery.of(context).size.height * 1,

@@ -46,6 +46,8 @@ class _GroupCardState extends State<GroupCard> {
               groupData.group.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(3, true);
     } catch (e) {
       BeStilDialog.hideLoading(context);
     }
@@ -177,22 +179,22 @@ class _GroupCardState extends State<GroupCard> {
                             ],
                           ),
                           SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Type: ',
-                                style: AppTextStyles.regularText15,
-                              ),
-                              Text(
-                                '${this.widget.groupData.group.status} Group',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Text(
+                          //       'Type: ',
+                          //       style: AppTextStyles.regularText15,
+                          //     ),
+                          //     Text(
+                          //       '${this.widget.groupData.group.status} Group',
+                          //       style: AppTextStyles.regularText15.copyWith(
+                          //         color: AppColors.textFieldText,
+                          //       ),
+                          //       textAlign: TextAlign.center,
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       ),
                       SizedBox(height: 30.0),

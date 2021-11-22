@@ -75,7 +75,7 @@ class CreateGroupForm extends StatelessWidget {
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),
             controller: organizationController,
-            label: 'Organization / Church Association',
+            label: 'Church Association',
             isRequired: false,
             keyboardType: TextInputType.text,
             showSuffix: false,
@@ -84,7 +84,7 @@ class CreateGroupForm extends StatelessWidget {
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),
             controller: descriptionController,
-            label: 'Group Short Description',
+            label: 'Purpose',
             maxLines: 4,
             textInputAction: TextInputAction.done,
             isRequired: false,
