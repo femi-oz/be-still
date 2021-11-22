@@ -31,8 +31,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   AppCOntroller appCOntroller = Get.find();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _groupNameController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -43,10 +42,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
     final isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
-    List locationArr = isEdit ? groupData?.group?.location?.split(',') : [];
     _groupNameController.text = isEdit ? groupData?.group?.name : '';
-    _cityController.text = isEdit ? locationArr[0].trim() : '';
-    _stateController.text = isEdit ? locationArr[1].trim() : '';
+    _locationController.text = isEdit ? groupData?.group?.location : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
     _emailController.text = isEdit ? groupData?.group?.email : '';
@@ -72,7 +69,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     GroupModel groupData = GroupModel(
       id: Uuid().v1(),
       name: _groupNameController.text,
-      location: '${_cityController.text}, ${_stateController.text}',
+      location: _locationController.text,
       organization: _organizationController.text,
       description: _descriptionController.text,
       email: _emailController.text,
@@ -243,8 +240,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final groupData = groupProvider.currentGroup;
     bool isValid = _groupNameController.text.isNotEmpty ||
         _emailController.text.isNotEmpty ||
-        _cityController.text.isNotEmpty ||
-        _stateController.text.isNotEmpty;
+        _locationController.text.isNotEmpty;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: GestureDetector(
@@ -322,13 +318,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       _step == 1
                           ? CreateGroupForm(
                               formKey: _formKey,
-                              cityController: _cityController,
+                              locationController: _locationController,
                               descriptionController: _descriptionController,
                               groupNameController: _groupNameController,
                               emailController: _emailController,
                               option: _option,
                               organizationController: _organizationController,
-                              stateController: _stateController,
                               setOption: _setOption,
                               autoValidate: _autoValidate,
                             )

@@ -3,8 +3,7 @@ import 'package:be_still/widgets/input_field.dart';
 
 class CreateGroupForm extends StatelessWidget {
   final groupNameController;
-  final cityController;
-  final stateController;
+  final locationController;
   final organizationController;
   final descriptionController;
   final Function setOption;
@@ -16,8 +15,7 @@ class CreateGroupForm extends StatelessWidget {
 
   CreateGroupForm(
       {this.groupNameController,
-      this.cityController,
-      this.stateController,
+      this.locationController,
       this.organizationController,
       this.descriptionController,
       this.setOption,
@@ -56,17 +54,8 @@ class CreateGroupForm extends StatelessWidget {
           SizedBox(height: 12.0),
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),
-            controller: cityController,
-            label: 'City*',
-            keyboardType: TextInputType.text,
-            isRequired: true,
-            showSuffix: false,
-          ),
-          SizedBox(height: 12.0),
-          CustomInput(
-            // textkey: GlobalKey<FormFieldState>(),
-            controller: stateController,
-            label: 'State*',
+            controller: locationController,
+            label: 'Location*',
             keyboardType: TextInputType.text,
             isRequired: true,
             showSuffix: false,

@@ -1,7 +1,11 @@
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FindGroupTools extends StatefulWidget {
   @override
@@ -13,12 +17,18 @@ class FindGroupTools extends StatefulWidget {
 
 class _FindGroupToolsState extends State<FindGroupTools> {
   final TextEditingController _groupNameController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _adminNameController = TextEditingController();
-  var _option = 'normal';
+
+  void _searchGroup() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<GroupProvider>(context, listen: false)
+        .searchAllGroups(_groupNameController.text, userId);
+  }
+
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
@@ -68,16 +78,8 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 SizedBox(height: 12.0),
                 CustomInput(
                   textkey: GlobalKey<FormFieldState>(),
-                  controller: _cityController,
-                  label: 'City Name',
-                  isRequired: false,
-                  showSuffix: false,
-                ),
-                SizedBox(height: 12.0),
-                CustomInput(
-                  textkey: GlobalKey<FormFieldState>(),
-                  controller: _stateController,
-                  label: 'State*',
+                  controller: _locationController,
+                  label: 'Location',
                   isRequired: false,
                   showSuffix: false,
                 ),
@@ -105,73 +107,6 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   isRequired: false,
                   showSuffix: false,
                 ),
-                SizedBox(height: 30.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: _option == 'normal'
-                            ? AppColors.activeButton.withOpacity(0.3)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          side: MaterialStateProperty.all<BorderSide>(
-                              BorderSide(color: Colors.transparent)),
-                        ),
-                        child: Container(
-                          child: Text(
-                            'NORMAL',
-                            style: TextStyle(
-                                color: AppColors.lightBlue3,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        onPressed: () => setState(() => _option = 'normal'),
-                      ),
-                    ),
-                    SizedBox(width: 50.0),
-                    Container(
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: _option == 'feed'
-                            ? AppColors.activeButton.withOpacity(0.5)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          side: MaterialStateProperty.all<BorderSide>(
-                              BorderSide(color: Colors.transparent)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5.0, vertical: 5),
-                          child: Text(
-                            'FEED',
-                            style: TextStyle(
-                                color: AppColors.lightBlue3,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        onPressed: () => setState(() => _option = 'feed'),
-                      ),
-                    ),
-                  ],
-                ),
                 SizedBox(height: 60.0),
                 Container(
                   height: 30,
@@ -186,19 +121,24 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   ),
                   child: OutlinedButton(
                     style: ButtonStyle(
-                      side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.transparent)),
+                      side: MaterialStateProperty.all<BorderSide>(BorderSide(
+                          color: Settings.isDarkMode
+                              ? AppColors.darkBlue
+                              : AppColors.lightBlue4)),
                     ),
                     child: Container(
                       child: Text(
                         'SEARCH',
                         style: TextStyle(
-                            color: AppColors.lightBlue3,
+                            color: AppColors.lightBlue4,
                             fontSize: 14,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () {
+                      _searchGroup();
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ),
               ],
