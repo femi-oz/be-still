@@ -97,24 +97,25 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   _sendNotification() async {
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    GroupUserModel receiver;
     data.forEach((element) async {
       for (var i = 0; i < element.groupUsers.length; i++) {
-        var receiver = element.groupUsers
-            .where((e) => e.role == GroupUserRole.admin)
-            .toList();
-        if (receiver.length > 0) {
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .addPushNotification(
-                  '${_user.firstName} flagged a prayer as inappropriate',
-                  NotificationType.inappropriate_content,
-                  _user.firstName,
-                  _user.id,
-                  receiver[i].userId,
-                  'Prayer flagged as innapropriate',
-                  widget.prayerData.groupPrayer.id);
-        }
+        receiver =
+            element.groupUsers.firstWhere((e) => e.role == GroupUserRole.admin);
       }
     });
+    if (receiver != null) {
+      print(receiver.role);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .addPushNotification(
+              '${_user.firstName} flagged a prayer as inappropriate',
+              NotificationType.inappropriate_content,
+              _user.firstName,
+              _user.id,
+              receiver.userId,
+              'Prayer flagged as innapropriate',
+              widget.prayerData.groupPrayer.id);
+    }
   }
 
   void _flagAsInappropriate() async {
