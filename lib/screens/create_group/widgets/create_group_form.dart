@@ -1,5 +1,3 @@
-import 'package:be_still/enums/group_type.dart';
-import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/input_field.dart';
 
@@ -185,12 +183,6 @@ class CreateGroupForm extends StatelessWidget {
               //       onPressed: () => this.setOption(GroupType.feed)),
               // ),
             ],
-          ),
-          SizedBox(height: 30.0),
-          Text(
-            'PRIVATE groups setting will hide the group from general search, admin & moderators will need to send invites directly to add new members',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200),
           ),
         ],
       ),

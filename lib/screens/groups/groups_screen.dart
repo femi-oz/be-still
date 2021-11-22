@@ -7,6 +7,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -82,11 +83,11 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-    
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: CustomAppBar(showPrayerActions: false),
+        appBar: SettingsAppBar(title: 'GROUPS'),
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
@@ -171,26 +172,42 @@ class _GroupScreenState extends State<GroupScreen> {
                                             textColor: AppColors.lightBlue3,
                                             hasIcon: false,
                                             hasMore: true,
-                                            child:_user != null? e.groupUsers.firstWhere((x) => (x.userId == _user.id && x.role == GroupUserRole.admin), orElse: () => null) != null? Container(
-                                              alignment: Alignment.center,
-                                              height: 25,
-                                              width: 60,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color:
-                                                          AppColors.lightBlue3,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10)),
-                                              child: Text(
-                                                "Admin",
-                                                style: TextStyle(
-                                                  color: AppColors.lightBlue3,
-                                                  fontSize: 12
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ): SizedBox.shrink():SizedBox.shrink(),
+                                            child: _user != null
+                                                ? e.groupUsers.firstWhere(
+                                                            (x) => (x.userId ==
+                                                                    _user.id &&
+                                                                x.role ==
+                                                                    GroupUserRole
+                                                                        .admin),
+                                                            orElse: () =>
+                                                                null) !=
+                                                        null
+                                                    ? Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        height: 25,
+                                                        width: 60,
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color: AppColors
+                                                                    .lightBlue3,
+                                                                width: 1),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        child: Text(
+                                                          "Admin",
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .lightBlue3,
+                                                              fontSize: 12),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      )
+                                                    : SizedBox.shrink()
+                                                : SizedBox.shrink(),
                                             onPressMore: () =>
                                                 showModalBottomSheet(
                                               context: context,

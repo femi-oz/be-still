@@ -85,6 +85,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       createdOn: DateTime.now(),
     );
     final fullName = '${_user.firstName + ' ' + _user.lastName}';
+
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
           .addGroup(groupData, _user.id, _user.email, fullName);
@@ -268,27 +269,51 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             child: Column(
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).padding.top + 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0, left: 20),
-                    child: InkWell(
-                      child: Text(
-                        'CANCEL',
-                        style: AppTextStyles.boldText18
-                            .copyWith(color: AppColors.grey),
-                      ),
-                      onTap: isValid
-                          ? () => onCancel()
-                          : () {
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-                              // Navigator.pop(context);
-                              appCOntroller.setCurrentPage(3, true);
-                            },
-                    ),
-                  ),
-                ),
+                _step == 1
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 10.0,
+                              left: 20,
+                            ),
+                            child: InkWell(
+                              child: Text(
+                                'CANCEL',
+                                style: AppTextStyles.boldText18
+                                    .copyWith(color: AppColors.grey),
+                              ),
+                              onTap: isValid
+                                  ? () => onCancel()
+                                  : () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      // Navigator.pop(context);
+                                      appCOntroller.setCurrentPage(3, true);
+                                    },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 10.0,
+                              right: 20,
+                            ),
+                            child: InkWell(
+                                child: Text('ADD',
+                                    style: AppTextStyles.boldText18
+                                        .copyWith(color: Colors.blue)),
+                                onTap: () {
+                                  if (_step == 1) {
+                                    _save(groupProvider.isEdit, groupData);
+                                  } else {
+                                    NavigationService.instance.goHome(0);
+                                  }
+                                }),
+                          ),
+                        ],
+                      )
+                    : Container(),
                 Expanded(
                     child: SingleChildScrollView(
                   padding: EdgeInsets.all(20.0),
@@ -310,46 +335,46 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                           : GroupCreated(_groupNameController.text,
                               groupProvider.isEdit, newGroupId),
                       SizedBox(height: 30.0),
-                      _step == 1
-                          ? Container(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColors.lightBlue1,
-                                          AppColors.lightBlue2,
-                                        ],
-                                      ),
-                                    ),
-                                    child: TextButton(
-                                      onPressed: () {
-                                        if (_step == 1) {
-                                          _save(
-                                              groupProvider.isEdit, groupData);
-                                        } else {
-                                          NavigationService.instance.goHome(0);
-                                        }
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.transparent),
-                                      ),
-                                      child: Icon(AppIcons.bestill_next_arrow,
-                                          color: AppColors.white),
-                                    ),
-                                  ),
-                                  SizedBox(height: 60.0),
-                                ],
-                              ),
-                            )
-                          : Container(),
+                      // _step == 1
+                      //     ? Container(
+                      //         child: Column(
+                      //           children: <Widget>[
+                      //             Container(
+                      //               width: double.infinity,
+                      //               margin: EdgeInsets.only(bottom: 20),
+                      //               decoration: BoxDecoration(
+                      //                 gradient: LinearGradient(
+                      //                   begin: Alignment.centerLeft,
+                      //                   end: Alignment.centerRight,
+                      //                   colors: [
+                      //                     AppColors.lightBlue1,
+                      //                     AppColors.lightBlue2,
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               child: TextButton(
+                      //                 onPressed: () {
+                      // if (_step == 1) {
+                      //   _save(
+                      //       groupProvider.isEdit, groupData);
+                      // } else {
+                      //   NavigationService.instance.goHome(0);
+                      // }
+                      //                 },
+                      //                 style: ButtonStyle(
+                      //                   backgroundColor:
+                      //                       MaterialStateProperty.all<Color>(
+                      //                           Colors.transparent),
+                      //                 ),
+                      //                 child: Icon(AppIcons.bestill_next_arrow,
+                      //                     color: AppColors.white),
+                      //               ),
+                      //             ),
+                      //             SizedBox(height: 60.0),
+                      //           ],
+                      //         ),
+                      //       )
+                      //     : Container(),
                     ],
                   ),
                 )),

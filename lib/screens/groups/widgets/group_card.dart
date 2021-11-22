@@ -7,6 +7,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -260,7 +261,7 @@ class _GroupCardState extends State<GroupCard> {
                               child: OutlinedButton(
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.transparent)),
+                                        BorderSide(color: Colors.lightBlue)),
                                   ),
                                   child: Container(
                                     child: Row(
@@ -323,7 +324,8 @@ class _GroupCardState extends State<GroupCard> {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
-          color: AppColors.darkBlue,
+          color:
+              Settings.isDarkMode ? AppColors.darkBlue : AppColors.lightBlue4,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),

@@ -32,8 +32,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   _removeUserFromGroup(
       GroupUserModel user, CombineGroupUserStream group) async {
-    var userData =
-        Provider.of<UserProvider>(context, listen: false).selectedUser;
     final message = 'You have removed the user from your group';
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -494,7 +492,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
@@ -527,7 +525,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(
@@ -623,7 +621,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
@@ -656,7 +654,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(
@@ -1371,7 +1369,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   ),
                                   child: Container(
                                     child: Text(
-                                      'LEAVE',
+                                      'LEAVE GROUP',
                                       style: AppTextStyles.boldText20
                                           .copyWith(color: AppColors.red),
                                       textAlign: TextAlign.center,

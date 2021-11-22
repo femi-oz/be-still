@@ -1,5 +1,6 @@
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
@@ -28,6 +29,7 @@ class _FindAGroupState extends State<FindAGroup> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearchMode = true;
   final GlobalKey _keyButton = GlobalKey();
+  static const pageTitle = 'FIND A GROUP';
 
   @override
   void initState() {
@@ -53,11 +55,13 @@ class _FindAGroupState extends State<FindAGroup> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: CustomAppBar(
-          showPrayerActions: true,
-          isSearchMode: false,
-          globalKey: _keyButton,
-        ),
+        appBar: SettingsAppBar(title: pageTitle),
+
+        // CustomAppBar(
+        //   showPrayerActions: true,
+        //   isSearchMode: false,
+        //   globalKey: _keyButton,
+        // ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 20.0),
           height: MediaQuery.of(context).size.height * 1,
@@ -136,17 +140,18 @@ class _FindAGroupState extends State<FindAGroup> {
                               child: OutlinedButton(
                                 style: ButtonStyle(
                                   side: MaterialStateProperty.all<BorderSide>(
-                                      BorderSide(color: Colors.transparent)),
+                                      BorderSide(color: AppColors.lightBlue4)),
                                 ),
                                 child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(Icons.more_horiz,
                                           color: AppColors.lightBlue3),
                                       Text(
-                                        'ADVANCE SEARCH',
-                                        style: AppTextStyles.boldText24,
+                                        'ADVANCED SEARCH',
+                                        style: AppTextStyles.boldText20,
                                       ),
                                     ],
                                   ),
