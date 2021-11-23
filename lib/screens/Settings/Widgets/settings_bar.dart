@@ -39,7 +39,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
         widget.title,
         style: TextStyle(
           color: AppColors.bottomNavIconColor,
-          fontSize: 32,
+          fontSize: 22,
           fontWeight: FontWeight.w700,
           height: 1.5,
         ),

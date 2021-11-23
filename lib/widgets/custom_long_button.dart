@@ -14,19 +14,18 @@ class LongButton extends StatelessWidget {
   final String suffix;
   final Widget child;
 
-  LongButton({
-    this.onPress,
-    this.onPressMore,
-    this.text,
-    this.backgroundColor,
-    @required this.textColor,
-    this.hasIcon = true,
-    this.hasMore = false,
-    this.isDisabled = false,
-    this.icon,
-    this.suffix,
-    this.child
-  });
+  LongButton(
+      {this.onPress,
+      this.onPressMore,
+      this.text,
+      this.backgroundColor,
+      @required this.textColor,
+      this.hasIcon = true,
+      this.hasMore = false,
+      this.isDisabled = false,
+      this.icon,
+      this.suffix,
+      this.child});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -35,7 +34,7 @@ class LongButton extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          color: AppColors.cardBorder.withOpacity(isDisabled ? 0.5 : 1),
+          color: AppColors.lightBlue4.withOpacity(isDisabled ? 0.5 : 1),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -72,7 +71,8 @@ class LongButton extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
                           style: AppTextStyles.boldText18.copyWith(
-                            color: textColor.withOpacity(isDisabled ? 0.5 : 1.0),
+                            color:
+                                textColor.withOpacity(isDisabled ? 0.5 : 1.0),
                             height: 1,
                           ),
                         ),
@@ -92,13 +92,13 @@ class LongButton extends StatelessWidget {
                     )
                   : hasMore
                       ? Row(
-                        children: [
-                          child != null?child: SizedBox.shrink(),
-                          InkWell(
-                              onTap: () => onPressMore(),
-                              child: Icon(Icons.more_vert, color: textColor)),
-                        ],
-                      )
+                          children: [
+                            child != null ? child : SizedBox.shrink(),
+                            InkWell(
+                                onTap: () => onPressMore(),
+                                child: Icon(Icons.more_vert, color: textColor)),
+                          ],
+                        )
                       : Container(),
             ],
           ),

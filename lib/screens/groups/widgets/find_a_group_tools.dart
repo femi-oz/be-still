@@ -1,8 +1,12 @@
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class FindGroupTools extends StatefulWidget {
   @override
@@ -14,12 +18,18 @@ class FindGroupTools extends StatefulWidget {
 
 class _FindGroupToolsState extends State<FindGroupTools> {
   final TextEditingController _groupNameController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _adminNameController = TextEditingController();
-  // var _option = 'normal';
+
+  void _searchGroup() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<GroupProvider>(context, listen: false)
+        .searchAllGroups(_groupNameController.text, userId);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor[0],
@@ -205,9 +215,30 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-                ],
-              ),
-            ],
+                  child: OutlinedButton(
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(BorderSide(
+                          color: Settings.isDarkMode
+                              ? AppColors.darkBlue
+                              : AppColors.lightBlue4)),
+                    ),
+                    child: Container(
+                      child: Text(
+                        'SEARCH',
+                        style: TextStyle(
+                            color: AppColors.lightBlue4,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    onPressed: () {
+                      _searchGroup();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

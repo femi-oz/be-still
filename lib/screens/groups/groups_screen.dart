@@ -7,6 +7,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -39,7 +40,7 @@ class _GroupScreenState extends State<GroupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<MiscProvider>(context, listen: false)
-          .setPageTitle('MY GROUPS');
+          .setPageTitle('GROUPS');
       // appCOntroller.setCurrentPage(4, true);
     });
     super.initState();
@@ -81,8 +82,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-
+    var data = Provider.of<GroupProvider>(context, listen: true).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(

@@ -118,86 +118,86 @@ Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} t
               fontSize: 16,
               fontWeight: FontWeight.w500),
         ),
-        SizedBox(height: 30.0),
-        Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.2),
-          child: Text(
-            'Now spread the news and send some invitations.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Settings.isDarkMode
-                    ? AppColors.white
-                    : AppColors.lightBlue1,
-                fontSize: 16,
-                fontWeight: FontWeight.w400),
-          ),
-        ),
+        // SizedBox(height: 30.0),
+        // Padding(
+        //   padding: EdgeInsets.symmetric(
+        //       horizontal: MediaQuery.of(context).size.width * 0.2),
+        //   child: Text(
+        //     'Now spread the news and send some invitations.',
+        //     textAlign: TextAlign.center,
+        //     style: TextStyle(
+        //         color: Settings.isDarkMode
+        //             ? AppColors.white
+        //             : AppColors.lightBlue1,
+        //         fontSize: 16,
+        //         fontWeight: FontWeight.w400),
+        //   ),
+        // ),
         SizedBox(height: 40.0),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(
-              height: 30,
-              width: double.maxFinite,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(
-                  color: AppColors.cardBorder,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: OutlinedButton(
-                style: ButtonStyle(
-                  side: MaterialStateProperty.all<BorderSide>(
-                      BorderSide(color: AppColors.lightBlue4)),
-                ),
-                child: Container(
-                  child: Text(
-                    'SEND AN EMAIL',
-                    style: TextStyle(
-                        color: AppColors.lightBlue3,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ),
-                onPressed: () => generateInviteLink(0),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            Container(
-              height: 30,
-              width: double.maxFinite,
-              decoration: BoxDecoration(
-                color: option == NotificationType.text
-                    ? AppColors.activeButton.withOpacity(0.5)
-                    : Colors.transparent,
-                border: Border.all(
-                  color: AppColors.cardBorder,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: OutlinedButton(
-                style: ButtonStyle(
-                  side: MaterialStateProperty.all<BorderSide>(
-                      BorderSide(color: AppColors.lightBlue4)),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-                  child: Text(
-                    'TEXT MESSAGE',
-                    style: TextStyle(
-                        color: AppColors.lightBlue3,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ),
-                onPressed: () => generateInviteLink(1),
-              ),
-            ),
+            // Container(
+            //   height: 30,
+            //   width: double.maxFinite,
+            //   decoration: BoxDecoration(
+            //     color: Colors.transparent,
+            //     border: Border.all(
+            //       color: AppColors.cardBorder,
+            //       width: 1,
+            //     ),
+            //     borderRadius: BorderRadius.circular(5),
+            //   ),
+            //   child: OutlinedButton(
+            //     style: ButtonStyle(
+            //       side: MaterialStateProperty.all<BorderSide>(
+            //           BorderSide(color: AppColors.lightBlue4)),
+            //     ),
+            //     child: Container(
+            //       child: Text(
+            //         'SEND AN EMAIL',
+            //         style: TextStyle(
+            //             color: AppColors.lightBlue3,
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w700),
+            //       ),
+            //     ),
+            //     onPressed: () => generateInviteLink(0),
+            //   ),
+            // ),
+            // SizedBox(height: 20.0),
+            // Container(
+            //   height: 30,
+            //   width: double.maxFinite,
+            //   decoration: BoxDecoration(
+            //     color: option == NotificationType.text
+            //         ? AppColors.activeButton.withOpacity(0.5)
+            //         : Colors.transparent,
+            //     border: Border.all(
+            //       color: AppColors.cardBorder,
+            //       width: 1,
+            //     ),
+            //     borderRadius: BorderRadius.circular(5),
+            //   ),
+            //   child: OutlinedButton(
+            //     style: ButtonStyle(
+            //       side: MaterialStateProperty.all<BorderSide>(
+            //           BorderSide(color: AppColors.lightBlue4)),
+            //     ),
+            //     child: Padding(
+            //       padding:
+            //           const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+            //       child: Text(
+            //         'TEXT MESSAGE',
+            //         style: TextStyle(
+            //             color: AppColors.lightBlue3,
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w700),
+            //       ),
+            //     ),
+            //     onPressed: () => generateInviteLink(1),
+            //   ),
+            // ),
             SizedBox(height: 20.0),
             Container(
               height: 30,
