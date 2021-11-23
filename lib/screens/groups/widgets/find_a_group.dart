@@ -133,69 +133,59 @@ class _FindAGroupState extends State<FindAGroup> {
                               ),
                               SizedBox(height: 30.0),
                               Container(
-                                height: 30,
-                                padding: EdgeInsets.symmetric(horizontal: 15.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  border: Border.all(
-                                    color: AppColors.lightBlue4,
-                                    width: 1,
+                                  height: 30,
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border.all(
+                                      color: AppColors.lightBlue4,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: OutlinedButton(
-                                  style: ButtonStyle(
-                                    side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.transparent)),
-                                  ),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 5),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'ADVANCED SEARCH',
-                                          style: AppTextStyles.boldText20,
+                                  child: OutlinedButton(
+                                    style: ButtonStyle(
+                                      side:
+                                          MaterialStateProperty.all<BorderSide>(
+                                              BorderSide(
+                                                  color: Colors.transparent)),
+                                    ),
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'ADVANCED SEARCH',
+                                            style: AppTextStyles.boldText20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    onPressed: () => {
+                                      FocusScope.of(context).unfocus(),
+                                      // showModalBottomSheet(
+                                      //   context: context,
+                                      //   barrierColor:
+                                      //       AppColors.detailBackgroundColor[1],
+                                      //   backgroundColor:
+                                      //       AppColors.detailBackgroundColor[1],
+                                      //   isScrollControlled: true,
+                                      //   builder: (BuildContext context) {
+                                      //     return FindGroupTools();
+                                      //   },
+                                      // ),
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FindGroupTools(),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  onPressed: () => {
-                                    FocusScope.of(context).unfocus(),
-                                    showModalBottomSheet(
-                                      context: context,
-                                      barrierColor:
-                                          AppColors.detailBackgroundColor[1],
-                                      backgroundColor:
-                                          AppColors.detailBackgroundColor[1],
-                                      isScrollControlled: true,
-                                      builder: (BuildContext context) {
-                                        return FindGroupTools();
-                                      },
-                                    ),
-                                  },
-                                ),
-                                onPressed: () => {
-                                  FocusScope.of(context).unfocus(),
-                                  // showModalBottomSheet(
-                                  //   context: context,
-                                  //   barrierColor:
-                                  //       AppColors.detailBackgroundColor[1],
-                                  //   backgroundColor:
-                                  //       AppColors.detailBackgroundColor[1],
-                                  //   isScrollControlled: true,
-                                  //   builder: (BuildContext context) {
-                                  //     return FindGroupTools();
-                                  //   },
-                                  // ),
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FindGroupTools(),
-                                    ),
-                                  )
-                                },
-                              ),
+                                      )
+                                    },
+                                  )),
                               SizedBox(height: 30.0),
                               _searchController.text.isNotEmpty &&
                                       _searchController.text != ' '
