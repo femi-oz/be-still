@@ -46,6 +46,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     _locationController.text = isEdit ? groupData?.group?.location : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
+    _allowAutoJoin = groupData.groupSettings.allowAutoJoin;
     // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
@@ -84,11 +85,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
-          .addGroup(groupData, _user.id, fullName);
+          .addGroup(groupData, _user.id, fullName, _allowAutoJoin);
       BeStilDialog.hideLoading(context);
     } else {
-      await Provider.of<GroupProvider>(context, listen: false)
-          .editGroup(groupData, group.group.id);
+      await Provider.of<GroupProvider>(context, listen: false).editGroup(
+          groupData,
+          group.group.id,
+          _allowAutoJoin,
+          Provider.of<GroupProvider>(context, listen: false)
+                  .currentGroup
+                  .groupSettings
+                  ?.id ??
+              '');
       BeStilDialog.hideLoading(context);
     }
     setState(() {
@@ -233,6 +241,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         false;
   }
 
+  bool _allowAutoJoin = false;
   bool _autoValidate = false;
   Widget build(BuildContext context) {
     final groupProvider = Provider.of<GroupProvider>(context, listen: false);
@@ -316,6 +325,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     children: [
                       _step == 1
                           ? CreateGroupForm(
+                              autoJoin: _allowAutoJoin,
+                              allowAutoJoin: (val) {
+                                setState(() {
+                                  _allowAutoJoin = val;
+                                });
+                              },
+
                               formKey: _formKey,
                               locationController: _locationController,
                               descriptionController: _descriptionController,

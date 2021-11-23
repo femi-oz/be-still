@@ -76,6 +76,7 @@ class _FindAGroupState extends State<FindAGroup> {
               ),
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage),
+                fit: BoxFit.fitWidth,
                 alignment: Alignment.bottomCenter,
               ),
             ),
@@ -118,13 +119,11 @@ class _FindAGroupState extends State<FindAGroup> {
                           child: Column(
                             children: [
                               SizedBox(height: 30.0),
-                              Text(
-                                _searchController.text.isNotEmpty &&
-                                        _searchController.text != ' '
-                                    ? '${_filteredGroups.length} $matchText match your search.'
-                                    : '0 Groups match your search.',
-                                style: AppTextStyles.boldText20,
-                              ),
+                              if (_searchController.text.trim().isNotEmpty)
+                                Text(
+                                  '${_filteredGroups.length} $matchText match your search.',
+                                  style: AppTextStyles.boldText20,
+                                ),
                               SizedBox(height: 2.0),
                               Text(
                                 'Use Advance Search to narrow your results.',

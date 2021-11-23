@@ -88,12 +88,13 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addGroup(GroupModel groupData, String userID, String fullName) async {
+  Future addGroup(GroupModel groupData, String userID, String fullName,
+      bool allowAutoJoin) async {
     if (_firebaseAuth.currentUser == null) return null;
     {
       final _userGroupId = Uuid().v1();
       return _groupService
-          .addGroup(userID, groupData, fullName, _userGroupId)
+          .addGroup(userID, groupData, fullName, _userGroupId, allowAutoJoin)
           .then((value) async {
         await Future.delayed(Duration(milliseconds: 500));
         await setCurrentGroupById(_userGroupId, userID);
@@ -101,9 +102,11 @@ class GroupProvider with ChangeNotifier {
     }
   }
 
-  Future editGroup(GroupModel groupData, String groupId) async {
+  Future editGroup(GroupModel groupData, String groupId, bool allowAutoJoin,
+      String groupSettingsId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.editGroup(groupData, groupId);
+    return await _groupService.editGroup(
+        groupData, groupId, allowAutoJoin, groupSettingsId);
   }
 
   Future leaveGroup(String userGroupId) async {
