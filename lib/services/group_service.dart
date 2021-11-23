@@ -31,7 +31,7 @@ class GroupService {
       FirebaseFirestore.instance.collection("GroupSettings");
 
   GroupUserModel populateGroupUser(
-    GroupModel groupData,
+    // GroupModel groupData,
     String userID,
     String groupID,
     String role,
@@ -113,16 +113,16 @@ class GroupService {
                       .toList());
           Stream<List<GroupSettings>> groupSettings =
               _groupSettingsCollectionReference
-                  .where('GroupId', isEqualTo: g['GroupId'])
+                  .where('GroupId', isEqualTo: g.id)
                   .snapshots()
                   .asyncMap((e) {
             if (e.docs.length == 0) {
-              addGroupSettings(userId, g['GroupId']);
+              addGroupSettings(userId, g.id);
               return [
                 GroupSettings(
                     allowAutoJoin: false,
                     userId: userId,
-                    groupId: g['GroupId'],
+                    groupId: g.id,
                     enableNotificationFormNewPrayers: false,
                     enableNotificationForUpdates: false,
                     notifyOfMembershipRequest: false,
@@ -151,7 +151,7 @@ class GroupService {
                     groupUsers,
                     group,
                     groupRequests,
-                    groupSettings,
+                    groupSettings[0],
                   ));
         });
       }).switchMap((observables) {
@@ -191,16 +191,16 @@ class GroupService {
                     .toList());
         Stream<List<GroupSettings>> groupSettings =
             _groupSettingsCollectionReference
-                .where('GroupId', isEqualTo: g['GroupId'])
+                .where('GroupId', isEqualTo: g.id)
                 .snapshots()
                 .asyncMap((e) {
           if (e.docs.length == 0) {
-            addGroupSettings(userId, g['GroupId']);
+            addGroupSettings(userId, g.id);
             return [
               GroupSettings(
                   allowAutoJoin: false,
                   userId: userId,
-                  groupId: g['GroupId'],
+                  groupId: g.id,
                   enableNotificationFormNewPrayers: false,
                   enableNotificationForUpdates: false,
                   notifyOfMembershipRequest: false,
@@ -221,7 +221,7 @@ class GroupService {
             groupSettings,
             (groupUsers, group, groupRequests, groupSettings) =>
                 CombineGroupUserStream(
-                    groupUsers, group, groupRequests, groupSettings));
+                    groupUsers, group, groupRequests, groupSettings[0]));
         // });
       }).switchMap((observables) {
         return observables;
@@ -382,7 +382,7 @@ class GroupService {
               groupSettings,
             ) =>
                 CombineGroupUserStream(
-                    groupUsers, group, groupRequests, groupSettings));
+                    groupUsers, group, groupRequests, groupSettings[0]));
       }).switchMap((observables) {
         return observables;
       });
@@ -408,7 +408,7 @@ class GroupService {
       //     .add({'userId': userId});
 
       _userGroupCollectionReference.doc(userGroupId).set(populateGroupUser(
-            groupData,
+            // groupData,
             userId,
             groupData.id,
             GroupUserRole.admin,
@@ -490,7 +490,7 @@ class GroupService {
       //             groupData, userId, groupId, GroupUserRole.member)
       //         .toJson());
       _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
-            groupData,
+            // groupData,
             userId,
             groupId,
             GroupUserRole.member,
@@ -507,6 +507,26 @@ class GroupService {
           e.message != null ? e.message : e.toString(),
           userId,
           'GROUP/service/acceptRequest');
+      throw HttpException(e.message);
+    }
+  }
+
+  autoJoinGroup(String groupId, String userId, String fullName) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      final _userGroupId = Uuid().v1();
+      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
+            userId,
+            groupId,
+            GroupUserRole.member,
+            userId,
+            fullName,
+          ).toJson());
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/autoJoinGroup');
       throw HttpException(e.message);
     }
   }

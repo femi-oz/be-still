@@ -170,6 +170,15 @@ class GroupProvider with ChangeNotifier {
     );
   }
 
+  Future autoJoinGroup(String groupId, String userId, String fullName) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    return await _groupService.autoJoinGroup(
+      groupId,
+      userId,
+      fullName,
+    );
+  }
+
   Future denyRequest(String groupId, String requestId) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.denyRequest(groupId, requestId);
