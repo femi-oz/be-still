@@ -59,7 +59,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'ADVANCE SEARCH',
+                  'ADVANCED SEARCH',
                   style: TextStyle(
                       color: AppColors.lightBlue3,
                       fontSize: 16,

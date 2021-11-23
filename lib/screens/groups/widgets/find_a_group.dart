@@ -122,15 +122,18 @@ class _FindAGroupState extends State<FindAGroup> {
                                 _searchController.text.isNotEmpty &&
                                         _searchController.text != ' '
                                     ? '${_filteredGroups.length} $matchText match your search.'
-                                    : '0 Groups match your search.',
+                                    : '',
                                 style: AppTextStyles.boldText20,
                               ),
                               SizedBox(height: 2.0),
-                              Text(
-                                'Use Advance Search to narrow your results.',
-                                style: AppTextStyles.regularText15
-                                    .copyWith(color: AppColors.offWhite4),
-                              ),
+                              _searchController.text.isNotEmpty &&
+                                      _searchController.text != ' '
+                                  ? Container()
+                                  : Text(
+                                      'Use Advanced Search to narrow your results.',
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(color: AppColors.offWhite4),
+                                    ),
                               SizedBox(height: 30.0),
                               Container(
                                 height: 30,
