@@ -60,6 +60,10 @@ class GroupProvider with ChangeNotifier {
     return _groupService.getGroup(groupdId, userId);
   }
 
+  emptyGroupList() {
+    _filteredAllGroups = [];
+  }
+
   Future setAllGroups(String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
@@ -75,11 +79,60 @@ class GroupProvider with ChangeNotifier {
 
   Future searchAllGroups(String searchQuery, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
+    print('sss');
+    if (searchQuery.trim().isEmpty) {
+      _filteredAllGroups = [];
+      notifyListeners();
+      return;
+    }
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
             data.group.name.toLowerCase().contains(searchQuery.toLowerCase()) &&
             !data.groupUsers.map((e) => e.userId).contains(userId))
         .toList();
+    _filteredAllGroups = filteredGroups;
+
+    _filteredAllGroups = _filteredAllGroups
+        .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
+        .toList();
+    notifyListeners();
+  }
+
+  Future advanceSearchAllGroups(String name, String userId, String location,
+      String church, String admin, String purpose) async {
+    if (_firebaseAuth.currentUser == null) return null;
+
+// filter by name
+// filter rest by location
+// filter rest by church
+// filter rest by admin
+// filter rest by purpose
+    List<CombineGroupUserStream> filteredGroups = _allGroups
+        .where((CombineGroupUserStream data) =>
+            data.group.name.toLowerCase().contains(name.toLowerCase()))
+        .toList();
+
+    filteredGroups = filteredGroups
+        .where((CombineGroupUserStream data) =>
+            data.group.location.toLowerCase().contains(location.toLowerCase()))
+        .toList();
+
+    filteredGroups = filteredGroups
+        .where((CombineGroupUserStream data) => data.group.organization
+            .toLowerCase()
+            .contains(church.toLowerCase()))
+        .toList();
+
+    filteredGroups = filteredGroups
+        .where((CombineGroupUserStream data) => data.group.description
+            .toLowerCase()
+            .contains(purpose.toLowerCase()))
+        .toList();
+    filteredGroups = filteredGroups
+        .where((CombineGroupUserStream data) => data.groupUsers
+            .any((u) => u.fullName.toLowerCase().contains(admin.toLowerCase())))
+        .toList();
+
     _filteredAllGroups = filteredGroups;
 
     _filteredAllGroups = _filteredAllGroups
