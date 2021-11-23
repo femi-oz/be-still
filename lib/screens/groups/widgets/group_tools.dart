@@ -79,6 +79,7 @@ class _GroupToolsState extends State<GroupTools> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          SizedBox(height: 80),
           Row(
             children: [
               TextButton.icon(
@@ -114,86 +115,87 @@ class _GroupToolsState extends State<GroupTools> {
           //   textColor: AppColors.lightBlue3,
           //   onPressMore: () => null,
           // ),
-          SizedBox(height: 10),
-          currentGroupUser.role == GroupUserRole.admin
-              ? LongButton(
-                  icon: Icons.edit,
-                  onPress: () => onEditTap(widget.groupData),
-                  text: "Edit Group",
-                  backgroundColor: Settings.isDarkMode
-                      ? AppColors.backgroundColor[0]
-                      : Colors.white,
-                  textColor: AppColors.lightBlue3,
-                  onPressMore: () => null,
-                )
-              : Container(),
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 10),
+              currentGroupUser.role == GroupUserRole.admin
+                  ? LongButton(
+                      icon: Icons.edit,
+                      onPress: () => onEditTap(widget.groupData),
+                      text: "Edit Group",
+                      backgroundColor:
+                          AppColors.groupActionBgColor.withOpacity(0.9),
+                      textColor: AppColors.addprayerTextColor,
+                      onPressMore: () => null,
+                    )
+                  : Container(),
 
-          SizedBox(height: 10),
-          LongButton(
-            icon: Icons.add,
-            onPress: () {
-              AppCOntroller appCOntroller = Get.find();
-              appCOntroller.setCurrentPage(10, true);
-              Navigator.pop(context);
-            },
-            text: "Add a Prayer",
-            backgroundColor: Settings.isDarkMode
-                ? AppColors.backgroundColor[0]
-                : Colors.white,
-            textColor: AppColors.lightBlue3,
-            onPressMore: () => null,
-          ),
-          SizedBox(height: 10),
-          LongButton(
-            icon: Icons.more_vert,
-            onPress: () {
-              AppCOntroller appCOntroller = Get.find();
+              SizedBox(height: 10),
+              LongButton(
+                icon: Icons.add,
+                onPress: () {
+                  AppCOntroller appCOntroller = Get.find();
+                  appCOntroller.setCurrentPage(10, true);
+                  Navigator.pop(context);
+                },
+                text: "Add a Prayer",
+                backgroundColor: AppColors.groupActionBgColor.withOpacity(0.9),
+                textColor: AppColors.addprayerTextColor,
+                onPressMore: () => null,
+              ),
+              SizedBox(height: 10),
+              LongButton(
+                icon: Icons.more_vert,
+                onPress: () {
+                  AppCOntroller appCOntroller = Get.find();
 
-              appCOntroller.setCurrentPage(4, true);
-              appCOntroller.settingsTab = 4;
-              Navigator.pop(context);
-            },
-            text: "Manage Settings",
-            backgroundColor: Settings.isDarkMode
-                ? AppColors.backgroundColor[0]
-                : Colors.white,
-            textColor: AppColors.lightBlue3,
-            onPressMore: () => null,
-          ),
-          // SizedBox(height: 10),
-          // LongButton(
-          //   icon: Icons.share,
-          //   onPress: null,
-          //   text: "Invite - Email",
-          //   backgroundColor: Settings.isDarkMode
-          //       ? AppColors.backgroundColor[0]
-          //       : Colors.white,
-          //   textColor: AppColors.lightBlue3,
-          //   onPressMore: () => null,
-          // ),
-          // SizedBox(height: 10),
-          // LongButton(
-          //   icon: Icons.share,
-          //   onPress: null,
-          //   text: "Invite - Text",
-          //   backgroundColor: Settings.isDarkMode
-          //       ? AppColors.backgroundColor[0]
-          //       : Colors.white,
-          //   textColor: AppColors.lightBlue3,
-          //   onPressMore: () => null,
-          // ),
-          // SizedBox(height: 10),
-          // LongButton(
-          //   icon: Icons.share,
-          //   onPress: null,
-          //   text: "Invite - QR Code",
-          //   backgroundColor: Settings.isDarkMode
-          //       ? AppColors.backgroundColor[0]
-          //       : Colors.white,
-          //   textColor: AppColors.lightBlue3,
-          //   onPressMore: () => null,
-          // ),
-          SizedBox(height: 60),
+                  appCOntroller.setCurrentPage(4, true);
+                  appCOntroller.settingsTab = 4;
+                  Navigator.pop(context);
+                },
+                text: "Manage Settings",
+                backgroundColor: AppColors.groupActionBgColor.withOpacity(0.9),
+                textColor: AppColors.addprayerTextColor,
+                onPressMore: () => null,
+              ),
+              // SizedBox(height: 10),
+              // LongButton(
+              //   icon: Icons.share,
+              //   onPress: null,
+              //   text: "Invite - Email",
+              //   backgroundColor: Settings.isDarkMode
+              //       ? AppColors.backgroundColor[0]
+              //       : Colors.white,
+              //   textColor: AppColors.lightBlue3,
+              //   onPressMore: () => null,
+              // ),
+              // SizedBox(height: 10),
+              // LongButton(
+              //   icon: Icons.share,
+              //   onPress: null,
+              //   text: "Invite - Text",
+              //   backgroundColor: Settings.isDarkMode
+              //       ? AppColors.backgroundColor[0]
+              //       : Colors.white,
+              //   textColor: AppColors.lightBlue3,
+              //   onPressMore: () => null,
+              // ),
+              // SizedBox(height: 10),
+              // LongButton(
+              //   icon: Icons.share,
+              //   onPress: null,
+              //   text: "Invite - QR Code",
+              //   backgroundColor: Settings.isDarkMode
+              //       ? AppColors.backgroundColor[0]
+              //       : Colors.white,
+              //   textColor: AppColors.lightBlue3,
+              //   onPressMore: () => null,
+              // ),
+              SizedBox(height: 60),
+            ],
+          ))
         ],
       ),
     );

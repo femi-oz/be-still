@@ -858,43 +858,43 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ),
                             initiallyExpanded: false,
                             children: <Widget>[
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                        'To submit prayers to this group via email:',
-                                        style: AppTextStyles.regularText13
-                                            .copyWith(
-                                                color: AppColors.textFieldText))
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 30),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      data.group.email.toString(),
-                                      style: AppTextStyles.regularText16b
-                                          .copyWith(
-                                              color: AppColors.lightBlue3),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
+                              // Padding(
+                              //   padding:
+                              //       const EdgeInsets.symmetric(horizontal: 20),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: <Widget>[
+                              //       Text(
+                              //           'To submit prayers to this group via email:',
+                              //           style: AppTextStyles.regularText13
+                              //               .copyWith(
+                              //                   color: AppColors.textFieldText))
+                              //     ],
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 10,
+                              // ),
+                              // Padding(
+                              //   padding:
+                              //       const EdgeInsets.symmetric(horizontal: 30),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: <Widget>[
+                              //       Text(
+                              //         data.group.email.toString(),
+                              //         style: AppTextStyles.regularText16b
+                              //             .copyWith(
+                              //                 color: AppColors.lightBlue3),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 30,
+                              // ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
@@ -923,7 +923,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Flexible(
                                       child: Text(
-                                        data.group.description,
+                                        data.group.description.isEmpty
+                                            ? "N/A"
+                                            : data.group.description,
                                         style: AppTextStyles.regularText14
                                             .copyWith(
                                                 color: AppColors.textFieldText),
@@ -961,10 +963,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      data.group.organization,
+                                      data.group.organization.isEmpty
+                                          ? "N/A"
+                                          : data.group.organization,
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
-                                              color: AppColors.lightBlue3),
+                                              color: AppColors.textFieldText),
                                     ),
                                   ],
                                 ),

@@ -169,7 +169,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                               appCOntroller.setCurrentPage(
                                                   8, true);
                                             },
-                                            text: e.group.name.capitalizeFirst,
+                                            text: e.group.name,
                                             backgroundColor:
                                                 AppColors.groupCardBgColor,
                                             textColor: AppColors.lightBlue3,

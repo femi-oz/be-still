@@ -35,7 +35,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
   // bool isEdit = false;
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     _stateController.text = isEdit ? locationArr[1].trim() : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
-    _emailController.text = isEdit ? groupData?.group?.email : '';
+    // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
 
@@ -75,7 +75,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       location: '${_cityController.text}, ${_stateController.text}',
       organization: _organizationController.text,
       description: _descriptionController.text,
-      email: _emailController.text,
+      // email: _emailController.text,
       status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
@@ -241,7 +241,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final groupProvider = Provider.of<GroupProvider>(context, listen: false);
     final groupData = groupProvider.currentGroup;
     bool isValid = _groupNameController.text.isNotEmpty ||
-        _emailController.text.isNotEmpty ||
+        // _emailController.text.isNotEmpty ||
         _cityController.text.isNotEmpty ||
         _stateController.text.isNotEmpty;
     return WillPopScope(
@@ -300,7 +300,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               cityController: _cityController,
                               descriptionController: _descriptionController,
                               groupNameController: _groupNameController,
-                              emailController: _emailController,
+                              // emailController: _emailController,
                               option: _option,
                               organizationController: _organizationController,
                               stateController: _stateController,

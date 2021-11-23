@@ -10,7 +10,7 @@ class CreateGroupForm extends StatelessWidget {
   final Function setOption;
   final option;
   final formKey;
-  final emailController;
+  // final emailController;
   final bool isEdit;
   final bool autoValidate;
 
@@ -23,7 +23,7 @@ class CreateGroupForm extends StatelessWidget {
       this.setOption,
       this.option,
       this.formKey,
-      this.emailController,
+      // this.emailController,
       this.autoValidate,
       this.isEdit});
 
@@ -44,15 +44,15 @@ class CreateGroupForm extends StatelessWidget {
             showSuffix: false,
           ),
           SizedBox(height: 12.0),
-          CustomInput(
-            // textkey: GlobalKey<FormFieldState>(),
-            controller: emailController,
-            label: 'Email*',
-            isEmail: true,
-            keyboardType: TextInputType.emailAddress,
-            isRequired: true,
-            showSuffix: false,
-          ),
+          // CustomInput(
+          //   // textkey: GlobalKey<FormFieldState>(),
+          //   controller: emailController,
+          //   label: 'Email*',
+          //   isEmail: true,
+          //   keyboardType: TextInputType.emailAddress,
+          //   isRequired: true,
+          //   showSuffix: false,
+          // ),
           SizedBox(height: 12.0),
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),

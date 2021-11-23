@@ -157,17 +157,23 @@ class _FindAGroupState extends State<FindAGroup> {
                                 ),
                                 onPressed: () => {
                                   FocusScope.of(context).unfocus(),
-                                  showModalBottomSheet(
-                                    context: context,
-                                    barrierColor:
-                                        AppColors.detailBackgroundColor[1],
-                                    backgroundColor:
-                                        AppColors.detailBackgroundColor[1],
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return FindGroupTools();
-                                    },
-                                  ),
+                                  // showModalBottomSheet(
+                                  //   context: context,
+                                  //   barrierColor:
+                                  //       AppColors.detailBackgroundColor[1],
+                                  //   backgroundColor:
+                                  //       AppColors.detailBackgroundColor[1],
+                                  //   isScrollControlled: true,
+                                  //   builder: (BuildContext context) {
+                                  //     return FindGroupTools();
+                                  //   },
+                                  // ),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FindGroupTools(),
+                                    ),
+                                  )
                                 },
                               ),
                             ),

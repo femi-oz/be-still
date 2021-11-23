@@ -59,7 +59,7 @@ class GroupService {
       modifiedBy: groupData.modifiedBy,
       modifiedOn: groupData.modifiedOn,
       description: groupData.description,
-      email: groupData.email,
+      // email: groupData.email,
       isFeed: groupData.isFeed,
       isPrivate: groupData.isPrivate,
       location: groupData.location,
@@ -336,7 +336,7 @@ class GroupService {
         {
           "Name": groupData.name,
           "Description": groupData.description,
-          "Email": groupData.email,
+          // "Email": groupData.email,
           "Organization": groupData.organization,
           "Location": groupData.location,
           "Status": groupData.status,

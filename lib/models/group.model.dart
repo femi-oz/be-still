@@ -6,7 +6,7 @@ class GroupModel {
   final String id;
   final String name;
   final String status;
-  final String email;
+  // final String email;
   final String description;
   final String organization;
   final String location;
@@ -21,7 +21,7 @@ class GroupModel {
     this.id,
     @required this.name,
     @required this.status,
-    @required this.email,
+    // @required this.email,
     @required this.description,
     @required this.organization,
     @required this.location,
@@ -38,8 +38,8 @@ class GroupModel {
         name = snapshot.data()['Name'],
         description = snapshot.data()['Description'] ?? 'N/A',
         status = snapshot.data()['Status'] ?? 'N/A',
-        email = snapshot.data()['Email'],
-        organization = snapshot.data()['Organization'],
+        // email = snapshot.data()['Email'],
+        organization = snapshot.data()['Organization'] ?? 'N/A',
         location = snapshot.data()['Location'],
         isPrivate = snapshot.data()['IsPrivate'],
         isFeed = snapshot.data()['IsFeed'],
@@ -54,7 +54,7 @@ class GroupModel {
       'Name': name,
       'Description': description,
       'Status': status,
-      'Email': email,
+      // 'Email': email,
       'Organization': organization,
       'Location': location,
       'IsPrivate': isPrivate,
