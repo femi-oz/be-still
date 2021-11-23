@@ -23,9 +23,7 @@ class SettingsService {
   final CollectionReference<Map<String, dynamic>>
       _sharingSettingsCollectionReference =
       FirebaseFirestore.instance.collection("SharingSetting");
-  final CollectionReference<Map<String, dynamic>>
-      _groupSettingsCollectionReference =
-      FirebaseFirestore.instance.collection("GroupSettings");
+
   final CollectionReference<Map<String, dynamic>>
       _groupPrefernceSettingsCollectionReference =
       FirebaseFirestore.instance.collection("GroupPreferenceSettings");
@@ -84,21 +82,6 @@ class SettingsService {
     return groupPreferenceSettings;
   }
 
-  populateGroupSettings(String userId) {
-    GroupSettings groupsSettings = GroupSettings(
-        userId: userId,
-        enableNotificationFormNewPrayers: false,
-        enableNotificationForUpdates: false,
-        notifyOfMembershipRequest: false,
-        notifyMeofFlaggedPrayers: false,
-        notifyWhenNewMemberJoins: false,
-        createdBy: userId,
-        createdOn: DateTime.now(),
-        modifiedBy: userId,
-        modifiedOn: DateTime.now());
-    return groupsSettings;
-  }
-
   populateSharingSettings(String userId, String email) {
     SharingSettingsModel sharingSettings = SharingSettingsModel(
         userId: userId,
@@ -144,25 +127,6 @@ class SettingsService {
           e.message != null ? e.message : e.toString(),
           userId,
           'SETTINGS/service/addSettings');
-      throw HttpException(e.message);
-    }
-  }
-
-  Future<bool> addGroupSettings(String userId) async {
-    final groupSettingsId = Uuid().v1();
-
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-
-      _groupSettingsCollectionReference
-          .doc(groupSettingsId)
-          .set(populateGroupSettings(userId).toJson());
-      return true;
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userId,
-          'SETTINGS/service/addGroupSettings');
       throw HttpException(e.message);
     }
   }
@@ -233,27 +197,27 @@ class SettingsService {
     }
   }
 
-  Future<GroupSettings> getGroupSettings(String userId) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      var settings = await _groupSettingsCollectionReference
-          .where('UserId', isEqualTo: userId)
-          .get();
-      if (settings.docs.length < 1) {
-        await addGroupSettings(userId);
-        settings = await _groupSettingsCollectionReference
-            .where('UserId', isEqualTo: userId)
-            .get();
-      }
-      return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userId,
-          'SETTINGS/service/getGroupSettings');
-      throw HttpException(e.message);
-    }
-  }
+  // Future<GroupSettings> getGroupSettings(String userId) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null) return null;
+  //     var settings = await _groupSettingsCollectionReference
+  //         .where('UserId', isEqualTo: userId)
+  //         .get();
+  //     if (settings.docs.length < 1) {
+  //       await addGroupSettings(userId);
+  //       settings = await _groupSettingsCollectionReference
+  //           .where('UserId', isEqualTo: userId)
+  //           .get();
+  //     }
+  //     return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
+  //   } catch (e) {
+  //     locator<LogService>().createLog(
+  //         e.message != null ? e.message : e.toString(),
+  //         userId,
+  //         'SETTINGS/service/getGroupSettings');
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
   Future<GroupPreferenceSettings> getGroupPreferenceSettings(
       String userId) async {
@@ -317,20 +281,6 @@ class SettingsService {
     } catch (e) {
       locator<LogService>().createLog(
           e.message, settingsId, 'SETTINGS/service/updateSharingSettings');
-      throw HttpException(e.message);
-    }
-  }
-
-  Future updateGroupSettings(
-      {String key, dynamic value, String groupSettingsId}) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      _groupSettingsCollectionReference.doc(groupSettingsId).update(
-        {key: value},
-      );
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message, groupSettingsId, 'SETTINGS/service/updateGroupSettings');
       throw HttpException(e.message);
     }
   }

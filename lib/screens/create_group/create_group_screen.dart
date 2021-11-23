@@ -75,7 +75,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       location: '${_cityController.text}, ${_stateController.text}',
       organization: _organizationController.text,
       description: _descriptionController.text,
-      // email: _emailController.text,
       status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
@@ -87,7 +86,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final fullName = '${_user.firstName + ' ' + _user.lastName}';
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
-          .addGroup(groupData, _user.id, _user.email, fullName);
+          .addGroup(groupData, _user.id, fullName);
       BeStilDialog.hideLoading(context);
     } else {
       await Provider.of<GroupProvider>(context, listen: false)

@@ -1,4 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
@@ -159,18 +160,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             fontWeight: FontWeight.w500,
                             height: 1.5),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Text(
-                          user.email ?? '',
-                          style: TextStyle(
-                              color: AppColors.textFieldText,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                              height: 1.5),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 10.0),
+                      //   child: Text(
+                      //     user.email ?? '',
+                      //     style: TextStyle(
+                      //         color: AppColors.textFieldText,
+                      //         fontSize: 12,
+                      //         fontWeight: FontWeight.w300,
+                      //         height: 1.5),
+                      //     overflow: TextOverflow.ellipsis,
+                      //   ),
+                      // ),
                       // Text(
                       //   'might be from Houston, TX',
                       //   style: TextStyle(
@@ -740,7 +741,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _settingsProvider = Provider.of<SettingsProvider>(context);
-    final _groupSettings = Provider.of<SettingsProvider>(context).groupSettings;
+    final _groupProvider = Provider.of<GroupProvider>(context);
     final _groupPreferenceSettings =
         Provider.of<SettingsProvider>(context).groupPreferenceSettings;
 
@@ -829,7 +830,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         margin: EdgeInsets.only(
                             left: MediaQuery.of(context).size.width * 0.1),
                         child: Text(
-                          data.group.name.capitalizeFirst,
+                          data.group.name,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white70),
@@ -1064,59 +1065,72 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             ),
                             SizedBox(height: 15),
+                            if (isAdmin || isModerator)
+                              CustomToggle(
+                                title: 'Allow auto join?',
+                                onChange: (value) => _groupProvider
+                                    .updateGroupSettings(_currentUser.id,
+                                        key: SettingsKey.allowAutoJoin,
+                                        value: value,
+                                        settingsId: data.groupSettings.id),
+                                value: data.groupSettings.allowAutoJoin,
+                              ),
+                            SizedBox(height: 15),
                             CustomToggle(
                               title:
                                   'Enable notifications for New Prayers for this group?',
-                              onChange: (value) => _settingsProvider
+                              onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id,
                                       key: 'EnableNotificationFormNewPrayers',
                                       value: value,
-                                      settingsId: _groupSettings.id),
-                              value: _groupSettings
-                                  ?.enableNotificationFormNewPrayers,
+                                      settingsId: data.groupSettings.id),
+                              value: data.groupSettings
+                                  .enableNotificationFormNewPrayers,
                             ),
                             CustomToggle(
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
-                              onChange: (value) => _settingsProvider
+                              onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id,
                                       key: 'EnableNotificationForUpdates',
                                       value: value,
-                                      settingsId: _groupSettings.id),
-                              value:
-                                  _groupSettings?.enableNotificationForUpdates,
+                                      settingsId: data.groupSettings.id),
+                              value: data
+                                  .groupSettings?.enableNotificationForUpdates,
                             ),
                             if (isMember)
                               CustomToggle(
                                 title:
                                     'Notify me when new members joins this group',
-                                onChange: (value) => _settingsProvider
+                                onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyWhenNewMemberJoins',
                                         value: value,
-                                        settingsId: _groupSettings.id),
-                                value: _groupSettings?.notifyWhenNewMemberJoins,
+                                        settingsId: data.groupSettings.id),
+                                value: data
+                                    .groupSettings?.notifyWhenNewMemberJoins,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
                                 title: 'Notify me of membership requests',
-                                onChange: (value) => _settingsProvider
+                                onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyOfMembershipRequest',
                                         value: value,
-                                        settingsId: _groupSettings.id),
-                                value:
-                                    _groupSettings?.notifyOfMembershipRequest,
+                                        settingsId: data.groupSettings.id),
+                                value: data
+                                    .groupSettings?.notifyOfMembershipRequest,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
                                 title: 'Notify me of flagged prayers',
-                                onChange: (value) => _settingsProvider
+                                onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyMeofFlaggedPrayers',
                                         value: value,
-                                        settingsId: _groupSettings.id),
-                                value: _groupSettings?.notifyMeofFlaggedPrayers,
+                                        settingsId: data.groupSettings.id),
+                                value: data
+                                    .groupSettings?.notifyMeofFlaggedPrayers,
                               ),
                           ],
                         ),

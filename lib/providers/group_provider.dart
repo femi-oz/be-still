@@ -58,8 +58,8 @@ class GroupProvider with ChangeNotifier {
     });
   }
 
-  Stream<CombineGroupUserStream> getGroup(groupdId) {
-    return _groupService.getGroup(groupdId);
+  Stream<CombineGroupUserStream> getGroup(groupdId, String userId) {
+    return _groupService.getGroup(groupdId, userId);
   }
 
   Future setAllGroups(String userId) async {
@@ -90,16 +90,15 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addGroup(GroupModel groupData, String userID, String email,
-      String fullName) async {
+  Future addGroup(GroupModel groupData, String userID, String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
     {
       final _userGroupId = Uuid().v1();
       return _groupService
-          .addGroup(userID, groupData, email, fullName, _userGroupId)
+          .addGroup(userID, groupData, fullName, _userGroupId)
           .then((value) async {
         await Future.delayed(Duration(milliseconds: 500));
-        await setCurrentGroupById(_userGroupId);
+        await setCurrentGroupById(_userGroupId, userID);
       });
     }
   }
@@ -125,10 +124,10 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setCurrentGroupById(String userGroupId) async {
+  Future setCurrentGroupById(String userGroupId, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService
-        .getUserGroupById(userGroupId)
+        .getUserGroupById(userGroupId, userId)
         .asBroadcastStream()
         .listen((userGroup) {
       _currentGroup = userGroup;
@@ -160,10 +159,15 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future acceptRequest(GroupModel groupData, String groupId, String userId,
-      String requestId, String fullName, String email) async {
+      String requestId, String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.acceptRequest(
-        groupId, groupData, userId, requestId, fullName, email);
+      groupId,
+      groupData,
+      userId,
+      requestId,
+      fullName,
+    );
   }
 
   Future denyRequest(String groupId, String requestId) async {
@@ -179,5 +183,12 @@ class GroupProvider with ChangeNotifier {
   void setJoinGroupId(String value) {
     _groupJoinId = value;
     notifyListeners();
+  }
+
+  Future updateGroupSettings(String userId,
+      {String key, dynamic value, String settingsId}) async {
+    if (_firebaseAuth.currentUser == null) return null;
+    await _groupService.updateGroupSettings(
+        key: key, groupSettingsId: settingsId, value: value);
   }
 }
