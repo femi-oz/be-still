@@ -1,3 +1,4 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
@@ -117,7 +118,7 @@ class GroupService {
                   .snapshots()
                   .asyncMap((e) {
             if (e.docs.length == 0) {
-              addGroupSettings(userId, g.id);
+              addGroupSettings(userId, g.id, false);
               return [
                 GroupSettings(
                     allowAutoJoin: false,
@@ -195,7 +196,7 @@ class GroupService {
                 .snapshots()
                 .asyncMap((e) {
           if (e.docs.length == 0) {
-            addGroupSettings(userId, g.id);
+            addGroupSettings(userId, g.id, false);
             return [
               GroupSettings(
                   allowAutoJoin: false,
@@ -261,7 +262,7 @@ class GroupService {
                   .snapshots()
                   .asyncMap((e) {
             if (e.docs.length == 0) {
-              addGroupSettings(userId, f['GroupId']);
+              addGroupSettings(userId, f['GroupId'], false);
               return [
                 GroupSettings(
                     allowAutoJoin: false,
@@ -351,7 +352,7 @@ class GroupService {
                 .snapshots()
                 .asyncMap((e) {
           if (e.docs.length == 0) {
-            addGroupSettings(userId, f['GroupId']);
+            addGroupSettings(userId, f['GroupId'], false);
             return [
               GroupSettings(
                   userId: userId,
@@ -396,7 +397,7 @@ class GroupService {
   }
 
   Future<String> addGroup(String userId, GroupModel groupData, String fullName,
-      String userGroupId) async {
+      String userGroupId, bool allowAutoJoin) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
@@ -417,7 +418,7 @@ class GroupService {
           ).toJson());
       //store group settings
 
-      addGroupSettings(userId, groupData.id);
+      addGroupSettings(userId, groupData.id, allowAutoJoin);
       return userGroupId;
     } catch (e) {
       locator<LogService>().createLog(
@@ -428,10 +429,8 @@ class GroupService {
     }
   }
 
-  Future editGroup(
-    GroupModel groupData,
-    String groupID,
-  ) async {
+  Future editGroup(GroupModel groupData, String groupID, bool allowAutoJoin,
+      String groupSettingsId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _groupCollectionReference.doc(groupID).update(
@@ -447,6 +446,11 @@ class GroupService {
           "ModifiedOn": DateTime.now()
         },
       );
+
+      updateGroupSettings(
+          key: SettingsKey.allowAutoJoin,
+          value: allowAutoJoin,
+          groupSettingsId: groupSettingsId);
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -654,7 +658,8 @@ class GroupService {
     }
   }
 
-  Future<bool> addGroupSettings(String userId, String groupId) async {
+  Future<bool> addGroupSettings(
+      String userId, String groupId, bool allowAutoJoin) async {
     final groupSettingsId = Uuid().v1();
 
     try {
@@ -662,7 +667,7 @@ class GroupService {
 
       _groupSettingsCollectionReference
           .doc(groupSettingsId)
-          .set(populateGroupSettings(userId, groupId).toJson());
+          .set(populateGroupSettings(userId, groupId, allowAutoJoin).toJson());
       return true;
     } catch (e) {
       locator<LogService>().createLog(
@@ -673,9 +678,9 @@ class GroupService {
     }
   }
 
-  populateGroupSettings(String userId, String groupId) {
+  populateGroupSettings(String userId, String groupId, bool allowAutoJoin) {
     GroupSettings groupsSettings = GroupSettings(
-        allowAutoJoin: false,
+        allowAutoJoin: allowAutoJoin,
         groupId: groupId,
         userId: userId,
         enableNotificationFormNewPrayers: false,

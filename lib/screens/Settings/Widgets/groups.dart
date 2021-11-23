@@ -944,7 +944,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text('Associated Church',
+                                    Text('Church',
                                         style: AppTextStyles.regularText11
                                             .copyWith(
                                                 color: AppColors.lightBlue2))
@@ -1065,7 +1065,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             SizedBox(height: 15),
                             if (isAdmin || isModerator)
                               CustomToggle(
-                                title: 'Allow auto join?',
+                                title: 'Require admin approval to join group?',
                                 onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: SettingsKey.allowAutoJoin,
@@ -1132,118 +1132,118 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                           ],
                         ),
-                        (isAdmin || isModerator)
-                            ? Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text('Invite',
-                                            style: AppTextStyles.regularText11),
-                                        SizedBox(width: 10),
-                                        Expanded(
-                                          child: Divider(
-                                            color: AppColors.darkBlue,
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: GestureDetector(
-                                          onTap: () => setState(
-                                              () => _inviteMode = true),
-                                          child: Text(
-                                            'Send an invite to join group',
-                                            style: AppTextStyles.regularText16b
-                                                .copyWith(
-                                                    color:
-                                                        AppColors.lightBlue3),
-                                          ),
-                                        ),
-                                      ),
-                                      _inviteMode
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 15.0,
-                                                      horizontal: 20.0),
-                                              child: Column(
-                                                children: [
-                                                  CustomInput(
-                                                    textkey: GlobalKey<
-                                                        FormFieldState>(),
-                                                    label: 'Email Address',
-                                                    controller:
-                                                        _emailController,
-                                                    isEmail: true,
-                                                    keyboardType: TextInputType
-                                                        .emailAddress,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      TextButton(
-                                                          style: ButtonStyle(
-                                                              textStyle: MaterialStateProperty.all<TextStyle>(
-                                                                  AppTextStyles
-                                                                      .boldText16
-                                                                      .copyWith(
-                                                                          color: Colors
-                                                                              .white)),
-                                                              backgroundColor:
-                                                                  MaterialStateProperty.all<Color>(
-                                                                      Colors.grey[
-                                                                          700])),
-                                                          onPressed: () => setState(
-                                                              () => _inviteMode = false),
-                                                          child: Text('Cancel', style: AppTextStyles.regularText14)),
-                                                      SizedBox(width: 15),
-                                                      TextButton(
-                                                          style: ButtonStyle(
-                                                            textStyle: MaterialStateProperty.all<
-                                                                    TextStyle>(
-                                                                AppTextStyles
-                                                                    .boldText16
-                                                                    .copyWith(
-                                                                        color: Colors
-                                                                            .white)),
-                                                            backgroundColor:
-                                                                MaterialStateProperty.all<
-                                                                        Color>(
-                                                                    AppColors
-                                                                        .dimBlue),
-                                                          ),
-                                                          onPressed: () =>
-                                                              _sendInvite(
-                                                                  data.group
-                                                                      .name,
-                                                                  data.group
-                                                                      .id),
-                                                          child: Text(
-                                                            'Send Invite',
-                                                            style: AppTextStyles
-                                                                .regularText14,
-                                                          )),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
-                                  )
-                                ],
-                              )
-                            : Container(),
+                        // (isAdmin || isModerator)
+                        //     ? Column(
+                        //         children: [
+                        //           Padding(
+                        //             padding: const EdgeInsets.symmetric(
+                        //                 horizontal: 20.0, vertical: 10.0),
+                        //             child: Row(
+                        //               children: <Widget>[
+                        //                 Text('Invite',
+                        //                     style: AppTextStyles.regularText11),
+                        //                 SizedBox(width: 10),
+                        //                 Expanded(
+                        //                   child: Divider(
+                        //                     color: AppColors.darkBlue,
+                        //                     thickness: 1,
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //           Column(
+                        //             children: [
+                        //               Container(
+                        //                 padding: const EdgeInsets.symmetric(
+                        //                     horizontal: 20.0),
+                        //                 child: GestureDetector(
+                        //                   onTap: () => setState(
+                        //                       () => _inviteMode = true),
+                        //                   child: Text(
+                        //                     'Send an invite to join group',
+                        //                     style: AppTextStyles.regularText16b
+                        //                         .copyWith(
+                        //                             color:
+                        //                                 AppColors.lightBlue3),
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //               _inviteMode
+                        //                   ? Padding(
+                        //                       padding:
+                        //                           const EdgeInsets.symmetric(
+                        //                               vertical: 15.0,
+                        //                               horizontal: 20.0),
+                        //                       child: Column(
+                        //                         children: [
+                        //                           CustomInput(
+                        //                             textkey: GlobalKey<
+                        //                                 FormFieldState>(),
+                        //                             label: 'Email Address',
+                        //                             controller:
+                        //                                 _emailController,
+                        //                             isEmail: true,
+                        //                             keyboardType: TextInputType
+                        //                                 .emailAddress,
+                        //                           ),
+                        //                           Row(
+                        //                             mainAxisAlignment:
+                        //                                 MainAxisAlignment.end,
+                        //                             children: [
+                        //                               TextButton(
+                        //                                   style: ButtonStyle(
+                        //                                       textStyle: MaterialStateProperty.all<TextStyle>(
+                        //                                           AppTextStyles
+                        //                                               .boldText16
+                        //                                               .copyWith(
+                        //                                                   color: Colors
+                        //                                                       .white)),
+                        //                                       backgroundColor:
+                        //                                           MaterialStateProperty.all<Color>(
+                        //                                               Colors.grey[
+                        //                                                   700])),
+                        //                                   onPressed: () => setState(
+                        //                                       () => _inviteMode = false),
+                        //                                   child: Text('Cancel', style: AppTextStyles.regularText14)),
+                        //                               SizedBox(width: 15),
+                        //                               TextButton(
+                        //                                   style: ButtonStyle(
+                        //                                     textStyle: MaterialStateProperty.all<
+                        //                                             TextStyle>(
+                        //                                         AppTextStyles
+                        //                                             .boldText16
+                        //                                             .copyWith(
+                        //                                                 color: Colors
+                        //                                                     .white)),
+                        //                                     backgroundColor:
+                        //                                         MaterialStateProperty.all<
+                        //                                                 Color>(
+                        //                                             AppColors
+                        //                                                 .dimBlue),
+                        //                                   ),
+                        //                                   onPressed: () =>
+                        //                                       _sendInvite(
+                        //                                           data.group
+                        //                                               .name,
+                        //                                           data.group
+                        //                                               .id),
+                        //                                   child: Text(
+                        //                                     'Send Invite',
+                        //                                     style: AppTextStyles
+                        //                                         .regularText14,
+                        //                                   )),
+                        //                             ],
+                        //                           )
+                        //                         ],
+                        //                       ),
+                        //                     )
+                        //                   : Container()
+                        //             ],
+                        //           )
+                        //         ],
+                        //       )
+                        //     : Container(),
                         (isAdmin || isModerator)
                             ? custom.ExpansionTile(
                                 iconColor: AppColors.lightBlue4,

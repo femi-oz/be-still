@@ -178,7 +178,7 @@ class _GroupCardState extends State<GroupCard> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Associated with: ',
+                                'Church: ',
                                 style: AppTextStyles.regularText15,
                               ),
                               Container(
