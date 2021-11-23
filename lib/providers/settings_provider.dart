@@ -45,12 +45,12 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setGroupSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getGroupSettings(userId);
-    _groupSettings = settings;
-    notifyListeners();
-  }
+  // Future setGroupSettings(String userId) async {
+  //   if (_firebaseAuth.currentUser == null) return null;
+  //   var settings = await _settingsService.getGroupSettings(userId);
+  //   _groupSettings = settings;
+  //   notifyListeners();
+  // }
 
   Future setGroupPreferenceSettings(String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
@@ -85,14 +85,6 @@ class SettingsProvider with ChangeNotifier {
     await _settingsService.updateSharingSettings(
         key: key, settingsId: settingsId, value: value);
     await setSharingSettings(userId);
-  }
-
-  Future updateGroupSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateGroupSettings(
-        key: key, groupSettingsId: settingsId, value: value);
-    await setGroupSettings(userId);
   }
 
   Future updateGroupPrefenceSettings(String userId,

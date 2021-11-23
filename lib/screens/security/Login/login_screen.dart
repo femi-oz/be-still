@@ -638,7 +638,9 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         InkWell(
-          child: Text("Create an Account", style: AppTextStyles.regularText15),
+          child: Text("Create an Account",
+              style: AppTextStyles.regularText14
+                  .copyWith(color: AppColors.lightBlue4)),
           onTap: () {
             Navigator.push(
               context,
@@ -648,18 +650,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         Row(
           children: <Widget>[
-            Text('Remember Me', style: AppTextStyles.regularText15),
-            SizedBox(width: 12),
+            Text('Remember Me',
+                style: AppTextStyles.regularText14
+                    .copyWith(color: AppColors.lightBlue4)),
             CustomToggle(
               hasText: false,
               onChange: (value) => setState(() => Settings.rememberMe = value),
               value: _remeberMe,
             ),
-            // Switch.adaptive(
-            //   activeColor: AppColors.lightBlue4,
-            //   value: _remeberMe,
-            //   onChanged: (value) => setState(() => Settings.rememberMe = value),
-            // ),
           ],
         ),
       ],
