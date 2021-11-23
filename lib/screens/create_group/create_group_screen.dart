@@ -34,7 +34,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
   // bool isEdit = false;
   @override
   void initState() {
@@ -46,7 +46,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     _locationController.text = isEdit ? groupData?.group?.location : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
-    _emailController.text = isEdit ? groupData?.group?.email : '';
+    _allowAutoJoin = groupData.groupSettings.allowAutoJoin;
+    // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
 
@@ -72,7 +73,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       location: _locationController.text,
       organization: _organizationController.text,
       description: _descriptionController.text,
-      email: _emailController.text,
       status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
@@ -85,11 +85,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
-          .addGroup(groupData, _user.id, _user.email, fullName);
+          .addGroup(groupData, _user.id, fullName, _allowAutoJoin);
       BeStilDialog.hideLoading(context);
     } else {
-      await Provider.of<GroupProvider>(context, listen: false)
-          .editGroup(groupData, group.group.id);
+      await Provider.of<GroupProvider>(context, listen: false).editGroup(
+          groupData,
+          group.group.id,
+          _allowAutoJoin,
+          Provider.of<GroupProvider>(context, listen: false)
+                  .currentGroup
+                  .groupSettings
+                  ?.id ??
+              '');
       BeStilDialog.hideLoading(context);
     }
     setState(() {
@@ -234,12 +241,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         false;
   }
 
+  bool _allowAutoJoin = false;
   bool _autoValidate = false;
   Widget build(BuildContext context) {
     final groupProvider = Provider.of<GroupProvider>(context, listen: false);
     final groupData = groupProvider.currentGroup;
     bool isValid = _groupNameController.text.isNotEmpty ||
-        _emailController.text.isNotEmpty ||
+        // _emailController.text.isNotEmpty ||
         _locationController.text.isNotEmpty;
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -317,11 +325,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     children: [
                       _step == 1
                           ? CreateGroupForm(
+                              autoJoin: _allowAutoJoin,
+                              allowAutoJoin: (val) {
+                                setState(() {
+                                  _allowAutoJoin = val;
+                                });
+                              },
+
                               formKey: _formKey,
                               locationController: _locationController,
                               descriptionController: _descriptionController,
                               groupNameController: _groupNameController,
-                              emailController: _emailController,
+                              // emailController: _emailController,
                               option: _option,
                               organizationController: _organizationController,
                               setOption: _setOption,

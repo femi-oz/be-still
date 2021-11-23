@@ -106,7 +106,7 @@ class JoinGroup {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Associated with: ',
+                                'Church: ',
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(

@@ -53,6 +53,22 @@ class _GroupCardState extends State<GroupCard> {
     }
   }
 
+  Future<void> _joinGroup(String groupId) async {
+    BeStilDialog.showLoading(context);
+    try {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<GroupProvider>(context, listen: false).autoJoinGroup(
+          groupId, user.id, user.firstName + ' ' + user.lastName);
+      Navigator.of(context).pop();
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(3, true);
+      BeStilDialog.hideLoading(context);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+    }
+  }
+
   bool _isInit = true;
 
   @override
@@ -162,7 +178,7 @@ class _GroupCardState extends State<GroupCard> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Associated with: ',
+                                'Church: ',
                                 style: AppTextStyles.regularText15,
                               ),
                               Container(
@@ -270,23 +286,31 @@ class _GroupCardState extends State<GroupCard> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          'REQUEST',
+                                          widget.groupData.groupSettings
+                                                  .allowAutoJoin
+                                              ? 'JOIN'
+                                              : 'REQUEST',
                                           style: AppTextStyles.boldText20,
                                         ),
                                       ],
                                     ),
                                   ),
                                   onPressed: () {
-                                    _requestToJoinGroup(
-                                      this.widget.groupData,
-                                      Provider.of<UserProvider>(context,
-                                              listen: false)
-                                          .currentUser
-                                          .id,
-                                      StringUtils.joinRequestStatusPending,
-                                      '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
-                                      adminData.id,
-                                    );
+                                    if (widget.groupData.groupSettings
+                                        .allowAutoJoin) {
+                                      _joinGroup(widget.groupData.group.id);
+                                    } else {
+                                      _requestToJoinGroup(
+                                        this.widget.groupData,
+                                        Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .currentUser
+                                            .id,
+                                        StringUtils.joinRequestStatusPending,
+                                        '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
+                                        adminData.id,
+                                      );
+                                    }
                                   }),
                             ),
                     ],

@@ -615,7 +615,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -646,7 +646,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
