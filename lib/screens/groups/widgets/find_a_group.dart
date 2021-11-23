@@ -1,5 +1,7 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
@@ -8,6 +10,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class FindAGroup extends StatefulWidget {
@@ -31,6 +34,7 @@ class _FindAGroupState extends State<FindAGroup> {
 
   @override
   void initState() {
+    Provider.of<GroupProvider>(context, listen: false).emptyGroupList();
     super.initState();
   }
 
@@ -42,8 +46,10 @@ class _FindAGroupState extends State<FindAGroup> {
   }
 
   Future<bool> _onWillPop() async {
+    AppCOntroller appCOntroller = Get.find();
+    appCOntroller.setCurrentPage(3, true);
     return (Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName, (Route<dynamic> route) => false)) ??
+            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;
   }
 
@@ -119,7 +125,7 @@ class _FindAGroupState extends State<FindAGroup> {
                           child: Column(
                             children: [
                               SizedBox(height: 30.0),
-                              if (_searchController.text.trim().isNotEmpty)
+                              if (_filteredGroups.isNotEmpty)
                                 Text(
                                   '${_filteredGroups.length} $matchText match your search.',
                                   style: AppTextStyles.boldText20,
@@ -186,8 +192,7 @@ class _FindAGroupState extends State<FindAGroup> {
                                     },
                                   )),
                               SizedBox(height: 30.0),
-                              _searchController.text.isNotEmpty &&
-                                      _searchController.text != ' '
+                              _filteredGroups.isNotEmpty
                                   ? Padding(
                                       padding: EdgeInsets.only(left: 20.0),
                                       child: Column(

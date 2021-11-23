@@ -3,6 +3,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -346,6 +347,7 @@ class GroupService {
                 .asyncMap((e) => e.docs
                     .map((doc) => GroupRequestModel.fromData(doc))
                     .toList());
+
         Stream<List<GroupSettings>> groupSettings =
             _groupSettingsCollectionReference
                 .where('GroupId', isEqualTo: f['GroupId'])
