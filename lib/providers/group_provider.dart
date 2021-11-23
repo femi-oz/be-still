@@ -42,7 +42,6 @@ class GroupProvider with ChangeNotifier {
         }
       }
       _userGroups = _distinct;
-
       _userGroups = _userGroups.map((u) {
         List<GroupUserModel> _distinct = [];
         var idSet = <String>{};
@@ -51,11 +50,10 @@ class GroupProvider with ChangeNotifier {
             _distinct.add(e);
           }
         }
-
         return u..groupUsers = _distinct;
       }).toList();
-      notifyListeners();
     });
+    notifyListeners();
   }
 
   Stream<CombineGroupUserStream> getGroup(groupdId) {

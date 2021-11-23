@@ -138,7 +138,7 @@ class _FindAGroupState extends State<FindAGroup> {
                                 decoration: BoxDecoration(
                                   color: Colors.transparent,
                                   border: Border.all(
-                                    color: AppColors.cardBorder,
+                                    color: AppColors.lightBlue4,
                                     width: 1,
                                   ),
                                   borderRadius: BorderRadius.circular(5),
@@ -146,16 +146,13 @@ class _FindAGroupState extends State<FindAGroup> {
                                 child: OutlinedButton(
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(
-                                            color: AppColors.lightBlue4)),
+                                        BorderSide(color: Colors.transparent)),
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.more_horiz,
-                                            color: AppColors.lightBlue3),
                                         Text(
                                           'ADVANCED SEARCH',
                                           style: AppTextStyles.boldText20,

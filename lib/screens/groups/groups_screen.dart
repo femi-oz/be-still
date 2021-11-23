@@ -40,7 +40,7 @@ class _GroupScreenState extends State<GroupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<MiscProvider>(context, listen: false)
-          .setPageTitle('MY GROUPS');
+          .setPageTitle('GROUPS');
       // appCOntroller.setCurrentPage(4, true);
     });
     super.initState();
@@ -82,8 +82,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-
+    var data = Provider.of<GroupProvider>(context, listen: true).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -170,7 +169,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                               appCOntroller.setCurrentPage(
                                                   8, true);
                                             },
-                                            text: e.group.name.capitalizeFirst,
+                                            text: e.group.name,
                                             backgroundColor:
                                                 AppColors.groupCardBgColor,
                                             textColor: AppColors.lightBlue3,

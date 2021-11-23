@@ -255,7 +255,7 @@ class _GroupCardState extends State<GroupCard> {
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: AppColors.cardBorder,
+                                  color: AppColors.lightBlue4,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -263,7 +263,7 @@ class _GroupCardState extends State<GroupCard> {
                               child: OutlinedButton(
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.lightBlue)),
+                                        BorderSide(color: Colors.transparent)),
                                   ),
                                   child: Container(
                                     child: Row(
@@ -350,10 +350,15 @@ class _GroupCardState extends State<GroupCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    this.widget.groupData.group.name.toUpperCase(),
-                    style: TextStyle(color: AppColors.lightBlue3, fontSize: 12),
-                    textAlign: TextAlign.left,
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      this.widget.groupData.group.name.toUpperCase(),
+                      style:
+                          TextStyle(color: AppColors.lightBlue3, fontSize: 12),
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   Text(
                     '${this.widget.groupData.group.location}'.toUpperCase(),

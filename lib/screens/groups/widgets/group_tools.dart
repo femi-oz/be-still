@@ -51,8 +51,7 @@ class _GroupToolsState extends State<GroupTools> {
         .id;
     if (id != null) {
       await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_currentUser.id);
+
       await sendPushNotification(
           '${_currentUser.firstName} has left your group ${data.group.name}',
           NotificationType.leave_group,
@@ -64,6 +63,8 @@ class _GroupToolsState extends State<GroupTools> {
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(3, true);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setUserGroups(_currentUser.id);
       Navigator.pop(context);
       Navigator.pop(context);
     }
