@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -94,7 +95,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
     List receiver;
-    var followedPrayers;
+    List followedPrayers;
     if (type == NotificationType.prayer_updates) {
       final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
           .prayerToEdit
@@ -112,9 +113,9 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
       });
     }
 
-    for (var i = 0; i < receiver.length; i++) {
-      if (receiver.length > 0) {
-        await Provider.of<NotificationProvider>(context, listen: false)
+    if (receiver.length > 0) {
+      for (var i = 0; i < receiver.length; i++) {
+        Provider.of<NotificationProvider>(context, listen: false)
             .addPushNotification(
                 _descriptionController.text,
                 type,
@@ -474,36 +475,11 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   }
 
   Future<void> _onTagSelected(s, TextEditingController controller) async {
-    // print(controller.text.replaceFirst(tagText, s.displayName));
-    // String controllerText;
-    // String tmpText = s.displayName.substring(0, s.displayName.length);
-
     controller.text = controller.text.replaceFirst(tagText, s.displayName);
     tagText = '';
     updateTagText = '';
-    // var tmpTextAfter = controller.text
-    //     .substring(controller.text.indexOf('@'), controller.text.length);
-    // var textAfter = tmpTextAfter.split(" ");
-    // var newText = textAfter..removeAt(0);
-    // var joinText = newText.join(" ");
-
-    // controllerText = controller.text.substring(
-    //   0,
-    //   controller.text.indexOf('@'),
-    // );
-    // controllerText += tmpText;
-    // if (textWithSpace) {
-    //   controller.text = controllerText;
-    //   textWithSpace = false;
-    // } else {
-    //   textWithSpace = false;
-    // }
-    // controller.text = controllerText;
-    // controller.text = controllerText + " " + joinText;
-
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
-
     setState(() {
       controller.selection =
           TextSelection.collapsed(offset: controller.text.length);

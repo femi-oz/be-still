@@ -118,7 +118,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
     for (var i = 0; i < receiver.length; i++) {
       if (receiver.length > 0) {
-        await Provider.of<NotificationProvider>(context, listen: false)
+        Provider.of<NotificationProvider>(context, listen: false)
             .addPushNotification(
                 _descriptionController.text,
                 type,
