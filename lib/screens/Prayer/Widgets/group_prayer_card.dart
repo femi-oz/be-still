@@ -323,6 +323,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                                               .reminder,
                                                           hideActionuttons:
                                                               false,
+                                                          popTwice: false,
                                                           onCancel: () =>
                                                               Navigator.of(
                                                                       context)

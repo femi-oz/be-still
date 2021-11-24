@@ -263,6 +263,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                             type: NotificationType.reminder,
                                             reminder: _reminder,
                                             hideActionuttons: false,
+                                            popTwice: false,
                                             onCancel: () =>
                                                 Navigator.of(context).pop(),
                                           ),
