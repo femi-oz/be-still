@@ -46,7 +46,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     _locationController.text = isEdit ? groupData?.group?.location : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
-    _allowAutoJoin = groupData.groupSettings.allowAutoJoin;
+    _allowAutoJoin = isEdit ? groupData.groupSettings.allowAutoJoin : false;
     // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
