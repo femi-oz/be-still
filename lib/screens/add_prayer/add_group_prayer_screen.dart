@@ -532,7 +532,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -563,7 +563,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

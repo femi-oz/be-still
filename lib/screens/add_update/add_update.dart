@@ -281,7 +281,7 @@ class _AddUpdateState extends State<AddUpdate> {
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -312,7 +312,7 @@ class _AddUpdateState extends State<AddUpdate> {
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
