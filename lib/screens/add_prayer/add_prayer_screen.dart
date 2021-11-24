@@ -73,7 +73,7 @@ class _AddPrayerState extends State<AddPrayer> {
   var displayname = [];
   var textFields = <Stack>[];
   var textEditingController = TextEditingController();
-  var selectedOption;
+  var selectedGroupId;
   var newDisplayName = '';
 
   @override
@@ -92,45 +92,6 @@ class _AddPrayerState extends State<AddPrayer> {
           .setUserGroups(userId);
     });
     super.didChangeDependencies();
-  }
-
-  _sendNotification(String prayerId, type) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-    List receiver;
-    var followedPrayers;
-    if (type == NotificationType.prayer_updates) {
-      final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .prayerToEdit
-          .prayer
-          .id;
-      followedPrayers = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .followedPrayers;
-      receiver = followedPrayers
-          .where((element) => element.prayerId == prayerId)
-          .toList();
-    } else {
-      data.forEach((element) async {
-        receiver =
-            element.groupUsers.where((e) => e.userId != _user.id).toList();
-      });
-    }
-
-    for (var i = 0; i < receiver.length; i++) {
-      if (receiver.length > 0) {
-        Provider.of<NotificationProvider>(context, listen: false)
-            .addPushNotification(
-                _descriptionController.text,
-                type,
-                _user.firstName,
-                _user.id,
-                receiver[i].userId,
-                type == NotificationType.prayer
-                    ? 'New Prayer'
-                    : 'Prayer Update',
-                prayerId);
-      }
-    }
   }
 
   Future<void> _save(textEditingControllers) async {
@@ -166,18 +127,14 @@ class _AddPrayerState extends State<AddPrayer> {
               backupText,
             );
           } else {
-            var prayerId =
-                Provider.of<GroupPrayerProvider>(context, listen: false)
-                    .newPrayerId;
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
-              selectedOption,
+              selectedGroupId,
               '${_user.firstName} ${_user.lastName}',
               backupText,
               _user.id,
             );
-            _sendNotification(prayerId, NotificationType.prayer);
           }
 
           contacts.forEach((s) {
@@ -200,11 +157,17 @@ class _AddPrayerState extends State<AddPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-          BeStilDialog.hideLoading(context);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(0, true);
+          var prayerId =
+              Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .newPrayerId;
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(prayerId, NotificationType.prayer,
+                  selectedGroupId, context, _descriptionController.text);
         } else {
+          final prayerId = Provider.of<PrayerProvider>(context, listen: false)
+              .prayerToEdit
+              .prayer
+              .id;
           var updates = Provider.of<PrayerProvider>(context, listen: false)
               .prayerToEdit
               ?.updates;
@@ -231,12 +194,8 @@ class _AddPrayerState extends State<AddPrayer> {
                   .editUpdate(element['description'], element['id']);
             });
           }
-          await Provider.of<PrayerProvider>(context, listen: false).editprayer(
-              _descriptionController.text,
-              Provider.of<PrayerProvider>(context, listen: false)
-                  .prayerToEdit
-                  .prayer
-                  .id);
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .editprayer(_descriptionController.text, prayerId);
 
           //tags
           List<PrayerTagModel> currentTags = [];
@@ -313,12 +272,12 @@ class _AddPrayerState extends State<AddPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-
-          BeStilDialog.hideLoading(context);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(0, true);
         }
+
+        BeStilDialog.hideLoading(context);
+        AppCOntroller appCOntroller = Get.find();
+
+        appCOntroller.setCurrentPage(0, true);
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -938,7 +897,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                             AppColors.textFieldBackgroundColor,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(5)),
-                                        value: selectedOption,
+                                        value: selectedGroupId,
                                         isDense: false,
                                         onChanged: (value) {
                                           setState(() {
@@ -946,7 +905,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                                 .firstWhere((element) =>
                                                     element.id == value)
                                                 .name;
-                                            selectedOption = value;
+                                            selectedGroupId = value;
                                           });
                                         },
                                         items: saveOptions

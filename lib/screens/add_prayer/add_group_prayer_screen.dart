@@ -91,45 +91,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     super.didChangeDependencies();
   }
 
-  _sendNotification(String prayerId, type) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-    List receiver;
-    List followedPrayers;
-    if (type == NotificationType.prayer_updates) {
-      final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .prayerToEdit
-          .prayer
-          .id;
-      followedPrayers = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .followedPrayers;
-      receiver = followedPrayers
-          .where((element) => element.prayerId == prayerId)
-          .toList();
-    } else {
-      data.forEach((element) async {
-        receiver =
-            element.groupUsers.where((e) => e.userId != _user.id).toList();
-      });
-    }
-
-    if (receiver.length > 0) {
-      for (var i = 0; i < receiver.length; i++) {
-        Provider.of<NotificationProvider>(context, listen: false)
-            .addPushNotification(
-                _descriptionController.text,
-                type,
-                _user.firstName,
-                _user.id,
-                receiver[i].userId,
-                type == NotificationType.prayer
-                    ? 'New Prayer'
-                    : 'Prayer Update',
-                prayerId);
-      }
-    }
-  }
-
   Future<void> _save(textEditingControllers) async {
     BeStilDialog.showLoading(context);
     FocusScope.of(context).unfocus();
@@ -180,7 +141,9 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          _sendNotification(prayerId, NotificationType.prayer);
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(prayerId, NotificationType.prayer,
+                  _group.group.id, context, _descriptionController.text);
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         } else {
@@ -293,13 +256,20 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-
-          _sendNotification(
+          var editPrayerId =
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .prayerToEdit
                   .groupPrayer
-                  .id,
-              NotificationType.prayer_updates);
+                  .id;
+
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+                  editPrayerId,
+                  NotificationType.prayer_updates,
+                  _group.group.id,
+                  context,
+                  _descriptionController.text);
+
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         }

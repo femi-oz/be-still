@@ -93,7 +93,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   ),
                   SizedBox(height: 12.0),
                   CustomInput(
-                    textkey: GlobalKey<FormFieldState>(),
+                    // textkey: GlobalKey<FormFieldState>(),
                     controller: _locationController,
                     label: 'Location',
                     isRequired: false,
@@ -102,7 +102,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
 
                   SizedBox(height: 12.0),
                   CustomInput(
-                    textkey: GlobalKey<FormFieldState>(),
+                    // textkey: GlobalKey<FormFieldState>(),
                     controller: _organizationController,
                     label: 'Church',
                     isRequired: false,
@@ -110,7 +110,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   ),
                   SizedBox(height: 12.0),
                   CustomInput(
-                    textkey: GlobalKey<FormFieldState>(),
+                    // textkey: GlobalKey<FormFieldState>(),
                     controller: _adminNameController,
                     label: 'Admin Name',
                     isRequired: false,
@@ -118,7 +118,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                   ),
                   SizedBox(height: 12.0),
                   CustomInput(
-                    textkey: GlobalKey<FormFieldState>(),
+                    // textkey: GlobalKey<FormFieldState>(),
                     controller: _descriptionController,
                     label: 'Purpose',
                     isRequired: false,
