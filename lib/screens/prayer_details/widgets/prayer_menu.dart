@@ -569,6 +569,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 30),
                                         child: ReminderPicker(
+                                          isGroup: false,
                                           entityId: widget
                                                   .prayerData?.userPrayer?.id ??
                                               '',

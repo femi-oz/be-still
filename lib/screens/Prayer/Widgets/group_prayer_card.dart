@@ -319,6 +319,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                                                   ?.groupPrayer
                                                                   ?.id ??
                                                               '',
+                                                          isGroup: true,
                                                           type: NotificationType
                                                               .reminder,
                                                           hideActionuttons:

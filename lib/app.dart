@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -213,11 +214,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       appCOntroller.setCurrentPage(2, false);
     }
     if (message.type == NotificationType.reminder) {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(message.entityId);
-      // Future.delayed(Duration)
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(7, false);
+      if (message.isGroup) {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setPrayer(message.entityId);
+        // Future.delayed(Duration)
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(9, false);
+      } else {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayer(message.entityId);
+        // Future.delayed(Duration)
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(7, false);
+      }
     }
   }
 

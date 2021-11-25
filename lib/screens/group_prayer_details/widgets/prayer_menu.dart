@@ -525,6 +525,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 30),
                                         child: ReminderPicker(
+                                          isGroup: true,
                                           type: NotificationType.reminder,
                                           hideActionuttons: false,
                                           reminder: widget.hasReminder
