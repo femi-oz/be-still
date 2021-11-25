@@ -181,20 +181,18 @@ class _GroupCardState extends State<GroupCard> {
                                 'Church: ',
                                 style: AppTextStyles.regularText15,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Text(
-                                  '${this.widget.groupData.group.organization}',
-                                  style: AppTextStyles.regularText15.copyWith(
-                                    color: AppColors.textFieldText,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
+                              Text(
+                                this.widget.groupData.group.organization.isEmpty
+                                    ? 'N/A'
+                                    : '${this.widget.groupData.group.organization}',
+                                style: AppTextStyles.regularText15.copyWith(
+                                  color: AppColors.textFieldText,
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
-                          SizedBox(height: 10.0),
                           // Row(
                           //   mainAxisAlignment: MainAxisAlignment.center,
                           //   children: [
@@ -213,7 +211,7 @@ class _GroupCardState extends State<GroupCard> {
                           // ),
                         ],
                       ),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 20.0),
                       Column(
                         children: [
                           Text(
@@ -238,7 +236,9 @@ class _GroupCardState extends State<GroupCard> {
                       ),
                       SizedBox(height: 30.0),
                       Text(
-                        this.widget.groupData.group.description,
+                        this.widget.groupData.group.description.isEmpty
+                            ? 'N/A'
+                            : this.widget.groupData.group.description,
                         style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.textFieldText,
                         ),
@@ -286,8 +286,8 @@ class _GroupCardState extends State<GroupCard> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          widget.groupData.groupSettings
-                                                  .allowAutoJoin
+                                          !widget.groupData.groupSettings
+                                                  .requireAdminApproval
                                               ? 'JOIN'
                                               : 'REQUEST',
                                           style: AppTextStyles.boldText20,
@@ -297,7 +297,7 @@ class _GroupCardState extends State<GroupCard> {
                                   ),
                                   onPressed: () {
                                     if (widget.groupData.groupSettings
-                                        .allowAutoJoin) {
+                                        .requireAdminApproval) {
                                       _joinGroup(widget.groupData.group.id);
                                     } else {
                                       _requestToJoinGroup(

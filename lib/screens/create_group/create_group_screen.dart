@@ -46,7 +46,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     _locationController.text = isEdit ? groupData?.group?.location : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
-    _allowAutoJoin = isEdit ? groupData.groupSettings.allowAutoJoin : false;
+    _requireAdminApproval =
+        isEdit ? groupData.groupSettings.requireAdminApproval : true;
     // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
@@ -85,13 +86,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
-          .addGroup(groupData, _user.id, fullName, _allowAutoJoin);
+          .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
       BeStilDialog.hideLoading(context);
     } else {
       await Provider.of<GroupProvider>(context, listen: false).editGroup(
           groupData,
           group.group.id,
-          _allowAutoJoin,
+          _requireAdminApproval,
           Provider.of<GroupProvider>(context, listen: false)
                   .currentGroup
                   .groupSettings
@@ -241,7 +242,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         false;
   }
 
-  bool _allowAutoJoin = false;
+  bool _requireAdminApproval = true;
   bool _autoValidate = false;
   Widget build(BuildContext context) {
     final groupProvider = Provider.of<GroupProvider>(context, listen: false);
@@ -265,11 +266,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.backgroundImage),
-              alignment: Alignment.bottomCenter,
-            ),
+                image: AssetImage(StringUtils.backgroundImage),
+                alignment: Alignment.bottomCenter,
+                fit: BoxFit.fitWidth),
           ),
           child: Container(
+            height: Get.height,
+            color: AppColors.backgroundColor[0].withOpacity(0.5),
             child: Column(
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).padding.top + 20),
@@ -325,10 +328,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     children: [
                       _step == 1
                           ? CreateGroupForm(
-                              autoJoin: _allowAutoJoin,
-                              allowAutoJoin: (val) {
+                              requireAdminApproval: _requireAdminApproval,
+                              onChangeAdminApproval: (val) {
                                 setState(() {
-                                  _allowAutoJoin = val;
+                                  _requireAdminApproval = val;
                                 });
                               },
 
