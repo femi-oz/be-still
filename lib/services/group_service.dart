@@ -119,10 +119,10 @@ class GroupService {
                   .snapshots()
                   .asyncMap((e) {
             if (e.docs.length == 0) {
-              addGroupSettings(userId, g.id, false);
+              addGroupSettings(userId, g.id, true);
               return [
                 GroupSettings(
-                    requireAdminApproval: false,
+                    requireAdminApproval: true,
                     userId: userId,
                     groupId: g.id,
                     enableNotificationFormNewPrayers: false,
@@ -197,10 +197,10 @@ class GroupService {
                 .snapshots()
                 .asyncMap((e) {
           if (e.docs.length == 0) {
-            addGroupSettings(userId, g.id, false);
+            addGroupSettings(userId, g.id, true);
             return [
               GroupSettings(
-                  requireAdminApproval: false,
+                  requireAdminApproval: true,
                   userId: userId,
                   groupId: g.id,
                   enableNotificationFormNewPrayers: false,
@@ -266,7 +266,7 @@ class GroupService {
               addGroupSettings(userId, f['GroupId'], false);
               return [
                 GroupSettings(
-                    requireAdminApproval: false,
+                    requireAdminApproval: true,
                     userId: userId,
                     groupId: f['GroupId'],
                     enableNotificationFormNewPrayers: false,
@@ -359,7 +359,7 @@ class GroupService {
               GroupSettings(
                   userId: userId,
                   groupId: f['GroupId'],
-                  requireAdminApproval: false,
+                  requireAdminApproval: true,
                   enableNotificationFormNewPrayers: false,
                   enableNotificationForUpdates: false,
                   notifyOfMembershipRequest: false,

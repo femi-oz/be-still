@@ -245,7 +245,9 @@ class _GroupCardState extends State<GroupCard> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 30.0),
-                      isRequestSent()
+                      isRequestSent() ||
+                              !widget
+                                  .groupData.groupSettings.requireAdminApproval
                           ? Container()
                           : Text(
                               'Would you like to request to join?',
@@ -296,7 +298,7 @@ class _GroupCardState extends State<GroupCard> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    if (widget.groupData.groupSettings
+                                    if (!widget.groupData.groupSettings
                                         .requireAdminApproval) {
                                       _joinGroup(widget.groupData.group.id);
                                     } else {
