@@ -296,7 +296,7 @@ class _GroupCardState extends State<GroupCard> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    if (widget.groupData.groupSettings
+                                    if (!widget.groupData.groupSettings
                                         .requireAdminApproval) {
                                       _joinGroup(widget.groupData.group.id);
                                     } else {
