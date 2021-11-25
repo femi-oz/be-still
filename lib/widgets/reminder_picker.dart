@@ -24,6 +24,7 @@ class ReminderPicker extends StatefulWidget {
   final LocalNotificationModel reminder;
   final String type;
   final String entityId;
+  final bool popTwice;
 
   @override
   ReminderPicker({
@@ -33,6 +34,7 @@ class ReminderPicker extends StatefulWidget {
     @required this.type,
     @required this.entityId,
     @required this.isGroup,
+    this.popTwice = true,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
@@ -159,8 +161,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
     setState(() {});
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
+      print(widget.popTwice);
       Navigator.pop(context);
-      Navigator.pop(context);
+      if (widget.popTwice) {
+        Navigator.pop(context);
+      }
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
@@ -169,7 +174,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   setNotification() async {
-    print(selectedPeriod);
     // AM 22= 22-12
     // pm 12 = 12+12
     final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12

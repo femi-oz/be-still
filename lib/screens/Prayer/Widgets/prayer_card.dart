@@ -300,6 +300,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                                               .reminder,
                                                           hideActionuttons:
                                                               false,
+                                                          popTwice: false,
                                                           onCancel: () =>
                                                               Navigator.of(
                                                                       context)

@@ -178,7 +178,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 13,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -210,7 +210,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 13,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

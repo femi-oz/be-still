@@ -312,6 +312,7 @@ class _GroupToolsState extends State<GroupTools> {
                       textColor: AppColors.addprayerTextColor,
                       onPressMore: () => null,
                     ),
+                    SizedBox(height: 10),
                     currentGroupUser.role != GroupUserRole.admin
                         ? LongButton(
                             icon: Icons.exit_to_app,

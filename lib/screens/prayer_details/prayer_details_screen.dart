@@ -259,6 +259,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                       type: NotificationType.reminder,
                                       reminder: _reminder,
                                       hideActionuttons: false,
+                                      popTwice: false,
                                       onCancel: () =>
                                           Navigator.of(context).pop(),
                                     ),

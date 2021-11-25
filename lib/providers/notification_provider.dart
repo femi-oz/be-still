@@ -4,16 +4,20 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:flutter/material.dart';
 import '../locator.dart';
+import 'group_prayer_provider.dart';
 
 class NotificationProvider with ChangeNotifier {
   NotificationService _notificationService = locator<NotificationService>();
@@ -251,5 +255,51 @@ class NotificationProvider with ChangeNotifier {
   Future<void> deletePrayerTime(String prayerTimeId) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _notificationService.deletePrayerTime(prayerTimeId);
+  }
+
+  Future sendPrayerNotification(String prayerId, String type,
+      String selectedGroupId, BuildContext context, String prayerDetail) async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
+    List receiver;
+    var followedPrayers;
+    if (type == NotificationType.prayer_updates) {
+      final editPrayerId =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .prayerToEdit
+              .prayer
+              .id;
+      followedPrayers = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers;
+      receiver = followedPrayers
+          .where((element) => element.prayerId == editPrayerId)
+          .toList();
+    } else {
+      data.forEach((element) {
+        int validGroupsLength = element.groupUsers
+            .where((e) => e.groupId == selectedGroupId && e.userId != _user.id)
+            .toList()
+            .length;
+        if (validGroupsLength > 0) {
+          receiver = element.groupUsers
+              .where(
+                  (e) => e.groupId == selectedGroupId && e.userId != _user.id)
+              .toList();
+        }
+      });
+    }
+
+    for (var i = 0; i < receiver.length; i++) {
+      if (receiver.length > 0) {
+        addPushNotification(
+            prayerDetail,
+            type,
+            _user.firstName,
+            _user.id,
+            receiver[i].userId,
+            type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
+            prayerId);
+      }
+    }
   }
 }
