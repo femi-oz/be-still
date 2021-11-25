@@ -1068,10 +1068,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 title: 'Require admin approval to join group?',
                                 onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
-                                        key: SettingsKey.allowAutoJoin,
+                                        key: SettingsKey.requireAdminApproval,
                                         value: value,
                                         settingsId: data.groupSettings.id),
-                                value: data.groupSettings.allowAutoJoin,
+                                value: data.groupSettings.requireAdminApproval,
                               ),
                             SizedBox(height: 15),
                             CustomToggle(

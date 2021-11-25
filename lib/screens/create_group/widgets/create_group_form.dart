@@ -13,10 +13,10 @@ class CreateGroupForm extends StatelessWidget {
   final Function setOption;
   final option;
   final formKey;
-  final Function(bool) allowAutoJoin;
+  final Function(bool) onChangeAdminApproval;
   final bool isEdit;
   final bool autoValidate;
-  final bool autoJoin;
+  final bool requireAdminApproval;
 
   CreateGroupForm(
       {this.groupNameController,
@@ -26,9 +26,9 @@ class CreateGroupForm extends StatelessWidget {
       this.setOption,
       this.option,
       this.formKey,
-      this.allowAutoJoin,
+      this.onChangeAdminApproval,
       this.autoValidate,
-      this.autoJoin,
+      this.requireAdminApproval,
       this.isEdit});
 
   @override
@@ -93,25 +93,24 @@ class CreateGroupForm extends StatelessWidget {
               Container(
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Text(
-                  'Require admin approval to join group?',
+                  'Require admin approval to join group',
                   style: AppTextStyles.regularText15.copyWith(
-                    color: AppColors.lightBlue4,
-                  ),
+                      color: AppColors.lightBlue4, fontWeight: FontWeight.w500),
                 ),
               ),
               Platform.isIOS
                   ? CupertinoSwitch(
-                      value: autoJoin,
+                      value: requireAdminApproval,
                       activeColor: AppColors.lightBlue4,
                       trackColor: Colors.grey[400],
-                      onChanged: allowAutoJoin,
+                      onChanged: onChangeAdminApproval,
                     )
                   : Switch(
-                      value: autoJoin,
+                      value: requireAdminApproval,
                       activeColor: Colors.white,
                       activeTrackColor: AppColors.lightBlue4,
                       inactiveThumbColor: Colors.white,
-                      onChanged: allowAutoJoin,
+                      onChanged: onChangeAdminApproval,
                     ),
             ],
           ),

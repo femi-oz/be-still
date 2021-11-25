@@ -122,7 +122,7 @@ class GroupService {
               addGroupSettings(userId, g.id, false);
               return [
                 GroupSettings(
-                    allowAutoJoin: false,
+                    requireAdminApproval: false,
                     userId: userId,
                     groupId: g.id,
                     enableNotificationFormNewPrayers: false,
@@ -200,7 +200,7 @@ class GroupService {
             addGroupSettings(userId, g.id, false);
             return [
               GroupSettings(
-                  allowAutoJoin: false,
+                  requireAdminApproval: false,
                   userId: userId,
                   groupId: g.id,
                   enableNotificationFormNewPrayers: false,
@@ -266,7 +266,7 @@ class GroupService {
               addGroupSettings(userId, f['GroupId'], false);
               return [
                 GroupSettings(
-                    allowAutoJoin: false,
+                    requireAdminApproval: false,
                     userId: userId,
                     groupId: f['GroupId'],
                     enableNotificationFormNewPrayers: false,
@@ -359,7 +359,7 @@ class GroupService {
               GroupSettings(
                   userId: userId,
                   groupId: f['GroupId'],
-                  allowAutoJoin: false,
+                  requireAdminApproval: false,
                   enableNotificationFormNewPrayers: false,
                   enableNotificationForUpdates: false,
                   notifyOfMembershipRequest: false,
@@ -399,7 +399,7 @@ class GroupService {
   }
 
   Future<String> addGroup(String userId, GroupModel groupData, String fullName,
-      String userGroupId, bool allowAutoJoin) async {
+      String userGroupId, bool requireAdminApproval) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
@@ -420,7 +420,7 @@ class GroupService {
           ).toJson());
       //store group settings
 
-      addGroupSettings(userId, groupData.id, allowAutoJoin);
+      addGroupSettings(userId, groupData.id, requireAdminApproval);
       return userGroupId;
     } catch (e) {
       locator<LogService>().createLog(
@@ -431,8 +431,8 @@ class GroupService {
     }
   }
 
-  Future editGroup(GroupModel groupData, String groupID, bool allowAutoJoin,
-      String groupSettingsId) async {
+  Future editGroup(GroupModel groupData, String groupID,
+      bool requireAdminApproval, String groupSettingsId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _groupCollectionReference.doc(groupID).update(
@@ -450,8 +450,8 @@ class GroupService {
       );
 
       updateGroupSettings(
-          key: SettingsKey.allowAutoJoin,
-          value: allowAutoJoin,
+          key: SettingsKey.requireAdminApproval,
+          value: requireAdminApproval,
           groupSettingsId: groupSettingsId);
     } catch (e) {
       locator<LogService>().createLog(
@@ -661,15 +661,15 @@ class GroupService {
   }
 
   Future<bool> addGroupSettings(
-      String userId, String groupId, bool allowAutoJoin) async {
+      String userId, String groupId, bool requireAdminApproval) async {
     final groupSettingsId = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
-      _groupSettingsCollectionReference
-          .doc(groupSettingsId)
-          .set(populateGroupSettings(userId, groupId, allowAutoJoin).toJson());
+      _groupSettingsCollectionReference.doc(groupSettingsId).set(
+          populateGroupSettings(userId, groupId, requireAdminApproval)
+              .toJson());
       return true;
     } catch (e) {
       locator<LogService>().createLog(
@@ -680,9 +680,10 @@ class GroupService {
     }
   }
 
-  populateGroupSettings(String userId, String groupId, bool allowAutoJoin) {
+  populateGroupSettings(
+      String userId, String groupId, bool requireAdminApproval) {
     GroupSettings groupsSettings = GroupSettings(
-        allowAutoJoin: allowAutoJoin,
+        requireAdminApproval: requireAdminApproval,
         groupId: groupId,
         userId: userId,
         enableNotificationFormNewPrayers: false,

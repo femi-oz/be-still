@@ -11,7 +11,7 @@ class GroupSettings {
   final bool notifyMeofFlaggedPrayers;
   final bool notifyWhenNewMemberJoins;
   final String createdBy;
-  final bool allowAutoJoin;
+  final bool requireAdminApproval;
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
@@ -19,7 +19,7 @@ class GroupSettings {
   const GroupSettings({
     this.id,
     @required this.userId,
-    @required this.allowAutoJoin,
+    @required this.requireAdminApproval,
     @required this.groupId,
     @required this.enableNotificationFormNewPrayers,
     @required this.enableNotificationForUpdates,
@@ -38,7 +38,7 @@ class GroupSettings {
         groupId = snapshot.data()['GroupId'],
         enableNotificationFormNewPrayers =
             snapshot.data()['EnableNotificationFormNewPrayers'],
-        allowAutoJoin = snapshot.data()['AllowAutoJoin'] ?? false,
+        requireAdminApproval = snapshot.data()['RequireAdminApproval'] ?? true,
         enableNotificationForUpdates =
             snapshot.data()['EnableNotificationForUpdates'],
         notifyOfMembershipRequest =
@@ -57,7 +57,7 @@ class GroupSettings {
       'EnableNotificationFormNewPrayers': enableNotificationFormNewPrayers,
       'EnableNotificationForUpdates': enableNotificationForUpdates,
       'NotifyOfMembershipRequest': notifyOfMembershipRequest,
-      'AllowAutoJoin': allowAutoJoin,
+      'RequireAdminApproval': requireAdminApproval,
       'NotifyMeofFlaggedPrayers': notifyMeofFlaggedPrayers,
       'NotifyWhenNewMemberJoins': notifyWhenNewMemberJoins,
       'CreatedBy': createdBy,
