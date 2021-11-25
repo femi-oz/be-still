@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 class ReminderPicker extends StatefulWidget {
   final Function onCancel;
   final bool hideActionuttons;
+  final bool isGroup;
   final LocalNotificationModel reminder;
   final String type;
   final String entityId;
@@ -31,6 +32,7 @@ class ReminderPicker extends StatefulWidget {
     @required this.reminder,
     @required this.type,
     @required this.entityId,
+    @required this.isGroup,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
@@ -228,9 +230,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
-      print(scheduleDate);
-      final payload =
-          NotificationMessage(entityId: widget.entityId, type: widget.type);
+      final payload = NotificationMessage(
+          entityId: widget.entityId,
+          type: widget.type,
+          isGroup: widget.isGroup);
       await LocalNotification.setLocalNotification(
         context: context,
         title: title,

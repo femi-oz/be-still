@@ -242,20 +242,24 @@ class MessageModel {
 class NotificationMessage {
   final String entityId;
   final String type;
+  final bool isGroup;
 
   const NotificationMessage({
     @required this.entityId,
     @required this.type,
+    @required this.isGroup,
   });
 
   NotificationMessage.fromData(Map<String, dynamic> data)
       : entityId = data['entityId'],
-        type = data['type'];
+        type = data['type'],
+        isGroup = data['isGroup'];
 
   Map<String, dynamic> toJson() {
     return {
       'entityId': entityId,
       'type': type,
+      'isGroup': isGroup,
     };
   }
 }

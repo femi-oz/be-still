@@ -195,6 +195,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: ReminderPicker(
+                                isGroup: false,
                                 entityId: prayerData?.userPrayer?.id ?? '',
                                 type: NotificationType.reminder,
                                 reminder: _reminder,
@@ -252,6 +253,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 30),
                                     child: ReminderPicker(
+                                      isGroup: false,
                                       entityId:
                                           prayerData?.userPrayer?.id ?? '',
                                       type: NotificationType.reminder,

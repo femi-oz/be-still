@@ -255,6 +255,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                               .symmetric(
                                                           vertical: 30),
                                                       child: ReminderPicker(
+                                                        isGroup: false,
                                                         entityId: '',
                                                         type: NotificationType
                                                             .prayer_time,
@@ -347,6 +348,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 30),
                                     child: ReminderPicker(
+                                      isGroup: false,
                                       entityId: '',
                                       type: NotificationType.prayer_time,
                                       reminder: null,
