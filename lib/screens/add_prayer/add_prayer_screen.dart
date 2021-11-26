@@ -47,7 +47,7 @@ class _AddPrayerState extends State<AddPrayer> {
   int tagLength;
   int index;
 
-  List<PrayerUpdateModel> updates;
+  List<PrayerUpdateModel> updates = [];
   List groups = [];
   List<Widget> contactDropDowns;
   List textControllers = [];

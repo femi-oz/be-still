@@ -150,7 +150,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             ),
             SizedBox(height: 20),
             Container(
-              // margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
