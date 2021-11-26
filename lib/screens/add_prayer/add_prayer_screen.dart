@@ -157,12 +157,12 @@ class _AddPrayerState extends State<AddPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-          var prayerId =
-              Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .newPrayerId;
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .sendPrayerNotification(prayerId, NotificationType.prayer,
-                  selectedGroupId, context, _descriptionController.text);
+          // var prayerId =
+          //     Provider.of<GroupPrayerProvider>(context, listen: false)
+          //         .newPrayerId;
+          // await Provider.of<NotificationProvider>(context, listen: false)
+          //     .sendPrayerNotification(prayerId, NotificationType.prayer,
+          //         selectedGroupId, context, _descriptionController.text);
         } else {
           final prayerId = Provider.of<PrayerProvider>(context, listen: false)
               .prayerToEdit
@@ -196,7 +196,9 @@ class _AddPrayerState extends State<AddPrayer> {
           }
           await Provider.of<PrayerProvider>(context, listen: false)
               .editprayer(_descriptionController.text, prayerId);
-
+          // await Provider.of<NotificationProvider>(context, listen: false)
+          //     .sendPrayerNotification(prayerId, NotificationType.prayer,
+          //         selectedGroupId, context, _descriptionController.text);
           //tags
           List<PrayerTagModel> currentTags = [];
           List<PrayerTagModel> initialTags = [];

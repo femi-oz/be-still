@@ -270,15 +270,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
 
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(receiverId);
+      final receiverData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
+          .sendPushNotification(
               'Your request to join ${groupData.name} has been denied',
               NotificationType.deny_request,
               currentUser.firstName,
               currentUser.id,
               receiverId,
               'Request Denied',
-              groupData.id);
+              groupData.id,
+              [receiverData.pushToken]);
       deleteNotification(notificationId);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
@@ -322,15 +327,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         });
         await Provider.of<NotificationProvider>(context, listen: false)
             .updateNotification(notificationId);
+        await Provider.of<UserProvider>(context, listen: false)
+            .getUserById(receiverId);
+        final receiverData =
+            Provider.of<UserProvider>(context, listen: false).selectedUser;
         await Provider.of<NotificationProvider>(context, listen: false)
-            .addPushNotification(
+            .sendPushNotification(
                 'Your request to join ${groupData.name} has been accepted',
                 NotificationType.accept_request,
                 currentUser.firstName,
                 currentUser.id,
                 receiverId,
                 'Request Accepted',
-                groupData.id);
+                groupData.id,
+                [receiverData.pushToken]);
         deleteNotification(notificationId);
         Navigator.of(context).pop();
         BeStilDialog.hideLoading(context);

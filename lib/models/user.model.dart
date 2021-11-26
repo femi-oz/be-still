@@ -10,11 +10,12 @@ class UserModel {
   final int churchId;
   final String dateOfBirth;
   final String createdBy;
+  String pushToken;
   final DateTime createdOn;
   final String modifiedBy;
   final DateTime modifiedOn;
 
-  const UserModel({
+  UserModel({
     this.id,
     @required this.firstName,
     @required this.lastName,
@@ -22,6 +23,7 @@ class UserModel {
     @required this.keyReference,
     @required this.churchId,
     @required this.dateOfBirth,
+    @required this.pushToken,
     @required this.createdBy,
     @required this.createdOn,
     @required this.modifiedBy,
@@ -31,6 +33,7 @@ class UserModel {
   UserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         firstName = snapshot.data()['FirstName'],
+        pushToken = snapshot.data()['PushToken'],
         lastName = snapshot.data()['LastName'],
         email = snapshot.data()['Email'],
         keyReference = snapshot.data()['KeyReference'],
@@ -46,6 +49,7 @@ class UserModel {
       'FirstName': firstName,
       'LastName': lastName,
       'Email': email,
+      'PushToken': pushToken,
       'DOB': dateOfBirth,
       'KeyReference': keyReference,
       'ChurchId': churchId,

@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -29,21 +30,22 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
-      String status, String userName, String adminId) async {
+      String status, String userName, UserModel admin) async {
     const title = 'Group Request';
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .joinRequest(groupData.group.id, userId, status, userName);
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
+          .sendPushNotification(
               '$userName has requested to join your group',
               NotificationType.request,
               userName,
               userId,
-              adminId,
+              admin.id,
               title,
-              groupData.group.id);
+              groupData.group.id,
+              [admin.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -310,7 +312,7 @@ class _GroupCardState extends State<GroupCard> {
                                             .id,
                                         StringUtils.joinRequestStatusPending,
                                         '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
-                                        adminData.id,
+                                        adminData,
                                       );
                                     }
                                   }),

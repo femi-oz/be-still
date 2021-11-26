@@ -45,9 +45,9 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   int fieldIndex;
 
   List<PrayerUpdateModel> updates;
-  List groups = [];
+  // List groups = [];
   List<Widget> contactDropDowns;
-  List textControllers = [];
+  List<TextEditingController> textControllers = [];
   List<String> tagList = [];
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
@@ -129,6 +129,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           var prayerId =
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .newPrayerId;
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+            prayerId,
+            NotificationType.prayer_updates,
+            _group.group.id,
+            context,
+            _descriptionController.text,
+          );
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
@@ -141,9 +149,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .sendPrayerNotification(prayerId, NotificationType.prayer,
-                  _group.group.id, context, _descriptionController.text);
+
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         } else {
@@ -264,11 +270,12 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
 
           await Provider.of<NotificationProvider>(context, listen: false)
               .sendPrayerNotification(
-                  editPrayerId,
-                  NotificationType.prayer_updates,
-                  _group.group.id,
-                  context,
-                  _descriptionController.text);
+            editPrayerId,
+            NotificationType.prayer_updates,
+            _group.group.id,
+            context,
+            _descriptionController.text,
+          );
 
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
