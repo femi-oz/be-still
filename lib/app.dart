@@ -235,7 +235,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,
-        builder: (contect, snapshot) => MaterialApp(
+        builder: (contect, snapshot) => GetMaterialApp(
           builder: (BuildContext context, Widget child) {
             final MediaQueryData data = MediaQuery.of(context);
             return MediaQuery(

@@ -36,7 +36,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
             _organizationController.text,
             _adminNameController.text,
             _descriptionController.text);
-    Get.back();
+    // Navigator.pop(context);
   }
 
   Widget build(BuildContext context) {

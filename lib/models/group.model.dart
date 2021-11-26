@@ -268,7 +268,7 @@ class GroupUserModel {
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],
-        fullName = snapshot.data()['FullName'],
+        fullName = snapshot.data()['FullName'] ?? '',
         // email = snapshot.data()['Email'],
         status = snapshot.data()['Status'],
         role = snapshot.data()['Role'],

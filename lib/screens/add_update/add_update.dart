@@ -252,32 +252,32 @@ class _AddUpdateState extends State<AddUpdate> {
             ),
             SizedBox(height: 20),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: 30),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          EntryScreen.routeName,
-                          (Route<dynamic> route) => false);
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            EntryScreen.routeName,
+                            (Route<dynamic> route) => false);
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.grey.withOpacity(0.5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey.withOpacity(0.5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
@@ -285,30 +285,30 @@ class _AddUpdateState extends State<AddUpdate> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 20,
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
@@ -316,7 +316,7 @@ class _AddUpdateState extends State<AddUpdate> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

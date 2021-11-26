@@ -65,33 +65,36 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   leaveGroup(CombineGroupUserStream data) async {
+    Navigator.pop(context);
+    BeStilDialog.showLoading(context, '');
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
 
     var receiver = data.groupUsers
         .firstWhere((element) => element.role == GroupUserRole.admin);
-    final id = data.groupUsers
-        .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
-        .id;
+    // final id = data.groupUsers
+    //     .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
+    //     .id;
     await Provider.of<UserProvider>(context, listen: false)
         .getUserById(receiver.userId);
     final receiverData =
         Provider.of<UserProvider>(context, listen: false).selectedUser;
-    if (id != null) {
-      BeStilDialog.showLoading(context, '');
-      await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-      sendPushNotification(
-          '${_currentUser.firstName} has left your group ${data.group.name}',
-          NotificationType.leave_group,
-          _currentUser.firstName,
-          _currentUser.id,
-          receiver.userId,
-          'Groups',
-          data.group.id,
-          [receiverData.pushToken]);
-      Navigator.pop(context);
-      BeStilDialog.hideLoading(context);
-    }
+    // if (id != null) {
+    await Provider.of<GroupProvider>(context, listen: false)
+        .leaveGroup(_currentUser.id);
+    sendPushNotification(
+        '${_currentUser.firstName} has left your group ${data.group.name}',
+        NotificationType.leave_group,
+        _currentUser.firstName,
+        _currentUser.id,
+        receiver.userId,
+        'Groups',
+        data.group.id,
+        [receiverData.pushToken]);
+    Provider.of<GroupProvider>(context, listen: false)
+        .setUserGroups(_currentUser.id);
+    BeStilDialog.hideLoading(context);
+    // }
   }
 
   deleteGroup(CombineGroupUserStream data) async {

@@ -87,7 +87,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
           .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
-      BeStilDialog.hideLoading(context);
     } else {
       await Provider.of<GroupProvider>(context, listen: false).editGroup(
           groupData,
@@ -98,11 +97,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   .groupSettings
                   ?.id ??
               '');
-      BeStilDialog.hideLoading(context);
     }
-    setState(() {
-      newGroupId = groupData.id;
-      _step++;
+    Future.delayed(Duration(milliseconds: 1000)).then((_) {
+      BeStilDialog.hideLoading(context);
+      setState(() {
+        newGroupId = groupData.id;
+        _step++;
+      });
     });
   }
 
@@ -154,28 +155,27 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      appCOntroller.setCurrentPage(3, true);
-                      Navigator.pop(context);
-                      FocusManager.instance.primaryFocus.unfocus();
-                    },
-                    child: Container(
-                      height: 30,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      // width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        appCOntroller.setCurrentPage(3, true);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.grey.withOpacity(0.5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey.withOpacity(0.5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
@@ -183,31 +183,30 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      height: 30,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      // width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
@@ -215,7 +214,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
