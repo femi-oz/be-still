@@ -45,9 +45,9 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   int fieldIndex;
 
   List<PrayerUpdateModel> updates;
-  List groups = [];
+  // List groups = [];
   List<Widget> contactDropDowns;
-  List textControllers = [];
+  List<TextEditingController> textControllers = [];
   List<String> tagList = [];
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
@@ -129,6 +129,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           var prayerId =
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .newPrayerId;
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+            prayerId,
+            NotificationType.prayer_updates,
+            _group.group.id,
+            context,
+            _descriptionController.text,
+          );
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
@@ -141,9 +149,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .sendPrayerNotification(prayerId, NotificationType.prayer,
-                  _group.group.id, context, _descriptionController.text);
+
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         } else {
@@ -264,11 +270,12 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
 
           await Provider.of<NotificationProvider>(context, listen: false)
               .sendPrayerNotification(
-                  editPrayerId,
-                  NotificationType.prayer_updates,
-                  _group.group.id,
-                  context,
-                  _descriptionController.text);
+            editPrayerId,
+            NotificationType.prayer_updates,
+            _group.group.id,
+            context,
+            _descriptionController.text,
+          );
 
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
@@ -503,32 +510,32 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             ),
             SizedBox(height: 20),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: 30),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      appCOntroller.setCurrentPage(8, true);
-                      Navigator.pop(context);
-                      FocusManager.instance.primaryFocus.unfocus();
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        appCOntroller.setCurrentPage(8, true);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.grey.withOpacity(0.5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey.withOpacity(0.5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
@@ -536,30 +543,30 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 20,
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
@@ -567,7 +574,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

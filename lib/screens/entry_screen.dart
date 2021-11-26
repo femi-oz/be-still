@@ -57,8 +57,8 @@ class _EntryScreenState extends State<EntryScreen> {
   initState() {
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       if (miscProvider.initialLoad) {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
@@ -82,7 +82,7 @@ class _EntryScreenState extends State<EntryScreen> {
         messaging = FirebaseMessaging.instance;
         messaging.getToken().then((value) => {
               Provider.of<NotificationProvider>(context, listen: false)
-                  .init(value, userId)
+                  .init(value, user.id, user)
             });
       }
     });
@@ -357,7 +357,7 @@ class _EntryScreenState extends State<EntryScreen> {
                 break;
               case 1:
                 Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditMode(false);
+                    .setEditMode(false, true);
                 Provider.of<PrayerProvider>(context, listen: false)
                     .setEditPrayer(null);
                 AppCOntroller appCOntroller = Get.find();

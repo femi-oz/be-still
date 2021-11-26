@@ -39,7 +39,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   }
 
   bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
+    var reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();

@@ -42,6 +42,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteFromGroup(user.userId, user.groupId);
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(user.userId);
+      final receiverData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       sendPushNotification(
           '$userName has removed you from ${group.group.name}',
           NotificationType.remove_from_group,
@@ -49,7 +53,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           _currentUser.id,
           user.userId,
           'Remove from group',
-          group.group.id);
+          group.group.id,
+          [receiverData.pushToken]);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -60,28 +65,37 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   leaveGroup(CombineGroupUserStream data) async {
+    Navigator.pop(context);
+    BeStilDialog.showLoading(context, '');
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-
-    var receiver = data.groupUsers
-        .firstWhere((element) => element.role == GroupUserRole.admin);
     final id = data.groupUsers
         .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
         .id;
-    if (id != null) {
-      BeStilDialog.showLoading(context, '');
-      await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-      sendPushNotification(
-          '${_currentUser.firstName} has left your group ${data.group.name}',
-          NotificationType.leave_group,
-          _currentUser.firstName,
-          _currentUser.id,
-          receiver.userId,
-          'Groups',
-          data.group.id);
-      Navigator.pop(context);
-      BeStilDialog.hideLoading(context);
-    }
+    await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
+    var receiver = data.groupUsers
+        .firstWhere((element) => element.role == GroupUserRole.admin);
+
+    await Provider.of<UserProvider>(context, listen: false)
+        .getUserById(receiver.userId);
+    await Future.delayed(Duration(milliseconds: 500));
+    final receiverData =
+        Provider.of<UserProvider>(context, listen: false).selectedUser;
+    // if (id != null) {
+
+    sendPushNotification(
+        '${_currentUser.firstName} has left your group ${data.group.name}',
+        NotificationType.leave_group,
+        _currentUser.firstName,
+        _currentUser.id,
+        receiver.userId,
+        'Groups',
+        data.group.id,
+        [receiverData.pushToken]);
+    Provider.of<GroupProvider>(context, listen: false)
+        .setUserGroups(_currentUser.id);
+    BeStilDialog.hideLoading(context);
+    // }
   }
 
   deleteGroup(CombineGroupUserStream data) async {
@@ -93,11 +107,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.hideLoading(context);
   }
 
-  sendPushNotification(message, messageType, sender, senderId, receiverId,
-      title, entityId) async {
+  sendPushNotification(
+      String message,
+      String messageType,
+      String sender,
+      String senderId,
+      String receiverId,
+      String title,
+      String entityId,
+      List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
-        .addPushNotification(message, messageType, sender, senderId, receiverId,
-            title, entityId);
+        .sendPushNotification(message, messageType, sender, senderId,
+            receiverId, title, entityId, tokens);
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
@@ -781,7 +802,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             SizedBox(height: 30),
             CustomToggle(
               title: 'Enable notifications from Groups?',
-              onChange: (value) async {
+              onChange: (bool value) async {
                 _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
                     key: 'EnableNotificationForAllGroups',
                     value: value,
@@ -792,12 +813,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   messaging.getToken().then((value) => {
                         Provider.of<NotificationProvider>(context,
                                 listen: false)
-                            .enablePushNotifications(value, _currentUser.id)
+                            .enablePushNotifications(
+                                value, _currentUser.id, _currentUser)
                       });
                 } else {
                   await Provider.of<NotificationProvider>(context,
                           listen: false)
-                      .disablePushNotifications(_currentUser.id);
+                      .disablePushNotifications(_currentUser.id, _currentUser);
                 }
               },
               value: _groupPreferenceSettings?.enableNotificationForAllGroups,
@@ -1075,6 +1097,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             SizedBox(height: 15),
                             CustomToggle(
+                              disabled: true,
                               title:
                                   'Enable notifications for New Prayers for this group?',
                               onChange: (value) => _groupProvider
@@ -1086,6 +1109,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   .enableNotificationFormNewPrayers,
                             ),
                             CustomToggle(
+                              disabled: true,
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
                               onChange: (value) => _groupProvider
@@ -1098,6 +1122,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ),
                             if (isMember)
                               CustomToggle(
+                                disabled: true,
                                 title:
                                     'Notify me when new members joins this group',
                                 onChange: (value) => _groupProvider
@@ -1110,6 +1135,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
+                                disabled: true,
                                 title: 'Notify me of membership requests',
                                 onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
@@ -1121,6 +1147,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
+                                disabled: true,
                                 title: 'Notify me of flagged prayers',
                                 onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,

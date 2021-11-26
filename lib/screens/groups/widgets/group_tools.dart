@@ -44,22 +44,26 @@ class _GroupToolsState extends State<GroupTools> {
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    var receiver = data.groupUsers
+    var admin = data.groupUsers
         .firstWhere((element) => element.role == GroupUserRole.admin);
+    await Provider.of<UserProvider>(context, listen: false)
+        .getUserById(admin.userId);
     final id = data.groupUsers
         .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
         .id;
     if (id != null) {
       await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-
+      final adminData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       await sendPushNotification(
           '${_currentUser.firstName} has left your group ${data.group.name}',
           NotificationType.leave_group,
           _currentUser.firstName,
           _currentUser.id,
-          receiver.userId,
+          adminData.id,
           'Groups',
-          data.group.id);
+          data.group.id,
+          [adminData.pushToken]);
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(3, true);
@@ -70,11 +74,18 @@ class _GroupToolsState extends State<GroupTools> {
     }
   }
 
-  sendPushNotification(message, messageType, sender, senderId, receiverId,
-      title, entityId) async {
+  sendPushNotification(
+      String message,
+      String messageType,
+      String sender,
+      String senderId,
+      String receiverId,
+      String title,
+      String entityId,
+      List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
-        .addPushNotification(message, messageType, sender, senderId, receiverId,
-            title, entityId);
+        .sendPushNotification(message, messageType, sender, senderId,
+            receiverId, title, entityId, tokens);
   }
 
   void _openDeleteConfirmation(BuildContext context, String message,

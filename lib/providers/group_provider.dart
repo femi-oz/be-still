@@ -52,8 +52,8 @@ class GroupProvider with ChangeNotifier {
         }
         return u..groupUsers = _distinct;
       }).toList();
+      notifyListeners();
     });
-    notifyListeners();
   }
 
   Stream<CombineGroupUserStream> getGroup(groupdId, String userId) {
@@ -141,7 +141,7 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addGroup(GroupModel groupData, String userID, String fullName,
+  Future<bool> addGroup(GroupModel groupData, String userID, String fullName,
       bool allowAutoJoin) async {
     if (_firebaseAuth.currentUser == null) return null;
     {
@@ -149,8 +149,8 @@ class GroupProvider with ChangeNotifier {
       return _groupService
           .addGroup(userID, groupData, fullName, _userGroupId, allowAutoJoin)
           .then((value) async {
-        await Future.delayed(Duration(milliseconds: 500));
         await setCurrentGroupById(_userGroupId, userID);
+        return true;
       });
     }
   }
@@ -185,8 +185,9 @@ class GroupProvider with ChangeNotifier {
         .asBroadcastStream()
         .listen((userGroup) {
       _currentGroup = userGroup;
+
+      notifyListeners();
     });
-    notifyListeners();
   }
 
   Future inviteMember(

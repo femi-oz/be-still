@@ -201,7 +201,9 @@ class _PrayerListState extends State<PrayerList> {
                                       onPress: () {
                                         AppCOntroller appCOntroller =
                                             Get.find();
-
+                                        Provider.of<PrayerProvider>(context,
+                                                listen: false)
+                                            .setEditMode(false, false);
                                         appCOntroller.setCurrentPage(1, true);
                                       },
                                       text: 'Add New Prayer',
@@ -238,7 +240,11 @@ class _PrayerListState extends State<PrayerList> {
                                                     AppCOntroller
                                                         appCOntroller =
                                                         Get.find();
-
+                                                    Provider.of<PrayerProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .setEditMode(
+                                                            false, false);
                                                     appCOntroller
                                                         .setCurrentPage(
                                                             1, true);

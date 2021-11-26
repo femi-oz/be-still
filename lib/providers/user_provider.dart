@@ -1,4 +1,5 @@
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,11 @@ class UserProvider with ChangeNotifier {
       _selectedUser = event;
       notifyListeners();
     });
+  }
+
+  Future<String> returnUserToken(String id) async {
+    final user = await _userService.getUserByIdFuture(id);
+    return user.pushToken;
   }
 
   Future setAllUsers(String userId) async {

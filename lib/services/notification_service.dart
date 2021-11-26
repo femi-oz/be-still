@@ -7,11 +7,15 @@ import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/user_device.model.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/services/log_service.dart';
+import 'package:be_still/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
@@ -26,48 +30,16 @@ class NotificationService {
   final CollectionReference<Map<String, dynamic>> _emailCollectionReference =
       FirebaseFirestore.instance.collection("MailMessage");
   final CollectionReference<Map<String, dynamic>>
-      _userDeviceCollectionReference =
-      FirebaseFirestore.instance.collection("UserDevice");
-  final CollectionReference<Map<String, dynamic>> _deviceCollectionReference =
-      FirebaseFirestore.instance.collection("Device");
-  final CollectionReference<Map<String, dynamic>>
       _prayerTimeCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTime");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  init(String token, String userId) async {
-    final deviceId = Uuid().v1();
-    final userDeviceID = Uuid().v1();
-    //store device
+  UserService userService = locator<UserService>();
+
+  init(String token, String userId, UserModel currentUser) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var tokens = await getNotificationToken(userId);
-      if (tokens.contains(token)) return;
-      await _deviceCollectionReference.doc(deviceId).set(
-            DeviceModel(
-                    createdBy: 'MOBILE',
-                    createdOn: DateTime.now(),
-                    modifiedOn: DateTime.now(),
-                    modifiedBy: 'MOBILE',
-                    model: 'MOBILE',
-                    deviceId: '',
-                    name: token,
-                    status: Status.active)
-                .toJson(),
-          );
-
-      // store user device
-      await _userDeviceCollectionReference.doc(userDeviceID).set(
-            UserDeviceModel(
-              createdBy: 'MOBILE',
-              createdOn: DateTime.now(),
-              modifiedOn: DateTime.now(),
-              modifiedBy: 'MOBILE',
-              deviceId: deviceId,
-              userId: userId,
-              status: Status.active,
-            ).toJson(),
-          );
+      userService.addUserToken(token: token, userId: userId, user: currentUser);
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -77,60 +49,10 @@ class NotificationService {
     }
   }
 
-  Future<List<String>> getNotificationToken(userId) async {
-    //get user devices
-    var userDevices = await _userDeviceCollectionReference
-        .where('UserId', isEqualTo: userId)
-        .get();
-    var userDevicesDocs =
-        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
-    List<DeviceModel> devices = [];
+  disablePushNotifications(String userId, UserModel currentUser) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      for (int i = 0; i < userDevicesDocs.length; i++) {
-        var dev = await _deviceCollectionReference
-            .doc(userDevicesDocs[i].deviceId)
-            .get();
-        devices.add(DeviceModel.fromData(dev));
-      }
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
-      throw HttpException(e.message);
-    }
-    return devices.map((e) => e.name).toList();
-  }
-
-  disablePushNotifications(userId) async {
-    //get user devices
-    var userDevices = await _userDeviceCollectionReference
-        .where('UserId', isEqualTo: userId)
-        .get();
-    var userDevicesDocs =
-        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
-    List<DeviceModel> devices = [];
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      for (int i = 0; i < userDevicesDocs.length; i++) {
-        var dev = await _deviceCollectionReference
-            .doc(userDevicesDocs[i].deviceId)
-            .get();
-        devices.add(DeviceModel.fromData(dev));
-        devices.forEach((element) async {
-          await _deviceCollectionReference.doc(element.id).update(
-                DeviceModel(
-                        modifiedOn: DateTime.now(),
-                        modifiedBy: 'MOBILE',
-                        model: 'MOBILE',
-                        deviceId: '',
-                        name: '',
-                        status: Status.active,
-                        createdBy: element.createdBy,
-                        createdOn: DateTime.now())
-                    .toJson(),
-              );
-        });
-      }
+      userService.addUserToken(token: '', userId: userId, user: currentUser);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, userId, 'NOTIFICATION/service/getNotificationToken');
@@ -138,37 +60,11 @@ class NotificationService {
     }
   }
 
-  enablePushNotification(String token, String userId) async {
-    var userDevices = await _userDeviceCollectionReference
-        .where('UserId', isEqualTo: userId)
-        .get();
-    var userDevicesDocs =
-        userDevices.docs.map((e) => UserDeviceModel.fromData(e)).toList();
-    List<DeviceModel> devices = [];
+  enablePushNotification(
+      String token, String userId, UserModel currentUser) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      for (int i = 0; i < userDevicesDocs.length; i++) {
-        var dev = await _deviceCollectionReference
-            .doc(userDevicesDocs[i].deviceId)
-            .get();
-        devices.add(DeviceModel.fromData(dev));
-
-        devices.forEach((element) async {
-          print(element.id);
-          await _deviceCollectionReference.doc(element.id).update(
-                DeviceModel(
-                        modifiedOn: DateTime.now(),
-                        modifiedBy: 'MOBILE',
-                        model: 'MOBILE',
-                        deviceId: '',
-                        name: token,
-                        status: Status.active,
-                        createdBy: element.createdBy,
-                        createdOn: DateTime.now())
-                    .toJson(),
-              );
-        });
-      }
+      userService.addUserToken(token: token, userId: userId, user: currentUser);
     } catch (e) {
       locator<LogService>().createLog(
           e.message, userId, 'NOTIFICATION/service/getNotificationToken');
@@ -176,17 +72,18 @@ class NotificationService {
     }
   }
 
-  addPushNotification({
-    String message,
-    String messageType,
-    String sender,
-    String senderId,
-    String recieverId,
-    String title,
+  sendPushNotification({
+    @required String message,
+    @required String messageType,
+    @required String sender,
+    @required String senderId,
+    @required String recieverId,
+    @required String title,
+    @required List<String> tokens,
     @required String entityId,
   }) async {
     final _notificationId = Uuid().v1();
-    var tokens = await getNotificationToken(recieverId);
+    // var tokens = await getNotificationToken(recieverId);
 
     var data = PushNotificationModel(
       messageType: messageType,

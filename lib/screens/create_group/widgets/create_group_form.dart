@@ -80,10 +80,10 @@ class CreateGroupForm extends StatelessWidget {
           CustomInput(
             // textkey: GlobalKey<FormFieldState>(),
             controller: descriptionController,
-            label: 'Purpose',
+            label: 'Purpose*',
             maxLines: 4,
             textInputAction: TextInputAction.done,
-            isRequired: false,
+            isRequired: true,
             showSuffix: false,
           ),
           SizedBox(height: 12.0),

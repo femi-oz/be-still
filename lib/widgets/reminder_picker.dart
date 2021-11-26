@@ -295,7 +295,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           .deleteLocalNotification(widget.reminder.id);
       setState(() {});
       if (widget.type == NotificationType.reminder) {
-        Navigator.pop(context);
+        if (widget.popTwice) Navigator.pop(context);
         Navigator.pop(context);
 
         AppCOntroller appCOntroller = Get.find();
@@ -618,9 +618,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
               : Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40),
+                      // margin: EdgeInsets.symmetric(horizontal: 40),
                       width: double.infinity,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
@@ -628,7 +629,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             },
                             child: Container(
                               height: 38.0,
-                              width: MediaQuery.of(context).size.width * .35,
+                              width: MediaQuery.of(context).size.width * .32,
                               decoration: BoxDecoration(
                                 color: AppColors.grey.withOpacity(0.5),
                                 border: Border.all(
@@ -648,11 +649,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               ),
                             ),
                           ),
+                          SizedBox(width: 15),
                           GestureDetector(
                             onTap: setNotification,
                             child: Container(
                               height: 38.0,
-                              width: MediaQuery.of(context).size.width * .35,
+                              width: MediaQuery.of(context).size.width * .32,
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 border: Border.all(

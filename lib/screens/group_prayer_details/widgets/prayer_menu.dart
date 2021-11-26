@@ -94,32 +94,23 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  _sendNotification(String groupId) async {
-    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
+  _sendNotification(
+      String groupId, List<String> tokens, String receiverId) async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    GroupUserModel receiver;
-    data
-        .where((element) => element.group.id == groupId)
-        .forEach((element) async {
-      for (var i = 0; i < element.groupUsers.length; i++) {
-        receiver =
-            element.groupUsers.firstWhere((e) => e.role == GroupUserRole.admin);
-      }
-    });
-    if (receiver != null) {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
-              '${_user.firstName} flagged a prayer as inappropriate',
-              NotificationType.inappropriate_content,
-              _user.firstName,
-              _user.id,
-              receiver.userId,
-              'Prayer flagged as innapropriate',
-              widget.prayerData.groupPrayer.id);
-    }
+
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .sendPushNotification(
+            '${_user.firstName} flagged a prayer as inappropriate',
+            NotificationType.inappropriate_content,
+            _user.firstName,
+            _user.id,
+            receiverId,
+            'Prayer flagged as innapropriate',
+            widget.prayerData.groupPrayer.id,
+            tokens);
   }
 
-  void _flagAsInappropriate(groupId) async {
+  void _flagAsInappropriate(CombineGroupUserStream group) async {
     BeStilDialog.showLoading(context);
 
     try {
@@ -129,7 +120,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .flagAsInappropriate(widget.prayerData.prayer.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .hidePrayer(widget.prayerData.prayer.id, currentUser);
-      _sendNotification(groupId);
+      var admin = group.groupUsers
+          .firstWhere((element) => element.role == GroupUserRole.admin);
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(admin.userId);
+      final adminData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
+      _sendNotification(group.group.id, [adminData.pushToken], adminData.id);
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
@@ -357,10 +354,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         widget.prayerData.groupPrayer.isArchived ||
         widget.prayerData.groupPrayer.isSnoozed;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    final groupId = Provider.of<GroupProvider>(context, listen: false)
-        .currentGroup
-        .group
-        .id;
+    final group =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
     bool isAdmin = Provider.of<GroupProvider>(context)
             .currentGroup
             .groupUsers
@@ -588,7 +583,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                         icon: Icons.info,
                         text: 'Flag As Inappropriate',
                         isDisabled: isDisable,
-                        onPress: () => _flagAsInappropriate(groupId)),
+                        onPress: () => _flagAsInappropriate(group)),
                     if (isAdmin || isOwner)
                       LongButton(
                         textColor: AppColors.lightBlue3,
