@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
@@ -98,7 +99,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   ?.id ??
               '');
     }
-    Future.delayed(Duration(milliseconds: 1000)).then((_) {
+    Future.delayed(Duration(milliseconds: 2000)).then((_) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setGroupPrayers(groupData.id);
       BeStilDialog.hideLoading(context);
       setState(() {
         newGroupId = groupData.id;

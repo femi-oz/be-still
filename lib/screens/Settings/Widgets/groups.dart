@@ -69,19 +69,20 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.showLoading(context, '');
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    final id = data.groupUsers
+        .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
+        .id;
+    await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
     var receiver = data.groupUsers
         .firstWhere((element) => element.role == GroupUserRole.admin);
-    // final id = data.groupUsers
-    //     .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
-    //     .id;
+
     await Provider.of<UserProvider>(context, listen: false)
         .getUserById(receiver.userId);
+    await Future.delayed(Duration(milliseconds: 500));
     final receiverData =
         Provider.of<UserProvider>(context, listen: false).selectedUser;
     // if (id != null) {
-    await Provider.of<GroupProvider>(context, listen: false)
-        .leaveGroup(_currentUser.id);
+
     sendPushNotification(
         '${_currentUser.firstName} has left your group ${data.group.name}',
         NotificationType.leave_group,

@@ -44,6 +44,7 @@ class GroupPrayerProvider with ChangeNotifier {
   String get filterOption => _filterOption;
 
   Future<void> setGroupPrayers(String groupId) async {
+    _filteredPrayers = [];
     _prayerService.getPrayers(groupId).asBroadcastStream().listen(
       (data) {
         _prayers = data.where((e) => e.groupPrayer.deleteStatus > -1).toList();

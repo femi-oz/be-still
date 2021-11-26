@@ -149,7 +149,6 @@ class GroupProvider with ChangeNotifier {
       return _groupService
           .addGroup(userID, groupData, fullName, _userGroupId, allowAutoJoin)
           .then((value) async {
-        await Future.delayed(Duration(milliseconds: 500));
         await setCurrentGroupById(_userGroupId, userID);
         return true;
       });
@@ -186,6 +185,7 @@ class GroupProvider with ChangeNotifier {
         .asBroadcastStream()
         .listen((userGroup) {
       _currentGroup = userGroup;
+
       notifyListeners();
     });
   }
