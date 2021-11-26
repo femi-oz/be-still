@@ -357,7 +357,7 @@ class _EntryScreenState extends State<EntryScreen> {
                 break;
               case 1:
                 Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditMode(false);
+                    .setEditMode(false, true);
                 Provider.of<PrayerProvider>(context, listen: false)
                     .setEditPrayer(null);
                 AppCOntroller appCOntroller = Get.find();

@@ -1093,6 +1093,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             SizedBox(height: 15),
                             CustomToggle(
+                              disabled: true,
                               title:
                                   'Enable notifications for New Prayers for this group?',
                               onChange: (value) => _groupProvider
@@ -1104,6 +1105,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   .enableNotificationFormNewPrayers,
                             ),
                             CustomToggle(
+                              disabled: true,
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
                               onChange: (value) => _groupProvider
@@ -1116,6 +1118,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ),
                             if (isMember)
                               CustomToggle(
+                                disabled: true,
                                 title:
                                     'Notify me when new members joins this group',
                                 onChange: (value) => _groupProvider
@@ -1128,6 +1131,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
+                                disabled: true,
                                 title: 'Notify me of membership requests',
                                 onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
@@ -1139,6 +1143,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
+                                disabled: true,
                                 title: 'Notify me of flagged prayers',
                                 onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,

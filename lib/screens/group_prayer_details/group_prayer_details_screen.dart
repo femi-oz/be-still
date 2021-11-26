@@ -51,8 +51,8 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
 
   String reminderString;
   bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
+    var reminders =
+        Provider.of<NotificationProvider>(context).localNotifications;
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(

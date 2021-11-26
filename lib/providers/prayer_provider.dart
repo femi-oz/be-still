@@ -41,6 +41,8 @@ class PrayerProvider with ChangeNotifier {
 
   bool _isEdit = false;
   bool get isEdit => _isEdit;
+  bool _showDropDown = false;
+  bool get showDropDown => _showDropDown;
 
   CombinePrayerStream _prayerToEdit;
   CombinePrayerStream get prayerToEdit => _prayerToEdit;
@@ -356,8 +358,9 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setEditMode(bool value) {
+  void setEditMode(bool value, bool showDropDown) {
     _isEdit = value;
+    _showDropDown = showDropDown;
     notifyListeners();
   }
 

@@ -497,7 +497,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           : () async {
                               Provider.of<PrayerProvider>(context,
                                       listen: false)
-                                  .setEditMode(true);
+                                  .setEditMode(true, false);
                               Provider.of<PrayerProvider>(context,
                                       listen: false)
                                   .setEditPrayer(widget.prayerData);

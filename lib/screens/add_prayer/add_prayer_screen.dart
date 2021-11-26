@@ -40,7 +40,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool showNoContact = false;
   bool textWithSpace = false;
   bool contactSearchMode = false;
-  bool showSaveDropDown;
+  // bool showSaveDropDown;
 
   double numberOfLines = 5.0;
   int fieldIndex;
@@ -297,7 +297,8 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   void initState() {
     final isEdit = Provider.of<PrayerProvider>(context, listen: false).isEdit;
-    showSaveDropDown = isEdit ? false : true;
+
+    // showSaveDropDown = isEdit || !showDropDown ? false : true;
     _descriptionController.text = isEdit
         ? Provider.of<PrayerProvider>(context, listen: false)
             .prayerToEdit
@@ -547,9 +548,11 @@ class _AddPrayerState extends State<AddPrayer> {
                     onTap: () {
                       if (Provider.of<PrayerProvider>(context, listen: false)
                           .isEdit) {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        AppCOntroller appCOntroller = Get.find();
+
+                        appCOntroller.setCurrentPage(7, true);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
                       } else {
                         AppCOntroller appCOntroller = Get.find();
 
@@ -648,9 +651,8 @@ class _AddPrayerState extends State<AddPrayer> {
     } else {
       positionOffset2 = 9;
     }
-
-    final userGroups =
-        Provider.of<GroupProvider>(context, listen: false).userGroups;
+    final showDropDown = Provider.of<PrayerProvider>(context).showDropDown;
+    final userGroups = Provider.of<GroupProvider>(context).userGroups;
     List<SaveOptionModel> saveOptions = [];
     SaveOptionModel saveOption;
     if (userGroups.length > 0) {
@@ -863,7 +865,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 isValid ? _save(textEditingControllers) : null,
                           ),
                         ])),
-                showSaveDropDown && userGroups.length > 0
+                showDropDown && userGroups.length > 0
                     ? SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
