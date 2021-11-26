@@ -217,11 +217,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   gotoPrayer(PushNotificationModel notification) async {
     // does it exist
-    // not, should show modal this prayer by admin/owner
+    // no, should show modal this prayer by admin/owner
     BeStilDialog.showLoading(context);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayer(notification.entityId);
-    new Future.delayed(const Duration(milliseconds: 15), () async {
+    await Future.delayed(const Duration(milliseconds: 500), () async {
       var prayerGroupId =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .currentPrayer
@@ -236,11 +236,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       }
       BeStilDialog.hideLoading(context);
       deleteNotification(notification.id);
-      Future.delayed(Duration(milliseconds: 400)).then((value) {
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(9, true);
-        Navigator.pop(context);
-      });
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(9, true);
+      Navigator.pop(context);
     });
   }
 

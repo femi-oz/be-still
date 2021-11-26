@@ -60,6 +60,7 @@ class GroupPrayerProvider with ChangeNotifier {
         _currentPrayer = prayer;
         notifyListeners();
       });
+
   Future<void> setHiddenPrayer(String id) async =>
       _prayerService.getHiddenPrayers(id).asBroadcastStream().listen((prayer) {
         _hiddenPrayers = prayer;

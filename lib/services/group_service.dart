@@ -569,7 +569,6 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
-      _groupCollectionReference.doc(groupId).delete();
       _userGroupCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
@@ -577,6 +576,7 @@ class GroupService {
         value.docs.forEach((element) {
           element.reference.delete();
         });
+        _groupCollectionReference.doc(groupId).delete();
       });
     } catch (e) {
       locator<LogService>().createLog(
