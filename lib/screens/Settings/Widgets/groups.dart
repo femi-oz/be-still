@@ -11,8 +11,8 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
-import 'package:be_still/widgets/input_field.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
@@ -105,6 +105,62 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     await Future.delayed(Duration(milliseconds: 300));
     Navigator.pop(context);
     BeStilDialog.hideLoading(context);
+  }
+
+  Future<void> acceptRequest(
+      GroupRequestModel request, GroupModel group) async {
+    BeStilDialog.showLoading(context);
+    try {
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(request.userId); //sender
+
+      Future.delayed(Duration(seconds: 5), () async {
+        final receiverFullName =
+            '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
+
+        final sender =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+
+        await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
+            group,
+            request.groupId,
+            request.userId,
+            request.id,
+            receiverFullName);
+
+        final receiverData =
+            Provider.of<UserProvider>(context, listen: false).selectedUser;
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .sendPushNotification(
+                'Your request to join ${group.name} has been accepted',
+                NotificationType.accept_request,
+                sender.firstName,
+                sender.id,
+                request.userId,
+                'Request Accepted',
+                group.id,
+                [receiverData.pushToken]);
+        final notifications =
+            Provider.of<NotificationProvider>(context, listen: false)
+                .notifications
+                .where((e) =>
+                    e.messageType == NotificationType.request &&
+                    e.entityId == request.groupId)
+                .toList();
+        //notifcations where groupId= && type==request
+        // for
+        for (final not in notifications) {
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .updateNotification(not.id);
+        }
+
+        // Navigator.of(context).pop();
+        BeStilDialog.hideLoading(context);
+      });
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      // print(e);
+    }
   }
 
   sendPushNotification(
@@ -1088,11 +1144,23 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             if (isAdmin || isModerator)
                               CustomToggle(
                                 title: 'Require admin approval to join group?',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id,
-                                        key: SettingsKey.requireAdminApproval,
-                                        value: value,
-                                        settingsId: data.groupSettings.id),
+                                onChange: (value) {
+                                  if (!value) {
+                                    final activeRequests = data.groupRequests
+                                        .where((e) => e.status == '0')
+                                        .toList();
+                                    for (final req in activeRequests) {
+                                      acceptRequest(req, data.group);
+                                    }
+                                    // add each to group
+                                    // send notification that they joined
+                                  }
+                                  _groupProvider.updateGroupSettings(
+                                      _currentUser.id,
+                                      key: SettingsKey.requireAdminApproval,
+                                      value: value,
+                                      settingsId: data.groupSettings.id);
+                                },
                                 value: data.groupSettings.requireAdminApproval,
                               ),
                             SizedBox(height: 15),
