@@ -50,7 +50,7 @@ class NotificationBarState extends State<NotificationBar> {
       leading: IconButton(
         icon: Icon(
           AppIcons.bestill_close,
-          color: AppColors.textFieldText,
+          color: AppColors.white,
           size: 24,
         ),
         onPressed: () => Navigator.of(context).pop(),

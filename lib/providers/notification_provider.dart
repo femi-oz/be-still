@@ -3,17 +3,24 @@ import 'dart:convert';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:flutter/material.dart';
 import '../locator.dart';
+import 'group_prayer_provider.dart';
 
 class NotificationProvider with ChangeNotifier {
   NotificationService _notificationService = locator<NotificationService>();
@@ -57,21 +64,22 @@ class NotificationProvider with ChangeNotifier {
     print('message -- prov _onSelectNotification ===> $_message');
   }
 
-  Future init(String token, String userId) async {
+  Future init(String token, String userId, UserModel currentUser) async {
     if (_firebaseAuth.currentUser == null) return null;
-    _notificationService.init(token, userId);
+    _notificationService.init(token, userId, currentUser);
     notifyListeners();
   }
 
-  Future disablePushNotifications(String userId) async {
+  Future disablePushNotifications(String userId, UserModel currentUser) async {
     if (_firebaseAuth.currentUser == null) return null;
-    _notificationService.disablePushNotifications(userId);
+    _notificationService.disablePushNotifications(userId, currentUser);
     notifyListeners();
   }
 
-  Future enablePushNotifications(String token, String userId) async {
+  Future enablePushNotifications(
+      String token, String userId, UserModel currentUser) async {
     if (_firebaseAuth.currentUser == null) return null;
-    _notificationService.enablePushNotification(token, userId);
+    _notificationService.enablePushNotification(token, userId, currentUser);
     notifyListeners();
   }
 
@@ -145,7 +153,7 @@ class NotificationProvider with ChangeNotifier {
     return await _notificationService.updatePushNotification(notificationId);
   }
 
-  Future addPushNotification(
+  Future sendPushNotification(
     String message,
     String messageType,
     String sender,
@@ -153,15 +161,17 @@ class NotificationProvider with ChangeNotifier {
     String recieverId,
     String title,
     String entityId,
+    List<String> tokens,
   ) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _notificationService.addPushNotification(
+    return await _notificationService.sendPushNotification(
         message: message,
         entityId: entityId,
         messageType: messageType,
         sender: sender,
         senderId: senderId,
         recieverId: recieverId,
+        tokens: tokens,
         title: title);
   }
 
@@ -251,5 +261,44 @@ class NotificationProvider with ChangeNotifier {
   Future<void> deletePrayerTime(String prayerTimeId) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _notificationService.deletePrayerTime(prayerTimeId);
+  }
+
+  Future sendPrayerNotification(
+    String prayerId,
+    String type,
+    String selectedGroupId,
+    BuildContext context,
+    String prayerDetail,
+  ) async {
+    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    List<String> followers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
+            .map((e) => e.userId)
+            .toList();
+
+    final admins = Provider.of<GroupProvider>(context, listen: false)
+        .currentGroup
+        .groupUsers
+        .where((e) => e.role == GroupUserRole.admin)
+        .map((e) => e.userId)
+        .toList();
+    final _ids = [...followers, ...admins];
+    _ids.removeWhere((e) => e == _user.id);
+    _ids.forEach((e) async {
+      final value = await Provider.of<UserProvider>(context, listen: false)
+          .returnUserToken(e);
+
+      sendPushNotification(
+          prayerDetail,
+          type,
+          _user.firstName,
+          _user.id,
+          e,
+          type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
+          prayerId,
+          [value]);
+    });
   }
 }

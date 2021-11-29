@@ -50,8 +50,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   String reminderString;
   bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
+    var reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
@@ -195,6 +197,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: ReminderPicker(
+                                isGroup: false,
                                 entityId: prayerData?.userPrayer?.id ?? '',
                                 type: NotificationType.reminder,
                                 reminder: _reminder,
@@ -252,11 +255,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 30),
                                     child: ReminderPicker(
+                                      isGroup: false,
                                       entityId:
                                           prayerData?.userPrayer?.id ?? '',
                                       type: NotificationType.reminder,
                                       reminder: _reminder,
                                       hideActionuttons: false,
+                                      popTwice: false,
                                       onCancel: () =>
                                           Navigator.of(context).pop(),
                                     ),

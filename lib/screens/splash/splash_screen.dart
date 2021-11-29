@@ -224,8 +224,7 @@ class _SplashScreenState extends State<SplashScreen>
                           StringUtils.copyRight2,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.medium10.copyWith(
-                            color: AppColors.splashTextColor,
-                          ),
+                              color: AppColors.splashTextColor, fontSize: 8),
                         ),
                       ],
                     ),

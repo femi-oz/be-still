@@ -1,12 +1,14 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,23 +30,42 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
-      String status, String userName, String adminId) async {
+      String status, String userName, UserModel admin) async {
     const title = 'Group Request';
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .joinRequest(groupData.group.id, userId, status, userName);
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
+          .sendPushNotification(
               '$userName has requested to join your group',
               NotificationType.request,
               userName,
               userId,
-              adminId,
+              admin.id,
               title,
-              groupData.group.id);
+              groupData.group.id,
+              [admin.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(3, true);
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+    }
+  }
+
+  Future<void> _joinGroup(String groupId) async {
+    BeStilDialog.showLoading(context);
+    try {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<GroupProvider>(context, listen: false).autoJoinGroup(
+          groupId, user.id, user.firstName + ' ' + user.lastName);
+      Navigator.of(context).pop();
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(3, true);
+      BeStilDialog.hideLoading(context);
     } catch (e) {
       BeStilDialog.hideLoading(context);
     }
@@ -142,12 +163,15 @@ class _GroupCardState extends State<GroupCard> {
                                 'Based in: ',
                                 style: AppTextStyles.regularText15,
                               ),
-                              Text(
-                                '${this.widget.groupData.group.location}',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
+                              Flexible(
+                                child: Text(
+                                  '${this.widget.groupData.group.location}',
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.textFieldText,
+                                  ),
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
@@ -156,38 +180,40 @@ class _GroupCardState extends State<GroupCard> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Associated with: ',
+                                'Church: ',
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${this.widget.groupData.group.organization}',
+                                this.widget.groupData.group.organization.isEmpty
+                                    ? 'N/A'
+                                    : '${this.widget.groupData.group.organization}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                               ),
                             ],
                           ),
-                          SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Type: ',
-                                style: AppTextStyles.regularText15,
-                              ),
-                              Text(
-                                '${this.widget.groupData.group.status} Group',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Text(
+                          //       'Type: ',
+                          //       style: AppTextStyles.regularText15,
+                          //     ),
+                          //     Text(
+                          //       '${this.widget.groupData.group.status} Group',
+                          //       style: AppTextStyles.regularText15.copyWith(
+                          //         color: AppColors.textFieldText,
+                          //       ),
+                          //       textAlign: TextAlign.center,
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       ),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 20.0),
                       Column(
                         children: [
                           Text(
@@ -212,14 +238,18 @@ class _GroupCardState extends State<GroupCard> {
                       ),
                       SizedBox(height: 30.0),
                       Text(
-                        this.widget.groupData.group.description,
+                        this.widget.groupData.group.description.isEmpty
+                            ? 'N/A'
+                            : this.widget.groupData.group.description,
                         style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.textFieldText,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 30.0),
-                      isRequestSent()
+                      isRequestSent() ||
+                              !widget
+                                  .groupData.groupSettings.requireAdminApproval
                           ? Container()
                           : Text(
                               'Would you like to request to join?',
@@ -245,7 +275,7 @@ class _GroupCardState extends State<GroupCard> {
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: AppColors.cardBorder,
+                                  color: AppColors.lightBlue4,
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -260,23 +290,31 @@ class _GroupCardState extends State<GroupCard> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          'REQUEST',
+                                          !widget.groupData.groupSettings
+                                                  .requireAdminApproval
+                                              ? 'JOIN'
+                                              : 'REQUEST',
                                           style: AppTextStyles.boldText20,
                                         ),
                                       ],
                                     ),
                                   ),
                                   onPressed: () {
-                                    _requestToJoinGroup(
-                                      this.widget.groupData,
-                                      Provider.of<UserProvider>(context,
-                                              listen: false)
-                                          .currentUser
-                                          .id,
-                                      StringUtils.joinRequestStatusPending,
-                                      '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
-                                      adminData.id,
-                                    );
+                                    if (!widget.groupData.groupSettings
+                                        .requireAdminApproval) {
+                                      _joinGroup(widget.groupData.group.id);
+                                    } else {
+                                      _requestToJoinGroup(
+                                        this.widget.groupData,
+                                        Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .currentUser
+                                            .id,
+                                        StringUtils.joinRequestStatusPending,
+                                        '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
+                                        adminData,
+                                      );
+                                    }
                                   }),
                             ),
                     ],
@@ -316,7 +354,8 @@ class _GroupCardState extends State<GroupCard> {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
-          color: AppColors.darkBlue,
+          color:
+              Settings.isDarkMode ? AppColors.darkBlue : AppColors.lightBlue4,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -339,10 +378,15 @@ class _GroupCardState extends State<GroupCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    this.widget.groupData.group.name.toUpperCase(),
-                    style: TextStyle(color: AppColors.lightBlue3, fontSize: 12),
-                    textAlign: TextAlign.left,
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      this.widget.groupData.group.name.toUpperCase(),
+                      style:
+                          TextStyle(color: AppColors.lightBlue3, fontSize: 12),
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   Text(
                     '${this.widget.groupData.group.location}'.toUpperCase(),

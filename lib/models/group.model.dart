@@ -1,5 +1,5 @@
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +7,6 @@ class GroupModel {
   final String id;
   final String name;
   final String status;
-  final String email;
   final String description;
   final String organization;
   final String location;
@@ -22,7 +21,6 @@ class GroupModel {
     this.id,
     @required this.name,
     @required this.status,
-    @required this.email,
     @required this.description,
     @required this.organization,
     @required this.location,
@@ -37,10 +35,9 @@ class GroupModel {
   GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         name = snapshot.data()['Name'],
-        description = snapshot.data()['Description'],
-        status = snapshot.data()['Status'],
-        email = snapshot.data()['Email'],
-        organization = snapshot.data()['Organization'],
+        description = snapshot.data()['Description'] ?? 'N/A',
+        status = snapshot.data()['Status'] ?? 'N/A',
+        organization = snapshot.data()['Organization'] ?? 'N/A',
         location = snapshot.data()['Location'],
         isPrivate = snapshot.data()['IsPrivate'],
         isFeed = snapshot.data()['IsFeed'],
@@ -55,7 +52,6 @@ class GroupModel {
       'Name': name,
       'Description': description,
       'Status': status,
-      'Email': email,
       'Organization': organization,
       'Location': location,
       'IsPrivate': isPrivate,
@@ -245,7 +241,7 @@ class GroupUserModel {
   final String id;
   final String groupId;
   final String userId;
-  final String email;
+  // final String email;
   final String fullName;
   final String status;
   final String role;
@@ -259,7 +255,7 @@ class GroupUserModel {
     @required this.groupId,
     @required this.userId,
     @required this.fullName,
-    @required this.email,
+    // @required this.email,
     @required this.status,
     @required this.role,
     @required this.createdBy,
@@ -272,8 +268,8 @@ class GroupUserModel {
       : id = snapshot.id,
         userId = snapshot.data()['UserId'],
         groupId = snapshot.data()['GroupId'],
-        fullName = snapshot.data()['FullName'],
-        email = snapshot.data()['Email'],
+        fullName = snapshot.data()['FullName'] ?? '',
+        // email = snapshot.data()['Email'],
         status = snapshot.data()['Status'],
         role = snapshot.data()['Role'],
         createdBy = snapshot.data()['CreatedBy'],
@@ -286,7 +282,7 @@ class GroupUserModel {
       'UserId': userId,
       'GroupId': groupId,
       'FullName': fullName,
-      'Email': email,
+      // 'Email': email,
       'Status': status,
       'Role': role,
       'CreatedBy': createdBy,
@@ -372,12 +368,14 @@ class CombineGroupUserStream {
   List<GroupUserModel> groupUsers;
   final List<GroupRequestModel> groupRequests;
   final GroupModel group;
+  final GroupSettings groupSettings;
   // final UserModel admin;
 
   CombineGroupUserStream(
     this.groupUsers,
     this.group,
     this.groupRequests,
+    this.groupSettings,
     // this.admin,
   );
 }

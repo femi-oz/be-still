@@ -1,7 +1,11 @@
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/log_service.dart';
+import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,17 +28,21 @@ class GroupService {
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  final CollectionReference<Map<String, dynamic>>
+      _groupSettingsCollectionReference =
+      FirebaseFirestore.instance.collection("GroupSettings");
+
   GroupUserModel populateGroupUser(
-      GroupModel groupData,
-      String userID,
-      String groupID,
-      String role,
-      String creator,
-      String fullName,
-      String email) {
+    // GroupModel groupData,
+    String userID,
+    String groupID,
+    String role,
+    String creator,
+    String fullName,
+    // String email
+  ) {
     GroupUserModel userPrayer = GroupUserModel(
       fullName: fullName,
-      email: email,
       userId: userID,
       status: Status.active,
       groupId: groupID,
@@ -59,7 +67,7 @@ class GroupService {
       modifiedBy: groupData.modifiedBy,
       modifiedOn: groupData.modifiedOn,
       description: groupData.description,
-      email: groupData.email,
+      // email: groupData.email,
       isFeed: groupData.isFeed,
       isPrivate: groupData.isPrivate,
       location: groupData.location,
@@ -105,20 +113,47 @@ class GroupService {
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupRequestModel.fromData(doc))
                       .toList());
-
-          return Rx.combineLatest3(
+          Stream<List<GroupSettings>> groupSettings =
+              _groupSettingsCollectionReference
+                  .where('GroupId', isEqualTo: g.id)
+                  .snapshots()
+                  .asyncMap((e) {
+            if (e.docs.length == 0) {
+              addGroupSettings(userId, g.id, true);
+              return [
+                GroupSettings(
+                    requireAdminApproval: true,
+                    userId: userId,
+                    groupId: g.id,
+                    enableNotificationFormNewPrayers: false,
+                    enableNotificationForUpdates: false,
+                    notifyOfMembershipRequest: false,
+                    notifyMeofFlaggedPrayers: false,
+                    notifyWhenNewMemberJoins: false,
+                    createdBy: userId,
+                    createdOn: DateTime.now(),
+                    modifiedBy: userId,
+                    modifiedOn: DateTime.now())
+              ];
+            }
+            return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+          });
+          return Rx.combineLatest4(
               groupUsers,
               group,
               groupRequests,
+              groupSettings,
               (
                 groupUsers,
                 group,
                 groupRequests,
+                groupSettings,
               ) =>
                   CombineGroupUserStream(
                     groupUsers,
                     group,
                     groupRequests,
+                    groupSettings[0],
                   ));
         });
       }).switchMap((observables) {
@@ -136,7 +171,7 @@ class GroupService {
     }
   }
 
-  Stream<CombineGroupUserStream> getGroup(String groupdId) {
+  Stream<CombineGroupUserStream> getGroup(String groupdId, String userId) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       final c = _groupCollectionReference.doc(groupdId).snapshots().map((g) {
@@ -156,21 +191,39 @@ class GroupService {
                 .asyncMap((e) => e.docs
                     .map((doc) => GroupRequestModel.fromData(doc))
                     .toList());
-
-        return Rx.combineLatest3(
+        Stream<List<GroupSettings>> groupSettings =
+            _groupSettingsCollectionReference
+                .where('GroupId', isEqualTo: g.id)
+                .snapshots()
+                .asyncMap((e) {
+          if (e.docs.length == 0) {
+            addGroupSettings(userId, g.id, true);
+            return [
+              GroupSettings(
+                  requireAdminApproval: true,
+                  userId: userId,
+                  groupId: g.id,
+                  enableNotificationFormNewPrayers: false,
+                  enableNotificationForUpdates: false,
+                  notifyOfMembershipRequest: false,
+                  notifyMeofFlaggedPrayers: false,
+                  notifyWhenNewMemberJoins: false,
+                  createdBy: userId,
+                  createdOn: DateTime.now(),
+                  modifiedBy: userId,
+                  modifiedOn: DateTime.now())
+            ];
+          }
+          return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+        });
+        return Rx.combineLatest4(
             groupUsers,
             group,
             groupRequests,
-            (
-              groupUsers,
-              group,
-              groupRequests,
-            ) =>
+            groupSettings,
+            (groupUsers, group, groupRequests, groupSettings) =>
                 CombineGroupUserStream(
-                  groupUsers,
-                  group,
-                  groupRequests,
-                ));
+                    groupUsers, group, groupRequests, groupSettings[0]));
         // });
       }).switchMap((observables) {
         return observables;
@@ -204,6 +257,31 @@ class GroupService {
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupUserModel.fromData(doc))
                       .toList());
+          Stream<List<GroupSettings>> groupSettings =
+              _groupSettingsCollectionReference
+                  .where('GroupId', isEqualTo: f['GroupId'])
+                  .snapshots()
+                  .asyncMap((e) {
+            if (e.docs.length == 0) {
+              addGroupSettings(userId, f['GroupId'], false);
+              return [
+                GroupSettings(
+                    requireAdminApproval: true,
+                    userId: userId,
+                    groupId: f['GroupId'],
+                    enableNotificationFormNewPrayers: false,
+                    enableNotificationForUpdates: false,
+                    notifyOfMembershipRequest: false,
+                    notifyMeofFlaggedPrayers: false,
+                    notifyWhenNewMemberJoins: false,
+                    createdBy: userId,
+                    createdOn: DateTime.now(),
+                    modifiedBy: userId,
+                    modifiedOn: DateTime.now())
+              ];
+            }
+            return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+          });
 
           Stream<List<GroupRequestModel>> groupRequests =
               _groupRequestCollectionReference
@@ -212,19 +290,22 @@ class GroupService {
                   .asyncMap((e) => e.docs
                       .map((doc) => GroupRequestModel.fromData(doc))
                       .toList());
-          return Rx.combineLatest3(
+          return Rx.combineLatest4(
               groupUsers,
               group,
               groupRequests,
+              groupSettings,
               (
                 groupUsers,
                 group,
                 groupRequests,
+                groupSettings,
               ) =>
                   CombineGroupUserStream(
                     groupUsers,
                     group,
                     groupRequests,
+                    groupSettings[0],
                   ));
         });
       }).switchMap((observables) {
@@ -243,10 +324,82 @@ class GroupService {
     }
   }
 
-  addGroup(String userId, GroupModel groupData, String email,
-      String fullName) async {
-    final _groupID = Uuid().v1();
-    final _userGroupId = Uuid().v1();
+  Stream<CombineGroupUserStream> getUserGroupById(
+      String userGroupId, String userId) {
+    try {
+      final data = _userGroupCollectionReference.doc(userGroupId).snapshots();
+      // .map((convert) {
+      return data.map((f) {
+        Stream<GroupModel> group = _groupCollectionReference
+            .doc(f['GroupId'])
+            .snapshots()
+            .map<GroupModel>((document) => GroupModel.fromData(document));
+        Stream<List<GroupUserModel>> groupUsers = _userGroupCollectionReference
+            .where('GroupId', isEqualTo: f['GroupId'])
+            .snapshots()
+            .asyncMap((e) =>
+                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
+
+        Stream<List<GroupRequestModel>> groupRequests =
+            _groupRequestCollectionReference
+                .where('GroupId', isEqualTo: f['GroupId'])
+                .snapshots()
+                .asyncMap((e) => e.docs
+                    .map((doc) => GroupRequestModel.fromData(doc))
+                    .toList());
+
+        Stream<List<GroupSettings>> groupSettings =
+            _groupSettingsCollectionReference
+                .where('GroupId', isEqualTo: f['GroupId'])
+                .snapshots()
+                .asyncMap((e) {
+          if (e.docs.length == 0) {
+            addGroupSettings(userId, f['GroupId'], false);
+            return [
+              GroupSettings(
+                  userId: userId,
+                  groupId: f['GroupId'],
+                  requireAdminApproval: true,
+                  enableNotificationFormNewPrayers: false,
+                  enableNotificationForUpdates: false,
+                  notifyOfMembershipRequest: false,
+                  notifyMeofFlaggedPrayers: false,
+                  notifyWhenNewMemberJoins: false,
+                  createdBy: userId,
+                  createdOn: DateTime.now(),
+                  modifiedBy: userId,
+                  modifiedOn: DateTime.now())
+            ];
+          }
+          return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+        });
+        return Rx.combineLatest4(
+            groupUsers,
+            group,
+            groupRequests,
+            groupSettings,
+            (
+              groupUsers,
+              group,
+              groupRequests,
+              groupSettings,
+            ) =>
+                CombineGroupUserStream(
+                    groupUsers, group, groupRequests, groupSettings[0]));
+      }).switchMap((observables) {
+        return observables;
+      });
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userGroupId,
+          'GROUP/service/getUserGroups');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<String> addGroup(String userId, GroupModel groupData, String fullName,
+      String userGroupId, bool requireAdminApproval) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
@@ -257,20 +410,18 @@ class GroupService {
       //     .collection("Group/" + groupData.id + "/Users")
       //     .add({'userId': userId});
 
-      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
-              groupData,
-              userId,
-              groupData.id,
-              GroupUserRole.admin,
-              groupData.createdBy,
-              fullName,
-              email)
-          .toJson());
-      return groupData.id;
+      _userGroupCollectionReference.doc(userGroupId).set(populateGroupUser(
+            // groupData,
+            userId,
+            groupData.id,
+            GroupUserRole.admin,
+            groupData.createdBy,
+            fullName,
+          ).toJson());
       //store group settings
 
-      // await locator<SettingsService>()
-      //     .addGroupSettings(userId, email, groupData.id);
+      addGroupSettings(userId, groupData.id, requireAdminApproval);
+      return userGroupId;
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -280,17 +431,15 @@ class GroupService {
     }
   }
 
-  Future editGroup(
-    GroupModel groupData,
-    String groupID,
-  ) async {
+  Future editGroup(GroupModel groupData, String groupID,
+      bool requireAdminApproval, String groupSettingsId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _groupCollectionReference.doc(groupID).update(
         {
           "Name": groupData.name,
           "Description": groupData.description,
-          "Email": groupData.email,
+          // "Email": groupData.email,
           "Organization": groupData.organization,
           "Location": groupData.location,
           "Status": groupData.status,
@@ -299,6 +448,11 @@ class GroupService {
           "ModifiedOn": DateTime.now()
         },
       );
+
+      updateGroupSettings(
+          key: SettingsKey.requireAdminApproval,
+          value: requireAdminApproval,
+          groupSettingsId: groupSettingsId);
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -330,7 +484,7 @@ class GroupService {
   }
 
   acceptRequest(String groupId, GroupModel groupData, String userId,
-      String requestId, String fullName, String email) async {
+      String requestId, String fullName) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       final _userGroupId = Uuid().v1();
@@ -342,14 +496,13 @@ class GroupService {
       //             groupData, userId, groupId, GroupUserRole.member)
       //         .toJson());
       _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
-              groupData,
-              userId,
-              groupId,
-              GroupUserRole.member,
-              userId,
-              fullName,
-              email)
-          .toJson());
+            // groupData,
+            userId,
+            groupId,
+            GroupUserRole.member,
+            userId,
+            fullName,
+          ).toJson());
       _groupRequestCollectionReference
           .doc(requestId)
           .update({"Status": StringUtils.joinRequestStatusApproved});
@@ -360,6 +513,26 @@ class GroupService {
           e.message != null ? e.message : e.toString(),
           userId,
           'GROUP/service/acceptRequest');
+      throw HttpException(e.message);
+    }
+  }
+
+  autoJoinGroup(String groupId, String userId, String fullName) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      final _userGroupId = Uuid().v1();
+      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
+            userId,
+            groupId,
+            GroupUserRole.member,
+            userId,
+            fullName,
+          ).toJson());
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'GROUP/service/autoJoinGroup');
       throw HttpException(e.message);
     }
   }
@@ -396,7 +569,6 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
-      _groupCollectionReference.doc(groupId).delete();
       _userGroupCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
@@ -404,6 +576,7 @@ class GroupService {
         value.docs.forEach((element) {
           element.reference.delete();
         });
+        _groupCollectionReference.doc(groupId).delete();
       });
     } catch (e) {
       locator<LogService>().createLog(
@@ -471,5 +644,57 @@ class GroupService {
           'GROUP/service/inviteMember');
       throw HttpException(e.message);
     }
+  }
+
+  Future updateGroupSettings(
+      {String key, dynamic value, String groupSettingsId}) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _groupSettingsCollectionReference.doc(groupSettingsId).update(
+        {key: value},
+      );
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message, groupSettingsId, 'SETTINGS/service/updateGroupSettings');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<bool> addGroupSettings(
+      String userId, String groupId, bool requireAdminApproval) async {
+    final groupSettingsId = Uuid().v1();
+
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+
+      _groupSettingsCollectionReference.doc(groupSettingsId).set(
+          populateGroupSettings(userId, groupId, requireAdminApproval)
+              .toJson());
+      return true;
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'SETTINGS/service/addGroupSettings');
+      throw HttpException(e.message);
+    }
+  }
+
+  populateGroupSettings(
+      String userId, String groupId, bool requireAdminApproval) {
+    GroupSettings groupsSettings = GroupSettings(
+        requireAdminApproval: requireAdminApproval,
+        groupId: groupId,
+        userId: userId,
+        enableNotificationFormNewPrayers: false,
+        enableNotificationForUpdates: false,
+        notifyOfMembershipRequest: false,
+        notifyMeofFlaggedPrayers: false,
+        notifyWhenNewMemberJoins: false,
+        createdBy: userId,
+        createdOn: DateTime.now(),
+        modifiedBy: userId,
+        modifiedOn: DateTime.now());
+    return groupsSettings;
   }
 }

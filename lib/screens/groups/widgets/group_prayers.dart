@@ -45,7 +45,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
         final group =
             Provider.of<GroupProvider>(context, listen: false).currentGroup;
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle(group.group.name.toUpperCase());
+            .setPageTitle((group.group?.name ?? '').toUpperCase());
         await Provider.of<GroupPrayerProvider>(context, listen: false)
             .setHiddenPrayer(_user.id);
       });

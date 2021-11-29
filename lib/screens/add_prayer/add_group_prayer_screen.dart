@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -44,9 +45,9 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   int fieldIndex;
 
   List<PrayerUpdateModel> updates;
-  List groups = [];
+  // List groups = [];
   List<Widget> contactDropDowns;
-  List textControllers = [];
+  List<TextEditingController> textControllers = [];
   List<String> tagList = [];
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
@@ -90,45 +91,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     super.didChangeDependencies();
   }
 
-  _sendNotification(String prayerId, type) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-    List receiver;
-    var followedPrayers;
-    if (type == NotificationType.prayer_updates) {
-      final prayerId = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .prayerToEdit
-          .prayer
-          .id;
-      followedPrayers = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .followedPrayers;
-      receiver = followedPrayers
-          .where((element) => element.prayerId == prayerId)
-          .toList();
-    } else {
-      data.forEach((element) async {
-        receiver =
-            element.groupUsers.where((e) => e.userId != _user.id).toList();
-      });
-    }
-
-    for (var i = 0; i < receiver.length; i++) {
-      if (receiver.length > 0) {
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .addPushNotification(
-                _descriptionController.text,
-                type,
-                _user.firstName,
-                _user.id,
-                receiver[i].userId,
-                type == NotificationType.prayer
-                    ? 'New Prayer'
-                    : 'Prayer Update',
-                prayerId);
-      }
-    }
-  }
-
   Future<void> _save(textEditingControllers) async {
     BeStilDialog.showLoading(context);
     FocusScope.of(context).unfocus();
@@ -167,6 +129,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           var prayerId =
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .newPrayerId;
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+            prayerId,
+            NotificationType.prayer_updates,
+            _group.group.id,
+            context,
+            _descriptionController.text,
+          );
           contacts.forEach((s) {
             if (!_descriptionController.text.contains(s.displayName)) {
               s.displayName = '';
@@ -179,7 +149,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayerTag(contacts, _user, _descriptionController.text, '');
           }
-          _sendNotification(prayerId, NotificationType.prayer);
+
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         } else {
@@ -292,13 +262,21 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                       contacts, _user, _descriptionController.text, '');
             }
           }
-
-          _sendNotification(
+          var editPrayerId =
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .prayerToEdit
                   .groupPrayer
-                  .id,
-              NotificationType.prayer_updates);
+                  .id;
+
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+            editPrayerId,
+            NotificationType.prayer_updates,
+            _group.group.id,
+            context,
+            _descriptionController.text,
+          );
+
           BeStilDialog.hideLoading(context);
           appCOntroller.setCurrentPage(8, true);
         }
@@ -474,36 +452,11 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   }
 
   Future<void> _onTagSelected(s, TextEditingController controller) async {
-    // print(controller.text.replaceFirst(tagText, s.displayName));
-    // String controllerText;
-    // String tmpText = s.displayName.substring(0, s.displayName.length);
-
     controller.text = controller.text.replaceFirst(tagText, s.displayName);
     tagText = '';
     updateTagText = '';
-    // var tmpTextAfter = controller.text
-    //     .substring(controller.text.indexOf('@'), controller.text.length);
-    // var textAfter = tmpTextAfter.split(" ");
-    // var newText = textAfter..removeAt(0);
-    // var joinText = newText.join(" ");
-
-    // controllerText = controller.text.substring(
-    //   0,
-    //   controller.text.indexOf('@'),
-    // );
-    // controllerText += tmpText;
-    // if (textWithSpace) {
-    //   controller.text = controllerText;
-    //   textWithSpace = false;
-    // } else {
-    //   textWithSpace = false;
-    // }
-    // controller.text = controllerText;
-    // controller.text = controllerText + " " + joinText;
-
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
-
     setState(() {
       controller.selection =
           TextSelection.collapsed(offset: controller.text.length);
@@ -557,71 +510,71 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             ),
             SizedBox(height: 20),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: 30),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      appCOntroller.setCurrentPage(8, true);
-                      Navigator.pop(context);
-                      FocusManager.instance.primaryFocus.unfocus();
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        appCOntroller.setCurrentPage(8, true);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.grey.withOpacity(0.5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey.withOpacity(0.5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 20,
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

@@ -7,6 +7,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -39,7 +40,7 @@ class _GroupScreenState extends State<GroupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<MiscProvider>(context, listen: false)
-          .setPageTitle('MY GROUPS');
+          .setPageTitle('GROUPS');
       // appCOntroller.setCurrentPage(4, true);
     });
     super.initState();
@@ -81,12 +82,15 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-    
+    var data = Provider.of<GroupProvider>(context).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: CustomAppBar(showPrayerActions: false),
+        appBar: CustomAppBar(
+          showPrayerActions: false,
+          isSearchMode: false,
+          showOnlyTitle: true,
+        ),
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
@@ -155,76 +159,83 @@ class _GroupScreenState extends State<GroupScreen> {
                             padding: EdgeInsets.only(left: 50),
                             child: Column(
                               children: <Widget>[
-                                ...data
-                                    .map(
-                                      (e) => Column(
-                                        children: [
-                                          LongButton(
-                                            onPress: () async {
-                                              _getPrayers(e);
-                                              appCOntroller.setCurrentPage(
-                                                  8, true);
-                                            },
-                                            text: e.group.name.capitalizeFirst,
-                                            backgroundColor:
-                                                AppColors.groupCardBgColor,
-                                            textColor: AppColors.lightBlue3,
-                                            hasIcon: false,
-                                            hasMore: true,
-                                            child:_user != null? e.groupUsers.firstWhere((x) => (x.userId == _user.id && x.role == GroupUserRole.admin), orElse: () => null) != null? Container(
-                                              alignment: Alignment.center,
-                                              height: 25,
-                                              width: 60,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
+                                ...data.map((e) {
+                                  final _currentUser =
+                                      Provider.of<UserProvider>(context)
+                                          .currentUser;
+
+                                  // bool isAdmin = true;
+                                  bool isAdmin = e.groupUsers
+                                          .firstWhere((g) =>
+                                              g.userId == _currentUser.id)
+                                          .role ==
+                                      GroupUserRole.admin;
+                                  return Column(
+                                    children: [
+                                      LongButton(
+                                        onPress: () async {
+                                          _getPrayers(e);
+                                          appCOntroller.setCurrentPage(8, true);
+                                        },
+                                        text: e.group.name,
+                                        backgroundColor:
+                                            AppColors.groupCardBgColor,
+                                        textColor: AppColors.lightBlue3,
+                                        hasIcon: false,
+                                        hasMore: true,
+                                        child: isAdmin
+                                            ? Container(
+                                                alignment: Alignment.center,
+                                                height: 25,
+                                                width: 60,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: AppColors
+                                                            .lightBlue3,
+                                                        width: 1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Text(
+                                                  "Admin",
+                                                  style: TextStyle(
                                                       color:
                                                           AppColors.lightBlue3,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10)),
-                                              child: Text(
-                                                "Admin",
-                                                style: TextStyle(
-                                                  color: AppColors.lightBlue3,
-                                                  fontSize: 12
+                                                      fontSize: 12),
+                                                  textAlign: TextAlign.center,
                                                 ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ): SizedBox.shrink():SizedBox.shrink(),
-                                            onPressMore: () =>
-                                                showModalBottomSheet(
-                                              context: context,
-                                              barrierColor:
-                                                  Provider.of<ThemeProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .isDarkModeEnabled
-                                                      ? AppColors
-                                                          .backgroundColor[0]
-                                                          .withOpacity(0.8)
-                                                      : Color(0xFF021D3C)
-                                                          .withOpacity(0.7),
-                                              backgroundColor:
-                                                  Provider.of<ThemeProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .isDarkModeEnabled
-                                                      ? AppColors
-                                                          .backgroundColor[0]
-                                                          .withOpacity(0.8)
-                                                      : Color(0xFF021D3C)
-                                                          .withOpacity(0.7),
-                                              isScrollControlled: true,
-                                              builder: (BuildContext context) {
-                                                return GroupTools(e);
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                        ],
+                                              )
+                                            : SizedBox.shrink(),
+                                        onPressMore: () => showModalBottomSheet(
+                                          context: context,
+                                          barrierColor:
+                                              Provider.of<ThemeProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .isDarkModeEnabled
+                                                  ? AppColors.backgroundColor[0]
+                                                      .withOpacity(0.8)
+                                                  : Color(0xFF021D3C)
+                                                      .withOpacity(0.7),
+                                          backgroundColor:
+                                              Provider.of<ThemeProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .isDarkModeEnabled
+                                                  ? AppColors.backgroundColor[0]
+                                                      .withOpacity(0.8)
+                                                  : Color(0xFF021D3C)
+                                                      .withOpacity(0.7),
+                                          isScrollControlled: true,
+                                          builder: (BuildContext context) {
+                                            return GroupTools(e);
+                                          },
+                                        ),
                                       ),
-                                    )
-                                    .toList(),
+                                      SizedBox(height: 10),
+                                    ],
+                                  );
+                                }).toList(),
                               ],
                             ),
                           ),

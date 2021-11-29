@@ -290,6 +290,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                                                     .symmetric(
                                                                 vertical: 30),
                                                         child: ReminderPicker(
+                                                          isGroup: false,
                                                           entityId: widget
                                                                   .prayerData
                                                                   ?.userPrayer
@@ -299,6 +300,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                                               .reminder,
                                                           hideActionuttons:
                                                               false,
+                                                          popTwice: false,
                                                           onCancel: () =>
                                                               Navigator.of(
                                                                       context)

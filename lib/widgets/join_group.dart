@@ -106,7 +106,7 @@ class JoinGroup {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Associated with: ',
+                                'Church: ',
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
@@ -245,15 +245,20 @@ class JoinGroup {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .joinRequest(groupData.group.id, userId, status, userName);
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(adminId);
+      final receiverData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
+          .sendPushNotification(
               '$userName has requested to join your group',
               NotificationType.request,
               userName,
               userId,
               adminId,
               title,
-              groupData.group.id);
+              groupData.group.id,
+              [receiverData.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } catch (e) {

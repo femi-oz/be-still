@@ -45,6 +45,7 @@ class UserService {
       keyReference: uid,
       lastName: lastName,
       modifiedBy: email,
+      pushToken: '',
       modifiedOn: DateTime.now(),
     );
 
@@ -59,13 +60,29 @@ class UserService {
 
       // store default settings
       await locator<SettingsService>().addSettings('', userId, email);
-      await locator<SettingsService>().addGroupSettings(userId);
       await locator<SettingsService>().addGroupPreferenceSettings(userId);
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           userId,
           'USER/service/addUserData');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future addUserToken({String userId, String token, UserModel user}) async {
+    user = user..pushToken = token;
+
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _userCollectionReference.doc(userId).update(
+            user.toJson(),
+          );
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'USER/service/addUserToken');
       throw HttpException(e.message);
     }
   }
@@ -99,6 +116,22 @@ class UserService {
           e.message != null ? e.message : e.toString(),
           id,
           'USER/service/getCurrentUser');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<UserModel> getUserByIdFuture(String id) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return _userCollectionReference
+          .doc(id)
+          .get()
+          .then((event) => UserModel.fromData(event));
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          id,
+          'USER/service/getUserByIdFuture');
       throw HttpException(e.message);
     }
   }

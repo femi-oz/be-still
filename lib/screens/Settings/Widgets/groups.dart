@@ -1,4 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
@@ -10,8 +11,8 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
-import 'package:be_still/widgets/input_field.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets//custom_expansion_tile.dart' as custom;
@@ -32,8 +33,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   _removeUserFromGroup(
       GroupUserModel user, CombineGroupUserStream group) async {
-    var userData =
-        Provider.of<UserProvider>(context, listen: false).selectedUser;
     final message = 'You have removed the user from your group';
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -43,6 +42,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteFromGroup(user.userId, user.groupId);
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(user.userId);
+      final receiverData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       sendPushNotification(
           '$userName has removed you from ${group.group.name}',
           NotificationType.remove_from_group,
@@ -50,7 +53,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           _currentUser.id,
           user.userId,
           'Remove from group',
-          group.group.id);
+          group.group.id,
+          [receiverData.pushToken]);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -61,28 +65,37 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   leaveGroup(CombineGroupUserStream data) async {
+    Navigator.pop(context);
+    BeStilDialog.showLoading(context, '');
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-
-    var receiver = data.groupUsers
-        .firstWhere((element) => element.role == GroupUserRole.admin);
     final id = data.groupUsers
         .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
         .id;
-    if (id != null) {
-      BeStilDialog.showLoading(context, '');
-      await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-      sendPushNotification(
-          '${_currentUser.firstName} has left your group ${data.group.name}',
-          NotificationType.leave_group,
-          _currentUser.firstName,
-          _currentUser.id,
-          receiver.userId,
-          'Groups',
-          data.group.id);
-      Navigator.pop(context);
-      BeStilDialog.hideLoading(context);
-    }
+    await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
+    var receiver = data.groupUsers
+        .firstWhere((element) => element.role == GroupUserRole.admin);
+
+    await Provider.of<UserProvider>(context, listen: false)
+        .getUserById(receiver.userId);
+    await Future.delayed(Duration(milliseconds: 500));
+    final receiverData =
+        Provider.of<UserProvider>(context, listen: false).selectedUser;
+    // if (id != null) {
+
+    sendPushNotification(
+        '${_currentUser.firstName} has left your group ${data.group.name}',
+        NotificationType.leave_group,
+        _currentUser.firstName,
+        _currentUser.id,
+        receiver.userId,
+        'Groups',
+        data.group.id,
+        [receiverData.pushToken]);
+    Provider.of<GroupProvider>(context, listen: false)
+        .setUserGroups(_currentUser.id);
+    BeStilDialog.hideLoading(context);
+    // }
   }
 
   deleteGroup(CombineGroupUserStream data) async {
@@ -94,11 +107,74 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.hideLoading(context);
   }
 
-  sendPushNotification(message, messageType, sender, senderId, receiverId,
-      title, entityId) async {
+  Future<void> acceptRequest(
+      GroupRequestModel request, GroupModel group) async {
+    BeStilDialog.showLoading(context);
+    try {
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(request.userId); //sender
+
+      Future.delayed(Duration(seconds: 5), () async {
+        final receiverFullName =
+            '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
+
+        final sender =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+
+        await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
+            group,
+            request.groupId,
+            request.userId,
+            request.id,
+            receiverFullName);
+
+        final receiverData =
+            Provider.of<UserProvider>(context, listen: false).selectedUser;
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .sendPushNotification(
+                'Your request to join ${group.name} has been accepted',
+                NotificationType.accept_request,
+                sender.firstName,
+                sender.id,
+                request.userId,
+                'Request Accepted',
+                group.id,
+                [receiverData.pushToken]);
+        final notifications =
+            Provider.of<NotificationProvider>(context, listen: false)
+                .notifications
+                .where((e) =>
+                    e.messageType == NotificationType.request &&
+                    e.entityId == request.groupId)
+                .toList();
+        //notifcations where groupId= && type==request
+        // for
+        for (final not in notifications) {
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .updateNotification(not.id);
+        }
+
+        // Navigator.of(context).pop();
+        BeStilDialog.hideLoading(context);
+      });
+    } catch (e) {
+      BeStilDialog.hideLoading(context);
+      // print(e);
+    }
+  }
+
+  sendPushNotification(
+      String message,
+      String messageType,
+      String sender,
+      String senderId,
+      String receiverId,
+      String title,
+      String entityId,
+      List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
-        .addPushNotification(message, messageType, sender, senderId, receiverId,
-            title, entityId);
+        .sendPushNotification(message, messageType, sender, senderId,
+            receiverId, title, entityId, tokens);
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
@@ -159,18 +235,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             fontWeight: FontWeight.w500,
                             height: 1.5),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Text(
-                          user.email ?? '',
-                          style: TextStyle(
-                              color: AppColors.textFieldText,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                              height: 1.5),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 10.0),
+                      //   child: Text(
+                      //     user.email ?? '',
+                      //     style: TextStyle(
+                      //         color: AppColors.textFieldText,
+                      //         fontSize: 12,
+                      //         fontWeight: FontWeight.w300,
+                      //         height: 1.5),
+                      //     overflow: TextOverflow.ellipsis,
+                      //   ),
+                      // ),
                       // Text(
                       //   'might be from Houston, TX',
                       //   style: TextStyle(
@@ -494,7 +570,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
@@ -527,7 +603,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(
@@ -623,7 +699,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
@@ -656,7 +732,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     },
                     child: Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .24,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(
@@ -740,7 +816,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final _groups = Provider.of<GroupProvider>(context).userGroups;
     final _settingsProvider = Provider.of<SettingsProvider>(context);
-    final _groupSettings = Provider.of<SettingsProvider>(context).groupSettings;
+    final _groupProvider = Provider.of<GroupProvider>(context);
     final _groupPreferenceSettings =
         Provider.of<SettingsProvider>(context).groupPreferenceSettings;
 
@@ -782,7 +858,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             SizedBox(height: 30),
             CustomToggle(
               title: 'Enable notifications from Groups?',
-              onChange: (value) async {
+              onChange: (bool value) async {
                 _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
                     key: 'EnableNotificationForAllGroups',
                     value: value,
@@ -793,12 +869,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   messaging.getToken().then((value) => {
                         Provider.of<NotificationProvider>(context,
                                 listen: false)
-                            .enablePushNotifications(value, _currentUser.id)
+                            .enablePushNotifications(
+                                value, _currentUser.id, _currentUser)
                       });
                 } else {
                   await Provider.of<NotificationProvider>(context,
                           listen: false)
-                      .disablePushNotifications(_currentUser.id);
+                      .disablePushNotifications(_currentUser.id, _currentUser);
                 }
               },
               value: _groupPreferenceSettings?.enableNotificationForAllGroups,
@@ -829,7 +906,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         margin: EdgeInsets.only(
                             left: MediaQuery.of(context).size.width * 0.1),
                         child: Text(
-                          data.group.name.capitalizeFirst,
+                          data.group.name,
                           textAlign: TextAlign.center,
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white70),
@@ -858,6 +935,43 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ),
                             initiallyExpanded: false,
                             children: <Widget>[
+                              // Padding(
+                              //   padding:
+                              //       const EdgeInsets.symmetric(horizontal: 20),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: <Widget>[
+                              //       Text(
+                              //           'To submit prayers to this group via email:',
+                              //           style: AppTextStyles.regularText13
+                              //               .copyWith(
+                              //                   color: AppColors.textFieldText))
+                              //     ],
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 10,
+                              // ),
+                              // Padding(
+                              //   padding:
+                              //       const EdgeInsets.symmetric(horizontal: 30),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: <Widget>[
+                              //       Text(
+                              //         data.group.email.toString(),
+                              //         style: AppTextStyles.regularText16b
+                              //             .copyWith(
+                              //                 color: AppColors.lightBlue3),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 30,
+                              // ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
@@ -866,44 +980,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                        'To submit prayers to this group via email:',
-                                        style: AppTextStyles.regularText13
-                                            .copyWith(
-                                                color: AppColors.textFieldText))
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 30),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      data.group.email.toString(),
-                                      style: AppTextStyles.regularText16b
-                                          .copyWith(
-                                              color: AppColors.lightBlue3),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      'Group Description',
+                                      'Purpose',
                                       style: AppTextStyles.regularText11
                                           .copyWith(
                                               color: AppColors.lightBlue2),
@@ -923,7 +1000,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Flexible(
                                       child: Text(
-                                        data.group.description,
+                                        data.group.description.isEmpty
+                                            ? "N/A"
+                                            : data.group.description,
                                         style: AppTextStyles.regularText14
                                             .copyWith(
                                                 color: AppColors.textFieldText),
@@ -943,7 +1022,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text('Associated Church/Organisation',
+                                    Text('Church',
                                         style: AppTextStyles.regularText11
                                             .copyWith(
                                                 color: AppColors.lightBlue2))
@@ -961,10 +1040,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      data.group.organization,
+                                      data.group.organization.isEmpty
+                                          ? "N/A"
+                                          : data.group.organization,
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
-                                              color: AppColors.lightBlue3),
+                                              color: AppColors.textFieldText),
                                     ),
                                   ],
                                 ),
@@ -1060,174 +1141,204 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             ),
                             SizedBox(height: 15),
+                            if (isAdmin || isModerator)
+                              CustomToggle(
+                                title: 'Require admin approval to join group?',
+                                onChange: (value) {
+                                  if (!value) {
+                                    final activeRequests = data.groupRequests
+                                        .where((e) => e.status == '0')
+                                        .toList();
+                                    for (final req in activeRequests) {
+                                      acceptRequest(req, data.group);
+                                    }
+                                    // add each to group
+                                    // send notification that they joined
+                                  }
+                                  _groupProvider.updateGroupSettings(
+                                      _currentUser.id,
+                                      key: SettingsKey.requireAdminApproval,
+                                      value: value,
+                                      settingsId: data.groupSettings.id);
+                                },
+                                value: data.groupSettings.requireAdminApproval,
+                              ),
+                            SizedBox(height: 15),
                             CustomToggle(
+                              disabled: true,
                               title:
                                   'Enable notifications for New Prayers for this group?',
-                              onChange: (value) => _settingsProvider
+                              onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id,
                                       key: 'EnableNotificationFormNewPrayers',
                                       value: value,
-                                      settingsId: _groupSettings.id),
-                              value: _groupSettings
-                                  ?.enableNotificationFormNewPrayers,
+                                      settingsId: data.groupSettings.id),
+                              value: data.groupSettings
+                                  .enableNotificationFormNewPrayers,
                             ),
                             CustomToggle(
+                              disabled: true,
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
-                              onChange: (value) => _settingsProvider
+                              onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id,
                                       key: 'EnableNotificationForUpdates',
                                       value: value,
-                                      settingsId: _groupSettings.id),
-                              value:
-                                  _groupSettings?.enableNotificationForUpdates,
+                                      settingsId: data.groupSettings.id),
+                              value: data
+                                  .groupSettings?.enableNotificationForUpdates,
                             ),
                             if (isMember)
                               CustomToggle(
+                                disabled: true,
                                 title:
                                     'Notify me when new members joins this group',
-                                onChange: (value) => _settingsProvider
+                                onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyWhenNewMemberJoins',
                                         value: value,
-                                        settingsId: _groupSettings.id),
-                                value: _groupSettings?.notifyWhenNewMemberJoins,
+                                        settingsId: data.groupSettings.id),
+                                value: data
+                                    .groupSettings?.notifyWhenNewMemberJoins,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
+                                disabled: true,
                                 title: 'Notify me of membership requests',
-                                onChange: (value) => _settingsProvider
+                                onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyOfMembershipRequest',
                                         value: value,
-                                        settingsId: _groupSettings.id),
-                                value:
-                                    _groupSettings?.notifyOfMembershipRequest,
+                                        settingsId: data.groupSettings.id),
+                                value: data
+                                    .groupSettings?.notifyOfMembershipRequest,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
+                                disabled: true,
                                 title: 'Notify me of flagged prayers',
-                                onChange: (value) => _settingsProvider
+                                onChange: (value) => _groupProvider
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyMeofFlaggedPrayers',
                                         value: value,
-                                        settingsId: _groupSettings.id),
-                                value: _groupSettings?.notifyMeofFlaggedPrayers,
+                                        settingsId: data.groupSettings.id),
+                                value: data
+                                    .groupSettings?.notifyMeofFlaggedPrayers,
                               ),
                           ],
                         ),
-                        (isAdmin || isModerator)
-                            ? Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text('Invite',
-                                            style: AppTextStyles.regularText11),
-                                        SizedBox(width: 10),
-                                        Expanded(
-                                          child: Divider(
-                                            color: AppColors.darkBlue,
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: GestureDetector(
-                                          onTap: () => setState(
-                                              () => _inviteMode = true),
-                                          child: Text(
-                                            'Send an invite to join group',
-                                            style: AppTextStyles.regularText16b
-                                                .copyWith(
-                                                    color:
-                                                        AppColors.lightBlue3),
-                                          ),
-                                        ),
-                                      ),
-                                      _inviteMode
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 15.0,
-                                                      horizontal: 20.0),
-                                              child: Column(
-                                                children: [
-                                                  CustomInput(
-                                                    textkey: GlobalKey<
-                                                        FormFieldState>(),
-                                                    label: 'Email Address',
-                                                    controller:
-                                                        _emailController,
-                                                    isEmail: true,
-                                                    keyboardType: TextInputType
-                                                        .emailAddress,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      TextButton(
-                                                          style: ButtonStyle(
-                                                              textStyle: MaterialStateProperty.all<TextStyle>(
-                                                                  AppTextStyles
-                                                                      .boldText16
-                                                                      .copyWith(
-                                                                          color: Colors
-                                                                              .white)),
-                                                              backgroundColor:
-                                                                  MaterialStateProperty.all<Color>(
-                                                                      Colors.grey[
-                                                                          700])),
-                                                          onPressed: () => setState(
-                                                              () => _inviteMode = false),
-                                                          child: Text('Cancel', style: AppTextStyles.regularText14)),
-                                                      SizedBox(width: 15),
-                                                      TextButton(
-                                                          style: ButtonStyle(
-                                                            textStyle: MaterialStateProperty.all<
-                                                                    TextStyle>(
-                                                                AppTextStyles
-                                                                    .boldText16
-                                                                    .copyWith(
-                                                                        color: Colors
-                                                                            .white)),
-                                                            backgroundColor:
-                                                                MaterialStateProperty.all<
-                                                                        Color>(
-                                                                    AppColors
-                                                                        .dimBlue),
-                                                          ),
-                                                          onPressed: () =>
-                                                              _sendInvite(
-                                                                  data.group
-                                                                      .name,
-                                                                  data.group
-                                                                      .id),
-                                                          child: Text(
-                                                            'Send Invite',
-                                                            style: AppTextStyles
-                                                                .regularText14,
-                                                          )),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
-                                  )
-                                ],
-                              )
-                            : Container(),
+                        // (isAdmin || isModerator)
+                        //     ? Column(
+                        //         children: [
+                        //           Padding(
+                        //             padding: const EdgeInsets.symmetric(
+                        //                 horizontal: 20.0, vertical: 10.0),
+                        //             child: Row(
+                        //               children: <Widget>[
+                        //                 Text('Invite',
+                        //                     style: AppTextStyles.regularText11),
+                        //                 SizedBox(width: 10),
+                        //                 Expanded(
+                        //                   child: Divider(
+                        //                     color: AppColors.darkBlue,
+                        //                     thickness: 1,
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //           Column(
+                        //             children: [
+                        //               Container(
+                        //                 padding: const EdgeInsets.symmetric(
+                        //                     horizontal: 20.0),
+                        //                 child: GestureDetector(
+                        //                   onTap: () => setState(
+                        //                       () => _inviteMode = true),
+                        //                   child: Text(
+                        //                     'Send an invite to join group',
+                        //                     style: AppTextStyles.regularText16b
+                        //                         .copyWith(
+                        //                             color:
+                        //                                 AppColors.lightBlue3),
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //               _inviteMode
+                        //                   ? Padding(
+                        //                       padding:
+                        //                           const EdgeInsets.symmetric(
+                        //                               vertical: 15.0,
+                        //                               horizontal: 20.0),
+                        //                       child: Column(
+                        //                         children: [
+                        //                           CustomInput(
+                        //                             textkey: GlobalKey<
+                        //                                 FormFieldState>(),
+                        //                             label: 'Email Address',
+                        //                             controller:
+                        //                                 _emailController,
+                        //                             isEmail: true,
+                        //                             keyboardType: TextInputType
+                        //                                 .emailAddress,
+                        //                           ),
+                        //                           Row(
+                        //                             mainAxisAlignment:
+                        //                                 MainAxisAlignment.end,
+                        //                             children: [
+                        //                               TextButton(
+                        //                                   style: ButtonStyle(
+                        //                                       textStyle: MaterialStateProperty.all<TextStyle>(
+                        //                                           AppTextStyles
+                        //                                               .boldText16
+                        //                                               .copyWith(
+                        //                                                   color: Colors
+                        //                                                       .white)),
+                        //                                       backgroundColor:
+                        //                                           MaterialStateProperty.all<Color>(
+                        //                                               Colors.grey[
+                        //                                                   700])),
+                        //                                   onPressed: () => setState(
+                        //                                       () => _inviteMode = false),
+                        //                                   child: Text('Cancel', style: AppTextStyles.regularText14)),
+                        //                               SizedBox(width: 15),
+                        //                               TextButton(
+                        //                                   style: ButtonStyle(
+                        //                                     textStyle: MaterialStateProperty.all<
+                        //                                             TextStyle>(
+                        //                                         AppTextStyles
+                        //                                             .boldText16
+                        //                                             .copyWith(
+                        //                                                 color: Colors
+                        //                                                     .white)),
+                        //                                     backgroundColor:
+                        //                                         MaterialStateProperty.all<
+                        //                                                 Color>(
+                        //                                             AppColors
+                        //                                                 .dimBlue),
+                        //                                   ),
+                        //                                   onPressed: () =>
+                        //                                       _sendInvite(
+                        //                                           data.group
+                        //                                               .name,
+                        //                                           data.group
+                        //                                               .id),
+                        //                                   child: Text(
+                        //                                     'Send Invite',
+                        //                                     style: AppTextStyles
+                        //                                         .regularText14,
+                        //                                   )),
+                        //                             ],
+                        //                           )
+                        //                         ],
+                        //                       ),
+                        //                     )
+                        //                   : Container()
+                        //             ],
+                        //           )
+                        //         ],
+                        //       )
+                        //     : Container(),
                         (isAdmin || isModerator)
                             ? custom.ExpansionTile(
                                 iconColor: AppColors.lightBlue4,
@@ -1371,7 +1482,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   ),
                                   child: Container(
                                     child: Text(
-                                      'LEAVE',
+                                      'LEAVE GROUP',
                                       style: AppTextStyles.boldText20
                                           .copyWith(color: AppColors.red),
                                       textAlign: TextAlign.center,

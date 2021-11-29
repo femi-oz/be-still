@@ -44,7 +44,7 @@ class CustomButtonGroup extends StatelessWidget {
                 child: Text(
                   title.toUpperCase(),
                   style: AppTextStyles.boldText20
-                      .copyWith(color: color, height: 1.5),
+                      .copyWith(color: color, height: 1.2),
                 ),
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
@@ -31,11 +32,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   AppCOntroller appCOntroller = Get.find();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _groupNameController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
   // bool isEdit = false;
   @override
   void initState() {
@@ -43,13 +43,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
     final isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
-    List locationArr = isEdit ? groupData?.group?.location?.split(',') : [];
     _groupNameController.text = isEdit ? groupData?.group?.name : '';
-    _cityController.text = isEdit ? locationArr[0].trim() : '';
-    _stateController.text = isEdit ? locationArr[1].trim() : '';
+    _locationController.text = isEdit ? groupData?.group?.location : '';
     _descriptionController.text = isEdit ? groupData?.group?.description : '';
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
-    _emailController.text = isEdit ? groupData?.group?.email : '';
+    _requireAdminApproval =
+        isEdit ? groupData.groupSettings.requireAdminApproval : true;
+    // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
 
@@ -72,10 +72,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     GroupModel groupData = GroupModel(
       id: Uuid().v1(),
       name: _groupNameController.text,
-      location: '${_cityController.text}, ${_stateController.text}',
+      location: _locationController.text,
       organization: _organizationController.text,
       description: _descriptionController.text,
-      email: _emailController.text,
       status: Status.active,
       isPrivate: _option == GroupType.private,
       isFeed: _option == GroupType.feed,
@@ -85,18 +84,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       createdOn: DateTime.now(),
     );
     final fullName = '${_user.firstName + ' ' + _user.lastName}';
+
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
-          .addGroup(groupData, _user.id, _user.email, fullName);
-      BeStilDialog.hideLoading(context);
+          .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
     } else {
-      await Provider.of<GroupProvider>(context, listen: false)
-          .editGroup(groupData, group.group.id);
-      BeStilDialog.hideLoading(context);
+      await Provider.of<GroupProvider>(context, listen: false).editGroup(
+          groupData,
+          group.group.id,
+          _requireAdminApproval,
+          Provider.of<GroupProvider>(context, listen: false)
+                  .currentGroup
+                  .groupSettings
+                  ?.id ??
+              '');
     }
-    setState(() {
-      newGroupId = groupData.id;
-      _step++;
+    Future.delayed(Duration(milliseconds: 2000)).then((_) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setGroupPrayers(groupData.id);
+      BeStilDialog.hideLoading(context);
+      setState(() {
+        newGroupId = groupData.id;
+        _step++;
+      });
     });
   }
 
@@ -143,73 +153,71 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             ),
             SizedBox(height: 20),
             Container(
-              // margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      appCOntroller.setCurrentPage(3, true);
-                      Navigator.pop(context);
-                      FocusManager.instance.primaryFocus.unfocus();
-                    },
-                    child: Container(
-                      height: 30,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      // width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        appCOntroller.setCurrentPage(3, true);
+                        Navigator.pop(context);
+                        FocusManager.instance.primaryFocus.unfocus();
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.grey.withOpacity(0.5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                        color: AppColors.grey.withOpacity(0.5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Discard Changes',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 13,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      height: 30,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      // width: MediaQuery.of(context).size.width * .25,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'Resume Editing',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 13,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -236,14 +244,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         false;
   }
 
+  bool _requireAdminApproval = true;
   bool _autoValidate = false;
   Widget build(BuildContext context) {
     final groupProvider = Provider.of<GroupProvider>(context, listen: false);
     final groupData = groupProvider.currentGroup;
     bool isValid = _groupNameController.text.isNotEmpty ||
-        _emailController.text.isNotEmpty ||
-        _cityController.text.isNotEmpty ||
-        _stateController.text.isNotEmpty;
+        // _emailController.text.isNotEmpty ||
+        _locationController.text.isNotEmpty;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: GestureDetector(
@@ -260,35 +268,61 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               colors: AppColors.backgroundColor,
             ),
             image: DecorationImage(
-              image: AssetImage(StringUtils.backgroundImage),
-              alignment: Alignment.bottomCenter,
-            ),
+                image: AssetImage(StringUtils.backgroundImage),
+                alignment: Alignment.bottomCenter,
+                fit: BoxFit.fitWidth),
           ),
           child: Container(
+            height: Get.height,
+            color: AppColors.backgroundColor[0].withOpacity(0.5),
             child: Column(
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).padding.top + 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0, left: 20),
-                    child: InkWell(
-                      child: Text(
-                        'CANCEL',
-                        style: AppTextStyles.boldText18
-                            .copyWith(color: AppColors.grey),
-                      ),
-                      onTap: isValid
-                          ? () => onCancel()
-                          : () {
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-                              // Navigator.pop(context);
-                              appCOntroller.setCurrentPage(3, true);
-                            },
-                    ),
-                  ),
-                ),
+                _step == 1
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 10.0,
+                              left: 20,
+                            ),
+                            child: InkWell(
+                              child: Text(
+                                'CANCEL',
+                                style: AppTextStyles.boldText18
+                                    .copyWith(color: AppColors.grey),
+                              ),
+                              onTap: isValid
+                                  ? () => onCancel()
+                                  : () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      // Navigator.pop(context);
+                                      appCOntroller.setCurrentPage(3, true);
+                                    },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 10.0,
+                              right: 20,
+                            ),
+                            child: InkWell(
+                                child: Text('ADD',
+                                    style: AppTextStyles.boldText18
+                                        .copyWith(color: Colors.blue)),
+                                onTap: () {
+                                  if (_step == 1) {
+                                    _save(groupProvider.isEdit, groupData);
+                                  } else {
+                                    NavigationService.instance.goHome(0);
+                                  }
+                                }),
+                          ),
+                        ],
+                      )
+                    : Container(),
                 Expanded(
                     child: SingleChildScrollView(
                   padding: EdgeInsets.all(20.0),
@@ -296,60 +330,66 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     children: [
                       _step == 1
                           ? CreateGroupForm(
+                              requireAdminApproval: _requireAdminApproval,
+                              onChangeAdminApproval: (val) {
+                                setState(() {
+                                  _requireAdminApproval = val;
+                                });
+                              },
+
                               formKey: _formKey,
-                              cityController: _cityController,
+                              locationController: _locationController,
                               descriptionController: _descriptionController,
                               groupNameController: _groupNameController,
-                              emailController: _emailController,
+                              // emailController: _emailController,
                               option: _option,
                               organizationController: _organizationController,
-                              stateController: _stateController,
                               setOption: _setOption,
                               autoValidate: _autoValidate,
                             )
                           : GroupCreated(_groupNameController.text,
                               groupProvider.isEdit, newGroupId),
                       SizedBox(height: 30.0),
-                      _step == 1
-                          ? Container(
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColors.lightBlue1,
-                                          AppColors.lightBlue2,
-                                        ],
-                                      ),
-                                    ),
-                                    child: TextButton(
-                                      onPressed: () {
-                                        if (_step == 1) {
-                                          _save(
-                                              groupProvider.isEdit, groupData);
-                                        } else {
-                                          NavigationService.instance.goHome(0);
-                                        }
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                Colors.transparent),
-                                      ),
-                                      child: Icon(AppIcons.bestill_next_arrow,
-                                          color: AppColors.white),
-                                    ),
-                                  ),
-                                  SizedBox(height: 60.0),
-                                ],
-                              ),
-                            )
-                          : Container(),
+                      // _step == 1
+                      //     ? Container(
+                      //         child: Column(
+                      //           children: <Widget>[
+                      //             Container(
+                      //               width: double.infinity,
+                      //               margin: EdgeInsets.only(bottom: 20),
+                      //               decoration: BoxDecoration(
+                      //                 gradient: LinearGradient(
+                      //                   begin: Alignment.centerLeft,
+                      //                   end: Alignment.centerRight,
+                      //                   colors: [
+                      //                     AppColors.lightBlue1,
+                      //                     AppColors.lightBlue2,
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               child: TextButton(
+                      //                 onPressed: () {
+                      // if (_step == 1) {
+                      //   _save(
+                      //       groupProvider.isEdit, groupData);
+                      // } else {
+                      //   NavigationService.instance.goHome(0);
+                      // }
+                      //                 },
+                      //                 style: ButtonStyle(
+                      //                   backgroundColor:
+                      //                       MaterialStateProperty.all<Color>(
+                      //                           Colors.transparent),
+                      //                 ),
+                      //                 child: Icon(AppIcons.bestill_next_arrow,
+                      //                     color: AppColors.white),
+                      //               ),
+                      //             ),
+                      //             SizedBox(height: 60.0),
+                      //           ],
+                      //         ),
+                      //       )
+                      //     : Container(),
                     ],
                   ),
                 )),

@@ -20,9 +20,11 @@ import 'package:provider/provider.dart';
 class ReminderPicker extends StatefulWidget {
   final Function onCancel;
   final bool hideActionuttons;
+  final bool isGroup;
   final LocalNotificationModel reminder;
   final String type;
   final String entityId;
+  final bool popTwice;
 
   @override
   ReminderPicker({
@@ -31,6 +33,8 @@ class ReminderPicker extends StatefulWidget {
     @required this.reminder,
     @required this.type,
     @required this.entityId,
+    @required this.isGroup,
+    this.popTwice = true,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
 }
@@ -157,8 +161,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
     setState(() {});
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
+      print(widget.popTwice);
       Navigator.pop(context);
-      Navigator.pop(context);
+      if (widget.popTwice) {
+        Navigator.pop(context);
+      }
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
@@ -167,7 +174,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   setNotification() async {
-    print(selectedPeriod);
     // AM 22= 22-12
     // pm 12 = 12+12
     final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12
@@ -228,9 +234,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
-      print(scheduleDate);
-      final payload =
-          NotificationMessage(entityId: widget.entityId, type: widget.type);
+      final payload = NotificationMessage(
+          entityId: widget.entityId,
+          type: widget.type,
+          isGroup: widget.isGroup);
       await LocalNotification.setLocalNotification(
         context: context,
         title: title,
@@ -288,7 +295,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           .deleteLocalNotification(widget.reminder.id);
       setState(() {});
       if (widget.type == NotificationType.reminder) {
-        Navigator.pop(context);
+        if (widget.popTwice) Navigator.pop(context);
         Navigator.pop(context);
 
         AppCOntroller appCOntroller = Get.find();
@@ -611,9 +618,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
               : Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40),
+                      // margin: EdgeInsets.symmetric(horizontal: 40),
                       width: double.infinity,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
@@ -621,7 +629,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             },
                             child: Container(
                               height: 38.0,
-                              width: MediaQuery.of(context).size.width * .35,
+                              width: MediaQuery.of(context).size.width * .32,
                               decoration: BoxDecoration(
                                 color: AppColors.grey.withOpacity(0.5),
                                 border: Border.all(
@@ -641,11 +649,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               ),
                             ),
                           ),
+                          SizedBox(width: 15),
                           GestureDetector(
                             onTap: setNotification,
                             child: Container(
                               height: 38.0,
-                              width: MediaQuery.of(context).size.width * .35,
+                              width: MediaQuery.of(context).size.width * .32,
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 border: Border.all(

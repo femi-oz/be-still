@@ -217,11 +217,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   gotoPrayer(PushNotificationModel notification) async {
     // does it exist
-    // not, should show modal this prayer by admin/owner
+    // no, should show modal this prayer by admin/owner
     BeStilDialog.showLoading(context);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayer(notification.entityId);
-    new Future.delayed(const Duration(milliseconds: 15), () async {
+    await Future.delayed(const Duration(milliseconds: 500), () async {
       var prayerGroupId =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .currentPrayer
@@ -236,11 +236,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       }
       BeStilDialog.hideLoading(context);
       deleteNotification(notification.id);
-      Future.delayed(Duration(milliseconds: 400)).then((value) {
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(9, true);
-        Navigator.pop(context);
-      });
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(9, true);
+      Navigator.pop(context);
     });
   }
 
@@ -270,15 +268,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .updateNotification(notificationId);
 
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(receiverId);
+      final receiverData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       await Provider.of<NotificationProvider>(context, listen: false)
-          .addPushNotification(
+          .sendPushNotification(
               'Your request to join ${groupData.name} has been denied',
               NotificationType.deny_request,
               currentUser.firstName,
               currentUser.id,
               receiverId,
               'Request Denied',
-              groupData.id);
+              groupData.id,
+              [receiverData.pushToken]);
       deleteNotification(notificationId);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
@@ -304,9 +307,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Provider.of<GroupProvider>(context, listen: false).userGroups;
         final currentUser =
             Provider.of<UserProvider>(context, listen: false).currentUser;
-        final receiverEmail = Provider.of<UserProvider>(context, listen: false)
-            .selectedUser
-            .email;
+
         var tempGroupData = data.map((e) => e.group);
         tempGroupData.where((x) => x.id == groupId).forEach((element) {
           groupData = element;
@@ -320,19 +321,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
           await Provider.of<GroupProvider>(context, listen: false)
               .acceptRequest(groupData, groupId, senderId, groupRequest.id,
-                  receiverFullName, receiverEmail);
+                  receiverFullName);
         });
         await Provider.of<NotificationProvider>(context, listen: false)
             .updateNotification(notificationId);
+        await Provider.of<UserProvider>(context, listen: false)
+            .getUserById(receiverId);
+        final receiverData =
+            Provider.of<UserProvider>(context, listen: false).selectedUser;
         await Provider.of<NotificationProvider>(context, listen: false)
-            .addPushNotification(
+            .sendPushNotification(
                 'Your request to join ${groupData.name} has been accepted',
                 NotificationType.accept_request,
                 currentUser.firstName,
                 currentUser.id,
                 receiverId,
                 'Request Accepted',
-                groupData.id);
+                groupData.id,
+                [receiverData.pushToken]);
         deleteNotification(notificationId);
         Navigator.of(context).pop();
         BeStilDialog.hideLoading(context);

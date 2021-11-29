@@ -31,4 +31,5 @@ class SettingsKey {
   static const churchPhone = 'ChurchPhone';
   static const churchEmail = 'ChurchEmail';
   static const webFormLink = 'WebFormLink';
+  static const requireAdminApproval = 'RequireAdminApproval';
 }
