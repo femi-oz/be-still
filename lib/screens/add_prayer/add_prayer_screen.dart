@@ -1,13 +1,10 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -800,10 +797,11 @@ class _AddPrayerState extends State<AddPrayer> {
         (!Provider.of<PrayerProvider>(context, listen: false).isEdit &&
                 _descriptionController.text.trim().isNotEmpty) ||
             (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
+                updates.length > 0 &&
                 _oldDescription.trim() != _descriptionController.text.trim() &&
                 _descriptionController.text.trim().isNotEmpty) ||
             (Provider.of<PrayerProvider>(context, listen: false).isEdit &&
-                updates.length > 0 &&
+                _oldDescription.trim() != _descriptionController.text.trim() &&
                 _descriptionController.text.trim().isNotEmpty);
 
     return WillPopScope(
