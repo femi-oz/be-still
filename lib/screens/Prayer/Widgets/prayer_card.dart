@@ -517,7 +517,7 @@ class _PrayerCardState extends State<PrayerCard> {
                             );
                           },
                         ),
-                  false),
+                  !isOwner),
         ],
       ),
     );

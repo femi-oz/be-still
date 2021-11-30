@@ -311,7 +311,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             ),
                             child: InkWell(
                                 child: Text(
-                                    groupProvider.isEdit ? 'EDIT' : 'ADD',
+                                    groupProvider.isEdit ? 'SAVE' : 'ADD',
                                     style: AppTextStyles.boldText18
                                         .copyWith(color: Colors.blue)),
                                 onTap: () {

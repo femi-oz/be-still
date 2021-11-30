@@ -58,7 +58,7 @@ class _FindAGroupState extends State<FindAGroup> {
         .filteredAllGroups
         .where((g) => g.groupUsers.length > 0)
         .toList();
-    var matchText = _filteredGroups.length == 1 ? 'Group' : 'Groups';
+    var matchText = _filteredGroups.length > 1 ? 'Groups' : 'Group';
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: WillPopScope(
@@ -87,178 +87,88 @@ class _FindAGroupState extends State<FindAGroup> {
             ),
             child: Column(
               children: [
-                !_isSearchMode
-                    ? GestureDetector(
-                        onTap: () {
-                          setState(() => _isSearchMode = true);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          color: Colors.transparent,
-                          child: IgnorePointer(
-                            child: CustomInput(
-                              controller: null,
-                              textkey: GlobalKey<FormFieldState>(),
-                              label: 'Start your Search',
-                              padding: 5.0,
-                              showSuffix: false,
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: CustomInput(
-                          // textkey: GlobalKey<FormFieldState>(),
-                          controller: _searchController,
-                          label: 'Start your Search',
-                          padding: 5.0,
-                          showSuffix: false,
-                          textInputAction: TextInputAction.done,
-                          onTextchanged: _searchGroup,
-                        ),
-                      ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: CustomInput(
+                    controller: _searchController,
+                    label: 'Start your Search',
+                    padding: 5.0,
+                    showSuffix: false,
+                    textInputAction: TextInputAction.done,
+                    onTextchanged: _searchGroup,
+                  ),
+                ),
                 Expanded(
-                  child: _isSearchMode
-                      ? SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(height: 30.0),
-                              if (_filteredGroups.isNotEmpty)
-                                Text(
-                                  '${_filteredGroups.length} $matchText match your search.',
-                                  style: AppTextStyles.boldText20,
-                                ),
-                              SizedBox(height: 2.0),
-                              _filteredGroups.isNotEmpty
-                                  ? Container()
-                                  : Text(
-                                      'Use Advanced Search to narrow your results.',
-                                      style: AppTextStyles.regularText15
-                                          .copyWith(color: AppColors.offWhite4),
-                                    ),
-                              SizedBox(height: 30.0),
-                              Container(
-                                  height: 30,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    border: Border.all(
-                                      color: AppColors.lightBlue4,
-                                      width: 1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: OutlinedButton(
-                                    style: ButtonStyle(
-                                      side:
-                                          MaterialStateProperty.all<BorderSide>(
-                                              BorderSide(
-                                                  color: Colors.transparent)),
-                                    ),
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'ADVANCED SEARCH',
-                                            style: AppTextStyles.boldText20,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    onPressed: () => {
-                                      FocusScope.of(context).unfocus(),
-                                      // showModalBottomSheet(
-                                      //   context: context,
-                                      //   barrierColor:
-                                      //       AppColors.detailBackgroundColor[1],
-                                      //   backgroundColor:
-                                      //       AppColors.detailBackgroundColor[1],
-                                      //   isScrollControlled: true,
-                                      //   builder: (BuildContext context) {
-                                      //     return FindGroupTools();
-                                      //   },
-                                      // ),
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FindGroupTools(),
-                                        ),
-                                      )
-                                    },
-                                  )),
-                              SizedBox(height: 30.0),
-                              _filteredGroups.isNotEmpty
-                                  ? Padding(
-                                      padding: EdgeInsets.only(left: 20.0),
-                                      child: Column(
-                                        children: [
-                                          ..._filteredGroups.map(
-                                            (e) => GroupCard(e),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        )
-                      : Center(
-                          child: Container(
-                            height: 30,
-                            padding: EdgeInsets.symmetric(horizontal: 15.0),
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              border: Border.all(
-                                color: AppColors.cardBorder,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: OutlinedButton(
-                              style: ButtonStyle(
-                                side: MaterialStateProperty.all<BorderSide>(
-                                    BorderSide(color: Colors.transparent)),
-                              ),
-                              child: Container(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.more_horiz,
-                                        color: AppColors.lightBlue3),
-                                    Text(
-                                      'ADVANCE SEARCH',
-                                      style: TextStyle(
-                                          color: AppColors.lightBlue3,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () => {
-                                FocusScope.of(context).unfocus(),
-                                showModalBottomSheet(
-                                  context: context,
-                                  barrierColor:
-                                      AppColors.detailBackgroundColor[1],
-                                  backgroundColor:
-                                      AppColors.detailBackgroundColor[1],
-                                  isScrollControlled: true,
-                                  builder: (BuildContext context) {
-                                    return FindGroupTools();
-                                  },
-                                ),
-                              },
-                            ),
-                          ),
+                    child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 30.0),
+                      if (_filteredGroups.isNotEmpty)
+                        Text(
+                          '${_filteredGroups.length} $matchText match your search.',
+                          style: AppTextStyles.boldText20,
                         ),
-                )
+                      SizedBox(height: 2.0),
+                      Text(
+                        'Use Advanced Search to narrow your results.',
+                        style: AppTextStyles.regularText15
+                            .copyWith(color: AppColors.lightBlue4),
+                      ),
+                      SizedBox(height: 30.0),
+                      Container(
+                          height: 30,
+                          padding: EdgeInsets.symmetric(horizontal: 15.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: AppColors.lightBlue4,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              side: MaterialStateProperty.all<BorderSide>(
+                                  BorderSide(color: Colors.transparent)),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'ADVANCED SEARCH',
+                                    style: AppTextStyles.boldText20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onPressed: () => {
+                              FocusScope.of(context).unfocus(),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FindGroupTools(),
+                                ),
+                              )
+                            },
+                          )),
+                      SizedBox(height: 30.0),
+                      _filteredGroups.isNotEmpty
+                          ? Padding(
+                              padding: EdgeInsets.only(left: 20.0),
+                              child: Column(
+                                children: [
+                                  ..._filteredGroups.map(
+                                    (e) => GroupCard(e),
+                                  )
+                                ],
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ))
               ],
             ),
           ),
