@@ -572,7 +572,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 : isDisabled
                     ? AppColors.lightBlue3.withOpacity(0.4)
                     : AppColors.lightBlue3,
-        onTap: _onTap,
+        onTap: isDisabled ? null : _onTap,
       ),
     );
   }
