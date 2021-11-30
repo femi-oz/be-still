@@ -1,5 +1,4 @@
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:flutter/material.dart';

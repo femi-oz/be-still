@@ -1,16 +1,11 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-
-import 'package:provider/provider.dart';
 
 class GroupAdminPrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
@@ -27,8 +22,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
 
   void _onHide() async {
     try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(
         bcontext,
       );

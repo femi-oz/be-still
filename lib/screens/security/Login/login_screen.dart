@@ -8,7 +8,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';

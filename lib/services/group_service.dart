@@ -3,9 +3,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/log_service.dart';
-import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -439,7 +437,6 @@ class GroupService {
         {
           "Name": groupData.name,
           "Description": groupData.description,
-          // "Email": groupData.email,
           "Organization": groupData.organization,
           "Location": groupData.location,
           "Status": groupData.status,

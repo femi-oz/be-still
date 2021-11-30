@@ -1,13 +1,10 @@
-import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class FindGroupTools extends StatefulWidget {

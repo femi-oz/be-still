@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:be_still/enums/message-template.dart';
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
@@ -12,7 +10,6 @@ import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
@@ -33,8 +30,6 @@ class PrayerService {
   final CollectionReference<Map<String, dynamic>>
       _hiddenPrayerCollectionReference =
       FirebaseFirestore.instance.collection("HiddenPrayer");
-  final CollectionReference<Map<String, dynamic>> _userCollectionReference =
-      FirebaseFirestore.instance.collection("User");
   final CollectionReference<Map<String, dynamic>>
       _prayerTagCollectionReference =
       FirebaseFirestore.instance.collection("PrayerTag");

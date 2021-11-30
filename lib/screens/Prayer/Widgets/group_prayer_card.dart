@@ -100,69 +100,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     }
   }
 
-  void _unSnoozePrayer() async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .unSnoozePrayer(widget.prayerData.prayer.id, DateTime.now(),
-              widget.prayerData.groupPrayer.id);
-      BeStilDialog.hideLoading(context);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _onMarkAsAnswered() async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.entityId == widget.prayerData.groupPrayer.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.groupPrayer.id);
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _unMarkAsAnswered() async {
-    try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.groupPrayer.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   Widget _buildMenu() {
     return PrayerGroupMenu(
         context, hasReminder, reminder, () => updateUI(), widget.prayerData);
@@ -205,18 +142,18 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
             .firstWhere((g) => g.userId == _user.id)
             .role ==
         GroupUserRole.admin;
-    bool isModerator = Provider.of<GroupProvider>(context)
-            .currentGroup
-            .groupUsers
-            .firstWhere((g) => g.userId == _user.id)
-            .role ==
-        GroupUserRole.moderator;
-    bool isMember = Provider.of<GroupProvider>(context)
-            .currentGroup
-            .groupUsers
-            .firstWhere((g) => g.userId == _user.id)
-            .role ==
-        GroupUserRole.member;
+    // bool isModerator = Provider.of<GroupProvider>(context)
+    //         .currentGroup
+    //         .groupUsers
+    //         .firstWhere((g) => g.userId == _user.id)
+    //         .role ==
+    //     GroupUserRole.moderator;
+    // bool isMember = Provider.of<GroupProvider>(context)
+    //         .currentGroup
+    //         .groupUsers
+    //         .firstWhere((g) => g.userId == _user.id)
+    //         .role ==
+    //     GroupUserRole.member;
     bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
 
     return Container(

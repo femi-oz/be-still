@@ -3,8 +3,6 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -13,12 +11,9 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
-import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +48,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays(
-        [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);

@@ -1,6 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';

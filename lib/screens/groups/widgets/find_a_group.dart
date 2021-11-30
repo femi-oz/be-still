@@ -4,7 +4,6 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
-import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
