@@ -364,7 +364,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       child: Form(
         key: _formKey,
         // ignore: deprecated_member_use
-        autovalidate: _autoValidate,
+        // autovalidate: _autoValidate,
+
+        autovalidateMode: _autoValidate
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: Column(
           children: <Widget>[
             CustomInput(

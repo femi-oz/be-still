@@ -943,7 +943,10 @@ class _AddPrayerState extends State<AddPrayer> {
                                 padding: const EdgeInsets.only(top: 10.0),
                                 child: Form(
                                   // ignore: deprecated_member_use
-                                  autovalidate: _autoValidate,
+                                  // autovalidate: _autoValidate,
+                                  autovalidateMode: _autoValidate
+                                      ? AutovalidateMode.onUserInteraction
+                                      : AutovalidateMode.disabled,
                                   key: _formKey,
                                   child: Container(
                                     child: CustomInput(

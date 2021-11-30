@@ -35,8 +35,11 @@ class CreateGroupForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Form(
       key: formKey,
+      autovalidateMode: autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       // ignore: deprecated_member_use
-      autovalidate: autoValidate,
+      // autoValidate: autoValidate,
       child: Column(
         children: [
           CustomInput(

@@ -472,7 +472,10 @@ class _AddUpdateState extends State<AddUpdate> {
                         children: [
                           Form(
                             // ignore: deprecated_member_use
-                            autovalidate: _autoValidate,
+                            // autovalidate: _autoValidate,
+                            autovalidateMode: _autoValidate
+                                ? AutovalidateMode.onUserInteraction
+                                : AutovalidateMode.disabled,
                             key: _formKey,
                             child: CustomInput(
                               textkey: _prayerKey,

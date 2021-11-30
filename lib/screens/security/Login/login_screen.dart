@@ -578,7 +578,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildForm() {
     return Form(
       // ignore: deprecated_member_use
-      autovalidate: _autoValidate,
+      // autovalidate: _autoValidate,
+
+      autovalidateMode: _autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       key: _formKey,
       child: Column(
         children: <Widget>[

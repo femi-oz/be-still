@@ -809,7 +809,10 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                 padding: const EdgeInsets.only(top: 30.0),
                                 child: Form(
                                   // ignore: deprecated_member_use
-                                  autovalidate: _autoValidate,
+                                  // autovalidate: _autoValidate,
+                                  autovalidateMode: _autoValidate
+                                      ? AutovalidateMode.onUserInteraction
+                                      : AutovalidateMode.disabled,
                                   key: _formKey,
                                   child: Container(
                                     child: CustomInput(
