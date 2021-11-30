@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

@@ -934,7 +934,7 @@ class _AddPrayerState extends State<AddPrayer> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: GestureDetector(
-                      onTap: fieldIndex = null,
+                      onTap: () => fieldIndex = null,
                       child: Column(
                         children: [
                           Stack(
