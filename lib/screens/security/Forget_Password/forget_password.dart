@@ -236,7 +236,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     return Form(
       key: _formKey1,
       // ignore: deprecated_member_use
-      autovalidate: _autoValidate,
+      // autovalidate: _autoValidate,
+
+      autovalidateMode: _autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       child: Column(
         children: <Widget>[
           CustomInput(

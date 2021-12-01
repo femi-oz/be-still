@@ -457,7 +457,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               SizedBox(height: 10.0),
               Form(
                 // ignore: deprecated_member_use
-                autovalidate: _autoValidate,
+                // autovalidate: _autoValidate,
+                autovalidateMode: _autoValidate
+                    ? AutovalidateMode.onUserInteraction
+                    : AutovalidateMode.disabled,
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

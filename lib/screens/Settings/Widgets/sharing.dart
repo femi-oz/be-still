@@ -213,7 +213,10 @@ class _SharingSettingsState extends State<SharingSettings> {
             children: [
               Form(
                 // ignore: deprecated_member_use
-                autovalidate: _autoValidate,
+                // autovalidate: _autoValidate,
+                autovalidateMode: _autoValidate
+                    ? AutovalidateMode.onUserInteraction
+                    : AutovalidateMode.disabled,
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

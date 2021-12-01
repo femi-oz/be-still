@@ -1,6 +1,4 @@
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +13,8 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   List selectedGroups = [];
 
   void _getGroup() async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
+    // UserModel _user =
+    //     Provider.of<UserProvider>(context, listen: false).currentUser;
     // await Provider.of<GroupProvider>(context, listen: false)
     //     .setAllGroups(_user.id);
   }
