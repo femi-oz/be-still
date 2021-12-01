@@ -9,11 +9,9 @@ import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
-import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +33,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  // final TextEditingController _emailController = TextEditingController();
-  // bool isEdit = false;
+
   @override
   void initState() {
     final groupData =
@@ -49,15 +46,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     _organizationController.text = isEdit ? groupData?.group?.organization : '';
     _requireAdminApproval =
         isEdit ? groupData.groupSettings.requireAdminApproval : true;
-    // _emailController.text = isEdit ? groupData?.group?.email : '';
     super.initState();
   }
 
-  _setOption(selectedOption) {
-    // setState(() {
-    //   _option = selectedOption;
-    // });
-  }
+  _setOption(selectedOption) {}
 
   String newGroupId = '';
 
@@ -88,6 +80,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
           .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
+      Future.delayed(Duration(milliseconds: 2000)).then((_) async {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setGroupPrayers(groupData.id);
+        BeStilDialog.hideLoading(context);
+        setState(() {
+          newGroupId = groupData.id;
+          _step++;
+        });
+      });
     } else {
       await Provider.of<GroupProvider>(context, listen: false).editGroup(
           groupData,
@@ -98,16 +99,16 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   .groupSettings
                   ?.id ??
               '');
-    }
-    Future.delayed(Duration(milliseconds: 2000)).then((_) async {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setGroupPrayers(groupData.id);
-      BeStilDialog.hideLoading(context);
-      setState(() {
-        newGroupId = groupData.id;
-        _step++;
+      Future.delayed(Duration(milliseconds: 2000)).then((_) async {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setGroupPrayers(group.group.id);
+        BeStilDialog.hideLoading(context);
+        setState(() {
+          newGroupId = groupData.id;
+          _step++;
+        });
       });
-    });
+    }
   }
 
   Future<void> onCancel() async {
@@ -309,7 +310,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               right: 20,
                             ),
                             child: InkWell(
-                                child: Text('ADD',
+                                child: Text(
+                                    groupProvider.isEdit ? 'SAVE' : 'ADD',
                                     style: AppTextStyles.boldText18
                                         .copyWith(color: Colors.blue)),
                                 onTap: () {

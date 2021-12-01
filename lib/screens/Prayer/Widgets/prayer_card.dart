@@ -189,6 +189,7 @@ class _PrayerCardState extends State<PrayerCard> {
   @override
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context).currentUser;
+    bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
     var tags = '';
     final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
     widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
@@ -472,14 +473,14 @@ class _PrayerCardState extends State<PrayerCard> {
               () => widget.prayerData.prayer.isAnswer
                   ? _unMarkAsAnswered()
                   : _onMarkAsAnswered(),
-              false),
+              !isOwner),
           _buildSlideItem(
               AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
               widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
               () => widget.prayerData.userPrayer.isArchived
                   ? _unArchive()
                   : _onArchive(),
-              false),
+              !isOwner),
           widget.prayerData.userPrayer.isArchived ||
                   widget.prayerData.prayer.isAnswer
               ? _buildSlideItem(
@@ -510,13 +511,13 @@ class _PrayerCardState extends State<PrayerCard> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 30),
                                       child: SnoozePrayer(widget.prayerData,
-                                          popTwice: false)),
+                                          popTwice: !isOwner)),
                                 ],
                               ),
                             );
                           },
                         ),
-                  false),
+                  !isOwner),
         ],
       ),
     );
@@ -571,7 +572,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 : isDisabled
                     ? AppColors.lightBlue3.withOpacity(0.4)
                     : AppColors.lightBlue3,
-        onTap: _onTap,
+        onTap: isDisabled ? null : _onTap,
       ),
     );
   }

@@ -8,7 +8,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -579,7 +578,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildForm() {
     return Form(
       // ignore: deprecated_member_use
-      autovalidate: _autoValidate,
+      // autovalidate: _autoValidate,
+
+      autovalidateMode: _autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       key: _formKey,
       child: Column(
         children: <Widget>[

@@ -362,18 +362,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             .firstWhere((g) => g.userId == _currentUser.id)
             .role ==
         GroupUserRole.admin;
-    bool isModerator = Provider.of<GroupProvider>(context)
-            .currentGroup
-            .groupUsers
-            .firstWhere((g) => g.userId == _currentUser.id)
-            .role ==
-        GroupUserRole.moderator;
-    bool isMember = Provider.of<GroupProvider>(context)
-            .currentGroup
-            .groupUsers
-            .firstWhere((g) => g.userId == _currentUser.id)
-            .role ==
-        GroupUserRole.member;
     bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
     return Container(
       padding: EdgeInsets.only(top: 50),

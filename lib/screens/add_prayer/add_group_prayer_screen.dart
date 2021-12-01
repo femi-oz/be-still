@@ -1,6 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -810,7 +809,10 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                 padding: const EdgeInsets.only(top: 30.0),
                                 child: Form(
                                   // ignore: deprecated_member_use
-                                  autovalidate: _autoValidate,
+                                  // autovalidate: _autoValidate,
+                                  autovalidateMode: _autoValidate
+                                      ? AutovalidateMode.onUserInteraction
+                                      : AutovalidateMode.disabled,
                                   key: _formKey,
                                   child: Container(
                                     child: CustomInput(

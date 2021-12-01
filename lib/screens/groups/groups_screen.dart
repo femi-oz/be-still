@@ -1,13 +1,11 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/Settings/Widgets/settings_bar.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -28,7 +26,6 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   AppCOntroller appCOntroller = Get.find();
 
-  UserModel _user;
   Future<bool> _onWillPop() async {
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
@@ -38,7 +35,6 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _user = Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<MiscProvider>(context, listen: false)
           .setPageTitle('GROUPS');
       // appCOntroller.setCurrentPage(4, true);

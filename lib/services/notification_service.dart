@@ -1,21 +1,15 @@
-import 'dart:io';
-
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/device.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
-import 'package:be_still/models/user_device.model.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {

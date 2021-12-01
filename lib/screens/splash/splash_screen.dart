@@ -147,94 +147,93 @@ class _SplashScreenState extends State<SplashScreen>
 
   initScreen(BuildContext context) {
     double targetValue = MediaQuery.of(context).size.height * 0.3;
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: Settings.isDarkMode
-              ? LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                      Color(0xFF043569),
-                      Color(0xFF011730),
-                      Color(0xFF043467),
-                      Color(0xFF01162E),
-                    ])
-              : RadialGradient(colors: [Color(0XFFFFFFFF), Color(0XFFC1C5C8)]),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TweenAnimationBuilder(
-                    tween: Tween<double>(begin: 0, end: targetValue),
-                    onEnd: () {
-                      setState(() => targetValue = targetValue);
-                    },
-                    duration: Duration(seconds: 2),
-                    builder: (BuildContext context, double size, Widget child) {
-                      return Container(
-                        height: size,
-                        child: Image.asset(
-                          StringUtils.logo,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+    return Container(
+      height: Get.height,
+      decoration: BoxDecoration(
+        gradient: Settings.isDarkMode
+            ? LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                    Color(0xFF043569),
+                    Color(0xFF011730),
+                    Color(0xFF043467),
+                    Color(0xFF01162E),
+                  ])
+            : RadialGradient(colors: [Color(0XFFFFFFFF), Color(0XFFC1C5C8)]),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TweenAnimationBuilder(
+                  tween: Tween<double>(begin: 0, end: targetValue),
+                  onEnd: () {
+                    setState(() => targetValue = targetValue);
+                  },
+                  duration: Duration(seconds: 2),
+                  builder: (BuildContext context, double size, Widget child) {
+                    return Container(
+                      height: size,
+                      child: Image.asset(
+                        StringUtils.logo,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            AnimatedBuilder(
-              animation: _textAnimationController,
-              builder: (context, widget) {
-                return Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.copyright,
-                          size: 12,
+          ),
+          AnimatedBuilder(
+            animation: _textAnimationController,
+            builder: (context, widget) {
+              return Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.copyright,
+                        size: 12,
+                        color: AppColors.splashTextColor,
+                      ),
+                      Text(
+                        StringUtils.copyRight1,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.medium10.copyWith(
                           color: AppColors.splashTextColor,
                         ),
-                        Text(
-                          StringUtils.copyRight1,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.medium10.copyWith(
-                            color: AppColors.splashTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          AppIcons.bestill_copyright,
-                          size: 16,
-                          color: AppColors.splashLogo,
-                        ),
-                        SizedBox(width: 10.0),
-                        Text(
-                          StringUtils.copyRight2,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.medium10.copyWith(
-                              color: AppColors.splashTextColor, fontSize: 8),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-            SizedBox(height: 40.0),
-          ],
-        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        AppIcons.bestill_copyright,
+                        size: 16,
+                        color: AppColors.splashLogo,
+                      ),
+                      SizedBox(width: 10.0),
+                      Text(
+                        StringUtils.copyRight2,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.medium10.copyWith(
+                            color: AppColors.splashTextColor, fontSize: 8),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+          SizedBox(height: 40.0),
+        ],
       ),
     );
   }

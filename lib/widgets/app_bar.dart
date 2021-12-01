@@ -46,7 +46,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     print(widget.showOnlyTitle);
   }
