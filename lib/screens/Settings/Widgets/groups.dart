@@ -1395,32 +1395,42 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                     ),
                                                   ),
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
                                                     children: <Widget>[
-                                                      Text(user.fullName ?? '',
-                                                          style: AppTextStyles
-                                                              .boldText14
-                                                              .copyWith(
-                                                                  color: AppColors
-                                                                      .lightBlue4)),
-                                                      Text(
-                                                        user.role ==
-                                                                GroupUserRole
-                                                                    .admin
-                                                            ? 'ADMIN'
-                                                            : user.role ==
+                                                      Expanded(
+                                                          child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                              user.fullName ??
+                                                                  '',
+                                                              style: AppTextStyles
+                                                                  .boldText14
+                                                                  .copyWith(
+                                                                      color: AppColors
+                                                                          .lightBlue4)),
+                                                          Text(
+                                                            user.role ==
                                                                     GroupUserRole
-                                                                        .moderator
-                                                                ? 'MODERATOR'
-                                                                : 'MEMBER',
-                                                        style: AppTextStyles
-                                                            .regularText14
-                                                            .copyWith(
-                                                                color: AppColors
-                                                                    .lightBlue1),
-                                                      ),
+                                                                        .admin
+                                                                ? 'ADMIN'
+                                                                : user.role ==
+                                                                        GroupUserRole
+                                                                            .moderator
+                                                                    ? 'MODERATOR'
+                                                                    : 'MEMBER',
+                                                            style: AppTextStyles
+                                                                .regularText14
+                                                                .copyWith(
+                                                                    color: AppColors
+                                                                        .lightBlue1),
+                                                          ),
+                                                        ],
+                                                      )),
+                                                      Icon(Icons.more_vert,
+                                                          color: AppColors
+                                                              .lightBlue4)
                                                     ],
                                                   ),
                                                 ),

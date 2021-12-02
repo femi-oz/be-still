@@ -292,27 +292,28 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   )
                 : Container(),
             SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.prayerDetailsBgColor,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
+            if (Provider.of<PrayerProvider>(context).currentPrayer != null)
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.prayerDetailsBgColor,
+                    border: Border.all(
+                      color: AppColors.cardBorder,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  borderRadius: BorderRadius.circular(15),
+                  child: Provider.of<PrayerProvider>(context)
+                              .currentPrayer
+                              .updates
+                              .length >
+                          0
+                      ? UpdateView()
+                      : NoUpdateView(),
                 ),
-                child: Provider.of<PrayerProvider>(context)
-                            .currentPrayer
-                            .updates
-                            .length >
-                        0
-                    ? UpdateView()
-                    : NoUpdateView(),
               ),
-            ),
             SizedBox(
               height: 30,
             )
