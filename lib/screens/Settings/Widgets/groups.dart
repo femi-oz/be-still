@@ -98,8 +98,17 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   deleteGroup(CombineGroupUserStream data) async {
     BeStilDialog.showLoading(context, '');
+    final notifications =
+        Provider.of<NotificationProvider>(context, listen: false).notifications;
+
+    final requests = notifications
+        .where((e) =>
+            e.messageType == NotificationType.request &&
+            e.entityId == data.group.id)
+        .toList();
+
     Provider.of<GroupProvider>(context, listen: false)
-        .deleteGroup(data.group.id, data.groupRequests);
+        .deleteGroup(data.group.id, requests);
     await Future.delayed(Duration(milliseconds: 300));
     Navigator.pop(context);
     BeStilDialog.hideLoading(context);
@@ -262,6 +271,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               fontSize: 12,
                               fontWeight: FontWeight.w300,
                               height: 1.5),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       // Container(
@@ -456,7 +466,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       !userIsAdmin
                           ? Container(
                               height: 30,
-                              margin: EdgeInsets.only(top: 40, bottom: 0),
+                              margin: EdgeInsets.only(top: 20, bottom: 0),
                               width: MediaQuery.of(context).size.width * 0.4,
                               decoration: BoxDecoration(
                                 // color: sortBy == 'date'

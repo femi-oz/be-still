@@ -98,7 +98,8 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
         if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
-          if (selected.name.isEmpty || selected.name == 'My List') {
+          if ((selected?.name ?? '').isEmpty ||
+              (selected?.name ?? '') == 'My List') {
             await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
               _descriptionController.text,
               _user.id,
@@ -109,7 +110,7 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
-              selected.id,
+              (selected?.id ?? ''),
               '${_user.firstName} ${_user.lastName}',
               _backupDescription,
               _user.id,
@@ -117,7 +118,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           if (contactList.length > 0) {
-            if (selected.name.isEmpty || selected.name == 'My List') {
+            if ((selected?.name ?? '').isEmpty ||
+                (selected?.name ?? '') == 'My List') {
               await Provider.of<PrayerProvider>(context, listen: false)
                   .addPrayerTag(
                       contactList, _user, _descriptionController.text, '');

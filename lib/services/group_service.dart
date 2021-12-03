@@ -247,7 +247,9 @@ class GroupService {
           Stream<GroupModel> group = _groupCollectionReference
               .doc(f['GroupId'])
               .snapshots()
-              .map<GroupModel>((document) => GroupModel.fromData(document));
+              .map<GroupModel>((document) => document.data() == null
+                  ? null
+                  : GroupModel.fromData(document));
           Stream<List<GroupUserModel>> groupUsers =
               _userGroupCollectionReference
                   .where('GroupId', isEqualTo: f['GroupId'])
@@ -574,7 +576,7 @@ class GroupService {
   deleteGroup(String groupId) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-
+      _groupCollectionReference.doc(groupId).delete();
       _userGroupCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
@@ -582,7 +584,6 @@ class GroupService {
         value.docs.forEach((element) {
           element.reference.delete();
         });
-        _groupCollectionReference.doc(groupId).delete();
       });
     } catch (e) {
       locator<LogService>().createLog(

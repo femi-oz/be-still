@@ -2,15 +2,17 @@ import 'dart:async';
 
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/services/group_service.dart';
+import 'package:be_still/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
 class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
+  NotificationService _notificationService = locator<NotificationService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
   List<CombineGroupUserStream> _userGroups = [];
   List<CombineGroupUserStream> _allGroups = [];
   List<CombineGroupUserStream> _filteredAllGroups = [];
@@ -34,6 +36,8 @@ class GroupProvider with ChangeNotifier {
         .getUserGroups(userId)
         .asBroadcastStream()
         .listen((userGroups) {
+      userGroups =
+          userGroups.where((element) => element.group != null).toList();
       List<CombineGroupUserStream> _distinct = [];
       var idSet = <String>{};
       for (var e in userGroups) {
@@ -167,10 +171,12 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.leaveGroup(userGroupId);
   }
 
-  Future deleteGroup(String groupId, List<GroupRequestModel> requests) async {
+  Future deleteGroup(
+      String groupId, List<PushNotificationModel> requests) async {
     if (_firebaseAuth.currentUser == null) return null;
+
     for (final req in requests) {
-      _groupService.deleteRequest(req.id);
+      _notificationService.updatePushNotification(req.id);
     }
     return await _groupService.deleteGroup(groupId);
   }
