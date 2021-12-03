@@ -167,8 +167,11 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.leaveGroup(userGroupId);
   }
 
-  Future deleteGroup(String groupId) async {
+  Future deleteGroup(String groupId, List<GroupRequestModel> requests) async {
     if (_firebaseAuth.currentUser == null) return null;
+    for (final req in requests) {
+      _groupService.deleteRequest(req.id);
+    }
     return await _groupService.deleteGroup(groupId);
   }
 

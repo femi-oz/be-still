@@ -404,12 +404,8 @@ class GroupService {
       _groupCollectionReference
           .doc(groupData.id)
           .set(populateGroup(groupData, groupData.id).toJson());
-      // FirebaseFirestore.instance
-      //     .collection("Group/" + groupData.id + "/Users")
-      //     .add({'userId': userId});
 
       _userGroupCollectionReference.doc(userGroupId).set(populateGroupUser(
-            // groupData,
             userId,
             groupData.id,
             GroupUserRole.admin,
@@ -476,6 +472,19 @@ class GroupService {
           e.message != null ? e.message : e.toString(),
           userId,
           'GROUP/service/joinRequest');
+      throw HttpException(e.message);
+    }
+  }
+
+  deleteRequest(String id) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _groupRequestCollectionReference.doc(id).delete();
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          id,
+          'GROUP/service/deleteRequest');
       throw HttpException(e.message);
     }
   }

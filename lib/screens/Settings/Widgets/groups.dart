@@ -99,7 +99,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   deleteGroup(CombineGroupUserStream data) async {
     BeStilDialog.showLoading(context, '');
     Provider.of<GroupProvider>(context, listen: false)
-        .deleteGroup(data.group.id);
+        .deleteGroup(data.group.id, data.groupRequests);
     await Future.delayed(Duration(milliseconds: 300));
     Navigator.pop(context);
     BeStilDialog.hideLoading(context);
@@ -301,158 +301,158 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       //     },
                       //   ),
                       // ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 5),
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: user.role == GroupUserRole.admin
-                                    ? AppColors.activeButton.withOpacity(0.3)
-                                    : Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.darkBlue,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: FittedBox(
-                                child: OutlinedButton(
-                                  style: ButtonStyle(
-                                    side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.transparent)),
-                                  ),
-                                  child: Container(
-                                    child: Text(
-                                      'ADMIN',
-                                      style: TextStyle(
-                                          color: AppColors.lightBlue3,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      barrierColor: AppColors
-                                          .detailBackgroundColor[1]
-                                          .withOpacity(0.5),
-                                      backgroundColor: AppColors
-                                          .detailBackgroundColor[1]
-                                          .withOpacity(0.9),
-                                      isScrollControlled: true,
-                                      builder: (BuildContext context) {
-                                        return GroupPrivilegeSettings(
-                                            'admin', user);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: 30,
-                              margin: EdgeInsets.symmetric(vertical: 5),
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: user.role == GroupUserRole.moderator
-                                    ? AppColors.activeButton.withOpacity(0.3)
-                                    : Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.darkBlue,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: FittedBox(
-                                child: OutlinedButton(
-                                  style: ButtonStyle(
-                                    side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.transparent)),
-                                  ),
-                                  child: Container(
-                                    child: Text(
-                                      'MODERATOR',
-                                      style: TextStyle(
-                                          color: AppColors.lightBlue3,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      barrierColor: AppColors
-                                          .detailBackgroundColor[1]
-                                          .withOpacity(0.5),
-                                      backgroundColor: AppColors
-                                          .detailBackgroundColor[1]
-                                          .withOpacity(0.9),
-                                      isScrollControlled: true,
-                                      builder: (BuildContext context) {
-                                        return GroupPrivilegeSettings(
-                                            'moderator', user);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: 30,
-                              margin: EdgeInsets.symmetric(vertical: 5),
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: user.role == GroupUserRole.member
-                                    ? AppColors.activeButton.withOpacity(0.3)
-                                    : Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.darkBlue,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: FittedBox(
-                                child: OutlinedButton(
-                                  style: ButtonStyle(
-                                    side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.transparent)),
-                                  ),
-                                  child: Container(
-                                    child: Text(
-                                      'MEMBER',
-                                      style: TextStyle(
-                                          color: AppColors.lightBlue3,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      barrierColor: AppColors
-                                          .detailBackgroundColor[1]
-                                          .withOpacity(0.5),
-                                      backgroundColor: AppColors
-                                          .detailBackgroundColor[1]
-                                          .withOpacity(0.9),
-                                      isScrollControlled: true,
-                                      builder: (BuildContext context) {
-                                        return GroupPrivilegeSettings(
-                                            'member', user);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      //   child: Column(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: <Widget>[
+                      //       Container(
+                      //         margin: EdgeInsets.symmetric(vertical: 5),
+                      //         height: 30,
+                      //         width: MediaQuery.of(context).size.width * 0.4,
+                      //         decoration: BoxDecoration(
+                      //           color: user.role == GroupUserRole.admin
+                      //               ? AppColors.activeButton.withOpacity(0.3)
+                      //               : Colors.transparent,
+                      //           border: Border.all(
+                      //             color: AppColors.darkBlue,
+                      //             width: 1,
+                      //           ),
+                      //           borderRadius: BorderRadius.circular(5),
+                      //         ),
+                      //         child: FittedBox(
+                      //           child: OutlinedButton(
+                      //             style: ButtonStyle(
+                      //               side: MaterialStateProperty.all<BorderSide>(
+                      //                   BorderSide(color: Colors.transparent)),
+                      //             ),
+                      //             child: Container(
+                      //               child: Text(
+                      //                 'ADMIN',
+                      //                 style: TextStyle(
+                      //                     color: AppColors.lightBlue3,
+                      //                     fontSize: 20,
+                      //                     fontWeight: FontWeight.w500),
+                      //               ),
+                      //             ),
+                      //             onPressed: () {
+                      //               showModalBottomSheet(
+                      //                 context: context,
+                      //                 barrierColor: AppColors
+                      //                     .detailBackgroundColor[1]
+                      //                     .withOpacity(0.5),
+                      //                 backgroundColor: AppColors
+                      //                     .detailBackgroundColor[1]
+                      //                     .withOpacity(0.9),
+                      //                 isScrollControlled: true,
+                      //                 builder: (BuildContext context) {
+                      //                   return GroupPrivilegeSettings(
+                      //                       'admin', user);
+                      //                 },
+                      //               );
+                      //             },
+                      //           ),
+                      //         ),
+                      //       ),
+                      //       Container(
+                      //         height: 30,
+                      //         margin: EdgeInsets.symmetric(vertical: 5),
+                      //         width: MediaQuery.of(context).size.width * 0.4,
+                      //         decoration: BoxDecoration(
+                      //           color: user.role == GroupUserRole.moderator
+                      //               ? AppColors.activeButton.withOpacity(0.3)
+                      //               : Colors.transparent,
+                      //           border: Border.all(
+                      //             color: AppColors.darkBlue,
+                      //             width: 1,
+                      //           ),
+                      //           borderRadius: BorderRadius.circular(5),
+                      //         ),
+                      //         child: FittedBox(
+                      //           child: OutlinedButton(
+                      //             style: ButtonStyle(
+                      //               side: MaterialStateProperty.all<BorderSide>(
+                      //                   BorderSide(color: Colors.transparent)),
+                      //             ),
+                      //             child: Container(
+                      //               child: Text(
+                      //                 'MODERATOR',
+                      //                 style: TextStyle(
+                      //                     color: AppColors.lightBlue3,
+                      //                     fontSize: 20,
+                      //                     fontWeight: FontWeight.w500),
+                      //               ),
+                      //             ),
+                      //             onPressed: () {
+                      //               showModalBottomSheet(
+                      //                 context: context,
+                      //                 barrierColor: AppColors
+                      //                     .detailBackgroundColor[1]
+                      //                     .withOpacity(0.5),
+                      //                 backgroundColor: AppColors
+                      //                     .detailBackgroundColor[1]
+                      //                     .withOpacity(0.9),
+                      //                 isScrollControlled: true,
+                      //                 builder: (BuildContext context) {
+                      //                   return GroupPrivilegeSettings(
+                      //                       'moderator', user);
+                      //                 },
+                      //               );
+                      //             },
+                      //           ),
+                      //         ),
+                      //       ),
+                      //       Container(
+                      //         height: 30,
+                      //         margin: EdgeInsets.symmetric(vertical: 5),
+                      //         width: MediaQuery.of(context).size.width * 0.4,
+                      //         decoration: BoxDecoration(
+                      //           color: user.role == GroupUserRole.member
+                      //               ? AppColors.activeButton.withOpacity(0.3)
+                      //               : Colors.transparent,
+                      //           border: Border.all(
+                      //             color: AppColors.darkBlue,
+                      //             width: 1,
+                      //           ),
+                      //           borderRadius: BorderRadius.circular(5),
+                      //         ),
+                      //         child: FittedBox(
+                      //           child: OutlinedButton(
+                      //             style: ButtonStyle(
+                      //               side: MaterialStateProperty.all<BorderSide>(
+                      //                   BorderSide(color: Colors.transparent)),
+                      //             ),
+                      //             child: Container(
+                      //               child: Text(
+                      //                 'MEMBER',
+                      //                 style: TextStyle(
+                      //                     color: AppColors.lightBlue3,
+                      //                     fontSize: 20,
+                      //                     fontWeight: FontWeight.w500),
+                      //               ),
+                      //             ),
+                      //             onPressed: () {
+                      //               showModalBottomSheet(
+                      //                 context: context,
+                      //                 barrierColor: AppColors
+                      //                     .detailBackgroundColor[1]
+                      //                     .withOpacity(0.5),
+                      //                 backgroundColor: AppColors
+                      //                     .detailBackgroundColor[1]
+                      //                     .withOpacity(0.9),
+                      //                 isScrollControlled: true,
+                      //                 builder: (BuildContext context) {
+                      //                   return GroupPrivilegeSettings(
+                      //                       'member', user);
+                      //                 },
+                      //               );
+                      //             },
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       !userIsAdmin
                           ? Container(
                               height: 30,
@@ -889,7 +889,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               .copyWith(color: Colors.white70),
                         ),
                       ),
-                      initiallyExpanded: false,
+                      initiallyExpanded: true,
                       children: <Widget>[
                         custom.ExpansionTile(
                             iconColor: AppColors.lightBlue1,
