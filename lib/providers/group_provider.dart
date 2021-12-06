@@ -72,18 +72,18 @@ class GroupProvider with ChangeNotifier {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
       _allGroups = groups;
-      _filteredAllGroups =
-          groups.where((e) => e.groupUsers.length > 0).toList();
-      _filteredAllGroups = _filteredAllGroups
-          .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-          .toList();
+      // _filteredAllGroups =
+      //     groups.where((e) => e.groupUsers.length > 0).toList();
+      // _filteredAllGroups = _filteredAllGroups
+      //     .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
+      //     .toList();
+      _filteredAllGroups = [];
       notifyListeners();
     });
   }
 
   Future searchAllGroups(String searchQuery, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    print('sss');
     if (searchQuery.trim().isEmpty) {
       _filteredAllGroups = [];
       notifyListeners();
@@ -106,11 +106,6 @@ class GroupProvider with ChangeNotifier {
       String church, String admin, String purpose) async {
     if (_firebaseAuth.currentUser == null) return null;
 
-// filter by name
-// filter rest by location
-// filter rest by church
-// filter rest by admin
-// filter rest by purpose
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
             data.group.name.toLowerCase().contains(name.toLowerCase()))

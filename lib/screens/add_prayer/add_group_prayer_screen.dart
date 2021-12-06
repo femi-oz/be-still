@@ -436,10 +436,16 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     setState(() {
       if (backup == null) {
         showContactList = false;
-      } else
+      } else {
         updateTextControllers = updateTextControllers
             .map((e) => e..showContactDropDown = false)
             .toList();
+      }
+      (backup == null ? _descriptionController : backup.ctrl).selection =
+          TextSelection.collapsed(
+              offset: (backup == null ? _descriptionController : backup.ctrl)
+                  .text
+                  .length);
     });
   }
 

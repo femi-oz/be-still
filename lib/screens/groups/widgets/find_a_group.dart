@@ -145,12 +145,9 @@ class _FindAGroupState extends State<FindAGroup> {
                             ),
                             onPressed: () => {
                               FocusScope.of(context).unfocus(),
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FindGroupTools(),
-                                ),
-                              )
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (ctx) => FindGroupTools())
                             },
                           )),
                       SizedBox(height: 30.0),
