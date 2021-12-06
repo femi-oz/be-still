@@ -57,7 +57,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.userPrayer.id,
+        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
         orElse: () => null);
     reminderString = reminder?.notificationText ?? '';
 
@@ -101,7 +101,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.userPrayer.id,
+        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
         orElse: () => null);
     return Scaffold(
       appBar: CustomAppBar(
@@ -174,7 +174,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 ],
               ),
             ),
-            if (prayerData.userPrayer.isSnoozed)
+            if (prayerData?.userPrayer?.isSnoozed ?? false)
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 InkWell(
                   onTap: () => showDialog(
@@ -221,7 +221,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       Container(
                         margin: EdgeInsets.only(left: 7),
                         child: Text(
-                            'Snoozed until ${DateFormat('MMM').format(prayerData.userPrayer.snoozeEndDate)} ${getDayText(prayerData.userPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.userPrayer.snoozeEndDate)}',
+                            'Snoozed until ${DateFormat('MMM').format(prayerData?.userPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData?.userPrayer?.snoozeEndDate?.day ?? 0)}, ${DateFormat('yyyy h:mm a').format(prayerData?.userPrayer?.snoozeEndDate ?? DateTime.now())}',
                             style: AppTextStyles.regularText12),
                       ),
                     ],
@@ -292,27 +292,28 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   )
                 : Container(),
             SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.prayerDetailsBgColor,
-                  border: Border.all(
-                    color: AppColors.cardBorder,
-                    width: 1,
+            if (Provider.of<PrayerProvider>(context).currentPrayer != null)
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.prayerDetailsBgColor,
+                    border: Border.all(
+                      color: AppColors.cardBorder,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  borderRadius: BorderRadius.circular(15),
+                  child: Provider.of<PrayerProvider>(context)
+                              .currentPrayer
+                              .updates
+                              .length >
+                          0
+                      ? UpdateView()
+                      : NoUpdateView(),
                 ),
-                child: Provider.of<PrayerProvider>(context)
-                            .currentPrayer
-                            .updates
-                            .length >
-                        0
-                    ? UpdateView()
-                    : NoUpdateView(),
               ),
-            ),
             SizedBox(
               height: 30,
             )
