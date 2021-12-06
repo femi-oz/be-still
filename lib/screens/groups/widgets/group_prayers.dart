@@ -78,87 +78,101 @@ class _GroupPrayersState extends State<GroupPrayers> {
           isSearchMode: widget.isSearchMode,
           switchSearchMode: (bool val) => widget.switchSearchMode(val),
         ),
-        body: Container(
-          padding: EdgeInsets.only(left: 20),
-          height: MediaQuery.of(context).size.height * 1,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: AppColors.backgroundColor,
+        body: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: AppColors.backgroundColor,
+              ),
+              image: DecorationImage(
+                image: AssetImage(StringUtils.backgroundImage),
+                alignment: Alignment.bottomCenter,
+              ),
             ),
-            image: DecorationImage(
-              image: AssetImage(StringUtils.backgroundImage),
-              alignment: Alignment.bottomCenter,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20),
-                data.length == 0
-                    ? Container(
-                        padding: EdgeInsets.all(60),
-                        child: Text(
-                          'You don\'t have any prayer in your List.',
-                          style: AppTextStyles.regularText13,
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : Container(
-                        child: Column(
-                          children: <Widget>[
-                            ...data
-                                .map((e) => GestureDetector(
-                                    onTap: () async {
-                                      await Provider.of<GroupPrayerProvider>(
-                                              context,
-                                              listen: false)
-                                          .setPrayer(e.groupPrayer.id);
-                                      Future.delayed(
-                                              Duration(milliseconds: 400))
-                                          .then((value) {
-                                        AppCOntroller appCOntroller =
-                                            Get.find();
+            child: Container(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    data.length == 0
+                        ? Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 60,
+                            ),
+                            child: Text(
+                              'You don\'t have any prayer in your List.',
+                              style: AppTextStyles.regularText13,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.only(left: 20),
+                            child: Column(
+                              children: <Widget>[
+                                ...data
+                                    .map((e) => GestureDetector(
+                                        onTap: () async {
+                                          await Provider.of<
+                                                      GroupPrayerProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .setPrayer(e.groupPrayer.id);
+                                          Future.delayed(
+                                                  Duration(milliseconds: 400))
+                                              .then((value) {
+                                            AppCOntroller appCOntroller =
+                                                Get.find();
 
-                                        appCOntroller.setCurrentPage(9, true);
-                                      });
-                                    },
-                                    child: GroupPrayerCard(
-                                      prayerData: e,
-                                      timeago: '',
-                                    )))
-                                .toList(),
-                          ],
-                        ),
+                                            appCOntroller.setCurrentPage(
+                                                9, true);
+                                          });
+                                        },
+                                        child: GroupPrayerCard(
+                                          prayerData: e,
+                                          timeago: '',
+                                        )))
+                                    .toList(),
+                              ],
+                            ),
+                          ),
+                    // currentPrayerType == Status.archived ||
+                    //         currentPrayerType == Status.answered
+                    //     ? Container()
+                    //     :
+                    // groupUser.role == GroupUserRole.admin
+                    //     ?
+                    Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: LongButton(
+                        onPress: () {
+                          Provider.of<GroupPrayerProvider>(context,
+                                  listen: false)
+                              .setEditMode(false);
+                          Provider.of<GroupPrayerProvider>(context,
+                                  listen: false)
+                              .setEditPrayer(null);
+                          AppCOntroller appCOntroller = Get.find();
+
+                          appCOntroller.setCurrentPage(10, true);
+                        },
+                        text: 'Add New Prayer',
+                        backgroundColor: Settings.isDarkMode
+                            ? AppColors.backgroundColor[1]
+                            : AppColors.lightBlue3,
+                        textColor: Settings.isDarkMode
+                            ? AppColors.lightBlue3
+                            : Colors.white,
+                        icon: AppIcons.bestill_add,
                       ),
-                // currentPrayerType == Status.archived ||
-                //         currentPrayerType == Status.answered
-                //     ? Container()
-                //     :
-                // groupUser.role == GroupUserRole.admin
-                //     ?
-                LongButton(
-                  onPress: () {
-                    Provider.of<GroupPrayerProvider>(context, listen: false)
-                        .setEditMode(false);
-                    Provider.of<GroupPrayerProvider>(context, listen: false)
-                        .setEditPrayer(null);
-                    AppCOntroller appCOntroller = Get.find();
-
-                    appCOntroller.setCurrentPage(10, true);
-                  },
-                  text: 'Add New Prayer',
-                  backgroundColor: Settings.isDarkMode
-                      ? AppColors.backgroundColor[1]
-                      : AppColors.lightBlue3,
-                  textColor:
-                      Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
-                  icon: AppIcons.bestill_add,
+                    ),
+                    // : Container(),
+                    SizedBox(height: 80),
+                  ],
                 ),
-                // : Container(),
-                SizedBox(height: 80),
-              ],
+              ),
             ),
           ),
         ),

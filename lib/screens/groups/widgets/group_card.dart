@@ -185,7 +185,7 @@ class _GroupCardState extends State<GroupCard> {
                               ),
                               Text(
                                 this.widget.groupData.group.organization.isEmpty
-                                    ? 'N/A'
+                                    ? '-'
                                     : '${this.widget.groupData.group.organization}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
