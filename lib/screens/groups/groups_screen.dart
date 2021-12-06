@@ -180,26 +180,12 @@ class _GroupScreenState extends State<GroupScreen> {
                                         hasIcon: false,
                                         hasMore: true,
                                         child: isAdmin
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                height: 25,
-                                                width: 60,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: AppColors
-                                                            .lightBlue3,
-                                                        width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Text(
-                                                  "Admin",
-                                                  style: TextStyle(
-                                                      color:
-                                                          AppColors.lightBlue3,
-                                                      fontSize: 12),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                            ? Text(
+                                                "Admin",
+                                                style: TextStyle(
+                                                    color: AppColors.lightBlue3,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.center,
                                               )
                                             : SizedBox.shrink(),
                                         onPressMore: () => showModalBottomSheet(

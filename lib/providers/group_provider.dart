@@ -72,11 +72,6 @@ class GroupProvider with ChangeNotifier {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
       _allGroups = groups;
-      // _filteredAllGroups =
-      //     groups.where((e) => e.groupUsers.length > 0).toList();
-      // _filteredAllGroups = _filteredAllGroups
-      //     .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-      //     .toList();
       _filteredAllGroups = [];
       notifyListeners();
     });
@@ -91,14 +86,9 @@ class GroupProvider with ChangeNotifier {
     }
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
-            data.group.name.toLowerCase().contains(searchQuery.toLowerCase()) &&
-            !data.groupUsers.map((e) => e.userId).contains(userId))
+            data.group.name.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
     _filteredAllGroups = filteredGroups;
-
-    _filteredAllGroups = _filteredAllGroups
-        .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-        .toList();
     notifyListeners();
   }
 
@@ -134,9 +124,6 @@ class GroupProvider with ChangeNotifier {
 
     _filteredAllGroups = filteredGroups;
 
-    _filteredAllGroups = _filteredAllGroups
-        .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-        .toList();
     notifyListeners();
   }
 
