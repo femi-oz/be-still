@@ -371,13 +371,14 @@ class CombineGroupUserStream {
   final GroupSettings groupSettings;
   // final UserModel admin;
 
-  CombineGroupUserStream(
-    this.groupUsers,
-    this.group,
-    this.groupRequests,
-    this.groupSettings,
-    // this.admin,
-  );
+  CombineGroupUserStream({
+    @required this.groupUsers,
+    @required this.group,
+    @required this.groupRequests,
+    @required this.groupSettings,
+  }
+      // this.admin,
+      );
 }
 
 class CombineGroupPrayerStream {

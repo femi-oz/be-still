@@ -160,12 +160,11 @@ class _GroupScreenState extends State<GroupScreen> {
                                       Provider.of<UserProvider>(context)
                                           .currentUser;
 
-                                  // bool isAdmin = true;
                                   bool isAdmin = e.groupUsers
-                                          .firstWhere((g) =>
-                                              g.userId == _currentUser.id)
-                                          .role ==
-                                      GroupUserRole.admin;
+                                      .where(
+                                          (e) => e.role == GroupUserRole.admin)
+                                      .map((e) => e.userId)
+                                      .contains(_currentUser.id);
                                   return Column(
                                     children: [
                                       LongButton(

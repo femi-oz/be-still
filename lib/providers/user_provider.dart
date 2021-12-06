@@ -23,10 +23,11 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getUserById(String id) async {
-    _userService.getUserById(id).asBroadcastStream().listen((event) {
+  Future<UserModel> getUserById(String id) async {
+    return _userService.getUserById(id).then((event) {
       _selectedUser = event;
       notifyListeners();
+      return _selectedUser;
     });
   }
 

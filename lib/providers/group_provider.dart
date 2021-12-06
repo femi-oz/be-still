@@ -64,6 +64,10 @@ class GroupProvider with ChangeNotifier {
     return _groupService.getGroup(groupdId, userId);
   }
 
+  Future<CombineGroupUserStream> getGroupFuture(groupdId, String userId) {
+    return _groupService.getGroupFuture(groupdId, userId);
+  }
+
   emptyGroupList() {
     _filteredAllGroups = [];
   }
@@ -204,13 +208,12 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.joinRequest(groupId, userId, status, createdBy);
   }
 
-  Future acceptRequest(GroupModel groupData, String groupId, String userId,
-      String requestId, String fullName) async {
+  Future acceptRequest(String groupId, String senderId, String requestId,
+      String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.acceptRequest(
       groupId,
-      groupData,
-      userId,
+      senderId,
       requestId,
       fullName,
     );

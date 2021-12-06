@@ -107,6 +107,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             receiverId,
             'Prayer flagged as innapropriate',
             widget.prayerData.groupPrayer.id,
+            '',
             tokens);
   }
 

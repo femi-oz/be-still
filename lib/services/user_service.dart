@@ -104,13 +104,13 @@ class UserService {
     }
   }
 
-  Stream<UserModel> getUserById(String id) {
+  Future<UserModel> getUserById(String id) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       return _userCollectionReference
           .doc(id)
-          .snapshots()
-          .map((event) => UserModel.fromData(event));
+          .get()
+          .then((event) => UserModel.fromData(event));
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),

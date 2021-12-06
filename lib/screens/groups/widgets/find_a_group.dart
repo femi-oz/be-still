@@ -147,6 +147,7 @@ class _FindAGroupState extends State<FindAGroup> {
                               FocusScope.of(context).unfocus(),
                               showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (ctx) => FindGroupTools())
                             },
                           )),

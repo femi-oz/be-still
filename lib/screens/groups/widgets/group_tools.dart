@@ -84,7 +84,7 @@ class _GroupToolsState extends State<GroupTools> {
       List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPushNotification(message, messageType, sender, senderId,
-            receiverId, title, entityId, tokens);
+            receiverId, title, entityId, '', tokens);
   }
 
   void _openDeleteConfirmation(BuildContext context, String message,

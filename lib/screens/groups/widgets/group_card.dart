@@ -45,6 +45,7 @@ class _GroupCardState extends State<GroupCard> {
               admin.id,
               title,
               groupData.group.id,
+              '',
               [admin.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

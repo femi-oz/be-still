@@ -1,4 +1,5 @@
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,12 @@ class NotificationBarState extends State<NotificationBar> {
       centerTitle: true,
       title: data.length > 0
           ? TextButton(
-              onPressed: () =>
-                  Provider.of<NotificationProvider>(context, listen: false)
-                      .clearNotification(context),
+              onPressed: () async {
+                BeStilDialog.showLoading(context);
+                await Provider.of<NotificationProvider>(context, listen: false)
+                    .clearNotification();
+                BeStilDialog.hideLoading(context);
+              },
               child: Text(
                 "CLEAR ALL",
                 style: AppTextStyles.boldText16
