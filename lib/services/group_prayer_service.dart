@@ -156,6 +156,62 @@ class GroupPrayerService {
     }
   }
 
+  Future<CombineGroupPrayerStream> getPrayerFuture(String prayerID) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var data = _groupPrayerCollectionReference.doc(prayerID).get();
+      return data.then((doc) async {
+        GroupPrayerModel groupPrayer = GroupPrayerModel.fromData(doc);
+        PrayerModel prayer = await _prayerCollectionReference
+            .doc(doc['PrayerId'])
+            .get()
+            .then<PrayerModel>((doc) => PrayerModel.fromData(doc));
+
+        List<PrayerUpdateModel> updates = await _prayerUpdateCollectionReference
+            .where('PrayerId', isEqualTo: doc['PrayerId'])
+            .get()
+            .then<List<PrayerUpdateModel>>((list) =>
+                list.docs.map((e) => PrayerUpdateModel.fromData(e)).toList());
+
+        List<PrayerTagModel> tags = await _prayerTagCollectionReference
+            .where('PrayerId', isEqualTo: doc['PrayerId'])
+            .get()
+            .then<List<PrayerTagModel>>((list) =>
+                list.docs.map((e) => PrayerTagModel.fromData(e)).toList());
+        // return Rx.combineLatest4(
+        //     groupPrayer,
+        //     prayer,
+        //     updates,
+        //     tags,
+        //     (GroupPrayerModel groupPrayer,
+        //             PrayerModel prayer,
+        //             List<PrayerUpdateModel> updates,
+        //             List<PrayerTagModel> tags) =>
+        //         CombineGroupPrayerStream(
+        //           prayer: prayer,
+        //           updates: updates,
+        //           groupPrayer: groupPrayer,
+        //           tags: tags,
+        //         ));
+        return CombineGroupPrayerStream(
+          prayer: prayer,
+          updates: updates,
+          groupPrayer: groupPrayer,
+          tags: tags,
+        );
+      });
+      // .switchMap((observables) {
+      //   return observables;
+      // });
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          prayerID,
+          'PRAYER/service/getPrayer');
+      throw HttpException(e.message);
+    }
+  }
+
   Future addPrayer(
     String prayerDesc,
     String groupId,

@@ -33,7 +33,6 @@ class _FindGroupToolsState extends State<FindGroupTools> {
             _organizationController.text,
             _adminNameController.text,
             _descriptionController.text);
-    // Navigator.pop(context);
   }
 
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                 bottom: 40,
                 right: 20,
                 left: 20,
-                top: MediaQuery.of(context).padding.top + 20),
+                top: MediaQuery.of(context).padding.top + 80),
             child: Column(children: <Widget>[
               Align(
                 alignment: Alignment.centerLeft,

@@ -94,18 +94,18 @@ class NotificationProvider with ChangeNotifier {
         .listen((notifications) {
       _notifications =
           notifications.where((e) => e.status == Status.active).toList();
+      _notifications =
+          _notifications.where((e) => e.recieverId == userId).toList();
       notifyListeners();
     });
   }
 
-  Future<void> clearNotification(BuildContext context) async {
-    // _notifications = [];
-    BeStilDialog.showLoading(context);
+  Future<void> clearNotification() async {
     var notificationsToClear =
         _notifications.where((e) => e.messageType != NotificationType.request);
     await _notificationService
         .clearNotification(notificationsToClear.map((e) => e.id).toList());
-    BeStilDialog.hideLoading(context);
+
     notifyListeners();
   }
 
@@ -160,12 +160,14 @@ class NotificationProvider with ChangeNotifier {
     String recieverId,
     String title,
     String entityId,
+    String entityId2,
     List<String> tokens,
   ) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _notificationService.sendPushNotification(
         message: message,
         entityId: entityId,
+        entityId2: entityId2,
         messageType: messageType,
         sender: sender,
         senderId: senderId,
@@ -292,11 +294,12 @@ class NotificationProvider with ChangeNotifier {
       sendPushNotification(
           prayerDetail,
           type,
-          _user.firstName,
+          _user.firstName + ' ' + _user.lastName,
           _user.id,
           e,
           type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
           prayerId,
+          selectedGroupId,
           [value]);
     });
   }

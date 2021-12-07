@@ -12,6 +12,7 @@ class PushNotificationModel {
   final String sender;
   final String recieverId;
   final String entityId;
+  final String entityId2;
   final String status;
   final int isSent;
   final String createdBy;
@@ -29,6 +30,7 @@ class PushNotificationModel {
     @required this.sender,
     @required this.recieverId,
     @required this.entityId,
+    @required this.entityId2,
     @required this.isSent,
     @required this.createdBy,
     @required this.createdOn,
@@ -46,6 +48,7 @@ class PushNotificationModel {
         status = snapshot.data()['Status'],
         recieverId = snapshot.data()['RecieverId'],
         entityId = snapshot.data()['EntityId'],
+        entityId2 = snapshot.data()['EntityId2'] ?? '',
         sender = snapshot.data()['Sender'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
@@ -63,6 +66,7 @@ class PushNotificationModel {
       'Status': status,
       'RecieverId': recieverId,
       'EntityId': entityId,
+      'EntityId2': entityId2,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,
       'ModifiedBy': modifiedBy,

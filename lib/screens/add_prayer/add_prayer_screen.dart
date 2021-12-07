@@ -317,11 +317,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
   setLineCount(String val, Backup backup) async {
     TextPainter painter = TextPainter(
-      textDirection: TextDirection.ltr,
-      text: TextSpan(
-        text: val,
-      ),
-    );
+        textDirection: TextDirection.ltr, text: TextSpan(text: val));
 
     painter.layout();
 
@@ -429,10 +425,16 @@ class _AddPrayerState extends State<AddPrayer> {
     setState(() {
       if (backup == null) {
         showContactList = false;
-      } else
+      } else {
         updateTextControllers = updateTextControllers
             .map((e) => e..showContactDropDown = false)
             .toList();
+      }
+      (backup == null ? _descriptionController : backup.ctrl).selection =
+          TextSelection.collapsed(
+              offset: (backup == null ? _descriptionController : backup.ctrl)
+                  .text
+                  .length);
     });
   }
 

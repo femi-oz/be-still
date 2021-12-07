@@ -75,6 +75,7 @@ class NotificationService {
     @required String title,
     @required List<String> tokens,
     @required String entityId,
+    @required String entityId2,
   }) async {
     final _notificationId = Uuid().v1();
     // var tokens = await getNotificationToken(recieverId);
@@ -93,6 +94,7 @@ class NotificationService {
       recieverId: recieverId,
       status: Status.active,
       entityId: entityId,
+      entityId2: entityId2,
     );
     try {
       if (_firebaseAuth.currentUser == null) return null;

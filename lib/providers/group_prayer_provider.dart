@@ -61,6 +61,13 @@ class GroupPrayerProvider with ChangeNotifier {
         notifyListeners();
       });
 
+  Future<CombineGroupPrayerStream> setPrayerFuture(String id) async =>
+      _prayerService.getPrayerFuture(id).then((prayer) {
+        _currentPrayer = prayer;
+        notifyListeners();
+        return _currentPrayer;
+      });
+
   Future<void> setHiddenPrayer(String id) async =>
       _prayerService.getHiddenPrayers(id).asBroadcastStream().listen((prayer) {
         _hiddenPrayers = prayer;
