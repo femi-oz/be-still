@@ -160,13 +160,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
 
   void _setCurrentPrayer() async {
     try {
-      final prayerData =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .currentPrayer;
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setPrayer(widget.prayerData.groupPrayer.id);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayer(prayerData.prayer.id);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -463,34 +458,37 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         ),
         closeOnScroll: true,
         actions: <Widget>[
+          _buildSlideItem(Icons.build, 'Options', () async {
+            _setCurrentPrayer();
+
+            showModalBottomSheet(
+              context: context,
+              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+                      .isDarkModeEnabled
+                  ? AppColors.backgroundColor[0].withOpacity(0.5)
+                  : Color(0xFF021D3C).withOpacity(0.7),
+              backgroundColor:
+                  Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkModeEnabled
+                      ? AppColors.backgroundColor[0].withOpacity(0.5)
+                      : Color(0xFF021D3C).withOpacity(0.7),
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return _buildMenu();
+              },
+            );
+          }, false)
+        ],
+        secondaryActions: <Widget>[
           _buildSlideItem(Icons.star, isFollowing ? 'UnFollow' : 'Follow',
               () async {
-            await _setCurrentPrayer();
+            _setCurrentPrayer();
             if (isFollowing) {
               _unFollowPrayer(followedPrayer.id, followedPrayer.userPrayerId);
             } else {
               _followPrayer();
             }
-
-            // showModalBottomSheet(
-            //   context: context,
-            //   barrierColor: Provider.of<ThemeProvider>(context, listen: false)
-            //           .isDarkModeEnabled
-            //       ? AppColors.backgroundColor[0].withOpacity(0.5)
-            //       : Color(0xFF021D3C).withOpacity(0.7),
-            //   backgroundColor:
-            //       Provider.of<ThemeProvider>(context, listen: false)
-            //               .isDarkModeEnabled
-            //           ? AppColors.backgroundColor[0].withOpacity(0.5)
-            //           : Color(0xFF021D3C).withOpacity(0.7),
-            //   isScrollControlled: true,
-            //   builder: (BuildContext context) {
-            //     return _buildMenu();
-            //   },
-            // );
           }, false)
-        ],
-        secondaryActions: <Widget>[
           // _buildSlideItem(
           //     AppIcons.bestill_answered,
           //     widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
@@ -498,16 +496,16 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
           //         ? _unMarkAsAnswered()
           //         : _onMarkAsAnswered(),
           //     false),
-          if (isAdmin || isOwner)
-            _buildSlideItem(
-                AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
-                widget.prayerData.groupPrayer.isArchived
-                    ? 'Unarchive'
-                    : 'Archive',
-                () => widget.prayerData.groupPrayer.isArchived
-                    ? _unArchive()
-                    : _onArchive(),
-                false),
+          // if (isAdmin || isOwner)
+          //   _buildSlideItem(
+          //       AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
+          //       widget.prayerData.groupPrayer.isArchived
+          //           ? 'Unarchive'
+          //           : 'Archive',
+          //       () => widget.prayerData.groupPrayer.isArchived
+          //           ? _unArchive()
+          //           : _onArchive(),
+          //       false),
           // widget.prayerData.groupPrayer.isArchived ||
           //         widget.prayerData.prayer.isAnswer
           //     ? _buildSlideItem(
