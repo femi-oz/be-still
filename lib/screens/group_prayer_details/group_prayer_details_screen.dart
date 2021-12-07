@@ -3,6 +3,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -86,6 +87,13 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         getSettings();
+        final prayerData =
+            Provider.of<GroupPrayerProvider>(context, listen: false)
+                .currentPrayer;
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setFollowedPrayer(prayerData.prayer.id);
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .setPrayer(prayerData.groupPrayer.id);
       });
       _isInit = false;
     }

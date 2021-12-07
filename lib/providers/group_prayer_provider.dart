@@ -278,4 +278,7 @@ class GroupPrayerProvider with ChangeNotifier {
       await _prayerService.flagAsInappropriate(prayerId);
   Future<void> addToMyList(String prayerId, String userId) async =>
       await _prayerService.addToMyList(prayerId, userId);
+  Future<void> removeFromMyList(
+          String followedPrayerId, String userPrayerId) async =>
+      await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);
 }

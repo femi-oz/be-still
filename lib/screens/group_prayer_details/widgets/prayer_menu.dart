@@ -4,9 +4,11 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -30,6 +32,7 @@ class PrayerGroupMenu extends StatefulWidget {
   final Function updateUI;
   final CombineGroupPrayerStream prayerData;
   final LocalNotificationModel reminder;
+
   @override
   PrayerGroupMenu(this.parentcontext, this.hasReminder, this.reminder,
       this.updateUI, this.prayerData);
@@ -43,6 +46,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     Frequency.daily,
     Frequency.weekly,
   ];
+
+  FollowedPrayerModel followedPrayer;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -74,7 +79,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         });
   }
 
-  void _addToMyList() async {
+  void _followPrayer() async {
     BeStilDialog.showLoading(context);
 
     try {
@@ -85,6 +90,24 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
 
+      appCOntroller.setCurrentPage(0, true);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _unFollowPrayer(followedPrayerId, userPrayerId) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(followedPrayerId, userPrayerId);
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -363,6 +386,15 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             .role ==
         GroupUserRole.admin;
     bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
+    bool isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+    if (isFollowing)
+      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers
+          .firstWhere(
+              (element) => element.prayerId == widget.prayerData.prayer.id);
+
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -424,20 +456,24 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
                                 : AppColors.white,
                         icon: Icons.star_border,
-                        text: 'Add to My List',
+                        text: isFollowing ? 'UnFollow' : 'Follow',
                         isDisabled: isDisable,
-                        onPress: () => isDisable ? null : _addToMyList()),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: AppIcons.bestill_share,
-                        text: 'Share',
-                        isDisabled: isDisable,
-                        onPress: () => isDisable ? null : _share()),
+                        onPress: () => isFollowing
+                            ? _unFollowPrayer(
+                                followedPrayer.id, followedPrayer.userPrayerId)
+                            : _followPrayer()),
+                    if (isAdmin || isOwner)
+                      LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
+                                  .isDarkModeEnabled
+                              ? AppColors.backgroundColor[0].withOpacity(0.7)
+                              : AppColors.white,
+                          icon: AppIcons.bestill_share,
+                          text: 'Share',
+                          isDisabled: isDisable,
+                          onPress: () => isDisable ? null : _share()),
                     if (isAdmin || isOwner)
                       LongButton(
                         textColor: AppColors.lightBlue3,
@@ -467,67 +503,70 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               },
                         text: 'Edit',
                       ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
-                                  .isDarkModeEnabled
-                              ? AppColors.backgroundColor[0].withOpacity(0.7)
-                              : AppColors.white,
-                      icon: AppIcons.bestill_reminder,
-                      isDisabled: isDisable,
-                      suffix: widget.hasReminder &&
-                              widget.reminder.frequency == Frequency.one_time
-                          ? DateFormat('dd MMM yyyy HH:mma')
-                              .format(widget.reminder.scheduledDate)
-                          : widget.hasReminder &&
-                                  widget.reminder.frequency !=
-                                      Frequency.one_time
-                              ? widget.reminder.frequency
-                              : null,
-                      onPress: () => isDisable
-                          ? null
-                          : showDialog(
-                              context: context,
-                              barrierColor: AppColors.detailBackgroundColor[1]
-                                  .withOpacity(0.5),
-                              builder: (BuildContext context) {
-                                return Dialog(
-                                  insetPadding: EdgeInsets.all(20),
-                                  backgroundColor: AppColors.prayerCardBgColor,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: AppColors.darkBlue),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10.0),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 30),
-                                        child: ReminderPicker(
-                                          isGroup: true,
-                                          type: NotificationType.reminder,
-                                          hideActionuttons: false,
-                                          reminder: widget.hasReminder
-                                              ? widget.reminder
-                                              : null,
-                                          entityId: widget.prayerData
-                                                  ?.groupPrayer?.id ??
-                                              '',
-                                          onCancel: () =>
-                                              Navigator.of(context).pop(),
-                                        ),
+                    if (isAdmin || isOwner)
+                      LongButton(
+                        textColor: AppColors.lightBlue3,
+                        backgroundColor:
+                            Provider.of<ThemeProvider>(context, listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.7)
+                                : AppColors.white,
+                        icon: AppIcons.bestill_reminder,
+                        isDisabled: isDisable,
+                        suffix: widget.hasReminder &&
+                                widget.reminder.frequency == Frequency.one_time
+                            ? DateFormat('dd MMM yyyy HH:mma')
+                                .format(widget.reminder.scheduledDate)
+                            : widget.hasReminder &&
+                                    widget.reminder.frequency !=
+                                        Frequency.one_time
+                                ? widget.reminder.frequency
+                                : null,
+                        onPress: () => isDisable
+                            ? null
+                            : showDialog(
+                                context: context,
+                                barrierColor: AppColors.detailBackgroundColor[1]
+                                    .withOpacity(0.5),
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    insetPadding: EdgeInsets.all(20),
+                                    backgroundColor:
+                                        AppColors.prayerCardBgColor,
+                                    shape: RoundedRectangleBorder(
+                                      side:
+                                          BorderSide(color: AppColors.darkBlue),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                      text: 'Reminder',
-                    ),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 30),
+                                          child: ReminderPicker(
+                                            isGroup: true,
+                                            type: NotificationType.reminder,
+                                            hideActionuttons: false,
+                                            reminder: widget.hasReminder
+                                                ? widget.reminder
+                                                : null,
+                                            entityId: widget.prayerData
+                                                    ?.groupPrayer?.id ??
+                                                '',
+                                            onCancel: () =>
+                                                Navigator.of(context).pop(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                        text: 'Reminder',
+                      ),
                     // LongButton(
                     //     textColor: AppColors.lightBlue3,
                     //     backgroundColor:

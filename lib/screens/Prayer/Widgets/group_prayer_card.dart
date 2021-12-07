@@ -1,7 +1,9 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -14,6 +16,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
@@ -33,9 +36,55 @@ class GroupPrayerCard extends StatefulWidget {
 class _GroupPrayerCardState extends State<GroupPrayerCard> {
   LocalNotificationModel reminder;
   final SlidableController slidableController = SlidableController();
+  FollowedPrayerModel followedPrayer;
 
   initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _setCurrentPrayer();
+
+    super.didChangeDependencies();
+  }
+
+  void _followPrayer() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .addToMyList(widget.prayerData.prayer.id,
+              Provider.of<UserProvider>(context, listen: false).currentUser.id);
+      BeStilDialog.hideLoading(context);
+      // Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+
+      appCOntroller.setCurrentPage(0, true);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _unFollowPrayer(followedPrayerId, userPrayerId) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(followedPrayerId, userPrayerId);
+      BeStilDialog.hideLoading(context);
+      // Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
   }
 
   bool get hasReminder {
@@ -109,10 +158,15 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     setState(() {});
   }
 
-  Future<void> _setCurrentPrayer() async {
+  void _setCurrentPrayer() async {
     try {
+      final prayerData =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .currentPrayer;
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setPrayer(widget.prayerData.groupPrayer.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayer(prayerData.prayer.id);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -155,6 +209,15 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     //         .role ==
     //     GroupUserRole.member;
     bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
+
+    bool isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+    if (isFollowing)
+      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers
+          .firstWhere(
+              (element) => element.prayerId == widget.prayerData.prayer.id);
 
     return Container(
       color: Colors.transparent,
@@ -286,15 +349,12 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  widget.prayerData.prayer.userId != _user?.id
-                                      ? Text(
-                                          widget.prayerData.prayer.creatorName,
-                                          style:
-                                              AppTextStyles.boldText14.copyWith(
-                                            color: AppColors.lightBlue4,
-                                          ),
-                                        )
-                                      : Container(),
+                                  Text(
+                                    widget.prayerData.prayer.creatorName,
+                                    style: AppTextStyles.boldText14.copyWith(
+                                      color: AppColors.lightBlue4,
+                                    ),
+                                  ),
                                   widget.prayerData.groupPrayer.isFavorite
                                       ? Padding(
                                           padding: const EdgeInsets.only(
@@ -403,25 +463,31 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         ),
         closeOnScroll: true,
         actions: <Widget>[
-          _buildSlideItem(Icons.build, 'Options', () async {
+          _buildSlideItem(Icons.star, isFollowing ? 'UnFollow' : 'Follow',
+              () async {
             await _setCurrentPrayer();
+            if (isFollowing) {
+              _unFollowPrayer(followedPrayer.id, followedPrayer.userPrayerId);
+            } else {
+              _followPrayer();
+            }
 
-            showModalBottomSheet(
-              context: context,
-              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
-                      .isDarkModeEnabled
-                  ? AppColors.backgroundColor[0].withOpacity(0.5)
-                  : Color(0xFF021D3C).withOpacity(0.7),
-              backgroundColor:
-                  Provider.of<ThemeProvider>(context, listen: false)
-                          .isDarkModeEnabled
-                      ? AppColors.backgroundColor[0].withOpacity(0.5)
-                      : Color(0xFF021D3C).withOpacity(0.7),
-              isScrollControlled: true,
-              builder: (BuildContext context) {
-                return _buildMenu();
-              },
-            );
+            // showModalBottomSheet(
+            //   context: context,
+            //   barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+            //           .isDarkModeEnabled
+            //       ? AppColors.backgroundColor[0].withOpacity(0.5)
+            //       : Color(0xFF021D3C).withOpacity(0.7),
+            //   backgroundColor:
+            //       Provider.of<ThemeProvider>(context, listen: false)
+            //               .isDarkModeEnabled
+            //           ? AppColors.backgroundColor[0].withOpacity(0.5)
+            //           : Color(0xFF021D3C).withOpacity(0.7),
+            //   isScrollControlled: true,
+            //   builder: (BuildContext context) {
+            //     return _buildMenu();
+            //   },
+            // );
           }, false)
         ],
         secondaryActions: <Widget>[

@@ -737,12 +737,26 @@ class GroupPrayerService {
           .set(populateUserPrayer(userId, prayerId).toJson());
       _followedPrayerCollectionReference
           .doc(followedPrayerID)
-          .set(populateFollowedPrayer(userId, prayerId).toJson());
+          .set(populateFollowedPrayer(userId, prayerId, userPrayerID).toJson());
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           userId,
           'PRAYER/service/addPrayer');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future removeFromMyList(String followedPrayerId, String userPrayerId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _followedPrayerCollectionReference.doc(followedPrayerId).delete();
+      await _userPrayerCollectionReference.doc(userPrayerId).delete();
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          followedPrayerId,
+          'PRAYER/service/removeFromMyList');
       throw HttpException(e.message);
     }
   }
@@ -762,14 +776,15 @@ class GroupPrayerService {
     }
   }
 
-  populateFollowedPrayer(String userId, String prayerId) {
+  populateFollowedPrayer(String userId, String prayerId, String userPrayerId) {
     FollowedPrayerModel followedPrayer = FollowedPrayerModel(
         prayerId: prayerId,
         userId: userId,
         createdBy: userId,
         createdOn: DateTime.now(),
         modifiedBy: userId,
-        modifiedOn: DateTime.now());
+        modifiedOn: DateTime.now(),
+        userPrayerId: userPrayerId);
     return followedPrayer;
   }
 
