@@ -466,6 +466,74 @@ class GroupService {
     }
   }
 
+  Future<CombineGroupUserStream> getUserGroupByIdFuture(
+      String userGroupId, String userId) async {
+    try {
+      // final data = _userGroupCollectionReference.doc(userGroupId).get();
+      // .map((convert) {
+      return _userGroupCollectionReference
+          .doc(userGroupId)
+          .get()
+          .then((f) async {
+        GroupModel group = await _groupCollectionReference
+            .doc(f['GroupId'])
+            .get()
+            .then<GroupModel>((document) => GroupModel.fromData(document));
+        List<GroupUserModel> groupUsers = await _userGroupCollectionReference
+            .where('GroupId', isEqualTo: f['GroupId'])
+            .get()
+            .then((e) =>
+                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
+
+        List<GroupRequestModel> groupRequests =
+            await _groupRequestCollectionReference
+                .where('GroupId', isEqualTo: f['GroupId'])
+                .get()
+                .then((e) => e.docs
+                    .map((doc) => GroupRequestModel.fromData(doc))
+                    .toList());
+
+        List<GroupSettings> groupSettings =
+            await _groupSettingsCollectionReference
+                .where('GroupId', isEqualTo: f['GroupId'])
+                .get()
+                .then((e) {
+          if (e.docs.length == 0) {
+            addGroupSettings(userId, f['GroupId'], false);
+            return [
+              GroupSettings(
+                  userId: userId,
+                  groupId: f['GroupId'],
+                  requireAdminApproval: true,
+                  enableNotificationFormNewPrayers: false,
+                  enableNotificationForUpdates: false,
+                  notifyOfMembershipRequest: false,
+                  notifyMeofFlaggedPrayers: false,
+                  notifyWhenNewMemberJoins: false,
+                  createdBy: userId,
+                  createdOn: DateTime.now(),
+                  modifiedBy: userId,
+                  modifiedOn: DateTime.now())
+            ];
+          }
+          return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+        });
+        return CombineGroupUserStream(
+          groupUsers: groupUsers,
+          group: group,
+          groupRequests: groupRequests,
+          groupSettings: groupSettings[0],
+        );
+      });
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userGroupId,
+          'GROUP/service/getUserGroups');
+      throw HttpException(e.message);
+    }
+  }
+
   Future<String> addGroup(String userId, GroupModel groupData, String fullName,
       String userGroupId, bool requireAdminApproval) async {
     try {
@@ -495,7 +563,7 @@ class GroupService {
     }
   }
 
-  Future editGroup(GroupModel groupData, String groupID,
+  Future<bool> editGroup(GroupModel groupData, String groupID,
       bool requireAdminApproval, String groupSettingsId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -516,6 +584,7 @@ class GroupService {
           key: SettingsKey.requireAdminApproval,
           value: requireAdminApproval,
           groupSettingsId: groupSettingsId);
+      return true;
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),

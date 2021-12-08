@@ -146,10 +146,14 @@ class GroupProvider with ChangeNotifier {
   }
 
   Future editGroup(GroupModel groupData, String groupId, bool allowAutoJoin,
-      String groupSettingsId) async {
+      String groupSettingsId, String userID, String userGroupId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.editGroup(
-        groupData, groupId, allowAutoJoin, groupSettingsId);
+    return await _groupService
+        .editGroup(groupData, groupId, allowAutoJoin, groupSettingsId)
+        .then((value) async {
+      await setCurrentGroupById(userGroupId, userID);
+      return true;
+    });
   }
 
   Future leaveGroup(String userGroupId) async {
@@ -175,12 +179,10 @@ class GroupProvider with ChangeNotifier {
 
   Future setCurrentGroupById(String userGroupId, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    _groupService
-        .getUserGroupById(userGroupId, userId)
-        .asBroadcastStream()
-        .listen((userGroup) {
+    return _groupService
+        .getUserGroupByIdFuture(userGroupId, userId)
+        .then((userGroup) {
       _currentGroup = userGroup;
-
       notifyListeners();
     });
   }
