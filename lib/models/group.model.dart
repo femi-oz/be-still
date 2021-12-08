@@ -369,7 +369,6 @@ class CombineGroupUserStream {
   final List<GroupRequestModel> groupRequests;
   final GroupModel group;
   final GroupSettings groupSettings;
-  // final UserModel admin;
 
   CombineGroupUserStream({
     @required this.groupUsers,

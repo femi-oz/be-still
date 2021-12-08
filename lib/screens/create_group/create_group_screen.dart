@@ -78,9 +78,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     final fullName = '${_user.firstName + ' ' + _user.lastName}';
 
     if (!isEdit) {
-      final isCreated = await Provider.of<GroupProvider>(context, listen: false)
+      await Provider.of<GroupProvider>(context, listen: false)
           .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
-      // Future.delayed(Duration(milliseconds: 2000)).then((_) async {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setGroupPrayers(groupData.id);
       BeStilDialog.hideLoading(context);
@@ -88,20 +87,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         newGroupId = groupData.id;
         _step++;
       });
-      // });
     } else {
       await Provider.of<GroupProvider>(context, listen: false).editGroup(
-          groupData,
-          group.group.id,
-          _requireAdminApproval,
-          Provider.of<GroupProvider>(context, listen: false)
-                  .currentGroup
-                  .groupSettings
-                  ?.id ??
-              '',
-          _user.id,
-          '');
-      // Future.delayed(Duration(milliseconds: 2000)).then((_) async {
+        groupData,
+        group.group.id,
+        _requireAdminApproval,
+        Provider.of<GroupProvider>(context, listen: false)
+                .currentGroup
+                .groupSettings
+                ?.id ??
+            '',
+        _user.id,
+      );
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setGroupPrayers(group.group.id);
       BeStilDialog.hideLoading(context);
@@ -109,7 +106,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         newGroupId = groupData.id;
         _step++;
       });
-      // });
     }
   }
 

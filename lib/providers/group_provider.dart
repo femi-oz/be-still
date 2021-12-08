@@ -60,9 +60,9 @@ class GroupProvider with ChangeNotifier {
     });
   }
 
-  Stream<CombineGroupUserStream> getGroup(groupdId, String userId) {
-    return _groupService.getGroup(groupdId, userId);
-  }
+  // Stream<CombineGroupUserStream> getGroup(groupdId, String userId) {
+  //   return _groupService.getGroup(groupdId, userId);
+  // }
 
   Future<CombineGroupUserStream> getGroupFuture(groupdId, String userId) {
     return _groupService.getGroupFuture(groupdId, userId);
@@ -139,19 +139,19 @@ class GroupProvider with ChangeNotifier {
       return _groupService
           .addGroup(userID, groupData, fullName, _userGroupId, allowAutoJoin)
           .then((value) async {
-        await setCurrentGroupById(_userGroupId, userID);
+        await setCurrentGroupById(groupData.id, userID);
         return true;
       });
     }
   }
 
   Future editGroup(GroupModel groupData, String groupId, bool allowAutoJoin,
-      String groupSettingsId, String userID, String userGroupId) async {
+      String groupSettingsId, String userID) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService
         .editGroup(groupData, groupId, allowAutoJoin, groupSettingsId)
         .then((value) async {
-      await setCurrentGroupById(userGroupId, userID);
+      await setCurrentGroupById(groupId, userID);
       return true;
     });
   }
@@ -177,11 +177,9 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setCurrentGroupById(String userGroupId, String userId) async {
+  Future setCurrentGroupById(String groupId, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return _groupService
-        .getUserGroupByIdFuture(userGroupId, userId)
-        .then((userGroup) {
+    return _groupService.getGroupFuture(groupId, userId).then((userGroup) {
       _currentGroup = userGroup;
       notifyListeners();
     });

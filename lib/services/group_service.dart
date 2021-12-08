@@ -169,76 +169,76 @@ class GroupService {
     }
   }
 
-  Stream<CombineGroupUserStream> getGroup(String groupdId, String userId) {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      final c = _groupCollectionReference.doc(groupdId).snapshots().map((g) {
-        // return convert.map((g) {
-        Stream<GroupModel> group = Stream.value(g)
-            .map<GroupModel>((document) => GroupModel.fromData(document));
-        Stream<List<GroupUserModel>> groupUsers = _userGroupCollectionReference
-            .where('GroupId', isEqualTo: g.id)
-            .snapshots()
-            .asyncMap((e) =>
-                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
+  // Stream<CombineGroupUserStream> getGroup(String groupdId, String userId) {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null) return null;
+  //     final c = _groupCollectionReference.doc(groupdId).snapshots().map((g) {
+  //       // return convert.map((g) {
+  //       Stream<GroupModel> group = Stream.value(g)
+  //           .map<GroupModel>((document) => GroupModel.fromData(document));
+  //       Stream<List<GroupUserModel>> groupUsers = _userGroupCollectionReference
+  //           .where('GroupId', isEqualTo: g.id)
+  //           .snapshots()
+  //           .asyncMap((e) =>
+  //               e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
 
-        Stream<List<GroupRequestModel>> groupRequests =
-            _groupRequestCollectionReference
-                .where('GroupId', isEqualTo: g.id)
-                .snapshots()
-                .asyncMap((e) => e.docs
-                    .map((doc) => GroupRequestModel.fromData(doc))
-                    .toList());
-        Stream<List<GroupSettings>> groupSettings =
-            _groupSettingsCollectionReference
-                .where('GroupId', isEqualTo: g.id)
-                .snapshots()
-                .asyncMap((e) {
-          if (e.docs.length == 0) {
-            addGroupSettings(userId, g.id, true);
-            return [
-              GroupSettings(
-                  requireAdminApproval: true,
-                  userId: userId,
-                  groupId: g.id,
-                  enableNotificationFormNewPrayers: false,
-                  enableNotificationForUpdates: false,
-                  notifyOfMembershipRequest: false,
-                  notifyMeofFlaggedPrayers: false,
-                  notifyWhenNewMemberJoins: false,
-                  createdBy: userId,
-                  createdOn: DateTime.now(),
-                  modifiedBy: userId,
-                  modifiedOn: DateTime.now())
-            ];
-          }
-          return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
-        });
-        return Rx.combineLatest4(
-            groupUsers,
-            group,
-            groupRequests,
-            groupSettings,
-            (groupUsers, group, groupRequests, groupSettings) =>
-                CombineGroupUserStream(
-                  groupUsers: groupUsers,
-                  group: group,
-                  groupRequests: groupRequests,
-                  groupSettings: groupSettings[0],
-                ));
-        // });
-      }).switchMap((observables) {
-        return observables;
-      });
-      return c;
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          groupdId,
-          'GROUP/service/getAllGroups');
-      throw HttpException(e.message);
-    }
-  }
+  //       Stream<List<GroupRequestModel>> groupRequests =
+  //           _groupRequestCollectionReference
+  //               .where('GroupId', isEqualTo: g.id)
+  //               .snapshots()
+  //               .asyncMap((e) => e.docs
+  //                   .map((doc) => GroupRequestModel.fromData(doc))
+  //                   .toList());
+  //       Stream<List<GroupSettings>> groupSettings =
+  //           _groupSettingsCollectionReference
+  //               .where('GroupId', isEqualTo: g.id)
+  //               .snapshots()
+  //               .asyncMap((e) {
+  //         if (e.docs.length == 0) {
+  //           addGroupSettings(userId, g.id, true);
+  //           return [
+  //             GroupSettings(
+  //                 requireAdminApproval: true,
+  //                 userId: userId,
+  //                 groupId: g.id,
+  //                 enableNotificationFormNewPrayers: false,
+  //                 enableNotificationForUpdates: false,
+  //                 notifyOfMembershipRequest: false,
+  //                 notifyMeofFlaggedPrayers: false,
+  //                 notifyWhenNewMemberJoins: false,
+  //                 createdBy: userId,
+  //                 createdOn: DateTime.now(),
+  //                 modifiedBy: userId,
+  //                 modifiedOn: DateTime.now())
+  //           ];
+  //         }
+  //         return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+  //       });
+  //       return Rx.combineLatest4(
+  //           groupUsers,
+  //           group,
+  //           groupRequests,
+  //           groupSettings,
+  //           (groupUsers, group, groupRequests, groupSettings) =>
+  //               CombineGroupUserStream(
+  //                 groupUsers: groupUsers,
+  //                 group: group,
+  //                 groupRequests: groupRequests,
+  //                 groupSettings: groupSettings[0],
+  //               ));
+  //       // });
+  //     }).switchMap((observables) {
+  //       return observables;
+  //     });
+  //     return c;
+  //   } catch (e) {
+  //     locator<LogService>().createLog(
+  //         e.message != null ? e.message : e.toString(),
+  //         groupdId,
+  //         'GROUP/service/getAllGroups');
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
   Future<CombineGroupUserStream> getGroupFuture(
       String groupdId, String userId) async {
@@ -388,151 +388,65 @@ class GroupService {
     }
   }
 
-  Stream<CombineGroupUserStream> getUserGroupById(
-      String userGroupId, String userId) {
-    try {
-      final data = _userGroupCollectionReference.doc(userGroupId).snapshots();
-      // .map((convert) {
-      return data.map((f) {
-        Stream<GroupModel> group = _groupCollectionReference
-            .doc(f['GroupId'])
-            .snapshots()
-            .map<GroupModel>((document) => GroupModel.fromData(document));
-        Stream<List<GroupUserModel>> groupUsers = _userGroupCollectionReference
-            .where('GroupId', isEqualTo: f['GroupId'])
-            .snapshots()
-            .asyncMap((e) =>
-                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
+  // Future<CombineGroupUserStream> getUserGroupByIdFuture(
+  //     String groupId, String userId) async {
+  //   try {
+  //     return _groupCollectionReference.doc(groupId).get().then((f) async {
+  //       GroupModel group = GroupModel.fromData(f);
+  //       List<GroupUserModel> groupUsers = await _userGroupCollectionReference
+  //           .where('GroupId', isEqualTo: f.id)
+  //           .get()
+  //           .then((e) =>
+  //               e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
 
-        Stream<List<GroupRequestModel>> groupRequests =
-            _groupRequestCollectionReference
-                .where('GroupId', isEqualTo: f['GroupId'])
-                .snapshots()
-                .asyncMap((e) => e.docs
-                    .map((doc) => GroupRequestModel.fromData(doc))
-                    .toList());
+  //       List<GroupRequestModel> groupRequests =
+  //           await _groupRequestCollectionReference
+  //               .where('GroupId', isEqualTo: f.id)
+  //               .get()
+  //               .then((e) => e.docs
+  //                   .map((doc) => GroupRequestModel.fromData(doc))
+  //                   .toList());
 
-        Stream<List<GroupSettings>> groupSettings =
-            _groupSettingsCollectionReference
-                .where('GroupId', isEqualTo: f['GroupId'])
-                .snapshots()
-                .asyncMap((e) {
-          if (e.docs.length == 0) {
-            addGroupSettings(userId, f['GroupId'], false);
-            return [
-              GroupSettings(
-                  userId: userId,
-                  groupId: f['GroupId'],
-                  requireAdminApproval: true,
-                  enableNotificationFormNewPrayers: false,
-                  enableNotificationForUpdates: false,
-                  notifyOfMembershipRequest: false,
-                  notifyMeofFlaggedPrayers: false,
-                  notifyWhenNewMemberJoins: false,
-                  createdBy: userId,
-                  createdOn: DateTime.now(),
-                  modifiedBy: userId,
-                  modifiedOn: DateTime.now())
-            ];
-          }
-          return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
-        });
-        return Rx.combineLatest4(
-            groupUsers,
-            group,
-            groupRequests,
-            groupSettings,
-            (
-              groupUsers,
-              group,
-              groupRequests,
-              groupSettings,
-            ) =>
-                CombineGroupUserStream(
-                  groupUsers: groupUsers,
-                  group: group,
-                  groupRequests: groupRequests,
-                  groupSettings: groupSettings[0],
-                ));
-      }).switchMap((observables) {
-        return observables;
-      });
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userGroupId,
-          'GROUP/service/getUserGroups');
-      throw HttpException(e.message);
-    }
-  }
-
-  Future<CombineGroupUserStream> getUserGroupByIdFuture(
-      String userGroupId, String userId) async {
-    try {
-      // final data = _userGroupCollectionReference.doc(userGroupId).get();
-      // .map((convert) {
-      return _userGroupCollectionReference
-          .doc(userGroupId)
-          .get()
-          .then((f) async {
-        GroupModel group = await _groupCollectionReference
-            .doc(f['GroupId'])
-            .get()
-            .then<GroupModel>((document) => GroupModel.fromData(document));
-        List<GroupUserModel> groupUsers = await _userGroupCollectionReference
-            .where('GroupId', isEqualTo: f['GroupId'])
-            .get()
-            .then((e) =>
-                e.docs.map((doc) => GroupUserModel.fromData(doc)).toList());
-
-        List<GroupRequestModel> groupRequests =
-            await _groupRequestCollectionReference
-                .where('GroupId', isEqualTo: f['GroupId'])
-                .get()
-                .then((e) => e.docs
-                    .map((doc) => GroupRequestModel.fromData(doc))
-                    .toList());
-
-        List<GroupSettings> groupSettings =
-            await _groupSettingsCollectionReference
-                .where('GroupId', isEqualTo: f['GroupId'])
-                .get()
-                .then((e) {
-          if (e.docs.length == 0) {
-            addGroupSettings(userId, f['GroupId'], false);
-            return [
-              GroupSettings(
-                  userId: userId,
-                  groupId: f['GroupId'],
-                  requireAdminApproval: true,
-                  enableNotificationFormNewPrayers: false,
-                  enableNotificationForUpdates: false,
-                  notifyOfMembershipRequest: false,
-                  notifyMeofFlaggedPrayers: false,
-                  notifyWhenNewMemberJoins: false,
-                  createdBy: userId,
-                  createdOn: DateTime.now(),
-                  modifiedBy: userId,
-                  modifiedOn: DateTime.now())
-            ];
-          }
-          return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
-        });
-        return CombineGroupUserStream(
-          groupUsers: groupUsers,
-          group: group,
-          groupRequests: groupRequests,
-          groupSettings: groupSettings[0],
-        );
-      });
-    } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          userGroupId,
-          'GROUP/service/getUserGroups');
-      throw HttpException(e.message);
-    }
-  }
+  //       List<GroupSettings> groupSettings =
+  //           await _groupSettingsCollectionReference
+  //               .where('GroupId', isEqualTo: f.id)
+  //               .get()
+  //               .then((e) {
+  //         if (e.docs.length == 0) {
+  //           addGroupSettings(userId, f.id, false);
+  //           return [
+  //             GroupSettings(
+  //                 userId: userId,
+  //                 groupId: f['GroupId'],
+  //                 requireAdminApproval: true,
+  //                 enableNotificationFormNewPrayers: false,
+  //                 enableNotificationForUpdates: false,
+  //                 notifyOfMembershipRequest: false,
+  //                 notifyMeofFlaggedPrayers: false,
+  //                 notifyWhenNewMemberJoins: false,
+  //                 createdBy: userId,
+  //                 createdOn: DateTime.now(),
+  //                 modifiedBy: userId,
+  //                 modifiedOn: DateTime.now())
+  //           ];
+  //         }
+  //         return e.docs.map((doc) => GroupSettings.fromData(doc)).toList();
+  //       });
+  //       return CombineGroupUserStream(
+  //         groupUsers: groupUsers,
+  //         group: group,
+  //         groupRequests: groupRequests,
+  //         groupSettings: groupSettings[0],
+  //       );
+  //     });
+  //   } catch (e) {
+  //     locator<LogService>().createLog(
+  //         e.message != null ? e.message : e.toString(),
+  //         groupId,
+  //         'GROUP/service/getUserGroups');
+  //     throw HttpException(e.message);
+  //   }
+  // }
 
   Future<String> addGroup(String userId, GroupModel groupData, String fullName,
       String userGroupId, bool requireAdminApproval) async {
