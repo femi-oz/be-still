@@ -68,9 +68,9 @@ class _EntryScreenState extends State<EntryScreen> {
             Provider.of<UserProvider>(context, listen: false).currentUser?.id;
         if (groupId.isNotEmpty)
           Provider.of<GroupProvider>(context, listen: false)
-              .getGroup(groupId, userId)
-              .asBroadcastStream()
-              .listen((groupPrayer) {
+              .getGroupFuture(groupId, userId)
+              // .asBroadcastStream()
+              .then((groupPrayer) {
             if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
               JoinGroup().showAlert(context, groupPrayer);
           });
