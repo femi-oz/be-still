@@ -74,10 +74,13 @@ class GroupPrayerProvider with ChangeNotifier {
         notifyListeners();
       });
 
-  Future<void> setFollowedPrayer(String id) async => _prayerService
-          .getFollowedPrayers(id)
-          .asBroadcastStream()
-          .listen((prayer) {
+  Future<void> setFollowedPrayer(String id) async =>
+      _prayerService.getFollowedPrayers(id).then((prayer) {
+        _followedPrayers = prayer;
+        notifyListeners();
+      });
+  Future<void> setFollowedPrayerByUserId(String id) async =>
+      _prayerService.getFollowedPrayersByUserId(id).then((prayer) {
         _followedPrayers = prayer;
         notifyListeners();
       });

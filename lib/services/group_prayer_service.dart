@@ -713,19 +713,36 @@ class GroupPrayerService {
     }
   }
 
-  Stream<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
+  Future<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       return _followedPrayerCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
-          .snapshots()
-          .asyncMap((event) =>
+          .get()
+          .then((event) =>
               event.docs.map((e) => FollowedPrayerModel.fromData(e)).toList());
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
           prayerId,
           'PRAYER/service/getFollowedPrayers');
+      throw HttpException(e.message);
+    }
+  }
+
+  Future<List<FollowedPrayerModel>> getFollowedPrayersByUserId(String userId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return _followedPrayerCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .get()
+          .then((event) =>
+              event.docs.map((e) => FollowedPrayerModel.fromData(e)).toList());
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          userId,
+          'PRAYER/service/getFollowedPrayersByUserId');
       throw HttpException(e.message);
     }
   }
@@ -844,27 +861,25 @@ class GroupPrayerService {
     return followedPrayer;
   }
 
-  populateUserPrayer(
-    String userId,
-    String prayerID,
-  ) {
+  populateUserPrayer(String userId, String prayerID) {
     UserPrayerModel userPrayer = UserPrayerModel(
-        deleteStatus: 0,
-        isArchived: false,
-        archivedDate: null,
-        userId: userId,
-        snoozeDuration: 0,
-        snoozeFrequency: '',
-        status: Status.active,
-        sequence: null,
-        prayerId: prayerID,
-        isFavorite: false,
-        isSnoozed: false,
-        snoozeEndDate: DateTime.now(),
-        createdBy: userId,
-        createdOn: DateTime.now(),
-        modifiedBy: userId,
-        modifiedOn: DateTime.now());
+      deleteStatus: 0,
+      isArchived: false,
+      archivedDate: null,
+      userId: userId,
+      snoozeDuration: 0,
+      snoozeFrequency: '',
+      status: Status.active,
+      sequence: null,
+      prayerId: prayerID,
+      isFavorite: false,
+      isSnoozed: false,
+      snoozeEndDate: DateTime.now(),
+      createdBy: userId,
+      createdOn: DateTime.now(),
+      modifiedBy: userId,
+      modifiedOn: DateTime.now(),
+    );
     return userPrayer;
   }
 

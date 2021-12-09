@@ -55,15 +55,15 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
-
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer.id,
-              Provider.of<UserProvider>(context, listen: false).currentUser.id);
+          .addToMyList(widget.prayerData.prayer.id, user.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
-
       appCOntroller.setCurrentPage(8, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -75,10 +75,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
   void _unFollowPrayer(followedPrayerId, userPrayerId) async {
     BeStilDialog.showLoading(context);
-
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(followedPrayerId, userPrayerId);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -347,6 +349,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
+  bool get isFollowing {
+    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+    return isFollowing;
+  }
+
   Widget build(BuildContext context) {
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.groupPrayer.isArchived ||
@@ -361,11 +370,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             .role ==
         GroupUserRole.admin;
     bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
-    bool isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
-        .followedPrayers
-        .any((element) =>
-            element.prayerId == widget.prayerData.prayer.id &&
-            element.createdBy == _currentUser.id);
+
     if (isFollowing)
       followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
           .followedPrayers
