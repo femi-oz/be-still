@@ -5,7 +5,6 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -43,24 +42,19 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
+    setGroupPrayer(widget.prayerData);
     _setCurrentPrayer();
-
     super.didChangeDependencies();
   }
 
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
-
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .addToMyList(widget.prayerData.prayer.id,
               Provider.of<UserProvider>(context, listen: false).currentUser.id);
       BeStilDialog.hideLoading(context);
-      // Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-
-      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -76,9 +70,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(followedPrayerId, userPrayerId);
       BeStilDialog.hideLoading(context);
-      // Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -102,51 +93,9 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     }
   }
 
-  void _unArchive() async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .unArchivePrayer(
-              widget.prayerData.groupPrayer.id, widget.prayerData.prayer.id);
-      BeStilDialog.hideLoading(context);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _onArchive() async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.entityId == widget.prayerData.groupPrayer.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
-
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.groupPrayer.id);
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
+  setGroupPrayer(CombineGroupPrayerStream prayerData) async {
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayer(prayerData.prayer.id);
   }
 
   Widget _buildMenu() {
@@ -185,34 +134,18 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     widget.prayerData.tags.forEach((element) {
       tags += ' ' + element.displayName;
     });
-    bool isAdmin = Provider.of<GroupProvider>(context)
-            .currentGroup
-            .groupUsers
-            .firstWhere((g) => g.userId == _user.id)
-            .role ==
-        GroupUserRole.admin;
-    // bool isModerator = Provider.of<GroupProvider>(context)
-    //         .currentGroup
-    //         .groupUsers
-    //         .firstWhere((g) => g.userId == _user.id)
-    //         .role ==
-    //     GroupUserRole.moderator;
-    // bool isMember = Provider.of<GroupProvider>(context)
-    //         .currentGroup
-    //         .groupUsers
-    //         .firstWhere((g) => g.userId == _user.id)
-    //         .role ==
-    //     GroupUserRole.member;
-    bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
 
     bool isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
         .followedPrayers
-        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+        .any((element) =>
+            element.prayerId == widget.prayerData.prayer.id &&
+            element.createdBy == _user.id);
     if (isFollowing)
       followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
           .followedPrayers
-          .firstWhere(
-              (element) => element.prayerId == widget.prayerData.prayer.id);
+          .firstWhere((element) =>
+              element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _user.id);
 
     return Container(
       color: Colors.transparent,
@@ -460,7 +393,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         actions: <Widget>[
           _buildSlideItem(Icons.build, 'Options', () async {
             _setCurrentPrayer();
-
             showModalBottomSheet(
               context: context,
               barrierColor: Provider.of<ThemeProvider>(context, listen: false)

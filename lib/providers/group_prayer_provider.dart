@@ -286,6 +286,8 @@ class GroupPrayerProvider with ChangeNotifier {
   Future<void> addToMyList(String prayerId, String userId) async =>
       await _prayerService.addToMyList(prayerId, userId);
   Future<void> removeFromMyList(
-          String followedPrayerId, String userPrayerId) async =>
-      await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);
+      String followedPrayerId, String userPrayerId) async {
+    await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);
+    notifyListeners();
+  }
 }

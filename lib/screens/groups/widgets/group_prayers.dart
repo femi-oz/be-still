@@ -123,7 +123,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                             .then((value) {
                                           AppCOntroller appCOntroller =
                                               Get.find();
-
                                           appCOntroller.setCurrentPage(9, true);
                                         });
                                       },
