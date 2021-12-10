@@ -795,10 +795,7 @@ class GroupPrayerService {
     }
   }
 
-  Future addToMyList(
-    String prayerId,
-    String userId,
-  ) async {
+  Future addToMyList(String prayerId, String userId, String groupId) async {
     final userPrayerID = Uuid().v1();
     final followedPrayerID = Uuid().v1();
 
@@ -808,9 +805,9 @@ class GroupPrayerService {
       _userPrayerCollectionReference
           .doc(userPrayerID)
           .set(populateUserPrayer(userId, prayerId).toJson());
-      _followedPrayerCollectionReference
-          .doc(followedPrayerID)
-          .set(populateFollowedPrayer(userId, prayerId, userPrayerID).toJson());
+      _followedPrayerCollectionReference.doc(followedPrayerID).set(
+          populateFollowedPrayer(userId, prayerId, userPrayerID, groupId)
+              .toJson());
     } catch (e) {
       await locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -849,7 +846,8 @@ class GroupPrayerService {
     }
   }
 
-  populateFollowedPrayer(String userId, String prayerId, String userPrayerId) {
+  populateFollowedPrayer(
+      String userId, String prayerId, String userPrayerId, String groupId) {
     FollowedPrayerModel followedPrayer = FollowedPrayerModel(
         prayerId: prayerId,
         userId: userId,
@@ -857,7 +855,8 @@ class GroupPrayerService {
         createdOn: DateTime.now(),
         modifiedBy: userId,
         modifiedOn: DateTime.now(),
-        userPrayerId: userPrayerId);
+        userPrayerId: userPrayerId,
+        groupId: groupId);
     return followedPrayer;
   }
 

@@ -56,9 +56,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final currentGroup =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer.id, user.id);
+          .addToMyList(
+              widget.prayerData.prayer.id, user.id, currentGroup.group.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);

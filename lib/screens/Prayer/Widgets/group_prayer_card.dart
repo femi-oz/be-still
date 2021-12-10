@@ -5,6 +5,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -51,11 +52,13 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
+    final currentGroup =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    print(currentGroup.group.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer.id,
-              Provider.of<UserProvider>(context, listen: false).currentUser.id);
+          .addToMyList(
+              widget.prayerData.prayer.id, user.id, currentGroup.group.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
