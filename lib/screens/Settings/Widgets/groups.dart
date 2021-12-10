@@ -1512,7 +1512,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ? GestureDetector(
                                 onTap: () async {
                                   const message =
-                                      'Are you sure you want to delete this group? \n\nAll the prayers in tihis group will be deleted.';
+                                      'Are you sure you want to delete this group? \n\nAll the prayers in this group will be deleted.';
                                   const method = 'Delete';
                                   const title = 'Delete Group';
                                   _openDeleteConfirmation(
