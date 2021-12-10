@@ -240,7 +240,7 @@ class _GroupCardState extends State<GroupCard> {
                       SizedBox(height: 30.0),
                       Text(
                         this.widget.groupData.group.description.isEmpty
-                            ? 'N/A'
+                            ? '-'
                             : this.widget.groupData.group.description,
                         style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.textFieldText,

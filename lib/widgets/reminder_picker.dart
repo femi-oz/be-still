@@ -161,7 +161,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
     setState(() {});
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
-      print(widget.popTwice);
       Navigator.pop(context);
       if (widget.popTwice) {
         Navigator.pop(context);
@@ -169,8 +168,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
-    } else
+    } else {
+      Navigator.pop(context);
       widget.onCancel();
+    }
   }
 
   setNotification() async {

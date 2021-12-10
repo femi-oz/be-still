@@ -112,23 +112,21 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.showLoading(context, '');
     final notifications =
         Provider.of<NotificationProvider>(context, listen: false).notifications;
-    final _currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
 
     final requests = notifications
         .where((e) =>
             e.messageType == NotificationType.request &&
             e.entityId == data.group.id)
         .toList();
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayerByGroupId(data.group.id);
 
     Provider.of<GroupProvider>(context, listen: false)
         .deleteGroup(data.group.id, requests);
     var followedPrayers =
         Provider.of<GroupPrayerProvider>(context, listen: false)
             .followedPrayers
-            .where((element) =>
-                element.groupId == data.group.id &&
-                element.userId == _currentUser.id);
+            .where((element) => element.groupId == data.group.id);
     followedPrayers.forEach((element) async {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(element.id, element.userPrayerId);
@@ -1007,7 +1005,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     Flexible(
                                       child: Text(
                                         data.group.description.isEmpty
-                                            ? "N/A"
+                                            ? "-"
                                             : data.group.description,
                                         style: AppTextStyles.regularText14
                                             .copyWith(
@@ -1047,7 +1045,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Text(
                                       data.group.organization.isEmpty
-                                          ? "N/A"
+                                          ? "-"
                                           : data.group.organization,
                                       style: AppTextStyles.regularText16b
                                           .copyWith(

@@ -730,6 +730,24 @@ class GroupPrayerService {
     }
   }
 
+  Future<List<FollowedPrayerModel>> getFollowedPrayersByGroupId(
+      String groupId) {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return _followedPrayerCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .get()
+          .then((event) =>
+              event.docs.map((e) => FollowedPrayerModel.fromData(e)).toList());
+    } catch (e) {
+      locator<LogService>().createLog(
+          e.message != null ? e.message : e.toString(),
+          groupId,
+          'PRAYER/service/getFollowedPrayersByGroupId');
+      throw HttpException(e.message);
+    }
+  }
+
   Future<List<FollowedPrayerModel>> getFollowedPrayersByUserId(String userId) {
     try {
       if (_firebaseAuth.currentUser == null) return null;

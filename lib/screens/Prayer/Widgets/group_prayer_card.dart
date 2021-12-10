@@ -54,7 +54,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final currentGroup =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    print(currentGroup.group.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .addToMyList(

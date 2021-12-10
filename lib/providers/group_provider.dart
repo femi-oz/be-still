@@ -123,7 +123,7 @@ class GroupProvider with ChangeNotifier {
         .toList();
     filteredGroups = filteredGroups
         .where((CombineGroupUserStream data) => data.groupUsers
-            .any((u) => u.fullName.toLowerCase().contains(admin.toLowerCase())))
+            .any((u) => u.fullName.toLowerCase() == admin.toLowerCase()))
         .toList();
 
     _filteredAllGroups = filteredGroups;
