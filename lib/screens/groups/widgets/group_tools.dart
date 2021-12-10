@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -52,6 +53,16 @@ class _GroupToolsState extends State<GroupTools> {
         .id;
     if (id != null) {
       await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
+      var followedPrayers =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .followedPrayers
+              .where((element) =>
+                  element.groupId == data.group.id &&
+                  element.userId == _currentUser.id);
+      followedPrayers.forEach((element) async {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .removeFromMyList(element.id, element.userPrayerId);
+      });
       final adminData =
           Provider.of<UserProvider>(context, listen: false).selectedUser;
       await sendPushNotification(
@@ -84,7 +95,7 @@ class _GroupToolsState extends State<GroupTools> {
       List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPushNotification(message, messageType, sender, senderId,
-            receiverId, title, entityId, tokens);
+            receiverId, title, entityId, '', tokens);
   }
 
   void _openDeleteConfirmation(BuildContext context, String message,

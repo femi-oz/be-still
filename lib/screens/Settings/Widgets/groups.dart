@@ -3,6 +3,7 @@ import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -16,6 +17,7 @@ import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
+import 'package:get/get.dart';
 import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -79,6 +81,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     await Future.delayed(Duration(milliseconds: 500));
     final receiverData =
         Provider.of<UserProvider>(context, listen: false).selectedUser;
+    var followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
+            .where((element) =>
+                element.groupId == data.group.id &&
+                element.userId == _currentUser.id);
+    followedPrayers.forEach((element) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(element.id, element.userPrayerId);
+    });
     // if (id != null) {
 
     sendPushNotification(
@@ -100,6 +112,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.showLoading(context, '');
     final notifications =
         Provider.of<NotificationProvider>(context, listen: false).notifications;
+    final _currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
 
     final requests = notifications
         .where((e) =>
@@ -109,6 +123,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
     Provider.of<GroupProvider>(context, listen: false)
         .deleteGroup(data.group.id, requests);
+    var followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
+            .where((element) =>
+                element.groupId == data.group.id &&
+                element.userId == _currentUser.id);
+    followedPrayers.forEach((element) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(element.id, element.userPrayerId);
+    });
     await Future.delayed(Duration(milliseconds: 300));
     Navigator.pop(context);
     BeStilDialog.hideLoading(context);
@@ -129,11 +153,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
 
         await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
-            group,
-            request.groupId,
-            request.userId,
-            request.id,
-            receiverFullName);
+            request.groupId, request.userId, request.id, receiverFullName);
 
         final receiverData =
             Provider.of<UserProvider>(context, listen: false).selectedUser;
@@ -146,6 +166,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 request.userId,
                 'Request Accepted',
                 group.id,
+                '',
                 [receiverData.pushToken]);
         final notifications =
             Provider.of<NotificationProvider>(context, listen: false)
@@ -181,7 +202,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPushNotification(message, messageType, sender, senderId,
-            receiverId, title, entityId, tokens);
+            receiverId, title, entityId, '', tokens);
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
@@ -535,8 +556,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.25,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
@@ -551,21 +572,19 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   height: 1.5,
                 ),
               ),
-            ),
+            ).marginOnly(bottom: 10),
             Flexible(
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.5,
                 child: Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.regularText16b
+                  style: AppTextStyles.regularText14
                       .copyWith(color: AppColors.lightBlue4),
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 40),
               width: double.infinity,
@@ -624,7 +643,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            method,
+                            method.toUpperCase(),
                             style: TextStyle(
                               color: AppColors.white,
                               fontSize: 14,
@@ -639,7 +658,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               ),
             )
           ],
-        ),
+        ).marginSymmetric(vertical: 30),
       ),
     );
 
@@ -1493,7 +1512,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ? GestureDetector(
                                 onTap: () async {
                                   const message =
-                                      'Are you sure you want to delete this group';
+                                      'Are you sure you want to delete this group? \n\nAll the prayers in this group will be deleted.';
                                   const method = 'Delete';
                                   const title = 'Delete Group';
                                   _openDeleteConfirmation(

@@ -45,6 +45,7 @@ class _GroupCardState extends State<GroupCard> {
               admin.id,
               title,
               groupData.group.id,
+              '',
               [admin.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -129,7 +130,7 @@ class _GroupCardState extends State<GroupCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        this.widget.groupData.group.name.toUpperCase(),
+                        widget.groupData.group.name.toUpperCase(),
                         style: AppTextStyles.boldText20,
                         textAlign: TextAlign.center,
                       ),
@@ -185,7 +186,7 @@ class _GroupCardState extends State<GroupCard> {
                               ),
                               Text(
                                 this.widget.groupData.group.organization.isEmpty
-                                    ? 'N/A'
+                                    ? '-'
                                     : '${this.widget.groupData.group.organization}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
@@ -349,13 +350,28 @@ class _GroupCardState extends State<GroupCard> {
 
   @override
   Widget build(BuildContext context) {
+    var currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
     return GestureDetector(
-      onTap: _showAlert,
+      onTap: widget.groupData.groupUsers
+              .map((e) => e.userId)
+              .contains(currentUser.id)
+          ? null
+          : _showAlert,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
-          color:
-              Settings.isDarkMode ? AppColors.darkBlue : AppColors.lightBlue4,
+          color: Settings.isDarkMode
+              ? AppColors.darkBlue.withOpacity(widget.groupData.groupUsers
+                      .map((e) => e.userId)
+                      .contains(currentUser.id)
+                  ? 0.5
+                  : 1)
+              : AppColors.lightBlue4.withOpacity(widget.groupData.groupUsers
+                      .map((e) => e.userId)
+                      .contains(currentUser.id)
+                  ? 0.5
+                  : 1),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -382,15 +398,28 @@ class _GroupCardState extends State<GroupCard> {
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       this.widget.groupData.group.name.toUpperCase(),
-                      style:
-                          TextStyle(color: AppColors.lightBlue3, fontSize: 12),
+                      style: TextStyle(
+                          color: AppColors.lightBlue3.withOpacity(widget
+                                  .groupData.groupUsers
+                                  .map((e) => e.userId)
+                                  .contains(currentUser.id)
+                              ? 0.5
+                              : 1),
+                          fontSize: 12),
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
                     '${this.widget.groupData.group.location}'.toUpperCase(),
-                    style: TextStyle(color: AppColors.lightBlue4, fontSize: 10),
+                    style: TextStyle(
+                        color: AppColors.lightBlue4.withOpacity(widget
+                                .groupData.groupUsers
+                                .map((e) => e.userId)
+                                .contains(currentUser.id)
+                            ? 0.5
+                            : 1),
+                        fontSize: 10),
                     textAlign: TextAlign.left,
                   ),
                 ],

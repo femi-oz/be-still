@@ -60,8 +60,12 @@ class GroupProvider with ChangeNotifier {
     });
   }
 
-  Stream<CombineGroupUserStream> getGroup(groupdId, String userId) {
-    return _groupService.getGroup(groupdId, userId);
+  // Stream<CombineGroupUserStream> getGroup(groupdId, String userId) {
+  //   return _groupService.getGroup(groupdId, userId);
+  // }
+
+  Future<CombineGroupUserStream> getGroupFuture(groupdId, String userId) {
+    return _groupService.getGroupFuture(groupdId, userId);
   }
 
   emptyGroupList() {
@@ -72,18 +76,13 @@ class GroupProvider with ChangeNotifier {
     if (_firebaseAuth.currentUser == null) return null;
     _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
       _allGroups = groups;
-      _filteredAllGroups =
-          groups.where((e) => e.groupUsers.length > 0).toList();
-      _filteredAllGroups = _filteredAllGroups
-          .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-          .toList();
+      _filteredAllGroups = [];
       notifyListeners();
     });
   }
 
   Future searchAllGroups(String searchQuery, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    print('sss');
     if (searchQuery.trim().isEmpty) {
       _filteredAllGroups = [];
       notifyListeners();
@@ -91,14 +90,9 @@ class GroupProvider with ChangeNotifier {
     }
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
-            data.group.name.toLowerCase().contains(searchQuery.toLowerCase()) &&
-            !data.groupUsers.map((e) => e.userId).contains(userId))
+            data.group.name.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
     _filteredAllGroups = filteredGroups;
-
-    _filteredAllGroups = _filteredAllGroups
-        .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-        .toList();
     notifyListeners();
   }
 
@@ -106,11 +100,6 @@ class GroupProvider with ChangeNotifier {
       String church, String admin, String purpose) async {
     if (_firebaseAuth.currentUser == null) return null;
 
-// filter by name
-// filter rest by location
-// filter rest by church
-// filter rest by admin
-// filter rest by purpose
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
             data.group.name.toLowerCase().contains(name.toLowerCase()))
@@ -139,9 +128,6 @@ class GroupProvider with ChangeNotifier {
 
     _filteredAllGroups = filteredGroups;
 
-    _filteredAllGroups = _filteredAllGroups
-        .where((e) => !e.groupUsers.map((e) => e.userId).contains(userId))
-        .toList();
     notifyListeners();
   }
 
@@ -153,17 +139,21 @@ class GroupProvider with ChangeNotifier {
       return _groupService
           .addGroup(userID, groupData, fullName, _userGroupId, allowAutoJoin)
           .then((value) async {
-        await setCurrentGroupById(_userGroupId, userID);
+        await setCurrentGroupById(groupData.id, userID);
         return true;
       });
     }
   }
 
   Future editGroup(GroupModel groupData, String groupId, bool allowAutoJoin,
-      String groupSettingsId) async {
+      String groupSettingsId, String userID) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.editGroup(
-        groupData, groupId, allowAutoJoin, groupSettingsId);
+    return await _groupService
+        .editGroup(groupData, groupId, allowAutoJoin, groupSettingsId)
+        .then((value) async {
+      await setCurrentGroupById(groupId, userID);
+      return true;
+    });
   }
 
   Future leaveGroup(String userGroupId) async {
@@ -187,14 +177,10 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setCurrentGroupById(String userGroupId, String userId) async {
+  Future setCurrentGroupById(String groupId, String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
-    _groupService
-        .getUserGroupById(userGroupId, userId)
-        .asBroadcastStream()
-        .listen((userGroup) {
+    return _groupService.getGroupFuture(groupId, userId).then((userGroup) {
       _currentGroup = userGroup;
-
       notifyListeners();
     });
   }
@@ -222,13 +208,12 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.joinRequest(groupId, userId, status, createdBy);
   }
 
-  Future acceptRequest(GroupModel groupData, String groupId, String userId,
-      String requestId, String fullName) async {
+  Future acceptRequest(String groupId, String senderId, String requestId,
+      String fullName) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _groupService.acceptRequest(
       groupId,
-      groupData,
-      userId,
+      senderId,
       requestId,
       fullName,
     );

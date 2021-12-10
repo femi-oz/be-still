@@ -4,9 +4,11 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
@@ -14,13 +16,9 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
-import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:be_still/widgets/share_group_prayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -30,6 +28,7 @@ class PrayerGroupMenu extends StatefulWidget {
   final Function updateUI;
   final CombineGroupPrayerStream prayerData;
   final LocalNotificationModel reminder;
+
   @override
   PrayerGroupMenu(this.parentcontext, this.hasReminder, this.reminder,
       this.updateUI, this.prayerData);
@@ -44,6 +43,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     Frequency.weekly,
   ];
 
+  FollowedPrayerModel followedPrayer;
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -52,40 +53,41 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     super.initState();
   }
 
-  _share() {
-    Navigator.pop(context);
-    showModalBottomSheet(
-        context: context,
-        barrierColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.backgroundColor[0].withOpacity(0.5)
-                : Color(0xFF021D3C).withOpacity(0.7),
-        backgroundColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.backgroundColor[0].withOpacity(0.5)
-                : Color(0xFF021D3C).withOpacity(0.7),
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return ShareGroupPrayer(
-            prayerData: widget.prayerData,
-            hasReminder: widget.hasReminder,
-            reminder: widget.reminder,
-          );
-        });
-  }
-
-  void _addToMyList() async {
+  void _followPrayer() async {
     BeStilDialog.showLoading(context);
-
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final currentGroup =
+        Provider.of<GroupProvider>(context, listen: false).currentGroup;
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer.id,
-              Provider.of<UserProvider>(context, listen: false).currentUser.id);
+          .addToMyList(
+              widget.prayerData.prayer.id, user.id, currentGroup.group.id);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(8, true);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
 
-      appCOntroller.setCurrentPage(0, true);
+  void _unFollowPrayer(followedPrayerId, userPrayerId) async {
+    BeStilDialog.showLoading(context);
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(followedPrayerId, userPrayerId);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(user.id);
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(8, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -107,6 +109,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             receiverId,
             'Prayer flagged as innapropriate',
             widget.prayerData.groupPrayer.id,
+            '',
             tokens);
   }
 
@@ -349,6 +352,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
+  bool get isFollowing {
+    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+    return isFollowing;
+  }
+
   Widget build(BuildContext context) {
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.groupPrayer.isArchived ||
@@ -363,6 +373,14 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             .role ==
         GroupUserRole.admin;
     bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
+
+    if (isFollowing)
+      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers
+          .firstWhere((element) =>
+              element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _currentUser.id);
+
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -424,20 +442,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
                                 : AppColors.white,
                         icon: Icons.star_border,
-                        text: 'Add to My List',
+                        text: isFollowing ? 'UnFollow' : 'Follow',
                         isDisabled: isDisable,
-                        onPress: () => isDisable ? null : _addToMyList()),
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                    .isDarkModeEnabled
-                                ? AppColors.backgroundColor[0].withOpacity(0.7)
-                                : AppColors.white,
-                        icon: AppIcons.bestill_share,
-                        text: 'Share',
-                        isDisabled: isDisable,
-                        onPress: () => isDisable ? null : _share()),
+                        onPress: () => isFollowing
+                            ? _unFollowPrayer(
+                                followedPrayer.id, followedPrayer.userPrayerId)
+                            : _followPrayer()),
                     if (isAdmin || isOwner)
                       LongButton(
                         textColor: AppColors.lightBlue3,
@@ -467,100 +477,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               },
                         text: 'Edit',
                       ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
-                                  .isDarkModeEnabled
-                              ? AppColors.backgroundColor[0].withOpacity(0.7)
-                              : AppColors.white,
-                      icon: AppIcons.bestill_reminder,
-                      isDisabled: isDisable,
-                      suffix: widget.hasReminder &&
-                              widget.reminder.frequency == Frequency.one_time
-                          ? DateFormat('dd MMM yyyy HH:mma')
-                              .format(widget.reminder.scheduledDate)
-                          : widget.hasReminder &&
-                                  widget.reminder.frequency !=
-                                      Frequency.one_time
-                              ? widget.reminder.frequency
-                              : null,
-                      onPress: () => isDisable
-                          ? null
-                          : showDialog(
-                              context: context,
-                              barrierColor: AppColors.detailBackgroundColor[1]
-                                  .withOpacity(0.5),
-                              builder: (BuildContext context) {
-                                return Dialog(
-                                  insetPadding: EdgeInsets.all(20),
-                                  backgroundColor: AppColors.prayerCardBgColor,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: AppColors.darkBlue),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10.0),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 30),
-                                        child: ReminderPicker(
-                                          isGroup: true,
-                                          type: NotificationType.reminder,
-                                          hideActionuttons: false,
-                                          reminder: widget.hasReminder
-                                              ? widget.reminder
-                                              : null,
-                                          entityId: widget.prayerData
-                                                  ?.groupPrayer?.id ??
-                                              '',
-                                          onCancel: () =>
-                                              Navigator.of(context).pop(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                      text: 'Reminder',
-                    ),
-                    // LongButton(
-                    //     textColor: AppColors.lightBlue3,
-                    //     backgroundColor:
-                    //         Provider.of<ThemeProvider>(context, listen: false)
-                    //                 .isDarkModeEnabled
-                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
-                    //             : AppColors.white,
-                    //     icon: Icons.remove_red_eye_sharp,
-                    //     text: 'Hide',
-                    //     isDisabled: isDisable,
-                    //     onPress: () => null),
-                    // LongButton(
-                    //     textColor: AppColors.lightBlue3,
-                    //     backgroundColor:
-                    //         Provider.of<ThemeProvider>(context, listen: false)
-                    //                 .isDarkModeEnabled
-                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
-                    //             : AppColors.white,
-                    //     icon: Icons.remove_red_eye_sharp,
-                    //     text: 'Hide From Group',
-                    //     isDisabled: isDisable,
-                    //     onPress: () => null),
-                    // LongButton(
-                    //     textColor: AppColors.lightBlue3,
-                    //     backgroundColor:
-                    //         Provider.of<ThemeProvider>(context, listen: false)
-                    //                 .isDarkModeEnabled
-                    //             ? AppColors.backgroundColor[0].withOpacity(0.7)
-                    //             : AppColors.white,
-                    //     icon: Icons.messenger,
-                    //     text: 'Message Requestor',
-                    //     isDisabled: isDisable,
-                    //     onPress: () => null),
                     LongButton(
                         textColor: AppColors.lightBlue3,
                         backgroundColor:

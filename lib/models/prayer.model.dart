@@ -379,6 +379,8 @@ class HiddenPrayerModel {
 class FollowedPrayerModel {
   final String id;
   final String prayerId;
+  final String groupId;
+  final String userPrayerId;
   final String userId;
   final String createdBy;
   final DateTime createdOn;
@@ -388,6 +390,8 @@ class FollowedPrayerModel {
   const FollowedPrayerModel({
     this.id,
     @required this.prayerId,
+    @required this.groupId,
+    @required this.userPrayerId,
     @required this.userId,
     @required this.createdBy,
     @required this.createdOn,
@@ -398,6 +402,8 @@ class FollowedPrayerModel {
   FollowedPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
         prayerId = snapshot.data()['PrayerId'],
+        groupId = snapshot.data()['GroupId'],
+        userPrayerId = snapshot.data()['UserPrayerId'],
         userId = snapshot.data()['UserId'],
         createdBy = snapshot.data()['CreatedBy'],
         createdOn = snapshot.data()['CreatedOn'].toDate(),
@@ -407,6 +413,8 @@ class FollowedPrayerModel {
   Map<String, dynamic> toJson() {
     return {
       'PrayerId': prayerId,
+      'GroupId': groupId,
+      'UserPrayerId': userPrayerId,
       'UserId': userId,
       'CreatedBy': createdBy,
       'CreatedOn': createdOn,

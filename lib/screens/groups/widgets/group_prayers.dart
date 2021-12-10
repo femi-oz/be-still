@@ -79,7 +79,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
           switchSearchMode: (bool val) => widget.switchSearchMode(val),
         ),
         body: Container(
-          padding: EdgeInsets.only(left: 20),
           height: MediaQuery.of(context).size.height * 1,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -92,73 +91,77 @@ class _GroupPrayersState extends State<GroupPrayers> {
               alignment: Alignment.bottomCenter,
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20),
-                data.length == 0
-                    ? Container(
-                        padding: EdgeInsets.all(60),
-                        child: Text(
-                          'You don\'t have any prayer in your List.',
-                          style: AppTextStyles.regularText13,
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : Container(
-                        child: Column(
-                          children: <Widget>[
-                            ...data
-                                .map((e) => GestureDetector(
-                                    onTap: () async {
-                                      await Provider.of<GroupPrayerProvider>(
-                                              context,
-                                              listen: false)
-                                          .setPrayer(e.groupPrayer.id);
-                                      Future.delayed(
-                                              Duration(milliseconds: 400))
-                                          .then((value) {
+          child: Container(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 20),
+                  data.length == 0
+                      ? Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 60,
+                          ),
+                          child: Text(
+                            'You do not have any prayer in your list.',
+                            style: AppTextStyles.regularText13,
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Column(
+                            children: <Widget>[
+                              ...data
+                                  .map((e) => GestureDetector(
+                                      onTap: () async {
+                                        await Provider.of<GroupPrayerProvider>(
+                                                context,
+                                                listen: false)
+                                            .setPrayer(e.groupPrayer.id);
                                         AppCOntroller appCOntroller =
                                             Get.find();
-
                                         appCOntroller.setCurrentPage(9, true);
-                                      });
-                                    },
-                                    child: GroupPrayerCard(
-                                      prayerData: e,
-                                      timeago: '',
-                                    )))
-                                .toList(),
-                          ],
+                                      },
+                                      child: GroupPrayerCard(
+                                        prayerData: e,
+                                        timeago: '',
+                                      )))
+                                  .toList(),
+                            ],
+                          ),
                         ),
-                      ),
-                // currentPrayerType == Status.archived ||
-                //         currentPrayerType == Status.answered
-                //     ? Container()
-                //     :
-                // groupUser.role == GroupUserRole.admin
-                //     ?
-                LongButton(
-                  onPress: () {
-                    Provider.of<GroupPrayerProvider>(context, listen: false)
-                        .setEditMode(false);
-                    Provider.of<GroupPrayerProvider>(context, listen: false)
-                        .setEditPrayer(null);
-                    AppCOntroller appCOntroller = Get.find();
+                  // currentPrayerType == Status.archived ||
+                  //         currentPrayerType == Status.answered
+                  //     ? Container()
+                  //     :
+                  // groupUser.role == GroupUserRole.admin
+                  //     ?
+                  Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child: LongButton(
+                      onPress: () {
+                        Provider.of<GroupPrayerProvider>(context, listen: false)
+                            .setEditMode(false);
+                        Provider.of<GroupPrayerProvider>(context, listen: false)
+                            .setEditPrayer(null);
+                        AppCOntroller appCOntroller = Get.find();
 
-                    appCOntroller.setCurrentPage(10, true);
-                  },
-                  text: 'Add New Prayer',
-                  backgroundColor: Settings.isDarkMode
-                      ? AppColors.backgroundColor[1]
-                      : AppColors.lightBlue3,
-                  textColor:
-                      Settings.isDarkMode ? AppColors.lightBlue3 : Colors.white,
-                  icon: AppIcons.bestill_add,
-                ),
-                // : Container(),
-                SizedBox(height: 80),
-              ],
+                        appCOntroller.setCurrentPage(10, true);
+                      },
+                      text: 'Add New Prayer',
+                      backgroundColor: Settings.isDarkMode
+                          ? AppColors.backgroundColor[1]
+                          : AppColors.lightBlue3,
+                      textColor: Settings.isDarkMode
+                          ? AppColors.lightBlue3
+                          : Colors.white,
+                      icon: AppIcons.bestill_add,
+                    ),
+                  ),
+                  // : Container(),
+                  SizedBox(height: 80),
+                ],
+              ),
             ),
           ),
         ),

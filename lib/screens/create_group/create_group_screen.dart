@@ -80,33 +80,31 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
           .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
-      Future.delayed(Duration(milliseconds: 2000)).then((_) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setGroupPrayers(groupData.id);
-        BeStilDialog.hideLoading(context);
-        setState(() {
-          newGroupId = groupData.id;
-          _step++;
-        });
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setGroupPrayers(groupData.id);
+      BeStilDialog.hideLoading(context);
+      setState(() {
+        newGroupId = groupData.id;
+        _step++;
       });
     } else {
       await Provider.of<GroupProvider>(context, listen: false).editGroup(
-          groupData,
-          group.group.id,
-          _requireAdminApproval,
-          Provider.of<GroupProvider>(context, listen: false)
-                  .currentGroup
-                  .groupSettings
-                  ?.id ??
-              '');
-      Future.delayed(Duration(milliseconds: 2000)).then((_) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setGroupPrayers(group.group.id);
-        BeStilDialog.hideLoading(context);
-        setState(() {
-          newGroupId = groupData.id;
-          _step++;
-        });
+        groupData,
+        group.group.id,
+        _requireAdminApproval,
+        Provider.of<GroupProvider>(context, listen: false)
+                .currentGroup
+                .groupSettings
+                ?.id ??
+            '',
+        _user.id,
+      );
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setGroupPrayers(group.group.id);
+      BeStilDialog.hideLoading(context);
+      setState(() {
+        newGroupId = groupData.id;
+        _step++;
       });
     }
   }
