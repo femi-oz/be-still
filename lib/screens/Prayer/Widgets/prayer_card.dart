@@ -59,6 +59,53 @@ class _PrayerCardState extends State<PrayerCard> {
     }
   }
 
+  void _onMarkAsAnswered() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _unMarkAsAnswered() async {
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unMarkPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
   void _unArchive() async {
     BeStilDialog.showLoading(context);
 
@@ -122,53 +169,6 @@ class _PrayerCardState extends State<PrayerCard> {
     }
   }
 
-  void _onMarkAsAnswered() async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-      BeStilDialog.hideLoading(context);
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _unMarkAsAnswered() async {
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
   Widget _buildMenu() {
     return PrayerMenu(
         context, hasReminder, reminder, () => updateUI(), widget.prayerData);
@@ -179,16 +179,13 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _unFollowPrayer(followedPrayerId, userPrayerId) async {
-    BeStilDialog.showLoading(context);
+    // BeStilDialog.showLoading(context);
 
     try {
+      BeStilDialog.hideLoading(context);
+
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(followedPrayerId, userPrayerId);
-      BeStilDialog.hideLoading(context);
-      // Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
-      setState(() {});
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -500,14 +497,18 @@ class _PrayerCardState extends State<PrayerCard> {
         secondaryActions: <Widget>[
           if (isGroupPrayer)
             _buildSlideItem(Icons.star, 'UnFollow', () async {
+              BeStilDialog.showLoading(context);
               await Provider.of<GroupPrayerProvider>(context, listen: false)
                   .setFollowedPrayer(widget.prayerData.prayer.id);
-              Future.delayed(Duration(microseconds: 15), () {
-                followedPrayer =
-                    Provider.of<GroupPrayerProvider>(context, listen: false)
-                        .followedPrayers
-                        .firstWhere((element) =>
-                            element.prayerId == widget.prayerData.prayer.id);
+              Future.delayed(Duration(seconds: 2), () {
+                followedPrayer = Provider.of<GroupPrayerProvider>(context,
+                        listen: false)
+                    .followedPrayers
+                    .firstWhere(
+                        (element) =>
+                            element.prayerId == widget.prayerData.prayer.id &&
+                            element.createdBy == _user.id,
+                        orElse: () => null);
                 _unFollowPrayer(followedPrayer.id, followedPrayer.userPrayerId);
               });
             }, false),
@@ -520,6 +521,14 @@ class _PrayerCardState extends State<PrayerCard> {
                 () => widget.prayerData.userPrayer.isArchived
                     ? _unArchive()
                     : _onArchive(),
+                !isOwner),
+          if (!isGroupPrayer)
+            _buildSlideItem(
+                AppIcons.bestill_answered,
+                widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
+                () => widget.prayerData.prayer.isAnswer
+                    ? _unMarkAsAnswered()
+                    : _onMarkAsAnswered(),
                 !isOwner),
           if (!isGroupPrayer)
             widget.prayerData.userPrayer.isArchived ||

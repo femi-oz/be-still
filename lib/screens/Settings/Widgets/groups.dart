@@ -3,6 +3,7 @@ import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -80,6 +81,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     await Future.delayed(Duration(milliseconds: 500));
     final receiverData =
         Provider.of<UserProvider>(context, listen: false).selectedUser;
+    var followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
+            .where((element) =>
+                element.groupId == data.group.id &&
+                element.userId == _currentUser.id);
+    followedPrayers.forEach((element) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(element.id, element.userPrayerId);
+    });
     // if (id != null) {
 
     sendPushNotification(
@@ -101,6 +112,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.showLoading(context, '');
     final notifications =
         Provider.of<NotificationProvider>(context, listen: false).notifications;
+    final _currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
 
     final requests = notifications
         .where((e) =>
@@ -110,6 +123,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
     Provider.of<GroupProvider>(context, listen: false)
         .deleteGroup(data.group.id, requests);
+    var followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
+            .where((element) =>
+                element.groupId == data.group.id &&
+                element.userId == _currentUser.id);
+    followedPrayers.forEach((element) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(element.id, element.userPrayerId);
+    });
     await Future.delayed(Duration(milliseconds: 300));
     Navigator.pop(context);
     BeStilDialog.hideLoading(context);
@@ -1489,7 +1512,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ? GestureDetector(
                                 onTap: () async {
                                   const message =
-                                      'Are you sure you want to delete this group? \n\nAll the prayers in tihis group will be deleted.';
+                                      'Are you sure you want to delete this group? \n\nAll the prayers in this group will be deleted.';
                                   const method = 'Delete';
                                   const title = 'Delete Group';
                                   _openDeleteConfirmation(

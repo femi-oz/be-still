@@ -87,13 +87,14 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         getSettings();
-        final prayerData =
-            Provider.of<GroupPrayerProvider>(context, listen: false)
-                .currentPrayer;
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setFollowedPrayer(prayerData.prayer.id);
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayer(prayerData.groupPrayer.id);
+        // final prayerData =
+        //     Provider.of<GroupPrayerProvider>(context, listen: false)
+        //         .currentPrayer;
+
+        // await Provider.of<GroupPrayerProvider>(context, listen: false)
+        //     .setFollowedPrayer(prayerData.prayer.id);
+        // await Provider.of<GroupPrayerProvider>(context, listen: false)
+        //     .setPrayer(prayerData.prayer.id);
       });
       _isInit = false;
     }

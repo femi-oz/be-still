@@ -199,7 +199,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           await Provider.of<NotificationProvider>(context, listen: false)
               .sendPrayerNotification(
             editPrayerId,
-            NotificationType.prayer,
+            NotificationType.prayer_updates,
             _group.group.id,
             context,
             _descriptionController.text,

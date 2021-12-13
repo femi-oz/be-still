@@ -46,12 +46,6 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      // final _user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setAllGroups(_user.id);
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(_user.id);
       setState(() {});
 
       _isInit = false;
@@ -169,6 +163,12 @@ class _GroupScreenState extends State<GroupScreen> {
                                     children: [
                                       LongButton(
                                         onPress: () async {
+                                          await Provider.of<
+                                                      GroupPrayerProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .setFollowedPrayerByUserId(
+                                                  _currentUser.id);
                                           _getPrayers(e);
                                           appCOntroller.setCurrentPage(8, true);
                                         },

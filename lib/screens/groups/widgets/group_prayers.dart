@@ -118,14 +118,9 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                                 context,
                                                 listen: false)
                                             .setPrayer(e.groupPrayer.id);
-                                        Future.delayed(
-                                                Duration(milliseconds: 400))
-                                            .then((value) {
-                                          AppCOntroller appCOntroller =
-                                              Get.find();
-
-                                          appCOntroller.setCurrentPage(9, true);
-                                        });
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+                                        appCOntroller.setCurrentPage(9, true);
                                       },
                                       child: GroupPrayerCard(
                                         prayerData: e,
