@@ -158,7 +158,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     if (isFollowing)
       followedPrayer = Provider.of<GroupPrayerProvider>(context)
           .followedPrayers
-          .firstWhere((element) =>
+          ?.firstWhere((element) =>
               element.prayerId == widget.prayerData.prayer.id &&
               element.createdBy == _user.id);
 

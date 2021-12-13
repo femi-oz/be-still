@@ -109,6 +109,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           var prayerId =
               Provider.of<GroupPrayerProvider>(context, listen: false)
                   .newPrayerId;
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .setFollowedPrayer(prayerId);
           await Provider.of<NotificationProvider>(context, listen: false)
               .sendPrayerNotification(
             prayerId,

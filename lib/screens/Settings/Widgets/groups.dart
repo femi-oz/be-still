@@ -121,7 +121,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setFollowedPrayerByGroupId(data.group.id);
 
-    Provider.of<GroupProvider>(context, listen: false)
+    await Provider.of<GroupProvider>(context, listen: false)
         .deleteGroup(data.group.id, requests);
     var followedPrayers =
         Provider.of<GroupPrayerProvider>(context, listen: false)
