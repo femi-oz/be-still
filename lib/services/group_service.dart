@@ -75,13 +75,13 @@ class GroupService {
     return group;
   }
 
-  GroupRequestModel populateGroupRequest(String userId, String status,
-      String createdBy, DateTime createdOn, String groupId, String id) {
+  GroupRequestModel populateGroupRequest(String userId, String createdBy,
+      DateTime createdOn, String groupId, String id) {
     GroupRequestModel groupRequest = GroupRequestModel(
         id: id,
         userId: userId,
         groupId: groupId,
-        status: status,
+        status: '',
         createdBy: createdBy,
         createdOn: createdOn);
     return groupRequest;
@@ -511,14 +511,13 @@ class GroupService {
   joinRequest(
     String groupId,
     String userId,
-    String status,
     String createdBy,
   ) async {
     try {
       final _requestID = Uuid().v1();
       if (_firebaseAuth.currentUser == null) return null;
       _groupRequestCollectionReference.doc(_requestID).set(populateGroupRequest(
-              userId, status, createdBy, DateTime.now(), groupId, _requestID)
+              userId, createdBy, DateTime.now(), groupId, _requestID)
           .toJson());
       getUserGroups(userId);
     } catch (e) {
@@ -555,9 +554,8 @@ class GroupService {
             userId,
             fullName,
           ).toJson());
-      _groupRequestCollectionReference
-          .doc(requestId)
-          .update({"Status": StringUtils.joinRequestStatusApproved});
+      _groupRequestCollectionReference.doc(requestId).delete();
+      // .update({"Status": StringUtils.joinRequestStatusApproved});
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -590,9 +588,8 @@ class GroupService {
   denyRequest(String groupId, String requestId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _groupRequestCollectionReference
-          .doc(requestId)
-          .update({"Status": StringUtils.joinRequestStatusDenied});
+      _groupRequestCollectionReference.doc(requestId).delete();
+      // .update({"Status": StringUtils.joinRequestStatusDenied});
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),

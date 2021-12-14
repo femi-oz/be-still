@@ -202,10 +202,9 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.deleteFromGroup(userId, groupId);
   }
 
-  Future joinRequest(
-      String groupId, String userId, String status, String createdBy) async {
+  Future joinRequest(String groupId, String userId, String createdBy) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.joinRequest(groupId, userId, status, createdBy);
+    return await _groupService.joinRequest(groupId, userId, createdBy);
   }
 
   Future acceptRequest(String groupId, String senderId, String requestId,

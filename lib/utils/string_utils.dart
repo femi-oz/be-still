@@ -7,9 +7,9 @@ class StringUtils {
     return paths[paths.length - 1];
   }
 
-  static const String joinRequestStatusPending = '0';
-  static const String joinRequestStatusApproved = '1';
-  static const String joinRequestStatusDenied = '-1';
+  // static const String joinRequestStatusPending = '0';
+  // static const String joinRequestStatusApproved = '1';
+  // static const String joinRequestStatusDenied = '-1';
   static const String joinRequestSent = 'Your request is pending';
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =

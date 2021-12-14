@@ -30,12 +30,12 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
-      String status, String userName, UserModel admin) async {
+      String userName, UserModel admin) async {
     const title = 'Group Request';
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupData.group.id, userId, status, userName);
+          .joinRequest(groupData.group.id, userId, userName);
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
               '$userName has requested to join your group',
@@ -82,14 +82,16 @@ class _GroupCardState extends State<GroupCard> {
     super.didChangeDependencies();
   }
 
+  bool isPressed = false;
   void _showAlert() async {
+    if (isPressed) return;
+    setState(() {
+      isPressed = true;
+    });
     final admin = widget.groupData.groupUsers
         .firstWhere((e) => e.role == GroupUserRole.admin);
     final adminData = await Provider.of<UserProvider>(context, listen: false)
         .getUserById(admin.userId);
-    // Future.delayed(Duration(milliseconds: 500)).then((value) {
-    // final adminData =
-    //     Provider.of<UserProvider>(context, listen: false).selectedUser;
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
@@ -248,7 +250,7 @@ class _GroupCardState extends State<GroupCard> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 30.0),
-                    isRequestSent() ||
+                    isRequestSent ||
                             !widget.groupData.groupSettings.requireAdminApproval
                         ? Container()
                         : Text(
@@ -258,8 +260,8 @@ class _GroupCardState extends State<GroupCard> {
                             ),
                             textAlign: TextAlign.left,
                           ),
-                    isRequestSent() ? Container() : SizedBox(height: 20.0),
-                    isRequestSent()
+                    isRequestSent ? Container() : SizedBox(height: 20.0),
+                    isRequestSent
                         ? Container(
                             child: Text(
                               StringUtils.joinRequestSent,
@@ -310,7 +312,6 @@ class _GroupCardState extends State<GroupCard> {
                                               listen: false)
                                           .currentUser
                                           .id,
-                                      StringUtils.joinRequestStatusPending,
                                       '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
                                       adminData,
                                     );
@@ -326,25 +327,24 @@ class _GroupCardState extends State<GroupCard> {
       ),
     );
 
-    showDialog(
+    await showDialog(
         context: context,
         builder: (BuildContext context) {
           return dialog;
         });
-    // });
+    setState(() {
+      isPressed = false;
+    });
   }
 
-  bool isRequestSent() {
-    var currentUser =
+  bool get isRequestSent {
+    final currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    var requestPending = widget.groupData.groupRequests.where((element) =>
-        element.status == StringUtils.joinRequestStatusPending &&
-        element.userId == currentUser.id);
-    if (requestPending.length == 0) {
-      return false;
-    } else {
-      return true;
-    }
+    print(widget.groupData.groupRequests
+        .where((e) => e.userId == currentUser.id)
+        .map((e) => e.toJson()));
+    return widget.groupData.groupRequests
+        .any((element) => element.userId == currentUser.id);
   }
 
   @override
