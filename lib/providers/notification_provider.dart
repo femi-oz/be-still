@@ -278,6 +278,7 @@ class NotificationProvider with ChangeNotifier {
             .followedPrayers
             .map((e) => e.userId)
             .toList();
+    print(followers.length);
 
     final admins = Provider.of<GroupProvider>(context, listen: false)
         .currentGroup

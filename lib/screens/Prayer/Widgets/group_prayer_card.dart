@@ -54,7 +54,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final currentGroup =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    print(currentGroup.group.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .addToMyList(
@@ -159,7 +158,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     if (isFollowing)
       followedPrayer = Provider.of<GroupPrayerProvider>(context)
           .followedPrayers
-          .firstWhere((element) =>
+          ?.firstWhere((element) =>
               element.prayerId == widget.prayerData.prayer.id &&
               element.createdBy == _user.id);
 

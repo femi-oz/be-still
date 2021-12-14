@@ -105,16 +105,19 @@ class GroupProvider with ChangeNotifier {
             data.group.name.toLowerCase().contains(name.toLowerCase()))
         .toList();
 
-    filteredGroups = filteredGroups
-        .where((CombineGroupUserStream data) =>
-            data.group.location.toLowerCase().contains(location.toLowerCase()))
-        .toList();
+    if (location.isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.group.location
+              .toLowerCase()
+              .contains(location.toLowerCase()))
+          .toList();
 
-    filteredGroups = filteredGroups
-        .where((CombineGroupUserStream data) => data.group.organization
-            .toLowerCase()
-            .contains(church.toLowerCase()))
-        .toList();
+    if (church.isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.group.organization
+              .toLowerCase()
+              .contains(church.toLowerCase()))
+          .toList();
 
     filteredGroups = filteredGroups
         .where((CombineGroupUserStream data) => data.group.description
@@ -126,6 +129,13 @@ class GroupProvider with ChangeNotifier {
             u.fullName.toLowerCase().contains(admin.toLowerCase()) &&
             u.role == GroupUserRole.admin))
         .toList();
+
+    if (admin.isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.groupUsers.any((u) =>
+              u.fullName.toLowerCase() == admin.toLowerCase() &&
+              u.role == GroupUserRole.admin))
+          .toList();
 
     _filteredAllGroups = filteredGroups;
 
