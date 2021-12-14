@@ -210,7 +210,7 @@ class JoinGroup {
                                           listen: false)
                                       .currentUser
                                       .id,
-                                  StringUtils.joinRequestStatusPending,
+                                  // StringUtils.joinRequestStatusPending,
                                   '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
                                   adminData.id,
                                   context);
@@ -236,7 +236,7 @@ class JoinGroup {
   _requestToJoinGroup(
       CombineGroupUserStream groupData,
       String userId,
-      String status,
+      // String status,
       String userName,
       String adminId,
       BuildContext context) async {
@@ -244,7 +244,7 @@ class JoinGroup {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupData.group.id, userId, status, userName);
+          .joinRequest(groupData.group.id, userId, userName);
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(adminId);
       final receiverData =
