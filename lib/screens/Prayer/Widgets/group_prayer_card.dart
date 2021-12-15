@@ -560,14 +560,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
             }, false),
           if ((isAdmin && isOwner) || (isOwner && !isAdmin))
             _buildSlideItem(
-                AppIcons.bestill_answered,
-                widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
-                () => widget.prayerData.prayer.isAnswer
-                    ? _unMarkAsAnswered()
-                    : _onMarkAsAnswered(),
-                false),
-          if ((isAdmin && isOwner) || (isOwner && !isAdmin))
-            _buildSlideItem(
                 AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                 widget.prayerData.groupPrayer.isArchived
                     ? 'Unarchive'
@@ -575,6 +567,14 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                 () => widget.prayerData.groupPrayer.isArchived
                     ? _unArchive()
                     : _onArchive(),
+                false),
+          if ((isAdmin && isOwner) || (isOwner && !isAdmin))
+            _buildSlideItem(
+                AppIcons.bestill_answered,
+                widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
+                () => widget.prayerData.prayer.isAnswer
+                    ? _unMarkAsAnswered()
+                    : _onMarkAsAnswered(),
                 false),
         ],
       ),
