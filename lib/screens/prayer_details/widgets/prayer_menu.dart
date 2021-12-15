@@ -407,6 +407,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    bool isGroupPrayer = widget.prayerData.prayer.isGroup;
+
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived ||
         widget.prayerData.userPrayer.isSnoozed;
@@ -477,7 +479,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 : AppColors.white,
                         icon: AppIcons.bestill_share,
                         text: 'Share',
-                        isDisabled: isDisable,
+                        isDisabled: isDisable || isGroupPrayer,
                         onPress: () => isDisable ? null : _share()),
                     LongButton(
                       textColor: AppColors.lightBlue3,
