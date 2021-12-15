@@ -536,7 +536,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_reminder,
-                      isDisabled: !isOwner,
+                      isDisabled: (!isOwner && isGroupPrayer) &&
+                          (!isGroupPrayer && !isOwner),
                       suffix: widget.hasReminder &&
                               widget.reminder.frequency == Frequency.one_time
                           ? DateFormat('dd MMM yyyy hh:mma').format(widget
@@ -712,6 +713,36 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           : () => _openDeleteConfirmation(context),
                       text: 'Delete',
                     ),
+                    isOwner && !isGroupPrayer
+                        ? Container()
+                        : LongButton(
+                            textColor: AppColors.lightBlue3,
+                            backgroundColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.7)
+                                : AppColors.white,
+                            icon: Icons.star,
+                            isDisabled: !isGroupPrayer,
+                            suffix: null,
+                            onPress: () => () {},
+                            text: 'Unfollow',
+                          ),
+                    isOwner && !isGroupPrayer
+                        ? Container()
+                        : LongButton(
+                            textColor: AppColors.lightBlue3,
+                            backgroundColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.7)
+                                : AppColors.white,
+                            icon: Icons.info,
+                            isDisabled: isGroupPrayer,
+                            suffix: null,
+                            onPress: () => () {},
+                            text: 'Flag as innapropriate',
+                          ),
                   ],
                 ),
               ),
