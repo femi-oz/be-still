@@ -56,6 +56,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() async {
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayer(widget.prayerData.prayer.id);
+    super.didChangeDependencies();
+  }
+
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -145,7 +152,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  void _onDelete() async {
+  _onDelete() async {
     BeStilDialog.showLoading(context);
     try {
       var notifications =
@@ -159,6 +166,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .deletePrayer(
               widget.prayerData.groupPrayer.id, widget.prayerData.prayer.id);
+      _deleteFollowedPrayers();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -171,6 +179,83 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _deleteFollowedPrayers() async {
+    try {
+      var followedPrayers =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .followedPrayers;
+      if (followedPrayers.length > 0) {
+        followedPrayers.forEach((element) async {
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .removeFromMyList(element.id, element.userPrayerId);
+        });
+      }
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _onMarkAsAnswered() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      var notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.entityId == widget.prayerData.prayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .deleteLocalNotification(e.id));
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .markPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.groupPrayer.id);
+      _deleteFollowedPrayers();
+
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  void _unMarkAsAnswered() async {
+    BeStilDialog.showLoading(context);
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .unMarkPrayerAsAnswered(
+              widget.prayerData.prayer.id, widget.prayerData.groupPrayer.id);
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
@@ -305,12 +390,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
   void _unArchive(CombineGroupPrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
-
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .unArchivePrayer(prayerData.groupPrayer.id, prayerData.prayer.id);
       BeStilDialog.hideLoading(context);
-
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
     } catch (e, s) {
@@ -338,6 +421,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.groupPrayer.id);
+      _deleteFollowedPrayers();
+
       BeStilDialog.hideLoading(context);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
@@ -604,7 +689,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       isDisabled: !isOwner && !isAdmin,
                       icon: AppIcons.bestill_answered,
-                      onPress: () {},
+                      onPress: () => widget.prayerData.prayer.isAnswer
+                          ? _unMarkAsAnswered()
+                          : _onMarkAsAnswered(),
                       text: widget.prayerData.prayer.isAnswer
                           ? 'Unmark as Answered'
                           : 'Mark as Answered',
@@ -649,7 +736,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: Icons.delete_forever,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: () => _openDeleteConfirmation(context),
+                      onPress: () {
+                        _openDeleteConfirmation(context);
+                      },
                       text: 'Delete',
                     ),
                     LongButton(
