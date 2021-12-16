@@ -749,7 +749,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
                                 : AppColors.white,
                         icon: Icons.star_border,
-                        text: isFollowing ? 'UnFollow' : 'Follow',
+                        text: isFollowing ? 'Unfollow' : 'follow',
                         isDisabled: isOwner,
                         onPress: () => isFollowing
                             ? _unFollowPrayer(
