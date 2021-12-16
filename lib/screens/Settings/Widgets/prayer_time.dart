@@ -353,8 +353,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                       type: NotificationType.prayer_time,
                                       reminder: null,
                                       hideActionuttons: false,
-                                      onCancel: () =>
-                                          Navigator.of(context).pop(),
+                                      onCancel: () => Navigator.pop(context),
                                     ),
                                   ),
                                 ],

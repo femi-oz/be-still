@@ -105,26 +105,31 @@ class GroupProvider with ChangeNotifier {
             data.group.name.toLowerCase().contains(name.toLowerCase()))
         .toList();
 
-    filteredGroups = filteredGroups
-        .where((CombineGroupUserStream data) =>
-            data.group.location.toLowerCase().contains(location.toLowerCase()))
-        .toList();
+    if (location.trim().isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.group.location
+              .toLowerCase()
+              .contains(location.toLowerCase()))
+          .toList();
 
-    filteredGroups = filteredGroups
-        .where((CombineGroupUserStream data) => data.group.organization
-            .toLowerCase()
-            .contains(church.toLowerCase()))
-        .toList();
-
-    filteredGroups = filteredGroups
-        .where((CombineGroupUserStream data) => data.group.description
-            .toLowerCase()
-            .contains(purpose.toLowerCase()))
-        .toList();
-    filteredGroups = filteredGroups
-        .where((CombineGroupUserStream data) => data.groupUsers
-            .any((u) => u.fullName.toLowerCase().contains(admin.toLowerCase())))
-        .toList();
+    if (church.trim().isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.group.organization
+              .toLowerCase()
+              .contains(church.toLowerCase()))
+          .toList();
+    if (purpose.trim().isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.group.description
+              .toLowerCase()
+              .contains(purpose.toLowerCase()))
+          .toList();
+    if (admin.trim().isNotEmpty)
+      filteredGroups = filteredGroups
+          .where((CombineGroupUserStream data) => data.groupUsers.any((u) =>
+              u.fullName.toLowerCase().contains(admin.toLowerCase()) &&
+              u.role == GroupUserRole.admin))
+          .toList();
 
     _filteredAllGroups = filteredGroups;
 
@@ -202,10 +207,9 @@ class GroupProvider with ChangeNotifier {
     return await _groupService.deleteFromGroup(userId, groupId);
   }
 
-  Future joinRequest(
-      String groupId, String userId, String status, String createdBy) async {
+  Future joinRequest(String groupId, String userId, String createdBy) async {
     if (_firebaseAuth.currentUser == null) return null;
-    return await _groupService.joinRequest(groupId, userId, status, createdBy);
+    return await _groupService.joinRequest(groupId, userId, createdBy);
   }
 
   Future acceptRequest(String groupId, String senderId, String requestId,

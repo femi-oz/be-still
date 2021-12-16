@@ -30,12 +30,12 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
-      String status, String userName, UserModel admin) async {
+      String userName, UserModel admin) async {
     const title = 'Group Request';
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupData.group.id, userId, status, userName);
+          .joinRequest(groupData.group.id, userId, userName);
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
               '$userName has requested to join your group',
@@ -82,270 +82,269 @@ class _GroupCardState extends State<GroupCard> {
     super.didChangeDependencies();
   }
 
+  bool isPressed = false;
   void _showAlert() async {
+    if (isPressed) return;
+    setState(() {
+      isPressed = true;
+    });
     final admin = widget.groupData.groupUsers
         .firstWhere((e) => e.role == GroupUserRole.admin);
-    await Provider.of<UserProvider>(context, listen: false)
+    final adminData = await Provider.of<UserProvider>(context, listen: false)
         .getUserById(admin.userId);
-    Future.delayed(Duration(milliseconds: 500)).then((value) {
-      final adminData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
 
-      FocusScope.of(context).unfocus();
-      AlertDialog dialog = AlertDialog(
-        actionsPadding: EdgeInsets.all(0),
-        contentPadding: EdgeInsets.all(0),
-        backgroundColor: AppColors.prayerCardBgColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: AppColors.lightBlue3,
-          ),
-          borderRadius: BorderRadius.all(
-            Radius.circular(10.0),
-          ),
+    FocusScope.of(context).unfocus();
+    AlertDialog dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: AppColors.lightBlue3,
         ),
-        content: Container(
-          width: double.infinity,
-          margin: EdgeInsets.only(bottom: 20),
-          padding: EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        margin: EdgeInsets.only(bottom: 20),
+        padding: EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
+                    icon: Icon(AppIcons.bestill_close),
+                  )
+                ],
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    IconButton(
-                      onPressed: () =>
-                          Navigator.of(context, rootNavigator: true).pop(),
-                      icon: Icon(AppIcons.bestill_close),
-                    )
-                  ],
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        widget.groupData.group.name.toUpperCase(),
-                        style: AppTextStyles.boldText20,
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30.0),
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Admin: ',
-                                style: AppTextStyles.regularText15,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  '${adminData.firstName} ${adminData.lastName}',
-                                  softWrap: true,
-                                  style: AppTextStyles.regularText15.copyWith(
-                                    color: AppColors.textFieldText,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Based in: ',
-                                style: AppTextStyles.regularText15,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  '${this.widget.groupData.group.location}',
-                                  style: AppTextStyles.regularText15.copyWith(
-                                    color: AppColors.textFieldText,
-                                  ),
-                                  softWrap: true,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Church: ',
-                                style: AppTextStyles.regularText15,
-                              ),
-                              Text(
-                                this.widget.groupData.group.organization.isEmpty
-                                    ? '-'
-                                    : '${this.widget.groupData.group.organization}',
+                    Text(
+                      widget.groupData.group.name.toUpperCase(),
+                      style: AppTextStyles.boldText20,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30.0),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Admin: ',
+                              style: AppTextStyles.regularText15,
+                            ),
+                            Flexible(
+                              child: Text(
+                                '${adminData.firstName} ${adminData.lastName}',
+                                softWrap: true,
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Based in: ',
+                              style: AppTextStyles.regularText15,
+                            ),
+                            Flexible(
+                              child: Text(
+                                '${this.widget.groupData.group.location}',
+                                style: AppTextStyles.regularText15.copyWith(
+                                  color: AppColors.textFieldText,
+                                ),
+                                softWrap: true,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Church: ',
+                              style: AppTextStyles.regularText15,
+                            ),
+                            Text(
+                              this.widget.groupData.group.organization.isEmpty
+                                  ? '-'
+                                  : '${this.widget.groupData.group.organization}',
+                              style: AppTextStyles.regularText15.copyWith(
+                                color: AppColors.textFieldText,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Text(
+                        //       'Type: ',
+                        //       style: AppTextStyles.regularText15,
+                        //     ),
+                        //     Text(
+                        //       '${this.widget.groupData.group.status} Group',
+                        //       style: AppTextStyles.regularText15.copyWith(
+                        //         color: AppColors.textFieldText,
+                        //       ),
+                        //       textAlign: TextAlign.center,
+                        //     ),
+                        //   ],
+                        // ),
+                      ],
+                    ),
+                    SizedBox(height: 20.0),
+                    Column(
+                      children: [
+                        Text(
+                          this.widget.groupData.groupUsers.length > 1 ||
+                                  this.widget.groupData.groupUsers.length == 0
+                              ? '${this.widget.groupData.groupUsers.length} current members'
+                              : '${this.widget.groupData.groupUsers.length} current member',
+                          style: AppTextStyles.regularText15.copyWith(
+                            color: AppColors.textFieldText,
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     Text(
-                          //       'Type: ',
-                          //       style: AppTextStyles.regularText15,
-                          //     ),
-                          //     Text(
-                          //       '${this.widget.groupData.group.status} Group',
-                          //       style: AppTextStyles.regularText15.copyWith(
-                          //         color: AppColors.textFieldText,
-                          //       ),
-                          //       textAlign: TextAlign.center,
-                          //     ),
-                          //   ],
-                          // ),
-                        ],
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 5.0),
+                        // Text(
+                        //   '2 contacts',
+                        //   style: AppTextStyles.regularText15.copyWith(
+                        //     color: AppColors.textFieldText,
+                        //   ),
+                        //   textAlign: TextAlign.center,
+                        // ),
+                      ],
+                    ),
+                    SizedBox(height: 30.0),
+                    Text(
+                      this.widget.groupData.group.description.isEmpty
+                          ? 'N/A'
+                          : this.widget.groupData.group.description,
+                      style: AppTextStyles.regularText15.copyWith(
+                        color: AppColors.textFieldText,
                       ),
-                      SizedBox(height: 20.0),
-                      Column(
-                        children: [
-                          Text(
-                            this.widget.groupData.groupUsers.length > 1 ||
-                                    this.widget.groupData.groupUsers.length == 0
-                                ? '${this.widget.groupData.groupUsers.length} current members'
-                                : '${this.widget.groupData.groupUsers.length} current member',
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30.0),
+                    isRequestSent ||
+                            !widget.groupData.groupSettings.requireAdminApproval
+                        ? Container()
+                        : Text(
+                            'Would you like to request to join?',
                             style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.textFieldText,
                             ),
-                            textAlign: TextAlign.center,
+                            textAlign: TextAlign.left,
                           ),
-                          SizedBox(height: 5.0),
-                          // Text(
-                          //   '2 contacts',
-                          //   style: AppTextStyles.regularText15.copyWith(
-                          //     color: AppColors.textFieldText,
-                          //   ),
-                          //   textAlign: TextAlign.center,
-                          // ),
-                        ],
-                      ),
-                      SizedBox(height: 30.0),
-                      Text(
-                        this.widget.groupData.group.description.isEmpty
-                            ? 'N/A'
-                            : this.widget.groupData.group.description,
-                        style: AppTextStyles.regularText15.copyWith(
-                          color: AppColors.textFieldText,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30.0),
-                      isRequestSent() ||
-                              !widget
-                                  .groupData.groupSettings.requireAdminApproval
-                          ? Container()
-                          : Text(
-                              'Would you like to request to join?',
+                    isRequestSent ? Container() : SizedBox(height: 20.0),
+                    isRequestSent
+                        ? Container(
+                            child: Text(
+                              StringUtils.joinRequestSent,
                               style: AppTextStyles.regularText15.copyWith(
                                 color: AppColors.textFieldText,
                               ),
                               textAlign: TextAlign.left,
                             ),
-                      isRequestSent() ? Container() : SizedBox(height: 20.0),
-                      isRequestSent()
-                          ? Container(
-                              child: Text(
-                                StringUtils.joinRequestSent,
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
-                                ),
-                                textAlign: TextAlign.left,
+                          )
+                        : Container(
+                            height: 30,
+                            padding: EdgeInsets.symmetric(horizontal: 15.0),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(
+                                color: AppColors.lightBlue4,
+                                width: 1,
                               ),
-                            )
-                          : Container(
-                              height: 30,
-                              padding: EdgeInsets.symmetric(horizontal: 15.0),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.lightBlue4,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: OutlinedButton(
-                                  style: ButtonStyle(
-                                    side: MaterialStateProperty.all<BorderSide>(
-                                        BorderSide(color: Colors.transparent)),
-                                  ),
-                                  child: Container(
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          !widget.groupData.groupSettings
-                                                  .requireAdminApproval
-                                              ? 'JOIN'
-                                              : 'REQUEST',
-                                          style: AppTextStyles.boldText20,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    if (!widget.groupData.groupSettings
-                                        .requireAdminApproval) {
-                                      _joinGroup(widget.groupData.group.id);
-                                    } else {
-                                      _requestToJoinGroup(
-                                        this.widget.groupData,
-                                        Provider.of<UserProvider>(context,
-                                                listen: false)
-                                            .currentUser
-                                            .id,
-                                        StringUtils.joinRequestStatusPending,
-                                        '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
-                                        adminData,
-                                      );
-                                    }
-                                  }),
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                    ],
-                  ),
+                            child: OutlinedButton(
+                                style: ButtonStyle(
+                                  side: MaterialStateProperty.all<BorderSide>(
+                                      BorderSide(color: Colors.transparent)),
+                                ),
+                                child: Container(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        !widget.groupData.groupSettings
+                                                .requireAdminApproval
+                                            ? 'JOIN'
+                                            : 'REQUEST',
+                                        style: AppTextStyles.boldText20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (!widget.groupData.groupSettings
+                                      .requireAdminApproval) {
+                                    _joinGroup(widget.groupData.group.id);
+                                  } else {
+                                    _requestToJoinGroup(
+                                      this.widget.groupData,
+                                      Provider.of<UserProvider>(context,
+                                              listen: false)
+                                          .currentUser
+                                          .id,
+                                      '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
+                                      adminData,
+                                    );
+                                  }
+                                }),
+                          ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
 
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return dialog;
-          });
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+    setState(() {
+      isPressed = false;
     });
   }
 
-  bool isRequestSent() {
-    var currentUser =
+  bool get isRequestSent {
+    final currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    var requestPending = widget.groupData.groupRequests.where((element) =>
-        element.status == StringUtils.joinRequestStatusPending &&
-        element.userId == currentUser.id);
-    if (requestPending.length == 0) {
-      return false;
-    } else {
-      return true;
-    }
+    print(widget.groupData.groupRequests
+        .where((e) => e.userId == currentUser.id)
+        .map((e) => e.toJson()));
+    return widget.groupData.groupRequests
+        .any((element) => element.userId == currentUser.id);
   }
 
   @override
