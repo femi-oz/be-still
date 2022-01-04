@@ -114,7 +114,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               height: 25,
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+
+              // margin: EdgeInsets.symmetric(horizontal: 20),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -124,8 +126,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       Navigator.of(context).pop();
                     },
                     child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
+                      width: MediaQuery.of(context).size.width * .30,
                       decoration: BoxDecoration(
                         color: AppColors.grey.withOpacity(0.5),
                         border: Border.all(
@@ -152,8 +155,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   GestureDetector(
                     onTap: () => openAppSettings(),
                     child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       height: 30,
-                      width: MediaQuery.of(context).size.width * .30,
+                      // width: MediaQuery.of(context).size.width * .30,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(

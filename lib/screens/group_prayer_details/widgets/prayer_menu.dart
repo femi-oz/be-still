@@ -131,8 +131,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .flagAsInappropriate(widget.prayerData.prayer.id);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .hidePrayer(widget.prayerData.prayer.id, currentUser);
+
       var admin = group.groupUsers
           .firstWhere((element) => element.role == GroupUserRole.admin);
       await Provider.of<UserProvider>(context, listen: false)
