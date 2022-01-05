@@ -135,7 +135,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
     }
   }
 
-  Future<void> _save(String prayerId) async {
+  Future<void> _save(String prayerId, String groupId) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -162,9 +162,16 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
               .addPrayerTag(
                   contacts, user, _descriptionController.text, prayerId);
         }
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .sendPrayerNotification(
+          prayerId,
+          NotificationType.prayer_updates,
+          groupId,
+          context,
+          _descriptionController.text,
+        );
+        FocusScope.of(context).requestFocus(FocusNode());
         BeStilDialog.hideLoading(context);
-        // Navigator.pop(context);
-
         AppCOntroller appCOntroller = Get.find();
         appCOntroller.setCurrentPage(8, true);
       }
@@ -436,7 +443,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer.id)
+                          ? _save(prayerData.prayer.id,
+                              prayerData.groupPrayer.groupId)
                           : null,
                     ),
                   ],

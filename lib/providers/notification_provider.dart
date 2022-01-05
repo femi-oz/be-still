@@ -8,6 +8,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/services/group_service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -23,6 +24,7 @@ import 'group_prayer_provider.dart';
 
 class NotificationProvider with ChangeNotifier {
   NotificationService _notificationService = locator<NotificationService>();
+  GroupService _groupService = locator<GroupService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   NotificationProvider._();
   factory NotificationProvider() => _instance;
@@ -159,15 +161,15 @@ class NotificationProvider with ChangeNotifier {
     String senderId,
     String recieverId,
     String title,
-    String entityId,
-    String entityId2,
+    String prayerId,
+    String groupId,
     List<String> tokens,
   ) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _notificationService.sendPushNotification(
         message: message,
-        entityId: entityId,
-        entityId2: entityId2,
+        prayerId: prayerId,
+        groupId: groupId,
         messageType: messageType,
         sender: sender,
         senderId: senderId,
@@ -278,6 +280,7 @@ class NotificationProvider with ChangeNotifier {
             .followedPrayers
             .map((e) => e.userId)
             .toList();
+
     final admins = Provider.of<GroupProvider>(context, listen: false)
         .currentGroup
         .groupUsers

@@ -255,9 +255,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     await Provider.of<GroupProvider>(context, listen: false)
-        .setCurrentGroupById(notification.entityId2, userId);
+        .setCurrentGroupById(notification.groupId, userId);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .setPrayerFuture(notification.entityId)
+        .setPrayerFuture(notification.prayerId)
         .then((value) async {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setPrayerFuture(value.groupPrayer.id);
@@ -322,8 +322,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               admin.id,
               receiverId,
               'Request Accepted',
-              groupData.group.id,
               '',
+              groupData.group.id,
               [requestor.pushToken]);
       Navigator.of(context).pop();
       BeStilDialog.hideLoading(context);
@@ -384,7 +384,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             final userId = Provider.of<UserProvider>(context).currentUser.id;
             return FutureBuilder<CombineGroupUserStream>(
                 future: Provider.of<GroupProvider>(context)
-                    .getGroupFuture(notification.entityId, userId),
+                    .getGroupFuture(notification.groupId, userId),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData || snapshot.hasError)
                     return SizedBox.shrink();
@@ -392,17 +392,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     return Column(
                       children: [
                         SizedBox(height: 10),
-                        // Dismissible(
-                        //   key: Key(notification.id),
-                        //   direction: DismissDirection.endToStart,
-                        //   onDismissed: (direction) {
-                        //     deleteNotification(notification.id);
-                        //   },
-                        //   child:
                         GestureDetector(
                           onLongPressEnd: null,
                           onTap: () => _showAlert(
-                              notification.entityId,
+                              notification.groupId,
                               notification.message,
                               notification.createdBy,
                               notification.id,
@@ -456,7 +449,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       )
                                                     : Container(),
                                                 if (notification
-                                                    .entityId2.isEmpty)
+                                                    .groupId.isEmpty)
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
@@ -476,7 +469,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               context)
                                                           .getGroupFuture(
                                                               notification
-                                                                  .entityId2,
+                                                                  .groupId,
                                                               userId),
                                                       builder:
                                                           (context, snapshot) {
@@ -558,7 +551,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                         ),
-                        // ),
                         SizedBox(height: 10),
                       ],
                     );
@@ -595,7 +587,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     Provider.of<UserProvider>(context).currentUser.id;
                 return FutureBuilder<CombineGroupUserStream>(
                     future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.entityId2, userId),
+                        .getGroupFuture(notification.groupId, userId),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.hasError)
                         return SizedBox.shrink();
@@ -1087,12 +1079,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             initiallyExpanded: true,
             children: <Widget>[
-              ...requestAccepted.map((notification) {
+              ...requestAccepted.map((PushNotificationModel notification) {
                 final userId =
                     Provider.of<UserProvider>(context).currentUser.id;
                 return FutureBuilder<CombineGroupUserStream>(
                     future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.entityId, userId),
+                        .getGroupFuture(notification.groupId, userId),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.hasError)
                         return SizedBox.shrink();
@@ -1603,7 +1595,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     Provider.of<UserProvider>(context).currentUser.id;
                 return FutureBuilder<CombineGroupUserStream>(
                     future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.entityId2, userId),
+                        .getGroupFuture(notification.groupId, userId),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.hasError)
                         return SizedBox.shrink();
@@ -1738,6 +1730,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildPanel() {
     final data = Provider.of<NotificationProvider>(context).notifications;
+
     data.sort((a, b) => b.createdOn.compareTo(a.createdOn));
     final requests =
         data.where((e) => e.messageType == NotificationType.request).toList();

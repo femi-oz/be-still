@@ -63,18 +63,7 @@ class _EntryScreenState extends State<EntryScreen> {
       if (miscProvider.initialLoad) {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
-        final groupId =
-            Provider.of<GroupProvider>(context, listen: false).groupJoinId;
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-        if (groupId.isNotEmpty)
-          Provider.of<GroupProvider>(context, listen: false)
-              .getGroupFuture(groupId, userId)
-              // .asBroadcastStream()
-              .then((groupPrayer) {
-            if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
-              JoinGroup().showAlert(context, groupPrayer);
-          });
+
         initDynamicLinks();
       }
       if (Provider.of<SettingsProvider>(context, listen: false)
@@ -91,15 +80,15 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   Future<void> initDynamicLinks() async {
+    String _groupId = '';
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
       final Uri deepLink = dynamicLink.link;
-
       if (deepLink != null) {
-        var groupId = deepLink.queryParameters['groups'];
+        _groupId = deepLink.queryParameters['groups'];
 
         Provider.of<GroupProvider>(context, listen: false)
-            .setJoinGroupId(groupId);
+            .setJoinGroupId(_groupId);
       }
     }, onError: (OnLinkErrorException e) async {
       print('onLinkError');
@@ -111,10 +100,22 @@ class _EntryScreenState extends State<EntryScreen> {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
-      var groupId = deepLink.queryParameters['groups'];
+      _groupId = deepLink.queryParameters['groups'];
       Provider.of<GroupProvider>(context, listen: false)
-          .setJoinGroupId(groupId);
+          .setJoinGroupId(_groupId);
     }
+    // final groupId =
+    //     Provider.of<GroupProvider>(context, listen: false).groupJoinId;
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+    if (_groupId.isNotEmpty)
+      Provider.of<GroupProvider>(context, listen: false)
+          .getGroupFuture(_groupId, userId)
+          // .asBroadcastStream()
+          .then((groupPrayer) {
+        if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
+          JoinGroup().showAlert(context, groupPrayer);
+      });
   }
 
   notificationInit() {}

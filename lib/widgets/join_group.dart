@@ -257,8 +257,8 @@ class JoinGroup {
               userId,
               adminId,
               title,
-              groupData.group.id,
               '',
+              groupData.group.id,
               [receiverData.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
