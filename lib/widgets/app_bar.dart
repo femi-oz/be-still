@@ -1,7 +1,10 @@
 import 'dart:ui';
 
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -132,10 +135,21 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
-  int get notificationCount {
+  Future<int> getCount() async {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
-    return notifications.length;
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    final z = notifications.map((e) async {
+      final j = await Provider.of<GroupProvider>(context)
+          .getGroupFuture(e.groupId, userId);
+      if (j != null) {
+        return j;
+      } else {
+        return null;
+      }
+    }).toList();
+
+    return z.where((element) => element != null).length;
   }
 
   @override
@@ -283,42 +297,57 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 child: Container(
                   child: Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                              notificationCount != 0
-                                  ? Icons.notifications
-                                  : Icons.notifications_none,
-                              size: 30,
-                              color: notificationCount != 0
-                                  ? AppColors.red
-                                  : AppColors.white),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NotificationsScreen(),
-                            ),
-                          ),
-                        ),
-                        notificationCount != 0
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                    right: notificationCount == 1
-                                        ? 2
-                                        : notificationCount > 9
-                                            ? 1
-                                            : 0),
-                                child: Text(notificationCount.toString(),
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.w600)),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                    child: FutureBuilder<int>(
+                        future: getCount(),
+                        builder: (context, snapshot) {
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              (!snapshot.hasData || snapshot.hasError)
+                                  ? IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(Icons.notifications_none,
+                                          size: 30, color: AppColors.white))
+                                  : IconButton(
+                                      icon: Icon(
+                                          snapshot.data != 0
+                                              ? Icons.notifications
+                                              : Icons.notifications_none,
+                                          size: 30,
+                                          color: snapshot.data != 0
+                                              ? AppColors.red
+                                              : AppColors.white),
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              NotificationsScreen(),
+                                        ),
+                                      ),
+                                    ),
+                              (!snapshot.hasData || snapshot.hasError)
+                                  // snapshot.data != 0
+                                  ? SizedBox()
+                                  : Padding(
+                                      padding: EdgeInsets.only(
+                                          right: snapshot.data == 1
+                                              ? 2
+                                              : snapshot.data > 9
+                                                  ? 1
+                                                  : 0),
+                                      child: Text(
+                                          snapshot.data < 1
+                                              ? ''
+                                              : snapshot.data.toString(),
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.w600)),
+                                    )
+                              // : Container(),
+                            ],
+                          );
+                        }),
                   ),
                 ),
               )

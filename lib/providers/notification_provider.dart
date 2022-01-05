@@ -161,15 +161,15 @@ class NotificationProvider with ChangeNotifier {
     String senderId,
     String recieverId,
     String title,
-    String entityId,
-    String entityId2,
+    String prayerId,
+    String groupId,
     List<String> tokens,
   ) async {
     if (_firebaseAuth.currentUser == null) return null;
     return await _notificationService.sendPushNotification(
         message: message,
-        entityId: entityId,
-        entityId2: entityId2,
+        prayerId: prayerId,
+        groupId: groupId,
         messageType: messageType,
         sender: sender,
         senderId: senderId,
@@ -280,7 +280,6 @@ class NotificationProvider with ChangeNotifier {
             .followedPrayers
             .map((e) => e.userId)
             .toList();
-    print(followers.length);
 
     final admins = Provider.of<GroupProvider>(context, listen: false)
         .currentGroup

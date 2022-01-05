@@ -116,7 +116,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final requests = notifications
         .where((e) =>
             e.messageType == NotificationType.request &&
-            e.entityId == data.group.id)
+            e.prayerId == data.group.id)
         .toList();
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setFollowedPrayerByGroupId(data.group.id);
@@ -163,15 +163,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 sender.id,
                 request.userId,
                 'Request Accepted',
-                group.id,
                 '',
+                group.id,
                 [receiverData.pushToken]);
         final notifications =
             Provider.of<NotificationProvider>(context, listen: false)
                 .notifications
                 .where((e) =>
                     e.messageType == NotificationType.request &&
-                    e.entityId == request.groupId)
+                    e.prayerId == request.groupId)
                 .toList();
         //notifcations where groupId= && type==request
         // for
@@ -200,7 +200,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       List<String> tokens) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPushNotification(message, messageType, sender, senderId,
-            receiverId, title, entityId, '', tokens);
+            receiverId, title, '', entityId, tokens);
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
