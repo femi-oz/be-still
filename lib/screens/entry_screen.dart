@@ -12,6 +12,7 @@ import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/add_prayer/add_group_prayer_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/add_update/add_group_prayer_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/group_prayer_details/group_prayer_details_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
@@ -532,7 +533,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: FindAGroup(), //11
+            page: AddGroupPrayerUpdate(), //11
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -541,7 +542,16 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: CreateGroupScreen(), //12
+            page: FindAGroup(), //12
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: CreateGroupScreen(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,

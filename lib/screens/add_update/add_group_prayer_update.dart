@@ -1,8 +1,14 @@
 import 'dart:io';
 
+import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -14,17 +20,18 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:provider/provider.dart';
 
-class AddUpdate extends StatefulWidget {
-  static const routeName = 'update-prayer';
+class AddGroupPrayerUpdate extends StatefulWidget {
+  static const routeName = 'update-group-prayer';
   @override
   _AddUpdateState createState() => _AddUpdateState();
 }
 
-class _AddUpdateState extends State<AddUpdate> {
+class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   BuildContext bcontext;
@@ -142,9 +149,8 @@ class _AddUpdateState extends State<AddUpdate> {
             code: 'custom', message: 'You can not save empty prayers');
         BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
-
         contacts.forEach((s) {
           if (!_descriptionController.text.contains(s.displayName)) {
             s.displayName = '';
@@ -157,8 +163,10 @@ class _AddUpdateState extends State<AddUpdate> {
                   contacts, user, _descriptionController.text, prayerId);
         }
         BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
+        // Navigator.pop(context);
+
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(8, true);
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -303,7 +311,7 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
-    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
     final updates = prayerData.updates
         .where((element) => element.deleteStatus != -1)
         .toList();
@@ -480,11 +488,11 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayerData.prayer.userId != currentUser.id
+                            prayerData.groupPrayer.createdBy != currentUser.id
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
-                                      prayerData.prayer.createdBy,
+                                      prayerData.prayer.creatorName,
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.lightBlue4),

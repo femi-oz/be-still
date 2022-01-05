@@ -11,6 +11,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/add_update/add_group_prayer_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -122,6 +123,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             '',
             tokens);
   }
+
+  openAddUpdate() async {}
 
   void _flagAsInappropriate(CombineGroupUserStream group) async {
     BeStilDialog.showLoading(context);
@@ -553,9 +556,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                   .setEditPrayer(widget.prayerData);
                               Navigator.pop(context);
                               await Future.delayed(Duration(milliseconds: 200));
-
                               AppCOntroller appCOntroller = Get.find();
-
                               appCOntroller.setCurrentPage(10, true);
                             },
                       text: 'Edit',
@@ -569,14 +570,18 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: () => !isOwner
+                      onPress: !isOwner
                           ? () {}
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Container(),
-                              ),
-                            ),
+                          : () async {
+                              Provider.of<GroupPrayerProvider>(context,
+                                      listen: false)
+                                  .setPrayer(
+                                      widget.prayerData.groupPrayer.prayerId);
+                              Navigator.pop(context);
+                              await Future.delayed(Duration(milliseconds: 200));
+                              AppCOntroller appCOntroller = Get.find();
+                              appCOntroller.setCurrentPage(11, true);
+                            },
                       text: 'Add an Update',
                     ),
                     LongButton(
