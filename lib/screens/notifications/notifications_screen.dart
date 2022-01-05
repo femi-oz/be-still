@@ -252,6 +252,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   gotoPrayer(PushNotificationModel notification) async {
     BeStilDialog.showLoading(context);
+    var userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<GroupProvider>(context, listen: false)
+        .setCurrentGroupById(notification.entityId2, userId);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayerFuture(notification.entityId)
         .then((value) async {
