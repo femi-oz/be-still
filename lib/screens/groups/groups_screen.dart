@@ -140,7 +140,7 @@ class _GroupScreenState extends State<GroupScreen> {
                         ? Container(
                             padding: EdgeInsets.only(right: 20, left: 20),
                             child: Text(
-                              'You are currently not in any groups',
+                              'You are currently not in any group',
                               style: AppTextStyles.demiboldText34,
                               textAlign: TextAlign.center,
                             ),

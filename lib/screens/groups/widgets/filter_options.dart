@@ -71,11 +71,11 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
                   onPressed: () => setOption(Status.archived),
                   text: Status.archived.toUpperCase(),
                 ),
-                // MenuButton(
-                //   isActive: status == Status.answered,
-                //   onPressed: () => setOption(Status.answered),
-                //   text: Status.answered.toUpperCase(),
-                // ),
+                MenuButton(
+                  isActive: status == Status.answered,
+                  onPressed: () => setOption(Status.answered),
+                  text: Status.answered.toUpperCase(),
+                ),
                 // MenuButton(
                 //   isActive: status == Status.following,
                 //   onPressed: () => setOption(Status.following),
