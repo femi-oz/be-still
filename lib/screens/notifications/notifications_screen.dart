@@ -388,13 +388,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     return Column(
                       children: [
                         SizedBox(height: 10),
-                        // Dismissible(
-                        //   key: Key(notification.id),
-                        //   direction: DismissDirection.endToStart,
-                        //   onDismissed: (direction) {
-                        //     deleteNotification(notification.id);
-                        //   },
-                        //   child:
                         GestureDetector(
                           onLongPressEnd: null,
                           onTap: () => _showAlert(
@@ -554,7 +547,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                         ),
-                        // ),
                         SizedBox(height: 10),
                       ],
                     );
@@ -1734,6 +1726,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildPanel() {
     final data = Provider.of<NotificationProvider>(context).notifications;
+
     data.sort((a, b) => b.createdOn.compareTo(a.createdOn));
     final requests =
         data.where((e) => e.messageType == NotificationType.request).toList();

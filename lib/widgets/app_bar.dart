@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -131,11 +132,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
+  int get notificationCount {
+    final notifications =
+        Provider.of<NotificationProvider>(context).notifications;
+    return notifications.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    final notifications =
-        Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
@@ -283,11 +288,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       children: [
                         IconButton(
                           icon: Icon(
-                              notifications.length != 0
+                              notificationCount != 0
                                   ? Icons.notifications
                                   : Icons.notifications_none,
                               size: 30,
-                              color: notifications.length != 0
+                              color: notificationCount != 0
                                   ? AppColors.red
                                   : AppColors.white),
                           onPressed: () => Navigator.push(
@@ -297,15 +302,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             ),
                           ),
                         ),
-                        notifications.length != 0
+                        notificationCount != 0
                             ? Padding(
                                 padding: EdgeInsets.only(
-                                    right: notifications.length == 1
+                                    right: notificationCount == 1
                                         ? 2
-                                        : notifications.length > 9
+                                        : notificationCount > 9
                                             ? 1
                                             : 0),
-                                child: Text(notifications.length.toString(),
+                                child: Text(notificationCount.toString(),
                                     style: TextStyle(
                                         fontSize: 10,
                                         color: AppColors.white,
