@@ -157,7 +157,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             Provider.of<UserProvider>(context, listen: false).selectedUser;
         await Provider.of<NotificationProvider>(context, listen: false)
             .sendPushNotification(
-                'Your request to join ${group.name} has been accepted',
+                'Your request to join this group has been accepted',
                 NotificationType.accept_request,
                 sender.firstName,
                 sender.id,
