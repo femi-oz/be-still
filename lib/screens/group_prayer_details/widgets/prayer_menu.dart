@@ -8,18 +8,14 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/add_update/add_group_prayer_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:be_still/widgets/snooze_prayer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -124,14 +120,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             tokens);
   }
 
-  openAddUpdate() async {}
-
   void _flagAsInappropriate(CombineGroupUserStream group) async {
     BeStilDialog.showLoading(context);
 
     try {
-      var currentUser =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .flagAsInappropriate(widget.prayerData.prayer.id);
 
@@ -580,7 +572,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               Navigator.pop(context);
                               await Future.delayed(Duration(milliseconds: 200));
                               AppCOntroller appCOntroller = Get.find();
-                              appCOntroller.setCurrentPage(11, true);
+                              appCOntroller.setCurrentPage(13, true);
                             },
                       text: 'Add an Update',
                     ),

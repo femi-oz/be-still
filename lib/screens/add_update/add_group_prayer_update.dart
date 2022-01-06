@@ -194,6 +194,11 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         false;
   }
 
+  goBack() {
+    AppCOntroller appCOntroller = Get.find();
+    appCOntroller.setCurrentPage(9, true);
+  }
+
   Future<void> onCancel() async {
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -245,9 +250,9 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        Navigator.pop(context);
+                        goBack();
                       },
                       child: Container(
                         height: 30,
@@ -433,9 +438,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                         ),
                         onTap: () => _descriptionController.text.isNotEmpty
                             ? onCancel()
-                            : Navigator.of(context).pushNamedAndRemoveUntil(
-                                EntryScreen.routeName,
-                                (Route<dynamic> route) => false)),
+                            : goBack()),
                     InkWell(
                       child: Text('SAVE',
                           style: AppTextStyles.boldText18.copyWith(

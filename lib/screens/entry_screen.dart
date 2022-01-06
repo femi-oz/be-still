@@ -534,7 +534,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddGroupPrayerUpdate(), //11
+            page: FindAGroup(), //11
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -543,7 +543,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: FindAGroup(), //12
+            page: CreateGroupScreen(), //12
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -552,7 +552,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: CreateGroupScreen(), //13
+            page: AddGroupPrayerUpdate(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,
