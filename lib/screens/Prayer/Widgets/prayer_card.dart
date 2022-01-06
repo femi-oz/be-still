@@ -496,7 +496,7 @@ class _PrayerCardState extends State<PrayerCard> {
         ],
         secondaryActions: <Widget>[
           if (isGroupPrayer)
-            _buildSlideItem(Icons.star, 'UnFollow', () async {
+            _buildSlideItem(Icons.star, 'Unfollow', () async {
               BeStilDialog.showLoading(context);
               await Provider.of<GroupPrayerProvider>(context, listen: false)
                   .setFollowedPrayer(widget.prayerData.prayer.id);

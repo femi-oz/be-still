@@ -583,7 +583,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         ],
         secondaryActions: <Widget>[
           if ((!isOwner && isAdmin) || (!isOwner && !isAdmin))
-            _buildSlideItem(Icons.star, isFollowing ? 'UnFollow' : 'Follow',
+            _buildSlideItem(Icons.star, isFollowing ? 'Unfollow' : 'Follow',
                 () async {
               _setCurrentPrayer();
               setState(() {
