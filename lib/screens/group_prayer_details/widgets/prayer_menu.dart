@@ -537,8 +537,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: isDisable
-                          ? null
+                      onPress: !isOwner && !isAdmin
+                          ? () {}
                           : () async {
                               Provider.of<GroupPrayerProvider>(context,
                                       listen: false)
@@ -562,7 +562,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner
+                      onPress: !isOwner && !isAdmin
                           ? () {}
                           : () async {
                               Provider.of<GroupPrayerProvider>(context,
@@ -595,7 +595,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                       Frequency.one_time
                               ? widget.reminder.frequency
                               : null,
-                      onPress: () => isDisable || !isOwner
+                      onPress: isDisable || !isOwner
                           ? () {}
                           : showDialog(
                               context: context,
@@ -647,7 +647,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                       icon: AppIcons.bestill_snooze,
                       isDisabled:
                           (isOwner || isAdmin) || (!isOwner && !isAdmin),
-                      onPress: () => !isOwner
+                      onPress: !isOwner
                           ? () {}
                           : showDialog(
                               context: context,
@@ -685,9 +685,11 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       isDisabled: !isOwner && !isAdmin,
                       icon: AppIcons.bestill_answered,
-                      onPress: () => widget.prayerData.prayer.isAnswer
-                          ? _unMarkAsAnswered()
-                          : _onMarkAsAnswered(),
+                      onPress: () => !isOwner && !isAdmin
+                          ? () {}
+                          : widget.prayerData.prayer.isAnswer
+                              ? _unMarkAsAnswered()
+                              : _onMarkAsAnswered(),
                       text: widget.prayerData.prayer.isAnswer
                           ? 'Unmark as Answered'
                           : 'Mark as Answered',
@@ -716,9 +718,11 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons
                           .bestill_icons_bestill_archived_icon_revised_drk,
-                      onPress: () => widget.prayerData.groupPrayer.isArchived
-                          ? _unArchive(widget.prayerData)
-                          : _onArchive(widget.prayerData),
+                      onPress: () => !isOwner && !isAdmin
+                          ? () {}
+                          : widget.prayerData.groupPrayer.isArchived
+                              ? _unArchive(widget.prayerData)
+                              : _onArchive(widget.prayerData),
                       text: widget.prayerData.groupPrayer.isArchived
                           ? 'Unarchive'
                           : 'Archive',
@@ -732,9 +736,11 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: Icons.delete_forever,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: () {
-                        _openDeleteConfirmation(context);
-                      },
+                      onPress: !isOwner && !isAdmin
+                          ? () {}
+                          : () {
+                              _openDeleteConfirmation(context);
+                            },
                       text: 'Delete',
                     ),
                     LongButton(

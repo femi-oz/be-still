@@ -251,16 +251,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   //fittedBox fix: BoxFit.cont
 
   gotoPrayer(PushNotificationModel notification) async {
+    print(notification.prayerId);
     BeStilDialog.showLoading(context);
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<GroupProvider>(context, listen: false)
-        .setCurrentGroupById(notification.groupId, userId);
+    if (notification.groupId.isNotEmpty)
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setCurrentGroupById(notification.prayerId, userId);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayerFuture(notification.prayerId)
         .then((value) async {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setPrayerFuture(value.groupPrayer.id);
+          .setPrayerFuture(notification.prayerId);
       AppCOntroller appCOntroller = Get.find();
 
       appCOntroller.setCurrentPage(9, true);
@@ -1442,7 +1444,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       },
                       child: GestureDetector(
                         onLongPressEnd: null,
-                        onTap: () async {
+                        onTap: () {
                           gotoPrayer(notification);
                         },
                         child: Container(

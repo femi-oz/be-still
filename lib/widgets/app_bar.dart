@@ -140,12 +140,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
         Provider.of<NotificationProvider>(context).notifications;
     final userId = Provider.of<UserProvider>(context).currentUser.id;
     final z = notifications.map((e) async {
-      final j = await Provider.of<GroupProvider>(context)
-          .getGroupFuture(e.groupId, userId);
-      if (j != null) {
-        return j;
-      } else {
-        return null;
+      if (e.groupId.isNotEmpty) {
+        final j = await Provider.of<GroupProvider>(context)
+            .getGroupFuture(e.groupId, userId);
+        if (j != null) {
+          return j;
+        } else {
+          return null;
+        }
       }
     }).toList();
 
