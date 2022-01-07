@@ -66,6 +66,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void _clearSearchField() async {
     _searchController.clear();
     _searchPrayer('');
+    _searchGroupPrayer('');
   }
 
   void _searchGroupPrayer(String value) async {
