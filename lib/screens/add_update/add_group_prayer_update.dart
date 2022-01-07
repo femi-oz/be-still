@@ -2,15 +2,12 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -350,7 +347,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
           padding: EdgeInsets.all(20),
-          color: AppColors.prayerCardBgColor,
+          color: AppColors.backgroundColor[0].withOpacity(0.5),
           width: MediaQuery.of(context).size.width * 0.85,
           child: SingleChildScrollView(
             child: Column(

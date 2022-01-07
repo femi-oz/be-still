@@ -1,10 +1,12 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -115,6 +117,19 @@ class _AddPrayerState extends State<AddPrayer> {
               _backupDescription,
               _user.id,
             );
+            var prayerId =
+                Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .newPrayerId;
+            if (prayerId.isNotEmpty) {
+              await Provider.of<NotificationProvider>(context, listen: false)
+                  .sendPrayerNotification(
+                prayerId,
+                NotificationType.prayer,
+                selected?.id,
+                context,
+                _descriptionController.text,
+              );
+            }
           }
 
           if (contactList.length > 0) {
@@ -358,7 +373,7 @@ class _AddPrayerState extends State<AddPrayer> {
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: 300,
         decoration: BoxDecoration(
-            color: AppColors.backgroundColor[0],
+            color: AppColors.backgroundColor[0].withOpacity(0.5),
             border: Border(
                 top: BorderSide(color: AppColors.lightBlue3, width: 0.5))),
         width: Get.width - 80,

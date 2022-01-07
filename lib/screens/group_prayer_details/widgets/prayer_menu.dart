@@ -461,7 +461,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .firstWhere((element) =>
               element.prayerId == widget.prayerData.prayer.id &&
               element.createdBy == _currentUser.id);
-    print(group.group.id);
 
     return Container(
       padding: EdgeInsets.only(top: 50),
@@ -537,7 +536,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: !isOwner && !isAdmin
                           ? () {}
                           : () async {
                               Provider.of<GroupPrayerProvider>(context,
@@ -562,13 +561,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: !isOwner && !isAdmin
                           ? () {}
                           : () async {
-                              Provider.of<GroupPrayerProvider>(context,
+                              await Provider.of<GroupPrayerProvider>(context,
                                       listen: false)
-                                  .setPrayer(
-                                      widget.prayerData.groupPrayer.prayerId);
+                                  .setPrayerFuture(
+                                      widget.prayerData.groupPrayer.id);
                               Navigator.pop(context);
                               await Future.delayed(Duration(milliseconds: 200));
                               AppCOntroller appCOntroller = Get.find();
@@ -676,7 +675,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: Icons.delete_forever,
                       isDisabled: !isOwner && !isAdmin,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: !isOwner && !isAdmin
                           ? () {}
                           : () {
                               _openDeleteConfirmation(context);

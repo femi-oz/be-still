@@ -309,9 +309,12 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       var followedPrayers =
           Provider.of<GroupPrayerProvider>(context).followedPrayers;
       if (followedPrayers.length > 0) {
-        followedPrayer = followedPrayers.firstWhere((element) =>
-            element.prayerId == widget.prayerData.prayer.id &&
-            element.createdBy == _user.id);
+        followedPrayers.forEach((element) {
+          if (element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _user.id) {
+            followedPrayer = element;
+          }
+        });
       }
     }
 
