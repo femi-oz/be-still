@@ -117,7 +117,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                         await Provider.of<GroupPrayerProvider>(
                                                 context,
                                                 listen: false)
-                                            .setPrayer(e.groupPrayer.id);
+                                            .setPrayerFuture(e.groupPrayer.id);
                                         AppCOntroller appCOntroller =
                                             Get.find();
                                         appCOntroller.setCurrentPage(9, true);

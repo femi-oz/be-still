@@ -44,8 +44,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
 
   @override
   void didChangeDependencies() async {
-    _setCurrentPrayer();
-
     super.didChangeDependencies();
   }
 
