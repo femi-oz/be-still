@@ -109,7 +109,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPushNotification(
-            '${_user.firstName} flagged a prayer as inappropriate',
+            '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
             NotificationType.inappropriate_content,
             _user.firstName,
             _user.id,
