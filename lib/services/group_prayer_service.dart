@@ -107,15 +107,13 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       var data = _groupPrayerCollectionReference.doc(prayerID).snapshots();
-      return data.map((doc) {
+      var _combineStream = data.map((doc) {
         Stream<GroupPrayerModel> groupPrayer = Stream.value(doc)
             .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
-
         Stream<PrayerModel> prayer = _prayerCollectionReference
             .doc(doc['PrayerId'])
             .snapshots()
             .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
-
         Stream<List<PrayerUpdateModel>> updates =
             _prayerUpdateCollectionReference
                 .where('PrayerId', isEqualTo: doc['PrayerId'])
@@ -147,6 +145,7 @@ class GroupPrayerService {
       }).switchMap((observables) {
         return observables;
       });
+      return _combineStream;
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),

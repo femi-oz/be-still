@@ -3,6 +3,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -75,7 +76,7 @@ class _PrayerListState extends State<PrayerList> {
     super.didChangeDependencies();
   }
 
-  Future<void> onTapCard(prayerData) async {
+  Future<void> onTapCard(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context, '');
     try {
       await Provider.of<PrayerProvider>(context, listen: false)

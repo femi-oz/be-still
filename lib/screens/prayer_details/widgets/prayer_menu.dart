@@ -4,6 +4,7 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -47,6 +48,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  FollowedPrayerModel followedPrayer;
+
   void _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
     try {
@@ -69,6 +72,33 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, e, user, s);
     }
+  }
+
+  void _unFollowPrayer(followedPrayerId, userPrayerId) async {
+    BeStilDialog.showLoading(context);
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(followedPrayerId, userPrayerId);
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(user.id);
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(0, true);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e, user, s);
+    }
+  }
+
+  bool get isFollowing {
+    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+    return isFollowing;
   }
 
   void _unMarkPrayerAsFavorite(CombinePrayerStream prayerData) async {
@@ -417,6 +447,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
     final _user = Provider.of<UserProvider>(context).currentUser;
     bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
 
+    if (isFollowing)
+      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers
+          .firstWhere((element) =>
+              element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _user.id);
+
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -480,7 +517,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         icon: AppIcons.bestill_share,
                         text: 'Share',
                         isDisabled: isDisable || isGroupPrayer,
-                        onPress: () => isDisable ? null : _share()),
+                        onPress: () =>
+                            isDisable || isGroupPrayer ? () {} : _share()),
                     LongButton(
                       textColor: AppColors.lightBlue3,
                       backgroundColor:
@@ -547,7 +585,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                       Frequency.one_time
                               ? widget.reminder.frequency
                               : null,
-                      onPress: () => isDisable || !isOwner
+                      onPress: () => (!isOwner && isGroupPrayer) &&
+                              (!isGroupPrayer && !isOwner)
                           ? () {}
                           : showDialog(
                               context: context,
@@ -725,7 +764,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             icon: Icons.star,
                             isDisabled: !isGroupPrayer,
                             suffix: null,
-                            onPress: () => () {},
+                            onPress: () => _unFollowPrayer(
+                                followedPrayer.id, followedPrayer.userPrayerId),
                             text: 'Unfollow',
                           ),
                     isOwner && !isGroupPrayer
