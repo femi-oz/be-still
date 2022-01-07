@@ -105,13 +105,14 @@ class GroupPrayerService {
 
   Stream<CombineGroupPrayerStream> getPrayer(String prayerID) {
     try {
+      print(prayerID);
       if (_firebaseAuth.currentUser == null) return null;
       var data = _groupPrayerCollectionReference.doc(prayerID).snapshots();
       var _combineStream = data.map((doc) {
         Stream<GroupPrayerModel> groupPrayer = Stream.value(doc)
             .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
         Stream<PrayerModel> prayer = _prayerCollectionReference
-            .doc(doc['PrayerId'])
+            .doc(prayerID)
             .snapshots()
             .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
         Stream<List<PrayerUpdateModel>> updates =
@@ -157,6 +158,7 @@ class GroupPrayerService {
 
   Future<CombineGroupPrayerStream> getPrayerFuture(String prayerID) {
     try {
+      print(prayerID);
       if (_firebaseAuth.currentUser == null) return null;
       var data = _groupPrayerCollectionReference.doc(prayerID).get();
       return data.then((doc) async {

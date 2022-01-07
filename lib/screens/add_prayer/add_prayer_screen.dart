@@ -492,7 +492,6 @@ class _AddPrayerState extends State<AddPrayer> {
                         if (Provider.of<PrayerProvider>(context, listen: false)
                             .isEdit) {
                           AppCOntroller appCOntroller = Get.find();
-
                           appCOntroller.setCurrentPage(7, true);
                           Navigator.pop(context);
                           FocusManager.instance.primaryFocus.unfocus();

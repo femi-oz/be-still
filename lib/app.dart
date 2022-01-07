@@ -210,8 +210,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
     if (message.type == NotificationType.reminder) {
       if (message.isGroup) {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setPrayer(message.entityId);
+        // await Provider.of<GroupPrayerProvider>(context, listen: false)
+        //     .setPrayer(message.entityId);
         // Future.delayed(Duration)
         AppCOntroller appCOntroller = Get.find();
         appCOntroller.setCurrentPage(9, false);

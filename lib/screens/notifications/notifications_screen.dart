@@ -251,25 +251,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   //fittedBox fix: BoxFit.cont
 
   gotoPrayer(PushNotificationModel notification) async {
-    print(notification.prayerId);
     BeStilDialog.showLoading(context);
     var userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     if (notification.groupId.isNotEmpty)
       await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroupById(notification.prayerId, userId);
+          .setCurrentGroupById(notification.groupId, userId);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setPrayerFuture(notification.prayerId)
         .then((value) async {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setPrayerFuture(notification.prayerId);
       AppCOntroller appCOntroller = Get.find();
-
       appCOntroller.setCurrentPage(9, true);
       await deleteNotification(notification.id);
-
       BeStilDialog.hideLoading(context);
-
       Navigator.pop(context);
     });
   }
@@ -480,17 +476,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               .shrink();
                                                         return Row(
                                                           children: <Widget>[
-                                                            Text(
-                                                              snapshot.data
-                                                                  .group.name,
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .red,
-                                                              ),
-                                                            ),
+                                                            // Text(
+                                                            //   snapshot.data
+                                                            //       .group.name,
+                                                            //   style: AppTextStyles
+                                                            //       .regularText15b
+                                                            //       .copyWith(
+                                                            //     fontSize: 14,
+                                                            //     color: AppColors
+                                                            //         .red,
+                                                            //   ),
+                                                            // ),
                                                             Container(
                                                               margin: EdgeInsets
                                                                   .symmetric(

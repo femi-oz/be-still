@@ -44,8 +44,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
 
   @override
   void didChangeDependencies() async {
-    _setCurrentPrayer();
-
     super.didChangeDependencies();
   }
 
@@ -562,7 +560,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         closeOnScroll: true,
         actions: <Widget>[
           _buildSlideItem(Icons.build, 'Options', () async {
-            _setCurrentPrayer();
+            // _setCurrentPrayer();
             showModalBottomSheet(
               context: context,
               barrierColor: Provider.of<ThemeProvider>(context, listen: false)
@@ -585,7 +583,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
           if ((!isOwner && isAdmin) || (!isOwner && !isAdmin))
             _buildSlideItem(Icons.star, isFollowing ? 'Unfollow' : 'Follow',
                 () async {
-              _setCurrentPrayer();
+              // _setCurrentPrayer();
               setState(() {
                 if (isFollowing) {
                   _unFollowPrayer(

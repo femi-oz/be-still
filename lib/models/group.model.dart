@@ -34,7 +34,7 @@ class GroupModel {
 
   GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        name = snapshot.data()['Name'],
+        name = snapshot.data()['Name'] ?? 'N/A',
         description = snapshot.data()['Description'] ?? 'N/A',
         status = snapshot.data()['Status'] ?? 'N/A',
         organization = snapshot.data()['Organization'] ?? 'N/A',
