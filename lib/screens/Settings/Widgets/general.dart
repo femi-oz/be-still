@@ -155,9 +155,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   GestureDetector(
                     onTap: () => openAppSettings(),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.03),
                       height: 30,
-                      // width: MediaQuery.of(context).size.width * .30,
+                      // width: MediaQuery.of(context).size.width * .35,
                       decoration: BoxDecoration(
                         color: Colors.blue,
                         border: Border.all(

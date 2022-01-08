@@ -330,7 +330,7 @@ class _AddUpdateState extends State<AddUpdate> {
         height: MediaQuery.of(context).size.height * 0.4,
         child: Container(
           padding: EdgeInsets.all(20),
-          color: AppColors.backgroundColor[0].withOpacity(0.5),
+          color: AppColors.backgroundColor[0],
           width: MediaQuery.of(context).size.width * 0.85,
           child: SingleChildScrollView(
             child: Column(

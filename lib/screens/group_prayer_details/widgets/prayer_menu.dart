@@ -15,10 +15,8 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
-import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -111,7 +109,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         .sendPushNotification(
             '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
             NotificationType.inappropriate_content,
-            _user.firstName,
+            _user.firstName + ' ' + _user.lastName,
             _user.id,
             receiverId,
             'Prayer flagged as innapropriate',

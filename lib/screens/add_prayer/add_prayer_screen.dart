@@ -373,7 +373,7 @@ class _AddPrayerState extends State<AddPrayer> {
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: 300,
         decoration: BoxDecoration(
-            color: AppColors.backgroundColor[0].withOpacity(0.5),
+            color: AppColors.backgroundColor[0],
             border: Border(
                 top: BorderSide(color: AppColors.lightBlue3, width: 0.5))),
         width: Get.width - 80,
