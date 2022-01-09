@@ -440,9 +440,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   }
 
   Widget build(BuildContext context) {
-    var isDisable = widget.prayerData.prayer.isAnswer ||
-        widget.prayerData.groupPrayer.isArchived ||
-        widget.prayerData.groupPrayer.isSnoozed;
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final group = Provider.of<GroupProvider>(context).currentGroup;
     bool isAdmin = Provider.of<GroupProvider>(context)
@@ -454,11 +451,16 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
 
     if (isFollowing)
-      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+      Provider.of<GroupPrayerProvider>(context, listen: false)
           .followedPrayers
-          .firstWhere((element) =>
-              element.prayerId == widget.prayerData.prayer.id &&
-              element.createdBy == _currentUser.id);
+          .forEach((element) {
+        if (element != null) {
+          if (element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _currentUser.id) {
+            followedPrayer = element;
+          }
+        }
+      });
 
     return Container(
       padding: EdgeInsets.only(top: 50),
