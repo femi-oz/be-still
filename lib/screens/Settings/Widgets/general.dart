@@ -128,7 +128,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 35,
+                        height: 30,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
                           color: AppColors.grey.withOpacity(0.5),

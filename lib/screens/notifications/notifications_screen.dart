@@ -1408,6 +1408,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildInapproriateContentPanel(inappropriateContent) {
+    // var groupName = Provider.of<GroupProvider>(context,listen: false).setCurrentGroupById()
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(

@@ -62,6 +62,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   void initState() {
     if (widget.reminder != null) {
       selectedHour = int.parse(widget.reminder?.selectedHour);
+
       selectedMinute = int.parse(widget.reminder?.selectedMinute);
       selectedDayOfWeek = LocalNotification.daysOfWeek
           .indexOf(widget.reminder?.selectedDay?.capitalizeFirst);
@@ -177,11 +178,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
   setNotification() async {
     // AM 22= 22-12
     // pm 12 = 12+12
-    final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12
+    var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
-        : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
+        : selectedPeriod == PeriodOfDay.pm && selectedHour <= 12
             ? selectedHour + 12
             : selectedHour;
+
     DateTime date = DateTime(
         selectedYear,
         LocalNotification.months.indexOf(selectedMonth) + 1,
@@ -198,6 +200,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
       return;
     }
     try {
+      if (hour == 0) {
+        hour = 12;
+      }
       var _selectedMinuteString =
           selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
       var _selectedHourString = hour < 10
@@ -328,6 +333,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                 .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
+
     FixedExtentScrollController hourController = FixedExtentScrollController(
         initialItem: hoursOfTheDay
             .indexOf(selectedHour > 12 ? selectedHour - 12 : selectedHour));

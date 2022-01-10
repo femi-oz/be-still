@@ -60,7 +60,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
         orElse: () => null);
     reminderString = reminder?.notificationText ?? '';
-
     if (reminder == null)
       return false;
     else
