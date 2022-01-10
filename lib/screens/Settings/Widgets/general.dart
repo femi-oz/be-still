@@ -128,7 +128,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 30,
+                        height: 35,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
                           color: AppColors.grey.withOpacity(0.5),
@@ -143,7 +143,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'CANCEL',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -174,7 +174,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'GO TO SETTINGS',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 11,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -401,10 +401,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             SizedBox(height: 20),
             CustomSectionHeder('App Appearance'),
             SizedBox(height: 35),
-            Padding(
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   for (int i = 0; i < _themeModes.length; i++)
                     CustomButtonGroup(
