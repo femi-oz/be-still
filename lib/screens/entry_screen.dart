@@ -12,6 +12,7 @@ import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/add_prayer/add_group_prayer_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/add_update/add_group_prayer_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/group_prayer_details/group_prayer_details_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
@@ -62,18 +63,7 @@ class _EntryScreenState extends State<EntryScreen> {
       if (miscProvider.initialLoad) {
         await _preLoadData();
         miscProvider.setLoadStatus(false);
-        final groupId =
-            Provider.of<GroupProvider>(context, listen: false).groupJoinId;
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-        if (groupId.isNotEmpty)
-          Provider.of<GroupProvider>(context, listen: false)
-              .getGroupFuture(groupId, userId)
-              // .asBroadcastStream()
-              .then((groupPrayer) {
-            if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
-              JoinGroup().showAlert(context, groupPrayer);
-          });
+
         initDynamicLinks();
       }
       if (Provider.of<SettingsProvider>(context, listen: false)
@@ -90,15 +80,15 @@ class _EntryScreenState extends State<EntryScreen> {
   }
 
   Future<void> initDynamicLinks() async {
+    String _groupId = '';
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
       final Uri deepLink = dynamicLink.link;
-
       if (deepLink != null) {
-        var groupId = deepLink.queryParameters['groups'];
+        _groupId = deepLink.queryParameters['groups'];
 
         Provider.of<GroupProvider>(context, listen: false)
-            .setJoinGroupId(groupId);
+            .setJoinGroupId(_groupId);
       }
     }, onError: (OnLinkErrorException e) async {
       print('onLinkError');
@@ -110,10 +100,22 @@ class _EntryScreenState extends State<EntryScreen> {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
-      var groupId = deepLink.queryParameters['groups'];
+      _groupId = deepLink.queryParameters['groups'];
       Provider.of<GroupProvider>(context, listen: false)
-          .setJoinGroupId(groupId);
+          .setJoinGroupId(_groupId);
     }
+    // final groupId =
+    //     Provider.of<GroupProvider>(context, listen: false).groupJoinId;
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+    if (_groupId.isNotEmpty)
+      Provider.of<GroupProvider>(context, listen: false)
+          .getGroupFuture(_groupId, userId)
+          // .asBroadcastStream()
+          .then((groupPrayer) {
+        if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
+          JoinGroup().showAlert(context, groupPrayer);
+      });
   }
 
   notificationInit() {}
@@ -542,6 +544,15 @@ class _EntryScreenState extends State<EntryScreen> {
             padding: 7),
         TabNavigationItem(
             page: CreateGroupScreen(), //12
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: AddGroupPrayerUpdate(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,

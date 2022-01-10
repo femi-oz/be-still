@@ -40,11 +40,13 @@ class CustomButtonGroup extends StatelessWidget {
                 side: MaterialStateProperty.all<BorderSide>(
                     BorderSide(color: Colors.transparent))),
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: FittedBox(
+                fit: BoxFit.contain,
                 child: Text(
                   title.toUpperCase(),
                   style: AppTextStyles.boldText20
-                      .copyWith(color: color, height: 1.2),
+                      .copyWith(color: color, height: 1.2, fontSize: 14),
                 ),
               ),
             ),

@@ -619,7 +619,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
               : Column(
                   children: [
                     Container(
-                      // margin: EdgeInsets.symmetric(horizontal: 40),
                       width: double.infinity,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -639,14 +638,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('CANCEL',
-                                      style: AppTextStyles.boldText20.copyWith(
-                                          color: AppColors.white, height: 1.5)),
-                                ],
+                              child: Center(
+                                child: Text('CANCEL',
+                                    style: AppTextStyles.boldText20.copyWith(
+                                        color: AppColors.white, height: 1.2)),
                               ),
                             ),
                           ),
@@ -664,14 +659,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('SAVE',
-                                      style: AppTextStyles.boldText20.copyWith(
-                                          color: AppColors.white, height: 1.5)),
-                                ],
+                              child: Center(
+                                child: Text('SAVE',
+                                    style: AppTextStyles.boldText20.copyWith(
+                                        color: AppColors.white, height: 1.2)),
                               ),
                             ),
                           ),
@@ -695,14 +686,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('DELETE REMINDER',
-                                      style: AppTextStyles.boldText20.copyWith(
-                                          color: AppColors.white, height: 1.5)),
-                                ],
+                              child: Center(
+                                child: Text('DELETE REMINDER',
+                                    style: AppTextStyles.boldText20.copyWith(
+                                        color: AppColors.white, height: 1.2)),
                               ),
                             ),
                           )

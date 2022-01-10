@@ -3,7 +3,6 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -14,7 +13,6 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -87,14 +85,6 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     if (_isInit) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         getSettings();
-        // final prayerData =
-        //     Provider.of<GroupPrayerProvider>(context, listen: false)
-        //         .currentPrayer;
-
-        // await Provider.of<GroupPrayerProvider>(context, listen: false)
-        //     .setFollowedPrayer(prayerData.prayer.id);
-        // await Provider.of<GroupPrayerProvider>(context, listen: false)
-        //     .setPrayer(prayerData.prayer.id);
       });
       _isInit = false;
     }
@@ -103,10 +93,9 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
 
   @override
   Widget build(BuildContext context) {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    final prayerData =
-        Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
+    var reminders =
+        Provider.of<NotificationProvider>(context).localNotifications;
+    final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
 
     _reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.groupPrayer.id,

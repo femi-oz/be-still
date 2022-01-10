@@ -1,3 +1,4 @@
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -140,6 +141,8 @@ class _CustomInputState extends State<CustomInput> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers(value, userId);
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
         .searchPrayers(value, userId);
   }
 

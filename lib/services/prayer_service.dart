@@ -303,7 +303,6 @@ class PrayerService {
       await _prayerCollectionReference
           .doc(prayerId)
           .update({'ModifiedOn': DateTime.now()});
-
       _prayerUpdateCollectionReference.doc(updateId).set(
             prayerUpdate.toJson(),
           );

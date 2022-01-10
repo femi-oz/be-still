@@ -25,14 +25,19 @@ class _FindGroupToolsState extends State<FindGroupTools> {
   void _searchGroup() async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<GroupProvider>(context, listen: false)
-        .advanceSearchAllGroups(
-            _groupNameController.text,
-            userId,
-            _locationController.text,
-            _organizationController.text,
-            _adminNameController.text,
-            _descriptionController.text);
+    if (_groupNameController.text.isNotEmpty ||
+        _locationController.text.isNotEmpty ||
+        _adminNameController.text.isNotEmpty ||
+        _descriptionController.text.isNotEmpty) {
+      await Provider.of<GroupProvider>(context, listen: false)
+          .advanceSearchAllGroups(
+              _groupNameController.text,
+              userId,
+              _locationController.text,
+              _organizationController.text,
+              _adminNameController.text,
+              _descriptionController.text);
+    }
   }
 
   Widget build(BuildContext context) {

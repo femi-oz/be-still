@@ -34,7 +34,7 @@ class GroupModel {
 
   GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        name = snapshot.data()['Name'],
+        name = snapshot.data()['Name'] ?? 'N/A',
         description = snapshot.data()['Description'] ?? 'N/A',
         status = snapshot.data()['Status'] ?? 'N/A',
         organization = snapshot.data()['Organization'] ?? 'N/A',
@@ -190,14 +190,14 @@ class GroupPrayerModel {
 
   GroupPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
       : id = snapshot.id,
-        prayerId = snapshot.data()['PrayerId'],
-        groupId = snapshot.data()['GroupId'],
-        sequence = snapshot.data()['Sequence'],
-        isFavorite = snapshot.data()['IsFavourite'],
-        status = snapshot.data()['Status'],
-        createdBy = snapshot.data()['CreatedBy'],
+        prayerId = snapshot.data()['PrayerId'] ?? '',
+        groupId = snapshot.data()['GroupId'] ?? '',
+        sequence = snapshot.data()['Sequence'] ?? '',
+        isFavorite = snapshot.data()['IsFavourite'] ?? false,
+        status = snapshot.data()['Status'] ?? '',
+        createdBy = snapshot.data()['CreatedBy'] ?? '',
         createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
+        modifiedBy = snapshot.data()['ModifiedBy'] ?? '',
         modifiedOn = snapshot.data()['ModifiedOn'].toDate(),
         isSnoozed = snapshot.data()['IsSnoozed'] ?? false,
         isArchived = snapshot.data()['IsArchived'] ?? false,

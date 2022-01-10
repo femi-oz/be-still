@@ -1,6 +1,10 @@
 import 'dart:ui';
 
+import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -62,6 +66,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void _clearSearchField() async {
     _searchController.clear();
     _searchPrayer('');
+    _searchGroupPrayer('');
   }
 
   void _searchGroupPrayer(String value) async {
@@ -131,11 +136,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
+  Future<int> getCount() async {
+    final notifications =
+        Provider.of<NotificationProvider>(context).notifications;
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    final z = notifications.map((e) async {
+      if (e.groupId.isNotEmpty) {
+        final j = await Provider.of<GroupProvider>(context)
+            .getGroupFuture(e.groupId, userId);
+        if (j != null) {
+          return j;
+        } else {
+          return null;
+        }
+      }
+    }).toList();
+
+    return z.where((element) => element != null).length;
+  }
+
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    final notifications =
-        Provider.of<NotificationProvider>(context).notifications;
 
     return AppBar(
       flexibleSpace: Container(
@@ -278,42 +300,57 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 child: Container(
                   child: Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                              notifications.length != 0
-                                  ? Icons.notifications
-                                  : Icons.notifications_none,
-                              size: 30,
-                              color: notifications.length != 0
-                                  ? AppColors.red
-                                  : AppColors.white),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NotificationsScreen(),
-                            ),
-                          ),
-                        ),
-                        notifications.length != 0
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                    right: notifications.length == 1
-                                        ? 2
-                                        : notifications.length > 9
-                                            ? 1
-                                            : 0),
-                                child: Text(notifications.length.toString(),
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.w600)),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                    child: FutureBuilder<int>(
+                        future: getCount(),
+                        builder: (context, snapshot) {
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              (!snapshot.hasData || snapshot.hasError)
+                                  ? IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(Icons.notifications_none,
+                                          size: 30, color: AppColors.white))
+                                  : IconButton(
+                                      icon: Icon(
+                                          snapshot.data != 0
+                                              ? Icons.notifications
+                                              : Icons.notifications_none,
+                                          size: 30,
+                                          color: snapshot.data != 0
+                                              ? AppColors.red
+                                              : AppColors.white),
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              NotificationsScreen(),
+                                        ),
+                                      ),
+                                    ),
+                              (!snapshot.hasData || snapshot.hasError)
+                                  // snapshot.data != 0
+                                  ? SizedBox()
+                                  : Padding(
+                                      padding: EdgeInsets.only(
+                                          right: snapshot.data == 1
+                                              ? 2
+                                              : snapshot.data > 9
+                                                  ? 1
+                                                  : 0),
+                                      child: Text(
+                                          snapshot.data < 1
+                                              ? ''
+                                              : snapshot.data.toString(),
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.w600)),
+                                    )
+                              // : Container(),
+                            ],
+                          );
+                        }),
                   ),
                 ),
               )

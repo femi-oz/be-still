@@ -89,8 +89,8 @@ $_footerText''',
 
   initState() {
     var emailUpdates = [];
-    widget.prayerData.updates.forEach((u) => emailUpdates.add(
-        '''${DateFormat('dd MMMM yyyy').format(u.createdOn)}
+    widget.prayerData.updates.forEach((u) =>
+        emailUpdates.add('''${DateFormat('dd MMMM yyyy').format(u.createdOn)}
 ${u.description}
 '''));
     var textUpdates = [];

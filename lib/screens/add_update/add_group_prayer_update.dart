@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
-
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -14,17 +17,18 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:provider/provider.dart';
 
-class AddUpdate extends StatefulWidget {
-  static const routeName = 'update-prayer';
+class AddGroupPrayerUpdate extends StatefulWidget {
+  static const routeName = 'update-group-prayer';
   @override
   _AddUpdateState createState() => _AddUpdateState();
 }
 
-class _AddUpdateState extends State<AddUpdate> {
+class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   BuildContext bcontext;
@@ -128,7 +132,7 @@ class _AddUpdateState extends State<AddUpdate> {
     }
   }
 
-  Future<void> _save(String prayerId) async {
+  Future<void> _save(String prayerId, String groupId) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState.validate()) return;
     _formKey.currentState.save();
@@ -142,9 +146,8 @@ class _AddUpdateState extends State<AddUpdate> {
             code: 'custom', message: 'You can not save empty prayers');
         BeStilDialog.showErrorDialog(context, e, user, null);
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
-
         contacts.forEach((s) {
           if (!_descriptionController.text.contains(s.displayName)) {
             s.displayName = '';
@@ -156,9 +159,18 @@ class _AddUpdateState extends State<AddUpdate> {
               .addPrayerTag(
                   contacts, user, _descriptionController.text, prayerId);
         }
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .sendPrayerNotification(
+          prayerId,
+          NotificationType.prayer_updates,
+          groupId,
+          context,
+          _descriptionController.text,
+        );
+        FocusScope.of(context).requestFocus(FocusNode());
         BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(8, true);
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -177,6 +189,11 @@ class _AddUpdateState extends State<AddUpdate> {
     return (Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false)) ??
         false;
+  }
+
+  goBack() {
+    AppCOntroller appCOntroller = Get.find();
+    appCOntroller.setCurrentPage(9, true);
   }
 
   Future<void> onCancel() async {
@@ -230,9 +247,9 @@ class _AddUpdateState extends State<AddUpdate> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        Navigator.pop(context);
+                        goBack();
                       },
                       child: Container(
                         height: 30,
@@ -303,7 +320,7 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
-    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
     final updates = prayerData.updates
         .where((element) => element.deleteStatus != -1)
         .toList();
@@ -418,9 +435,7 @@ class _AddUpdateState extends State<AddUpdate> {
                         ),
                         onTap: () => _descriptionController.text.isNotEmpty
                             ? onCancel()
-                            : Navigator.of(context).pushNamedAndRemoveUntil(
-                                EntryScreen.routeName,
-                                (Route<dynamic> route) => false)),
+                            : goBack()),
                     InkWell(
                       child: Text('SAVE',
                           style: AppTextStyles.boldText18.copyWith(
@@ -428,7 +443,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer.id)
+                          ? _save(prayerData.prayer.id,
+                              prayerData.groupPrayer.groupId)
                           : null,
                     ),
                   ],
@@ -480,11 +496,11 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayerData.prayer.userId != currentUser.id
+                            prayerData.groupPrayer.createdBy != currentUser.id
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
-                                      prayerData.prayer.createdBy,
+                                      prayerData.prayer.creatorName,
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.lightBlue4),

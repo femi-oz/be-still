@@ -105,17 +105,16 @@ class GroupPrayerService {
 
   Stream<CombineGroupPrayerStream> getPrayer(String prayerID) {
     try {
+      print(prayerID);
       if (_firebaseAuth.currentUser == null) return null;
       var data = _groupPrayerCollectionReference.doc(prayerID).snapshots();
-      return data.map((doc) {
+      var _combineStream = data.map((doc) {
         Stream<GroupPrayerModel> groupPrayer = Stream.value(doc)
             .map<GroupPrayerModel>((doc) => GroupPrayerModel.fromData(doc));
-
         Stream<PrayerModel> prayer = _prayerCollectionReference
-            .doc(doc['PrayerId'])
+            .doc(prayerID)
             .snapshots()
             .map<PrayerModel>((doc) => PrayerModel.fromData(doc));
-
         Stream<List<PrayerUpdateModel>> updates =
             _prayerUpdateCollectionReference
                 .where('PrayerId', isEqualTo: doc['PrayerId'])
@@ -147,6 +146,7 @@ class GroupPrayerService {
       }).switchMap((observables) {
         return observables;
       });
+      return _combineStream;
     } catch (e) {
       locator<LogService>().createLog(
           e.message != null ? e.message : e.toString(),
@@ -158,6 +158,7 @@ class GroupPrayerService {
 
   Future<CombineGroupPrayerStream> getPrayerFuture(String prayerID) {
     try {
+      print(prayerID);
       if (_firebaseAuth.currentUser == null) return null;
       var data = _groupPrayerCollectionReference.doc(prayerID).get();
       return data.then((doc) async {
@@ -249,8 +250,6 @@ class GroupPrayerService {
       if (_firebaseAuth.currentUser == null) return null;
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
-        ///b70b8540-9860-11eb-8da1-dfaaff472e96
-
         final _prayerTagID = Uuid().v1();
         if (contactData[i] != null) {
           _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
