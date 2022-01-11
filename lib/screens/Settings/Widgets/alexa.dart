@@ -87,7 +87,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
             children: [
               CustomSectionHeder('Prayer Time'),
               CustomToggle(
-                title: 'Enable Alexa to read prayers from My List?',
+                title: 'Enable Alexa to read prayers from My Prayers?',
                 onChange: (value) => setingProvider.updateSettings(userId,
                     key: SettingsKey.allowAlexaReadPrayer,
                     value: value,

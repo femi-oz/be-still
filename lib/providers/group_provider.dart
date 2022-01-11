@@ -99,12 +99,10 @@ class GroupProvider with ChangeNotifier {
   Future advanceSearchAllGroups(String name, String userId, String location,
       String church, String admin, String purpose) async {
     if (_firebaseAuth.currentUser == null) return null;
-
     List<CombineGroupUserStream> filteredGroups = _allGroups
         .where((CombineGroupUserStream data) =>
             data.group.name.toLowerCase().contains(name.toLowerCase()))
         .toList();
-
     if (location.trim().isNotEmpty)
       filteredGroups = filteredGroups
           .where((CombineGroupUserStream data) => data.group.location

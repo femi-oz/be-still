@@ -101,7 +101,7 @@ class _AddPrayerState extends State<AddPrayer> {
       } else {
         if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
-              (selected?.name ?? '') == 'My List') {
+              (selected?.name ?? '') == 'My Prayers') {
             await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
               _descriptionController.text,
               _user.id,
@@ -139,7 +139,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
           if (contactList.length > 0) {
             if ((selected?.name ?? '').isEmpty ||
-                (selected?.name ?? '') == 'My List') {
+                (selected?.name ?? '') == 'My Prayers') {
               await Provider.of<PrayerProvider>(context, listen: false)
                   .addPrayerTag(
                       contactList, _user, _descriptionController.text, '');
@@ -267,7 +267,7 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<GroupProvider>(context, listen: false).userGroups;
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    saveOptions.add(SaveOptionModel(id: userId, name: 'My List'));
+    saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
       userGroups.forEach((element) {
         final option =
@@ -310,7 +310,6 @@ class _AddPrayerState extends State<AddPrayer> {
           showContactList = true;
         else
           backup.showContactDropDown = true;
-
         setLineCount(val, backup);
       } else {
         showContactList = false;

@@ -36,7 +36,7 @@ class TutorialTarget {
           ),
           child: _buildBody(
             context,
-            'MY LIST',
+            'MY PRAYERS',
             2,
             null,
             " List",

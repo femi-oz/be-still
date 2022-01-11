@@ -28,6 +28,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
     if (_groupNameController.text.isNotEmpty ||
         _locationController.text.isNotEmpty ||
         _adminNameController.text.isNotEmpty ||
+        _organizationController.text.isNotEmpty ||
         _descriptionController.text.isNotEmpty) {
       await Provider.of<GroupProvider>(context, listen: false)
           .advanceSearchAllGroups(

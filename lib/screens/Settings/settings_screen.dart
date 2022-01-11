@@ -149,7 +149,7 @@ class SettingsTabState extends State<SettingsTab>
                     text: "General",
                   ),
                   Tab(
-                    text: "My List",
+                    text: "My Prayers",
                   ),
                   Tab(
                     text: "Set Reminder",

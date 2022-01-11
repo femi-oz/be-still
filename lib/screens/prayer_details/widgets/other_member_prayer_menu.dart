@@ -50,7 +50,7 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
-                            'Add to my List',
+                            'Add to my Prayers',
                             style: TextStyle(
                               color: AppColors.lightBlue4,
                               fontSize: 14,

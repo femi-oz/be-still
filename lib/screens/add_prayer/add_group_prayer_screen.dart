@@ -258,7 +258,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         Provider.of<GroupProvider>(context, listen: false).userGroups;
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    saveOptions.add(SaveOptionModel(id: userId, name: 'My List'));
+    saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
       userGroups.forEach((element) {
         final option =
