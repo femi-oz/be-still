@@ -604,10 +604,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 30),
-                                        child: Container()),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30),
+                                    ),
                                   ],
                                 ),
                               ),

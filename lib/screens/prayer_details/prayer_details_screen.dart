@@ -97,11 +97,13 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Widget build(BuildContext context) {
     var reminders = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
+
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     _reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
         orElse: () => null);
+
     return Scaffold(
       appBar: CustomAppBar(
         showPrayerActions: false,

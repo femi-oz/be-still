@@ -180,7 +180,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
     // pm 12 = 12+12
     var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
-        : selectedPeriod == PeriodOfDay.pm && selectedHour <= 12
+        : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
             ? selectedHour + 12
             : selectedHour;
 
@@ -203,6 +203,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       if (hour == 0) {
         hour = 12;
       }
+
       var _selectedMinuteString =
           selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
       var _selectedHourString = hour < 10

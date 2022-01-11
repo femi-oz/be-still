@@ -182,7 +182,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.3,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -227,6 +227,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
@@ -243,14 +244,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('CANCEL',
-                                style: AppTextStyles.boldText20.copyWith(
-                                    color: AppColors.white, height: 1.5)),
-                          ],
+                        child: Center(
+                          child: Text('CANCEL',
+                              style: AppTextStyles.boldText20
+                                  .copyWith(color: AppColors.white)),
                         ),
                       ),
                     ),
@@ -267,14 +264,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('SNOOZE',
-                                style: AppTextStyles.boldText20.copyWith(
-                                    color: AppColors.white, height: 1.5)),
-                          ],
+                        child: Center(
+                          child: Text('SNOOZE',
+                              style: AppTextStyles.boldText20
+                                  .copyWith(color: AppColors.white)),
                         ),
                       ),
                     ),

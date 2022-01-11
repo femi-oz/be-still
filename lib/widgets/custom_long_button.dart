@@ -65,7 +65,9 @@ class LongButton extends StatelessWidget {
                           : Container(),
                       SizedBox(width: 10),
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
+                        width: suffix != null
+                            ? MediaQuery.of(context).size.width * 0.3
+                            : MediaQuery.of(context).size.width * 0.5,
                         child: Text(
                           text,
                           overflow: TextOverflow.ellipsis,
