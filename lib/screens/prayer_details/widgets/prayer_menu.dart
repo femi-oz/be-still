@@ -61,26 +61,29 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
+    var _userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayerByUserId(_userId);
     super.didChangeDependencies();
   }
 
   getGroup() async {
     var _userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (isFollowing) {
-      Provider.of<GroupPrayerProvider>(context, listen: false)
-          .followedPrayers
-          .forEach((element) async {
-        if (element != null) {
-          if (element.prayerId == widget.prayerData.prayer.id &&
-              element.createdBy == _userId) {
-            await Provider.of<GroupProvider>(context, listen: false)
-                .setCurrentGroupById(element.groupId, _userId);
-          }
+
+    Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .forEach((element) async {
+      if (element != null) {
+        if (element.prayerId == widget.prayerData.prayer.id &&
+            element.createdBy == _userId) {
+          await Provider.of<GroupProvider>(context, listen: false)
+              .setCurrentGroupById(element.groupId, _userId);
         }
-      });
-    }
+      }
+    });
   }
 
   void _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
