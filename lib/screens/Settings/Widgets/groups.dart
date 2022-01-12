@@ -116,7 +116,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final requests = notifications
         .where((e) =>
             e.messageType == NotificationType.request &&
-            e.prayerId == data.group.id)
+            e.groupId == data.group.id)
         .toList();
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setFollowedPrayerByGroupId(data.group.id);

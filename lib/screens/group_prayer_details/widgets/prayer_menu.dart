@@ -101,15 +101,15 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  _sendNotification(
-      String groupId, List<String> tokens, String receiverId) async {
+  _sendNotification(String groupId, List<String> tokens, String receiverId,
+      String senderName) async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPushNotification(
             '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
             NotificationType.inappropriate_content,
-            _user.firstName + ' ' + _user.lastName,
+            senderName.capitalizeFirst,
             _user.id,
             receiverId,
             'Prayer flagged as innapropriate',
@@ -131,7 +131,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .getUserById(admin.userId);
       final adminData =
           Provider.of<UserProvider>(context, listen: false).selectedUser;
-      _sendNotification(group.group.id, [adminData.pushToken], adminData.id);
+      _sendNotification(group.group.id, [adminData.pushToken], adminData.id,
+          group.group.name);
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);

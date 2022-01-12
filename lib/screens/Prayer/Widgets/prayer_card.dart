@@ -38,12 +38,32 @@ class _PrayerCardState extends State<PrayerCard> {
   FollowedPrayerModel followedPrayer;
 
   initState() {
+    getGroup();
+
     super.initState();
   }
 
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+  }
+
+  getGroup() async {
+    var _userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
+    Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .forEach((element) async {
+      if (element != null) {
+        if (element.prayerId == widget.prayerData.prayer.id &&
+            element.createdBy == _userId) {
+          followedPrayer = element;
+          await Provider.of<GroupProvider>(context, listen: false)
+              .setCurrentGroupById(followedPrayer.groupId, _userId);
+        }
+      }
+    });
   }
 
   bool get hasReminder {
