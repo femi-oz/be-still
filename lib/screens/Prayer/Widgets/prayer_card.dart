@@ -36,34 +36,24 @@ class _PrayerCardState extends State<PrayerCard> {
   LocalNotificationModel reminder;
   final SlidableController slidableController = SlidableController();
   FollowedPrayerModel followedPrayer;
+  bool isAdmin = false;
 
   initState() {
-    getGroup();
-
     super.initState();
   }
 
   @override
   void didChangeDependencies() async {
+    getGroup();
+
     super.didChangeDependencies();
   }
 
   getGroup() async {
     var _userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-
-    Provider.of<GroupPrayerProvider>(context, listen: false)
-        .followedPrayers
-        .forEach((element) async {
-      if (element != null) {
-        if (element.prayerId == widget.prayerData.prayer.id &&
-            element.createdBy == _userId) {
-          followedPrayer = element;
-          await Provider.of<GroupProvider>(context, listen: false)
-              .setCurrentGroupById(followedPrayer.groupId, _userId);
-        }
-      }
-    });
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayerByUserId(_userId);
   }
 
   bool get hasReminder {
@@ -243,8 +233,31 @@ class _PrayerCardState extends State<PrayerCard> {
     widget.prayerData.tags.forEach((element) {
       tags += ' ' + element.displayName;
     });
-
     bool isGroupPrayer = widget.prayerData.prayer.isGroup;
+    Provider.of<GroupPrayerProvider>(context)
+        .followedPrayers
+        .forEach((element) async {
+      if (element != null) {
+        if (element.prayerId == widget.prayerData.prayer.id &&
+            element.createdBy == _user.id) {
+          await Provider.of<GroupProvider>(context, listen: false)
+              .getGroupFuture(element.groupId, _user.id)
+              .then((value) {
+            isAdmin = value.groupUsers.any((element) =>
+                element.userId == _user.id &&
+                element.role == GroupUserRole.admin);
+          });
+        }
+      }
+    });
+    bool showOption = false;
+    if (isGroupPrayer && isAdmin) {
+      showOption = true;
+    } else if (isGroupPrayer && !isAdmin) {
+      showOption = false;
+    } else if (!isGroupPrayer) {
+      showOption = true;
+    }
 
     return Container(
       color: Colors.transparent,
@@ -517,7 +530,7 @@ class _PrayerCardState extends State<PrayerCard> {
           }, false)
         ],
         secondaryActions: <Widget>[
-          if (isGroupPrayer)
+          if (isAdmin || !showOption)
             _buildSlideItem(Icons.star, 'Unfollow', () async {
               BeStilDialog.showLoading(context);
               await Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -534,7 +547,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 _unFollowPrayer(followedPrayer.id, followedPrayer.userPrayerId);
               });
             }, false),
-          if (!isGroupPrayer)
+          if (showOption)
             _buildSlideItem(
                 AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                 widget.prayerData.userPrayer.isArchived
@@ -543,15 +556,15 @@ class _PrayerCardState extends State<PrayerCard> {
                 () => widget.prayerData.userPrayer.isArchived
                     ? _unArchive()
                     : _onArchive(),
-                !isOwner),
-          if (!isGroupPrayer)
+                !isOwner && !isAdmin),
+          if (showOption)
             _buildSlideItem(
                 AppIcons.bestill_answered,
                 widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
                 () => widget.prayerData.prayer.isAnswer
                     ? _unMarkAsAnswered()
                     : _onMarkAsAnswered(),
-                !isOwner),
+                !isOwner && !isAdmin),
           if (!isGroupPrayer)
             widget.prayerData.userPrayer.isArchived ||
                     widget.prayerData.prayer.isAnswer

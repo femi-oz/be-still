@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
@@ -18,7 +17,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
