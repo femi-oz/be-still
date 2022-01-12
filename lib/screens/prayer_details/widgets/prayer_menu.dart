@@ -51,24 +51,35 @@ class _PrayerMenuState extends State<PrayerMenu> {
       FlutterLocalNotificationsPlugin();
 
   FollowedPrayerModel followedPrayer;
+  bool isAdmin = false;
 
   @override
   void initState() {
     getGroup();
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   getGroup() async {
     var _userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     if (isFollowing) {
-      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+      Provider.of<GroupPrayerProvider>(context, listen: false)
           .followedPrayers
-          .firstWhere((element) =>
-              element.prayerId == widget.prayerData.prayer.id &&
-              element.createdBy == _userId);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroupById(followedPrayer.groupId, _userId);
+          .forEach((element) async {
+        if (element != null) {
+          if (element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _userId) {
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(element.groupId, _userId);
+          }
+        }
+      });
     }
   }
 
@@ -459,7 +470,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    bool isAdmin;
     bool isGroupPrayer = widget.prayerData.prayer.isGroup;
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived ||
@@ -468,16 +478,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
         widget.prayerData.userPrayer.isArchived;
     final _user = Provider.of<UserProvider>(context).currentUser;
     bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
-    var groupData = Provider.of<GroupProvider>(context).currentGroup;
-    isAdmin = groupData.groupUsers.any((element) =>
-        element.userId == _user.id && element.role == GroupUserRole.admin);
 
-    if (isFollowing)
+    if (isFollowing) {
       followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
           .followedPrayers
           .firstWhere((element) =>
               element.prayerId == widget.prayerData.prayer.id &&
               element.createdBy == _user.id);
+      var groupData = Provider.of<GroupProvider>(context).currentGroup;
+      isAdmin = groupData.groupUsers.any((element) =>
+          element.userId == _user.id && element.role == GroupUserRole.admin);
+    }
 
     return Container(
       padding: EdgeInsets.only(top: 50),
