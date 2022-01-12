@@ -115,7 +115,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.groupPrayer.id &&
+                  e.entityId == widget.prayerData.prayer.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>

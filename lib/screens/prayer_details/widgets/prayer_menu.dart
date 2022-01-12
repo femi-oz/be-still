@@ -1,10 +1,12 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -49,6 +51,26 @@ class _PrayerMenuState extends State<PrayerMenu> {
       FlutterLocalNotificationsPlugin();
 
   FollowedPrayerModel followedPrayer;
+
+  @override
+  void initState() {
+    getGroup();
+    super.initState();
+  }
+
+  getGroup() async {
+    var _userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    if (isFollowing) {
+      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers
+          .firstWhere((element) =>
+              element.prayerId == widget.prayerData.prayer.id &&
+              element.createdBy == _userId);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setCurrentGroupById(followedPrayer.groupId, _userId);
+    }
+  }
 
   void _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
@@ -437,8 +459,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   Widget build(BuildContext context) {
+    bool isAdmin;
     bool isGroupPrayer = widget.prayerData.prayer.isGroup;
-
     var isDisable = widget.prayerData.prayer.isAnswer ||
         widget.prayerData.userPrayer.isArchived ||
         widget.prayerData.userPrayer.isSnoozed;
@@ -446,6 +468,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
         widget.prayerData.userPrayer.isArchived;
     final _user = Provider.of<UserProvider>(context).currentUser;
     bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
+    var groupData = Provider.of<GroupProvider>(context).currentGroup;
+    isAdmin = groupData.groupUsers.any((element) =>
+        element.userId == _user.id && element.role == GroupUserRole.admin);
 
     if (isFollowing)
       followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -575,7 +600,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_reminder,
                       isDisabled: (!isOwner && isGroupPrayer) &&
-                          (!isGroupPrayer && !isOwner),
+                          (!isGroupPrayer && !isOwner) &&
+                          !isAdmin,
                       suffix: widget.hasReminder &&
                               widget.reminder.frequency == Frequency.one_time
                           ? DateFormat('dd MMM yyyy hh:mma').format(widget
@@ -586,7 +612,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? widget.reminder.frequency
                               : null,
                       onPress: () => (!isOwner && isGroupPrayer) &&
-                              (!isGroupPrayer && !isOwner)
+                              (!isGroupPrayer && !isOwner) &&
+                              !isAdmin
                           ? () {}
                           : showDialog(
                               context: context,
@@ -610,8 +637,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                             vertical: 30),
                                         child: ReminderPicker(
                                           isGroup: false,
-                                          entityId: widget
-                                                  .prayerData?.userPrayer?.id ??
+                                          entityId: widget.prayerData
+                                                  ?.userPrayer?.prayerId ??
                                               '',
                                           type: NotificationType.reminder,
                                           hideActionuttons: false,
@@ -687,9 +714,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      isDisabled: !isOwner,
+                      isDisabled: !isOwner && !isAdmin,
                       icon: AppIcons.bestill_answered,
-                      onPress: !isOwner
+                      onPress: !isOwner && !isAdmin
                           ? () {}
                           : () => widget.prayerData.prayer.isAnswer
                               ? _unMarkAsAnswered(widget.prayerData)
@@ -721,7 +748,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                     LongButton(
                       textColor: AppColors.lightBlue3,
                       hasIcon: true,
-                      isDisabled: !isOwner,
+                      isDisabled: !isOwner && !isAdmin,
                       backgroundColor:
                           Provider.of<ThemeProvider>(context, listen: false)
                                   .isDarkModeEnabled
@@ -729,7 +756,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons
                           .bestill_icons_bestill_archived_icon_revised_drk,
-                      onPress: !isOwner
+                      onPress: !isOwner && !isAdmin
                           ? () {}
                           : () => widget.prayerData.userPrayer.isArchived
                               ? _unArchive(widget.prayerData)

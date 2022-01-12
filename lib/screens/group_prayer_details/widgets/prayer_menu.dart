@@ -150,7 +150,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData.groupPrayer.id)
+              .where((e) => e.entityId == widget.prayerData.prayer.id)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
@@ -574,6 +574,18 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               appCOntroller.setCurrentPage(13, true);
                             },
                       text: 'Add an Update',
+                    ),
+                    LongButton(
+                      textColor: AppColors.lightBlue3,
+                      backgroundColor:
+                          Provider.of<ThemeProvider>(context, listen: false)
+                                  .isDarkModeEnabled
+                              ? AppColors.backgroundColor[0].withOpacity(0.7)
+                              : AppColors.white,
+                      icon: AppIcons.bestill_reminder,
+                      isDisabled: true,
+                      onPress: () => () {},
+                      text: 'Reminder',
                     ),
                     LongButton(
                       textColor: AppColors.lightBlue3,
