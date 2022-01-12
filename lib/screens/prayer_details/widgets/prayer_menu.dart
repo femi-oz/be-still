@@ -19,7 +19,6 @@ import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -62,16 +61,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void didChangeDependencies() async {
-    var _userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .setFollowedPrayerByUserId(_userId);
     super.didChangeDependencies();
   }
 
   getGroup() async {
     var _userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayerByUserId(_userId);
 
     Provider.of<GroupPrayerProvider>(context, listen: false)
         .followedPrayers
@@ -481,16 +478,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
         widget.prayerData.userPrayer.isArchived;
     final _user = Provider.of<UserProvider>(context).currentUser;
     bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
+    var groupData =
+        Provider.of<GroupProvider>(context, listen: true).currentGroup;
+    if (groupData != null) {
+      isAdmin = groupData.groupUsers.any((element) =>
+          element.userId == _user.id && element.role == GroupUserRole.admin);
+    }
 
     if (isFollowing) {
-      followedPrayer = Provider.of<GroupPrayerProvider>(context, listen: false)
+      followedPrayer = Provider.of<GroupPrayerProvider>(context)
           .followedPrayers
           .firstWhere((element) =>
               element.prayerId == widget.prayerData.prayer.id &&
               element.createdBy == _user.id);
-      var groupData = Provider.of<GroupProvider>(context).currentGroup;
-      isAdmin = groupData.groupUsers.any((element) =>
-          element.userId == _user.id && element.role == GroupUserRole.admin);
     }
 
     return Container(
