@@ -40,10 +40,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
     final isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
-    _groupNameController.text = isEdit ? groupData?.group?.name : '';
-    _locationController.text = isEdit ? groupData?.group?.location : '';
-    _descriptionController.text = isEdit ? groupData?.group?.description : '';
-    _organizationController.text = isEdit ? groupData?.group?.organization : '';
+    _groupNameController.text = isEdit ? groupData.group.name : '';
+    _locationController.text = isEdit ? groupData.group.location : '';
+    _descriptionController.text = isEdit ? groupData.group.description : '';
+    _organizationController.text = isEdit ? groupData.group.organization : '';
     _requireAdminApproval =
         isEdit ? groupData.groupSettings.requireAdminApproval : true;
     super.initState();
@@ -55,8 +55,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   void _save(isEdit, group) async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    if (!_formKey.currentState!.validate()) return null;
+    _formKey.currentState!.save();
 
     BeStilDialog.showLoading(context);
 
@@ -75,7 +75,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       createdBy: _user.id,
       createdOn: DateTime.now(),
     );
-    final fullName = '${_user.firstName + ' ' + _user.lastName}';
+    final fullName = '${(_user.firstName) + ' ' + (_user.lastName)}';
 
     if (!isEdit) {
       await Provider.of<GroupProvider>(context, listen: false)
@@ -93,10 +93,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         group.group.id,
         _requireAdminApproval,
         Provider.of<GroupProvider>(context, listen: false)
-                .currentGroup
-                .groupSettings
-                ?.id ??
-            '',
+            .currentGroup
+            .groupSettings
+            .id,
         _user.id,
       );
       await Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -162,7 +161,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       onTap: () {
                         appCOntroller.setCurrentPage(3, true);
                         Navigator.pop(context);
-                        FocusManager.instance.primaryFocus.unfocus();
+                        FocusManager.instance.primaryFocus?.unfocus();
                       },
                       child: Container(
                         height: 30,
@@ -238,9 +237,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   Future<bool> _onWillPop() async {
     AppCOntroller appCOntroller = Get.find();
     appCOntroller.setCurrentPage(3, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   bool _requireAdminApproval = true;
@@ -336,7 +336,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                   _requireAdminApproval = val;
                                 });
                               },
-
+                              isEdit: groupProvider.isEdit,
                               formKey: _formKey,
                               locationController: _locationController,
                               descriptionController: _descriptionController,

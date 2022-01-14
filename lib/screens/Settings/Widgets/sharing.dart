@@ -276,7 +276,7 @@ class _SharingSettingsState extends State<SharingSettings> {
                                         label:
                                             'Enter Church Web Prayer Form Link',
                                         controller: _churchLink)
-                                    : null,
+                                    : SizedBox.shrink(),
                     SizedBox(height: 10.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,8 +307,8 @@ class _SharingSettingsState extends State<SharingSettings> {
                           ),
                           onPressed: () {
                             setState(() => _autoValidate = true);
-                            if (!_formKey.currentState.validate()) return null;
-                            _formKey.currentState.save();
+                            if (!_formKey.currentState!.validate()) return null;
+                            _formKey.currentState!.save();
                             switch (type) {
                               case _ModalType.church:
                                 _updateChurch();

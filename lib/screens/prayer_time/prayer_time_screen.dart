@@ -8,8 +8,9 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'dart:math' as math;
+
+import 'package:provider/provider.dart';
 
 class PrayerTime extends StatefulWidget {
   static const routeName = '/prayer-time';
@@ -24,7 +25,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<MiscProvider>(context, listen: false)
@@ -47,9 +48,10 @@ class _PrayerTimeState extends State<PrayerTime> {
     AppCOntroller appCOntroller = Get.find();
 
     appCOntroller.setCurrentPage(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override

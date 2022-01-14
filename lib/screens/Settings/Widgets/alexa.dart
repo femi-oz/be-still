@@ -30,10 +30,10 @@ class _AlexaSettingsState extends State<AlexaSettings> {
   }
 
   List<LookUp> prayerTimeInterval = [
-    LookUp(text: SecondsInterval.ten),
-    LookUp(text: SecondsInterval.twenty),
-    LookUp(text: SecondsInterval.thirty),
-    LookUp(text: SecondsInterval.fourty),
+    LookUp(text: SecondsInterval.ten, value: 10),
+    LookUp(text: SecondsInterval.twenty, value: 20),
+    LookUp(text: SecondsInterval.thirty, value: 30),
+    LookUp(text: SecondsInterval.fourty, value: 40),
   ];
 
   @override

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-Color getColor(bool isDarkMode, {@required int light, @required int dark}) =>
+Color getColor(bool isDarkMode, {required int light, required int dark}) =>
     Color(isDarkMode ? dark : light);
 
 List<Color> getGradientColor(bool isDarkMode,
-        {@required int lightStart,
-        @required int lightEnd,
-        @required int darkStart,
-        @required int darkEnd}) =>
+        {required int lightStart,
+        required int lightEnd,
+        required int darkStart,
+        required int darkEnd}) =>
     isDarkMode
         ? [Color(darkStart), Color(darkEnd)]
         : [Color(lightStart), Color(lightEnd)];

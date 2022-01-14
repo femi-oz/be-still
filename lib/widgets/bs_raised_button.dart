@@ -17,8 +17,8 @@ class BsRaisedButton extends StatelessWidget {
   final void Function() onPressed;
 
   const BsRaisedButton({
-    Key key,
-    this.width,
+    Key? key,
+    this.width = 0,
     this.size = BsRaisedButtonSize.normal,
     this.type = BsRaisedButtonType.primary,
     this.fontWeight = FontWeight.bold,
@@ -28,7 +28,7 @@ class BsRaisedButton extends StatelessWidget {
     this.hasShader = false,
     this.applyBold = false,
     this.disabled = false,
-    this.onPressed,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -76,7 +76,7 @@ enum BsRaisedButtonType {
 }
 
 class BsRaisedButtonSize {
-  const BsRaisedButtonSize._([this.vertical, this.horizontal]);
+  const BsRaisedButtonSize._([this.vertical = 0, this.horizontal = 0]);
 
   final double horizontal;
   final double vertical;

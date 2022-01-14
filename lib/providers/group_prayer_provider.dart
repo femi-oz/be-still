@@ -19,7 +19,8 @@ class GroupPrayerProvider with ChangeNotifier {
   List<CombineGroupPrayerStream> _filteredPrayers = [];
   Iterable<Contact> _localContacts = [];
 
-  CombineGroupPrayerStream _currentPrayer;
+  CombineGroupPrayerStream _currentPrayer =
+      CombineGroupPrayerStream.defaultValue();
   List<HiddenPrayerModel> _hiddenPrayers = [];
   List<FollowedPrayerModel> _followedPrayers = [];
 
@@ -37,7 +38,8 @@ class GroupPrayerProvider with ChangeNotifier {
   String _newPrayerId = '';
   String get newPrayerId => _newPrayerId;
 
-  CombineGroupPrayerStream _prayerToEdit;
+  CombineGroupPrayerStream _prayerToEdit =
+      CombineGroupPrayerStream.defaultValue();
   CombineGroupPrayerStream get prayerToEdit => _prayerToEdit;
 
   String _filterOption = Status.active;
@@ -209,8 +211,8 @@ class GroupPrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setEditPrayer(CombineGroupPrayerStream data) {
-    _prayerToEdit = data;
+  void setEditPrayer({CombineGroupPrayerStream? data}) {
+    _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
     notifyListeners();
   }
 
@@ -240,7 +242,7 @@ class GroupPrayerProvider with ChangeNotifier {
           .toList();
       activePrayers = prayers
           .where((CombineGroupPrayerStream data) =>
-              data.groupPrayer.status.toLowerCase() ==
+              (data.groupPrayer.status).toLowerCase() ==
               Status.active.toLowerCase())
           .toList();
     }
@@ -291,9 +293,12 @@ class GroupPrayerProvider with ChangeNotifier {
 
   Future<void> flagAsInappropriate(String prayerId) async =>
       await _prayerService.flagAsInappropriate(prayerId);
-  Future<void> addToMyList(
-          String prayerId, String userId, String groupId) async =>
-      await _prayerService.addToMyList(prayerId, userId, groupId);
+
+  Future<void> addToMyList(String prayerId, String userId, String groupId,
+          bool isFollowedByAdmin) async =>
+      await _prayerService.addToMyList(
+          prayerId, userId, groupId, isFollowedByAdmin);
+
   Future<void> removeFromMyList(
       String followedPrayerId, String userPrayerId) async {
     await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);

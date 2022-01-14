@@ -41,7 +41,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     Frequency.weekly,
   ];
 
-  FollowedPrayerModel followedPrayer;
+  // FollowedPrayerModel followedPrayer = FollowedPrayerModel();
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -63,10 +63,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final currentGroup =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    final isFollowedByAdmin = currentGroup.groupUsers.any((element) =>
+        element.role == GroupUserRole.admin && element.userId == user.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(
-              widget.prayerData.prayer.id, user.id, currentGroup.group.id);
+          .addToMyList(widget.prayerData.prayer.id, user.id,
+              currentGroup.group.id, isFollowedByAdmin);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
@@ -81,12 +83,23 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  void _unFollowPrayer(followedPrayerId, userPrayerId) async {
+  void _unFollowPrayer() async {
     BeStilDialog.showLoading(context);
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
+      final _userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final followedPrayer =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .followedPrayers
+              .firstWhere(
+                  (element) =>
+                      element.prayerId == widget.prayerData.prayer.id &&
+                      element.createdBy == _userId,
+                  orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .removeFromMyList(followedPrayerId, userPrayerId);
+          .removeFromMyList(
+              followedPrayer.id, widget.prayerData.groupPrayer.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
@@ -109,7 +122,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         .sendPushNotification(
             '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
             NotificationType.inappropriate_content,
-            senderName.capitalizeFirst,
+            senderName.capitalizeFirst ?? '',
             _user.id,
             receiverId,
             'Prayer flagged as innapropriate',
@@ -451,17 +464,17 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         GroupUserRole.admin;
     bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
 
-    if (isFollowing)
-      Provider.of<GroupPrayerProvider>(context, listen: false)
-          .followedPrayers
-          .forEach((element) {
-        if (element != null) {
-          if (element.prayerId == widget.prayerData.prayer.id &&
-              element.createdBy == _currentUser.id) {
-            followedPrayer = element;
-          }
-        }
-      });
+    // if (isFollowing)
+    //   Provider.of<GroupPrayerProvider>(context, listen: false)
+    //       .followedPrayers
+    //       .forEach((element) {
+    //     if (element != null) {
+    //       if (element.prayerId == widget.prayerData.prayer?.id &&
+    //           element.createdBy == _currentUser.id) {
+    //         followedPrayer = element;
+    //       }
+    //     }
+    //   });
 
     return Container(
       padding: EdgeInsets.only(top: 50),
@@ -545,7 +558,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                   .setEditMode(true);
                               Provider.of<GroupPrayerProvider>(context,
                                       listen: false)
-                                  .setEditPrayer(widget.prayerData);
+                                  .setEditPrayer(data: widget.prayerData);
                               Navigator.pop(context);
                               await Future.delayed(Duration(milliseconds: 200));
                               AppCOntroller appCOntroller = Get.find();
@@ -708,8 +721,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                         onPress: () => isOwner
                             ? () {}
                             : isFollowing
-                                ? _unFollowPrayer(followedPrayer.id,
-                                    followedPrayer.userPrayerId)
+                                ? _unFollowPrayer()
                                 : _followPrayer()),
                     LongButton(
                         textColor: AppColors.lightBlue3,

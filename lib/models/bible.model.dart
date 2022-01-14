@@ -1,25 +1,30 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class BibleModel {
-  String id;
-  String name;
-  String link;
-  String shortName;
-  String recommendedFor;
+  final String id;
+  final String name;
+  final String link;
+  final String shortName;
+  final String recommendedFor;
 
-  BibleModel({
-    this.id,
-    this.name,
-    this.link,
-    this.shortName,
-    this.recommendedFor,
+  const BibleModel({
+    required this.id,
+    required this.name,
+    required this.link,
+    required this.shortName,
+    required this.recommendedFor,
   });
-  BibleModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        name = snapshot.data()['name'],
-        recommendedFor = snapshot.data()['recommendedFor'],
-        link = snapshot.data()['link'],
-        shortName = snapshot.data()['shortName'];
+  factory BibleModel.fromData(Map<String, dynamic> data, String did) {
+    final id = did;
+    final name = data['name'] ?? '';
+    final recommendedFor = data['recommendedFor'] ?? '';
+    final link = data['link'] ?? '';
+    final shortName = data['shortName'] ?? '';
+    return BibleModel(
+        id: id,
+        link: link,
+        name: name,
+        recommendedFor: recommendedFor,
+        shortName: shortName);
+  }
 
   Map<String, dynamic> toJson() {
     return {

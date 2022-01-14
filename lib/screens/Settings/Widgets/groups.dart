@@ -29,7 +29,7 @@ class GroupsSettings extends StatefulWidget {
 
 class _GroupsSettingsState extends State<GroupsSettings> {
   final f = new DateFormat('yyyy-MM-dd');
-  FirebaseMessaging messaging;
+  late FirebaseMessaging messaging;
 
   _removeUserFromGroup(
       GroupUserModel user, CombineGroupUserStream group) async {
@@ -49,7 +49,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       sendPushNotification(
           '$userName has removed you from ${group.group.name}',
           NotificationType.remove_from_group,
-          userName,
+          userName ?? '',
           _currentUser.id,
           user.userId,
           'Remove from group',
@@ -70,7 +70,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final _currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     final id = data.groupUsers
-        .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
+        .firstWhere((e) => e.userId == _currentUser.id,
+            orElse: () => GroupUserModel.defaultValue())
         .id;
     await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
     var receiver = data.groupUsers
@@ -204,8 +205,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
-    bool userIsAdmin;
-    UserModel userData;
+    bool userIsAdmin = false;
+    UserModel userData = UserModel.defaultValue();
 
     setState(() {
       final _currentUser =
@@ -874,7 +875,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         Provider.of<NotificationProvider>(context,
                                 listen: false)
                             .enablePushNotifications(
-                                value, _currentUser.id, _currentUser)
+                                value ?? '', _currentUser.id, _currentUser)
                       });
                 } else {
                   await Provider.of<NotificationProvider>(context,
@@ -882,7 +883,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       .disablePushNotifications(_currentUser.id, _currentUser);
                 }
               },
-              value: _groupPreferenceSettings?.enableNotificationForAllGroups,
+              value: _groupPreferenceSettings.enableNotificationForAllGroups,
             ),
             Column(
               children: <Widget>[
@@ -1190,7 +1191,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       value: value,
                                       settingsId: data.groupSettings.id),
                               value: data
-                                  .groupSettings?.enableNotificationForUpdates,
+                                  .groupSettings.enableNotificationForUpdates,
                             ),
                             if (isMember)
                               CustomToggle(
@@ -1202,8 +1203,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         key: 'NotifyWhenNewMemberJoins',
                                         value: value,
                                         settingsId: data.groupSettings.id),
-                                value: data
-                                    .groupSettings?.notifyWhenNewMemberJoins,
+                                value:
+                                    data.groupSettings.notifyWhenNewMemberJoins,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
@@ -1215,7 +1216,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         value: value,
                                         settingsId: data.groupSettings.id),
                                 value: data
-                                    .groupSettings?.notifyOfMembershipRequest,
+                                    .groupSettings.notifyOfMembershipRequest,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
@@ -1226,8 +1227,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         key: 'NotifyMeofFlaggedPrayers',
                                         value: value,
                                         settingsId: data.groupSettings.id),
-                                value: data
-                                    .groupSettings?.notifyMeofFlaggedPrayers,
+                                value:
+                                    data.groupSettings.notifyMeofFlaggedPrayers,
                               ),
                           ],
                         ),
@@ -1429,9 +1430,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                              user.fullName ??
-                                                                  '',
+                                                          Text(user.fullName,
                                                               style: AppTextStyles
                                                                   .boldText14
                                                                   .copyWith(

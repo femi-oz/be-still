@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
+import 'package:provider/provider.dart';
 
 class UpdateView extends StatefulWidget {
   static const routeName = '/update';
@@ -34,7 +34,7 @@ class _UpdateView extends State<UpdateView> {
     Navigator.pop(context);
   }
 
-  _textLink([String phoneNumber]) async {
+  _textLink(String phoneNumber) async {
     await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
@@ -52,12 +52,14 @@ class _UpdateView extends State<UpdateView> {
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),

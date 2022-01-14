@@ -17,38 +17,86 @@ class GroupSettings {
   final DateTime modifiedOn;
 
   const GroupSettings({
-    this.id,
-    @required this.userId,
-    @required this.requireAdminApproval,
-    @required this.groupId,
-    @required this.enableNotificationFormNewPrayers,
-    @required this.enableNotificationForUpdates,
-    @required this.notifyOfMembershipRequest,
-    @required this.notifyMeofFlaggedPrayers,
-    @required this.notifyWhenNewMemberJoins,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
+    required this.id,
+    required this.userId,
+    required this.requireAdminApproval,
+    required this.groupId,
+    required this.enableNotificationFormNewPrayers,
+    required this.enableNotificationForUpdates,
+    required this.notifyOfMembershipRequest,
+    required this.notifyMeofFlaggedPrayers,
+    required this.notifyWhenNewMemberJoins,
+    required this.createdBy,
+    required this.createdOn,
+    required this.modifiedBy,
+    required this.modifiedOn,
   });
 
-  GroupSettings.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
-        enableNotificationFormNewPrayers =
-            snapshot.data()['EnableNotificationFormNewPrayers'],
-        requireAdminApproval = snapshot.data()['RequireAdminApproval'] ?? true,
-        enableNotificationForUpdates =
-            snapshot.data()['EnableNotificationForUpdates'],
-        notifyOfMembershipRequest =
-            snapshot.data()['NotifyOfMembershipRequest'],
-        notifyMeofFlaggedPrayers = snapshot.data()['NotifyMeofFlaggedPrayers'],
-        notifyWhenNewMemberJoins = snapshot.data()['NotifyWhenNewMemberJoins'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  factory GroupSettings.defaultValue() {
+    DateTime now = DateTime.now();
+    final createdOn = now;
+    final modifiedOn = now;
+    final id = '';
+    final userId = '';
+    final groupId = '';
+    final createdBy = '';
+    final modifiedBy = '';
+    final requireAdminApproval = false;
+    final enableNotificationFormNewPrayers = false;
+    final enableNotificationForUpdates = false;
+    final notifyOfMembershipRequest = false;
+    final notifyMeofFlaggedPrayers = false;
+    final notifyWhenNewMemberJoins = false;
+    return GroupSettings(
+        id: id,
+        userId: userId,
+        requireAdminApproval: requireAdminApproval,
+        groupId: groupId,
+        enableNotificationFormNewPrayers: enableNotificationFormNewPrayers,
+        enableNotificationForUpdates: enableNotificationForUpdates,
+        notifyOfMembershipRequest: notifyOfMembershipRequest,
+        notifyMeofFlaggedPrayers: notifyMeofFlaggedPrayers,
+        notifyWhenNewMemberJoins: notifyWhenNewMemberJoins,
+        createdBy: createdBy,
+        createdOn: createdOn,
+        modifiedBy: modifiedBy,
+        modifiedOn: modifiedOn);
+  }
+  factory GroupSettings.fromData(Map<String, dynamic> data, String did) {
+    final String id = did;
+    final String userId = data['UserId'] ?? '';
+    final String groupId = data['GroupId'] ?? '';
+    final bool enableNotificationFormNewPrayers =
+        data['EnableNotificationFormNewPrayers'] ?? false;
+    final bool requireAdminApproval = data['RequireAdminApproval'] ?? true;
+    final bool enableNotificationForUpdates =
+        data['EnableNotificationForUpdates'] ?? false;
+    final bool notifyOfMembershipRequest =
+        data['NotifyOfMembershipRequest'] ?? false;
+    final bool notifyMeofFlaggedPrayers =
+        data['NotifyMeofFlaggedPrayers'] ?? false;
+    final bool notifyWhenNewMemberJoins =
+        data['NotifyWhenNewMemberJoins'] ?? false;
+    final String createdBy = data['CreatedBy'] ?? '';
+    final DateTime createdOn = data['CreatedOn'].toDate() ?? DateTime.now();
+    final String modifiedBy = data['ModifiedBy'] ?? '';
+    final DateTime modifiedOn = data['ModifiedOn'].toDate() ?? DateTime.now();
+
+    return GroupSettings(
+        id: id,
+        userId: userId,
+        requireAdminApproval: requireAdminApproval,
+        groupId: groupId,
+        enableNotificationFormNewPrayers: enableNotificationFormNewPrayers,
+        enableNotificationForUpdates: enableNotificationForUpdates,
+        notifyOfMembershipRequest: notifyOfMembershipRequest,
+        notifyMeofFlaggedPrayers: notifyMeofFlaggedPrayers,
+        notifyWhenNewMemberJoins: notifyWhenNewMemberJoins,
+        createdBy: createdBy,
+        createdOn: createdOn,
+        modifiedBy: modifiedBy,
+        modifiedOn: modifiedOn);
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -74,17 +122,25 @@ class GroupPreferenceSettings {
   final bool enableNotificationForAllGroups;
 
   const GroupPreferenceSettings({
-    this.id,
-    @required this.userId,
-    @required this.enableNotificationForAllGroups,
+    required this.id,
+    required this.userId,
+    required this.enableNotificationForAllGroups,
   });
 
-  GroupPreferenceSettings.fromData(
-      DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        enableNotificationForAllGroups =
-            snapshot.data()['EnableNotificationForAllGroups'];
+  factory GroupPreferenceSettings.defaultValue() => GroupPreferenceSettings(
+      id: '', userId: '', enableNotificationForAllGroups: false);
+
+  factory GroupPreferenceSettings.fromData(
+      Map<String, dynamic> data, String did) {
+    final id = did;
+    final userId = data['UserId'];
+    final enableNotificationForAllGroups =
+        data['EnableNotificationForAllGroups'];
+    return GroupPreferenceSettings(
+        id: id,
+        userId: userId,
+        enableNotificationForAllGroups: enableNotificationForAllGroups);
+  }
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,

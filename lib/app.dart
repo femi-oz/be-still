@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  Future<void> _initializeFlutterFireFuture;
+  late Future<void> _initializeFlutterFireFuture;
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   Future<void> _testAsyncErrorOnInit() async {
@@ -53,8 +54,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
     });
     Provider.of<NotificationProvider>(context, listen: false)
@@ -94,16 +95,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     var platformChannelSpecifics = NotificationDetails(
         android: androidChannelSpecifics, iOS: iosChannelSpecifics);
     await _flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      message.notification.title, // Notification Title
-      message.notification
-          .body, // Notification Body, set as null to remove the body
+      0,
+      message.notification?.title ?? '',
+      message.notification?.body ?? '',
       platformChannelSpecifics,
-      payload: 'New Payload', // Notification Payload
+      payload: 'New Payload',
     );
   }
 
-  Future _onSelectNotification(String payload) async {
+  Future _onSelectNotification(String? payload) async {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) {
       return EntryScreen();
     }));
@@ -116,7 +116,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
     }
   }
 
@@ -131,11 +131,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     // Pass all uncaught errors to Crashlytics.
-    Function originalOnError = FlutterError.onError;
+    Function(FlutterErrorDetails)? originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails errorDetails) async {
       await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
       // Forward to original handler.
-      originalOnError(errorDetails);
+      if (originalOnError != null) originalOnError(errorDetails);
     };
 
     if (_kShouldTestAsyncErrorOnInit) {
@@ -145,7 +145,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
@@ -163,7 +163,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           await NavigationService.instance.navigateTo(LoginScreen.routeName);
         }
         final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
         final notifications =
             Provider.of<NotificationProvider>(context, listen: false)
                 .localNotifications;
@@ -231,10 +231,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,
         builder: (contect, snapshot) => GetMaterialApp(
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             final MediaQueryData data = MediaQuery.of(context);
             return MediaQuery(
-                data: data.copyWith(textScaleFactor: 1), child: child);
+                data: data.copyWith(textScaleFactor: 1),
+                child: child ?? SizedBox.shrink());
           },
           title: 'Be Still',
           debugShowCheckedModeBanner: false,

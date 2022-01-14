@@ -12,15 +12,16 @@ class SettingsProvider with ChangeNotifier {
   SettingsService _settingsService = locator<SettingsService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  SettingsModel _settings;
+  SettingsModel _settings = SettingsModel.defaultValue();
   SettingsModel get settings => _settings;
-  PrayerSettingsModel _prayerSettings;
+  PrayerSettingsModel _prayerSettings = PrayerSettingsModel.defaultValue();
   PrayerSettingsModel get prayerSetttings => _prayerSettings;
-  SharingSettingsModel _sharingSettings;
+  SharingSettingsModel _sharingSettings = SharingSettingsModel.defaultValue();
   SharingSettingsModel get sharingSettings => _sharingSettings;
-  GroupSettings _groupSettings;
+  GroupSettings _groupSettings = GroupSettings.defaultValue();
   GroupSettings get groupSettings => _groupSettings;
-  GroupPreferenceSettings _groupPreferenceSettings;
+  GroupPreferenceSettings _groupPreferenceSettings =
+      GroupPreferenceSettings.defaultValue();
   GroupPreferenceSettings get groupPreferenceSettings =>
       _groupPreferenceSettings;
 
@@ -61,9 +62,9 @@ class SettingsProvider with ChangeNotifier {
 
   Future updateSettings(
     String userId, {
-    String key,
-    dynamic value,
-    String settingsId,
+    required String key,
+    required dynamic value,
+    required String settingsId,
   }) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _settingsService.updateSettings(
@@ -72,7 +73,9 @@ class SettingsProvider with ChangeNotifier {
   }
 
   Future updatePrayerSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
+      {required String key,
+      required dynamic value,
+      required String settingsId}) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _settingsService.updatePrayerSettings(
         key: key, settingsId: settingsId, value: value);
@@ -80,7 +83,9 @@ class SettingsProvider with ChangeNotifier {
   }
 
   Future updateSharingSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
+      {required String key,
+      required dynamic value,
+      required String settingsId}) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _settingsService.updateSharingSettings(
         key: key, settingsId: settingsId, value: value);
@@ -88,7 +93,9 @@ class SettingsProvider with ChangeNotifier {
   }
 
   Future updateGroupPrefenceSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
+      {required String key,
+      required dynamic value,
+      required String settingsId}) async {
     if (_firebaseAuth.currentUser == null) return null;
     await _settingsService.updateGroupPreferenceSettings(
         key: key, groupPreferenceSettingsId: settingsId, value: value);

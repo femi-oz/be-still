@@ -43,12 +43,12 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-TutorialCoachMark tutorialCoachMark;
+late TutorialCoachMark tutorialCoachMark;
 
 class _EntryScreenState extends State<EntryScreen> {
-  BuildContext bcontext;
+  // BuildContext bcontext;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  FirebaseMessaging messaging;
+  late FirebaseMessaging messaging;
 
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
@@ -57,7 +57,7 @@ class _EntryScreenState extends State<EntryScreen> {
 
   initState() {
     final miscProvider = Provider.of<MiscProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       if (miscProvider.initialLoad) {
@@ -72,7 +72,7 @@ class _EntryScreenState extends State<EntryScreen> {
         messaging = FirebaseMessaging.instance;
         messaging.getToken().then((value) => {
               Provider.of<NotificationProvider>(context, listen: false)
-                  .init(value, user.id, user)
+                  .init(value ?? "", user.id, user)
             });
       }
     });
@@ -82,32 +82,31 @@ class _EntryScreenState extends State<EntryScreen> {
   Future<void> initDynamicLinks() async {
     String _groupId = '';
     FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink.link;
-      if (deepLink != null) {
-        _groupId = deepLink.queryParameters['groups'];
+        onSuccess: (PendingDynamicLinkData? dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link ?? Uri();
+      // if (deepLink != null) {
+      _groupId = deepLink.queryParameters['groups'] ?? "";
 
-        Provider.of<GroupProvider>(context, listen: false)
-            .setJoinGroupId(_groupId);
-      }
+      Provider.of<GroupProvider>(context, listen: false)
+          .setJoinGroupId(_groupId);
+      // }
     }, onError: (OnLinkErrorException e) async {
       print('onLinkError');
       print(e.message);
     });
 
-    final PendingDynamicLinkData data =
+    final PendingDynamicLinkData? data =
         await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+    final Uri deepLink = data?.link ?? Uri();
 
-    if (deepLink != null) {
-      _groupId = deepLink.queryParameters['groups'];
-      Provider.of<GroupProvider>(context, listen: false)
-          .setJoinGroupId(_groupId);
-    }
+    // if (deepLink != null) {
+    _groupId = deepLink.queryParameters['groups'] ?? "";
+    Provider.of<GroupProvider>(context, listen: false).setJoinGroupId(_groupId);
+    // }
     // final groupId =
     //     Provider.of<GroupProvider>(context, listen: false).groupJoinId;
     final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     if (_groupId.isNotEmpty)
       Provider.of<GroupProvider>(context, listen: false)
           .getGroupFuture(_groupId, userId)
@@ -128,7 +127,7 @@ class _EntryScreenState extends State<EntryScreen> {
         Settings.enableLocalAuth = false;
 
       final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
       await _getPrayers();
       await _getActivePrayers();
@@ -204,7 +203,7 @@ class _EntryScreenState extends State<EntryScreen> {
             .searchPrayers(searchQuery, _user.id);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user?.id);
+            .setPrayers(_user.id);
       }
     } on HttpException catch (e, s) {
       final user =
@@ -248,16 +247,18 @@ class _EntryScreenState extends State<EntryScreen> {
 
   void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
     try {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        userId,
         key: SettingsKey.defaultSnoozeDuration,
         value: selectedDuration,
         settingsId: settingsId,
       );
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        userId,
         key: SettingsKey.defaultSnoozeFrequency,
         value: selectedInterval,
         settingsId: settingsId,
@@ -361,7 +362,7 @@ class _EntryScreenState extends State<EntryScreen> {
                 Provider.of<PrayerProvider>(context, listen: false)
                     .setEditMode(false, true);
                 Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditPrayer(null);
+                    .setEditPrayer();
                 AppCOntroller appCOntroller = Get.find();
 
                 appCOntroller.setCurrentPage(1, true);
@@ -568,13 +569,13 @@ class TabNavigationItem {
   final String title;
   final Icon icon;
   final double padding;
-  final GlobalKey key;
+  final GlobalKey? key;
 
   TabNavigationItem({
-    @required this.page,
-    @required this.title,
-    @required this.icon,
-    @required this.padding,
+    required this.page,
+    required this.title,
+    required this.icon,
+    required this.padding,
     this.key,
   });
 }

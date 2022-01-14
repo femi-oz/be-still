@@ -14,7 +14,7 @@ class CreateAccountSuccess extends StatefulWidget {
 class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
+    WidgetsBinding.instance?.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
         () => Navigator.of(context).pushReplacement(

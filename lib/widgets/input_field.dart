@@ -11,33 +11,33 @@ import 'package:provider/provider.dart';
 class CustomInput extends StatefulWidget {
   final int maxLines;
   final String label;
-  final Color color;
+  final Color? color;
   final bool isPassword;
   final TextEditingController controller;
   final bool showSuffix;
   final TextInputAction textInputAction;
-  final Function submitForm;
-  final Function onTextchanged;
-  final TextInputType keyboardType;
+  final Function? submitForm;
+  final Function? onTextchanged;
+  final TextInputType? keyboardType;
   final bool isRequired;
-  final validator;
+  final String? Function(String)? validator;
   final bool isEmail;
   final bool obScurePassword;
   final double padding;
   final bool isPhone;
   final bool isLink;
   final bool unfocus;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
   final bool isSearch;
-  final GlobalKey textkey;
+  final GlobalKey? textkey;
   final bool hasBorder;
 
   CustomInput({
     this.maxLines = 1,
-    @required this.label,
+    required this.label,
     this.color,
     this.isPassword = false,
-    @required this.controller,
+    required this.controller,
     this.textkey,
     this.showSuffix = true,
     this.textInputAction = TextInputAction.done,
@@ -118,7 +118,7 @@ class _CustomInputState extends State<CustomInput> {
           filled: true,
         ),
         obscureText: widget.obScurePassword,
-        validator: (value) => _validatorFn(value),
+        validator: (String? value) => _validatorFn(value ?? ""),
         onFieldSubmitted: (val) => {
           widget.isSearch ? _searchPrayer(val) : null,
           widget.unfocus
@@ -128,8 +128,8 @@ class _CustomInputState extends State<CustomInput> {
         },
         textInputAction: widget.textInputAction,
         onChanged: (val) {
-          setState(() => _isTextNotEmpty = val != null && val.isNotEmpty);
-          if (widget.onTextchanged != null) widget.onTextchanged(val);
+          setState(() => _isTextNotEmpty = val.isNotEmpty);
+          if (widget.onTextchanged != null) widget.onTextchanged!(val);
         },
       ),
     );
@@ -137,7 +137,7 @@ class _CustomInputState extends State<CustomInput> {
 
   void _searchPrayer(String value) async {
     final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
@@ -146,7 +146,7 @@ class _CustomInputState extends State<CustomInput> {
         .searchPrayers(value, userId);
   }
 
-  String _validatorFn(String value) {
+  String? _validatorFn(String value) {
     if (widget.isRequired) {
       if (value.isEmpty && widget.isEmail) {
         return 'Email is required';
@@ -178,20 +178,20 @@ class _CustomInputState extends State<CustomInput> {
       }
     }
     if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
-      Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
+      String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value)) {
         return 'Password must be at least 6 characters long and contain at least 1 lowercase, 1 uppercase, and 1 number.';
       }
     }
     if (widget.isLink && value.isNotEmpty) {
-      Pattern pattern =
+      String pattern =
           r'^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$';
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value)) return 'Enter a valid url';
     }
     if (widget.validator != null) {
-      return widget.validator(value);
+      return widget.validator!(value);
     }
     return null;
   }

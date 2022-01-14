@@ -8,7 +8,7 @@ class PrayModeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final current;
   final totalPrayers;
 
-  PrayModeAppBar({this.current, Key key, this.totalPrayers})
+  PrayModeAppBar(Key key, {this.current, this.totalPrayers})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 

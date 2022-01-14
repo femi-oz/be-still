@@ -17,7 +17,7 @@ class CustomPicker extends StatefulWidget {
 
 class _CustomPickerState extends State<CustomPicker> {
   double itemExtent = 30.0;
-  LookUp selectedInterval;
+  LookUp selectedInterval = LookUp(text: '', value: 0);
   @override
   Widget build(BuildContext context) {
     int selectedIndex =
@@ -56,14 +56,12 @@ class _CustomPickerState extends State<CustomPicker> {
                               }),
                               children: <Widget>[
                                 ...widget.lookup
-                                    .map(
-                                      (i) => Align(
-                                          alignment: Alignment.center,
-                                          child: Text(i.text,
-                                              textAlign: TextAlign.center,
-                                              style:
-                                                  AppTextStyles.regularText15)),
-                                    )
+                                    .map((i) => Align(
+                                        alignment: Alignment.center,
+                                        child: Text(i.text,
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                AppTextStyles.regularText15)))
                                     .toList(),
                               ],
                             ),

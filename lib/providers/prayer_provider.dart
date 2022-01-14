@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
@@ -25,7 +26,7 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
   Iterable<Contact> _localContacts = [];
 
-  CombinePrayerStream _currentPrayer;
+  CombinePrayerStream _currentPrayer = CombinePrayerStream.defaultValue();
   String _filterOption = Status.active;
 
   List<CombinePrayerStream> get prayers => _prayers;
@@ -44,7 +45,7 @@ class PrayerProvider with ChangeNotifier {
   bool _showDropDown = false;
   bool get showDropDown => _showDropDown;
 
-  CombinePrayerStream _prayerToEdit;
+  CombinePrayerStream _prayerToEdit = CombinePrayerStream.defaultValue();
   CombinePrayerStream get prayerToEdit => _prayerToEdit;
 
   Future<void> setPrayers(String userId) async {
@@ -302,9 +303,7 @@ class PrayerProvider with ChangeNotifier {
       }
 
       for (int i = 0; i < toDelete.length; i++) {
-        if (toDelete[i]
-                .userPrayer
-                .archivedDate
+        if ((toDelete[i].userPrayer.archivedDate ?? DateTime.now())
                 .add(Duration(minutes: autoDeleteDuration))
                 .isBefore(DateTime.now()) &&
             autoDeleteDuration != 0) {
@@ -364,8 +363,8 @@ class PrayerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setEditPrayer(CombinePrayerStream data) {
-    _prayerToEdit = data;
+  void setEditPrayer({CombinePrayerStream? data}) {
+    _prayerToEdit = data ?? CombinePrayerStream.defaultValue();
     notifyListeners();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -50,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameKey = GlobalKey();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
   bool isBioMetricAvailable = false;
-  List<BiometricType> listOfBiometrics;
+  List<BiometricType> listOfBiometrics = [];
   bool showFingerPrint = false;
   bool showFaceId = false;
   bool showSuffix = true;
@@ -102,9 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isInit) {
       setState(() => isFormValid = _usernameController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty);
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         await _isBiometricAvailable();
-        bool showBioAuth = ModalRoute.of(context)?.settings?.arguments ?? false;
+        bool showBioAuth =
+            (ModalRoute.of(context)?.settings.arguments ?? false) as bool;
         if (showBioAuth && isBioMetricAvailable && Settings.enableLocalAuth)
           _biologin();
       });
@@ -128,14 +130,14 @@ class _LoginScreenState extends State<LoginScreen> {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink.link;
+        onSuccess: (PendingDynamicLinkData? dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link ?? Uri();
 
       if (deepLink != null) {
         var actionCode = deepLink.queryParameters['oobCode'];
         try {
-          await auth.checkActionCode(actionCode);
-          await auth.applyActionCode(actionCode);
+          await auth.checkActionCode(actionCode ?? '');
+          await auth.applyActionCode(actionCode ?? '');
           showInfoDialog(context);
         } on FirebaseAuthException catch (e) {
           if (e.code == 'invalid-action-code') {
@@ -148,15 +150,15 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e.message);
     });
 
-    final PendingDynamicLinkData data =
+    final PendingDynamicLinkData? data =
         await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+    final Uri deepLink = data?.link ?? Uri();
 
     if (deepLink != null) {
       var actionCode = deepLink.queryParameters['oobCode'];
       try {
-        await auth.checkActionCode(actionCode);
-        await auth.applyActionCode(actionCode);
+        await auth.checkActionCode(actionCode ?? '');
+        await auth.applyActionCode(actionCode ?? '');
         showInfoDialog(context);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-action-code') {
@@ -230,8 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> setRouteDestination() async {
     var message =
         Provider.of<NotificationProvider>(context, listen: false).message;
-    if (message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (message.entityId.isNotEmpty) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayerTimePrayers(message.entityId);
@@ -272,13 +274,13 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .signOut();
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, null, null);
-    } catch (e) {
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+    } catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
@@ -287,14 +289,14 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       PlatformException err = PlatformException(
           code: 'custom', message: 'An error occured. Please try again.');
-      BeStilDialog.showErrorDialog(context, err, null, null);
+      BeStilDialog.showErrorDialog(context, err, UserModel.defaultValue(), s);
     }
   }
 
   void _login() async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    if (!_formKey.currentState!.validate()) return null;
+    _formKey.currentState!.save();
 
     BeStilDialog.showLoading(context, 'Authenticating');
     try {
@@ -320,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
               .needsVerification;
 
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
     } catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
@@ -329,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
     }
   }
 
@@ -351,14 +353,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
         await setRouteDestination();
       }
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e, null, null);
-    } catch (e) {
+    } on HttpException catch (e, s) {
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+    } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       PlatformException er = PlatformException(
           code: 'custom', message: 'An error occured. Please try again');
-      BeStilDialog.showErrorDialog(context, er, null, null);
+      BeStilDialog.showErrorDialog(context, er, UserModel.defaultValue(), s);
     }
   }
 
@@ -435,9 +437,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         LoginScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   bool isFormValid = false;

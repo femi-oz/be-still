@@ -27,8 +27,8 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
   List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
-  String selectedInterval;
-  int selectedDuration;
+  String selectedInterval = '';
+  int selectedDuration = 0;
 
   @override
   void initState() {

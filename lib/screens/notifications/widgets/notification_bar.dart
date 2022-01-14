@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
   final context;
 
-  NotificationBar({Key key, this.context})
+  NotificationBar({Key? key, this.context})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 

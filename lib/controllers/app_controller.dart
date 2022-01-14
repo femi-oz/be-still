@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class AppCOntroller extends GetxController with SingleGetTickerProviderMixin {
-  TabController tabController;
+  late TabController tabController;
   Rx<int> _currentPage = 0.obs;
   int get currentPage => _currentPage.value;
   Rx<int> _settingsTab = 0.obs;

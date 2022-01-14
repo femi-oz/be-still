@@ -51,7 +51,7 @@ class _PrayerListState extends State<PrayerList> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         var status =
             Provider.of<PrayerProvider>(context, listen: false).filterOption;
         String heading =
@@ -111,7 +111,7 @@ class _PrayerListState extends State<PrayerList> {
             .searchPrayers(searchQuery, _user.id);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user?.id);
+            .setPrayers(_user.id);
       }
     } on HttpException catch (e, s) {
       final user =
@@ -130,15 +130,15 @@ class _PrayerListState extends State<PrayerList> {
     final notifications =
         Provider.of<NotificationProvider>(context, listen: false)
             .localNotifications;
-    if (user != null)
-      Provider.of<PrayerProvider>(context, listen: false)
-          .checkPrayerValidity(user.id, notifications);
+
+    Provider.of<PrayerProvider>(context, listen: false)
+        .checkPrayerValidity(user.id, notifications);
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
 
     final currentPrayerType =
         Provider.of<PrayerProvider>(context).currentPrayerType;
     return WillPopScope(
-      onWillPop: () => null,
+      onWillPop: () async => false,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         child: Scaffold(

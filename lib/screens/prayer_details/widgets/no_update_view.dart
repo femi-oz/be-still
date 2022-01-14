@@ -20,8 +20,8 @@ class NoUpdateView extends StatefulWidget {
 class _NoUpdateViewState extends State<NoUpdateView> {
   Iterable<Contact> localContacts = [];
 
-  _emailLink([String payload]) async {
-    payload = payload == null ? '' : payload;
+  _emailLink(String payload) async {
+    // payload = payload == null ? '' : payload;
     final Email email = Email(
       body: '',
       recipients: [payload],
@@ -32,7 +32,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
     Navigator.pop(context);
   }
 
-  _textLink([String phoneNumber]) async {
+  _textLink(String phoneNumber) async {
     await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
@@ -50,12 +50,14 @@ class _NoUpdateViewState extends State<NoUpdateView> {
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),

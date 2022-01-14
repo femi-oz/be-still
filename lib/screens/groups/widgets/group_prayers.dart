@@ -28,9 +28,10 @@ class GroupPrayers extends StatefulWidget {
 
 class _GroupPrayersState extends State<GroupPrayers> {
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   bool _isInit = true;
@@ -40,11 +41,11 @@ class _GroupPrayersState extends State<GroupPrayers> {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final group =
             Provider.of<GroupProvider>(context, listen: false).currentGroup;
         await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle((group.group?.name ?? '').toUpperCase());
+            .setPageTitle((group.group.name).toUpperCase());
         await Provider.of<GroupPrayerProvider>(context, listen: false)
             .setHiddenPrayer(_user.id);
       });
@@ -60,7 +61,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
         Provider.of<GroupPrayerProvider>(context, listen: false).hiddenPrayers;
     data.forEach((element) {
       _hiddenPrayers.forEach((x) {
-        if (element.groupPrayer.prayerId.contains(x.prayerId)) {
+        if ((element.groupPrayer.prayerId).contains(x.prayerId)) {
           data = data
               .where(
                   (y) => y.groupPrayer.prayerId != element.groupPrayer.prayerId)
@@ -143,7 +144,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                         Provider.of<GroupPrayerProvider>(context, listen: false)
                             .setEditMode(false);
                         Provider.of<GroupPrayerProvider>(context, listen: false)
-                            .setEditPrayer(null);
+                            .setEditPrayer();
                         AppCOntroller appCOntroller = Get.find();
 
                         appCOntroller.setCurrentPage(10, true);

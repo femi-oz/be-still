@@ -27,14 +27,15 @@ class _GroupScreenState extends State<GroupScreen> {
   AppCOntroller appCOntroller = Get.find();
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       await Provider.of<MiscProvider>(context, listen: false)
           .setPageTitle('GROUPS');
       // appCOntroller.setCurrentPage(4, true);

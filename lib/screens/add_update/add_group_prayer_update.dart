@@ -31,7 +31,6 @@ class AddGroupPrayerUpdate extends StatefulWidget {
 class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
   bool _autoValidate = false;
@@ -42,8 +41,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   String tagText = '';
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
-  String backupText;
-  TextPainter painter;
+  String backupText = '';
+  TextPainter painter = TextPainter();
   bool showNoContact = false;
   String displayName = '';
   List<String> tagList = [];
@@ -57,7 +56,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<MiscProvider>(context, listen: false)
@@ -91,10 +90,10 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
       localContacts.forEach((s) {
         var displayName = s.displayName == null ? '' : s.displayName;
         var displayNameList =
-            displayName.toLowerCase().split(new RegExp(r"\s"));
+            (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
         displayNameList.forEach((e) {
           if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
-            tagList.add(displayName);
+            tagList.add(displayName ?? '');
           }
         });
       });
@@ -134,8 +133,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
 
   Future<void> _save(String prayerId, String groupId) async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return;
-    _formKey.currentState.save();
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
@@ -144,12 +143,13 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
-        BeStilDialog.showErrorDialog(context, e, user, null);
+        final s = StackTrace.fromString(e.stacktrace ?? '');
+        BeStilDialog.showErrorDialog(context, e, user, s);
       } else {
         await Provider.of<GroupPrayerProvider>(context, listen: false)
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
         contacts.forEach((s) {
-          if (!_descriptionController.text.contains(s.displayName)) {
+          if (!_descriptionController.text.contains(s.displayName ?? '')) {
             s.displayName = '';
           }
         });
@@ -186,9 +186,10 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   goBack() {

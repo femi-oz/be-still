@@ -1,5 +1,6 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -11,19 +12,19 @@ class AuthenticationProvider with ChangeNotifier {
   bool _needsVerification = false;
   bool get needsVerification => _needsVerification;
 
-  Future<void> signIn({String email, String password}) async {
-    Map<String, Object> response =
+  Future<void> signIn({required String email, required String password}) async {
+    UserVerify response =
         await _authService.signIn(email: email, password: password);
-    _needsVerification = response['needsVerification'];
+    _needsVerification = response.needsVerification;
     if (_needsVerification) {
       final message = StringUtils.generateExceptionMessage('not-verified');
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/signIn');
       throw HttpException(message);
     }
-    if (response['error'] != null) {
-      var e = response['error'] as FirebaseAuthException;
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+    if (response.error != null) {
+      var e = response.error as FirebaseAuthException;
+      final message = StringUtils.generateExceptionMessage(e.code);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/signIn');
       throw HttpException(message);
@@ -35,11 +36,11 @@ class AuthenticationProvider with ChangeNotifier {
   }
 
   Future<void> registerUser({
-    String email,
-    String password,
-    String firstName,
-    String lastName,
-    DateTime dob,
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required DateTime dob,
   }) async {
     await _authService.registerUser(
       email,

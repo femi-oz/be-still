@@ -27,7 +27,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
-  TabController tabController;
+  late TabController tabController;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<MiscProvider>(context, listen: false)
@@ -77,7 +77,7 @@ class SettingsTab extends StatefulWidget {
 
 class SettingsTabState extends State<SettingsTab>
     with SingleTickerProviderStateMixin {
-  TabController tabController;
+  late TabController tabController;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -102,9 +102,10 @@ class SettingsTabState extends State<SettingsTab>
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   AppCOntroller appCOntroller = Get.find();

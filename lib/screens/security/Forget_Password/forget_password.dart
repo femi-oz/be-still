@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
@@ -32,8 +33,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   _forgotPassword() async {
     setState(() => _autoValidate = true);
-    if (!_formKey1.currentState.validate()) return;
-    _formKey1.currentState.save();
+    if (!_formKey1.currentState!.validate()) return;
+    _formKey1.currentState!.save();
     try {
       BeStilDialog.showLoading(context, 'Sending Mail');
       await Provider.of<AuthenticationProvider>(context, listen: false)
@@ -44,11 +45,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
     }
   }
 

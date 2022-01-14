@@ -7,6 +7,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/user_service.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,55 +33,61 @@ class NotificationService {
 
   init(String token, String userId, UserModel currentUser) async {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       userService.addUserToken(token: token, userId: userId, user: currentUser);
     } catch (e) {
       locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
+          StringUtils.getErrorMessage(e) != null
+              ? StringUtils.getErrorMessage(e)
+              : e.toString(),
           userId,
           'NOTIFICATION/service/init');
-      throw HttpException(e.message);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   disablePushNotifications(String userId, UserModel currentUser) async {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       userService.addUserToken(token: '', userId: userId, user: currentUser);
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'NOTIFICATION/service/getNotificationToken');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   enablePushNotification(
       String token, String userId, UserModel currentUser) async {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       userService.addUserToken(token: token, userId: userId, user: currentUser);
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userId, 'NOTIFICATION/service/getNotificationToken');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'NOTIFICATION/service/getNotificationToken');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   sendPushNotification({
-    @required String message,
-    @required String messageType,
-    @required String sender,
-    @required String senderId,
-    @required String recieverId,
-    @required String title,
-    @required List<String> tokens,
-    @required String prayerId,
-    @required String groupId,
+    required String message,
+    required String messageType,
+    required String sender,
+    required String senderId,
+    required String recieverId,
+    required String title,
+    required List<String> tokens,
+    required String prayerId,
+    required String groupId,
   }) async {
     final _notificationId = Uuid().v1();
     // var tokens = await getNotificationToken(recieverId);
 
     var data = PushNotificationModel(
+      id: _notificationId,
       messageType: messageType,
       message: message,
       sender: sender,
@@ -97,25 +104,26 @@ class NotificationService {
       groupId: groupId,
     );
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _pushNotificationCollectionReference
           .doc(_notificationId)
           .set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, senderId, 'NOTIFICATION/service/addPushNotification');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), senderId,
+          'NOTIFICATION/service/addPushNotification');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   addSMS({
-    String senderId,
-    String message,
-    String sender,
-    String phoneNumber,
-    String title,
-    MessageTemplate template,
-    String receiver,
+    required String senderId,
+    required String message,
+    required String sender,
+    required String phoneNumber,
+    required String title,
+    required MessageTemplate template,
+    required String receiver,
   }) async {
     final _smsId = Uuid().v1();
     var _templateBody = template.templateBody;
@@ -126,6 +134,7 @@ class NotificationService {
     _templateBody =
         _templateBody.replaceAll("{Link}", 'https://www.bestillapp.com/');
     var data = MessageModel(
+        id: _smsId,
         email: '',
         phoneNumber: phoneNumber,
         isSent: 0,
@@ -141,25 +150,28 @@ class NotificationService {
         subject: '',
         country: FlavorConfig.instance.values.country);
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
       locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
+          StringUtils.getErrorMessage(e) != null
+              ? StringUtils.getErrorMessage(e)
+              : e.toString(),
           senderId,
           'NOTIFICATION/service/addSMS');
-      throw HttpException(e.message);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   addEmail({
-    String senderId,
-    String message,
-    String sender,
-    String email,
-    String title,
-    String receiver,
-    MessageTemplate template,
+    required String senderId,
+    required String message,
+    required String sender,
+    required String email,
+    required String title,
+    required String receiver,
+    required MessageTemplate template,
   }) async {
     final _emailId = Uuid().v1();
     var templateSubject = template.templateSubject;
@@ -172,6 +184,7 @@ class NotificationService {
         "{Link}", "<a href='https://www.bestillapp.com/'>Learn more.</a>");
 
     var data = MessageModel(
+        id: _emailId,
         email: email,
         phoneNumber: '',
         isSent: 0,
@@ -187,14 +200,17 @@ class NotificationService {
         subject: templateSubject,
         country: '');
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
       locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
+          StringUtils.getErrorMessage(e) != null
+              ? StringUtils.getErrorMessage(e)
+              : e.toString(),
           senderId,
           'NOTIFICATION/service/addEmail');
-      throw HttpException(e.message);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
@@ -218,11 +234,13 @@ class NotificationService {
     String selectedDayOfMonth,
   ) async {
     final _notificationId = Uuid().v1();
-    String deviceId;
+    String deviceId = '';
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _localNotificationCollectionReference.doc(_notificationId).set(
             LocalNotificationModel(
+              id: _notificationId,
               type: type,
               description: description,
               frequency: frequency,
@@ -243,9 +261,9 @@ class NotificationService {
             ).toJson(),
           );
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, deviceId, 'NOTIFICATION/service/addLocalNotification');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), deviceId,
+          'NOTIFICATION/service/addLocalNotification');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
@@ -262,9 +280,10 @@ class NotificationService {
     String selectedMonth,
     String selectedDayOfMonth,
   ) async {
-    String deviceId;
+    String deviceId = '';
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _localNotificationCollectionReference.doc(notificationId).update({
         'Frequency': frequency,
         'Period': period,
@@ -278,86 +297,92 @@ class NotificationService {
         'SelectedDayOfMonth': selectedDayOfMonth,
       });
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, deviceId, 'NOTIFICATION/service/updateLocalNotification');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), deviceId,
+          'NOTIFICATION/service/updateLocalNotification');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   updatePushNotification(String _notificationId) {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _pushNotificationCollectionReference
           .doc(_notificationId)
           .update({'Status': Status.inactive});
     } catch (e) {
-      locator<LogService>().createLog(e.message, _notificationId,
-          'NOTIFICATION/service/updatePushNotification');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          _notificationId, 'NOTIFICATION/service/updatePushNotification');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future deletePrayerTime(String prayerTimeId) async {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _prayerTimeCollectionReference.doc(prayerTimeId).delete();
     } catch (e) {
       locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
+          StringUtils.getErrorMessage(e) != null
+              ? StringUtils.getErrorMessage(e)
+              : e.toString(),
           prayerTimeId,
           'PRAYER/service/deletePrayerTime');
-      throw HttpException(e.message);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   removeLocalNotification(String notificationId) async {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message != null ? e.message : e.toString(),
-          notificationId,
-          'NOTIFICATION/service/removeLocalNotification');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          notificationId, 'NOTIFICATION/service/removeLocalNotification');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Stream<List<LocalNotificationModel>> getLocalNotifications(String userId) {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Stream.error(StringUtils.unathorized);
       return _localNotificationCollectionReference
           .where('UserId', isEqualTo: userId)
           .snapshots()
           .map((e) => e.docs
-              .map((doc) => LocalNotificationModel.fromData(doc))
+              .map((doc) => LocalNotificationModel.fromData(doc.data(), doc.id))
               .toList());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userId, 'NOTIFICATION/service/getLocalNotifications');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'NOTIFICATION/service/getLocalNotifications');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Stream<List<PushNotificationModel>> getUserNotifications(String userId) {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Stream.error(StringUtils.unathorized);
       return _pushNotificationCollectionReference
           .where('RecieverId', isEqualTo: userId)
           .snapshots()
           .map((e) => e.docs
-              .map((doc) => PushNotificationModel.fromData(doc))
+              .map((doc) => PushNotificationModel.fromData(doc.data(), doc.id))
               .toList());
     } catch (e) {
-      locator<LogService>().createLog(
-          e.message, userId, 'NOTIFICATION/service/getUserNotifications');
-      throw HttpException(e.message);
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'NOTIFICATION/service/getUserNotifications');
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future clearNotification(List<String> ids) async {
     try {
-      if (_firebaseAuth.currentUser == null) return null;
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
       for (int i = 0; i < ids.length; i++) {
         await _pushNotificationCollectionReference
             .doc(ids[i])
@@ -365,10 +390,10 @@ class NotificationService {
       }
     } catch (e) {
       for (int i = 0; i < ids.length; i++) {
-        locator<LogService>().createLog(
-            e.message, ids[i], 'NOTIFICATION/service/clearNotification');
+        locator<LogService>().createLog(StringUtils.getErrorMessage(e), ids[i],
+            'NOTIFICATION/service/clearNotification');
       }
-      throw HttpException(e.message);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 }

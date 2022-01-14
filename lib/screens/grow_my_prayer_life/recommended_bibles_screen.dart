@@ -25,7 +25,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<MiscProvider>(context, listen: false)
@@ -50,9 +50,10 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
     AppCOntroller appCOntroller = Get.find();
 
     appCOntroller.setCurrentPage(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override

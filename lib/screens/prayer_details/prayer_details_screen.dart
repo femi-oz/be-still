@@ -34,13 +34,15 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         .setSettings(_user.id);
   }
 
-  Duration snoozeDurationinDays;
-  DateTime snoozeEndDate;
-  Duration snoozeDurationinHour;
-  Duration snoozeDurationinMinutes;
-  String durationText;
-  int snoozeDuration;
-  LocalNotificationModel _reminder;
+  Duration snoozeDurationinDays = Duration.zero;
+  DateTime snoozeEndDate = DateTime.now();
+  Duration snoozeDurationinHour = Duration.zero;
+  Duration snoozeDurationinMinutes = Duration.zero;
+  String durationText = '';
+  int snoozeDuration = 0;
+  String reminderString = '';
+  LocalNotificationModel _reminder = LocalNotificationModel.defaultValue();
+
   Widget _buildMenu() {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
@@ -48,7 +50,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         context, hasReminder, _reminder, () => updateUI(), prayerData);
   }
 
-  String reminderString;
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
@@ -57,10 +58,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
-        orElse: () => null);
-    reminderString = reminder?.notificationText ?? '';
-    if (reminder == null)
+        (reminder) => reminder.entityId == (prayerData.userPrayer.id),
+        orElse: () => LocalNotificationModel.defaultValue());
+    reminderString = reminder.notificationText;
+    if (reminder.id == null || (reminder.id).isEmpty)
       return false;
     else
       return true;
@@ -81,11 +82,12 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     return day.toString() + suffix;
   }
 
-  BuildContext selectedContext;
+  // BuildContext selectedContext;
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        setReminder();
         getSettings();
       });
       _isInit = false;
@@ -93,16 +95,21 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     super.didChangeDependencies();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-
+  setReminder() {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+
+    final reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
     _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
-        orElse: () => null);
+        (reminder) => reminder.entityId == (prayerData.userPrayer.id),
+        orElse: () => LocalNotificationModel.defaultValue());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -175,7 +182,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 ],
               ),
             ),
-            if (prayerData?.userPrayer?.isSnoozed ?? false)
+            if (prayerData.userPrayer.isSnoozed)
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 InkWell(
                   onTap: () => showDialog(
@@ -199,7 +206,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: ReminderPicker(
                                 isGroup: false,
-                                entityId: prayerData?.userPrayer?.id ?? '',
+                                entityId: prayerData.userPrayer.id,
                                 type: NotificationType.reminder,
                                 reminder: _reminder,
                                 hideActionuttons: false,
@@ -222,7 +229,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       Container(
                         margin: EdgeInsets.only(left: 7),
                         child: Text(
-                            'Snoozed until ${DateFormat('MMM').format(prayerData?.userPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData?.userPrayer?.snoozeEndDate?.day ?? 0)}, ${DateFormat('yyyy h:mm a').format(prayerData?.userPrayer?.snoozeEndDate ?? DateTime.now())}',
+                            'Snoozed until ${DateFormat('MMM').format(prayerData.userPrayer.snoozeEndDate)} ${getDayText(prayerData.userPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.userPrayer.snoozeEndDate)}',
                             style: AppTextStyles.regularText12),
                       ),
                     ],
@@ -257,8 +264,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                         vertical: 30),
                                     child: ReminderPicker(
                                       isGroup: false,
-                                      entityId:
-                                          prayerData?.userPrayer?.id ?? '',
+                                      entityId: prayerData.userPrayer.id,
                                       type: NotificationType.reminder,
                                       reminder: _reminder,
                                       hideActionuttons: false,
@@ -323,14 +329,4 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       ),
     );
   }
-}
-
-class PrayerDetailsRouteArguments {
-  final String id;
-  final bool isGroup;
-
-  PrayerDetailsRouteArguments({
-    this.id,
-    this.isGroup,
-  });
 }

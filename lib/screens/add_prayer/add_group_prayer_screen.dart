@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -45,7 +46,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   List<Contact> contactList = [];
   List<SaveOptionModel> saveOptions = [];
   String tagText = '';
-  SaveOptionModel selected;
+  SaveOptionModel selected = SaveOptionModel(id: '', name: '');
   final widgetKey = GlobalKey();
 
   AppCOntroller appCOntroller = Get.find();
@@ -53,7 +54,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance!.addPostFrameCallback((_) async {
         var userId =
             Provider.of<UserProvider>(context, listen: false).currentUser.id;
         await Provider.of<MiscProvider>(context, listen: false)
@@ -84,17 +85,16 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return;
-    _formKey.currentState.save();
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
 
     try {
-      if (_descriptionController.text == null ||
-          _descriptionController.text.trim() == '') {
+      if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
-
-        BeStilDialog.showErrorDialog(context, e, _user, null);
+        final s = StackTrace.fromString(e.stacktrace ?? '');
+        BeStilDialog.showErrorDialog(context, e, _user, s);
       } else {
         if (!Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
           await Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -235,12 +235,10 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                 .description
             : '';
 
-    if (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit &&
-        Provider.of<GroupPrayerProvider>(context, listen: false).prayerToEdit !=
-            null) {
+    if (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
       updates = Provider.of<GroupPrayerProvider>(context, listen: false)
           .prayerToEdit
-          ?.updates;
+          .updates;
       updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
       updates = updates.where((element) => element.deleteStatus != -1).toList();
       updateTextControllers = updates
@@ -282,7 +280,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     }
   }
 
-  void _onTextChange(String val, Backup backup) {
+  void _onTextChange(String val, {Backup? backup}) {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
@@ -302,7 +300,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         else
           backup.showContactDropDown = true;
 
-        setLineCount(val, backup);
+        setLineCount(val, backup!);
       } else {
         showContactList = false;
         updateTextControllers = updateTextControllers
@@ -320,7 +318,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   setContactList(String tagText) {
     tagList.clear();
     tagList = localContacts
-        .where((c) => ('@' + c.displayName ?? '')
+        .where((c) => ('@' + (c.displayName ?? ''))
             .toLowerCase()
             .contains(tagText.toLowerCase()))
         .toList();
@@ -336,7 +334,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
 
     painter.layout();
 
-    RenderBox box = widgetKey.currentContext.findRenderObject() as RenderBox;
+    RenderBox box = widgetKey.currentContext?.findRenderObject() as RenderBox;
     Offset position = box.localToGlobal(Offset.zero);
     double y = position.dy;
     numberOfLines = (_focusNode.offset.dy + painter.height + 3) - y;
@@ -357,13 +355,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
       return true;
     } else {
       appCOntroller.setCurrentPage(8, true);
-      return (Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-          false;
+      // return (Navigator.of(context).pushNamedAndRemoveUntil(
+      //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+      //     false;
+      return false;
     }
   }
 
-  Widget contactDropdown({Backup backup}) {
+  Widget contactDropdown({Backup? backup}) {
     return Positioned(
       top: numberOfLines + 10,
       child: Container(
@@ -392,8 +391,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...tagList.map((s) {
-                      final displayName = s.displayName ?? '';
-                      if (displayName.isNotEmpty) {
+                      final displayName = s.displayName;
+                      if ((displayName ?? '').isNotEmpty) {
                         return GestureDetector(
                             child: Row(
                               children: [
@@ -401,7 +400,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                   width: Get.width - 100,
                                   padding: EdgeInsets.symmetric(vertical: 10.0),
                                   child: Text(
-                                    displayName,
+                                    (displayName ?? ''),
                                     style: AppTextStyles.regularText14.copyWith(
                                       color: AppColors.lightBlue4,
                                     ),
@@ -409,7 +408,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                 ),
                               ],
                             ),
-                            onTap: () => _onTagSelected(s, backup));
+                            onTap: () => _onTagSelected(s, backup!));
                       } else {
                         return SizedBox();
                       }
@@ -435,7 +434,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     (backup == null ? _descriptionController : backup.ctrl).text =
         (backup == null ? _descriptionController : backup.ctrl)
             .text
-            .replaceFirst(tagText, s.displayName);
+            .replaceFirst(tagText, s.displayName ?? '');
     setState(() {
       if (backup == null) {
         showContactList = false;
@@ -505,7 +504,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                       onTap: () {
                         appCOntroller.setCurrentPage(8, true);
                         Navigator.pop(context);
-                        FocusManager.instance.primaryFocus.unfocus();
+                        FocusManager.instance.primaryFocus?.unfocus();
                       },
                       child: Container(
                         height: 30,
@@ -672,7 +671,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                       showSuffix: false,
                                       textInputAction: TextInputAction.newline,
                                       onTextchanged: (val) =>
-                                          _onTextChange(val, null),
+                                          _onTextChange(val),
                                       focusNode: _focusNode,
                                     ),
                                   ),
@@ -681,11 +680,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                               if (showContactList) contactDropdown()
                             ],
                           ),
-                          if (Provider.of<GroupPrayerProvider>(context,
-                                          listen: false)
-                                      .prayerToEdit !=
-                                  null &&
-                              updates.length > 0)
+                          if (updates.length > 0)
                             ...updates.map(
                               (e) => Padding(
                                 padding: EdgeInsets.only(top: 20),
@@ -711,9 +706,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                         style: AppTextStyles.regularText15,
                                         cursorColor: AppColors.lightBlue4,
                                         onChanged: (val) {
-                                          _onTextChange(
-                                              val,
-                                              updateTextControllers[
+                                          _onTextChange(val,
+                                              backup: updateTextControllers[
                                                   updates.indexOf(e)]);
                                         },
                                         decoration: InputDecoration(

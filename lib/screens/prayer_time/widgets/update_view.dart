@@ -54,12 +54,14 @@ class _UpdateViewState extends State<UpdateView> {
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),

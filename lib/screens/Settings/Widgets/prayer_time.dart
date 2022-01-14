@@ -29,8 +29,6 @@ class PrayerTimeSettings extends StatefulWidget {
 }
 
 class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
-  BuildContext bcontext;
-
   @override
   void initState() {
     super.initState();
@@ -49,7 +47,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   double itemExtent = 30.0;
   bool showUpdateField = false;
-  LocalNotificationModel reminder;
+  LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
 
   _deletePrayerTime(
     int localNotificationId,
@@ -351,7 +349,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                       isGroup: false,
                                       entityId: '',
                                       type: NotificationType.prayer_time,
-                                      reminder: null,
+                                      reminder:
+                                          LocalNotificationModel.defaultValue(),
                                       hideActionuttons: false,
                                       onCancel: () => Navigator.pop(context),
                                     ),

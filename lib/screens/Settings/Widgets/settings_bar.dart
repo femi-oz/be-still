@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
-  SettingsAppBar({this.title = 'SETTINGS', Key key})
+  SettingsAppBar({this.title = 'SETTINGS', Key? key})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 

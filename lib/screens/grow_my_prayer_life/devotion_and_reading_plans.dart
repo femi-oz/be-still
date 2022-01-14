@@ -25,7 +25,7 @@ class DevotionPlans extends StatefulWidget {
 class _DevotionPlansState extends State<DevotionPlans> {
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<MiscProvider>(context, listen: false)
@@ -170,9 +170,10 @@ class _DevotionPlansState extends State<DevotionPlans> {
     AppCOntroller appCOntroller = Get.find();
 
     appCOntroller.setCurrentPage(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override

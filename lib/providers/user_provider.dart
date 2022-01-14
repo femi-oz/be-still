@@ -8,18 +8,18 @@ class UserProvider with ChangeNotifier {
   UserService _userService = locator<UserService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  UserModel _currentUser;
+  UserModel _currentUser = UserModel.defaultValue();
   UserModel get currentUser => _currentUser;
 
-  UserModel _selectedUser;
+  UserModel _selectedUser = UserModel.defaultValue();
   UserModel get selectedUser => _selectedUser;
 
-  List<UserModel> _allUsers;
+  List<UserModel> _allUsers = <UserModel>[];
   List<UserModel> get allUsers => _allUsers;
 
   Future setCurrentUser(bool isLocalAuth) async {
-    var keyRefernence = _firebaseAuth.currentUser.uid;
-    _currentUser = await _userService.getCurrentUser(keyRefernence);
+    final keyRefernence = _firebaseAuth.currentUser?.uid;
+    _currentUser = await _userService.getCurrentUser(keyRefernence ?? '');
     notifyListeners();
   }
 
@@ -38,14 +38,17 @@ class UserProvider with ChangeNotifier {
 
   Future setAllUsers(String userId) async {
     _userService.getAllUsers().then((e) {
-      _allUsers =
-          e.where((e) => e.firstName != null || e.lastName != null).toList();
+      _allUsers = e
+          // .where((e) => e.firstName.isNotEmpty || e.lastName.isNotEmpty)
+          .toList();
       _allUsers = _allUsers.where((e) => e.id != userId).toList();
       notifyListeners();
     });
   }
 
-  Future<void> clearCurrentUser() => _currentUser = null;
+  void clearCurrentUser() {
+    _currentUser = UserModel.defaultValue();
+  }
 
   updateEmail(String newEmail, String userId) async {
     await _userService.updateEmail(newEmail, userId);

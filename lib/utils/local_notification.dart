@@ -10,8 +10,8 @@ import 'package:timezone/timezone.dart' as tz;
 class LocalNotification {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  static String reminderId;
-  static int localNotificationID;
+  static String reminderId = '';
+  static int localNotificationID = 0;
   static List<String> daysOfWeek = [
     DaysOfWeek.mon,
     DaysOfWeek.tue,
@@ -58,13 +58,13 @@ class LocalNotification {
   }
 
   static Future<void> setLocalNotification({
-    @required String title,
-    @required String description,
-    @required tz.TZDateTime scheduledDate,
-    @required payload,
-    @required String frequency,
-    @required BuildContext context,
-    int localNotificationId,
+    required String title,
+    required String description,
+    required tz.TZDateTime scheduledDate,
+    required payload,
+    required String frequency,
+    required BuildContext context,
+    int? localNotificationId,
   }) async {
     if (localNotificationId != null)
       localNotificationID = localNotificationId;

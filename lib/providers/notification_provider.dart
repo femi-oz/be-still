@@ -42,7 +42,7 @@ class NotificationProvider with ChangeNotifier {
 
   List<LocalNotificationModel> _localNotifications = [];
   List<LocalNotificationModel> get localNotifications => _localNotifications;
-  NotificationMessage _message;
+  NotificationMessage _message = NotificationMessage.defaultValue();
   NotificationMessage get message => _message;
 
   Future<void> initLocal(BuildContext context) async {
@@ -60,8 +60,8 @@ class NotificationProvider with ChangeNotifier {
         onSelectNotification: _onSelectNotification);
   }
 
-  Future _onSelectNotification(String payload) async {
-    _message = NotificationMessage.fromData(jsonDecode(payload));
+  Future _onSelectNotification(String? payload) async {
+    _message = NotificationMessage.fromData(jsonDecode(payload ?? ''));
     print('message -- prov _onSelectNotification ===> $_message');
   }
 
@@ -85,7 +85,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> clearMessage() async {
-    _message = null;
+    _message = NotificationMessage.defaultValue();
   }
 
   Future<void> setUserNotifications(String userId) async {

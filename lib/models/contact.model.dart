@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class ContactModel {
   final String id;
@@ -8,16 +7,23 @@ class ContactModel {
   final String displayName;
 
   const ContactModel({
-    this.id,
-    @required this.email,
-    @required this.phoneNumber,
-    @required this.displayName,
+    required this.id,
+    required this.email,
+    required this.phoneNumber,
+    required this.displayName,
   });
-  ContactModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        email = snapshot.data()['Email'],
-        phoneNumber = snapshot.data()['PhoneNumber'],
-        displayName = snapshot.data()['DisplayName'];
+
+  factory ContactModel.fromData(Map<String, dynamic> data, String did) {
+    final id = did;
+    final email = data['Email'] ?? '';
+    final phoneNumber = data['PhoneNumber'] ?? '';
+    final displayName = data['DisplayName'] ?? '';
+    return ContactModel(
+        id: id,
+        email: email,
+        phoneNumber: phoneNumber,
+        displayName: displayName);
+  }
 
   Map<String, dynamic> toJson() {
     return {

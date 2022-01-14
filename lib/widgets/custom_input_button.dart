@@ -10,11 +10,11 @@ class CustomOutlineButton extends StatelessWidget {
   final String icon;
   final Color textColor;
   CustomOutlineButton({
-    this.actionText,
+    required this.actionText,
     this.actionColor = AppColors.lightBlue4,
-    this.textColor,
-    this.value,
-    this.onPressed,
+    required this.textColor,
+    required this.value,
+    required this.onPressed,
     this.textIcon = '',
     this.icon = '',
   });

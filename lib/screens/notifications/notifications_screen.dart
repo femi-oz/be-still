@@ -28,7 +28,6 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  BuildContext bcontext;
   final SlidableController slidableController = SlidableController();
 
   @override
@@ -49,7 +48,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(_user?.id);
+          .setUserNotifications(_user.id);
       // await Provider.of<GroupProvider>(context, listen: false)
       //     .setUserGroups(_user.id);
     } on HttpException catch (_) {
@@ -120,7 +119,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(message.capitalizeFirst,
+                    Text(message.capitalizeFirst ?? '',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
@@ -310,7 +309,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           groupId,
           senderId,
           groupRequest.id,
-          requestor.firstName + ' ' + requestor.lastName);
+          (requestor.firstName) + ' ' + (requestor.lastName));
       await deleteNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
@@ -332,7 +331,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return SafeArea(
       child: Scaffold(
         appBar: NotificationBar(),
@@ -398,7 +396,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               notification.createdBy,
                               notification.id,
                               notification.createdBy,
-                              snapshot.data.group),
+                              (snapshot.data ??
+                                      CombineGroupUserStream.defaultValue())
+                                  .group),
                           child: Container(
                             margin: EdgeInsets.only(left: 20.0),
                             decoration: BoxDecoration(
@@ -435,7 +435,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                               children: <Widget>[
                                                 notification.sender != ''
                                                     ? Text(
-                                                        snapshot.data.group.name
+                                                        (snapshot.data ??
+                                                                CombineGroupUserStream
+                                                                    .defaultValue())
+                                                            .group
+                                                            .name
                                                             .toUpperCase(),
                                                         style: AppTextStyles
                                                             .regularText15b
@@ -533,7 +537,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             MediaQuery.of(context).size.width *
                                                 0.8,
                                         child: Text(
-                                          notification.message.capitalizeFirst
+                                          (notification.message
+                                                      .capitalizeFirst ??
+                                                  '')
                                               .substring(0,
                                                   notification.message.length),
                                           style: AppTextStyles.regularText16b
@@ -657,7 +663,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            snapshot.data.group
+                                                            (snapshot.data ??
+                                                                    CombineGroupUserStream
+                                                                        .defaultValue())
+                                                                .group
                                                                 .name,
                                                             style: AppTextStyles
                                                                 .regularText15b
@@ -1142,8 +1151,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     children: <Widget>[
                                                       notification.sender != ''
                                                           ? Text(
-                                                              snapshot.data
-                                                                  .group.name,
+                                                              (snapshot.data ??
+                                                                      CombineGroupUserStream
+                                                                          .defaultValue())
+                                                                  .group
+                                                                  .name,
                                                               style: AppTextStyles
                                                                   .regularText15b
                                                                   .copyWith(
@@ -1666,7 +1678,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            snapshot.data.group
+                                                            (snapshot.data ??
+                                                                    CombineGroupUserStream
+                                                                        .defaultValue())
+                                                                .group
                                                                 .name,
                                                             style: AppTextStyles
                                                                 .regularText15b

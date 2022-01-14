@@ -8,10 +8,10 @@ class CustomToggle extends StatelessWidget {
   final bool value;
   final bool hasText;
   final bool disabled;
-  final String title;
+  final String? title;
   CustomToggle(
-      {this.value,
-      this.onChange,
+      {required this.value,
+      required this.onChange,
       this.title,
       this.hasText = true,
       this.disabled = false});
@@ -26,7 +26,7 @@ class CustomToggle extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width * 0.7,
               child: Text(
-                title,
+                title ?? '',
                 style: AppTextStyles.regularText15.copyWith(
                   color:
                       AppColors.textFieldText.withOpacity(disabled ? 0.3 : 1),

@@ -49,7 +49,8 @@ class _GroupToolsState extends State<GroupTools> {
     await Provider.of<UserProvider>(context, listen: false)
         .getUserById(admin.userId);
     final id = data.groupUsers
-        .firstWhere((e) => e.userId == _currentUser.id, orElse: () => null)
+        .firstWhere((e) => e.userId == _currentUser.id,
+            orElse: () => GroupUserModel.defaultValue())
         .id;
     if (id != null) {
       await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);

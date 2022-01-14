@@ -8,6 +8,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -246,14 +247,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
       BeStilDialog.showErrorDialog(context, e, user, s);
     } catch (e, s) {
-      print(e.message);
-      var message = '';
-      if (e.message ==
+      String message = StringUtils.getErrorMessage(e);
+      if (message ==
           'The email address is already in use by another account.') {
         message =
             'That email address is already in use. Please select another email.';
-      } else {
-        message = e.message;
       }
 
       final user =
@@ -520,7 +518,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               isRequired: true,
                               label: 'Confirm New Password',
                               controller: _newConfirmPassword,
-                              validator: (value) {
+                              validator: (String? value) {
                                 if (_newPassword.text != value) {
                                   return 'Password fields do not match';
                                 }
@@ -569,8 +567,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ),
                           onPressed: () {
                             setState(() => _autoValidate = true);
-                            if (!_formKey.currentState.validate()) return null;
-                            _formKey.currentState.save();
+                            if (!_formKey.currentState!.validate()) return null;
+                            _formKey.currentState!.save();
                             _verifyPassword(
                               _user,
                               type,

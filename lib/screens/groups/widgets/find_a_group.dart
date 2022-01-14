@@ -15,12 +15,8 @@ import 'package:provider/provider.dart';
 class FindAGroup extends StatefulWidget {
   static const routeName = '/find-group';
 
-  final Function(int, bool) setCurrentIndex;
-
   @override
-  FindAGroup({
-    this.setCurrentIndex,
-  });
+  FindAGroup();
 
   @override
   _FindAGroupState createState() => _FindAGroupState();
@@ -47,9 +43,10 @@ class _FindAGroupState extends State<FindAGroup> {
   Future<bool> _onWillPop() async {
     AppCOntroller appCOntroller = Get.find();
     appCOntroller.setCurrentPage(3, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override

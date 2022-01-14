@@ -14,10 +14,7 @@ class OtherMemberPrayerMenu extends StatefulWidget {
 }
 
 class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
-  BuildContext bcontext;
-
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,

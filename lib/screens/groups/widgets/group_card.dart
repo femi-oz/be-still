@@ -62,7 +62,7 @@ class _GroupCardState extends State<GroupCard> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<GroupProvider>(context, listen: false).autoJoinGroup(
-          groupId, user.id, user.firstName + ' ' + user.lastName);
+          groupId, user.id, (user.firstName) + ' ' + (user.lastName));
       Navigator.of(context).pop();
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(3, true);
@@ -312,7 +312,7 @@ class _GroupCardState extends State<GroupCard> {
                                               listen: false)
                                           .currentUser
                                           .id,
-                                      '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
+                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName) + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName)}',
                                       adminData,
                                     );
                                   }
