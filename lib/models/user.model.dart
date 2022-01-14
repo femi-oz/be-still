@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class UserModel {
   String id;
@@ -100,7 +101,7 @@ class UserModel {
 }
 
 class UserVerify {
-  final String error;
+  final PlatformException? error;
   final bool needsVerification;
   UserVerify({required this.error, required this.needsVerification});
 }

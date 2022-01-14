@@ -23,8 +23,8 @@ class AuthenticationProvider with ChangeNotifier {
       throw HttpException(message);
     }
     if (response.error != null) {
-      var e = response.error as FirebaseAuthException;
-      final message = StringUtils.generateExceptionMessage(e.code);
+      final e = response.error;
+      final message = StringUtils.generateExceptionMessage(e?.code);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/signIn');
       throw HttpException(message);

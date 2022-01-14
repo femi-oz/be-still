@@ -10,6 +10,7 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
@@ -140,7 +141,8 @@ class _AddUpdateState extends State<AddUpdate> {
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, e, user, s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
             .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
@@ -164,12 +166,14 @@ class _AddUpdateState extends State<AddUpdate> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 

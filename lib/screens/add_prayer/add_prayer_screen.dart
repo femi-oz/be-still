@@ -12,6 +12,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class _AddPrayerState extends State<AddPrayer> {
   List<Contact> contactList = [];
   List<SaveOptionModel> saveOptions = [];
   String tagText = '';
-  SaveOptionModel selected = SaveOptionModel(id: '', name: 'My Prayers');
+  SaveOptionModel? selected;
   final widgetKey = GlobalKey();
 
   @override
@@ -98,10 +99,12 @@ class _AddPrayerState extends State<AddPrayer> {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, e, user, s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       } else {
         if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
-          if ((selected.name).isEmpty || (selected.name) == 'My Prayers') {
+          if ((selected?.name ?? '').isEmpty ||
+              (selected?.name) == 'My Prayers') {
             await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
               _descriptionController.text,
               _user.id,
@@ -112,7 +115,7 @@ class _AddPrayerState extends State<AddPrayer> {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
-              (selected.id),
+              (selected?.id ?? ''),
               '${_user.firstName} ${_user.lastName}',
               _backupDescription,
               _user.id,
@@ -125,12 +128,12 @@ class _AddPrayerState extends State<AddPrayer> {
               await Provider.of<GroupPrayerProvider>(context, listen: false)
                   .setFollowedPrayer(prayerId);
               await Provider.of<GroupProvider>(context, listen: false)
-                  .setCurrentGroupById(selected.id, _user.id);
+                  .setCurrentGroupById(selected?.id ?? '', _user.id);
               await Provider.of<NotificationProvider>(context, listen: false)
                   .sendPrayerNotification(
                 prayerId,
                 NotificationType.prayer,
-                selected.id,
+                selected?.id ?? '',
                 context,
                 _descriptionController.text,
               );
@@ -138,7 +141,8 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           if (contactList.length > 0) {
-            if ((selected.name).isEmpty || (selected.name) == 'My Prayers') {
+            if ((selected?.name ?? '').isEmpty ||
+                (selected?.name) == 'My Prayers') {
               await Provider.of<PrayerProvider>(context, listen: false)
                   .addPrayerTag(
                       contactList, _user, _descriptionController.text, '');
@@ -221,12 +225,14 @@ class _AddPrayerState extends State<AddPrayer> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -266,11 +272,14 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
-      userGroups.forEach((element) {
+      // userGroups.forEach((element) {
+      for (final element in userGroups) {
         final option =
             new SaveOptionModel(id: element.group.id, name: element.group.name);
         saveOptions.add(option);
-      });
+      }
+      // });
+
     }
     super.initState();
   }

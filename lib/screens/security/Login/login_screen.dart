@@ -279,7 +279,8 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
@@ -289,7 +290,8 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       PlatformException err = PlatformException(
           code: 'custom', message: 'An error occured. Please try again.');
-      BeStilDialog.showErrorDialog(context, err, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(err),
+          UserModel.defaultValue(), s);
     }
   }
 
@@ -322,7 +324,8 @@ class _LoginScreenState extends State<LoginScreen> {
               .needsVerification;
 
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
@@ -331,7 +334,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     }
   }
 
@@ -354,13 +358,15 @@ class _LoginScreenState extends State<LoginScreen> {
         await setRouteDestination();
       }
     } on HttpException catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       PlatformException er = PlatformException(
           code: 'custom', message: 'An error occured. Please try again');
-      BeStilDialog.showErrorDialog(context, er, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(er),
+          UserModel.defaultValue(), s);
     }
   }
 

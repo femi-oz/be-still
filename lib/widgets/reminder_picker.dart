@@ -11,6 +11,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -145,21 +146,35 @@ class _ReminderPickerState extends State<ReminderPicker> {
     String notificationText,
     String selectedYear,
   ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      selectedFrequency,
-      scheduledDate,
-      selectedDay,
-      selectedPeriod,
-      selectedHour,
-      selectedMinute,
-      widget.reminder?.id ?? '',
-      userId,
-      notificationText,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth.toString(),
-    );
+    try {
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .updateLocalNotification(
+        selectedFrequency,
+        scheduledDate,
+        selectedDay,
+        selectedPeriod,
+        selectedHour,
+        selectedMinute,
+        widget.reminder?.id ?? '',
+        userId,
+        notificationText,
+        selectedYear,
+        selectedMonth,
+        selectedDayOfMonth.toString(),
+      );
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
 
     setState(() {});
     if (widget.type == NotificationType.reminder) {
@@ -200,7 +215,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final e = PlatformException(
           code: '', message: 'Please select a date in the future.');
       final s = StackTrace.fromString(e.message ?? '');
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e.message), user, s);
       return;
     }
     try {
@@ -291,12 +307,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -317,12 +335,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 

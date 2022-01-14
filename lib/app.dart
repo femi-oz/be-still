@@ -14,6 +14,7 @@ import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -116,7 +117,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     }
   }
 

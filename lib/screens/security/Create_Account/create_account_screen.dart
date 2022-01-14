@@ -79,7 +79,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           code: 'custom',
           message: 'You must accept terms to create an account.');
       final s = StackTrace.fromString(e.stacktrace ?? '');
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
       return;
     }
     setState(() => _autoValidate = true);
@@ -94,14 +95,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             code: 'custom',
             message: 'First Name is empty, please enter a valid name.');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+            UserModel.defaultValue(), s);
       } else if (_lastnameController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom',
             message: 'Last Name is empty, please enter a valid name.');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+            UserModel.defaultValue(), s);
       } else {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .registerUser(
@@ -138,14 +141,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       PlatformException er =
           PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(context, er, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(er),
+          UserModel.defaultValue(), s);
     } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
 
       BeStilDialog.hideLoading(context);
 
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     }
   }
 

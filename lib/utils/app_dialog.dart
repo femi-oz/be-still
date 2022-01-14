@@ -6,6 +6,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 
 import 'essentials.dart';
 
@@ -55,24 +56,20 @@ class BeStilDialog {
     Navigator.pop(context);
   }
 
-  static Future showErrorDialog(BuildContext context, dynamic error,
+  static Future showErrorDialog(BuildContext context, String error,
       UserModel user, StackTrace stackTrace) async {
-    var hasProperty = false;
-    try {
-      (error as PlatformException).message;
-      hasProperty = true;
-    } on NoSuchMethodError {}
+    // bool hasProperty = false;
+    // try {
+    //   (error as PlatformException).message;
+    //   hasProperty = true;
+    // } on NoSuchMethodError {}
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
         type: AlertType.error,
         confirmText: 'OK',
-        message: error == null
-            ? StringUtils.generateExceptionMessage(null)
-            : !hasProperty
-                ? StringUtils.generateExceptionMessage(null)
-                : error?.message,
+        message: error.capitalizeFirst ?? '',
       ),
     );
     FirebaseCrashlytics.instance.setUserIdentifier(user.id);

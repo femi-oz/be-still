@@ -7,7 +7,7 @@ class BsRaisedButton extends StatelessWidget {
   final BsRaisedButtonType type;
   final FontWeight fontWeight;
   final double fontSize;
-  final double width;
+  // final double width;
   final bool applyBold;
   final bool fullWidth;
   final bool hasCorners;
@@ -18,7 +18,7 @@ class BsRaisedButton extends StatelessWidget {
 
   const BsRaisedButton({
     Key? key,
-    this.width = 0,
+    // this.width = 0,
     this.size = BsRaisedButtonSize.normal,
     this.type = BsRaisedButtonType.primary,
     this.fontWeight = FontWeight.bold,
@@ -40,7 +40,7 @@ class BsRaisedButton extends StatelessWidget {
         elevation: MaterialStateProperty.all<double>(0.0),
       ),
       child: Container(
-        width: fullWidth ? double.maxFinite : width,
+        // width: fullWidth ? double.maxFinite : width,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           gradient: LinearGradient(

@@ -74,18 +74,18 @@ class AuthenticationService {
         throw HttpException(e.code);
       }
       return UserVerify(
-          error: '',
+          error: null,
           needsVerification:
               needsVerification); //{'error': '', 'needsVerification': needsVerification};
     } on FirebaseException catch (e) {
       return UserVerify(
-          error: StringUtils.generateExceptionMessage(e.code),
+          error: e as PlatformException,
           needsVerification:
               needsVerification); // {'error': e, 'needsVerification': needsVerification};
 
     } catch (e) {
       return UserVerify(
-          error: StringUtils.getErrorMessage(e),
+          error: e as PlatformException,
           needsVerification:
               needsVerification); // {'error': e, 'needsVerification': needsVerification};
     }

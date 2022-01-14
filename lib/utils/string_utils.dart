@@ -58,9 +58,10 @@ class StringUtils {
       " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
   static String unathorized =
       "You're unathorized to perform this action. Kindly log in";
-  static String getErrorMessage(err) {
-    final e = (err as PlatformException);
-    return (e.message != null ? e.message : e.toString()) ?? '';
+  static String getErrorMessage(e) {
+    // final e = (err as Exception);
+    // return (e.message != null ? e.message : e.toString()) ?? '';
+    return e.toString();
   }
 
   static generateExceptionMessage(exceptionCode) {

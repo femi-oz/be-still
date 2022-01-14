@@ -71,7 +71,8 @@ class _SplashScreenState extends State<SplashScreen>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     }
   }
 
