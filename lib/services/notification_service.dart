@@ -362,6 +362,23 @@ class NotificationService {
     }
   }
 
+  Stream<List<PushNotificationModel>> getAllNotifications() {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Stream.error(StringUtils.unathorized);
+      return _pushNotificationCollectionReference
+          .where('Status', isEqualTo: Status.active)
+          .snapshots()
+          .map((e) => e.docs
+              .map((doc) => PushNotificationModel.fromData(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), '',
+          'NOTIFICATION/service/getotifications');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future clearNotification(List<String> ids) async {
     try {
       if (_firebaseAuth.currentUser == null)

@@ -190,7 +190,9 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   void _unFollowPrayer() async {
-    // BeStilDialog.showLoading(context);
+    BeStilDialog.showLoading(context);
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .setFollowedPrayer(widget.prayerData.prayer.id);
 
     try {
       final _userId =
@@ -203,13 +205,13 @@ class _PrayerCardState extends State<PrayerCard> {
                       element.prayerId == widget.prayerData.prayer.id &&
                       element.createdBy == _userId,
                   orElse: () => FollowedPrayerModel.defaultValue());
-      // BeStilDialog.hideLoading(context);
       if ((followedPrayer.id).isNotEmpty)
         await Provider.of<GroupPrayerProvider>(context, listen: false)
             .removeFromMyList(
                 followedPrayer.id, widget.prayerData.userPrayer.id);
+      BeStilDialog.hideLoading(context);
     } catch (e, s) {
-      // BeStilDialog.hideLoading(context);
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
@@ -561,21 +563,7 @@ class _PrayerCardState extends State<PrayerCard> {
         secondaryActions: <Widget>[
           if (isAdmin || !showOption)
             _buildSlideItem(Icons.star, 'Unfollow', () async {
-              BeStilDialog.showLoading(context);
-              await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .setFollowedPrayer(widget.prayerData.prayer.id);
-              Future.delayed(Duration(seconds: 2), () {
-                // followedPrayer = Provider.of<GroupPrayerProvider>(context,
-                //         listen: false)
-                //     .followedPrayers
-                //     .firstWhere(
-                //         (element) =>
-                //             element.prayerId == widget.prayerData.prayer.id &&
-                //             element.createdBy == _user.id,
-                //         orElse: () => FollowedPrayerModel());
-                // if ((followedPrayer.id).isNotEmpty)
-                _unFollowPrayer();
-              });
+              _unFollowPrayer();
             }, false),
           if (showOption)
             _buildSlideItem(

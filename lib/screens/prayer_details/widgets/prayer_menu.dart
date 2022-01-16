@@ -137,7 +137,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       element.createdBy == _userId,
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .removeFromMyList(followedPrayer.id, widget.prayerData.userPrayer.id);
+          .removeFromMyList(followedPrayer.id, widget.prayerData.prayer.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(_userId);
       BeStilDialog.hideLoading(context);

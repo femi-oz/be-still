@@ -52,7 +52,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   String newGroupId = '';
 
-  void _save(isEdit, group) async {
+  void _save(bool isEdit, CombineGroupUserStream group) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState!.validate()) return null;
     _formKey.currentState!.save();
@@ -60,6 +60,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     BeStilDialog.showLoading(context);
 
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final settingsId = Provider.of<GroupProvider>(context, listen: false)
+        .currentGroup
+        .groupSettings
+        .id;
     GroupModel groupData = GroupModel(
       id: Uuid().v1(),
       name: _groupNameController.text,
@@ -91,10 +95,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         groupData,
         group.group.id,
         _requireAdminApproval,
-        Provider.of<GroupProvider>(context, listen: false)
-            .currentGroup
-            .groupSettings
-            .id,
+        settingsId,
         _user.id,
       );
       await Provider.of<GroupPrayerProvider>(context, listen: false)

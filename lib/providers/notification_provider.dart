@@ -85,6 +85,18 @@ class NotificationProvider with ChangeNotifier {
     _message = NotificationMessage.defaultValue();
   }
 
+  Future<void> setNotifications() async {
+    if (_firebaseAuth.currentUser == null) return null;
+    _notificationService
+        .getAllNotifications()
+        .asBroadcastStream()
+        .listen((notifications) {
+      _notifications = notifications;
+
+      notifyListeners();
+    });
+  }
+
   Future<void> setUserNotifications(String userId) async {
     if (_firebaseAuth.currentUser == null) return null;
     _notificationService

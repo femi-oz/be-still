@@ -56,6 +56,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   void didChangeDependencies() async {
     await Provider.of<GroupPrayerProvider>(context, listen: false)
         .setFollowedPrayer(widget.prayerData.prayer.id);
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .setNotifications();
     super.didChangeDependencies();
   }
 
@@ -164,15 +166,26 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
   _onDelete() async {
     BeStilDialog.showLoading(context);
+
     try {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) => e.entityId == widget.prayerData.prayer.id)
               .toList();
+      var pushNotifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .notifications
+              .where((element) =>
+                  element.prayerId == widget.prayerData.prayer.id ||
+                  element.groupId == widget.prayerData.groupPrayer.groupId);
+
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id));
+      pushNotifications.forEach((e) async =>
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .updateNotification(e.id));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .deletePrayer(
               widget.prayerData.groupPrayer.id, widget.prayerData.prayer.id);
