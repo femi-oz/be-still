@@ -3,7 +3,6 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -17,7 +16,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -169,7 +167,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         final notifications =
             Provider.of<NotificationProvider>(context, listen: false)
                 .localNotifications;
-        if (userId != null)
+        if (userId.isNotEmpty)
           Provider.of<PrayerProvider>(context, listen: false)
               .checkPrayerValidity(userId, notifications);
         print(
@@ -182,7 +180,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
         var message =
             Provider.of<NotificationProvider>(context, listen: false).message;
-        if (message != null) {
+        if (message.entityId.isNotEmpty) {
           print('AppLifecycleState resume ===> ${message.entityId}');
           await gotoPage(message);
           Provider.of<NotificationProvider>(context, listen: false)

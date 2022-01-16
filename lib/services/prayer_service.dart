@@ -100,11 +100,7 @@ class PrayerService {
       });
     } catch (e) {
       locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userId,
-          'PRAYER/service/getPrayers');
+          StringUtils.getErrorMessage(e), userId, 'PRAYER/service/getPrayers');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -161,11 +157,7 @@ class PrayerService {
       return _combineStream;
     } catch (e) {
       locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerID,
-          'PRAYER/service/getPrayer');
+          StringUtils.getErrorMessage(e), prayerID, 'PRAYER/service/getPrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -193,11 +185,7 @@ class PrayerService {
           .set(populateUserPrayer(userId, newPrayerId, userPrayerID).toJson());
     } catch (e) {
       await locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userId,
-          'PRAYER/service/addPrayer');
+          StringUtils.getErrorMessage(e), userId, 'PRAYER/service/addPrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -251,11 +239,7 @@ class PrayerService {
       }
       // }
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          user.id,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), user.id,
           'PRAYER/service/addPrayerTag');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -267,11 +251,7 @@ class PrayerService {
         return Future.error(StringUtils.unathorized);
       _prayerTagCollectionReference.doc(tagId).delete();
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          tagId,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), tagId,
           'PRAYER/service/removePrayerTag');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -289,11 +269,7 @@ class PrayerService {
         {"Description": description, "ModifiedOn": DateTime.now()},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerID,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/editPrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -307,11 +283,7 @@ class PrayerService {
         {"Description": description, "ModifiedOn": DateTime.now()},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerID,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/editPrayerUpdate');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -384,12 +356,8 @@ class PrayerService {
         },
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userPrayerID,
-          'PRAYER/service/snoozePrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          userPrayerID, 'PRAYER/service/snoozePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -408,12 +376,8 @@ class PrayerService {
         },
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userPrayerID,
-          'PRAYER/service/unSnoozePrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          userPrayerID, 'PRAYER/service/unSnoozePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -434,12 +398,8 @@ class PrayerService {
         },
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userPrayerId,
-          'PRAYER/service/archivePrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          userPrayerId, 'PRAYER/service/archivePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -457,12 +417,8 @@ class PrayerService {
         'ArchivedDate': null,
       });
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userPrayerId,
-          'PRAYER/service/unArchivePrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          userPrayerId, 'PRAYER/service/unArchivePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -513,11 +469,7 @@ class PrayerService {
         {'IsFavourite': true},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerID,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/favoritePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -533,11 +485,7 @@ class PrayerService {
         {'IsFavourite': false},
       );
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerID,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/unFavoritePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -551,12 +499,8 @@ class PrayerService {
           .doc(userPrayeId)
           .update({'DeleteStatus': -1});
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userPrayeId,
-          'PRAYER/service/deletePrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          userPrayeId, 'PRAYER/service/deletePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -569,11 +513,7 @@ class PrayerService {
           .doc(prayerId)
           .update({'DeleteStatus': -1});
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerId,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerId,
           'PRAYER/service/deletePrayerUpdate');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -599,11 +539,7 @@ class PrayerService {
           .set(hiddenPrayer.toJson());
     } catch (e) {
       locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          user.id,
-          'PRAYER/service/hidePrayer');
+          StringUtils.getErrorMessage(e), user.id, 'PRAYER/service/hidePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -699,11 +635,7 @@ class PrayerService {
           .doc(prayerId)
           .update({'HideFromAllMembers': value});
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerId,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerId,
           'PRAYER/service/hideFromAllMembers');
       throw HttpException(StringUtils.getErrorMessage(e));
     }

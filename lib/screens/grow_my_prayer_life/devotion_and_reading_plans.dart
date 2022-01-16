@@ -13,8 +13,6 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../entry_screen.dart';
-
 class DevotionPlans extends StatefulWidget {
   static const routeName = 'devotion-plan';
 

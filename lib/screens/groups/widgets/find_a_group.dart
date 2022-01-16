@@ -1,7 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -24,7 +23,6 @@ class FindAGroup extends StatefulWidget {
 
 class _FindAGroupState extends State<FindAGroup> {
   final TextEditingController _searchController = TextEditingController();
-  bool _isSearchMode = true;
   final GlobalKey _keyButton = GlobalKey();
 
   @override

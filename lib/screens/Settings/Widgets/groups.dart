@@ -9,7 +9,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/Settings/Widgets/group_privilege.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -18,7 +17,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

@@ -25,7 +25,6 @@ class _UpdateViewState extends State<UpdateView> {
   Iterable<Contact> localContacts = [];
 
   _emailLink(String payload, context) async {
-    payload = payload == null ? '' : payload;
     final Email email = Email(
       body: '',
       recipients: [payload],

@@ -66,9 +66,7 @@ $_footerText''',
     final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchPhone;
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _prayer = widget.prayerData.prayer.description;
-    final name = _user.firstName.capitalizeFirst;
     final _footerText =
         "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. \n\nhttps://www.bestillapp.com";
 

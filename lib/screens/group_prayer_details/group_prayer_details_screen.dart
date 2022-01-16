@@ -52,7 +52,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
         orElse: () => LocalNotificationModel.defaultValue());
     reminderString = reminder.notificationText;
 
-    if (reminder.id == null || (reminder.id).isEmpty)
+    if ((reminder.id).isEmpty)
       return false;
     else
       return true;

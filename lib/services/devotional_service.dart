@@ -1,4 +1,3 @@
-import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/models/devotionals.model.dart';
@@ -7,8 +6,6 @@ import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 class DevotionalService {
   final CollectionReference<Map<String, dynamic>> _bibleCollectionReference =

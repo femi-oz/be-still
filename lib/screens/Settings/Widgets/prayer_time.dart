@@ -15,7 +15,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

@@ -2,7 +2,6 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';

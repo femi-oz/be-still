@@ -135,8 +135,7 @@ class _AddUpdateState extends State<AddUpdate> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
-      if (_descriptionController.text == null ||
-          _descriptionController.text.trim() == '') {
+      if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');

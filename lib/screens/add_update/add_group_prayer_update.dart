@@ -9,7 +9,6 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -139,8 +138,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
       BeStilDialog.showLoading(context);
-      if (_descriptionController.text == null ||
-          _descriptionController.text.trim() == '') {
+      if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');

@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData? dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link ?? Uri();
+      final Uri? deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
         var actionCode = deepLink.queryParameters['oobCode'];
@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final PendingDynamicLinkData? data =
         await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link ?? Uri();
+    final Uri? deepLink = data?.link;
 
     if (deepLink != null) {
       var actionCode = deepLink.queryParameters['oobCode'];

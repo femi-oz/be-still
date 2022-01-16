@@ -79,7 +79,7 @@ class AuthenticationService {
               needsVerification); //{'error': '', 'needsVerification': needsVerification};
     } on FirebaseException catch (e) {
       return UserVerify(
-          error: e as PlatformException,
+          error: PlatformException(code: e.code, message: e.message),
           needsVerification:
               needsVerification); // {'error': e, 'needsVerification': needsVerification};
 

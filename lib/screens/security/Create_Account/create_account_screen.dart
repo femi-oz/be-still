@@ -56,7 +56,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     FocusScope.of(context).unfocus();
     var pickedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate == null ? DateTime.now() : _selectedDate,
+      initialDate: _selectedDate,
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );

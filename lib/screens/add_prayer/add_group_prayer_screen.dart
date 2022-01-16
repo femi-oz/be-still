@@ -1,6 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -15,14 +14,12 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import '../entry_screen.dart';
 
 class AddGroupPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -304,7 +301,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         else
           backup.showContactDropDown = true;
 
-        setLineCount(val, backup!);
+        setLineCount(val);
       } else {
         showContactList = false;
         updateTextControllers = updateTextControllers
@@ -328,7 +325,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         .toList();
   }
 
-  setLineCount(String val, Backup backup) async {
+  setLineCount(String val) async {
     TextPainter painter = TextPainter(
       textDirection: TextDirection.ltr,
       text: TextSpan(
@@ -412,7 +409,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                                 ),
                               ],
                             ),
-                            onTap: () => _onTagSelected(s, backup!));
+                            onTap: () => _onTagSelected(s, backup));
                       } else {
                         return SizedBox();
                       }
@@ -427,7 +424,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
     );
   }
 
-  Future<void> _onTagSelected(Contact s, Backup backup) async {
+  Future<void> _onTagSelected(Contact s, Backup? backup) async {
     if (!(backup == null ? contactList : backup.contactList)
         .any((e) => e.identifier == s.identifier)) {
       if (backup == null)

@@ -471,7 +471,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Form(
                 // ignore: deprecated_member_use
                 // autovalidate: _autoValidate,
-                autovalidateMode: _autoValidate
+                autovalidateMode: _autoValidate == true
                     ? AutovalidateMode.onUserInteraction
                     : AutovalidateMode.disabled,
                 key: _formKey,

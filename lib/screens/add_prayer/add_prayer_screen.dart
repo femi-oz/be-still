@@ -14,14 +14,12 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import '../entry_screen.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -91,8 +89,7 @@ class _AddPrayerState extends State<AddPrayer> {
     _formKey.currentState!.save();
 
     try {
-      if (_descriptionController.text == null ||
-          _descriptionController.text.trim() == '') {
+      if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
@@ -286,8 +283,8 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> getContacts() async {
     var status = await Permission.contacts.status;
-    setState(() =>
-        Settings.enabledContactPermission = status == PermissionStatus.granted);
+
+    Settings.enabledContactPermission = status == PermissionStatus.granted;
 
     if (Settings.enabledContactPermission) {
       final _localContacts =
@@ -295,6 +292,7 @@ class _AddPrayerState extends State<AddPrayer> {
       localContacts =
           _localContacts.where((e) => e.displayName != null).toList();
     }
+    setState(() => {});
   }
 
   void _onTextChange(String val, {Backup? backup}) {
@@ -316,7 +314,7 @@ class _AddPrayerState extends State<AddPrayer> {
           showContactList = true;
         else
           backup.showContactDropDown = true;
-        setLineCount(val, backup!);
+        setLineCount(val);
       } else {
         showContactList = false;
         updateTextControllers = updateTextControllers
@@ -340,7 +338,7 @@ class _AddPrayerState extends State<AddPrayer> {
         .toList();
   }
 
-  setLineCount(String val, Backup backup) async {
+  setLineCount(String val) async {
     TextPainter painter = TextPainter(
         textDirection: TextDirection.ltr, text: TextSpan(text: val));
 
@@ -422,7 +420,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 ),
                               ],
                             ),
-                            onTap: () => _onTagSelected(s, backup!));
+                            onTap: () => _onTagSelected(s, backup));
                       } else {
                         return SizedBox();
                       }
@@ -437,7 +435,7 @@ class _AddPrayerState extends State<AddPrayer> {
     );
   }
 
-  Future<void> _onTagSelected(Contact s, Backup backup) async {
+  Future<void> _onTagSelected(Contact s, Backup? backup) async {
     if (!(backup == null ? contactList : backup.contactList)
         .any((e) => e.identifier == s.identifier)) {
       if (backup == null)
@@ -678,68 +676,55 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                         ])),
                 showDropDown && userGroups.length > 0
-                    ? SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 60.0,
-                              padding: EdgeInsets.only(top: 10),
-                              child: Container(
-                                padding: EdgeInsets.only(left: 10, right: 20),
-                                decoration: BoxDecoration(
-                                    color: AppColors.textFieldBackgroundColor,
-                                    border: Border.all(
-                                        color: AppColors.lightBlue4
-                                            .withOpacity(0.5)),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
-                                child: DropdownButtonHideUnderline(
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
-                                    child: new DropdownButton<SaveOptionModel>(
-                                        hint: Container(
-                                          margin: const EdgeInsets.only(
-                                              left: 5.0, right: 10),
-                                          child: new Text('Save prayer to?',
-                                              style: new TextStyle(
-                                                  color: AppColors.lightBlue4)),
-                                        ),
-                                        iconEnabledColor: AppColors.lightBlue4,
-                                        iconDisabledColor: AppColors.grey,
-                                        dropdownColor:
-                                            AppColors.textFieldBackgroundColor,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        value: selected,
-                                        isDense: false,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selected = value ??
-                                                SaveOptionModel(
-                                                    id: '', name: 'My Prayers');
-                                          });
-                                        },
-                                        items: saveOptions
-                                            .map((SaveOptionModel e) {
-                                          return new DropdownMenuItem<
-                                              SaveOptionModel>(
-                                            value: e,
-                                            child: FittedBox(
-                                              child: new Text(e.name,
-                                                  style: new TextStyle(
-                                                      color: AppColors
-                                                          .lightBlue4)),
-                                            ),
-                                          );
-                                        }).toList()),
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 60.0,
+                        padding: EdgeInsets.only(top: 10),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10, right: 20),
+                          decoration: BoxDecoration(
+                              color: AppColors.textFieldBackgroundColor,
+                              border: Border.all(
+                                  color: AppColors.lightBlue4.withOpacity(0.5)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          child: DropdownButtonHideUnderline(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: new DropdownButton<SaveOptionModel>(
+                                  hint: Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 5.0, right: 10),
+                                    child: new Text('Save prayer to?',
+                                        style: new TextStyle(
+                                            color: AppColors.lightBlue4)),
                                   ),
-                                ),
-                              ),
+                                  iconEnabledColor: AppColors.lightBlue4,
+                                  iconDisabledColor: AppColors.grey,
+                                  dropdownColor:
+                                      AppColors.textFieldBackgroundColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  value: selected,
+                                  isDense: false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selected = value ??
+                                          SaveOptionModel(
+                                              id: '', name: 'My Prayers');
+                                    });
+                                  },
+                                  items: saveOptions.map((SaveOptionModel e) {
+                                    return new DropdownMenuItem<
+                                        SaveOptionModel>(
+                                      value: e,
+                                      child: new Text(e.name,
+                                          style: new TextStyle(
+                                              color: AppColors.lightBlue4)),
+                                    );
+                                  }).toList()),
                             ),
-                          ],
+                          ),
                         ),
                       )
                     : Container(),
@@ -786,9 +771,11 @@ class _AddPrayerState extends State<AddPrayer> {
                             ],
                           ),
                           if (Provider.of<PrayerProvider>(context,
-                                          listen: false)
-                                      .prayerToEdit !=
-                                  null &&
+                                      listen: false)
+                                  .prayerToEdit
+                                  .prayer
+                                  .id
+                                  .isNotEmpty &&
                               updates.length > 0)
                             ...updates.map(
                               (e) => Padding(

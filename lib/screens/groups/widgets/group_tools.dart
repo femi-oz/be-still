@@ -52,7 +52,7 @@ class _GroupToolsState extends State<GroupTools> {
         .firstWhere((e) => e.userId == _currentUser.id,
             orElse: () => GroupUserModel.defaultValue())
         .id;
-    if (id != null) {
+    if (id.isNotEmpty) {
       await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
       var followedPrayers =
           Provider.of<GroupPrayerProvider>(context, listen: false)

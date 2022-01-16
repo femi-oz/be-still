@@ -156,7 +156,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     reminder = reminders.firstWhere(
         (reminder) => reminder.entityId == widget.prayerData.groupPrayer.id,
         orElse: () => LocalNotificationModel.defaultValue());
-    if (reminder.id == null || (reminder.id).isEmpty)
+    if ((reminder.id).isEmpty)
       return false;
     else {
       return true;

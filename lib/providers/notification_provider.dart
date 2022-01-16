@@ -8,8 +8,6 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/services/group_service.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -24,7 +22,6 @@ import 'group_prayer_provider.dart';
 
 class NotificationProvider with ChangeNotifier {
   NotificationService _notificationService = locator<NotificationService>();
-  GroupService _groupService = locator<GroupService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   NotificationProvider._();
   factory NotificationProvider() => _instance;

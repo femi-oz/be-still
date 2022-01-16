@@ -1,6 +1,5 @@
 import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:flutter/services.dart';
 
 class StringUtils {
   static String enumName(String enumToString) {

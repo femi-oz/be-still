@@ -10,7 +10,6 @@ import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationService {
@@ -38,11 +37,7 @@ class NotificationService {
       userService.addUserToken(token: token, userId: userId, user: currentUser);
     } catch (e) {
       locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          userId,
-          'NOTIFICATION/service/init');
+          StringUtils.getErrorMessage(e), userId, 'NOTIFICATION/service/init');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -154,11 +149,7 @@ class NotificationService {
         return Future.error(StringUtils.unathorized);
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          senderId,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), senderId,
           'NOTIFICATION/service/addSMS');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -204,11 +195,7 @@ class NotificationService {
         return Future.error(StringUtils.unathorized);
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          senderId,
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), senderId,
           'NOTIFICATION/service/addEmail');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -323,12 +310,8 @@ class NotificationService {
         return Future.error(StringUtils.unathorized);
       _prayerTimeCollectionReference.doc(prayerTimeId).delete();
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e) != null
-              ? StringUtils.getErrorMessage(e)
-              : e.toString(),
-          prayerTimeId,
-          'PRAYER/service/deletePrayerTime');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          prayerTimeId, 'PRAYER/service/deletePrayerTime');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }

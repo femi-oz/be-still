@@ -13,7 +13,6 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -46,6 +45,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Widget _buildMenu() {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    setReminder();
     return PrayerMenu(
         context, hasReminder, _reminder, () => updateUI(), prayerData);
   }
@@ -58,10 +58,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData.userPrayer.id),
+        (reminder) => reminder.entityId == (prayerData.userPrayer.prayerId),
         orElse: () => LocalNotificationModel.defaultValue());
     reminderString = reminder.notificationText;
-    if (reminder.id == null || (reminder.id).isEmpty)
+    if ((reminder.id).isEmpty)
       return false;
     else
       return true;
@@ -102,7 +102,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final reminders = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
     _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData.userPrayer.id),
+        (reminder) => reminder.entityId == (prayerData.userPrayer.prayerId),
         orElse: () => LocalNotificationModel.defaultValue());
   }
 
@@ -299,7 +299,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   )
                 : Container(),
             SizedBox(height: 10),
-            if (Provider.of<PrayerProvider>(context).currentPrayer != null)
+            if (Provider.of<PrayerProvider>(context)
+                .currentPrayer
+                .prayer
+                .id
+                .isNotEmpty)
               Expanded(
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),

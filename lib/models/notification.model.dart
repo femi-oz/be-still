@@ -125,7 +125,7 @@ class LocalNotificationModel {
         payload = '',
         notificationText = '',
         localNotificationId = 0,
-        selectedDay = LocalNotification.daysOfWeek[DateTime.now().weekday],
+        selectedDay = LocalNotification.daysOfWeek[DateTime.now().weekday - 1],
         period = 'pm',
         selectedHour = DateTime.now().hour.toString(),
         selectedMinute = DateTime.now().minute.toString(),
@@ -147,7 +147,7 @@ class LocalNotificationModel {
         localNotificationId = snapshot['LocalNotificationId'] ?? 0,
         selectedDay =
             snapshot['SelectedDay'] == null || snapshot['SelectedDay'] == ''
-                ? LocalNotification.daysOfWeek[DateTime.now().weekday]
+                ? LocalNotification.daysOfWeek[DateTime.now().weekday - 1]
                 : snapshot['SelectedDay'],
         period = snapshot['Period'] == '' || snapshot['Period'] == null
             ? 'pm'

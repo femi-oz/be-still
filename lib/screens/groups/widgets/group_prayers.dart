@@ -4,7 +4,6 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';

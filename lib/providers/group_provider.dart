@@ -39,7 +39,7 @@ class GroupProvider with ChangeNotifier {
         .asBroadcastStream()
         .listen((userGroups) {
       userGroups =
-          userGroups.where((element) => element.group != null).toList();
+          userGroups.where((element) => element.group.id.isNotEmpty).toList();
       List<CombineGroupUserStream> _distinct = [];
       var idSet = <String>{};
       for (var e in userGroups) {

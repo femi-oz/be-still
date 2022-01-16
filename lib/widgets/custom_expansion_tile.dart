@@ -80,7 +80,7 @@ class ExpansionTile extends StatefulWidget {
   final Widget? trailing;
 
   /// Specifies if the list tile is initially expanded (true) or collapsed (false, the default).
-  final bool initiallyExpanded;
+  final bool? initiallyExpanded;
 
   @override
   _ExpansionTileState createState() => _ExpansionTileState();

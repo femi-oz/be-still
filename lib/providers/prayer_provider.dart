@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';

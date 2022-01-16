@@ -8,7 +8,6 @@ import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SharingSettings extends StatefulWidget {
@@ -219,7 +218,7 @@ class _SharingSettingsState extends State<SharingSettings> {
               Form(
                 // ignore: deprecated_member_use
                 // autovalidate: _autoValidate,
-                autovalidateMode: _autoValidate
+                autovalidateMode: _autoValidate == true
                     ? AutovalidateMode.onUserInteraction
                     : AutovalidateMode.disabled,
                 key: _formKey,

@@ -4,7 +4,6 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticationProvider with ChangeNotifier {

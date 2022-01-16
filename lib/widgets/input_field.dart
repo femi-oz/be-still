@@ -177,7 +177,7 @@ class _CustomInputState extends State<CustomInput> {
         return 'Enter a valid phone number';
       }
     }
-    if (widget.isPassword && value.isNotEmpty && widget.validator != 'null') {
+    if (widget.isPassword && value.isNotEmpty) {
       String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
       RegExp regex = new RegExp(pattern);
       if (!regex.hasMatch(value)) {

@@ -1,10 +1,7 @@
-import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -18,7 +15,6 @@ import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
 import 'dart:math' as math;
