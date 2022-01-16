@@ -45,6 +45,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool _autoValidate = false;
   double numberOfLines = 5.0;
   bool showContactList = false;
+  bool showDropdown = false;
 
   List<PrayerUpdateModel> updates = [];
   List<Backup> updateTextControllers = [];
@@ -215,8 +216,14 @@ class _AddPrayerState extends State<AddPrayer> {
 
         BeStilDialog.hideLoading(context);
         AppCOntroller appCOntroller = Get.find();
-
-        appCOntroller.setCurrentPage(0, true);
+        if ((selected?.name ?? '').isEmpty ||
+            (selected?.name) == 'My Prayers') {
+          appCOntroller.setCurrentPage(0, true);
+        } else {
+          await Provider.of<GroupProvider>(context, listen: false)
+              .setCurrentGroupById(selected?.id ?? '', _user.id);
+          appCOntroller.setCurrentPage(8, true);
+        }
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -243,9 +250,12 @@ class _AddPrayerState extends State<AddPrayer> {
             .prayer
             .description
         : '';
+
     _backupDescription = _descriptionController.text;
 
     if (isEdit) {
+      showDropdown = false;
+
       updates = Provider.of<PrayerProvider>(context, listen: false)
           .prayerToEdit
           .updates;
@@ -262,6 +272,8 @@ class _AddPrayerState extends State<AddPrayer> {
               FocusNode(),
               GlobalKey()))
           .toList();
+    } else {
+      showDropdown = true;
     }
     final userGroups =
         Provider.of<GroupProvider>(context, listen: false).userGroups;
@@ -278,6 +290,7 @@ class _AddPrayerState extends State<AddPrayer> {
       // });
 
     }
+    selected = saveOptions[0];
     super.initState();
   }
 
@@ -603,9 +616,6 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   Widget build(BuildContext context) {
     final userGroups = Provider.of<GroupProvider>(context).userGroups;
-
-    final showDropDown = Provider.of<PrayerProvider>(context).showDropDown;
-
     bool isValid = (!Provider.of<PrayerProvider>(context).isEdit &&
             _descriptionController.text.trim().isNotEmpty) ||
         (Provider.of<PrayerProvider>(context).isEdit &&
@@ -675,7 +685,7 @@ class _AddPrayerState extends State<AddPrayer> {
                             onTap: isValid ? () => _save() : null,
                           ),
                         ])),
-                showDropDown && userGroups.length > 0
+                showDropdown && userGroups.length > 0
                     ? Container(
                         width: MediaQuery.of(context).size.width,
                         height: 60.0,

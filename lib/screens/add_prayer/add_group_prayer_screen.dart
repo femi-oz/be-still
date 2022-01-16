@@ -44,10 +44,10 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   List<Contact> contactList = [];
   List<SaveOptionModel> saveOptions = [];
   String tagText = '';
-  SaveOptionModel selected = SaveOptionModel(id: '', name: '');
+  SaveOptionModel? selected;
   final widgetKey = GlobalKey();
-
   AppCOntroller appCOntroller = Get.find();
+  bool showDropdown = false;
 
   @override
   void didChangeDependencies() {
@@ -237,6 +237,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             : '';
 
     if (Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
+      showDropdown = false;
+
       updates = Provider.of<GroupPrayerProvider>(context, listen: false)
           .prayerToEdit
           .updates;
@@ -252,6 +254,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               FocusNode(),
               GlobalKey()))
           .toList();
+    } else {
+      showDropdown = true;
     }
     final userGroups =
         Provider.of<GroupProvider>(context, listen: false).userGroups;
@@ -265,6 +269,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
         saveOptions.add(option);
       });
     }
+    selected = saveOptions[0];
     super.initState();
   }
 
@@ -580,6 +585,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
 
   @override
   Widget build(BuildContext context) {
+    final userGroups = Provider.of<GroupProvider>(context).userGroups;
+
     bool isValid = (!Provider.of<GroupPrayerProvider>(context).isEdit &&
             _descriptionController.text.trim().isNotEmpty) ||
         (Provider.of<GroupPrayerProvider>(context).isEdit &&
@@ -640,6 +647,59 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                     ],
                   ),
                 ),
+                showDropdown && userGroups.length > 0
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 60.0,
+                        padding: EdgeInsets.only(top: 10),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10, right: 20),
+                          decoration: BoxDecoration(
+                              color: AppColors.textFieldBackgroundColor,
+                              border: Border.all(
+                                  color: AppColors.lightBlue4.withOpacity(0.5)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          child: DropdownButtonHideUnderline(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: new DropdownButton<SaveOptionModel>(
+                                  hint: Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 5.0, right: 10),
+                                    child: new Text('Save prayer to?',
+                                        style: new TextStyle(
+                                            color: AppColors.lightBlue4)),
+                                  ),
+                                  iconEnabledColor: AppColors.lightBlue4,
+                                  iconDisabledColor: AppColors.grey,
+                                  dropdownColor:
+                                      AppColors.textFieldBackgroundColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  value: selected,
+                                  isDense: false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selected = value ??
+                                          SaveOptionModel(
+                                              id: '', name: 'My Prayers');
+                                    });
+                                  },
+                                  items: saveOptions.map((SaveOptionModel e) {
+                                    return new DropdownMenuItem<
+                                        SaveOptionModel>(
+                                      value: e,
+                                      child: new Text(e.name,
+                                          style: new TextStyle(
+                                              color: AppColors.lightBlue4)),
+                                    );
+                                  }).toList()),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Expanded(
                   child: SingleChildScrollView(
                     child: GestureDetector(

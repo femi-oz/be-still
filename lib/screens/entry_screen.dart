@@ -447,7 +447,7 @@ class _EntryScreenState extends State<EntryScreen> {
             size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "List",
+          title: "Prayers",
           padding: 7,
           key: _keyButton,
         ),
