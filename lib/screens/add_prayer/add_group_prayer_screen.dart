@@ -7,6 +7,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -96,28 +97,37 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             context, StringUtils.getErrorMessage(e), _user, s);
       } else {
         if (!Provider.of<GroupPrayerProvider>(context, listen: false).isEdit) {
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .addPrayer(
-            _descriptionController.text,
-            _group.group.id,
-            '${_user.firstName} ${_user.lastName}',
-            _backupDescription,
-            _user.id,
-          );
-
-          var prayerId =
-              Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .newPrayerId;
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .setFollowedPrayer(prayerId);
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .sendPrayerNotification(
-            prayerId,
-            NotificationType.prayer,
-            _group.group.id,
-            context,
-            _descriptionController.text,
-          );
+          if ((selected?.name ?? '').isEmpty ||
+              (selected?.name) == 'My Prayers') {
+            await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
+              _descriptionController.text,
+              _user.id,
+              '${_user.firstName} ${_user.lastName}',
+              _backupDescription,
+            );
+          } else {
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .addPrayer(
+              _descriptionController.text,
+              (selected?.id ?? ''),
+              '${_user.firstName} ${_user.lastName}',
+              _backupDescription,
+              _user.id,
+            );
+            var prayerId =
+                Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .newPrayerId;
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .setFollowedPrayer(prayerId);
+            await Provider.of<NotificationProvider>(context, listen: false)
+                .sendPrayerNotification(
+              prayerId,
+              NotificationType.prayer,
+              _group.group.id,
+              context,
+              _descriptionController.text,
+            );
+          }
 
           if (contactList.length > 0) {
             await Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -125,8 +135,16 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                     contactList, _user, _descriptionController.text, '');
           }
 
-          BeStilDialog.hideLoading(context);
-          appCOntroller.setCurrentPage(8, true);
+          if ((selected?.name ?? '').isEmpty ||
+              (selected?.name) == 'My Prayers') {
+            BeStilDialog.hideLoading(context);
+            appCOntroller.setCurrentPage(0, true);
+          } else {
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '', _user.id);
+            BeStilDialog.hideLoading(context);
+            appCOntroller.setCurrentPage(8, true);
+          }
         } else {
           if (updateTextControllers.length > 0) {
             updateTextControllers.forEach((element) async {
