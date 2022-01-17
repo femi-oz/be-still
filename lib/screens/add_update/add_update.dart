@@ -54,14 +54,26 @@ class _AddUpdateState extends State<AddUpdate> {
   @override
   void didChangeDependencies() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId);
+      } on HttpException catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }
@@ -107,8 +119,10 @@ class _AddUpdateState extends State<AddUpdate> {
       setState(() {
         numberOfLines = lines.length.toDouble();
       });
-    } catch (e) {
-      print(e);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
@@ -130,10 +144,12 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Future<void> _save(String prayerId) async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState!.save();
-    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
     try {
+      if (!_formKey.currentState!.validate()) return;
+      _formKey.currentState!.save();
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(context);
       if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
@@ -171,15 +187,11 @@ class _AddUpdateState extends State<AddUpdate> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   Future<bool> _onWillPop() async {
-    // return (Navigator.of(context).pushNamedAndRemoveUntil(
-    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-    //     false;
     return false;
   }
 

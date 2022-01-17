@@ -1,16 +1,16 @@
 class BibleModel {
-  final String id;
-  final String name;
-  final String link;
-  final String shortName;
-  final String recommendedFor;
+  final String? id;
+  final String? name;
+  final String? link;
+  final String? shortName;
+  final String? recommendedFor;
 
   const BibleModel({
-    required this.id,
-    required this.name,
-    required this.link,
-    required this.shortName,
-    required this.recommendedFor,
+    this.id,
+    this.name,
+    this.link,
+    this.shortName,
+    this.recommendedFor,
   });
   factory BibleModel.fromData(Map<String, dynamic> data, String did) {
     final id = did;

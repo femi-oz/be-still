@@ -2,38 +2,38 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/utils/local_notification.dart';
 
 class PushNotificationModel {
-  final String id;
-  final String title;
+  final String? id;
+  final String? title;
   final List<dynamic> tokens;
-  final String messageType;
-  final String message;
-  final String sender;
-  final String recieverId;
-  final String prayerId;
-  final String groupId;
-  final String status;
-  final int isSent;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? messageType;
+  final String? message;
+  final String? sender;
+  final String? recieverId;
+  final String? prayerId;
+  final String? groupId;
+  final String? status;
+  final int? isSent;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const PushNotificationModel({
-    required this.id,
-    required this.title,
-    required this.messageType,
+    this.id,
+    this.title,
+    this.messageType,
     required this.tokens,
-    required this.message,
-    required this.status,
-    required this.sender,
-    required this.recieverId,
-    required this.prayerId,
-    required this.groupId,
-    required this.isSent,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.message,
+    this.status,
+    this.sender,
+    this.recieverId,
+    this.prayerId,
+    this.groupId,
+    this.isSent,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
   PushNotificationModel.fromData(Map<String, dynamic> snapshot, String did)
       : id = did,
@@ -73,44 +73,44 @@ class PushNotificationModel {
 }
 
 class LocalNotificationModel {
-  final String id;
-  final String userId;
-  final String entityId;
-  final String description;
-  final DateTime scheduledDate;
-  final String frequency;
-  final String title;
-  final String payload;
-  final String type;
-  final String notificationText;
-  final int localNotificationId;
-  final String selectedDay;
-  final String period;
-  final String selectedHour;
-  final String selectedMinute;
-  final String selectedYear;
-  final String selectedMonth;
-  final String selectedDayOfMonth;
+  final String? id;
+  final String? userId;
+  final String? entityId;
+  final String? description;
+  final DateTime? scheduledDate;
+  final String? frequency;
+  final String? title;
+  final String? payload;
+  final String? type;
+  final String? notificationText;
+  final int? localNotificationId;
+  final String? selectedDay;
+  final String? period;
+  final String? selectedHour;
+  final String? selectedMinute;
+  final String? selectedYear;
+  final String? selectedMonth;
+  final String? selectedDayOfMonth;
 
   const LocalNotificationModel({
-    required this.id,
-    required this.userId,
-    required this.entityId,
-    required this.payload,
-    required this.title,
-    required this.description,
-    required this.frequency,
-    required this.type,
-    required this.scheduledDate,
-    required this.notificationText,
-    required this.localNotificationId,
-    required this.selectedDay,
-    required this.period,
-    required this.selectedHour,
-    required this.selectedMinute,
-    required this.selectedYear,
-    required this.selectedMonth,
-    required this.selectedDayOfMonth,
+    this.id,
+    this.userId,
+    this.entityId,
+    this.payload,
+    this.title,
+    this.description,
+    this.frequency,
+    this.type,
+    this.scheduledDate,
+    this.notificationText,
+    this.localNotificationId,
+    this.selectedDay,
+    this.period,
+    this.selectedHour,
+    this.selectedMinute,
+    this.selectedYear,
+    this.selectedMonth,
+    this.selectedDayOfMonth,
   });
 
   LocalNotificationModel.defaultValue()
@@ -197,38 +197,38 @@ class LocalNotificationModel {
 }
 
 class MessageModel {
-  final String id;
-  final String title;
-  final String message;
-  final String subject;
-  final String phoneNumber;
-  final String email;
-  final String sender;
-  final String country;
-  final String receiver;
-  final String senderId;
-  final int isSent;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? title;
+  final String? message;
+  final String? subject;
+  final String? phoneNumber;
+  final String? email;
+  final String? sender;
+  final String? country;
+  final String? receiver;
+  final String? senderId;
+  final int? isSent;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const MessageModel({
-    required this.id,
-    required this.title,
-    required this.message,
-    required this.sender,
-    required this.subject,
-    required this.receiver,
-    required this.country,
-    required this.phoneNumber,
-    required this.email,
-    required this.senderId,
-    required this.isSent,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.title,
+    this.message,
+    this.sender,
+    this.subject,
+    this.receiver,
+    this.country,
+    this.phoneNumber,
+    this.email,
+    this.senderId,
+    this.isSent,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
   MessageModel.fromData(Map<String, dynamic> snapshot, String did)
       : id = did,
@@ -268,14 +268,14 @@ class MessageModel {
 }
 
 class NotificationMessage {
-  final String entityId;
-  final String type;
-  final bool isGroup;
+  final String? entityId;
+  final String? type;
+  final bool? isGroup;
 
   const NotificationMessage({
-    required this.entityId,
-    required this.type,
-    required this.isGroup,
+    this.entityId,
+    this.type,
+    this.isGroup,
   });
 
   NotificationMessage.defaultValue()

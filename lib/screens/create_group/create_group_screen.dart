@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -39,12 +42,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
 
     final isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
-    _groupNameController.text = isEdit ? groupData.group.name : '';
-    _locationController.text = isEdit ? groupData.group.location : '';
-    _descriptionController.text = isEdit ? groupData.group.description : '';
-    _organizationController.text = isEdit ? groupData.group.organization : '';
+    _groupNameController.text = isEdit ? groupData.group?.name ?? '' : '';
+    _locationController.text = isEdit ? groupData.group?.location ?? '' : '';
+    _descriptionController.text =
+        isEdit ? groupData.group?.description ?? '' : '';
+    _organizationController.text =
+        isEdit ? groupData.group?.organization ?? '' : '';
     _requireAdminApproval =
-        isEdit ? groupData.groupSettings.requireAdminApproval : true;
+        isEdit ? groupData.groupSettings?.requireAdminApproval ?? false : true;
     super.initState();
   }
 
@@ -54,57 +59,71 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   void _save(bool isEdit, CombineGroupUserStream group) async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState!.validate()) return null;
-    _formKey.currentState!.save();
+    try {
+      if (!_formKey.currentState!.validate()) return null;
+      _formKey.currentState!.save();
 
-    BeStilDialog.showLoading(context);
+      BeStilDialog.showLoading(context);
 
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final settingsId = Provider.of<GroupProvider>(context, listen: false)
-        .currentGroup
-        .groupSettings
-        .id;
-    GroupModel groupData = GroupModel(
-      id: Uuid().v1(),
-      name: _groupNameController.text,
-      location: _locationController.text,
-      organization: _organizationController.text,
-      description: _descriptionController.text,
-      status: Status.active,
-      isPrivate: _option == GroupType.private,
-      isFeed: _option == GroupType.feed,
-      modifiedBy: _user.id,
-      modifiedOn: DateTime.now(),
-      createdBy: _user.id,
-      createdOn: DateTime.now(),
-    );
-    final fullName = '${(_user.firstName) + ' ' + (_user.lastName)}';
-
-    if (!isEdit) {
-      await Provider.of<GroupProvider>(context, listen: false)
-          .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setGroupPrayers(groupData.id);
-      BeStilDialog.hideLoading(context);
-      setState(() {
-        newGroupId = groupData.id;
-        _step++;
-      });
-    } else {
-      await Provider.of<GroupProvider>(context, listen: false).editGroup(
-        groupData,
-        group.group.id,
-        _requireAdminApproval,
-        settingsId,
-        _user.id,
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final settingsId = (Provider.of<GroupProvider>(context, listen: false)
+                      .currentGroup
+                      .groupSettings ??
+                  GroupSettings.defaultValue())
+              .id ??
+          '';
+      GroupModel groupData = GroupModel(
+        id: Uuid().v1(),
+        name: _groupNameController.text,
+        location: _locationController.text,
+        organization: _organizationController.text,
+        description: _descriptionController.text,
+        status: Status.active,
+        isPrivate: _option == GroupType.private,
+        isFeed: _option == GroupType.feed,
+        modifiedBy: _user.id,
+        modifiedOn: DateTime.now(),
+        createdBy: _user.id,
+        createdOn: DateTime.now(),
       );
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setGroupPrayers(group.group.id);
-      BeStilDialog.hideLoading(context);
-      setState(() {
-        newGroupId = groupData.id;
-        _step++;
-      });
+      final fullName = '${(_user.firstName) + ' ' + (_user.lastName)}';
+
+      if (!isEdit) {
+        await Provider.of<GroupProvider>(context, listen: false)
+            .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setGroupPrayers(groupData.id ?? '');
+        BeStilDialog.hideLoading(context);
+        setState(() {
+          newGroupId = groupData.id ?? '';
+          _step++;
+        });
+      } else {
+        await Provider.of<GroupProvider>(context, listen: false).editGroup(
+          groupData,
+          group.group?.id ?? '',
+          _requireAdminApproval,
+          settingsId,
+          _user.id,
+        );
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setGroupPrayers(group.group?.id ?? '');
+        BeStilDialog.hideLoading(context);
+        setState(() {
+          newGroupId = groupData.id ?? '';
+          _step++;
+        });
+      }
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -237,9 +256,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   Future<bool> _onWillPop() async {
     AppCOntroller appCOntroller = Get.find();
     appCOntroller.setCurrentPage(3, true);
-    // return (Navigator.of(context).pushNamedAndRemoveUntil(
-    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-    //     false;
     return false;
   }
 

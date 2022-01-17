@@ -133,7 +133,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         message =
             'That email address is already in use. Please select another one.';
       } else {
-        message = e.message;
+        message = e.message ?? '';
       }
 
       BeStilDialog.hideLoading(context);
@@ -146,11 +146,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
-
       BeStilDialog.hideLoading(context);
-
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 

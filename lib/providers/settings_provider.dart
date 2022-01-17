@@ -26,37 +26,46 @@ class SettingsProvider with ChangeNotifier {
       _groupPreferenceSettings;
 
   Future setSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getSettings(userId);
-    _settings = settings;
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getSettings(userId);
+      _settings = settings;
+    } catch (e) {
+      rethrow;
+    }
     notifyListeners();
   }
 
   Future setPrayerSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getPrayerSettings(userId);
-    _prayerSettings = settings;
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getPrayerSettings(userId);
+      _prayerSettings = settings;
+    } catch (e) {
+      rethrow;
+    }
     notifyListeners();
   }
 
   Future setSharingSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getSharingSettings(userId);
-    _sharingSettings = settings;
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getSharingSettings(userId);
+      _sharingSettings = settings;
+    } catch (e) {
+      rethrow;
+    }
     notifyListeners();
   }
 
-  // Future setGroupSettings(String userId) async {
-  //   if (_firebaseAuth.currentUser == null) return null;
-  //   var settings = await _settingsService.getGroupSettings(userId);
-  //   _groupSettings = settings;
-  //   notifyListeners();
-  // }
-
   Future setGroupPreferenceSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getGroupPreferenceSettings(userId);
-    _groupPreferenceSettings = settings;
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getGroupPreferenceSettings(userId);
+      _groupPreferenceSettings = settings;
+    } catch (e) {
+      rethrow;
+    }
     notifyListeners();
   }
 
@@ -66,39 +75,55 @@ class SettingsProvider with ChangeNotifier {
     required dynamic value,
     required String settingsId,
   }) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateSettings(
-        key: key, settingsId: settingsId, value: value);
-    await setSettings(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updateSettings(
+          key: key, settingsId: settingsId, value: value);
+      await setSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updatePrayerSettings(String userId,
       {required String key,
       required dynamic value,
       required String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updatePrayerSettings(
-        key: key, settingsId: settingsId, value: value);
-    await setPrayerSettings(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updatePrayerSettings(
+          key: key, settingsId: settingsId, value: value);
+      await setPrayerSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updateSharingSettings(String userId,
       {required String key,
       required dynamic value,
       required String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateSharingSettings(
-        key: key, settingsId: settingsId, value: value);
-    await setSharingSettings(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updateSharingSettings(
+          key: key, settingsId: settingsId, value: value);
+      await setSharingSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updateGroupPrefenceSettings(String userId,
       {required String key,
       required dynamic value,
       required String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateGroupPreferenceSettings(
-        key: key, groupPreferenceSettingsId: settingsId, value: value);
-    await setGroupPreferenceSettings(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updateGroupPreferenceSettings(
+          key: key, groupPreferenceSettingsId: settingsId, value: value);
+      await setGroupPreferenceSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -64,16 +64,28 @@ class _AddPrayerState extends State<AddPrayer> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        var userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setSearchMode(false);
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setSearchQuery('');
-        Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId);
-        await Provider.of<GroupProvider>(context, listen: false)
-            .setUserGroups(userId);
+        try {
+          var userId =
+              Provider.of<UserProvider>(context, listen: false).currentUser.id;
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setSearchMode(false);
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setSearchQuery('');
+          Provider.of<PrayerProvider>(context, listen: false)
+              .searchPrayers('', userId);
+          await Provider.of<GroupProvider>(context, listen: false)
+              .setUserGroups(userId);
+        } on HttpException catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.getErrorMessage(e), user, s);
+        } catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.errorOccured, user, s);
+        }
       });
       _isInit = false;
     }
@@ -83,13 +95,14 @@ class _AddPrayerState extends State<AddPrayer> {
   Future<void> _save() async {
     BeStilDialog.showLoading(context);
     FocusScope.of(context).unfocus();
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-
-    setState(() => _autoValidate = true);
-    if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState!.save();
 
     try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      setState(() => _autoValidate = true);
+      if (!_formKey.currentState!.validate()) return;
+      _formKey.currentState!.save();
       if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
@@ -235,8 +248,7 @@ class _AddPrayerState extends State<AddPrayer> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -283,8 +295,8 @@ class _AddPrayerState extends State<AddPrayer> {
     if (userGroups.length > 0) {
       // userGroups.forEach((element) {
       for (final element in userGroups) {
-        final option =
-            new SaveOptionModel(id: element.group.id, name: element.group.name);
+        final option = new SaveOptionModel(
+            id: element.group?.id ?? '', name: element.group?.name ?? '');
         saveOptions.add(option);
       }
       // });
@@ -335,8 +347,10 @@ class _AddPrayerState extends State<AddPrayer> {
             .toList();
       }
       setState(() {});
-    } catch (e) {
-      print(e);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER/screen/onTextChange_tag');
     }
@@ -527,18 +541,33 @@ class _AddPrayerState extends State<AddPrayer> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        if (Provider.of<PrayerProvider>(context, listen: false)
-                            .isEdit) {
-                          AppCOntroller appCOntroller = Get.find();
-                          appCOntroller.setCurrentPage(7, true);
-                          Navigator.pop(context);
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        } else {
-                          AppCOntroller appCOntroller = Get.find();
+                        try {
+                          if (Provider.of<PrayerProvider>(context,
+                                  listen: false)
+                              .isEdit) {
+                            AppCOntroller appCOntroller = Get.find();
+                            appCOntroller.setCurrentPage(7, true);
+                            Navigator.pop(context);
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          } else {
+                            AppCOntroller appCOntroller = Get.find();
 
-                          appCOntroller.setCurrentPage(0, true);
-                          Navigator.pop(context);
-                          FocusManager.instance.primaryFocus?.unfocus();
+                            appCOntroller.setCurrentPage(0, true);
+                            Navigator.pop(context);
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          }
+                        } on HttpException catch (e, s) {
+                          final user =
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .currentUser;
+                          BeStilDialog.showErrorDialog(
+                              context, StringUtils.getErrorMessage(e), user, s);
+                        } catch (e, s) {
+                          final user =
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .currentUser;
+                          BeStilDialog.showErrorDialog(
+                              context, StringUtils.errorOccured, user, s);
                         }
                       },
                       child: Container(

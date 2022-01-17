@@ -34,24 +34,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     super.initState();
   }
 
-  // Future<void> _setCurrentIndex(int index, bool animate) async {
-  //   await Provider.of<MiscProvider>(context, listen: false)
-  //       .setCurrentPage(index);
-  //   Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-  //     return EntryScreen();
-  //   }));
-  // }
-
   void _getNotifications() async {
     try {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<NotificationProvider>(context, listen: false)
           .setUserNotifications(_user.id);
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(_user.id);
-    } on HttpException catch (_) {
-    } catch (e) {}
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   bool _isInit = true;
@@ -65,12 +63,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
     super.didChangeDependencies();
   }
-
-  // getUserGroupsData() async {
-  //   final userId = Provider.of<UserProvider>(context).currentUser.id;
-  //   await Provider.of<GroupProvider>(context, listen: false)
-  //       .setUserGroups(userId);
-  // }
 
   void _showAlert(String groupId, String message, String senderId,
       String notificationId, String receiverId, GroupModel group) {
@@ -123,7 +115,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500)),
-                    Text(group.name,
+                    Text(group.name ?? '',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
@@ -242,34 +234,54 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Future deleteNotification(String id) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateNotification(id);
+    try {
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .updateNotification(id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
-
-  //fittedBox fix: BoxFit.cont
 
   gotoPrayer(PushNotificationModel notification) async {
     BeStilDialog.showLoading(context);
-    var userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (notification.groupId.isNotEmpty)
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroupById(notification.groupId, userId);
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .setPrayerFuture(notification.prayerId)
-        .then((value) async {
+    try {
+      var userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      if ((notification.groupId ?? '').isNotEmpty)
+        await Provider.of<GroupProvider>(context, listen: false)
+            .setCurrentGroupById(notification.groupId ?? '', userId);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setPrayerFuture(notification.prayerId);
+          .setPrayerFuture(notification.prayerId ?? '');
+
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(9, true);
-      await deleteNotification(notification.id);
+      await deleteNotification(notification.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-    });
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   Future<void> denyRequest(
       String groupId, String notificationId, String receiverId) async {
+    BeStilDialog.showLoading(context);
     try {
       BeStilDialog.showLoading(context);
       final requestor = await Provider.of<UserProvider>(context, listen: false)
@@ -278,17 +290,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
           .getGroupFuture(groupId, admin.id); //group
-      final groupRequest =
-          groupData.groupRequests.firstWhere((e) => e.userId == requestor.id);
+      final groupRequest = (groupData.groupRequests ?? [])
+          .firstWhere((e) => e.userId == requestor.id);
       await Provider.of<GroupProvider>(context, listen: false)
-          .denyRequest(groupId, groupRequest.id);
-
+          .denyRequest(groupId, groupRequest.id ?? '');
       deleteNotification(notificationId);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-    } catch (e) {
-      print(e.toString());
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -302,12 +322,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
           .getGroupFuture(groupId, admin.id); //group
-      final groupRequest =
-          groupData.groupRequests.firstWhere((e) => e.userId == requestor.id);
+      final groupRequest = (groupData.groupRequests ?? [])
+          .firstWhere((e) => e.userId == requestor.id);
       await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
           groupId,
           senderId,
-          groupRequest.id,
+          groupRequest.id ?? '',
           (requestor.firstName) + ' ' + (requestor.lastName));
       await deleteNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
@@ -319,12 +339,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               receiverId,
               'Request Accepted',
               '',
-              groupData.group.id,
+              groupData.group?.id ?? '',
               [requestor.pushToken]);
+      BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-    } catch (e) {
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
       BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -390,14 +420,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         GestureDetector(
                           onLongPressEnd: null,
                           onTap: () => _showAlert(
-                              notification.groupId,
-                              notification.message,
-                              notification.createdBy,
-                              notification.id,
-                              notification.createdBy,
+                              notification.groupId ?? '',
+                              notification.message ?? '',
+                              notification.createdBy ?? '',
+                              notification.id ?? '',
+                              notification.createdBy ?? '',
                               (snapshot.data ??
-                                      CombineGroupUserStream.defaultValue())
-                                  .group),
+                                          CombineGroupUserStream.defaultValue())
+                                      .group ??
+                                  GroupModel.defaultValue()),
                           child: Container(
                             margin: EdgeInsets.only(left: 20.0),
                             decoration: BoxDecoration(
@@ -434,12 +465,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                               children: <Widget>[
                                                 notification.sender != ''
                                                     ? Text(
-                                                        (snapshot.data ??
-                                                                CombineGroupUserStream
-                                                                    .defaultValue())
-                                                            .group
-                                                            .name
-                                                            .toUpperCase(),
+                                                        ((snapshot.data ?? CombineGroupUserStream.defaultValue())
+                                                                        .group ??
+                                                                    GroupModel
+                                                                        .defaultValue())
+                                                                .name ??
+                                                            ''.toUpperCase(),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -449,12 +480,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         ),
                                                       )
                                                     : Container(),
-                                                if (notification
-                                                    .groupId.isEmpty)
+                                                if ((notification.groupId ?? '')
+                                                    .isEmpty)
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                            .createdOn),
+                                                                .createdOn ??
+                                                            DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
                                                         .copyWith(
@@ -506,7 +538,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               DateFormat(
                                                                       'MM.dd.yyyy')
                                                                   .format(notification
-                                                                      .createdOn),
+                                                                          .createdOn ??
+                                                                      DateTime
+                                                                          .now()),
                                                               style: AppTextStyles
                                                                   .regularText15b
                                                                   .copyWith(
@@ -536,11 +570,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             MediaQuery.of(context).size.width *
                                                 0.8,
                                         child: Text(
-                                          (notification.message
-                                                      .capitalizeFirst ??
+                                          (notification.message ??
+                                                  ''.capitalizeFirst ??
                                                   '')
-                                              .substring(0,
-                                                  notification.message.length),
+                                              .substring(
+                                                  0,
+                                                  (notification.message ?? '')
+                                                      .length),
                                           style: AppTextStyles.regularText16b
                                               .copyWith(
                                             color: AppColors.lightBlue4,
@@ -599,10 +635,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           children: [
                             SizedBox(height: 10),
                             Dismissible(
-                              key: Key(notification.id),
+                              key: Key(notification.id ?? ''),
                               direction: DismissDirection.endToStart,
                               onDismissed: (direction) {
-                                deleteNotification(notification.id);
+                                deleteNotification(notification.id ?? '');
                               },
                               child: GestureDetector(
                                 onLongPressEnd: null,
@@ -646,7 +682,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       notification.sender != ''
                                                           ? Text(
                                                               notification
-                                                                  .sender,
+                                                                      .sender ??
+                                                                  '',
                                                               style: AppTextStyles
                                                                   .regularText15b
                                                                   .copyWith(
@@ -662,11 +699,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            (snapshot.data ??
-                                                                    CombineGroupUserStream
-                                                                        .defaultValue())
-                                                                .group
-                                                                .name,
+                                                            ((snapshot.data ?? CombineGroupUserStream.defaultValue())
+                                                                            .group ??
+                                                                        GroupModel
+                                                                            .defaultValue())
+                                                                    .name ??
+                                                                ''.toUpperCase(),
                                                             style: AppTextStyles
                                                                 .regularText15b
                                                                 .copyWith(
@@ -699,10 +737,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       .width *
                                                   0.8,
                                               child: Text(
-                                                notification.message.length > 99
-                                                    ? notification.message
+                                                (notification.message ?? '')
+                                                            .length >
+                                                        99
+                                                    ? (notification.message ??
+                                                            '')
                                                         .substring(0, 100)
-                                                    : notification.message,
+                                                    : notification.message ??
+                                                        '',
                                                 style: AppTextStyles
                                                     .regularText16b
                                                     .copyWith(
@@ -752,15 +794,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         children: [
                           SizedBox(height: 10),
                           Dismissible(
-                            key: Key(notification.id),
+                            key: Key(notification.id ?? ''),
                             direction: DismissDirection.endToStart,
                             onDismissed: (direction) {
-                              deleteNotification(notification.id);
+                              deleteNotification(notification.id ?? '');
                             },
                             child: GestureDetector(
                               onLongPressEnd: null,
                               onTap: () {
-                                deleteNotification(notification.id);
+                                deleteNotification(notification.id ?? '');
                                 Navigator.pop(context);
                                 AppCOntroller appCOntroller = Get.find();
                                 appCOntroller.setCurrentPage(3, true);
@@ -801,7 +843,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   children: <Widget>[
                                                     notification.sender != ''
                                                         ? Text(
-                                                            notification.sender,
+                                                            notification
+                                                                    .sender ??
+                                                                '',
                                                             style: AppTextStyles
                                                                 .regularText15b
                                                                 .copyWith(
@@ -839,7 +883,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           DateFormat(
                                                                   'MM.dd.yyyy')
                                                               .format(notification
-                                                                  .createdOn),
+                                                                      .createdOn ??
+                                                                  DateTime
+                                                                      .now()),
                                                           style: AppTextStyles
                                                               .regularText15b
                                                               .copyWith(
@@ -869,10 +915,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     .width *
                                                 0.8,
                                             child: Text(
-                                              notification.message.length > 99
-                                                  ? notification.message
+                                              (notification.message ?? '')
+                                                          .length >
+                                                      99
+                                                  ? (notification.message ?? '')
                                                       .substring(0, 100)
-                                                  : notification.message,
+                                                  : notification.message ?? '',
                                               style: AppTextStyles
                                                   .regularText16b
                                                   .copyWith(
@@ -1099,15 +1147,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           children: [
                             SizedBox(height: 10),
                             Dismissible(
-                              key: Key(notification.id),
+                              key: Key(notification.id ?? ''),
                               direction: DismissDirection.endToStart,
                               onDismissed: (direction) {
-                                deleteNotification(notification.id);
+                                deleteNotification(notification.id ?? '');
                               },
                               child: GestureDetector(
                                 onLongPressEnd: null,
                                 onTap: () {
-                                  deleteNotification(notification.id);
+                                  deleteNotification(notification.id ?? '');
                                   // service get group by id
                                   // go to 8
                                   Navigator.pop(context);
@@ -1150,11 +1198,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     children: <Widget>[
                                                       notification.sender != ''
                                                           ? Text(
-                                                              (snapshot.data ??
-                                                                      CombineGroupUserStream
-                                                                          .defaultValue())
-                                                                  .group
-                                                                  .name,
+                                                              ((snapshot.data ?? CombineGroupUserStream.defaultValue())
+                                                                              .group ??
+                                                                          GroupModel
+                                                                              .defaultValue())
+                                                                      .name ??
+                                                                  ''.toUpperCase(),
                                                               style: AppTextStyles
                                                                   .regularText15b
                                                                   .copyWith(
@@ -1192,7 +1241,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             DateFormat(
                                                                     'MM.dd.yyyy')
                                                                 .format(notification
-                                                                    .createdOn),
+                                                                        .createdOn ??
+                                                                    DateTime
+                                                                        .now()),
                                                             style: AppTextStyles
                                                                 .regularText15b
                                                                 .copyWith(
@@ -1222,10 +1273,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       .width *
                                                   0.8,
                                               child: Text(
-                                                notification.message.length > 99
-                                                    ? notification.message
+                                                (notification.message ?? '')
+                                                            .length >
+                                                        99
+                                                    ? (notification.message ??
+                                                            '')
                                                         .substring(0, 100)
-                                                    : notification.message,
+                                                    : notification.message ??
+                                                        '',
                                                 style: AppTextStyles
                                                     .regularText16b
                                                     .copyWith(
@@ -1419,7 +1474,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildInapproriateContentPanel(inappropriateContent) {
-    // var groupName = Provider.of<GroupProvider>(context,listen: false).setCurrentGroupById()
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1445,10 +1499,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   children: [
                     SizedBox(height: 10),
                     Dismissible(
-                      key: Key(notification.id),
+                      key: Key(notification.id ?? ''),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        deleteNotification(notification.id);
+                        deleteNotification(notification.id ?? '');
                       },
                       child: GestureDetector(
                         onLongPressEnd: null,
@@ -1490,7 +1544,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             children: <Widget>[
                                               notification.sender != ''
                                                   ? Text(
-                                                      notification.sender,
+                                                      notification.sender ?? '',
                                                       style: AppTextStyles
                                                           .regularText15b
                                                           .copyWith(
@@ -1526,7 +1580,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                            .createdOn),
+                                                                .createdOn ??
+                                                            DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
                                                         .copyWith(
@@ -1554,10 +1609,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       width: MediaQuery.of(context).size.width *
                                           0.8,
                                       child: Text(
-                                        notification.message.length > 99
-                                            ? notification.message
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
                                                 .substring(0, 100)
-                                            : notification.message,
+                                            : notification.message ?? '',
                                         style: AppTextStyles.regularText16b
                                             .copyWith(
                                           color: AppColors.lightBlue4,
@@ -1614,10 +1669,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           children: [
                             SizedBox(height: 10),
                             Dismissible(
-                              key: Key(notification.id),
+                              key: Key(notification.id ?? ''),
                               direction: DismissDirection.endToStart,
                               onDismissed: (direction) {
-                                deleteNotification(notification.id);
+                                deleteNotification(notification.id ?? '');
                               },
                               child: GestureDetector(
                                 onLongPressEnd: null,
@@ -1661,7 +1716,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       notification.sender != ''
                                                           ? Text(
                                                               notification
-                                                                  .sender,
+                                                                      .sender ??
+                                                                  '',
                                                               style: AppTextStyles
                                                                   .regularText15b
                                                                   .copyWith(
@@ -1677,11 +1733,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            (snapshot.data ??
-                                                                    CombineGroupUserStream
-                                                                        .defaultValue())
-                                                                .group
-                                                                .name,
+                                                            ((snapshot.data ?? CombineGroupUserStream.defaultValue())
+                                                                            .group ??
+                                                                        GroupModel
+                                                                            .defaultValue())
+                                                                    .name ??
+                                                                ''.toUpperCase(),
                                                             style: AppTextStyles
                                                                 .regularText15b
                                                                 .copyWith(
@@ -1714,10 +1771,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       .width *
                                                   0.8,
                                               child: Text(
-                                                notification.message.length > 99
-                                                    ? notification.message
+                                                (notification.message ?? '')
+                                                            .length >
+                                                        99
+                                                    ? (notification.message ??
+                                                            '')
                                                         .substring(0, 100)
-                                                    : notification.message,
+                                                    : notification.message ??
+                                                        '',
                                                 style: AppTextStyles
                                                     .regularText16b
                                                     .copyWith(
@@ -1743,11 +1804,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildPanel() {
     final data = Provider.of<NotificationProvider>(context).notifications;
-
-    data.sort((a, b) => b.createdOn.compareTo(a.createdOn));
+    data.sort((a, b) => (b.createdOn ?? DateTime.now())
+        .compareTo(a.createdOn ?? DateTime.now()));
     final requests =
         data.where((e) => e.messageType == NotificationType.request).toList();
-
     final newPrayers =
         data.where((e) => e.messageType == NotificationType.prayer).toList();
     final remove = data
@@ -1759,7 +1819,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final requestDenied = data
         .where((e) => e.messageType == NotificationType.deny_request)
         .toList();
-
     final inappropriateContent = data
         .where((e) => e.messageType == NotificationType.inappropriate_content)
         .toList();

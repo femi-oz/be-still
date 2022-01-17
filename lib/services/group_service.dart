@@ -462,19 +462,19 @@ class GroupService {
 
       _groupCollectionReference
           .doc(groupData.id)
-          .set(populateGroup(groupData, groupData.id).toJson());
+          .set(populateGroup(groupData, groupData.id ?? '').toJson());
 
       _userGroupCollectionReference.doc(userGroupId).set(populateGroupUser(
               userId,
-              groupData.id,
+              groupData.id ?? '',
               GroupUserRole.admin,
-              groupData.createdBy,
+              groupData.createdBy ?? '',
               fullName,
               userGroupId)
           .toJson());
       //store group settings
 
-      addGroupSettings(userId, groupData.id, requireAdminApproval);
+      addGroupSettings(userId, groupData.id ?? '', requireAdminApproval);
       return userGroupId;
     } catch (e) {
       locator<LogService>().createLog(

@@ -35,11 +35,12 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   void initState() {
     final settings =
         Provider.of<SettingsProvider>(context, listen: false).settings;
-    selectedInterval = widget.prayerData.userPrayer.snoozeFrequency.isNotEmpty
-        ? widget.prayerData.userPrayer.snoozeFrequency
-        : settings.defaultSnoozeFrequency;
-    selectedDuration = widget.prayerData.userPrayer.snoozeDuration > 0
-        ? widget.prayerData.userPrayer.snoozeDuration
+    selectedInterval =
+        (widget.prayerData.userPrayer?.snoozeFrequency ?? '').isNotEmpty
+            ? widget.prayerData.userPrayer?.snoozeFrequency ?? ''
+            : settings.defaultSnoozeFrequency;
+    selectedDuration = (widget.prayerData.userPrayer?.snoozeDuration ?? 0) > 0
+        ? widget.prayerData.userPrayer?.snoozeDuration ?? 0
         : settings.defaultSnoozeDuration;
     snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
@@ -77,16 +78,16 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? ''));
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
-          widget.prayerData.prayer.id,
+          widget.prayerData.prayer?.id ?? '',
           _snoozeEndDate,
-          widget.prayerData.userPrayer.id,
+          widget.prayerData.userPrayer?.id ?? '',
           selectedDuration,
           selectedInterval);
       BeStilDialog.hideLoading(context);

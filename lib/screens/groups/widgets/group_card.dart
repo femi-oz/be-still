@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -35,7 +38,7 @@ class _GroupCardState extends State<GroupCard> {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupData.group.id, userId, userName);
+          .joinRequest(groupData.group?.id ?? '', userId, userName);
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
               '$userName has requested to join your group',
@@ -45,14 +48,23 @@ class _GroupCardState extends State<GroupCard> {
               admin.id,
               title,
               '',
-              groupData.group.id,
+              groupData.group?.id ?? '',
               [admin.pushToken]);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(3, true);
-    } catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -67,8 +79,19 @@ class _GroupCardState extends State<GroupCard> {
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(3, true);
       BeStilDialog.hideLoading(context);
-    } catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -88,10 +111,10 @@ class _GroupCardState extends State<GroupCard> {
     setState(() {
       isPressed = true;
     });
-    final admin = widget.groupData.groupUsers
+    final admin = (widget.groupData.groupUsers ?? [])
         .firstWhere((e) => e.role == GroupUserRole.admin);
     final adminData = await Provider.of<UserProvider>(context, listen: false)
-        .getUserById(admin.userId);
+        .getUserById(admin.userId ?? '');
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
@@ -132,7 +155,10 @@ class _GroupCardState extends State<GroupCard> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      widget.groupData.group.name.toUpperCase(),
+                      ((widget.groupData.group ?? GroupModel.defaultValue())
+                                  .name ??
+                              '')
+                          .toUpperCase(),
                       style: AppTextStyles.boldText20,
                       textAlign: TextAlign.center,
                     ),
@@ -168,7 +194,7 @@ class _GroupCardState extends State<GroupCard> {
                             ),
                             Flexible(
                               child: Text(
-                                '${this.widget.groupData.group.location}',
+                                '${this.widget.groupData.group?.location}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
@@ -187,9 +213,13 @@ class _GroupCardState extends State<GroupCard> {
                               style: AppTextStyles.regularText15,
                             ),
                             Text(
-                              this.widget.groupData.group.organization.isEmpty
+                              ((this.widget.groupData.group ??
+                                                  GroupModel.defaultValue())
+                                              .organization ??
+                                          '')
+                                      .isEmpty
                                   ? '-'
-                                  : '${this.widget.groupData.group.organization}',
+                                  : '${this.widget.groupData.group?.organization}',
                               style: AppTextStyles.regularText15.copyWith(
                                 color: AppColors.textFieldText,
                               ),
@@ -220,10 +250,12 @@ class _GroupCardState extends State<GroupCard> {
                     Column(
                       children: [
                         Text(
-                          this.widget.groupData.groupUsers.length > 1 ||
-                                  this.widget.groupData.groupUsers.length == 0
-                              ? '${this.widget.groupData.groupUsers.length} current members'
-                              : '${this.widget.groupData.groupUsers.length} current member',
+                          (this.widget.groupData.groupUsers ?? []).length > 1 ||
+                                  (this.widget.groupData.groupUsers ?? [])
+                                          .length ==
+                                      0
+                              ? '${(this.widget.groupData.groupUsers ?? []).length} current members'
+                              : '${(this.widget.groupData.groupUsers ?? []).length} current member',
                           style: AppTextStyles.regularText15.copyWith(
                             color: AppColors.textFieldText,
                           ),
@@ -241,9 +273,13 @@ class _GroupCardState extends State<GroupCard> {
                     ),
                     SizedBox(height: 30.0),
                     Text(
-                      this.widget.groupData.group.description.isEmpty
+                      ((this.widget.groupData.group ??
+                                          GroupModel.defaultValue())
+                                      .description ??
+                                  '')
+                              .isEmpty
                           ? 'N/A'
-                          : this.widget.groupData.group.description,
+                          : this.widget.groupData.group?.description ?? '',
                       style: AppTextStyles.regularText15.copyWith(
                         color: AppColors.textFieldText,
                       ),
@@ -251,7 +287,10 @@ class _GroupCardState extends State<GroupCard> {
                     ),
                     SizedBox(height: 30.0),
                     isRequestSent ||
-                            !widget.groupData.groupSettings.requireAdminApproval
+                            !((widget.groupData.groupSettings ??
+                                        GroupSettings.defaultValue())
+                                    .requireAdminApproval ??
+                                false)
                         ? Container()
                         : Text(
                             'Would you like to request to join?',
@@ -292,8 +331,11 @@ class _GroupCardState extends State<GroupCard> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        !widget.groupData.groupSettings
-                                                .requireAdminApproval
+                                        !((widget.groupData.groupSettings ??
+                                                        GroupSettings
+                                                            .defaultValue())
+                                                    .requireAdminApproval ??
+                                                false)
                                             ? 'JOIN'
                                             : 'REQUEST',
                                         style: AppTextStyles.boldText20,
@@ -302,9 +344,12 @@ class _GroupCardState extends State<GroupCard> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  if (!widget.groupData.groupSettings
-                                      .requireAdminApproval) {
-                                    _joinGroup(widget.groupData.group.id);
+                                  if (!((widget.groupData.groupSettings ??
+                                              GroupSettings.defaultValue())
+                                          .requireAdminApproval ??
+                                      false)) {
+                                    _joinGroup(
+                                        widget.groupData.group?.id ?? '');
                                   } else {
                                     _requestToJoinGroup(
                                       this.widget.groupData,
@@ -340,10 +385,7 @@ class _GroupCardState extends State<GroupCard> {
   bool get isRequestSent {
     final currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
-    print(widget.groupData.groupRequests
-        .where((e) => e.userId == currentUser.id)
-        .map((e) => e.toJson()));
-    return widget.groupData.groupRequests
+    return (widget.groupData.groupRequests ?? [])
         .any((element) => element.userId == currentUser.id);
   }
 
@@ -352,7 +394,7 @@ class _GroupCardState extends State<GroupCard> {
     var currentUser =
         Provider.of<UserProvider>(context, listen: false).currentUser;
     return GestureDetector(
-      onTap: widget.groupData.groupUsers
+      onTap: (widget.groupData.groupUsers ?? [])
               .map((e) => e.userId)
               .contains(currentUser.id)
           ? null
@@ -361,16 +403,18 @@ class _GroupCardState extends State<GroupCard> {
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
           color: Settings.isDarkMode
-              ? AppColors.darkBlue.withOpacity(widget.groupData.groupUsers
-                      .map((e) => e.userId)
-                      .contains(currentUser.id)
-                  ? 0.5
-                  : 1)
-              : AppColors.lightBlue4.withOpacity(widget.groupData.groupUsers
-                      .map((e) => e.userId)
-                      .contains(currentUser.id)
-                  ? 0.5
-                  : 1),
+              ? AppColors.darkBlue.withOpacity(
+                  (widget.groupData.groupUsers ?? [])
+                          .map((e) => e.userId)
+                          .contains(currentUser.id)
+                      ? 0.5
+                      : 1)
+              : AppColors.lightBlue4.withOpacity(
+                  (widget.groupData.groupUsers ?? [])
+                          .map((e) => e.userId)
+                          .contains(currentUser.id)
+                      ? 0.5
+                      : 1),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -396,28 +440,30 @@ class _GroupCardState extends State<GroupCard> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
-                      this.widget.groupData.group.name.toUpperCase(),
+                      (this.widget.groupData.group ?? GroupModel.defaultValue())
+                              .name ??
+                          ''.toUpperCase(),
                       style: TextStyle(
-                          color: AppColors.lightBlue3.withOpacity(widget
-                                  .groupData.groupUsers
-                                  .map((e) => e.userId)
-                                  .contains(currentUser.id)
-                              ? 0.5
-                              : 1),
+                          color: AppColors.lightBlue3.withOpacity(
+                              (widget.groupData.groupUsers ?? [])
+                                      .map((e) => e.userId)
+                                      .contains(currentUser.id)
+                                  ? 0.5
+                                  : 1),
                           fontSize: 12),
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
-                    '${this.widget.groupData.group.location}'.toUpperCase(),
+                    '${this.widget.groupData.group?.location}'.toUpperCase(),
                     style: TextStyle(
-                        color: AppColors.lightBlue4.withOpacity(widget
-                                .groupData.groupUsers
-                                .map((e) => e.userId)
-                                .contains(currentUser.id)
-                            ? 0.5
-                            : 1),
+                        color: AppColors.lightBlue4.withOpacity(
+                            (widget.groupData.groupUsers ?? [])
+                                    .map((e) => e.userId)
+                                    .contains(currentUser.id)
+                                ? 0.5
+                                : 1),
                         fontSize: 10),
                     textAlign: TextAlign.left,
                   ),

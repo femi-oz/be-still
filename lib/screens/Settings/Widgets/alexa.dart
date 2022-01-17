@@ -4,7 +4,9 @@ import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
@@ -22,11 +24,17 @@ class AlexaSettings extends StatefulWidget {
 
 class _AlexaSettingsState extends State<AlexaSettings> {
   _onChangeTime(value) {
-    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
-        key: SettingsKey.pauseInterval,
-        value: value,
-        settingsId: widget.settings.id);
+    try {
+      Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id,
+          key: SettingsKey.pauseInterval,
+          value: value,
+          settingsId: widget.settings.id);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   List<LookUp> prayerTimeInterval = [

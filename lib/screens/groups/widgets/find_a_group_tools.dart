@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,21 +27,32 @@ class _FindGroupToolsState extends State<FindGroupTools> {
   final TextEditingController _adminNameController = TextEditingController();
 
   void _searchGroup() async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (_groupNameController.text.isNotEmpty ||
-        _locationController.text.isNotEmpty ||
-        _adminNameController.text.isNotEmpty ||
-        _organizationController.text.isNotEmpty ||
-        _descriptionController.text.isNotEmpty) {
-      await Provider.of<GroupProvider>(context, listen: false)
-          .advanceSearchAllGroups(
-              _groupNameController.text,
-              userId,
-              _locationController.text,
-              _organizationController.text,
-              _adminNameController.text,
-              _descriptionController.text);
+    try {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      if (_groupNameController.text.isNotEmpty ||
+          _locationController.text.isNotEmpty ||
+          _adminNameController.text.isNotEmpty ||
+          _organizationController.text.isNotEmpty ||
+          _descriptionController.text.isNotEmpty) {
+        await Provider.of<GroupProvider>(context, listen: false)
+            .advanceSearchAllGroups(
+                _groupNameController.text,
+                userId,
+                _locationController.text,
+                _organizationController.text,
+                _adminNameController.text,
+                _descriptionController.text);
+      }
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 

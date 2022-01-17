@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -41,12 +44,24 @@ class _GroupPrayersState extends State<GroupPrayers> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        final group =
-            Provider.of<GroupProvider>(context, listen: false).currentGroup;
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle((group.group.name).toUpperCase());
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setHiddenPrayer(_user.id);
+        try {
+          final group =
+              Provider.of<GroupProvider>(context, listen: false).currentGroup;
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setPageTitle((group.group?.name ?? '').toUpperCase());
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .setHiddenPrayer(_user.id);
+        } on HttpException catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.getErrorMessage(e), user, s);
+        } catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.errorOccured, user, s);
+        }
       });
       _isInit = false;
     }
@@ -60,10 +75,10 @@ class _GroupPrayersState extends State<GroupPrayers> {
         Provider.of<GroupPrayerProvider>(context, listen: false).hiddenPrayers;
     data.forEach((element) {
       _hiddenPrayers.forEach((x) {
-        if ((element.groupPrayer.prayerId).contains(x.prayerId)) {
+        if ((element.groupPrayer?.prayerId ?? '').contains(x.prayerId)) {
           data = data
-              .where(
-                  (y) => y.groupPrayer.prayerId != element.groupPrayer.prayerId)
+              .where((y) =>
+                  y.groupPrayer?.prayerId != element.groupPrayer?.prayerId)
               .toList();
         }
       });
@@ -114,13 +129,37 @@ class _GroupPrayersState extends State<GroupPrayers> {
                               ...data
                                   .map((e) => GestureDetector(
                                       onTap: () async {
-                                        await Provider.of<GroupPrayerProvider>(
-                                                context,
-                                                listen: false)
-                                            .setPrayerFuture(e.groupPrayer.id);
-                                        AppCOntroller appCOntroller =
-                                            Get.find();
-                                        appCOntroller.setCurrentPage(9, true);
+                                        try {
+                                          await Provider.of<
+                                                      GroupPrayerProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .setPrayerFuture(
+                                                  e.groupPrayer?.id ?? '');
+                                          AppCOntroller appCOntroller =
+                                              Get.find();
+                                          appCOntroller.setCurrentPage(9, true);
+                                        } on HttpException catch (e, s) {
+                                          final user =
+                                              Provider.of<UserProvider>(context,
+                                                      listen: false)
+                                                  .currentUser;
+                                          BeStilDialog.showErrorDialog(
+                                              context,
+                                              StringUtils.getErrorMessage(e),
+                                              user,
+                                              s);
+                                        } catch (e, s) {
+                                          final user =
+                                              Provider.of<UserProvider>(context,
+                                                      listen: false)
+                                                  .currentUser;
+                                          BeStilDialog.showErrorDialog(
+                                              context,
+                                              StringUtils.errorOccured,
+                                              user,
+                                              s);
+                                        }
                                       },
                                       child: GroupPrayerCard(
                                         prayerData: e,
@@ -140,13 +179,29 @@ class _GroupPrayersState extends State<GroupPrayers> {
                     padding: EdgeInsets.only(left: 20),
                     child: LongButton(
                       onPress: () {
-                        Provider.of<GroupPrayerProvider>(context, listen: false)
-                            .setEditMode(false);
-                        Provider.of<GroupPrayerProvider>(context, listen: false)
-                            .setEditPrayer();
-                        AppCOntroller appCOntroller = Get.find();
+                        try {
+                          Provider.of<GroupPrayerProvider>(context,
+                                  listen: false)
+                              .setEditMode(false);
+                          Provider.of<GroupPrayerProvider>(context,
+                                  listen: false)
+                              .setEditPrayer();
+                          AppCOntroller appCOntroller = Get.find();
 
-                        appCOntroller.setCurrentPage(10, true);
+                          appCOntroller.setCurrentPage(10, true);
+                        } on HttpException catch (e, s) {
+                          final user =
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .currentUser;
+                          BeStilDialog.showErrorDialog(
+                              context, StringUtils.getErrorMessage(e), user, s);
+                        } catch (e, s) {
+                          final user =
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .currentUser;
+                          BeStilDialog.showErrorDialog(
+                              context, StringUtils.errorOccured, user, s);
+                        }
                       },
                       text: 'Add New Prayer',
                       backgroundColor: Settings.isDarkMode

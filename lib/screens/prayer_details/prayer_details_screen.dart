@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -9,8 +12,10 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +33,25 @@ class PrayerDetails extends StatefulWidget {
 
 class _PrayerDetailsState extends State<PrayerDetails> {
   void getSettings() async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(_user.id);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   Duration snoozeDurationinDays = Duration.zero;
@@ -58,10 +79,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData.userPrayer.prayerId),
+        (reminder) =>
+            reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''),
         orElse: () => LocalNotificationModel.defaultValue());
-    reminderString = reminder.notificationText;
-    if ((reminder.id).isEmpty)
+    reminderString = reminder.notificationText ?? '';
+    if ((reminder.id ?? '').isEmpty)
       return false;
     else
       return true;
@@ -96,14 +118,31 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   }
 
   setReminder() {
-    final prayerData =
-        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    try {
+      final prayerData =
+          Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
 
-    final reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
-    _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData.userPrayer.prayerId),
-        orElse: () => LocalNotificationModel.defaultValue());
+      final reminders =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .localNotifications;
+      _reminder = reminders.firstWhere(
+          (reminder) =>
+              reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''),
+          orElse: () => LocalNotificationModel.defaultValue());
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   @override
@@ -182,7 +221,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 ],
               ),
             ),
-            if (prayerData.userPrayer.isSnoozed)
+            if ((prayerData.userPrayer ?? UserPrayerModel.defaultValue())
+                    .isSnoozed ??
+                false)
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 InkWell(
                   onTap: () => showDialog(
@@ -206,7 +247,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                               padding: const EdgeInsets.symmetric(vertical: 30),
                               child: ReminderPicker(
                                 isGroup: false,
-                                entityId: prayerData.userPrayer.id,
+                                entityId: prayerData.userPrayer?.id ?? '',
                                 type: NotificationType.reminder,
                                 reminder: _reminder,
                                 hideActionuttons: false,
@@ -229,7 +270,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       Container(
                         margin: EdgeInsets.only(left: 7),
                         child: Text(
-                            'Snoozed until ${DateFormat('MMM').format(prayerData.userPrayer.snoozeEndDate)} ${getDayText(prayerData.userPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.userPrayer.snoozeEndDate)}',
+                            'Snoozed until ${DateFormat('MMM').format(prayerData.userPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData.userPrayer?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.userPrayer?.snoozeEndDate ?? DateTime.now())}',
                             style: AppTextStyles.regularText12),
                       ),
                     ],
@@ -264,7 +305,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                         vertical: 30),
                                     child: ReminderPicker(
                                       isGroup: false,
-                                      entityId: prayerData.userPrayer.id,
+                                      entityId: prayerData.userPrayer?.id ?? '',
                                       type: NotificationType.reminder,
                                       reminder: _reminder,
                                       hideActionuttons: false,
@@ -299,10 +340,10 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   )
                 : Container(),
             SizedBox(height: 10),
-            if (Provider.of<PrayerProvider>(context)
-                .currentPrayer
-                .prayer
-                .id
+            if (((Provider.of<PrayerProvider>(context).currentPrayer.prayer ??
+                            PrayerModel.defaultValue())
+                        .id ??
+                    '')
                 .isNotEmpty)
               Expanded(
                 child: Container(

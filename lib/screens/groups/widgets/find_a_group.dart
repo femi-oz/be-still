@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
 import 'package:be_still/screens/groups/Widgets/group_card.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -27,23 +30,43 @@ class _FindAGroupState extends State<FindAGroup> {
 
   @override
   void initState() {
-    Provider.of<GroupProvider>(context, listen: false).emptyGroupList();
+    try {
+      Provider.of<GroupProvider>(context, listen: false).emptyGroupList();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
     super.initState();
   }
 
   void _searchGroup(String val) async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<GroupProvider>(context, listen: false)
-        .searchAllGroups(val, userId);
+    try {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      await Provider.of<GroupProvider>(context, listen: false)
+          .searchAllGroups(val, userId);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   Future<bool> _onWillPop() async {
     AppCOntroller appCOntroller = Get.find();
     appCOntroller.setCurrentPage(3, true);
-    // return (Navigator.of(context).pushNamedAndRemoveUntil(
-    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-    //     false;
+
     return false;
   }
 
@@ -51,7 +74,7 @@ class _FindAGroupState extends State<FindAGroup> {
   Widget build(BuildContext context) {
     var _filteredGroups = Provider.of<GroupProvider>(context)
         .filteredAllGroups
-        .where((g) => g.groupUsers.length > 0)
+        .where((g) => (g.groupUsers ?? []).length > 0)
         .toList();
     var matchText = _filteredGroups.length > 1 ? 'Groups' : 'Group';
     return GestureDetector(

@@ -1,18 +1,18 @@
 class DevotionalModel {
-  final String id;
-  final String title;
-  final String link;
-  final String period;
-  final String type;
-  final String description;
+  final String? id;
+  final String? title;
+  final String? link;
+  final String? period;
+  final String? type;
+  final String? description;
 
   DevotionalModel({
-    required this.id,
-    required this.title,
-    required this.link,
-    required this.type,
-    required this.description,
-    required this.period,
+    this.id,
+    this.title,
+    this.link,
+    this.type,
+    this.description,
+    this.period,
   });
 
   factory DevotionalModel.fromData(Map<String, dynamic> data, String did) {

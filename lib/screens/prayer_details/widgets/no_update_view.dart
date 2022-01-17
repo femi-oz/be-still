@@ -1,5 +1,9 @@
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -21,15 +25,22 @@ class _NoUpdateViewState extends State<NoUpdateView> {
   Iterable<Contact> localContacts = [];
 
   _emailLink(String payload) async {
-    // payload = payload == null ? '' : payload;
-    final Email email = Email(
-      body: '',
-      recipients: [payload],
-      isHTML: false,
-    );
+    try {
+      final Email email = Email(
+        body: '',
+        recipients: [payload],
+        isHTML: false,
+      );
 
-    await FlutterEmailSender.send(email);
-    Navigator.pop(context);
+      await FlutterEmailSender.send(email);
+      Navigator.pop(context);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   _textLink(String phoneNumber) async {
@@ -41,7 +52,22 @@ class _NoUpdateViewState extends State<NoUpdateView> {
 
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
-    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
@@ -225,11 +251,11 @@ class _NoUpdateViewState extends State<NoUpdateView> {
       padding: EdgeInsets.all(20),
       child: Column(
         children: <Widget>[
-          prayerData.prayer.groupId != '0'
+          prayerData.prayer?.groupId != '0'
               ? Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
-                    prayerData.prayer.creatorName,
+                    prayerData.prayer?.creatorName ?? '',
                     style: AppTextStyles.boldText16.copyWith(
                       color: AppColors.lightBlue4,
                     ),
@@ -246,7 +272,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                   children: <Widget>[
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(prayerData.prayer.createdOn)
+                          .format(
+                              prayerData.prayer?.createdOn ?? DateTime.now())
                           .toLowerCase(),
                       style: AppTextStyles.regularText18b
                           .copyWith(color: AppColors.prayerModeBorder),
@@ -276,7 +303,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                         EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                     child: SingleChildScrollView(
                       child: EasyRichText(
-                        prayerData.prayer.description,
+                        prayerData.prayer?.description ?? '',
                         defaultStyle: AppTextStyles.regularText16b.copyWith(
                           color: AppColors.prayerTextColor,
                         ),
@@ -285,14 +312,15 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                           for (var i = 0; i < prayerData.tags.length; i++)
                             EasyRichTextPattern(
                                 targetString:
-                                    prayerData.tags[i].displayName.trim(),
+                                    (prayerData.tags[i].displayName ?? '')
+                                        .trim(),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     _openShareModal(
                                         context,
-                                        prayerData.tags[i].phoneNumber,
-                                        prayerData.tags[i].email,
-                                        prayerData.tags[i].identifier);
+                                        prayerData.tags[i].phoneNumber ?? '',
+                                        prayerData.tags[i].email ?? '',
+                                        prayerData.tags[i].identifier ?? '');
                                   },
                                 style: AppTextStyles.regularText15.copyWith(
                                     color: AppColors.lightBlue2,

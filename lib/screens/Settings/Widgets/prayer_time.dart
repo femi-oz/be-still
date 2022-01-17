@@ -142,7 +142,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                           children: [
                                             Container(
                                               child: Text(
-                                                data.frequency,
+                                                data.frequency ?? '',
                                                 style: AppTextStyles
                                                     .regularText15
                                                     .copyWith(
@@ -153,7 +153,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             data.frequency == Frequency.weekly
                                                 ? Container(
                                                     child: Text(
-                                                      data.selectedDay,
+                                                      data.selectedDay ?? '',
                                                       style: AppTextStyles
                                                           .regularText15
                                                           .copyWith(
@@ -168,7 +168,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                         child: Text(
                                                           DateFormat('MM-dd-yy')
                                                               .format(data
-                                                                  .scheduledDate),
+                                                                      .scheduledDate ??
+                                                                  DateTime
+                                                                      .now()),
                                                           style: AppTextStyles
                                                               .regularText15
                                                               .copyWith(
@@ -181,7 +183,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  data.selectedHour,
+                                                  data.selectedHour ?? '',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -201,7 +203,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  data.selectedMinute,
+                                                  data.selectedMinute ?? '',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -211,7 +213,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  data.period,
+                                                  data.period ?? '',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -295,8 +297,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                       InkWell(
                                         onTap: () {
                                           _deletePrayerTime(
-                                              data.localNotificationId,
-                                              data.id);
+                                              data.localNotificationId ?? 0,
+                                              data.id ?? '');
                                         },
                                         child: Container(
                                           width: 30,

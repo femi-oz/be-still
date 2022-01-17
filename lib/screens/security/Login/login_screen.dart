@@ -230,36 +230,52 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> setRouteDestination() async {
-    var message =
-        Provider.of<NotificationProvider>(context, listen: false).message;
-    if (message.entityId.isNotEmpty) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) async {
-        if (message.type == NotificationType.prayer_time) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId);
-          // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
-          AppCOntroller appCOntroller = Get.find();
+    try {
+      var message =
+          Provider.of<NotificationProvider>(context, listen: false).message;
+      if ((message.entityId ?? '').isNotEmpty) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) async {
+          if (message.type == NotificationType.prayer_time) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayerTimePrayers(message.entityId ?? '');
+            // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
+            AppCOntroller appCOntroller = Get.find();
 
-          appCOntroller.setCurrentPage(2, false);
-          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
-        }
-        if (message.type == NotificationType.prayer) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId);
-          // NavigationService.instance.navigateToReplacement(PrayerDetails());
-        }
-      });
-      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
-    } else {
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setLoadStatus(true);
-      AppCOntroller appCOntroller = Get.find();
+            appCOntroller.setCurrentPage(2, false);
+            Provider.of<MiscProvider>(context, listen: false)
+                .setLoadStatus(true);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+          }
+          if (message.type == NotificationType.prayer) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayer(message.entityId ?? '');
+          }
+        });
+        Provider.of<NotificationProvider>(context, listen: false)
+            .clearMessage();
+      } else {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setLoadStatus(true);
+        AppCOntroller appCOntroller = Get.find();
 
-      appCOntroller.setCurrentPage(0, false);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+        appCOntroller.setCurrentPage(0, false);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
+      }
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -288,10 +304,9 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _usernameController.text, 'LOGIN/screen/_resendVerification');
       BeStilDialog.hideLoading(context);
-      PlatformException err = PlatformException(
-          code: 'custom', message: 'An error occured. Please try again.');
-      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(err),
-          UserModel.defaultValue(), s);
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 
@@ -335,7 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 
@@ -363,10 +378,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      PlatformException er = PlatformException(
-          code: 'custom', message: 'An error occured. Please try again');
-      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(er),
-          UserModel.defaultValue(), s);
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 

@@ -1,8 +1,10 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:flutter/gestures.dart';
@@ -44,7 +46,12 @@ class _UpdateViewState extends State<UpdateView> {
 
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
-    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    } catch (e, s) {
+      var user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
@@ -225,7 +232,8 @@ class _UpdateViewState extends State<UpdateView> {
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     var updates = widget.data.updates;
-    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+    updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
+        .compareTo(a.modifiedOn ?? DateTime.now()));
     updates = updates.where((element) => element.deleteStatus != -1).toList();
 
     return Container(
@@ -235,11 +243,11 @@ class _UpdateViewState extends State<UpdateView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              widget.data.prayer.userId != _currentUser.id
+              widget.data.prayer?.userId != _currentUser.id
                   ? Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        widget.data.prayer.creatorName,
+                        widget.data.prayer?.creatorName ?? '',
                         style: AppTextStyles.boldText20.copyWith(
                             color: Settings.isDarkMode
                                 ? Color(0xFF009FD0)
@@ -262,7 +270,8 @@ class _UpdateViewState extends State<UpdateView> {
                               children: <Widget>[
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(updates[i].createdOn)
+                                      .format(updates[i].createdOn ??
+                                          DateTime.now())
                                       .toLowerCase(),
                                   style: AppTextStyles.regularText18b.copyWith(
                                       color: AppColors.prayerModeBorder),
@@ -286,7 +295,7 @@ class _UpdateViewState extends State<UpdateView> {
                                 children: [
                                   Flexible(
                                     child: EasyRichText(
-                                      updates[i].description,
+                                      updates[i].description ?? '',
                                       defaultStyle:
                                           AppTextStyles.regularText16b.copyWith(
                                         color: AppColors.prayerTextColor,
@@ -304,10 +313,14 @@ class _UpdateViewState extends State<UpdateView> {
                                                   _openShareModal(
                                                       context,
                                                       widget.data.tags[i]
-                                                          .phoneNumber,
-                                                      widget.data.tags[i].email,
+                                                              .phoneNumber ??
+                                                          '',
                                                       widget.data.tags[i]
-                                                          .identifier);
+                                                              .email ??
+                                                          '',
+                                                      widget.data.tags[i]
+                                                              .identifier ??
+                                                          '');
                                                 },
                                               style: AppTextStyles.regularText15
                                                   .copyWith(
@@ -324,7 +337,7 @@ class _UpdateViewState extends State<UpdateView> {
                                 children: [
                                   Flexible(
                                     child: EasyRichText(
-                                      updates[i].description,
+                                      updates[i].description ?? '',
                                       defaultStyle:
                                           AppTextStyles.regularText16b.copyWith(
                                         color: AppColors.prayerTextColor,
@@ -342,10 +355,14 @@ class _UpdateViewState extends State<UpdateView> {
                                                   _openShareModal(
                                                       context,
                                                       widget.data.tags[i]
-                                                          .phoneNumber,
-                                                      widget.data.tags[i].email,
+                                                              .phoneNumber ??
+                                                          '',
                                                       widget.data.tags[i]
-                                                          .identifier);
+                                                              .email ??
+                                                          '',
+                                                      widget.data.tags[i]
+                                                              .identifier ??
+                                                          '');
                                                 },
                                               style: AppTextStyles.regularText15
                                                   .copyWith(
@@ -378,8 +395,9 @@ class _UpdateViewState extends State<UpdateView> {
                                     color: AppColors.prayerModeBorder),
                               ),
                               Text(
-                                DateFormat('MM.dd.yyyy')
-                                    .format(widget.data.prayer.createdOn),
+                                DateFormat('MM.dd.yyyy').format(
+                                    widget.data.prayer?.createdOn ??
+                                        DateTime.now()),
                                 style: AppTextStyles.regularText18b.copyWith(
                                     color: AppColors.prayerModeBorder),
                               ),
@@ -401,7 +419,7 @@ class _UpdateViewState extends State<UpdateView> {
                         children: [
                           Flexible(
                             child: EasyRichText(
-                              widget.data.prayer.description,
+                              widget.data.prayer?.description ?? '',
                               defaultStyle:
                                   AppTextStyles.regularText16b.copyWith(
                                 color: AppColors.prayerTextColor,
@@ -418,9 +436,11 @@ class _UpdateViewState extends State<UpdateView> {
                                         ..onTap = () {
                                           _openShareModal(
                                               context,
-                                              widget.data.tags[i].phoneNumber,
-                                              widget.data.tags[i].email,
-                                              widget.data.tags[i].identifier);
+                                              widget.data.tags[i].phoneNumber ??
+                                                  '',
+                                              widget.data.tags[i].email ?? '',
+                                              widget.data.tags[i].identifier ??
+                                                  '');
                                         },
                                       style: AppTextStyles.regularText15
                                           .copyWith(

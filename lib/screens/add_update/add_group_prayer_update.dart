@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
@@ -57,14 +58,26 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   @override
   void didChangeDependencies() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId);
+      } on HttpException catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }
@@ -110,8 +123,10 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
       setState(() {
         numberOfLines = lines.length.toDouble();
       });
-    } catch (e) {
-      print(e);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
@@ -324,9 +339,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
-    final updates = prayerData.updates
-        .where((element) => element.deleteStatus != -1)
-        .toList();
+    final updates = prayerData.updates ??
+        [].where((element) => element.deleteStatus != -1).toList();
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
@@ -446,8 +460,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer.id,
-                              prayerData.groupPrayer.groupId)
+                          ? _save(prayerData.prayer?.id ?? '',
+                              prayerData.groupPrayer?.groupId ?? '')
                           : null,
                     ),
                   ],
@@ -499,18 +513,25 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayerData.groupPrayer.createdBy != currentUser.id
-                                ? Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    child: Text(
-                                      prayerData.prayer.creatorName,
-                                      style: AppTextStyles.regularText16b
-                                          .copyWith(
-                                              color: AppColors.lightBlue4),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  )
-                                : Container(),
+                            if ((prayerData.groupPrayer ??
+                                        GroupPrayerModel.defaultValue())
+                                    .createdBy !=
+                                '')
+                              (prayerData.groupPrayer ??
+                                              GroupPrayerModel.defaultValue())
+                                          .createdBy !=
+                                      currentUser.id
+                                  ? Container(
+                                      margin: EdgeInsets.only(bottom: 20),
+                                      child: Text(
+                                        prayerData.prayer?.creatorName ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                                color: AppColors.lightBlue4),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  : Container(),
                             ...updates.map(
                               (u) => Container(
                                 child: Column(
@@ -586,7 +607,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                                             Text(
                                               intl.DateFormat(' MM.dd.yyyy')
                                                   .format(prayerData
-                                                      .prayer.modifiedOn),
+                                                          .prayer?.modifiedOn ??
+                                                      DateTime.now()),
                                               style: AppTextStyles
                                                   .regularText18b
                                                   .copyWith(
@@ -613,7 +635,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                                           vertical: 20.0, horizontal: 20),
                                       child: Center(
                                         child: Text(
-                                          prayerData.prayer.description,
+                                          prayerData.prayer?.description ?? '',
                                           style: AppTextStyles.regularText16b
                                               .copyWith(
                                                   color: AppColors

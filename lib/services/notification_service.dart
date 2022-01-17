@@ -122,7 +122,7 @@ class NotificationService {
   }) async {
     final _smsId = Uuid().v1();
     var _templateBody = template.templateBody;
-    _templateBody = _templateBody.replaceAll('{Sender}', sender);
+    _templateBody = (_templateBody ?? '').replaceAll('{Sender}', sender);
     _templateBody = _templateBody.replaceAll("{Receiver}", receiver);
     _templateBody = _templateBody.replaceAll('{message}', message);
     _templateBody = _templateBody.replaceAll('<br/>', "\n");
@@ -167,8 +167,8 @@ class NotificationService {
     final _emailId = Uuid().v1();
     var templateSubject = template.templateSubject;
     var templateBody = template.templateBody;
-    templateSubject = templateSubject.replaceAll("{Sender}", sender);
-    templateBody = templateBody.replaceAll("{Receiver}", receiver);
+    templateSubject = (templateSubject ?? '').replaceAll("{Sender}", sender);
+    templateBody = templateBody ?? ''.replaceAll("{Receiver}", receiver);
     templateBody = templateBody.replaceAll("{Sender}", sender);
     templateBody = templateBody.replaceAll("{message}", message);
     templateBody = templateBody.replaceAll(

@@ -12,26 +12,34 @@ class AuthenticationProvider with ChangeNotifier {
   bool get needsVerification => _needsVerification;
 
   Future<void> signIn({required String email, required String password}) async {
-    UserVerify response =
-        await _authService.signIn(email: email, password: password);
-    _needsVerification = response.needsVerification;
-    if (_needsVerification) {
-      final message = StringUtils.generateExceptionMessage('not-verified');
-      await locator<LogService>()
-          .createLog(message, email, 'AUTHENTICATION/service/signIn');
-      throw HttpException(message);
-    }
-    if (response.error != null) {
-      final e = response.error;
-      final message = StringUtils.generateExceptionMessage(e?.code);
-      await locator<LogService>()
-          .createLog(message, email, 'AUTHENTICATION/service/signIn');
-      throw HttpException(message);
+    try {
+      UserVerify response =
+          await _authService.signIn(email: email, password: password);
+      _needsVerification = response.needsVerification;
+      if (_needsVerification) {
+        final message = StringUtils.generateExceptionMessage('not-verified');
+        await locator<LogService>()
+            .createLog(message, email, 'AUTHENTICATION/service/signIn');
+        throw HttpException(message);
+      }
+      if (response.error != null) {
+        final e = response.error;
+        final message = StringUtils.generateExceptionMessage(e?.code);
+        await locator<LogService>()
+            .createLog(message, email, 'AUTHENTICATION/service/signIn');
+        throw HttpException(message);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
   Future<bool> biometricSignin(String email) async {
-    return await _authService.biometricAuthentication(email);
+    try {
+      return await _authService.biometricAuthentication(email);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> registerUser({
@@ -41,27 +49,48 @@ class AuthenticationProvider with ChangeNotifier {
     required String lastName,
     required DateTime dob,
   }) async {
-    await _authService.registerUser(
-      email,
-      password,
-      firstName,
-      lastName,
-      dob,
-    );
+    try {
+      await _authService.registerUser(
+        email,
+        password,
+        firstName,
+        lastName,
+        dob,
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
-    await _authService.sendPasswordResetEmail(email);
+    try {
+      await _authService.sendPasswordResetEmail(email);
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> sendEmailVerification() async =>
+  Future<void> sendEmailVerification() async {
+    try {
       await _authService.sendEmailVerification();
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> signOut() async {
-    await _authService.signOut();
+    try {
+      await _authService.signOut();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<bool> isUserLoggedIn() async {
-    return await _authService.isUserLoggedIn();
+    try {
+      return await _authService.isUserLoggedIn();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

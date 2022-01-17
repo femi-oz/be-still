@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -40,11 +42,19 @@ class _SharingSettingsState extends State<SharingSettings> {
               value: _churchName.text);
 
       Navigator.pop(context);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -60,11 +70,19 @@ class _SharingSettingsState extends State<SharingSettings> {
               settingsId: settingProvider.sharingSettings.id,
               value: _churchEmail.text);
       Navigator.pop(context);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -80,11 +98,19 @@ class _SharingSettingsState extends State<SharingSettings> {
               settingsId: settingProvider.sharingSettings.id,
               value: _churchLink.text);
       Navigator.pop(context);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -100,11 +126,19 @@ class _SharingSettingsState extends State<SharingSettings> {
               settingsId: settingProvider.sharingSettings.id,
               value: _churchPhone.text);
       Navigator.pop(context);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 

@@ -360,7 +360,7 @@ class GroupPrayerService {
           );
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
-          prayerUpdate.userId, 'PRAYER/service/addPrayerUpdate');
+          prayerUpdate.userId ?? '', 'PRAYER/service/addPrayerUpdate');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -630,7 +630,7 @@ class GroupPrayerService {
       await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
-          prayerData.userId, 'PRAYER/service/addPrayerWithGroup');
+          prayerData.userId ?? '', 'PRAYER/service/addPrayerWithGroup');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -798,8 +798,10 @@ class GroupPrayerService {
         data: data,
       );
     } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
-          requestMessageModel.senderId, 'PRAYER/service/messageRequestor');
+      locator<LogService>().createLog(
+          StringUtils.getErrorMessage(e),
+          requestMessageModel.senderId ?? '',
+          'PRAYER/service/messageRequestor');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }

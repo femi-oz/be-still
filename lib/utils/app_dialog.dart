@@ -56,7 +56,7 @@ class BeStilDialog {
   }
 
   static Future showErrorDialog(BuildContext context, String error,
-      UserModel user, StackTrace stackTrace) async {
+      UserModel? user, StackTrace? stackTrace) async {
     // bool hasProperty = false;
     // try {
     //   (error as PlatformException).message;
@@ -71,9 +71,11 @@ class BeStilDialog {
         message: error.capitalizeFirst ?? '',
       ),
     );
-    FirebaseCrashlytics.instance.setUserIdentifier(user.id);
-    FirebaseCrashlytics.instance.setCustomKey('id', user.id);
-    FirebaseCrashlytics.instance.setCustomKey('email', user.email);
+    if (user != null) {
+      FirebaseCrashlytics.instance.setUserIdentifier(user.id);
+      FirebaseCrashlytics.instance.setCustomKey('id', user.id);
+      FirebaseCrashlytics.instance.setCustomKey('email', user.email);
+    }
 
     FirebaseCrashlytics.instance.recordError(
       error,

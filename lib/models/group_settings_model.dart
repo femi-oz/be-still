@@ -1,32 +1,32 @@
 class GroupSettings {
-  final String id;
-  final String userId;
-  final String groupId;
-  final bool enableNotificationFormNewPrayers;
-  final bool enableNotificationForUpdates;
-  final bool notifyOfMembershipRequest;
-  final bool notifyMeofFlaggedPrayers;
-  final bool notifyWhenNewMemberJoins;
-  final String createdBy;
-  final bool requireAdminApproval;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? userId;
+  final String? groupId;
+  final bool? enableNotificationFormNewPrayers;
+  final bool? enableNotificationForUpdates;
+  final bool? notifyOfMembershipRequest;
+  final bool? notifyMeofFlaggedPrayers;
+  final bool? notifyWhenNewMemberJoins;
+  final String? createdBy;
+  final bool? requireAdminApproval;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const GroupSettings({
-    required this.id,
-    required this.userId,
-    required this.requireAdminApproval,
-    required this.groupId,
-    required this.enableNotificationFormNewPrayers,
-    required this.enableNotificationForUpdates,
-    required this.notifyOfMembershipRequest,
-    required this.notifyMeofFlaggedPrayers,
-    required this.notifyWhenNewMemberJoins,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.userId,
+    this.requireAdminApproval,
+    this.groupId,
+    this.enableNotificationFormNewPrayers,
+    this.enableNotificationForUpdates,
+    this.notifyOfMembershipRequest,
+    this.notifyMeofFlaggedPrayers,
+    this.notifyWhenNewMemberJoins,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory GroupSettings.defaultValue() {
@@ -114,14 +114,14 @@ class GroupSettings {
 }
 
 class GroupPreferenceSettings {
-  final String id;
-  final String userId;
-  final bool enableNotificationForAllGroups;
+  final String? id;
+  final String? userId;
+  final bool? enableNotificationForAllGroups;
 
   const GroupPreferenceSettings({
-    required this.id,
-    required this.userId,
-    required this.enableNotificationForAllGroups,
+    this.id,
+    this.userId,
+    this.enableNotificationForAllGroups,
   });
 
   factory GroupPreferenceSettings.defaultValue() => GroupPreferenceSettings(

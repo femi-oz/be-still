@@ -1,14 +1,14 @@
 class ContactModel {
-  final String id;
-  final String email;
-  final String phoneNumber;
-  final String displayName;
+  final String? id;
+  final String? email;
+  final String? phoneNumber;
+  final String? displayName;
 
   const ContactModel({
-    required this.id,
-    required this.email,
-    required this.phoneNumber,
-    required this.displayName,
+    this.id,
+    this.email,
+    this.phoneNumber,
+    this.displayName,
   });
 
   factory ContactModel.fromData(Map<String, dynamic> data, String did) {

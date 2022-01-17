@@ -1,32 +1,32 @@
 class PrayerSettingsModel {
-  final String id;
-  final String userId;
-  final String frequency;
-  final String day;
-  final String time;
-  final bool doNotDisturb;
-  final bool allowEmergencyCalls;
-  final bool enableBackgroundMusic;
-  final bool autoPlayMusic;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? userId;
+  final String? frequency;
+  final String? day;
+  final String? time;
+  final bool? doNotDisturb;
+  final bool? allowEmergencyCalls;
+  final bool? enableBackgroundMusic;
+  final bool? autoPlayMusic;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const PrayerSettingsModel({
-    required this.id,
-    required this.userId,
-    required this.frequency,
-    required this.time,
-    required this.day,
-    required this.doNotDisturb,
-    required this.allowEmergencyCalls,
-    required this.autoPlayMusic,
-    required this.enableBackgroundMusic,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.userId,
+    this.frequency,
+    this.time,
+    this.day,
+    this.doNotDisturb,
+    this.allowEmergencyCalls,
+    this.autoPlayMusic,
+    this.enableBackgroundMusic,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory PrayerSettingsModel.defaultValue() => PrayerSettingsModel(

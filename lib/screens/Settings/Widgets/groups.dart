@@ -1,6 +1,7 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -12,6 +13,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -31,108 +33,141 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   _removeUserFromGroup(
       GroupUserModel user, CombineGroupUserStream group) async {
-    final message = 'You have removed the user from your group';
-    final _currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    final userName =
-        ('${_currentUser.firstName}  ${_currentUser.lastName}').capitalizeFirst;
     try {
+      final message = 'You have removed the user from your group';
+      final _currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final userName = ('${_currentUser.firstName}  ${_currentUser.lastName}')
+          .capitalizeFirst;
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .deleteFromGroup(user.userId, user.groupId);
+          .deleteFromGroup(user.userId ?? "", user.groupId ?? "");
       await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(user.userId);
+          .getUserById(user.userId ?? "");
       final receiverData =
           Provider.of<UserProvider>(context, listen: false).selectedUser;
       sendPushNotification(
-          '$userName has removed you from ${group.group.name}',
+          '$userName has removed you from ${group.group?.name}',
           NotificationType.remove_from_group,
           userName ?? '',
           _currentUser.id,
-          user.userId,
+          user.userId ?? "",
           'Remove from group',
-          group.group.id,
+          group.group?.id ?? "",
           [receiverData.pushToken]);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       Navigator.pop(context);
       BeStilDialog.showSuccessDialog(context, message);
-    } on HttpException catch (_) {
-    } catch (e) {}
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   leaveGroup(CombineGroupUserStream data) async {
-    Navigator.pop(context);
-    BeStilDialog.showLoading(context, '');
-    final _currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    final id = data.groupUsers
-        .firstWhere((e) => e.userId == _currentUser.id,
-            orElse: () => GroupUserModel.defaultValue())
-        .id;
-    await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-    var receiver = data.groupUsers
-        .firstWhere((element) => element.role == GroupUserRole.admin);
+    try {
+      Navigator.pop(context);
+      BeStilDialog.showLoading(context, '');
+      final _currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final id = (data.groupUsers ?? [])
+          .firstWhere((e) => e.userId == _currentUser.id,
+              orElse: () => GroupUserModel.defaultValue())
+          .id;
+      await Provider.of<GroupProvider>(context, listen: false)
+          .leaveGroup(id ?? "");
+      var receiver = (data.groupUsers ?? [])
+          .firstWhere((element) => element.role == GroupUserRole.admin);
 
-    await Provider.of<UserProvider>(context, listen: false)
-        .getUserById(receiver.userId);
-    await Future.delayed(Duration(milliseconds: 500));
-    final receiverData =
-        Provider.of<UserProvider>(context, listen: false).selectedUser;
-    var followedPrayers =
-        Provider.of<GroupPrayerProvider>(context, listen: false)
-            .followedPrayers
-            .where((element) =>
-                element.groupId == data.group.id &&
-                element.userId == _currentUser.id);
-    followedPrayers.forEach((element) async {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .removeFromMyList(element.id, element.userPrayerId);
-    });
-    // if (id != null) {
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(receiver.userId ?? '');
+      await Future.delayed(Duration(milliseconds: 500));
+      final receiverData =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
+      var followedPrayers =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .followedPrayers
+              .where((element) =>
+                  element.groupId == data.group?.id &&
+                  element.userId == _currentUser.id);
+      followedPrayers.forEach((element) async {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
+      });
 
-    sendPushNotification(
-        '${_currentUser.firstName} has left your group ${data.group.name}',
-        NotificationType.leave_group,
-        _currentUser.firstName,
-        _currentUser.id,
-        receiver.userId,
-        'Groups',
-        data.group.id,
-        [receiverData.pushToken]);
-    Provider.of<GroupProvider>(context, listen: false)
-        .setUserGroups(_currentUser.id);
-    BeStilDialog.hideLoading(context);
-    // }
+      sendPushNotification(
+          '${_currentUser.firstName} has left your group ${data.group?.name}',
+          NotificationType.leave_group,
+          _currentUser.firstName,
+          _currentUser.id,
+          receiver.userId ?? '',
+          'Groups',
+          data.group?.id ?? '',
+          [receiverData.pushToken]);
+      Provider.of<GroupProvider>(context, listen: false)
+          .setUserGroups(_currentUser.id);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   deleteGroup(CombineGroupUserStream data) async {
-    BeStilDialog.showLoading(context, '');
-    final notifications =
-        Provider.of<NotificationProvider>(context, listen: false).notifications;
+    try {
+      BeStilDialog.showLoading(context, '');
+      final notifications =
+          Provider.of<NotificationProvider>(context, listen: false)
+              .notifications;
 
-    final requests = notifications
-        .where((e) =>
-            e.messageType == NotificationType.request &&
-            e.groupId == data.group.id)
-        .toList();
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .setFollowedPrayerByGroupId(data.group.id);
-
-    await Provider.of<GroupProvider>(context, listen: false)
-        .deleteGroup(data.group.id, requests);
-    var followedPrayers =
-        Provider.of<GroupPrayerProvider>(context, listen: false)
-            .followedPrayers
-            .where((element) => element.groupId == data.group.id);
-    followedPrayers.forEach((element) async {
+      final requests = notifications
+          .where((e) =>
+              e.messageType == NotificationType.request &&
+              e.groupId == data.group?.id)
+          .toList();
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .removeFromMyList(element.id, element.userPrayerId);
-    });
-    await Future.delayed(Duration(milliseconds: 300));
-    Navigator.pop(context);
-    BeStilDialog.hideLoading(context);
+          .setFollowedPrayerByGroupId(data.group?.id ?? '');
+
+      await Provider.of<GroupProvider>(context, listen: false)
+          .deleteGroup(data.group?.id ?? '', requests);
+      var followedPrayers =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .followedPrayers
+              .where((element) => element.groupId == data.group?.id);
+      followedPrayers.forEach((element) async {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
+      });
+      await Future.delayed(Duration(milliseconds: 300));
+      Navigator.pop(context);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   Future<void> acceptRequest(
@@ -140,7 +175,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(request.userId); //sender
+          .getUserById(request.userId ?? ''); //sender
 
       Future.delayed(Duration(seconds: 5), () async {
         final receiverFullName =
@@ -150,7 +185,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
 
         await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
-            request.groupId, request.userId, request.id, receiverFullName);
+            request.groupId ?? '',
+            request.userId ?? '',
+            request.id ?? '',
+            receiverFullName);
 
         final receiverData =
             Provider.of<UserProvider>(context, listen: false).selectedUser;
@@ -160,10 +198,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 NotificationType.accept_request,
                 sender.firstName,
                 sender.id,
-                request.userId,
+                request.userId ?? '',
                 'Request Accepted',
                 '',
-                group.id,
+                group.id ?? '',
                 [receiverData.pushToken]);
         final notifications =
             Provider.of<NotificationProvider>(context, listen: false)
@@ -176,15 +214,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
         // for
         for (final not in notifications) {
           await Provider.of<NotificationProvider>(context, listen: false)
-              .updateNotification(not.id);
+              .updateNotification(not.id ?? '');
         }
 
         // Navigator.of(context).pop();
         BeStilDialog.hideLoading(context);
       });
-    } catch (e) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // print(e);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -197,16 +245,30 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       String title,
       String entityId,
       List<String> tokens) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .sendPushNotification(message, messageType, sender, senderId,
-            receiverId, title, '', entityId, tokens);
+    try {
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .sendPushNotification(message, messageType, sender, senderId,
+              receiverId, title, '', entityId, tokens);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
     bool userIsAdmin = false;
     UserModel userData = UserModel.defaultValue();
-
-    setState(() {
+    try {
       final _currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       userIsAdmin =
@@ -215,7 +277,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               : false;
 
       userData = Provider.of<UserProvider>(context, listen: false).selectedUser;
-    });
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+
+    setState(() {});
 
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -283,7 +353,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
                         child: Text(
-                          'Has been a member since ${f.format(user.createdOn)}',
+                          'Has been a member since ${f.format(user.createdOn ?? DateTime.now())}',
                           style: TextStyle(
                               color: AppColors.textFieldText,
                               fontSize: 12,
@@ -805,13 +875,30 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   String getUser(CombineGroupUserStream data) {
-    data.groupUsers.forEach((element) {
-      Provider.of<UserProvider>(context, listen: false)
-          .getUserById(element.userId);
-    });
-    return Provider.of<UserProvider>(context, listen: false)
-        .selectedUser
-        .lastName;
+    try {
+      (data.groupUsers ?? []).forEach((element) {
+        Provider.of<UserProvider>(context, listen: false)
+            .getUserById(element.userId ?? '');
+      });
+      return Provider.of<UserProvider>(context, listen: false)
+          .selectedUser
+          .lastName;
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+      return '';
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      return '';
+    }
   }
 
   @override
@@ -862,39 +949,57 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             CustomToggle(
               title: 'Enable Alerts from Groups?',
               onChange: (bool value) async {
-                _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
-                    key: 'EnableNotificationForAllGroups',
-                    value: value,
-                    settingsId: _groupPreferenceSettings.id);
+                try {
+                  _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
+                      key: 'EnableNotificationForAllGroups',
+                      value: value,
+                      settingsId: _groupPreferenceSettings.id ?? '');
 
-                if (value) {
-                  messaging = FirebaseMessaging.instance;
-                  messaging.getToken().then((value) => {
-                        Provider.of<NotificationProvider>(context,
-                                listen: false)
-                            .enablePushNotifications(
-                                value ?? '', _currentUser.id, _currentUser)
-                      });
-                } else {
-                  await Provider.of<NotificationProvider>(context,
-                          listen: false)
-                      .disablePushNotifications(_currentUser.id, _currentUser);
+                  if (value) {
+                    messaging = FirebaseMessaging.instance;
+                    messaging.getToken().then((value) => {
+                          Provider.of<NotificationProvider>(context,
+                                  listen: false)
+                              .enablePushNotifications(
+                                  value ?? '', _currentUser.id, _currentUser)
+                        });
+                  } else {
+                    await Provider.of<NotificationProvider>(context,
+                            listen: false)
+                        .disablePushNotifications(
+                            _currentUser.id, _currentUser);
+                  }
+                } on HttpException catch (e, s) {
+                  BeStilDialog.hideLoading(context);
+
+                  final user = Provider.of<UserProvider>(context, listen: false)
+                      .currentUser;
+                  BeStilDialog.showErrorDialog(
+                      context, StringUtils.getErrorMessage(e), user, s);
+                } catch (e, s) {
+                  BeStilDialog.hideLoading(context);
+
+                  final user = Provider.of<UserProvider>(context, listen: false)
+                      .currentUser;
+                  BeStilDialog.showErrorDialog(
+                      context, StringUtils.errorOccured, user, s);
                 }
               },
-              value: _groupPreferenceSettings.enableNotificationForAllGroups,
+              value: _groupPreferenceSettings.enableNotificationForAllGroups ??
+                  false,
             ),
             Column(
               children: <Widget>[
                 ..._groups.map((CombineGroupUserStream data) {
-                  bool isAdmin = data.groupUsers
+                  bool isAdmin = (data.groupUsers ?? [])
                           .firstWhere((g) => g.userId == _currentUser.id)
                           .role ==
                       GroupUserRole.admin;
-                  bool isModerator = data.groupUsers
+                  bool isModerator = (data.groupUsers ?? [])
                           .firstWhere((g) => g.userId == _currentUser.id)
                           .role ==
                       GroupUserRole.moderator;
-                  bool isMember = data.groupUsers
+                  bool isMember = (data.groupUsers ?? [])
                           .firstWhere((g) => g.userId == _currentUser.id)
                           .role ==
                       GroupUserRole.member;
@@ -909,7 +1014,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         margin: EdgeInsets.only(
                             left: MediaQuery.of(context).size.width * 0.1),
                         child: Text(
-                          data.group.name,
+                          data.group?.name ?? '',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white70),
@@ -1003,9 +1108,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Flexible(
                                       child: Text(
-                                        data.group.description.isEmpty
+                                        ((data.group ??
+                                                            GroupModel
+                                                                .defaultValue())
+                                                        .description ??
+                                                    '')
+                                                .isEmpty
                                             ? "-"
-                                            : data.group.description,
+                                            : data.group?.description ?? '',
                                         style: AppTextStyles.regularText14
                                             .copyWith(
                                                 color: AppColors.textFieldText),
@@ -1043,9 +1153,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      data.group.organization.isEmpty
+                                      ((data.group ?? GroupModel.defaultValue())
+                                                      .description ??
+                                                  '')
+                                              .isEmpty
                                           ? "-"
-                                          : data.group.organization,
+                                          : data.group?.description ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.textFieldText),
@@ -1084,7 +1197,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Flexible(
                                       child: Text(
-                                        data.group.location,
+                                        data.group?.location ?? '',
                                         style: AppTextStyles.regularText16b
                                             .copyWith(
                                                 color: AppColors.textFieldText),
@@ -1149,11 +1262,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 title: 'Require admin approval to join group?',
                                 onChange: (value) {
                                   if (!value) {
-                                    final activeRequests = data.groupRequests
-                                        .where((e) => e.status == '0')
-                                        .toList();
+                                    final activeRequests =
+                                        (data.groupRequests ?? [])
+                                            .where((e) => e.status == '0')
+                                            .toList();
                                     for (final req in activeRequests) {
-                                      acceptRequest(req, data.group);
+                                      acceptRequest(
+                                          req,
+                                          data.group ??
+                                              GroupModel.defaultValue());
                                     }
                                     // add each to group
                                     // send notification that they joined
@@ -1162,9 +1279,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       _currentUser.id,
                                       key: SettingsKey.requireAdminApproval,
                                       value: value,
-                                      settingsId: data.groupSettings.id);
+                                      settingsId: data.groupSettings?.id ?? '');
                                 },
-                                value: data.groupSettings.requireAdminApproval,
+                                value:
+                                    data.groupSettings?.requireAdminApproval ??
+                                        false,
                               ),
                             SizedBox(height: 15),
                             CustomToggle(
@@ -1175,9 +1294,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   .updateGroupSettings(_currentUser.id,
                                       key: 'EnableNotificationFormNewPrayers',
                                       value: value,
-                                      settingsId: data.groupSettings.id),
-                              value: data.groupSettings
-                                  .enableNotificationFormNewPrayers,
+                                      settingsId: data.groupSettings?.id ?? ''),
+                              value: (data.groupSettings ??
+                                          GroupSettings.defaultValue())
+                                      .enableNotificationFormNewPrayers ??
+                                  false,
                             ),
                             CustomToggle(
                               disabled: true,
@@ -1187,9 +1308,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   .updateGroupSettings(_currentUser.id,
                                       key: 'EnableNotificationForUpdates',
                                       value: value,
-                                      settingsId: data.groupSettings.id),
-                              value: data
-                                  .groupSettings.enableNotificationForUpdates,
+                                      settingsId: data.groupSettings?.id ?? ''),
+                              value: (data.groupSettings ??
+                                          GroupSettings.defaultValue())
+                                      .enableNotificationFormNewPrayers ??
+                                  false,
                             ),
                             if (isMember)
                               CustomToggle(
@@ -1200,9 +1323,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyWhenNewMemberJoins',
                                         value: value,
-                                        settingsId: data.groupSettings.id),
-                                value:
-                                    data.groupSettings.notifyWhenNewMemberJoins,
+                                        settingsId:
+                                            data.groupSettings?.id ?? ''),
+                                value: (data.groupSettings ??
+                                            GroupSettings.defaultValue())
+                                        .notifyWhenNewMemberJoins ??
+                                    false,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
@@ -1212,9 +1338,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyOfMembershipRequest',
                                         value: value,
-                                        settingsId: data.groupSettings.id),
-                                value: data
-                                    .groupSettings.notifyOfMembershipRequest,
+                                        settingsId:
+                                            data.groupSettings?.id ?? ''),
+                                value: (data.groupSettings ??
+                                            GroupSettings.defaultValue())
+                                        .notifyOfMembershipRequest ??
+                                    false,
                               ),
                             if (isAdmin || isModerator)
                               CustomToggle(
@@ -1224,9 +1353,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     .updateGroupSettings(_currentUser.id,
                                         key: 'NotifyMeofFlaggedPrayers',
                                         value: value,
-                                        settingsId: data.groupSettings.id),
-                                value:
-                                    data.groupSettings.notifyMeofFlaggedPrayers,
+                                        settingsId:
+                                            data.groupSettings?.id ?? ''),
+                                value: (data.groupSettings ??
+                                            GroupSettings.defaultValue())
+                                        .notifyMeofFlaggedPrayers ??
+                                    false,
                               ),
                           ],
                         ),
@@ -1354,7 +1486,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   child: Row(
                                     children: <Widget>[
                                       Text(
-                                          'Members | ${data.groupUsers.length}',
+                                          'Members | ${data.groupUsers ?? [].length}',
                                           style: AppTextStyles.regularText11),
                                       SizedBox(width: 10),
                                       Expanded(
@@ -1374,19 +1506,53 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: Column(
                                       children: <Widget>[
-                                        ...data.groupUsers.map(
+                                        ...?data.groupUsers?.map(
                                           (user) {
                                             return GestureDetector(
                                               onTap: () async {
-                                                await Provider.of<UserProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getUserById(user.userId);
-                                                Future.delayed(
-                                                    Duration(milliseconds: 15),
-                                                    () {
-                                                  _showAlert(user, data);
-                                                });
+                                                try {
+                                                  await Provider.of<
+                                                              UserProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserById(
+                                                          user.userId ?? '');
+                                                  Future.delayed(
+                                                      Duration(
+                                                          milliseconds: 15),
+                                                      () {
+                                                    _showAlert(user, data);
+                                                  });
+                                                } on HttpException catch (e, s) {
+                                                  BeStilDialog.hideLoading(
+                                                      context);
+
+                                                  final user =
+                                                      Provider.of<UserProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .currentUser;
+                                                  BeStilDialog.showErrorDialog(
+                                                      context,
+                                                      StringUtils
+                                                          .getErrorMessage(e),
+                                                      user,
+                                                      s);
+                                                } catch (e, s) {
+                                                  BeStilDialog.hideLoading(
+                                                      context);
+
+                                                  final user =
+                                                      Provider.of<UserProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .currentUser;
+                                                  BeStilDialog.showErrorDialog(
+                                                      context,
+                                                      StringUtils.errorOccured,
+                                                      user,
+                                                      s);
+                                                }
                                               },
                                               child: Container(
                                                 margin: EdgeInsets.symmetric(
@@ -1428,7 +1594,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(user.fullName,
+                                                          Text(
+                                                              user.fullName ??
+                                                                  '',
                                                               style: AppTextStyles
                                                                   .boldText14
                                                                   .copyWith(

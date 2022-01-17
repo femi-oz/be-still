@@ -134,17 +134,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Future<int> getCount() async {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    final z = [];
-    for (final e in notifications) {
-      if (e.groupId.isNotEmpty) {
-        final j = await Provider.of<GroupProvider>(context)
-            .getGroupFuture(e.groupId, userId);
-        if (j.group.id.isNotEmpty) {
-          z.add(j);
-        }
-      }
-    }
+    // final userId = Provider.of<UserProvider>(context).currentUser.id;
+    // final z = [];
+    // for (final e in notifications) {
+    //   if (e.groupId.isNotEmpty) {
+    //     final j = await Provider.of<GroupProvider>(context)
+    //         .getGroupFuture(e.groupId, userId);
+    //     if (j.group.id.isNotEmpty) {
+    //       z.add(j);
+    //     }
+    //   }
+    // }
     // notifications.forEach((e) async {
     //   if (e.groupId.isNotEmpty) {
     //     final j = await Provider.of<GroupProvider>(context)
@@ -157,7 +157,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
     //   }
     // }).toList();
 
-    return z.where((element) => element != null).length;
+    // return z.where((element) => element != null).length;
+    return notifications.length;
   }
 
   @override

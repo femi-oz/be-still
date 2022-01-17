@@ -77,31 +77,38 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> setRouteDestination() async {
-    _getPermissions();
-    final message =
-        Provider.of<NotificationProvider>(context, listen: false).message;
-    if (message.entityId.isNotEmpty) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        if (message.type == NotificationType.prayer_time) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(2, false);
-          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
-        }
-        if (message.type == NotificationType.prayer) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId);
-        }
-      });
-      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
-    } else {
-      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+    try {
+      _getPermissions();
+      final message =
+          Provider.of<NotificationProvider>(context, listen: false).message;
+      if ((message.entityId ?? '').isNotEmpty) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+          if (message.type == NotificationType.prayer_time) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayerTimePrayers(message.entityId ?? '');
+            AppCOntroller appCOntroller = Get.find();
+            appCOntroller.setCurrentPage(2, false);
+            Provider.of<MiscProvider>(context, listen: false)
+                .setLoadStatus(true);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+          }
+          if (message.type == NotificationType.prayer) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayer(message.entityId ?? '');
+          }
+        });
+        Provider.of<NotificationProvider>(context, listen: false)
+            .clearMessage();
+      } else {
+        Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
+      }
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 

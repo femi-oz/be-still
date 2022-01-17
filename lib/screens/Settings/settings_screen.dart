@@ -10,7 +10,9 @@ import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -37,14 +39,21 @@ class _SettingsScreenPage extends State<SettingsScreen>
   @override
   void didChangeDependencies() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId);
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }

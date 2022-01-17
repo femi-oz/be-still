@@ -2,32 +2,32 @@ import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/prayer.model.dart';
 
 class GroupModel {
-  final String id;
-  final String name;
-  final String status;
-  final String description;
-  final String organization;
-  final String location;
-  final bool isPrivate;
-  final bool isFeed;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? name;
+  final String? status;
+  final String? description;
+  final String? organization;
+  final String? location;
+  final bool? isPrivate;
+  final bool? isFeed;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const GroupModel({
-    required this.id,
-    required this.name,
-    required this.status,
-    required this.description,
-    required this.organization,
-    required this.location,
-    required this.isPrivate,
-    required this.isFeed,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.name,
+    this.status,
+    this.description,
+    this.organization,
+    this.location,
+    this.isPrivate,
+    this.isFeed,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   GroupModel.defaultValue()
@@ -77,20 +77,20 @@ class GroupModel {
 }
 
 class GroupRequestModel {
-  final String id;
-  final String groupId;
-  final String userId;
-  final String status;
-  final String createdBy;
-  final DateTime createdOn;
+  final String? id;
+  final String? groupId;
+  final String? userId;
+  final String? status;
+  final String? createdBy;
+  final DateTime? createdOn;
 
   const GroupRequestModel(
-      {required this.id,
-      required this.userId,
-      required this.groupId,
-      required this.status,
-      required this.createdBy,
-      required this.createdOn});
+      {this.id,
+      this.userId,
+      this.groupId,
+      this.status,
+      this.createdBy,
+      this.createdOn});
   GroupRequestModel.fromData(Map<String, dynamic> snapshot, String did)
       : id = did,
         userId = snapshot['UserId'] ?? '',
@@ -111,28 +111,28 @@ class GroupRequestModel {
 }
 
 class GroupInviteModel {
-  final String groupName;
-  final String groupId;
-  final String email;
-  final String sender;
-  final String senderId;
-  final String id;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? groupName;
+  final String? groupId;
+  final String? email;
+  final String? sender;
+  final String? senderId;
+  final String? id;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const GroupInviteModel({
-    required this.id,
-    required this.groupName,
-    required this.groupId,
-    required this.email,
-    required this.sender,
-    required this.senderId,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.groupName,
+    this.groupId,
+    this.email,
+    this.sender,
+    this.senderId,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   GroupInviteModel.fromData(Map<String, dynamic> snapshot, String did)
@@ -163,42 +163,42 @@ class GroupInviteModel {
 }
 
 class GroupPrayerModel {
-  String id;
-  String groupId;
-  String prayerId;
-  String sequence;
-  bool isFavorite;
-  String status;
-  String createdBy;
-  bool isArchived;
-  bool isSnoozed;
-  DateTime snoozeEndDate;
-  DateTime archivedDate;
-  int snoozeDuration;
-  String snoozeFrequency;
-  int deleteStatus;
-  DateTime createdOn;
-  String modifiedBy;
-  DateTime modifiedOn;
+  String? id;
+  String? groupId;
+  String? prayerId;
+  String? sequence;
+  bool? isFavorite;
+  String? status;
+  String? createdBy;
+  bool? isArchived;
+  bool? isSnoozed;
+  DateTime? snoozeEndDate;
+  DateTime? archivedDate;
+  int? snoozeDuration;
+  String? snoozeFrequency;
+  int? deleteStatus;
+  DateTime? createdOn;
+  String? modifiedBy;
+  DateTime? modifiedOn;
 
   GroupPrayerModel(
-      {required this.id,
-      required this.groupId,
-      required this.prayerId,
-      required this.sequence,
-      required this.isFavorite,
-      required this.status,
-      required this.createdBy,
-      required this.createdOn,
-      required this.modifiedBy,
-      required this.modifiedOn,
-      required this.deleteStatus,
-      required this.isSnoozed,
-      required this.isArchived,
-      required this.snoozeEndDate,
-      required this.archivedDate,
-      required this.snoozeDuration,
-      required this.snoozeFrequency});
+      {this.id,
+      this.groupId,
+      this.prayerId,
+      this.sequence,
+      this.isFavorite,
+      this.status,
+      this.createdBy,
+      this.createdOn,
+      this.modifiedBy,
+      this.modifiedOn,
+      this.deleteStatus,
+      this.isSnoozed,
+      this.isArchived,
+      this.snoozeEndDate,
+      this.archivedDate,
+      this.snoozeDuration,
+      this.snoozeFrequency});
 
   factory GroupPrayerModel.defaultValue() => GroupPrayerModel(
       createdOn: DateTime.now(),
@@ -267,29 +267,29 @@ class GroupUserRole {
 }
 
 class GroupUserModel {
-  String id;
-  String groupId;
-  String userId;
-  //  String email;
-  String fullName;
-  String status;
-  String role;
-  String createdBy;
-  DateTime createdOn;
-  String modifiedBy;
-  DateTime modifiedOn;
+  String? id;
+  String? groupId;
+  String? userId;
+  //  String? email;
+  String? fullName;
+  String? status;
+  String? role;
+  String? createdBy;
+  DateTime? createdOn;
+  String? modifiedBy;
+  DateTime? modifiedOn;
 
   GroupUserModel({
-    required this.id,
-    required this.groupId,
-    required this.userId,
-    required this.fullName,
-    required this.status,
-    required this.role,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.groupId,
+    this.userId,
+    this.fullName,
+    this.status,
+    this.role,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory GroupUserModel.defaultValue() => GroupUserModel(
@@ -335,26 +335,26 @@ class GroupUserModel {
 }
 
 class UserGroupModel {
-  final String id;
-  final String groupId;
-  final String userId;
-  final String status;
-  final String role;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? groupId;
+  final String? userId;
+  final String? status;
+  final String? role;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const UserGroupModel({
-    required this.id,
-    required this.groupId,
-    required this.userId,
-    required this.status,
-    required this.role,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.groupId,
+    this.userId,
+    this.status,
+    this.role,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   UserGroupModel.fromData(Map<String, dynamic> snapshot, String did)
@@ -384,14 +384,14 @@ class UserGroupModel {
 }
 
 class GroupUserReferenceModel {
-  final String id;
-  final String userId;
-  final String groupId;
+  final String? id;
+  final String? userId;
+  final String? groupId;
 
   const GroupUserReferenceModel({
-    required this.id,
-    required this.userId,
-    required this.groupId,
+    this.id,
+    this.userId,
+    this.groupId,
   });
 
   GroupUserReferenceModel.fromData(Map<String, dynamic> snapshot, String did)
@@ -408,16 +408,16 @@ class GroupUserReferenceModel {
 }
 
 class CombineGroupUserStream {
-  List<GroupUserModel> groupUsers;
-  final List<GroupRequestModel> groupRequests;
-  final GroupModel group;
-  final GroupSettings groupSettings;
+  List<GroupUserModel>? groupUsers;
+  final List<GroupRequestModel>? groupRequests;
+  final GroupModel? group;
+  final GroupSettings? groupSettings;
 
   CombineGroupUserStream({
-    required this.groupUsers,
-    required this.group,
-    required this.groupRequests,
-    required this.groupSettings,
+    this.groupUsers = const [],
+    this.group,
+    this.groupRequests = const [],
+    this.groupSettings,
   });
   factory CombineGroupUserStream.defaultValue() => CombineGroupUserStream(
       group: GroupModel.defaultValue(),
@@ -427,20 +427,20 @@ class CombineGroupUserStream {
 }
 
 class CombineGroupPrayerStream {
-  // final String id;
-  GroupPrayerModel groupPrayer;
+  // final String? id;
+  GroupPrayerModel? groupPrayer;
 
-  PrayerModel prayer;
+  PrayerModel? prayer;
 
-  List<PrayerTagModel> tags;
+  List<PrayerTagModel>? tags;
 
-  List<PrayerUpdateModel> updates;
+  List<PrayerUpdateModel>? updates;
 
   CombineGroupPrayerStream({
-    required this.groupPrayer,
-    required this.prayer,
-    required this.tags,
-    required this.updates,
+    this.groupPrayer,
+    this.prayer,
+    this.tags,
+    this.updates,
   });
   factory CombineGroupPrayerStream.defaultValue() => CombineGroupPrayerStream(
       groupPrayer: GroupPrayerModel.defaultValue(),

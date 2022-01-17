@@ -1,20 +1,20 @@
 class ErrorLog {
-  final String id;
-  final String message;
-  final String location;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? message;
+  final String? location;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const ErrorLog({
-    required this.id,
-    required this.message,
-    required this.location,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.message,
+    this.location,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory ErrorLog.fromData(Map<String, dynamic> data, did) {

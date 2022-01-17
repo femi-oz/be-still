@@ -38,13 +38,13 @@ class _ShareInAppState extends State<ShareInApp> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final currentGroup =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    final isFollowedByAdmin = currentGroup.groupUsers.any((element) =>
+    final isFollowedByAdmin = (currentGroup.groupUsers ?? []).any((element) =>
         element.role == GroupUserRole.admin && element.userId == user.id);
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(
-              _prayer.id, receievrId, currentGroup.group.id, isFollowedByAdmin);
+          .addToMyList(_prayer?.id ?? '', receievrId,
+              currentGroup.group?.id ?? '', isFollowedByAdmin);
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

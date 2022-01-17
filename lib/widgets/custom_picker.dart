@@ -58,7 +58,7 @@ class _CustomPickerState extends State<CustomPicker> {
                                 ...widget.lookup
                                     .map((i) => Align(
                                         alignment: Alignment.center,
-                                        child: Text(i.text,
+                                        child: Text(i.text ?? '',
                                             textAlign: TextAlign.center,
                                             style:
                                                 AppTextStyles.regularText15)))

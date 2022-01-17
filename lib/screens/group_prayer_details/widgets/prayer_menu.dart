@@ -54,10 +54,22 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
   @override
   void didChangeDependencies() async {
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .setFollowedPrayer(widget.prayerData.prayer.id);
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .setNotifications();
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setNotifications();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+
     super.didChangeDependencies();
   }
 
@@ -66,24 +78,29 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final currentGroup =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
-    final isFollowedByAdmin = currentGroup.groupUsers.any((element) =>
+    final isFollowedByAdmin = (currentGroup.groupUsers ?? []).any((element) =>
         element.role == GroupUserRole.admin && element.userId == user.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer.id, user.id,
-              currentGroup.group.id, isFollowedByAdmin);
+          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id,
+              currentGroup.group?.id ?? '', isFollowedByAdmin);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -98,42 +115,61 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .followedPrayers
               .firstWhere(
                   (element) =>
-                      element.prayerId == widget.prayerData.prayer.id &&
+                      element.prayerId == widget.prayerData.prayer?.id &&
                       element.createdBy == _userId,
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
-              followedPrayer.id, widget.prayerData.groupPrayer.id);
+              followedPrayer.id, widget.prayerData.groupPrayer?.id ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setFollowedPrayerByUserId(user.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   _sendNotification(String groupId, List<String> tokens, String receiverId,
       String senderName) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .sendPushNotification(
-            '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
-            NotificationType.inappropriate_content,
-            senderName.capitalizeFirst ?? '',
-            _user.id,
-            receiverId,
-            'Prayer flagged as innapropriate',
-            widget.prayerData.groupPrayer.id,
-            '',
-            tokens);
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .sendPushNotification(
+              '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
+              NotificationType.inappropriate_content,
+              senderName.capitalizeFirst ?? '',
+              _user.id,
+              receiverId,
+              'Prayer flagged as innapropriate',
+              widget.prayerData.groupPrayer?.id ?? '',
+              '',
+              tokens);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   void _flagAsInappropriate(CombineGroupUserStream group) async {
@@ -141,26 +177,33 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .flagAsInappropriate(widget.prayerData.prayer.id);
+          .flagAsInappropriate(widget.prayerData.prayer?.id ?? '');
 
-      var admin = group.groupUsers
+      var admin = (group.groupUsers ?? [])
           .firstWhere((element) => element.role == GroupUserRole.admin);
       await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(admin.userId);
+          .getUserById(admin.userId ?? '');
       final adminData =
           Provider.of<UserProvider>(context, listen: false).selectedUser;
-      _sendNotification(group.group.id, [adminData.pushToken], adminData.id,
-          group.group.name);
+      _sendNotification(group.group?.id ?? '', [adminData.pushToken],
+          adminData.id, group.group?.name ?? '');
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
       Navigator.pop(context);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -171,24 +214,24 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData.prayer.id)
+              .where((e) => e.entityId == widget.prayerData.prayer?.id)
               .toList();
       var pushNotifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications
               .where((element) =>
-                  element.prayerId == widget.prayerData.prayer.id ||
-                  element.groupId == widget.prayerData.groupPrayer.groupId);
+                  element.prayerId == widget.prayerData.prayer?.id ||
+                  element.groupId == widget.prayerData.groupPrayer?.groupId);
 
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? ''));
       pushNotifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .updateNotification(e.id));
+              .updateNotification(e.id ?? ''));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .deletePrayer(
-              widget.prayerData.groupPrayer.id, widget.prayerData.prayer.id);
+          .deletePrayer(widget.prayerData.groupPrayer?.id ?? '',
+              widget.prayerData.prayer?.id ?? '');
       _deleteFollowedPrayers();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -205,8 +248,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -231,8 +273,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -244,15 +285,15 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.prayer.id &&
+                  e.entityId == widget.prayerData.prayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? ''));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.groupPrayer.id);
+          .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
+              widget.prayerData.groupPrayer?.id ?? '');
       _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -267,8 +308,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -276,8 +316,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.groupPrayer.id);
+          .unMarkPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
+              widget.prayerData.groupPrayer?.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -288,8 +328,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -423,16 +462,24 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .unArchivePrayer(prayerData.groupPrayer.id, prayerData.prayer.id);
+          .unArchivePrayer(
+              prayerData.groupPrayer?.id ?? '', prayerData.prayer?.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
-    } catch (e, s) {
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -444,15 +491,15 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.groupPrayer.id &&
+                  e.entityId == widget.prayerData.groupPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? ''));
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.groupPrayer.id);
+          .archivePrayer(widget.prayerData.groupPrayer?.id ?? '');
       _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -469,40 +516,26 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   bool get isFollowing {
     var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
         .followedPrayers
-        .any((element) => element.prayerId == widget.prayerData.prayer.id);
+        .any((element) => element.prayerId == widget.prayerData.prayer?.id);
     return isFollowing;
   }
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
     final group = Provider.of<GroupProvider>(context).currentGroup;
-    bool isAdmin = Provider.of<GroupProvider>(context)
-            .currentGroup
-            .groupUsers
-            .firstWhere((g) => g.userId == _currentUser.id)
-            .role ==
-        GroupUserRole.admin;
-    bool isOwner = widget.prayerData.prayer.createdBy == _currentUser.id;
-
-    // if (isFollowing)
-    //   Provider.of<GroupPrayerProvider>(context, listen: false)
-    //       .followedPrayers
-    //       .forEach((element) {
-    //     if (element != null) {
-    //       if (element.prayerId == widget.prayerData.prayer?.id &&
-    //           element.createdBy == _currentUser.id) {
-    //         followedPrayer = element;
-    //       }
-    //     }
-    //   });
+    bool isAdmin =
+        (Provider.of<GroupProvider>(context).currentGroup.groupUsers ?? [])
+                .firstWhere((g) => g.userId == _currentUser.id)
+                .role ==
+            GroupUserRole.admin;
+    bool isOwner = widget.prayerData.prayer?.createdBy == _currentUser.id;
 
     return Container(
       padding: EdgeInsets.only(top: 50),
@@ -581,16 +614,31 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                       onPress: !isOwner && !isAdmin
                           ? () {}
                           : () async {
-                              Provider.of<GroupPrayerProvider>(context,
-                                      listen: false)
-                                  .setEditMode(true);
-                              Provider.of<GroupPrayerProvider>(context,
-                                      listen: false)
-                                  .setEditPrayer(data: widget.prayerData);
-                              Navigator.pop(context);
-                              await Future.delayed(Duration(milliseconds: 200));
-                              AppCOntroller appCOntroller = Get.find();
-                              appCOntroller.setCurrentPage(10, true);
+                              try {
+                                Provider.of<GroupPrayerProvider>(context,
+                                        listen: false)
+                                    .setEditMode(true);
+                                Provider.of<GroupPrayerProvider>(context,
+                                        listen: false)
+                                    .setEditPrayer(data: widget.prayerData);
+                                Navigator.pop(context);
+                                await Future.delayed(
+                                    Duration(milliseconds: 200));
+                                AppCOntroller appCOntroller = Get.find();
+                                appCOntroller.setCurrentPage(10, true);
+                              } on HttpException catch (e, s) {
+                                final user = Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .currentUser;
+                                BeStilDialog.showErrorDialog(context,
+                                    StringUtils.getErrorMessage(e), user, s);
+                              } catch (e, s) {
+                                final user = Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .currentUser;
+                                BeStilDialog.showErrorDialog(
+                                    context, StringUtils.errorOccured, user, s);
+                              }
                             },
                       text: 'Edit',
                     ),
@@ -606,14 +654,30 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                       onPress: !isOwner && !isAdmin
                           ? () {}
                           : () async {
-                              await Provider.of<GroupPrayerProvider>(context,
-                                      listen: false)
-                                  .setPrayerFuture(
-                                      widget.prayerData.groupPrayer.id);
-                              Navigator.pop(context);
-                              await Future.delayed(Duration(milliseconds: 200));
-                              AppCOntroller appCOntroller = Get.find();
-                              appCOntroller.setCurrentPage(13, true);
+                              try {
+                                await Provider.of<GroupPrayerProvider>(context,
+                                        listen: false)
+                                    .setPrayerFuture(
+                                        widget.prayerData.groupPrayer?.id ??
+                                            '');
+                                Navigator.pop(context);
+                                await Future.delayed(
+                                    Duration(milliseconds: 200));
+                                AppCOntroller appCOntroller = Get.find();
+                                appCOntroller.setCurrentPage(13, true);
+                              } on HttpException catch (e, s) {
+                                final user = Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .currentUser;
+                                BeStilDialog.showErrorDialog(context,
+                                    StringUtils.getErrorMessage(e), user, s);
+                              } catch (e, s) {
+                                final user = Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .currentUser;
+                                BeStilDialog.showErrorDialog(
+                                    context, StringUtils.errorOccured, user, s);
+                              }
                             },
                       text: 'Add an Update',
                     ),
@@ -680,10 +744,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                       icon: AppIcons.bestill_answered,
                       onPress: () => !isOwner && !isAdmin
                           ? () {}
-                          : widget.prayerData.prayer.isAnswer
+                          : widget.prayerData.prayer?.isAnswer ?? false
                               ? _unMarkAsAnswered()
                               : _onMarkAsAnswered(),
-                      text: widget.prayerData.prayer.isAnswer
+                      text: widget.prayerData.prayer?.isAnswer ?? false
                           ? 'Unmark as Answered'
                           : 'Mark as Answered',
                     ),
@@ -713,10 +777,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                           .bestill_icons_bestill_archived_icon_revised_drk,
                       onPress: () => !isOwner && !isAdmin
                           ? () {}
-                          : widget.prayerData.groupPrayer.isArchived
+                          : widget.prayerData.groupPrayer?.isArchived ?? false
                               ? _unArchive(widget.prayerData)
                               : _onArchive(widget.prayerData),
-                      text: widget.prayerData.groupPrayer.isArchived
+                      text: widget.prayerData.groupPrayer?.isArchived ?? false
                           ? 'Unarchive'
                           : 'Archive',
                     ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
@@ -28,60 +30,84 @@ class GroupTools extends StatefulWidget {
 
 class _GroupToolsState extends State<GroupTools> {
   Future<void> onEditTap(CombineGroupUserStream groupData) async {
-    AppCOntroller appCOntroller = Get.find();
-
-    appCOntroller.setCurrentPage(12, true);
-
-    Provider.of<GroupProvider>(context, listen: false).setEditMode(true);
-    await Provider.of<GroupProvider>(context, listen: false)
-        .setCurrentGroup(groupData);
-    Navigator.pop(context);
+    try {
+      AppCOntroller appCOntroller = Get.find();
+      appCOntroller.setCurrentPage(12, true);
+      Provider.of<GroupProvider>(context, listen: false).setEditMode(true);
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setCurrentGroup(groupData);
+      Navigator.pop(context);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   leaveGroup(CombineGroupUserStream data) async {
     BeStilDialog.showLoading(context);
+    try {
+      final _currentUser =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    final _currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-
-    var admin = data.groupUsers
-        .firstWhere((element) => element.role == GroupUserRole.admin);
-    await Provider.of<UserProvider>(context, listen: false)
-        .getUserById(admin.userId);
-    final id = data.groupUsers
-        .firstWhere((e) => e.userId == _currentUser.id,
-            orElse: () => GroupUserModel.defaultValue())
-        .id;
-    if (id.isNotEmpty) {
-      await Provider.of<GroupProvider>(context, listen: false).leaveGroup(id);
-      var followedPrayers =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .followedPrayers
-              .where((element) =>
-                  element.groupId == data.group.id &&
-                  element.userId == _currentUser.id);
-      followedPrayers.forEach((element) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .removeFromMyList(element.id, element.userPrayerId);
-      });
-      final adminData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
-      await sendPushNotification(
-          '${_currentUser.firstName} has left your group ${data.group.name}',
-          NotificationType.leave_group,
-          _currentUser.firstName,
-          _currentUser.id,
-          adminData.id,
-          'Groups',
-          data.group.id,
-          [adminData.pushToken]);
+      var admin = (data.groupUsers ?? [])
+          .firstWhere((element) => element.role == GroupUserRole.admin);
+      await Provider.of<UserProvider>(context, listen: false)
+          .getUserById(admin.userId ?? '');
+      final id = (data.groupUsers ?? [])
+          .firstWhere((e) => e.userId == _currentUser.id,
+              orElse: () => GroupUserModel.defaultValue())
+          .id;
+      if ((id ?? '').isNotEmpty) {
+        await Provider.of<GroupProvider>(context, listen: false)
+            .leaveGroup(id ?? '');
+        var followedPrayers =
+            Provider.of<GroupPrayerProvider>(context, listen: false)
+                .followedPrayers
+                .where((element) =>
+                    element.groupId == data.group?.id &&
+                    element.userId == _currentUser.id);
+        followedPrayers.forEach((element) async {
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .removeFromMyList(element.id, element.userPrayerId);
+        });
+        final adminData =
+            Provider.of<UserProvider>(context, listen: false).selectedUser;
+        await sendPushNotification(
+            '${_currentUser.firstName} has left your group ${data.group?.name}',
+            NotificationType.leave_group,
+            _currentUser.firstName,
+            _currentUser.id,
+            adminData.id,
+            'Groups',
+            data.group?.id ?? '',
+            [adminData.pushToken]);
+        BeStilDialog.hideLoading(context);
+        AppCOntroller appCOntroller = Get.find();
+        appCOntroller.setCurrentPage(3, true);
+        await Provider.of<GroupProvider>(context, listen: false)
+            .setUserGroups(_currentUser.id);
+        Navigator.pop(context);
+        Navigator.pop(context);
+      }
+    } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(3, true);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_currentUser.id);
-      Navigator.pop(context);
-      Navigator.pop(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -94,9 +120,20 @@ class _GroupToolsState extends State<GroupTools> {
       String title,
       String entityId,
       List<String> tokens) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .sendPushNotification(message, messageType, sender, senderId,
-            receiverId, title, '', entityId, tokens);
+    try {
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .sendPushNotification(message, messageType, sender, senderId,
+              receiverId, title, '', entityId, tokens);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   void _openDeleteConfirmation(BuildContext context, String message,
@@ -232,7 +269,7 @@ class _GroupToolsState extends State<GroupTools> {
   Widget build(BuildContext context) {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    var currentGroupUser = widget.groupData.groupUsers
+    var currentGroupUser = (widget.groupData.groupUsers ?? [])
         .firstWhere((element) => element.userId == _user.id);
     return Container(
         padding: EdgeInsets.only(left: 40),
@@ -273,20 +310,6 @@ class _GroupToolsState extends State<GroupTools> {
                   ),
                 ],
               ),
-              // SizedBox(height: 20),
-              // LongButton(
-              //   icon: Icons.settings,
-              //   onPress: () {
-              //     _getPrayers(Provider.of<GroupProvider>(context, listen: false)
-              //         .currentGroup);
-              //   },
-              //   text: "View Group",
-              //   backgroundColor: Settings.isDarkMode
-              //       ? AppColors.backgroundColor[0]
-              //       : Colors.white,
-              //   textColor: AppColors.lightBlue3,
-              //   onPressMore: () => null,
-              // ),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

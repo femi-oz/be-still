@@ -51,7 +51,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       BeStilDialog.hideLoading(context);
 
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 

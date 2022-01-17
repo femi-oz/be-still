@@ -86,81 +86,110 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> setNotifications() async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService
-        .getAllNotifications()
-        .asBroadcastStream()
-        .listen((notifications) {
-      _notifications = notifications;
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService
+          .getAllNotifications()
+          .asBroadcastStream()
+          .listen((notifications) {
+        _notifications = notifications;
 
-      notifyListeners();
-    });
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> setUserNotifications(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService
-        .getUserNotifications(userId)
-        .asBroadcastStream()
-        .listen((notifications) {
-      _notifications =
-          notifications.where((e) => e.status == Status.active).toList();
-      _notifications =
-          _notifications.where((e) => e.recieverId == userId).toList();
-      notifyListeners();
-    });
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService
+          .getUserNotifications(userId)
+          .asBroadcastStream()
+          .listen((notifications) {
+        _notifications =
+            notifications.where((e) => e.status == Status.active).toList();
+        _notifications =
+            _notifications.where((e) => e.recieverId == userId).toList();
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> clearNotification() async {
-    var notificationsToClear =
-        _notifications.where((e) => e.messageType != NotificationType.request);
-    await _notificationService
-        .clearNotification(notificationsToClear.map((e) => e.id).toList());
+    try {
+      var notificationsToClear = _notifications
+          .where((e) => e.messageType != NotificationType.request);
+      await _notificationService.clearNotification(
+          notificationsToClear.map((e) => e.id ?? '').toList());
+    } catch (e) {
+      rethrow;
+    }
 
     notifyListeners();
   }
 
   Future<void> setLocalNotifications(userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService
-        .getLocalNotifications(userId)
-        .asBroadcastStream()
-        .listen((notifications) {
-      _localNotifications = notifications;
-      _deletePastReminder(notifications);
-      notifyListeners();
-    });
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService
+          .getLocalNotifications(userId)
+          .asBroadcastStream()
+          .listen((notifications) {
+        _localNotifications = notifications;
+        _deletePastReminder(notifications);
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> _deletePastReminder(List<LocalNotificationModel> data) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var reminderToDelete = data
-        .where((e) =>
-            e.scheduledDate.isBefore(DateTime.now()) &&
-            e.frequency == Frequency.one_time)
-        .toList();
-    for (int i = 0; i < reminderToDelete.length; i++) {
-      await deleteLocalNotification(reminderToDelete[i].id);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var reminderToDelete = data
+          .where((e) =>
+              (e.scheduledDate ?? DateTime.now()).isBefore(DateTime.now()) &&
+              e.frequency == Frequency.one_time)
+          .toList();
+      for (int i = 0; i < reminderToDelete.length; i++) {
+        await deleteLocalNotification(reminderToDelete[i].id ?? '');
+      }
+    } catch (e) {
+      rethrow;
     }
+
     notifyListeners();
   }
 
   Future<void> setPrayerTimeNotifications(userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService
-        .getLocalNotifications(userId)
-        .asBroadcastStream()
-        .listen((notifications) {
-      _prayerTimeNotifications = notifications
-          .where((e) => e.type == NotificationType.prayer_time)
-          .toList();
-      notifyListeners();
-    });
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService
+          .getLocalNotifications(userId)
+          .asBroadcastStream()
+          .listen((notifications) {
+        _prayerTimeNotifications = notifications
+            .where((e) => e.type == NotificationType.prayer_time)
+            .toList();
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updateNotification(String notificationId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    return await _notificationService.updatePushNotification(notificationId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return await _notificationService.updatePushNotification(notificationId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future sendPushNotification(
@@ -174,17 +203,21 @@ class NotificationProvider with ChangeNotifier {
     String groupId,
     List<String> tokens,
   ) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    return await _notificationService.sendPushNotification(
-        message: message,
-        prayerId: prayerId,
-        groupId: groupId,
-        messageType: messageType,
-        sender: sender,
-        senderId: senderId,
-        recieverId: recieverId,
-        tokens: tokens,
-        title: title);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return await _notificationService.sendPushNotification(
+          message: message,
+          prayerId: prayerId,
+          groupId: groupId,
+          messageType: messageType,
+          sender: sender,
+          senderId: senderId,
+          recieverId: recieverId,
+          tokens: tokens,
+          title: title);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> addLocalNotification(
@@ -206,27 +239,31 @@ class NotificationProvider with ChangeNotifier {
     String selectedMonth,
     String selectedDayOfMonth,
   ) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _notificationService.addLocalNotification(
-      localId,
-      entityId,
-      notificationText,
-      userId,
-      payload,
-      title,
-      description,
-      frequency,
-      type,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth,
-    );
-    await setLocalNotifications(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _notificationService.addLocalNotification(
+        localId,
+        entityId,
+        notificationText,
+        userId,
+        payload,
+        title,
+        description,
+        frequency,
+        type,
+        scheduledDate,
+        selectedDay,
+        period,
+        selectedHour,
+        selectedMinute,
+        selectedYear,
+        selectedMonth,
+        selectedDayOfMonth,
+      );
+      await setLocalNotifications(userId);
+    } catch (e) {
+      rethrow;
+    }
     notifyListeners();
   }
 
@@ -244,35 +281,48 @@ class NotificationProvider with ChangeNotifier {
     String selectedMonth,
     String selectedDayOfMonth,
   ) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _notificationService.updateLocalNotification(
-      frequency,
-      scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      notificationId,
-      notificationText,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth,
-    );
-    await setLocalNotifications(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _notificationService.updateLocalNotification(
+        frequency,
+        scheduledDate,
+        selectedDay,
+        period,
+        selectedHour,
+        selectedMinute,
+        notificationId,
+        notificationText,
+        selectedYear,
+        selectedMonth,
+        selectedDayOfMonth,
+      );
+      await setLocalNotifications(userId);
+    } catch (e) {
+      rethrow;
+    }
+
     notifyListeners();
   }
 
   Future<void> deleteLocalNotification(String notificationId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var notification =
-        _localNotifications.firstWhere((e) => e.id == notificationId);
-    await LocalNotification.unschedule(notification.localNotificationId);
-    await _notificationService.removeLocalNotification(notificationId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var notification =
+          _localNotifications.firstWhere((e) => e.id == notificationId);
+      await LocalNotification.unschedule(notification.localNotificationId);
+      await _notificationService.removeLocalNotification(notificationId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> deletePrayerTime(String prayerTimeId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _notificationService.deletePrayerTime(prayerTimeId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _notificationService.deletePrayerTime(prayerTimeId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future sendPrayerNotification(
@@ -282,36 +332,44 @@ class NotificationProvider with ChangeNotifier {
     BuildContext context,
     String prayerDetail,
   ) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
 
-    List<String> followers =
-        Provider.of<GroupPrayerProvider>(context, listen: false)
-            .followedPrayers
-            .map((e) => e.userId)
-            .toList();
+      List<String> followers =
+          Provider.of<GroupPrayerProvider>(context, listen: false)
+              .followedPrayers
+              .map((e) => e.userId)
+              .toList();
 
-    final admins = Provider.of<GroupProvider>(context, listen: false)
-        .currentGroup
-        .groupUsers
-        .where((e) => e.role == GroupUserRole.admin)
-        .map((e) => e.userId)
-        .toList();
-    final _ids = [...followers, ...admins];
-    _ids.removeWhere((e) => e == _user.id);
-    _ids.forEach((e) async {
-      final value = await Provider.of<UserProvider>(context, listen: false)
-          .returnUserToken(e);
+      final admins = Provider.of<GroupProvider>(context, listen: false)
+              .currentGroup
+              .groupUsers ??
+          []
+              .where((e) => e.role == GroupUserRole.admin)
+              .map((e) => e.userId)
+              .toList();
+      final _ids = [...followers, ...admins];
+      _ids.removeWhere((e) => e == _user.id);
+      _ids.forEach((e) async {
+        await Provider.of<UserProvider>(context, listen: false)
+            .returnUserToken(e ?? '');
+        final value =
+            Provider.of<UserProvider>(context, listen: false).userToken;
 
-      sendPushNotification(
-          prayerDetail,
-          type,
-          _user.firstName + ' ' + _user.lastName,
-          _user.id,
-          e,
-          type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
-          prayerId,
-          selectedGroupId,
-          [value]);
-    });
+        sendPushNotification(
+            prayerDetail,
+            type,
+            _user.firstName + ' ' + _user.lastName,
+            _user.id,
+            (e ?? ''),
+            type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
+            prayerId,
+            selectedGroupId,
+            [value]);
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 }

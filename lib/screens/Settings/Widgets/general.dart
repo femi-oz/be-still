@@ -260,8 +260,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       PlatformException er =
           PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(er), user, s);
+      BeStilDialog.showErrorDialog(context, message, user, s);
       _newEmail.clear();
     }
   }
@@ -288,8 +287,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -322,7 +320,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           e.message == 'The application has encountered an error.') {
         message = 'Password is incorrect.';
       } else {
-        message = e.message;
+        message = e.message ?? '';
       }
       BeStilDialog.hideLoading(context);
       final user =
@@ -337,8 +335,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 

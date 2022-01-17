@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
@@ -9,8 +11,10 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/update_view.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
@@ -48,11 +52,11 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer.id,
+        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
         orElse: () => LocalNotificationModel.defaultValue());
-    reminderString = reminder.notificationText;
+    reminderString = reminder.notificationText ?? '';
 
-    if ((reminder.id).isEmpty)
+    if ((reminder.id ?? '').isEmpty)
       return false;
     else
       return true;
@@ -65,9 +69,21 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   }
 
   void getSettings() async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(_user.id);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   String getDayText(day) {
@@ -97,7 +113,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
 
     _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer.id,
+        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
         orElse: () => LocalNotificationModel.defaultValue());
     return Scaffold(
         appBar: CustomAppBar(
@@ -172,7 +188,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                   ],
                 ),
               ),
-              if (prayerData.groupPrayer.isSnoozed)
+              if (prayerData.groupPrayer?.isSnoozed ?? false)
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   InkWell(
                     onTap: () => showDialog(
@@ -197,7 +213,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                     const EdgeInsets.symmetric(vertical: 30),
                                 child: ReminderPicker(
                                   isGroup: true,
-                                  entityId: prayerData.groupPrayer.id,
+                                  entityId: prayerData.groupPrayer?.id ?? '',
                                   type: NotificationType.reminder,
                                   reminder: _reminder,
                                   hideActionuttons: false,
@@ -220,7 +236,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                         Container(
                           margin: EdgeInsets.only(left: 7),
                           child: Text(
-                              'Snoozed until ${DateFormat('MMM').format(prayerData.groupPrayer.snoozeEndDate)} ${getDayText(prayerData.groupPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.groupPrayer.snoozeEndDate)}',
+                              'Snoozed until ${DateFormat('MMM').format(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now().day)}, ${DateFormat('yyyy h:mm a').format(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now())}',
                               style: AppTextStyles.regularText12),
                         ),
                       ],
@@ -255,7 +271,9 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                               vertical: 30),
                                           child: ReminderPicker(
                                             isGroup: true,
-                                            entityId: prayerData.groupPrayer.id,
+                                            entityId:
+                                                prayerData.groupPrayer?.id ??
+                                                    '',
                                             type: NotificationType.reminder,
                                             reminder: _reminder,
                                             hideActionuttons: false,
@@ -299,9 +317,10 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                     ),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Provider.of<GroupPrayerProvider>(context)
-                              .currentPrayer
-                              .updates
+                  child: (Provider.of<GroupPrayerProvider>(context)
+                                      .currentPrayer
+                                      .updates ??
+                                  [])
                               .length >
                           0
                       ? UpdateView()
