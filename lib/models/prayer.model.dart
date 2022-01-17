@@ -1,38 +1,38 @@
 class PrayerModel {
-  String id;
-  String groupId;
-  String userId;
-  String type;
-  String title;
-  String status;
-  String description;
-  String descriptionBackup;
-  String creatorName;
-  String createdBy;
-  String modifiedBy;
-  bool isAnswer;
-  bool isGroup;
-  bool isInappropriate;
-  DateTime createdOn;
-  DateTime modifiedOn;
+  String? id;
+  String? groupId;
+  String? userId;
+  String? type;
+  String? title;
+  String? status;
+  String? description;
+  String? descriptionBackup;
+  String? creatorName;
+  String? createdBy;
+  String? modifiedBy;
+  bool? isAnswer;
+  bool? isGroup;
+  bool? isInappropriate;
+  DateTime? createdOn;
+  DateTime? modifiedOn;
 
   PrayerModel({
-    required this.id,
-    required this.groupId,
-    required this.userId,
-    required this.type,
-    required this.title,
-    required this.status,
-    required this.description,
-    required this.descriptionBackup,
-    required this.isAnswer,
-    required this.isGroup,
-    required this.isInappropriate,
-    required this.creatorName,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.groupId,
+    this.userId,
+    this.type,
+    this.title,
+    this.status,
+    this.description,
+    this.descriptionBackup,
+    this.isAnswer,
+    this.isGroup,
+    this.isInappropriate,
+    this.creatorName,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory PrayerModel.defaultValue() => PrayerModel(
@@ -112,30 +112,30 @@ class PrayerModel {
 }
 
 class PrayerUpdateModel {
-  final String id;
-  final String prayerId;
-  final String userId;
-  final String title;
-  final String description;
-  final String descriptionBackup;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
-  final int deleteStatus;
+  final String? id;
+  final String? prayerId;
+  final String? userId;
+  final String? title;
+  final String? description;
+  final String? descriptionBackup;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
+  final int? deleteStatus;
 
   const PrayerUpdateModel({
-    required this.id,
-    required this.prayerId,
-    required this.userId,
-    required this.title,
-    required this.description,
-    required this.descriptionBackup,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
-    required this.deleteStatus,
+    this.id,
+    this.prayerId,
+    this.userId,
+    this.title,
+    this.description,
+    this.descriptionBackup,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
+    this.deleteStatus,
   });
 
   PrayerUpdateModel.fromData(Map<String, dynamic> snapshot, String did)
@@ -168,42 +168,42 @@ class PrayerUpdateModel {
 }
 
 class UserPrayerModel {
-  final String id;
-  final String prayerId;
-  final String userId;
-  final bool isArchived;
-  final String sequence;
-  final bool isFavorite;
-  final String status;
-  final int snoozeDuration;
-  final String snoozeFrequency;
-  final int deleteStatus;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
-  final DateTime snoozeEndDate;
+  final String? id;
+  final String? prayerId;
+  final String? userId;
+  final bool? isArchived;
+  final String? sequence;
+  final bool? isFavorite;
+  final String? status;
+  final int? snoozeDuration;
+  final String? snoozeFrequency;
+  final int? deleteStatus;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
+  final DateTime? snoozeEndDate;
   final DateTime? archivedDate;
-  final bool isSnoozed;
+  final bool? isSnoozed;
 
   const UserPrayerModel({
-    required this.id,
-    required this.prayerId,
-    required this.userId,
-    required this.sequence,
-    required this.isFavorite,
-    required this.status,
-    required this.snoozeDuration,
-    required this.snoozeFrequency,
-    required this.deleteStatus,
-    required this.isArchived,
-    required this.isSnoozed,
-    required this.snoozeEndDate,
+    this.id,
+    this.prayerId,
+    this.userId,
+    this.sequence,
+    this.isFavorite,
+    this.status,
+    this.snoozeDuration,
+    this.snoozeFrequency,
+    this.deleteStatus,
+    this.isArchived,
+    this.isSnoozed,
+    this.snoozeEndDate,
     this.archivedDate,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   UserPrayerModel.defaultValue()
@@ -267,34 +267,34 @@ class UserPrayerModel {
 }
 
 class PrayerTagModel {
-  final String id;
-  final String prayerId;
-  final String userId;
-  final String tagger;
-  final String displayName;
-  final String phoneNumber;
-  final String email;
-  final String message;
-  final String identifier;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? prayerId;
+  final String? userId;
+  final String? tagger;
+  final String? displayName;
+  final String? phoneNumber;
+  final String? email;
+  final String? message;
+  final String? identifier;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const PrayerTagModel({
-    required this.id,
-    required this.prayerId,
-    required this.userId,
-    required this.tagger,
-    required this.displayName,
-    required this.identifier,
-    required this.phoneNumber,
-    required this.email,
-    required this.message,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.prayerId,
+    this.userId,
+    this.tagger,
+    this.displayName,
+    this.identifier,
+    this.phoneNumber,
+    this.email,
+    this.message,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
   PrayerTagModel.fromData(Map<String, dynamic> snapshot, String did)
       : id = did,
@@ -329,18 +329,18 @@ class PrayerTagModel {
 }
 
 class CombinePrayerStream {
-  UserPrayerModel userPrayer;
+  UserPrayerModel? userPrayer;
   // GroupPrayerModel groupPrayer;
-  PrayerModel prayer;
+  PrayerModel? prayer;
   List<PrayerTagModel> tags;
   List<PrayerUpdateModel> updates;
 
   CombinePrayerStream({
-    required this.userPrayer,
-    // required this.groupPrayer,
-    required this.prayer,
-    required this.tags,
-    required this.updates,
+    this.userPrayer,
+    //  this.groupPrayer,
+    this.prayer,
+    this.tags = const [],
+    this.updates = const [],
   });
 
   factory CombinePrayerStream.defaultValue() => CombinePrayerStream(
@@ -352,20 +352,20 @@ class CombinePrayerStream {
 }
 
 class PrayerRequestMessageModel {
-  final String senderId;
-  final String receiverId;
-  final String message;
-  final String email;
-  final String sender;
-  final String receiver;
+  final String? senderId;
+  final String? receiverId;
+  final String? message;
+  final String? email;
+  final String? sender;
+  final String? receiver;
 
   const PrayerRequestMessageModel(
-      {required this.senderId,
-      required this.receiverId,
-      required this.message,
-      required this.email,
-      required this.sender,
-      required this.receiver});
+      {this.senderId,
+      this.receiverId,
+      this.message,
+      this.email,
+      this.sender,
+      this.receiver});
 
   PrayerRequestMessageModel.fromData(Map<String, dynamic> snapshot, String did)
       : senderId = did,
@@ -388,22 +388,22 @@ class PrayerRequestMessageModel {
 }
 
 class HiddenPrayerModel {
-  final String id;
-  final String prayerId;
-  final String userId;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? prayerId;
+  final String? userId;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const HiddenPrayerModel({
-    required this.id,
-    required this.prayerId,
-    required this.userId,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.prayerId,
+    this.userId,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   HiddenPrayerModel.fromData(Map<String, dynamic> snapshot, String did)
@@ -428,28 +428,28 @@ class HiddenPrayerModel {
 }
 
 class FollowedPrayerModel {
-  final String id;
-  final String prayerId;
-  final String groupId;
-  final String userPrayerId;
-  final String userId;
-  final bool isFollowedByAdmin;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? prayerId;
+  final String? groupId;
+  final String? userPrayerId;
+  final String? userId;
+  final bool? isFollowedByAdmin;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const FollowedPrayerModel({
-    required this.id,
-    required this.prayerId,
-    required this.groupId,
-    required this.userPrayerId,
-    required this.userId,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
-    required this.isFollowedByAdmin,
+    this.id,
+    this.prayerId,
+    this.groupId,
+    this.userPrayerId,
+    this.userId,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
+    this.isFollowedByAdmin,
   });
 
   FollowedPrayerModel.defaultValue()
@@ -492,11 +492,11 @@ class FollowedPrayerModel {
 }
 
 class SaveOptionModel {
-  final String id;
-  final String name;
+  final String? id;
+  final String? name;
 
   const SaveOptionModel({
-    required this.id,
-    required this.name,
+    this.id,
+    this.name,
   });
 }
