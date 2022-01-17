@@ -28,10 +28,6 @@ class GroupProvider with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
   Future<void> setUserGroups(String userId) async {
-    // if (_userGroups.isNotEmpty) {
-    //   _userGroups = [];
-    // }
-
     if (_firebaseAuth.currentUser == null)
       return Future.error(StringUtils.unathorized);
     _groupService
@@ -58,6 +54,14 @@ class GroupProvider with ChangeNotifier {
         }
         return u..groupUsers = _distinct;
       }).toList();
+
+      // final isAdminGroup = _userGroups.map((CombineGroupUserStream element) =>
+      //     element.groupUsers.where((element) =>
+      //         element.role == GroupUserRole.admin &&
+      //         element.createdBy == userId));
+      // _userGroups = [...isAdminGroup];
+
+      _userGroups.sort((a, b) => a.group.name.compareTo(b.group.name));
       notifyListeners();
     });
   }
