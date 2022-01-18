@@ -29,44 +29,8 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final SlidableController slidableController = SlidableController();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void _getNotifications() async {
-    try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(_user.id ?? '');
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
-
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      // getUserGroupsData();
-      _getNotifications();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
   void _showAlert(String groupId, String message, String senderId,
       String notificationId, String receiverId, GroupModel group) {
-    _getNotifications();
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -316,8 +280,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       String notificationId, String receiverId) async {
     BeStilDialog.showLoading(context);
     try {
-      final requestor = await Provider.of<UserProvider>(context, listen: false)
+      await Provider.of<UserProvider>(context, listen: false)
           .getUserById(receiverId); //requestor
+      final requestor =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       final admin =
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
@@ -328,7 +294,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           groupId,
           senderId,
           groupRequest.id ?? '',
-          (requestor.firstName) + ' ' + (requestor.lastName));
+          (requestor.firstName ?? '') + ' ' + (requestor.lastName ?? ''));
       await deleteNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
@@ -340,7 +306,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               'Request Accepted',
               '',
               groupData.group?.id ?? '',
-              [requestor.pushToken]);
+              [requestor.pushToken ?? '']);
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {

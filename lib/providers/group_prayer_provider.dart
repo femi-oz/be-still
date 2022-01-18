@@ -23,6 +23,7 @@ class GroupPrayerProvider with ChangeNotifier {
       CombineGroupPrayerStream.defaultValue();
   List<HiddenPrayerModel> _hiddenPrayers = [];
   List<FollowedPrayerModel> _followedPrayers = [];
+  List<FollowedPrayerModel> _groupFollowedPrayers = [];
 
   List<CombineGroupPrayerStream> get prayers => _prayers;
   List<CombineGroupPrayerStream> get filteredPrayers => _filteredPrayers;
@@ -31,6 +32,7 @@ class GroupPrayerProvider with ChangeNotifier {
   CombineGroupPrayerStream get currentPrayer => _currentPrayer;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   List<FollowedPrayerModel> get followedPrayers => _followedPrayers;
+  List<FollowedPrayerModel> get groupFollowedPrayers => _groupFollowedPrayers;
 
   bool _isEdit = false;
   bool get isEdit => _isEdit;
@@ -96,31 +98,34 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setFollowedPrayer(String id) async {
-    try {
-      _prayerService.getFollowedPrayers(id).then((prayer) {
-        _followedPrayers = prayer;
-        notifyListeners();
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> setFollowedPrayer(String id) async {
+  //   try {
+  //     _prayerService.getFollowedPrayers(id).then((prayer) {
+  //       _followedPrayers = prayer;
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-  Future<void> setFollowedPrayerByGroupId(String id) async {
-    try {
-      _prayerService.getFollowedPrayersByGroupId(id).then((prayer) {
-        _followedPrayers = prayer;
-        notifyListeners();
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> setFollowedPrayerByGroupId(String id) async {
+  //   try {
+  //     _prayerService.getFollowedPrayersByGroupId(id).then((prayer) {
+  //       _groupFollowedPrayers = prayer;
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> setFollowedPrayerByUserId(String? id) async {
     try {
-      _prayerService.getFollowedPrayersByUserId(id ?? '').then((prayer) {
+      _prayerService
+          .getFollowedPrayersByUserId(id ?? '')
+          .asBroadcastStream()
+          .listen((prayer) {
         _followedPrayers = prayer;
         notifyListeners();
       });

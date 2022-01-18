@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -65,6 +66,7 @@ class _EntryScreenState extends State<EntryScreen> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
         if (miscProvider.initialLoad) {
           await _preLoadData();
+          Future.delayed(Duration(milliseconds: 500));
           miscProvider.setLoadStatus(false);
 
           initDynamicLinks();
@@ -161,6 +163,8 @@ class _EntryScreenState extends State<EntryScreen> {
           .setGroupPreferenceSettings(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
           .setUserGroups(userId ?? '');
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(userId ?? '');
 
       //set all users
       await Provider.of<UserProvider>(context, listen: false)

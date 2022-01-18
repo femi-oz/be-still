@@ -136,8 +136,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     .newPrayerId;
 
             if (prayerId.isNotEmpty) {
-              await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .setFollowedPrayer(prayerId);
+              // await Provider.of<GroupPrayerProvider>(context, listen: false)
+              //     .setFollowedPrayer(prayerId);
               await Provider.of<GroupProvider>(context, listen: false)
                   .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
               await Provider.of<NotificationProvider>(context, listen: false)
@@ -295,7 +295,8 @@ class _AddPrayerState extends State<AddPrayer> {
               GlobalKey()))
           .toList();
     } else {
-      showDropdown = true;
+      showDropdown =
+          Provider.of<PrayerProvider>(context, listen: false).showDropDown;
     }
     final userGroups =
         Provider.of<GroupProvider>(context, listen: false).userGroups;

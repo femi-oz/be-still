@@ -55,8 +55,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   @override
   void didChangeDependencies() async {
     try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
           .setNotifications();
     } on HttpException catch (e, s) {
@@ -84,8 +84,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .addToMyList(widget.prayerData.prayer?.id ?? '', user.id ?? '',
               currentGroup.group?.id ?? '', isFollowedByAdmin);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -121,8 +121,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
               followedPrayer.id ?? '', widget.prayerData.groupPrayer?.id ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -521,7 +521,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   }
 
   bool get isFollowing {
-    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+    final isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
         .followedPrayers
         .any((element) => element.prayerId == widget.prayerData.prayer?.id);
     return isFollowing;

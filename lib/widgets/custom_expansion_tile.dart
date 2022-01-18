@@ -30,12 +30,12 @@ class ExpansionTile extends StatefulWidget {
     this.headerBackgroundColorStart = Colors.black,
     this.headerBackgroundColorEnd = Colors.black,
     this.shadowColor = Colors.black,
-    this.leading = const SizedBox.shrink(),
+    this.leading,
     required this.title,
     this.backgroundColor = Colors.black,
     this.iconColor = Colors.black,
     this.onExpansionChanged,
-    this.children = const <Widget>[],
+    this.children,
     this.trailing,
     this.initiallyExpanded = true,
     this.scrollController,
@@ -45,7 +45,7 @@ class ExpansionTile extends StatefulWidget {
   /// A widget to display before the title.
   ///
   /// Typically a [CircleAvatar] widget.
-  final Widget leading;
+  final Widget? leading;
 
   /// The primary content of the list item.
   ///
@@ -62,7 +62,7 @@ class ExpansionTile extends StatefulWidget {
   /// The widgets that are displayed when the tile expands.
   ///
   /// Typically [ListTile] widgets.
-  final List<Widget> children;
+  final List<Widget>? children;
 
   /// The color to display behind the sublist when expanded.
   final Color backgroundColor;
@@ -226,7 +226,7 @@ class _ExpansionTileState extends State<ExpansionTile>
     return AnimatedBuilder(
       animation: _controller.view,
       builder: _buildChildren,
-      child: closed ? null : Column(children: widget.children),
+      child: closed ? null : Column(children: widget.children ?? []),
     );
   }
 }

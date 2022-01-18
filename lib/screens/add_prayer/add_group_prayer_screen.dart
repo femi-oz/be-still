@@ -71,8 +71,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                     PrayerModel.defaultValue())
                 .id;
             if ((id ?? '').isEmpty) return;
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .setFollowedPrayer(id ?? '');
+            // await Provider.of<GroupPrayerProvider>(context, listen: false)
+            //     .setFollowedPrayer(id ?? '');
           }
         } on HttpException catch (e, s) {
           final user =
@@ -133,8 +133,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             var prayerId =
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .setFollowedPrayer(prayerId);
+            // await Provider.of<GroupPrayerProvider>(context, listen: false)
+            //     .setFollowedPrayer(prayerId);
             await Provider.of<NotificationProvider>(context, listen: false)
                 .sendPrayerNotification(
               prayerId,
