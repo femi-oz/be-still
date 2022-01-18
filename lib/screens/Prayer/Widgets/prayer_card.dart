@@ -35,30 +35,30 @@ class _PrayerCardState extends State<PrayerCard> {
 
   @override
   void didChangeDependencies() {
-    getGroup();
+    // getGroup();
     super.didChangeDependencies();
   }
 
-  getGroup() async {
-    try {
-      var _userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId ?? '');
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
+  // getGroup() async {
+  //   try {
+  //     // var _userId =
+  //     //     Provider.of<UserProvider>(context, listen: false).currentUser.id;
+  //     // await Provider.of<GroupPrayerProvider>(context, listen: false)
+  //     //     .setFollowedPrayerByUserId(_userId ?? '');
+  //   } on HttpException catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
 
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   } catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+  //   }
+  // }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context)
@@ -220,8 +220,8 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
       final _userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       final followedPrayer =

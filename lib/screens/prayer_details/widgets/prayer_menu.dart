@@ -52,7 +52,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void initState() {
-    getGroup();
+    // getGroup();
 
     super.initState();
   }
@@ -94,25 +94,25 @@ class _PrayerMenuState extends State<PrayerMenu> {
     }
   }
 
-  getGroup() async {
-    try {
-      var _userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId ?? '');
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
+  // getGroup() async {
+  //   try {
+  //     var _userId =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+  //     await Provider.of<GroupPrayerProvider>(context, listen: false)
+  //         .setFollowedPrayerByUserId(_userId ?? '');
+  //   } on HttpException catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   } catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+  //   }
+  // }
 
   void _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context);
@@ -144,19 +144,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       final _userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      final followedPrayer =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .followedPrayers
-              .firstWhere(
-                  (element) =>
-                      element.prayerId == widget.prayerData.prayer?.id &&
-                      element.createdBy == _userId,
-                  orElse: () => FollowedPrayerModel.defaultValue());
+
+      final s = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers;
+      final followedPrayer = s.firstWhere(
+          (element) =>
+              element.prayerId == widget.prayerData.prayer?.id &&
+              element.createdBy == _userId,
+          orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
-              followedPrayer.id ?? '', widget.prayerData.prayer?.id ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId ?? '');
+              followedPrayer.id ?? '', widget.prayerData.userPrayer?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByUserId(_userId ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();

@@ -79,7 +79,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<GroupProvider>(context).userGroups;
+    final data = Provider.of<GroupProvider>(context).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -187,12 +187,12 @@ class _GroupScreenState extends State<GroupScreen> {
                                       LongButton(
                                         onPress: () async {
                                           try {
-                                            await Provider.of<
-                                                        GroupPrayerProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .setFollowedPrayerByUserId(
-                                                    _currentUser.id ?? '');
+                                            // await Provider.of<
+                                            //             GroupPrayerProvider>(
+                                            //         context,
+                                            //         listen: false)
+                                            //     .setFollowedPrayerByUserId(
+                                            //         _currentUser.id ?? '');
                                             _getPrayers(e);
                                             appCOntroller.setCurrentPage(
                                                 8, true);

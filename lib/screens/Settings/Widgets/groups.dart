@@ -141,8 +141,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               e.messageType == NotificationType.request &&
               e.groupId == data.group?.id)
           .toList();
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByGroupId(data.group?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByGroupId(data.group?.id ?? '');
 
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);

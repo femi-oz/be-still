@@ -706,49 +706,49 @@ class GroupPrayerService {
     }
   }
 
-  Future<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
-    try {
-      if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
-      return _followedPrayerCollectionReference
-          .where('PrayerId', isEqualTo: prayerId)
-          .get()
-          .then((event) => event.docs
-              .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
-              .toList());
-    } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerId,
-          'PRAYER/service/getFollowedPrayers');
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
-  }
+  // Future<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Future.error(StringUtils.unathorized);
+  //     return _followedPrayerCollectionReference
+  //         .where('PrayerId', isEqualTo: prayerId)
+  //         .get()
+  //         .then((event) => event.docs
+  //             .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+  //             .toList());
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerId,
+  //         'PRAYER/service/getFollowedPrayers');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
 
-  Future<List<FollowedPrayerModel>> getFollowedPrayersByGroupId(
-      String groupId) {
-    try {
-      if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
-      return _followedPrayerCollectionReference
-          .where('GroupId', isEqualTo: groupId)
-          .get()
-          .then((event) => event.docs
-              .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
-              .toList());
-    } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), groupId,
-          'PRAYER/service/getFollowedPrayersByGroupId');
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
-  }
+  // Future<List<FollowedPrayerModel>> getFollowedPrayersByGroupId(
+  //     String groupId) {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Future.error(StringUtils.unathorized);
+  //     return _followedPrayerCollectionReference
+  //         .where('GroupId', isEqualTo: groupId)
+  //         .get()
+  //         .then((event) => event.docs
+  //             .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+  //             .toList());
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), groupId,
+  //         'PRAYER/service/getFollowedPrayersByGroupId');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
 
-  Future<List<FollowedPrayerModel>> getFollowedPrayersByUserId(String userId) {
+  Stream<List<FollowedPrayerModel>> getFollowedPrayersByUserId(String userId) {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
+        return Stream.error(StringUtils.unathorized);
       return _followedPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
-          .get()
-          .then((event) => event.docs
+          .snapshots()
+          .map((event) => event.docs
               .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
               .toList());
     } catch (e) {
@@ -758,10 +758,10 @@ class GroupPrayerService {
     }
   }
 
-  hideFromAllMembers(String prayerId, bool value) {
+  Future hideFromAllMembers(String prayerId, bool value) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       _prayerCollectionReference
           .doc(prayerId)
           .update({'HideFromAllMembers': value});
@@ -772,10 +772,10 @@ class GroupPrayerService {
     }
   }
 
-  messageRequestor(PrayerRequestMessageModel requestMessageModel) async {
+  Future messageRequestor(PrayerRequestMessageModel requestMessageModel) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       var dio = Dio(BaseOptions(followRedirects: false));
       var user = await _userCollectionReference
           .where('Email', isEqualTo: requestMessageModel.email)
@@ -813,7 +813,7 @@ class GroupPrayerService {
 
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       //store user prayer
       _userPrayerCollectionReference
           .doc(userPrayerID)
@@ -832,9 +832,9 @@ class GroupPrayerService {
   Future removeFromMyList(String followedPrayerId, String userPrayerId) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      await _followedPrayerCollectionReference.doc(followedPrayerId).delete();
-      await _userPrayerCollectionReference.doc(userPrayerId).delete();
+        return Future.error(StringUtils.unathorized);
+      _followedPrayerCollectionReference.doc(followedPrayerId).delete();
+      _userPrayerCollectionReference.doc(userPrayerId).delete();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           followedPrayerId, 'PRAYER/service/removeFromMyList');
@@ -842,10 +842,10 @@ class GroupPrayerService {
     }
   }
 
-  flagAsInappropriate(String prayerId) {
+  Future flagAsInappropriate(String prayerId) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       _prayerCollectionReference
           .doc(prayerId)
           .update({'IsInappropriate': true});

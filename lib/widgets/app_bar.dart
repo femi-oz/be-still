@@ -133,7 +133,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
-  Future<int> getCount() async {
+  int get getCount {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
     return notifications.length;
@@ -286,56 +286,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 child: Container(
                   child: Center(
-                    child: FutureBuilder<int>(
-                        future: getCount(),
-                        builder: (context, snapshot) {
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              (!snapshot.hasData || snapshot.hasError)
-                                  ? IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.notifications_none,
-                                          size: 30, color: AppColors.white))
-                                  : IconButton(
-                                      icon: Icon(
-                                          snapshot.data != 0
-                                              ? Icons.notifications
-                                              : Icons.notifications_none,
-                                          size: 30,
-                                          color: snapshot.data != 0
-                                              ? AppColors.red
-                                              : AppColors.white),
-                                      onPressed: () {
-                                        AppCOntroller appCOntroller =
-                                            Get.find();
-                                        appCOntroller.setCurrentPage(14, false);
-                                      },
-                                    ),
-                              (!snapshot.hasData || snapshot.hasError)
-                                  // snapshot.data != 0
-                                  ? SizedBox()
-                                  : Padding(
-                                      padding: EdgeInsets.only(
-                                          right: snapshot.data == 1
-                                              ? 2
-                                              : (snapshot.data ?? 0) > 9
-                                                  ? 1
-                                                  : 0),
-                                      child: Text(
-                                          (snapshot.data ?? 0) < 1
-                                              ? ''
-                                              : snapshot.data.toString(),
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: AppColors.white,
-                                              fontWeight: FontWeight.w600)),
-                                    )
-                              // : Container(),
-                            ],
-                          );
-                        }),
-                  ),
+                      child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                            getCount != 0
+                                ? Icons.notifications
+                                : Icons.notifications_none,
+                            size: 30,
+                            color: getCount != 0
+                                ? AppColors.red
+                                : AppColors.white),
+                        onPressed: () {
+                          AppCOntroller appCOntroller = Get.find();
+                          appCOntroller.setCurrentPage(14, false);
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            right: getCount == 1
+                                ? 2
+                                : getCount > 9
+                                    ? 1
+                                    : 0),
+                        child: Text(getCount < 1 ? '' : getCount.toString(),
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w600)),
+                      )
+                    ],
+                  )),
                 ),
               )
             : Container(),
