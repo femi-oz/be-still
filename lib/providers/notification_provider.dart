@@ -63,26 +63,41 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future init(String token, String userId, UserModel currentUser) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService.init(token, userId, currentUser);
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService.init(token, userId, currentUser);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future disablePushNotifications(String userId, UserModel currentUser) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService.disablePushNotifications(userId, currentUser);
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService.disablePushNotifications(userId, currentUser);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future enablePushNotifications(
       String token, String userId, UserModel currentUser) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _notificationService.enablePushNotification(token, userId, currentUser);
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _notificationService.enablePushNotification(token, userId, currentUser);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> clearMessage() async {
-    _message = NotificationMessage.defaultValue();
+    try {
+      _message = NotificationMessage.defaultValue();
+      notifyListeners();
+    } catch (e) {}
   }
 
   Future<void> setNotifications() async {
@@ -93,7 +108,6 @@ class NotificationProvider with ChangeNotifier {
           .asBroadcastStream()
           .listen((notifications) {
         _notifications = notifications;
-
         notifyListeners();
       });
     } catch (e) {
@@ -125,11 +139,10 @@ class NotificationProvider with ChangeNotifier {
           .where((e) => e.messageType != NotificationType.request);
       await _notificationService.clearNotification(
           notificationsToClear.map((e) => e.id ?? '').toList());
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future<void> setLocalNotifications(userId) async {
@@ -159,11 +172,10 @@ class NotificationProvider with ChangeNotifier {
       for (int i = 0; i < reminderToDelete.length; i++) {
         await deleteLocalNotification(reminderToDelete[i].id ?? '');
       }
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future<void> setPrayerTimeNotifications(userId) async {
@@ -261,10 +273,10 @@ class NotificationProvider with ChangeNotifier {
         selectedDayOfMonth,
       );
       await setLocalNotifications(userId);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> updateLocalNotification(
@@ -297,11 +309,10 @@ class NotificationProvider with ChangeNotifier {
         selectedDayOfMonth,
       );
       await setLocalNotifications(userId);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future<void> deleteLocalNotification(String notificationId) async {

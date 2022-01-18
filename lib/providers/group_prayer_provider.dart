@@ -332,11 +332,11 @@ class GroupPrayerProvider with ChangeNotifier {
         _filteredPrayers = filteredPrayers;
         _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
             .compareTo((a.prayer?.modifiedOn ?? DateTime.now())));
+        notifyListeners();
       }
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> addPrayerUpdate(
@@ -351,28 +351,28 @@ class GroupPrayerProvider with ChangeNotifier {
   void setEditMode(bool value) {
     try {
       _isEdit = value;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   void setEditPrayer({CombineGroupPrayerStream? data}) {
     try {
       _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   void setPrayerFilterOptions(String option) {
     try {
       _filterOption = option;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> filterPrayers() async {
@@ -447,10 +447,10 @@ class GroupPrayerProvider with ChangeNotifier {
         }
       }
       _filteredPrayers = _distinct;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> flagAsInappropriate(String prayerId) async {
@@ -475,9 +475,9 @@ class GroupPrayerProvider with ChangeNotifier {
       String followedPrayerId, String userPrayerId) async {
     try {
       await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 }

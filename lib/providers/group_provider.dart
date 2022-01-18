@@ -78,12 +78,11 @@ class GroupProvider with ChangeNotifier {
             .compareTo((b.group?.name ?? '').toLowerCase()));
 
         _userGroups = [...isAdminGroups, ...isNotAdminGroups];
+        notifyListeners();
       });
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future<CombineGroupUserStream> getGroupFuture(groupdId, String userId) {
@@ -131,11 +130,10 @@ class GroupProvider with ChangeNotifier {
               .contains(searchQuery.toLowerCase()))
           .toList();
       _filteredAllGroups = filteredGroups;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future advanceSearchAllGroups(String name, String userId, String location,
@@ -180,11 +178,10 @@ class GroupProvider with ChangeNotifier {
             .toList();
 
       _filteredAllGroups = filteredGroups;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future addGroup(GroupModel groupData, String userID, String fullName,
@@ -351,19 +348,19 @@ class GroupProvider with ChangeNotifier {
   void setEditMode(bool value) {
     try {
       _isEdit = value;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   void setJoinGroupId(String value) {
     try {
       _groupJoinId = value;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future updateGroupSettings(String? userId,

@@ -24,10 +24,10 @@ class UserProvider with ChangeNotifier {
     try {
       final keyRefernence = _firebaseAuth.currentUser?.uid;
       _currentUser = await _userService.getCurrentUser(keyRefernence ?? '');
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future getUserById(String id) async {

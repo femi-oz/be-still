@@ -163,11 +163,11 @@ class PrayerProvider with ChangeNotifier {
           }
         }
         _filteredPrayers = _distinct;
+        notifyListeners();
       }
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> setPrayer(String id) async {
@@ -184,10 +184,10 @@ class PrayerProvider with ChangeNotifier {
   void setPrayerFilterOptions(String option) {
     try {
       _filterOption = option;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> filterPrayers() async {
@@ -263,11 +263,10 @@ class PrayerProvider with ChangeNotifier {
         }
       }
       _filteredPrayers = _distinct;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future<void> _unSnoozePrayerPast(List<CombinePrayerStream> data) async {
@@ -488,28 +487,28 @@ class PrayerProvider with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _currentPrayerType = type;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   void setEditMode(bool value, bool showDropDown) {
     try {
       _isEdit = value;
       _showDropDown = showDropDown;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   void setEditPrayer({CombinePrayerStream? data}) {
     try {
       _prayerToEdit = data ?? CombinePrayerStream.defaultValue();
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 }
