@@ -58,9 +58,26 @@ class GroupProvider with ChangeNotifier {
           return u..groupUsers = _distinct;
         }).toList();
 
-        _userGroups.sort((a, b) => (a.group?.name ?? '')
+        final isAdminGroups = _userGroups
+            .where((element) => (element.groupUsers ?? []).any((element) =>
+                element.role == GroupUserRole.admin &&
+                element.userId == userId))
+            .toList();
+        isAdminGroups.sort((a, b) => (a.group?.name ?? '')
             .toLowerCase()
             .compareTo((b.group?.name ?? '').toLowerCase()));
+
+        final isNotAdminGroups = _userGroups
+            .where((element) => (element.groupUsers ?? []).any((element) =>
+                element.role != GroupUserRole.admin &&
+                element.userId == userId))
+            .toList();
+
+        isNotAdminGroups.sort((a, b) => (a.group?.name ?? '')
+            .toLowerCase()
+            .compareTo((b.group?.name ?? '').toLowerCase()));
+
+        _userGroups = [...isAdminGroups, ...isNotAdminGroups];
       });
     } catch (e) {
       rethrow;

@@ -146,9 +146,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           }
 
           if (contactList.length > 0) {
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .addPrayerTag(
-                    contactList, _user, _descriptionController.text, '');
+            for (final contact in contactList) {
+              if (_descriptionController.text
+                  .contains(contact.displayName ?? '')) {
+                await Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .addPrayerTag(
+                        contactList, _user, _descriptionController.text, '');
+              }
+            }
           }
 
           if ((selected?.name ?? '').isEmpty ||

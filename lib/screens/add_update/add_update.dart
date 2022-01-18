@@ -163,16 +163,15 @@ class _AddUpdateState extends State<AddUpdate> {
             .addPrayerUpdate(
                 user.id ?? '', _descriptionController.text, prayerId);
 
-        contacts.forEach((s) {
-          if (!_descriptionController.text.contains(s.displayName ?? '')) {
-            s.displayName = '';
-          }
-        });
-
         if (contacts.length > 0) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(
-                  contacts, user, _descriptionController.text, prayerId);
+          for (final contact in contacts) {
+            if (_descriptionController.text
+                .contains(contact.displayName ?? '')) {
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .addPrayerTag(
+                      contacts, user, _descriptionController.text, prayerId);
+            }
+          }
         }
         BeStilDialog.hideLoading(context);
         Navigator.of(context).pushNamedAndRemoveUntil(

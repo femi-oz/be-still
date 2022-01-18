@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -12,6 +13,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -134,30 +136,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Future<int> getCount() async {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
-    // final userId = Provider.of<UserProvider>(context).currentUser.id;
-    // final z = [];
-    // for (final e in notifications) {
-    //   if (e.groupId.isNotEmpty) {
-    //     final j = await Provider.of<GroupProvider>(context)
-    //         .getGroupFuture(e.groupId, userId);
-    //     if (j.group.id.isNotEmpty) {
-    //       z.add(j);
-    //     }
-    //   }
-    // }
-    // notifications.forEach((e) async {
-    //   if (e.groupId.isNotEmpty) {
-    //     final j = await Provider.of<GroupProvider>(context)
-    //         .getGroupFuture(e.groupId, userId);
-    //     if (j.group.id.isNotEmpty) {
-    //       return j;
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // }).toList();
-
-    // return z.where((element) => element != null).length;
     return notifications.length;
   }
 
@@ -328,13 +306,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                           color: snapshot.data != 0
                                               ? AppColors.red
                                               : AppColors.white),
-                                      onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              NotificationsScreen(),
-                                        ),
-                                      ),
+                                      onPressed: () {
+                                        AppCOntroller appCOntroller =
+                                            Get.find();
+                                        appCOntroller.setCurrentPage(14, false);
+                                      },
                                     ),
                               (!snapshot.hasData || snapshot.hasError)
                                   // snapshot.data != 0

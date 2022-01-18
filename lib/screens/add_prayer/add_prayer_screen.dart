@@ -152,15 +152,20 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           if (contactList.length > 0) {
-            if ((selected?.name ?? '').isEmpty ||
-                (selected?.name) == 'My Prayers') {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .addPrayerTag(
-                      contactList, _user, _descriptionController.text, '');
-            } else {
-              await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .addPrayerTag(
-                      contactList, _user, _descriptionController.text, '');
+            for (final contact in contactList) {
+              if (_descriptionController.text
+                  .contains(contact.displayName ?? '')) {
+                if ((selected?.name ?? '').isEmpty ||
+                    (selected?.name) == 'My Prayers') {
+                  await Provider.of<PrayerProvider>(context, listen: false)
+                      .addPrayerTag(
+                          contactList, _user, _descriptionController.text, '');
+                } else {
+                  await Provider.of<GroupPrayerProvider>(context, listen: false)
+                      .addPrayerTag(
+                          contactList, _user, _descriptionController.text, '');
+                }
+              }
             }
           }
         } else {

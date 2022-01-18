@@ -12,7 +12,7 @@ class AppCOntroller extends GetxController
 
   @override
   void onInit() {
-    tabController = new TabController(length: 14, vsync: this);
+    tabController = new TabController(length: 15, vsync: this);
     super.onInit();
   }
 
