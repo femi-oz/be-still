@@ -171,9 +171,14 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         });
 
         if (contacts.length > 0) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .addPrayerTag(
-                  contacts, user, _descriptionController.text, prayerId);
+          for (final contact in contacts) {
+            if (_descriptionController.text
+                .contains(contact.displayName ?? '')) {
+              await Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .addPrayerTag(
+                      contacts, user, _descriptionController.text, '');
+            }
+          }
         }
         await Provider.of<NotificationProvider>(context, listen: false)
             .sendPrayerNotification(

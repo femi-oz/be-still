@@ -326,11 +326,11 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future sendPrayerNotification(
-    String prayerId,
-    String type,
-    String selectedGroupId,
+    String? prayerId,
+    String? type,
+    String? selectedGroupId,
     BuildContext context,
-    String prayerDetail,
+    String? prayerDetail,
   ) async {
     try {
       final _user =
@@ -358,14 +358,14 @@ class NotificationProvider with ChangeNotifier {
             Provider.of<UserProvider>(context, listen: false).userToken;
 
         sendPushNotification(
-            prayerDetail,
-            type,
+            prayerDetail ?? '',
+            type ?? '',
             _user.firstName ?? '' + ' ' + (_user.lastName ?? ''),
             _user.id ?? '',
             (e ?? ''),
             type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
-            prayerId,
-            selectedGroupId,
+            prayerId ?? '',
+            selectedGroupId ?? '',
             [value]);
       });
     } catch (e) {

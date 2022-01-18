@@ -57,19 +57,11 @@ class BeStilDialog {
 
   static Future showErrorDialog(BuildContext context, String error,
       UserModel? user, StackTrace? stackTrace) async {
-    // bool hasProperty = false;
-    // try {
-    //   (error as PlatformException).message;
-    //   hasProperty = true;
-    // } on NoSuchMethodError {}
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
-        type: AlertType.error,
-        confirmText: 'OK',
-        message: error.capitalizeFirst ?? '',
-      ),
+          type: AlertType.error, confirmText: 'OK', message: error),
     );
     if (user != null) {
       FirebaseCrashlytics.instance.setUserIdentifier(user.id ?? '');

@@ -1,3 +1,4 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -12,6 +13,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -131,33 +133,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
-  Future<int> getCount() async {
+  int get getCount {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
-    // final userId = Provider.of<UserProvider>(context).currentUser.id;
-    // final z = [];
-    // for (final e in notifications) {
-    //   if (e.groupId.isNotEmpty) {
-    //     final j = await Provider.of<GroupProvider>(context)
-    //         .getGroupFuture(e.groupId, userId);
-    //     if (j.group.id.isNotEmpty) {
-    //       z.add(j);
-    //     }
-    //   }
-    // }
-    // notifications.forEach((e) async {
-    //   if (e.groupId.isNotEmpty) {
-    //     final j = await Provider.of<GroupProvider>(context)
-    //         .getGroupFuture(e.groupId, userId);
-    //     if (j.group.id.isNotEmpty) {
-    //       return j;
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // }).toList();
-
-    // return z.where((element) => element != null).length;
     return notifications.length;
   }
 
@@ -308,58 +286,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 child: Container(
                   child: Center(
-                    child: FutureBuilder<int>(
-                        future: getCount(),
-                        builder: (context, snapshot) {
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              (!snapshot.hasData || snapshot.hasError)
-                                  ? IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.notifications_none,
-                                          size: 30, color: AppColors.white))
-                                  : IconButton(
-                                      icon: Icon(
-                                          snapshot.data != 0
-                                              ? Icons.notifications
-                                              : Icons.notifications_none,
-                                          size: 30,
-                                          color: snapshot.data != 0
-                                              ? AppColors.red
-                                              : AppColors.white),
-                                      onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              NotificationsScreen(),
-                                        ),
-                                      ),
-                                    ),
-                              (!snapshot.hasData || snapshot.hasError)
-                                  // snapshot.data != 0
-                                  ? SizedBox()
-                                  : Padding(
-                                      padding: EdgeInsets.only(
-                                          right: snapshot.data == 1
-                                              ? 2
-                                              : (snapshot.data ?? 0) > 9
-                                                  ? 1
-                                                  : 0),
-                                      child: Text(
-                                          (snapshot.data ?? 0) < 1
-                                              ? ''
-                                              : snapshot.data.toString(),
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: AppColors.white,
-                                              fontWeight: FontWeight.w600)),
-                                    )
-                              // : Container(),
-                            ],
-                          );
-                        }),
-                  ),
+                      child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                            getCount != 0
+                                ? Icons.notifications
+                                : Icons.notifications_none,
+                            size: 30,
+                            color: getCount != 0
+                                ? AppColors.red
+                                : AppColors.white),
+                        onPressed: () {
+                          AppCOntroller appCOntroller = Get.find();
+                          appCOntroller.setCurrentPage(14, false);
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            right: getCount == 1
+                                ? 2
+                                : getCount > 9
+                                    ? 1
+                                    : 0),
+                        child: Text(getCount < 1 ? '' : getCount.toString(),
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w600)),
+                      )
+                    ],
+                  )),
                 ),
               )
             : Container(),

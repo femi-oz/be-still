@@ -141,8 +141,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               e.messageType == NotificationType.request &&
               e.groupId == data.group?.id)
           .toList();
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByGroupId(data.group?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByGroupId(data.group?.id ?? '');
 
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);
@@ -1486,15 +1486,20 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 10.0),
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                          'Members | ${data.groupUsers ?? [].length}',
+                                          'Members | ${(data.groupUsers ?? []).length}',
                                           style: AppTextStyles.regularText11),
                                       SizedBox(width: 10),
                                       Expanded(
-                                        child: Divider(
-                                          color: AppColors.lightBlue1,
-                                          thickness: 1,
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Divider(
+                                            color: AppColors.lightBlue1,
+                                            thickness: 1,
+                                          ),
                                         ),
                                       ),
                                     ],

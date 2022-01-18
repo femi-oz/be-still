@@ -57,10 +57,10 @@ class StringUtils {
       " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
   static String unathorized =
       "You're unathorized to perform this action. Kindly log in";
+
   static String getErrorMessage(e) {
-    // final e = (err as Exception);
-    // return (e.message != null ? e.message : e.toString()) ?? '';
-    return e.toString();
+    return (e?.message != null ? e.message : StringUtils.errorOccured) ??
+        StringUtils.errorOccured;
   }
 
   static generateExceptionMessage(exceptionCode) {
@@ -68,7 +68,7 @@ class StringUtils {
     switch (exceptionCode) {
       case ErrorType.emailAlreadyExists:
         errorMessage =
-            "The email has already been registered. Please login or reset your password.";
+            "That email address is already in use. Please select another one.";
         break;
       case ErrorType.invalidEmail:
         errorMessage = "Email format is wrong";

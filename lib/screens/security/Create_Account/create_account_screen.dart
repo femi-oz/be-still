@@ -126,23 +126,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         showInfoDialog(context);
       }
     } on HttpException catch (e, s) {
-      var message = '';
-
-      if (e.message ==
-          'The email has already been registered. Please login or reset your password.') {
-        message =
-            'That email address is already in use. Please select another one.';
-      } else {
-        message = e.message ?? '';
-      }
-
       BeStilDialog.hideLoading(context);
 
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
-
-      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(er),
-          UserModel.defaultValue(), s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');

@@ -136,8 +136,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     .newPrayerId;
 
             if (prayerId.isNotEmpty) {
-              await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .setFollowedPrayer(prayerId);
+              // await Provider.of<GroupPrayerProvider>(context, listen: false)
+              //     .setFollowedPrayer(prayerId);
               await Provider.of<GroupProvider>(context, listen: false)
                   .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
               await Provider.of<NotificationProvider>(context, listen: false)
@@ -152,15 +152,20 @@ class _AddPrayerState extends State<AddPrayer> {
           }
 
           if (contactList.length > 0) {
-            if ((selected?.name ?? '').isEmpty ||
-                (selected?.name) == 'My Prayers') {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .addPrayerTag(
-                      contactList, _user, _descriptionController.text, '');
-            } else {
-              await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .addPrayerTag(
-                      contactList, _user, _descriptionController.text, '');
+            for (final contact in contactList) {
+              if (_descriptionController.text
+                  .contains(contact.displayName ?? '')) {
+                if ((selected?.name ?? '').isEmpty ||
+                    (selected?.name) == 'My Prayers') {
+                  await Provider.of<PrayerProvider>(context, listen: false)
+                      .addPrayerTag(
+                          contactList, _user, _descriptionController.text, '');
+                } else {
+                  await Provider.of<GroupPrayerProvider>(context, listen: false)
+                      .addPrayerTag(
+                          contactList, _user, _descriptionController.text, '');
+                }
+              }
             }
           }
         } else {
@@ -290,7 +295,8 @@ class _AddPrayerState extends State<AddPrayer> {
               GlobalKey()))
           .toList();
     } else {
-      showDropdown = true;
+      showDropdown =
+          Provider.of<PrayerProvider>(context, listen: false).showDropDown;
     }
     final userGroups =
         Provider.of<GroupProvider>(context, listen: false).userGroups;

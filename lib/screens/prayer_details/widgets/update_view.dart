@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -241,6 +242,8 @@ class _UpdateView extends State<UpdateView> {
 
   Widget build(BuildContext context) {
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    bool isOwner = prayerData.prayer?.createdBy == userId;
     var updates = prayerData.updates;
     updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
         .compareTo(a.modifiedOn ?? DateTime.now()));
@@ -280,7 +283,11 @@ class _UpdateView extends State<UpdateView> {
     );
   }
 
-  Widget _buildDetail(time, modifiedOn, description, tags, context) {
+  Widget _buildDetail(
+      time, modifiedOn, description, List<PrayerTagModel>? tags, context) {
+    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    bool isOwner = prayerData.prayer?.createdBy == userId;
     return Container(
       child: Column(
         children: <Widget>[
@@ -331,24 +338,34 @@ class _UpdateView extends State<UpdateView> {
               child: Row(
                 children: [
                   Flexible(
-                    child: EasyRichText(
-                      description,
-                      defaultStyle: AppTextStyles.regularText16b
-                          .copyWith(color: AppColors.prayerTextColor),
-                      patternList: [
-                        for (var i = 0; i < tags.length; i++)
-                          EasyRichTextPattern(
-                              targetString: tags[i].displayName.trim(),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  _openShareModal(context, tags[i].phoneNumber,
-                                      tags[i].email, tags[i].identifier);
-                                },
-                              style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.lightBlue2,
-                                  decoration: TextDecoration.underline))
-                      ],
-                    ),
+                    child: isOwner
+                        ? EasyRichText(
+                            description,
+                            defaultStyle: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.prayerTextColor),
+                            patternList: [
+                              for (var i = 0; i < (tags ?? []).length; i++)
+                                EasyRichTextPattern(
+                                    targetString:
+                                        (tags?[i].displayName ?? '').trim(),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        _openShareModal(
+                                            context,
+                                            tags?[i].phoneNumber ?? '',
+                                            tags?[i].email ?? '',
+                                            tags?[i].identifier ?? '');
+                                      },
+                                    style: AppTextStyles.regularText15.copyWith(
+                                        color: AppColors.lightBlue2,
+                                        decoration: TextDecoration.underline))
+                            ],
+                          )
+                        : Text(
+                            description,
+                            style: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.prayerTextColor),
+                          ),
                   ),
                 ],
               ),
